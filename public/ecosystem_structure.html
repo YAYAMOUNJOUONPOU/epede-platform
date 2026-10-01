@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Electrical Energy Ecosystem</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050b12;--panel:#08131d;--line:#1f6f93;--cyan:#33b6e8;--gold:#f2b544;--txt:#e8eef3;--mut:#aebbc6}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);width:100%;overflow-x:hidden}
+body{font-family:'Exo 2','Segoe UI',Arial,sans-serif;color:var(--txt)}
+#wrap{width:100%;position:relative}
+#stage{position:absolute;left:0;top:0;width:1536px;height:1024px;transform-origin:0 0;
+ background:#050b12 url("[BASE64_IMAGE]") no-repeat 0 0/1536px 1024px;overflow:hidden}
+.abs{position:absolute}
+/* header */
+#hdr{left:0;top:0;width:1536px;height:92px;background:linear-gradient(#0a121a,#070d14);border-bottom:1px solid #1a2a36}
+.logo-t{left:68px;top:16px;font-size:36px;font-weight:700;letter-spacing:6px;color:#fff;line-height:1}
+.logo-s{left:68px;top:52px;font-size:12.5px;line-height:14px;color:#c9d3db}
+.vline{width:1px;background:#3a4a58}
+.title{left:0;width:1132px;text-align:center;top:26px;font-size:26px;font-weight:600;letter-spacing:3px;color:#f3f6f8}
+.subtitle{left:0;width:1132px;text-align:center;top:59px;font-size:19px;color:#dfe6ec;letter-spacing:.3px}
+.nav{top:32px;width:80px;text-align:center;font-size:13.5px;color:#dfe6ec}
+.nav svg{display:block;margin:0 auto 6px;width:26px;height:26px;stroke:#9fb0bd;fill:none;stroke-width:1.4}
+.quote{left:1338px;top:33px;width:170px;font-size:12px;line-height:15px;font-style:italic;color:#d3dbe2}
+/* left panel */
+#lp{left:11px;top:107px;width:150px;height:468px;background:#0a1620;border:1px solid #1d3a4c;border-radius:5px}
+#lp .h{position:absolute;left:9px;top:8px;font-size:12px;color:#e8eef3}
+.li{position:absolute;left:0;width:148px;height:34px;display:flex;align-items:center;font-size:12px;color:#dfe6ec}
+.li i{width:36px;display:flex;justify-content:center}
+.li svg{width:22px;height:22px}
+.li.act{left:6px;width:136px;height:33px;border:1px solid #2a86b5;background:#0f2a3c;border-radius:4px}
+.li.act i{width:30px}
+.div{position:absolute;left:0;width:148px;height:1px;background:#1d3a4c}
+.big svg{width:30px;height:30px;stroke:#c9d3db;fill:none;stroke-width:1.3}
+.big i{width:44px}
+/* callouts */
+.co{position:absolute;height:42px;background:rgba(7,17,27,.94);border:1px solid #2a7fa6;border-radius:5px;display:flex;align-items:center;padding-left:8px;box-shadow:0 0 8px rgba(40,140,200,.25)}
+.co .n{flex:none;width:22px;height:22px;border-radius:50%;background:#1a73c4;border:1px solid #7fd0ff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;margin-right:9px}
+.co b{display:block;font-size:14px;font-weight:600;line-height:17px;color:#f2f5f8;white-space:nowrap}
+.co small{display:block;font-size:11px;line-height:14px;color:#b9c6d0;white-space:nowrap}
+/* journey */
+#jr{left:13px;top:714px;width:1082px;height:120px;background:linear-gradient(90deg,#08131d,#0a1a27);border:1px solid #1f5573;border-radius:6px}
+#jr .t{position:absolute;left:64px;top:12px;font-size:17px;font-weight:600;letter-spacing:.5px;color:#fff}
+#jr .t span{font-weight:700}
+#jr p{position:absolute;left:64px;top:38px;width:260px;font-size:12px;line-height:18.5px;color:#c5d0d9}
+.circ{position:absolute;top:24px;width:66px;height:66px;border:1.5px solid #39a9d6;border-radius:50%;background:#0b1f2e;display:flex;align-items:center;justify-content:center}
+.circ svg{width:34px;height:34px;stroke:#c9d3db;fill:none;stroke-width:1.4}
+.cl{position:absolute;top:96px;width:120px;text-align:center;font-size:12.5px;color:#e8eef3}
+.arr{position:absolute;top:44px;font-size:20px;color:#5f7a8c}
+/* bottom thumbs */
+.th{position:absolute;top:859px;height:122px;border:1px solid #2a7fa6;border-radius:4px;overflow:hidden;background:#050b12 url("[BASE64_IMAGE]") no-repeat;background-size:1536px 1024px}
+.th .bar{position:absolute;left:0;right:0;bottom:0;height:26px;background:rgba(6,16,26,.95);display:flex;align-items:center;font-size:12px;color:#fff;padding-left:6px}
+.th .bar .b{width:19px;height:19px;border-radius:50%;background:#1a73c4;border:1px solid #7fd0ff;font-size:9.5px;display:flex;align-items:center;justify-content:center;margin-right:6px}
+.th .bar .c{margin-left:auto;margin-right:6px;font-size:14px}
+.ctl{left:1165px;top:858px;width:156px;height:124px;background:#08131d;border:1px solid #1f5573;border-radius:5px}
+.btn{position:absolute;left:10px;width:140px;border:1px solid #2a86b5;border-radius:5px;background:#0a1a27;font-size:12px;display:flex;align-items:center;padding-left:14px;color:#e8eef3}
+.btn svg{width:20px;height:20px;margin-right:12px;stroke:#dfe6ec;fill:none;stroke-width:1.4}
+.btn.play{background:linear-gradient(#e8b04a,#c98f2b);border-color:#f2c56a;color:#1a1204;font-weight:500;font-size:13px}
+.btn.play svg{stroke:#1a1204}
+.vm{left:1333px;top:858px;width:188px;height:124px;background:#08131d;border:1px solid #1f5573;border-radius:5px}
+.vm .h{position:absolute;left:10px;top:7px;font-size:10.5px;color:#e8eef3}
+.vi{position:absolute;left:9px;width:167px;height:29px;display:flex;align-items:center;font-size:12px;color:#e8eef3;padding-left:14px}
+.vi svg{width:20px;height:20px;margin-right:12px;stroke:#c9d3db;fill:none;stroke-width:1.4}
+.vi.act{border:1px solid #2a86b5;background:#0f2a3c;border-radius:4px}
+.vi.act svg{stroke:#33b6e8}
+</style>
+</head>
+<body>
+<div id="wrap"><div id="stage">
+
+<!-- HEADER -->
+<div id="hdr" class="abs"></div>
+<svg class="abs" style="left:22px;top:18px" width="38" height="56" viewBox="0 0 38 56"><polygon points="24,2 4,32 17,32 10,54 34,20 20,20" fill="#e9a93a"/></svg>
+<div class="abs logo-t">EPEDE</div>
+<div class="abs logo-s">Electrical Power Engineering<br>Digital Environment</div>
+<svg class="abs" style="left:218px;top:24px" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#e9a93a" stroke-width="1.3"><circle cx="10" cy="10" r="8"/><ellipse cx="10" cy="10" rx="3.5" ry="8"/><path d="M2 10h16"/></svg>
+<div class="abs vline" style="left:257px;top:6px;height:80px;background:#8a6a2c"></div>
+<div class="abs title">THE ELECTRICAL ENERGY ECOSYSTEM</div>
+<div class="abs subtitle" style="left:-0px;width:1132px">From Energy Source to Useful Work</div>
+
+<div class="abs nav" style="left:901px"><svg viewBox="0 0 26 26"><path d="M13 3l9 5v10l-9 5-9-5V8z"/><path d="M4 8l9 5 9-5M13 13v10"/></svg>Explore</div>
+<div class="abs vline" style="left:989px;top:34px;height:40px"></div>
+<div class="abs nav" style="left:1004px"><svg viewBox="0 0 26 26"><path d="M3 6c5 0 6 14 10 14s5-14 10-14M3 20c5 0 6-14 10-14s5 14 10 14"/></svg>Journey</div>
+<div class="abs vline" style="left:1094px;top:34px;height:40px"></div>
+<div class="abs nav" style="left:1104px"><svg viewBox="0 0 26 26"><rect x="4" y="5" width="18" height="16"/><path d="M9 5v16M17 5v16M4 12h18"/></svg>Equipment</div>
+<div class="abs vline" style="left:1192px;top:34px;height:40px"></div>
+<div class="abs nav" style="left:1195px"><svg viewBox="0 0 26 26"><path d="M4 9h16l-4-4M22 17H6l4 4"/></svg>Power Flow</div>
+<div class="abs vline" style="left:1273px;top:34px;height:40px"></div>
+<div class="abs nav" style="left:1254px"><svg viewBox="0 0 26 26"><path d="M10 4v18M16 4v18" stroke-width="2.4"/></svg>Views</div>
+<div class="abs vline" style="left:1325px;top:26px;height:56px;background:#c9922e"></div>
+<div class="abs quote">" Understanding the complete energy chain to build a smarter, more sustainable future. "</div>
+
+<!-- LEFT PANEL -->
+<div id="lp" class="abs">
+  <div class="h">Energy Sources &amp; Generation</div>
+  <div class="li act" style="top:31px"><i><svg viewBox="0 0 22 22"><path d="M11 2C8 8 5 10 5 14a6 6 0 0012 0c0-4-3-6-6-12z" fill="#2a9df0"/></svg></i><span style="color:#5fc0ff">Hydro</span></div>
+  <div class="li" style="top:66px"><i><svg viewBox="0 0 22 22" stroke="#4bb0e8" fill="none" stroke-width="1.4"><path d="M11 10v10M11 10L6 3M11 10l6-2M11 10L5 14"/></svg></i>Wind</div>
+  <div class="li" style="top:104px"><i><svg viewBox="0 0 22 22"><circle cx="11" cy="11" r="4" fill="#f5b53a"/><g stroke="#f5b53a" stroke-width="1.6"><path d="M11 1v3M11 18v3M1 11h3M18 11h3M4 4l2 2M16 16l2 2M4 18l2-2M16 6l2-2"/></g></svg></i>Solar</div>
+  <div class="li" style="top:143px"><i><svg viewBox="0 0 22 22"><path d="M11 2c1 5 6 6 6 12a6 6 0 01-12 0c0-3 2-4 3-7 1 2 2 2 3-5z" fill="#ef5a2e"/></svg></i>Thermal</div>
+  <div class="li" style="top:180px"><i><svg viewBox="0 0 22 22"><path d="M4 18C4 8 10 4 19 3c0 9-4 15-13 15z" fill="#5fc25a"/></svg></i>Biomass</div>
+  <div class="div" style="top:221px"></div>
+  <div class="li big" style="top:226px;height:48px"><i><svg viewBox="0 0 30 30"><path d="M15 3v24M9 27l6-24 6 24M8 10h14M10 17h10"/></svg></i>Transmission</div>
+  <div class="div" style="top:270px"></div>
+  <div class="li big" style="top:275px;height:48px"><i><svg viewBox="0 0 30 30"><path d="M4 26V10M10 26V8M16 26V10M22 26V8M28 26V10M2 26h28M4 10h6M16 10h6"/></svg></i>Substation</div>
+  <div class="div" style="top:319px"></div>
+  <div class="li big" style="top:324px;height:48px"><i><svg viewBox="0 0 30 30"><circle cx="15" cy="6" r="3"/><circle cx="6" cy="22" r="3"/><circle cx="24" cy="22" r="3"/><circle cx="15" cy="15" r="2"/><path d="M15 9v4M8 20l5-4M22 20l-5-4"/></svg></i>Distribution</div>
+  <div class="div" style="top:368px"></div>
+  <div class="li big" style="top:374px;height:48px"><i><svg viewBox="0 0 30 30"><rect x="5" y="3" width="14" height="24"/><rect x="19" y="12" width="7" height="15"/><path d="M8 8h2M12 8h2M8 13h2M12 13h2M8 18h2M12 18h2"/></svg></i>Installation</div>
+  <div class="div" style="top:417px"></div>
+  <div class="li big" style="top:423px;height:48px"><i><svg viewBox="0 0 30 30"><path d="M3 15L15 4l12 11M7 13v13h16V13M13 26v-8h4v8"/></svg></i>Final Load</div>
+</div>
+
+<!-- CALLOUTS -->
+<div class="co" style="left:217px;top:136px;width:234px"><span class="n">1</span><div><b>Hydroelectric Power Plant</b><small>Water energy → Mechanical → Electrical</small></div></div>
+<div class="co" style="left:549px;top:153px;width:204px"><span class="n">3</span><div><b>High Voltage Transmission</b><small>Long distance power transfer</small></div></div>
+<div class="co" style="left:789px;top:163px;width:185px;height:43px"><span class="n">4</span><div><b>Transmission Substation</b><small>HV → MV (step-down)</small></div></div>
+<div class="co" style="left:987px;top:247px;width:168px;height:43px"><span class="n">5</span><div><b>Distribution Network</b><small>MV distribution</small></div></div>
+<div class="co" style="left:1174px;top:311px;width:196px;height:43px"><span class="n">6</span><div><b>Distribution Transformer</b><small>MV → LV</small></div></div>
+<div class="co" style="left:1316px;top:402px;width:184px;height:43px"><span class="n">7</span><div><b>Buildings &amp; Industry</b><small>LV distribution</small></div></div>
+<div class="co" style="left:684px;top:430px;width:179px"><span class="n">5</span><div><b>Power Transformer</b><small>HV → MV / LV</small></div></div>
+<div class="co" style="left:194px;top:502px;width:198px"><span class="n">1</span><div><b>Multiple Generation Sources</b><small>Hydro, Wind, Solar, Thermal, Biomass</small></div></div>
+<div class="co" style="left:1347px;top:624px;width:184px"><span class="n">8</span><div><b>Final Load</b><small>Homes, businesses, industry</small></div></div>
+
+<!-- JOURNEY -->
+<div id="jr" class="abs">
+  <svg class="abs" style="left:14px;top:12px" width="34" height="50" viewBox="0 0 38 56"><polygon points="24,2 4,32 17,32 10,54 34,20 20,20" fill="#e9a93a"/></svg>
+  <div class="t"><span>THE</span> COMPLETE JOURNEY</div>
+  <p>From natural and fuel sources to the final load, electricity travels through a complex ecosystem of generation, transmission, transformation, distribution and utilization.</p>
+
+  <div class="circ" style="left:373px"><svg viewBox="0 0 34 34"><path d="M6 24c4-10 10-14 14-14" stroke="#2a86b5" stroke-width="3"/><polygon points="20,4 10,19 17,19 14,30 25,14 18,14" fill="#39a9d6" stroke="none"/></svg></div>
+  <div class="cl" style="left:346px">Generation</div>
+  <div class="arr" style="left:452px">→</div>
+  <div class="circ" style="left:496px"><svg viewBox="0 0 34 34"><path d="M17 3v28M11 31l6-28 6 28M9 11h16M11 19h12"/></svg></div>
+  <div class="cl" style="left:474px">Transmission</div>
+  <div class="arr" style="left:578px">→</div>
+  <div class="circ" style="left:618px"><svg viewBox="0 0 34 34"><path d="M6 29V12M12 29V10M18 29V12M24 29V10M30 29V12M3 29h28M6 12h6M18 12h6"/></svg></div>
+  <div class="cl" style="left:592px">Substation</div>
+  <div class="arr" style="left:705px">→</div>
+  <div class="circ" style="left:751px"><svg viewBox="0 0 34 34"><circle cx="17" cy="7" r="3.5"/><circle cx="7" cy="25" r="3.5"/><circle cx="27" cy="25" r="3.5"/><circle cx="17" cy="17" r="2"/><path d="M17 10.5v4M9 22l6-4M25 22l-6-4"/></svg></div>
+  <div class="cl" style="left:724px">Distribution</div>
+  <div class="arr" style="left:833px">→</div>
+  <div class="circ" style="left:877px"><svg viewBox="0 0 34 34"><rect x="7" y="3" width="15" height="27"/><rect x="22" y="13" width="7" height="17"/><path d="M11 8h2M16 8h2M11 14h2M16 14h2M11 20h2M16 20h2"/></svg></div>
+  <div class="cl" style="left:851px">Installation</div>
+  <div class="arr" style="left:958px">→</div>
+  <div class="circ" style="left:998px"><svg viewBox="0 0 34 34"><path d="M3 17L17 4l14 13M7 15v15h20V15M14 30v-9h6v9"/></svg></div>
+  <div class="cl" style="left:972px">Final Load</div>
+</div>
+
+<!-- THUMBNAILS -->
+<div class="th" style="left:14px;width:162px;background-position:-14px -859px"><div class="bar"><span class="b">01</span>Generation<span class="c">›</span></div></div>
+<div class="th" style="left:189px;width:159px;background-position:-189px -859px"><div class="bar"><span class="b">02</span>Transmission<span class="c">›</span></div></div>
+<div class="th" style="left:360px;width:160px;background-position:-360px -859px"><div class="bar"><span class="b">03</span>Substation<span class="c">›</span></div></div>
+<div class="th" style="left:533px;width:159px;background-position:-533px -859px"><div class="bar"><span class="b">04</span>Distribution<span class="c">›</span></div></div>
+<div class="th" style="left:704px;width:159px;background-position:-704px -859px"><div class="bar"><span class="b">05</span>Transformer<span class="c">›</span></div></div>
+<div class="th" style="left:877px;width:158px;background-position:-877px -859px"><div class="bar"><span class="b">06</span>Installation<span class="c">›</span></div></div>
+<div class="th" style="left:1046px;width:105px;background-position:-1046px -859px"><div class="bar"><span class="b">07</span>Final Load<span class="c">›</span></div></div>
+
+<!-- CONTROLS -->
+<div class="abs ctl">
+  <div class="btn play" style="top:6px;height:36px"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="8"/><path d="M8 6l6 4-6 4z"/></svg>Play Journey</div>
+  <div class="btn" style="top:48px;height:32px"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="8"/><path d="M6 14l2-6 6-2-2 6z"/></svg>Explore Mode</div>
+  <div class="btn" style="top:87px;height:30px"><svg viewBox="0 0 20 20"><path d="M4 10a6 6 0 116 6M4 10V5M4 10h5"/></svg>Reset</div>
+</div>
+<div class="abs vm">
+  <div class="h">View Mode</div>
+  <div class="vi act" style="top:25px"><svg viewBox="0 0 20 20"><path d="M10 2l7 4v8l-7 4-7-4V6zM3 6l7 4 7-4M10 10v8"/></svg>Physical</div>
+  <div class="vi" style="top:62px"><svg viewBox="0 0 20 20"><polygon points="12,2 5,11 10,11 8,18 15,8 10,8"/></svg>Electrical</div>
+  <div class="vi" style="top:92px"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="3"/><path d="M10 2v3M10 15v3M2 10h3M15 10h3M4.5 4.5l2 2M13.5 13.5l2 2M4.5 15.5l2-2M13.5 6.5l2-2"/></svg>Functional</div>
+</div>
+
+</div></div>
+<script>
+(function(){
+  var w=document.getElementById('wrap'),s=document.getElementById('stage');
+  function fit(){var k=Math.min(window.innerWidth,document.documentElement.clientWidth||9999)/1536;
+    s.style.transform='scale('+k+')';w.style.height=(1024*k)+'px';}
+  window.addEventListener('resize',fit);fit();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+/* src/components/epede/epede-hero.css */
+@keyframes connection-flow {
+  to {
+    stroke-dashoffset: -28;
+  }
+}
+
+@keyframes node-ring {
+  0% {
+    opacity: 0.8;
+    transform: scale(0.75);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+
+.power-map-lines line {
+  animation: connection-flow 2s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .power-map-lines line {
+    animation: none !important;
+  }
+  .copper-particles {
+    display: none !important;
+  }
+}

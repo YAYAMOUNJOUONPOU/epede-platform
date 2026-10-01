@@ -1,0 +1,414 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* EPEDE Premium Dark Engineering Palette */
+    --bg-primary: #020617;        /* Deep Obsidian Slate (slate-950) */
+    --bg-surface-1: #0B0F17;      /* Primary Surface */
+    --bg-surface-2: #0F172A;      /* Elevated Card Surface (slate-900) */
+    --bg-surface-3: #1E293B;      /* Interactive/Toolbar Surface (slate-800) */
+    --surface-card: rgba(15, 23, 42, 0.85);
+    --surface-card-hover: rgba(30, 41, 59, 0.9);
+    --surface-border: rgba(148, 163, 184, 0.12);
+    --surface-border-subtle: rgba(148, 163, 184, 0.08);
+
+    --text-primary: #F8FAFC;      /* Slate-50 luminous white */
+    --text-secondary: #94A3B8;    /* Slate-400 high-contrast body */
+    --text-muted: #64748B;        /* Slate-500 technical details */
+
+    /* Core Energy & Signal Accents */
+    --accent-amber: #F59E0B;      /* Technical Electric Amber / Copper */
+    --accent-amber-glow: rgba(245, 158, 11, 0.25);
+    --accent-cyan: #06B6D4;       /* SCADA Digital Grid Cyan */
+    --accent-cyan-dim: rgba(6, 182, 212, 0.15);
+    --accent-sky: #38BDF8;        /* Technical Sky */
+    --accent-emerald: #10B981;    /* Nominal / Synchronized Green */
+    --accent-rose: #EF4444;       /* High-contrast Safety Red */
+    --accent-violet: #8B5CF6;     /* EHV 225 kV Purple */
+
+    /* Voltage Levels System */
+    --v-ehv: #A855F7;             /* 225 kV THT */
+    --v-hv: #0284C7;              /* 90 kV HTB */
+    --v-mv: #0D9488;              /* 30 kV HTA */
+    --v-lv: #F59E0B;              /* 400V / 230V BT */
+    --v-dc: #EAB308;              /* ±800 kV HVDC */
+
+    /* EPEDE Ecosystem Sky-Blue Environment Tokens (Directive: Ecosystem Sky Canvas) */
+    --ecosystem-sky-background: #BFE3F4;
+    --ecosystem-sky-background-light: #D9F0FA;
+    --ecosystem-sky-background-soft: #CFEAF7;
+    --ecosystem-sky-background-deep: #A9D8EF;
+    --ecosystem-text-primary: #0B0F12;
+    --ecosystem-text-secondary: #33434C;
+    --ecosystem-text-muted: #5E717B;
+    --ecosystem-border: rgba(11, 15, 18, 0.18);
+    --ecosystem-control-surface: #151C1E;
+  }
+
+  body {
+    font-family: 'Inter', 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #030712;
+    color: #F8FAFC;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', 'Inter', sans-serif;
+    letter-spacing: -0.025em;
+    color: #F8FAFC;
+  }
+
+  code, pre, .font-mono, [data-technical="true"] {
+    font-family: 'IBM Plex Mono', 'JetBrains Mono', monospace;
+  }
+
+  .font-display {
+    font-family: 'Outfit', 'Inter', sans-serif;
+  }
+
+  .font-tech {
+    font-family: 'Space Grotesk', 'Outfit', sans-serif;
+  }
+
+  *:focus-visible {
+    outline: 2px solid #F59E0B;
+    outline-offset: 2px;
+  }
+}
+
+/* CAD & Engineering Schematic Grid Background (Dark Mode) */
+.cad-grid-pattern {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+}
+
+.cad-grid-dense {
+  background-size: 16px 16px;
+  background-image: 
+    linear-gradient(to right, rgba(148, 163, 184, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
+}
+
+/* Glassmorphic Dark Engineering Card */
+.epede-card {
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(8, 14, 26, 0.92) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  transition: border-color 200ms ease, transform 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms ease, background-color 200ms ease;
+}
+.epede-card:hover {
+  border-color: rgba(245, 158, 11, 0.45);
+  background: linear-gradient(135deg, rgba(19, 30, 54, 0.92) 0%, rgba(10, 18, 34, 0.98) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.7), 0 0 20px -2px rgba(245, 158, 11, 0.2), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Frosted Luxury Glassmorphic Panel */
+.epede-glass-panel {
+  background: linear-gradient(180deg, rgba(13, 20, 36, 0.75) 0%, rgba(6, 10, 19, 0.85) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Subtle Specular Top Rim on Containers */
+.specular-border {
+  position: relative;
+}
+.specular-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  pointer-events: none;
+}
+
+/* Glow Accent Utilities */
+.glow-amber-subtle {
+  box-shadow: 0 0 25px -4px rgba(245, 158, 11, 0.25);
+}
+.glow-cyan-subtle {
+  box-shadow: 0 0 25px -4px rgba(6, 182, 212, 0.25);
+}
+.glow-emerald-subtle {
+  box-shadow: 0 0 25px -4px rgba(16, 185, 129, 0.25);
+}
+.glow-purple-subtle {
+  box-shadow: 0 0 25px -4px rgba(168, 85, 247, 0.25);
+}
+
+/* Modern Tactile Press Button */
+.epede-button-tactile {
+  transition: transform 120ms ease, box-shadow 150ms ease, background-color 150ms ease, border-color 150ms ease;
+}
+.epede-button-tactile:active {
+  transform: scale(0.97);
+}
+
+/* Navigation active states (Dark Obsidian) */
+.nav-item.active {
+  border-left: 3px solid #F59E0B;
+  background: rgba(245, 158, 11, 0.12);
+  color: #FBBF24;
+  font-weight: 700;
+}
+
+.nav-item.safety-domain.active {
+  border-left: 3px solid #EF4444;
+  background: rgba(239, 68, 68, 0.12);
+  color: #F87171;
+  font-weight: 700;
+}
+
+/* Oscilloscope CRT scanline effect (Dark Technical) */
+.crt-scanlines {
+  background: linear-gradient(
+    rgba(15, 23, 42, 0) 50%, 
+    rgba(2, 6, 23, 0.65) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(245, 158, 11, 0.02),
+    rgba(0, 0, 0, 0.05),
+    rgba(245, 158, 11, 0.02)
+  );
+  background-size: 100% 3px, 6px 100%;
+}
+
+/* Electrical chain flow animation */
+.chain-line {
+  stroke-dasharray: 8 4;
+  animation: flowRight 1.5s linear infinite;
+}
+@keyframes flowRight {
+  to {
+    stroke-dashoffset: -12;
+  }
+}
+
+/* Power System Grid SVG Flow Animations */
+.power-flow-gen {
+  stroke-dasharray: 6 6;
+  animation: powerFlowGen 1.8s linear infinite;
+}
+@keyframes powerFlowGen {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+.power-flow-hv {
+  stroke-dasharray: 10 6;
+  animation: powerFlowHv 1.2s linear infinite;
+}
+@keyframes powerFlowHv {
+  to {
+    stroke-dashoffset: -32;
+  }
+}
+
+.power-flow-mv {
+  stroke-dasharray: 8 5;
+  animation: powerFlowMv 1.5s linear infinite;
+}
+@keyframes powerFlowMv {
+  to {
+    stroke-dashoffset: -26;
+  }
+}
+
+.power-flow-lv {
+  stroke-dasharray: 6 4;
+  animation: powerFlowLv 2s linear infinite;
+}
+@keyframes powerFlowLv {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+/* Substation Core Transformer Glow & Breathing */
+.substation-glow {
+  animation: subGlow 3s ease-in-out infinite alternate;
+}
+@keyframes subGlow {
+  0% {
+    filter: drop-shadow(0 0 2px rgba(6, 182, 212, 0.4));
+    opacity: 0.85;
+  }
+  100% {
+    filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.8));
+    opacity: 1;
+  }
+}
+
+.substation-glow-amber {
+  animation: subGlowAmber 3.5s ease-in-out infinite alternate;
+}
+@keyframes subGlowAmber {
+  0% {
+    filter: drop-shadow(0 0 2px rgba(245, 158, 11, 0.4));
+    opacity: 0.85;
+  }
+  100% {
+    filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.85));
+    opacity: 1;
+  }
+}
+
+/* Voltage bands shimmer */
+.voltage-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(245, 158, 11, 0) 0%,
+    rgba(245, 158, 11, 0.12) 50%,
+    rgba(245, 158, 11, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmerMove 3s infinite;
+}
+@keyframes shimmerMove {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Safety badge critical pulse */
+.safety-pulse-critical {
+  animation: safetyPulse 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes safetyPulse {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6);
+  }
+  50% {
+    opacity: 0.85;
+    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+  }
+}
+
+/* Active Nav Item Slide-in Border */
+.nav-item-slide {
+  position: relative;
+  overflow: hidden;
+}
+.nav-item-slide::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: #F59E0B;
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nav-item-slide.active::before {
+  transform: scaleY(1);
+}
+
+/* Search modal appear */
+.search-modal-enter {
+  animation: modalDown 120ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes modalDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Search result item hover slide */
+.search-result-item {
+  position: relative;
+  overflow: hidden;
+  transition: transform 120ms ease, background-color 150ms ease, border-color 150ms ease;
+}
+.search-result-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: #F59E0B;
+  transform: scaleY(0);
+  transition: transform 140ms ease;
+}
+.search-result-item:hover::before,
+.search-result-item.selected::before {
+  transform: scaleY(1);
+}
+
+/* Voltage indicator pulse (for active/live status) */
+.voltage-badge.live {
+  animation: voltagePulse 2s ease-in-out infinite;
+}
+@keyframes voltagePulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.75;
+  }
+}
+
+/* Accessibility: Respect Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .chain-line,
+  .power-flow-gen,
+  .power-flow-hv,
+  .power-flow-mv,
+  .power-flow-lv,
+  .substation-glow,
+  .substation-glow-amber,
+  .voltage-shimmer,
+  .safety-pulse-critical,
+  .voltage-badge.live {
+    animation: none !important;
+  }
+}
+
+/* Premium Dark Mode Scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #0B0F17;
+}
+::-webkit-scrollbar-thumb {
+  background: #1E293B;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Unified Selection Color */
+::selection {
+  background-color: rgba(245, 158, 11, 0.25);
+  color: #FDE68A;
+}

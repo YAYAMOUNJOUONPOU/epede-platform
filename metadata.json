@@ -1,0 +1,6 @@
+{
+  "name": "EPEDE — Electrical Power Engineering Digital Environment",
+  "description": "An interactive digital engineering command center for exploring how electrical energy is generated, stepped up, transmitted, transformed, distributed, protected, and utilized.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

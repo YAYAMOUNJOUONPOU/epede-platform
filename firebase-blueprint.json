@@ -1,0 +1,182 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with engineering role and preferences",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase Auth UID of the user"
+        },
+        "email": {
+          "type": "string",
+          "description": "User email address"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Full name or engineer handle"
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "User avatar URL"
+        },
+        "organization": {
+          "type": "string",
+          "description": "Utility, EPC or engineering firm (e.g. SONATREL, Eneo, EDC)"
+        },
+        "roleTitle": {
+          "type": "string",
+          "description": "Engineering discipline role"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp"
+        }
+      },
+      "required": ["uid", "email"]
+    },
+    "Bookmark": {
+      "title": "Bookmark",
+      "description": "Saved engineering equipment, substation, or calculator reference",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique bookmark ID"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Owner user UID"
+        },
+        "targetType": {
+          "type": "string",
+          "enum": ["equipment", "domain", "calculator", "diagram", "standard"],
+          "description": "Type of saved engineering asset"
+        },
+        "targetId": {
+          "type": "string",
+          "description": "Identifier of the target entity"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title or label of the saved asset"
+        },
+        "subtitle": {
+          "type": "string",
+          "description": "Substation tag or voltage level"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Engineer personal calculation or field notes"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when saved"
+        }
+      },
+      "required": ["id", "userId", "targetType", "targetId", "title"]
+    },
+    "CalculationNote": {
+      "title": "CalculationNote",
+      "description": "Saved engineering study, SLD snapshot, or sizing calculation parameters",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Calculation note ID"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Engineer UID"
+        },
+        "title": {
+          "type": "string",
+          "description": "Project calculation name"
+        },
+        "calculatorType": {
+          "type": "string",
+          "description": "Type of calculator (e.g., power, voltage-drop, transformer, motor, earthing, arc-flash)"
+        },
+        "parameters": {
+          "type": "string",
+          "description": "JSON serialized calculation inputs and results"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "validated", "archived"],
+          "description": "Lifecycle state of the calculation note"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last modified timestamp"
+        }
+      },
+      "required": ["id", "userId", "title", "calculatorType"]
+    },
+    "SldAnnotation": {
+      "title": "SldAnnotation",
+      "description": "Persistent engineer switching state and inspection notes on Single-Line Diagram topologies",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Annotation record ID (topology specific)"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Engineer UID"
+        },
+        "topology": {
+          "type": "string",
+          "description": "SLD topology ID (e.g. substation_double_bus)"
+        },
+        "cbStates": {
+          "type": "string",
+          "description": "JSON serialized breaker Open/Close boolean states"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Operational notes or LOTO tags"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last modified timestamp"
+        }
+      },
+      "required": ["id", "userId", "topology"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Individual engineer profiles"
+    },
+    "/users/{userId}/bookmarks/{bookmarkId}": {
+      "schema": "Bookmark",
+      "description": "Saved equipment, standards, and substation links"
+    },
+    "/users/{userId}/calculationNotes/{noteId}": {
+      "schema": "CalculationNote",
+      "description": "User saved electrical engineering studies and calculations"
+    },
+    "/users/{userId}/sldAnnotations/{annotationId}": {
+      "schema": "SldAnnotation",
+      "description": "User breaker switching states and SLD operational notes"
+    }
+  }
+}
