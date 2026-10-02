@@ -19,6 +19,7 @@ import {
 
 interface SubstationInterlockingLabTabProps {
   locale: 'fr' | 'en';
+  onNavigateDiagram?: () => void;
 }
 
 interface LogEntry {
@@ -30,7 +31,7 @@ interface LogEntry {
 
 type ChallengeType = 'free' | 'bus_transfer' | 'feeder_consignation' | 'bus_grounding';
 
-export const SubstationInterlockingLabTab: React.FC<SubstationInterlockingLabTabProps> = ({ locale }) => {
+export const SubstationInterlockingLabTab: React.FC<SubstationInterlockingLabTabProps> = ({ locale, onNavigateDiagram }) => {
   // -------------------------------------------------------------------------
   // SUBSTATION TOPOLOGY STATE
   // Double Busbar Substation (AIS 225 kV SONATREL / Postes Sources)
@@ -682,6 +683,16 @@ export const SubstationInterlockingLabTab: React.FC<SubstationInterlockingLabTab
         </div>
 
         <div className="flex items-center gap-3">
+          {onNavigateDiagram && (
+            <button
+              type="button"
+              onClick={onNavigateDiagram}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-cyan-500/40 bg-cyan-950/40 hover:bg-cyan-900/60 text-xs font-mono font-bold text-cyan-300 hover:text-white transition-all shadow-sm cursor-pointer"
+            >
+              <GitMerge className="h-3.5 w-3.5 text-cyan-400" />
+              <span>{locale === 'fr' ? 'Schéma Unifilaire SLD Double Barre' : 'Double Bus SLD Diagram'}</span>
+            </button>
+          )}
           <button
             type="button"
             onClick={handleResetTopology}

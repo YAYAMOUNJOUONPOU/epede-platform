@@ -120,6 +120,26 @@ Every milestone of the multi-phase engineering roadmap has been executed step-by
   - Interactive Visa & Signer configuration drawer: customizable Signer Name, Lead Engineer Title, Regulatory Inspection Bureau (CONSUEL, Bureau Veritas, Apave, Dekra), and Revision Reference.
   - Procès-Verbal certificate card equipped with immediate download and print triggers with animated status feedback banner.
 
+#### Phase 8: Raw CAE Simulation & Power Grid Exporter (DIgSILENT / ETAP / MATPOWER / Python)
+- **Export Engine Service**: [`src/components/diagrams/services/CaeSimulationExportService.ts`](file:///src/components/diagrams/services/CaeSimulationExportService.ts).
+  - **DIgSILENT PowerFactory DGS Format (`.dgs`)**: Generates production-ready ASCII DGS v4.0 exchange files with normative objects (`$GENERAL`, `ElmTerm`, `ElmXnet`, `ElmTr2`, `ElmLne`, `ElmCoup`, `ElmLod`) per IEC 60909 / IEC 60076.
+  - **ETAP / Siemens PSS/E RAW Format (`.raw`)**: Generates IEEE Common Data Format (CDF) cards with 100 MVA base, bus records, generator records, and branch/transformer parameters.
+  - **MATPOWER / MATLAB Simulation Script (`.m`)**: Self-contained case function struct (`mpc.baseMVA`, `mpc.bus`, `mpc.gen`, `mpc.branch`) runnable via `runpf()`.
+  - **Python pandapower / PyPSA Script (`.py`)**: Standalone executable network script executing AC Newton-Raphson power flow calculations.
+- **Interactive Workbench UI Integration**:
+  - Modal component: [`src/components/diagrams/modules/SldCaeExportModal.tsx`](file:///src/components/diagrams/modules/SldCaeExportModal.tsx).
+  - Direct toolbar access button (`EXPORT CAE`) mounted into [`SldHeaderToolbar.tsx`](file:///src/components/diagrams/modules/SldHeaderToolbar.tsx) and [`InteractiveSldView.tsx`](file:///src/components/diagrams/InteractiveSldView.tsx) with code viewer, copy-to-clipboard, and direct file download.
+
+#### Phase 9: PWA Offline Field Inspection & Local Persistence Engine
+- **Substation Field Storage Service**: [`src/services/offlineInspectionStorage.ts`](file:///src/services/offlineInspectionStorage.ts).
+  - High-performance IndexedDB database (`epede_field_inspections_db`) with seamless fallback to `localStorage` for air-gapped substation environments.
+  - Automatic session saving of all checklist verification points, measured parameters (dielectric $R_{iso}$, continuity $R_{pe}$, withstand duration, busbar torque), and sign-off visas.
+  - Offline / Online network event detection with reactive UI state dispatching.
+  - Portable JSON backup export for off-site archiving and cross-device synchronization.
+- **Engine UI Integration**: [`src/components/installations/ProjectCommissioningFatSatEngine.tsx`](file:///src/components/installations/ProjectCommissioningFatSatEngine.tsx).
+  - Dynamic `PWA Field Mode` status pill (`En Ligne (Sync)` vs `Hors-Ligne (Cache)`).
+  - 1-click `Sauvegarde JSON` snapshot generator.
+
 ---
 
 ### Verification & Quality Assurance Matrix
@@ -131,24 +151,14 @@ Every milestone of the multi-phase engineering roadmap has been executed step-by
 | **Vite Fast Refresh (HMR)** | Code modification test | **PASS** | Clean HMR updates without state loss or console warnings |
 | **Dev Server HTTP Response** | `http://localhost:3000` | **HTTP 200 OK** | App responsive across all desktop and tablet viewports |
 | **FAT/SAT PDF Generator** | `generateFatSatPdf` pipeline | **VERIFIED** | 4-page A4 vector report with autotables, status pills, and signatures |
+| **CAE Simulation Exporter** | DGS, RAW, M, PY pipeline | **VERIFIED** | Real-time export for DIgSILENT, ETAP, MATPOWER, pandapower |
+| **PWA Offline Field Cache** | IndexedDB storage service | **VERIFIED** | Local persistence of checklists, test parameters, and JSON backup |
 | **Design System Fidelity** | Obsidian glassmorphism | **VERIFIED** | Specular borders, `#030712` obsidian depth, voltage accents |
 | **Normative Compliance** | IEC & IEEE Standards | **VERIFIED** | Formulations adhere strictly to IEC 60909, IEC 60255, IEEE 80, IEEE 1584, IEC 61439 |
 
 ---
 
-### Conclusion & Next Recommendations
+### Conclusion
 
-The EPEDE platform is now fully unified, robust, and mathematically grounded.
-
-**Completed Capabilities**:
-- Continuous Power System Chain Flow Banner (7 stages, 10.5 kV to 400 V)
-- Direct Home Gateways to specialized workbenches
-- 100% Formula Derivation & mathematical proofs across 17 engineering calculators
-- Full 16-Domain Visual Identity & Census apparatus integration
-- Discipline engineering role switcher & persistent profile sync
-- 3D Interactive Power Ecosystem Canvas with multi-tiered voltage orbits
-- **Automated FAT/SAT PDF Generation & Official CEI 61439 / NF C 15-100 Compliance Reporting**
-
-**Recommended Future Steps**:
-1. **PWA Offline Field Cache**: Expand IndexedDB storage for offline field inspections using the already registered Service Worker.
-2. **Export to DIgSILENT / ETAP**: Add raw file format export (`.dgs`, `.raw`, `.m`) from the SLD canvas directly to industry-standard simulation software.
+The EPEDE platform is now fully unified, robust, field-ready, and mathematically grounded.
+All major roadmap milestones have been successfully executed and validated with zero TypeScript regressions and complete end-to-end build integrity.

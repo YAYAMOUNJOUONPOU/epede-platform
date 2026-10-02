@@ -5,6 +5,8 @@ import {
   Search, 
   X, 
   ShieldAlert, 
+  ShieldCheck,
+  Clock,
   FileText, 
   UserCheck, 
   Zap, 
@@ -20,7 +22,8 @@ import {
   Scale,
   Sparkles,
   Database,
-  FolderOpen
+  FolderOpen,
+  Network
 } from 'lucide-react';
 import { epedeApi, SearchResultDto } from '../../services/epedeApiClient';
 import { DOMAINS, EQUIPMENT_ITEMS, STANDARDS, ENGINEERING_ROLES } from '../../data/epedeData';
@@ -308,6 +311,250 @@ export const SEARCH_SIMULATIONS: SearchSimulationItem[] = [
   },
 ];
 
+export interface SearchCommissioningItem {
+  id: string;
+  code: string;
+  title_fr: string;
+  title_en: string;
+  standard: string;
+  equipmentType: string;
+  category: 'FAT' | 'SAT' | 'PERIODIC_MAINTENANCE';
+  tools: string[];
+  keywords: string[];
+}
+
+export const SEARCH_COMMISSIONING_PROTOCOLS: SearchCommissioningItem[] = [
+  {
+    id: 'PROT_RELAY_ANSI_21',
+    code: 'SAT_ANSI_21_DISTANCE',
+    title_fr: "Protocole d'Essai par Injection Secondaire - Relais de Distance ANSI 21",
+    title_en: "Secondary Injection Test Protocol - Distance Protection ANSI 21",
+    standard: "IEC 60255-121 / IEEE C37.113",
+    equipmentType: "DISTANCE_RELAY",
+    category: "SAT",
+    tools: ["OMICRON CMC 356", "Megger SMRT410", "Test Universe"],
+    keywords: ["injection", "relais de distance", "ansi 21", "zone 1", "zone 2", "mho", "quadrilatère", "sat", "fat", "commissioning", "essai secondaire", "court-circuit", "ligne"]
+  },
+  {
+    id: 'PROT_TRAFO_INSULATION',
+    code: 'FAT_TRANSFORMER_INSULATION',
+    title_fr: "Protocole d'Essai Diélectrique & Résistance d'Isolement Transformateur HTB",
+    title_en: "HV Power Transformer Dielectric & Insulation Resistance Test Protocol",
+    standard: "IEC 60076-1 / IEC 60076-3 / IEEE C57.12.90",
+    equipmentType: "TRANSFORMER",
+    category: "FAT",
+    tools: ["Mégohmmètre 5 kV / 10 kV (Megger MIT525 / Chauvin Arnoux CA 6555)", "Pont de rapport TTR"],
+    keywords: ["isolement", "mégohmmètre", "megger", "dar", "pi", "indice de polarisation", "tangente delta", "diélectrique", "transformateur", "fat", "sat"]
+  },
+  {
+    id: 'PROT_RELAY_ANSI_87T',
+    code: 'SAT_ANSI_87T_DIFFERENTIAL',
+    title_fr: "Protocole d'Essai Protection Différentielle Transformateur ANSI 87T",
+    title_en: "Transformer Differential Protection ANSI 87T Test Protocol",
+    standard: "IEC 60255-187-1 / IEEE C37.91",
+    equipmentType: "TRANSFORMER",
+    category: "SAT",
+    tools: ["Valise d'injection hexaphasée (6 courants, 4 tensions)", "OMICRON CMC 356"],
+    keywords: ["différentielle", "87t", "inrush", "harmonique 2", "harmonique 5", "bipente", "slope", "relais", "sat", "injection"]
+  },
+  {
+    id: 'PROT_EARTHING_GRID',
+    code: 'SAT_SUBSTATION_EARTHING_IEEE80',
+    title_fr: "Mesure de la Résistance de la Grille de Terre & Tensions de Pas/Toucher",
+    title_en: "Substation Ground Grid Resistance & Step/Touch Voltage Survey",
+    standard: "IEEE Std 81 / IEEE Std 80 / IEC 61936-1",
+    equipmentType: "SUBSTATION_EARTHING",
+    category: "SAT",
+    tools: ["Telluromètre haute fréquence", "Omicron CPC 100 + HGT1"],
+    keywords: ["terre", "grille de terre", "tension de pas", "tension de toucher", "step voltage", "touch voltage", "telluromètre", "fall of potential", "wenner", "ieee 80"]
+  },
+  {
+    id: 'PROT_CB_TIMING',
+    code: 'SAT_CB_TIMING_CONTACT_RESISTANCE',
+    title_fr: "Mesure des Temps de Manœuvre & Résistance de Contact Disjoncteur HTB",
+    title_en: "HV Circuit Breaker Timing & Dynamic Contact Resistance (Crm)",
+    standard: "IEC 62271-100 / IEC 62271-1",
+    equipmentType: "CIRCUIT_BREAKER",
+    category: "SAT",
+    tools: ["Analyseur de disjoncteur (Megger TM1800 / SCOT M3K)", "Micro-ohmmètre 200A DC"],
+    keywords: ["disjoncteur", "temps d'ouverture", "simultanéité pôles", "résistance de contact", "micro-ohmmètre", "sf6", "bobine mx", "bobine mn", "breaker timing"]
+  }
+];
+
+export interface SearchDisciplineItem {
+  id: string;
+  category: 'discipline' | 'contractual' | 'asset-management';
+  title_fr: string;
+  title_en: string;
+  standards?: string[];
+  desc_fr: string;
+  desc_en: string;
+  keywords: string[];
+}
+
+export const SEARCH_DISCIPLINE_INTERFACES: SearchDisciplineItem[] = [
+  {
+    id: 'DUVAL_TRIANGLE_DGA',
+    category: 'asset-management',
+    title_fr: 'Triangle de Duval 1 — Analyse des Gaz Dissous DGA (CEI 60599)',
+    title_en: 'Duval Triangle 1 — Dissolved Gas Analysis DGA (IEC 60599)',
+    standards: ['IEC 60599', 'IEEE C57.104'],
+    desc_fr: 'Diagnostic des défauts thermiques (T1/T2/T3), arcs électriques (D1/D2) et décharges partielles (PD) dans l\'huile des transformateurs.',
+    desc_en: 'Thermal faults, arcing, and PD diagnostic in oil-immersed power transformers using %CH4, %C2H4, %C2H2 coordinates.',
+    keywords: ['duval', 'triangle', 'dga', 'gaz dissous', 'huile', 'ch4', 'c2h4', 'c2h2', 'transformateur', 'cei 60599', 'arc', 'décharge partielle'],
+  },
+  {
+    id: 'HEALTH_INDEX_ISO55000',
+    category: 'asset-management',
+    title_fr: 'Indice de Santé Composite Transformateur & Gestion d\'Actifs (ISO 55000)',
+    title_en: 'Composite Health Index & Asset Management (ISO 55000)',
+    standards: ['ISO 55000', 'CIGRE TB 761'],
+    desc_fr: 'Scoring multi-critères : rigidité diélectrique, teneur en eau, acidité, furanne 2-FAL, DGA et âge calendaire de l\'appareil.',
+    desc_en: 'Multi-criteria scoring: breakdown voltage, moisture, acidity, 2-FAL furan, DGA, and service age.',
+    keywords: ['health index', 'indice de santé', 'iso 55000', 'actifs', 'vieillissement', 'furanne', 'acidité', 'rigidité', 'eau'],
+  },
+  {
+    id: 'SFRA_WINDING_ANALYSIS',
+    category: 'asset-management',
+    title_fr: 'Analyse SFRA — Réponse en Fréquence & Déformation Bobinage (CEI 60076-18)',
+    title_en: 'SFRA Analysis — Sweep Frequency Response & Winding Integrity (IEC 60076-18)',
+    standards: ['IEC 60076-18', 'IEEE C57.149'],
+    desc_fr: 'Détection des déformations mécaniques d\'enroulements post court-circuit ou transport (20 Hz - 2 MHz).',
+    desc_en: 'Detection of radial/axial winding deformation after short-circuit or transportation.',
+    keywords: ['sfra', 'bobinage', 'enroulement', 'fréquence', 'déformation', 'court-circuit', 'bode', 'impédance', 'cei 60076-18'],
+  },
+  {
+    id: 'AMI_SMART_METERING',
+    category: 'asset-management',
+    title_fr: 'Smart Metering AMI — Compteurs Communicants DLMS/COSEM (CEI 62056)',
+    title_en: 'AMI Smart Metering Platform — DLMS/COSEM Architecture (IEC 62056)',
+    standards: ['IEC 62056', 'DLMS/COSEM'],
+    desc_fr: 'Architecture HES/MDM, télérelève 15 min, détection des fraudes et courbes de charge tarifaires.',
+    desc_en: 'HES/MDM architecture, 15-min interval load profiles, tamper detection, and billing integration.',
+    keywords: ['ami', 'smart metering', 'compteur communicant', 'dlms', 'cosem', 'mdm', 'hes', 'fraude', 'courbe de charge', 'prepaid'],
+  },
+  {
+    id: 'GUIDED_FIELD_DIAGNOSIS',
+    category: 'asset-management',
+    title_fr: 'Diagnostic Causal Terrain FMEA — Arbres de Défaillance Postes HTB/HTA',
+    title_en: 'Field Causal FMEA Diagnosis — HV/MV Failure Modes & Root Cause Trees',
+    standards: ['IEC 60812', 'IEEE 493'],
+    desc_fr: 'Guide pas-à-pas pour disjoncteurs SF6, transformateurs, réducteurs de mesure TC/TT et tableaux HTA.',
+    desc_en: 'Step-by-step diagnostic guide for SF6 breakers, transformers, instrument CT/VT, and MV switchgear.',
+    keywords: ['fmea', 'diagnostic terrain', 'cause racine', 'panne', 'défaut', 'disjoncteur', 'sf6', 'fuite', 'échauffement', 'arbre de défaillance'],
+  },
+  {
+    id: 'ELECTRICAL_HV',
+    category: 'discipline',
+    title_fr: 'Génie Électrique Haute Tension (HTB / THT)',
+    title_en: 'High-Voltage Electrical Engineering (HV/EHV)',
+    standards: ['IEC 60076', 'IEC 62271-100', 'IEC 60826'],
+    desc_fr: 'Postes et lignes HTB/THT, SLD unifilaires, notes de calcul court-circuit et choix d\'appareillage.',
+    desc_en: 'HV/EHV substations and lines, SLD single-lines, short-circuit calculation, and switchgear selection.',
+    keywords: ['htb', 'tht', 'haute tension', 'génie électrique', 'poste', 'ligne', 'sld', 'court-circuit', 'appareillage', 'sonatrel'],
+  },
+  {
+    id: 'PROTECTION_AUTOMATION',
+    category: 'discipline',
+    title_fr: 'Protection des Réseaux, Relayage & CEI 61850',
+    title_en: 'Network Protection, Automation & IEC 61850',
+    standards: ['IEC 60255', 'IEC 61850', 'IEEE C37.90'],
+    desc_fr: 'Coordination sélective, réglage des relais différentiels 87, distance 21, surintensité 50/51 et trames GOOSE.',
+    desc_en: 'Selective grading, differential 87, distance 21, overcurrent 50/51 relay settings, and GOOSE messaging.',
+    keywords: ['protection', 'relais', 'relayage', 'sélectivité', 'différentielle 87', 'distance 21', 'iec 61850', 'goose', 'ied'],
+  },
+  {
+    id: 'SCADA_TELEMETRY',
+    category: 'discipline',
+    title_fr: 'Téléconduite SCADA, EMS & Dispatching Réseau',
+    title_en: 'SCADA Telemetry, EMS & Dispatch Systems',
+    standards: ['IEC 60870-5-104', 'IEC 61968 (CIM)'],
+    desc_fr: 'Supervision temps réel, télémesures, télésignalisations, passerelles RTU et interverrouillage logique.',
+    desc_en: 'Real-time monitoring, telemetries, indications, RTU gateways, and logic interlocking.',
+    keywords: ['scada', 'ems', 'dispatching', 'téléconduite', 'rtu', 'télémesure', 'télésignalisation', '104', 'interverrouillage'],
+  },
+  {
+    id: 'CIVIL_STRUCTURAL',
+    category: 'discipline',
+    title_fr: 'Génie Civil, Fondations & Massifs Transformateurs',
+    title_en: 'Civil & Structural Engineering (Pads & Gantries)',
+    standards: ['Eurocode 2 / 3', 'IEC 60826'],
+    desc_fr: 'Massifs bétons armés de transformateurs, portiques charpentes, caniveaux de câbles et tenue aux efforts électrodynamiques.',
+    desc_en: 'Reinforced concrete transformer pads, gantry steel structures, cable trenches, and electrodynamic stress.',
+    keywords: ['génie civil', 'civil', 'fondation', 'massif', 'charpente', 'portique', 'caniveau', 'béton', 'structure'],
+  },
+  {
+    id: 'FLUIDS_ENVIRONMENT',
+    category: 'discipline',
+    title_fr: 'Fluides, Sécurité Incendie & Bacs Rétention Huile',
+    title_en: 'Fluids, Fire Protection & 110% Oil Containment',
+    standards: ['NF C 17-300', 'IEC 61936-1 Cl. 8'],
+    desc_fr: 'Bacs de rétention 110% huile diélectrique, extinction déluge eau/mousse et traçabilité gaz SF6.',
+    desc_en: '110% transformer dielectric oil containment pits, water deluge/foam fire suppression, and SF6 tracking.',
+    keywords: ['fluides', 'huile', 'rétention', 'incendie', 'déluge', 'mousse', 'sf6', 'sécurité environnementale'],
+  },
+  {
+    id: 'AUXILIARY_DC_AC',
+    category: 'discipline',
+    title_fr: 'Services Auxiliaires AC/DC (110 Vcc & 400 Vca)',
+    title_en: 'AC/DC Auxiliary Power Systems (110 Vdc & 400 Vac)',
+    standards: ['IEEE 485', 'IEC 60896', 'IEC 61439-2'],
+    desc_fr: 'Bancs de batteries stationnaires 110 Vcc, chargeurs redresseurs, onduleurs UPS et TGBT de distribution.',
+    desc_en: 'Stationary 110 Vdc battery banks, rectifiers, UPS inverters, and station service AC switchboards.',
+    keywords: ['auxiliaires', 'batterie', '110 vcc', '110v', 'chargeur', 'ups', 'tgbt', 'continu', 'secours'],
+  },
+  {
+    id: 'TELECOM_CYBER',
+    category: 'discipline',
+    title_fr: 'Télécoms OPGW & Cybersécurité Industrielle OT',
+    title_en: 'Telecom OPGW & Substation Industrial OT Cybersecurity',
+    standards: ['IEC 62351', 'IEEE 1613', 'IEC 61850-90-5'],
+    desc_fr: 'Liaisons fibres optiques OPGW en tête de pylônes, réseaux durcis PRP/HSR et pare-feux industriels OT.',
+    desc_en: 'OPGW optical fiber ground wires, PRP/HSR resilient Ethernet, and OT industrial firewalls.',
+    keywords: ['télécom', 'fibre optique', 'opgw', 'cybersécurité', 'ot', 'firewall', 'prp', 'hsr', 'commutateur durci'],
+  },
+  {
+    id: 'EARTHING_LIGHTNING',
+    category: 'discipline',
+    title_fr: 'Mise à la Terre & Protection Contre la Foudre',
+    title_en: 'Substation Earthing Grid & Lightning Protection',
+    standards: ['IEEE Std 80', 'IEC 62305', 'IEC 60099-4'],
+    desc_fr: 'Grille de terre enfouie, calcul des tensions de pas et toucher, parafoudres ZnO et cônes de protection Franklin.',
+    desc_en: 'Buried earthing mesh, step and touch potential calculations, ZnO surge arresters, and Franklin rods.',
+    keywords: ['terre', 'grounding', 'earthing', 'foudre', 'lightning', 'parafoudre', 'tension de pas', 'toucher', 'ieee 80'],
+  },
+  {
+    id: 'boundary-sonatrel-eneo-30kv',
+    category: 'contractual',
+    title_fr: 'Frontière SONATREL / ENEO — Postes Sources 225/30 kV (Gate 3)',
+    title_en: 'SONATREL / ENEO Boundary — 225/30 kV Primary Substations (Gate 3)',
+    standards: ['Code Réseau ARSEL', 'Arrêté MINEE'],
+    desc_fr: 'Démarcation de propriété aux traversées de départ HTA 30 kV, comptage transactionnel 0.2S et protocole d\'accès LOTO.',
+    desc_en: 'Ownership cutoff at 30 kV feeder bushing, 0.2S settlement tariff metering, and LOTO switching protocol.',
+    keywords: ['sonatrel', 'eneo', 'frontière', 'démarcation', '30 kv', 'gate 3', 'comptage', 'loto', 'arsel', 'turpe'],
+  },
+  {
+    id: 'boundary-sonatrel-ipp-hydro',
+    category: 'contractual',
+    title_fr: 'Frontière Producteur IPP / SONATREL (Nachtigal / Songloulou 225 kV)',
+    title_en: 'IPP Hydro Generator / SONATREL Boundary (Nachtigal 225 kV)',
+    standards: ['PPA Nachtigal', 'CEI 61936-1'],
+    desc_fr: 'Point de livraison au portique d\'évacuation 225 kV, télémétries dispatching CNC et gestion du réactif P-Q.',
+    desc_en: '225 kV gantry delivery point, CNC national dispatch telemetry, and reactive power P-Q compliance.',
+    keywords: ['ipp', 'nachtigal', 'songloulou', 'sonatrel', 'hydro', '225 kv', 'évacuation', 'ppa', 'dispatching'],
+  },
+  {
+    id: 'boundary-sonatrel-alucam-90kv',
+    category: 'contractual',
+    title_fr: 'Frontière Client Grand Compte Industriel (ALUCAM Edéa 90 kV)',
+    title_en: 'Heavy Industrial Consumer Boundary (ALUCAM Edéa 90 kV)',
+    standards: ['Contrat Fourniture Spéciale ARSEL'],
+    desc_fr: 'Alimentation 90 kV des cuves d\'électrolyse, limites d\'injection d\'harmoniques et compensation d\'énergie réactive.',
+    desc_en: '90 kV supply to smelter potlines, harmonic distortion limits, and reactive power compensation.',
+    keywords: ['alucam', 'industriel', '90 kv', 'grand compte', 'harmoniques', 'facteur de puissance', 'edéa'],
+  },
+];
+
 interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -321,12 +568,14 @@ interface SearchModalProps {
   onNavigateSimulation?: (tab: SimulationTabType) => void;
   onNavigateDiagram?: (topology?: any) => void;
   onNavigateLifecycle?: () => void;
-  onNavigateCameroonGrid?: () => void;
+  onNavigateCameroonGrid?: (category?: string) => void;
   onNavigateRegulatory?: () => void;
   onNavigateJourney?: (stageId?: StageId) => void;
   onNavigateContextStack?: (nodeId?: string) => void;
   onNavigateScenarios?: (scenarioId?: string) => void;
   onNavigateTraceability?: () => void;
+  onNavigateCommissioning?: () => void;
+  onNavigateAssetManagement?: (pillar?: string) => void;
 }
 
 export const SearchModal: React.FC<SearchModalProps> = ({
@@ -348,10 +597,12 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   onNavigateContextStack,
   onNavigateScenarios,
   onNavigateTraceability,
+  onNavigateCommissioning,
+  onNavigateAssetManagement,
 }) => {
   const [query, setQuery] = useState(initialQuery);
   const [filterCategory, setFilterCategory] = useState<
-    'ALL' | 'EQUIPMENT' | 'STANDARD' | 'GRID' | 'CALCULATOR' | 'SIMULATION' | 'SCENARIO' | 'PROVENANCE' | 'SPINE' | 'JOURNEY' | 'REGULATORY' | 'LIFECYCLE' | 'DOMAIN' | 'ROLE'
+    'ALL' | 'EQUIPMENT' | 'STANDARD' | 'GRID' | 'CALCULATOR' | 'SIMULATION' | 'SCENARIO' | 'PROVENANCE' | 'SPINE' | 'JOURNEY' | 'REGULATORY' | 'LIFECYCLE' | 'DOMAIN' | 'ROLE' | 'DISCIPLINE' | 'COMMISSIONING'
   >('ALL');
   const [backendResults, setBackendResults] = useState<SearchResultDto[]>([]);
   const [isBackendSearching, setIsBackendSearching] = useState(false);
@@ -724,16 +975,15 @@ export const SearchModal: React.FC<SearchModalProps> = ({
     if (filterCategory !== 'ALL' && filterCategory !== 'SCENARIO') return [];
     if (!q) return [];
     return PEDAGOGICAL_SCENARIOS.filter((sc) => {
-      const matchTitleFr = sc.title_fr.toLowerCase().includes(q);
-      const matchTitleEn = sc.title_en.toLowerCase().includes(q);
-      const matchAnsi = sc.ansiCode.toLowerCase().includes(q);
-      const matchCat = sc.category.toLowerCase().includes(q);
-      const matchLocation = sc.substationOrFeeder.toLowerCase().includes(q);
+      const matchTitleFr = sc.titleFr.toLowerCase().includes(q);
+      const matchTitleEn = sc.titleEn.toLowerCase().includes(q);
+      const matchAnsi = sc.governingAnsiCodes.some((code) => code.toLowerCase().includes(q));
+      const matchDomain = sc.domainCode.toLowerCase().includes(q);
       const matchPhases = sc.phases.some((p) =>
-        p.name_fr.toLowerCase().includes(q) ||
-        p.name_en.toLowerCase().includes(q) ||
-        p.description_fr.toLowerCase().includes(q) ||
-        p.circuitBreakerStatus.toLowerCase().includes(q)
+        p.labelFr.toLowerCase().includes(q) ||
+        p.labelEn.toLowerCase().includes(q) ||
+        p.summaryFr.toLowerCase().includes(q) ||
+        p.breakerState.toLowerCase().includes(q)
       );
       const matchKeywords = [
         'saturation tc', 'déclenchement intempestif', 'défaut homopolaire',
@@ -741,7 +991,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
         '87t', '50/51', '21', '67n', '25', '40', 'replay', 'scada', 'soe', 'incident', 'panne'
       ].some((k) => k.includes(q) || q.includes(k));
 
-      return matchTitleFr || matchTitleEn || matchAnsi || matchCat || matchLocation || matchPhases || matchKeywords;
+      return matchTitleFr || matchTitleEn || matchAnsi || matchDomain || matchPhases || matchKeywords;
     }).slice(0, 4);
   }, [q, filterCategory]);
 
@@ -761,9 +1011,39 @@ export const SearchModal: React.FC<SearchModalProps> = ({
     }).slice(0, 4);
   }, [q, filterCategory]);
 
+  // Search in Field Engineering Commissioning Protocols (FAT/SAT)
+  const matchedCommissioning = useMemo(() => {
+    if (filterCategory !== 'ALL' && filterCategory !== 'COMMISSIONING') return [];
+    if (!q) return [];
+    return SEARCH_COMMISSIONING_PROTOCOLS.filter((p) => {
+      const matchTitle = (locale === 'fr' ? p.title_fr : p.title_en).toLowerCase().includes(q);
+      const matchCode = p.code.toLowerCase().includes(q);
+      const matchStd = p.standard.toLowerCase().includes(q);
+      const matchCat = p.category.toLowerCase().includes(q);
+      const matchKeywords = p.keywords.some((k) => k.includes(q) || q.includes(k));
+      const matchTools = p.tools.some((t) => t.toLowerCase().includes(q));
+      return matchTitle || matchCode || matchStd || matchCat || matchKeywords || matchTools;
+    }).slice(0, 4);
+  }, [q, filterCategory, locale]);
+
+  // Search in Multidisciplinary Engineering Disciplines & Contractual Boundaries
+  const matchedDisciplines = useMemo(() => {
+    if (filterCategory !== 'ALL' && filterCategory !== 'DISCIPLINE') return [];
+    if (!q) return [];
+    return SEARCH_DISCIPLINE_INTERFACES.filter((d) => {
+      const matchTitle = (locale === 'fr' ? d.title_fr : d.title_en).toLowerCase().includes(q);
+      const matchDesc = (locale === 'fr' ? d.desc_fr : d.desc_en).toLowerCase().includes(q);
+      const matchKeywords = d.keywords.some((k) => k.toLowerCase().includes(q) || q.includes(k.toLowerCase()));
+      const matchStds = d.standards?.some((s) => s.toLowerCase().includes(q));
+      return matchTitle || matchDesc || matchKeywords || matchStds;
+    }).slice(0, 4);
+  }, [q, filterCategory, locale]);
+
   const totalResultsCount =
     matchedScenarios.length +
     matchedProvenance.length +
+    matchedCommissioning.length +
+    matchedDisciplines.length +
     matchedSpineNodes.length +
     matchedJourney.length +
     matchedCalculators.length +
@@ -851,6 +1131,8 @@ export const SearchModal: React.FC<SearchModalProps> = ({
             { id: 'LIFECYCLE', label: locale === 'fr' ? '🔄 CYCLE EPC (DG1-7)' : '🔄 EPC LIFECYCLE' },
             { id: 'DOMAIN', label: locale === 'fr' ? 'DOMAINES' : 'DOMAINS' },
             { id: 'ROLE', label: locale === 'fr' ? 'MÉTIERS' : 'ROLES' },
+            { id: 'DISCIPLINE', label: locale === 'fr' ? '🌐 DISCIPLINES & INTERFACES' : '🌐 DISCIPLINES & BOUNDARIES' },
+            { id: 'COMMISSIONING', label: locale === 'fr' ? '📋 ESSAIS COMMISSIONING' : '📋 COMMISSIONING PROTOCOLS' },
           ].map((cat) => (
             <button
               key={cat.id}
@@ -964,14 +1246,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                         <div className="min-w-0 pr-3">
                           <div className="flex items-center gap-2 mb-0.5">
                             <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-700/60 shrink-0">
-                              ANSI {sc.ansiCode}
+                              ANSI {sc.governingAnsiCodes.join(', ')}
                             </span>
                             <span className="text-xs font-bold text-white group-hover:text-rose-300 transition-colors truncate">
-                              {locale === 'fr' ? sc.title_fr : sc.title_en}
+                              {locale === 'fr' ? sc.titleFr : sc.titleEn}
                             </span>
                           </div>
                           <p className="text-[11px] text-neutral-400 truncate">
-                            {sc.substationOrFeeder} · {sc.phases.length} phases séquentielles · Détection {sc.detectingRelay}
+                            {locale === 'fr' ? sc.subtitleFr : sc.subtitleEn} · {sc.phases.length} phases séquentielles
                           </p>
                         </div>
                         <div className="flex items-center gap-1.5 text-xs font-mono text-rose-400 shrink-0 opacity-85 group-hover:opacity-100 transition-opacity">
@@ -1025,6 +1307,52 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                         </div>
                         <div className="flex items-center gap-1.5 text-xs font-mono text-sky-400 shrink-0 opacity-85 group-hover:opacity-100 transition-opacity">
                           <span className="hidden sm:inline text-[11px]">{locale === 'fr' ? 'D\'où vient ce chiffre ?' : 'Inspect Source'}</span>
+                          <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* PROTOCOLES D'ESSAIS & COMMISSIONING (FAT/SAT) */}
+              {matchedCommissioning.length > 0 && (
+                <div className="pt-2 first:pt-0">
+                  <div className="flex items-center justify-between text-[11px] font-mono font-bold uppercase tracking-wider text-emerald-400 mb-2 px-1">
+                    <span className="flex items-center gap-1.5">
+                      <Target className="h-3.5 w-3.5 text-emerald-400" />
+                      <span>{locale === 'fr' ? "PROTOCOLLES D'ESSAIS & COMMISSIONING (FAT/SAT)" : 'COMMISSIONING & TESTING PROTOCOLS'}</span>
+                    </span>
+                    <span className="text-neutral-500 font-mono text-[10px] bg-emerald-950/40 text-emerald-400 px-2 py-0.5 rounded border border-emerald-800/60">
+                      {matchedCommissioning.length}
+                    </span>
+                  </div>
+                  <div className="space-y-1.5">
+                    {matchedCommissioning.map((prot) => (
+                      <button
+                        key={prot.id}
+                        type="button"
+                        onClick={() => {
+                          onNavigateCommissioning?.();
+                          onClose();
+                        }}
+                        className="w-full flex items-center justify-between p-2.5 rounded-lg bg-[#081510] hover:bg-[#0c2018] border border-emerald-900/50 hover:border-emerald-500/60 text-left transition-colors group"
+                      >
+                        <div className="min-w-0 pr-3">
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-700/60 shrink-0">
+                              {prot.category} · {prot.standard}
+                            </span>
+                            <span className="text-xs font-bold text-white group-hover:text-emerald-300 transition-colors truncate">
+                              {locale === 'fr' ? prot.title_fr : prot.title_en}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-neutral-400 truncate">
+                            {prot.code} · Outils : {prot.tools.join(', ')}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-xs font-mono text-emerald-400 shrink-0 opacity-85 group-hover:opacity-100 transition-opacity">
+                          <span className="hidden sm:inline text-[11px]">{locale === 'fr' ? 'Protocole' : 'Protocol'}</span>
                           <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
                         </div>
                       </button>
@@ -1266,6 +1594,60 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                         </div>
                         <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-emerald-400 shrink-0">
                           <span>{locale === 'fr' ? 'OBSERVATOIRE' : 'VIEW'}</span>
+                          <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* DISCIPLINES D'INGÉNIERIE & DÉMARCATIONS CONTRACTUELLES */}
+              {matchedDisciplines.length > 0 && (
+                <div className="pt-3 first:pt-0">
+                  <div className="flex items-center justify-between text-[11px] font-mono font-bold uppercase tracking-wider text-amber-400 mb-2 px-1">
+                    <span className="flex items-center gap-1.5">
+                      <Network className="h-3.5 w-3.5" />
+                      <span>{locale === 'fr' ? 'DISCIPLINES D\'INGÉNIERIE & DÉMARCATIONS CONTRACTUELLES' : 'ENGINEERING DISCIPLINES & CONTRACTUAL BOUNDARIES'}</span>
+                    </span>
+                    <span className="text-neutral-500">{matchedDisciplines.length}</span>
+                  </div>
+                  <div className="space-y-1.5">
+                    {matchedDisciplines.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => {
+                          if (item.category === 'asset-management' && onNavigateAssetManagement) {
+                            onNavigateAssetManagement(item.id);
+                          } else if (onNavigateCameroonGrid) {
+                            onNavigateCameroonGrid('demarcation');
+                          }
+                          onClose();
+                        }}
+                        className="relative overflow-hidden w-full flex items-center justify-between p-2.5 rounded-xl text-left bg-[#080B10] hover:bg-[#161C24] transition-all duration-150 group border border-[#252E38] hover:border-amber-400/80 hover:translate-x-0.5 cursor-pointer"
+                      >
+                        <span className="absolute left-0 top-0 bottom-0 w-1 bg-amber-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="min-w-0 pr-2">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-xs sm:text-sm text-white group-hover:text-amber-300 transition-colors truncate">
+                              {locale === 'fr' ? item.title_fr : item.title_en}
+                            </span>
+                            <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30 shrink-0">
+                              {item.category === 'discipline' ? (locale === 'fr' ? 'MÉTIER' : 'DISCIPLINE') : (locale === 'fr' ? 'CONTRAT' : 'CONTRACT')}
+                            </span>
+                            {item.standards && item.standards.length > 0 && (
+                              <span className="text-[10px] text-cyan-400 font-mono hidden sm:inline">
+                                {item.standards[0]}
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-[11px] text-neutral-400 truncate mt-0.5 font-sans">
+                            {locale === 'fr' ? item.desc_fr : item.desc_en}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-amber-400 shrink-0">
+                          <span>{locale === 'fr' ? 'MATRICE' : 'MATRIX'}</span>
                           <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                         </div>
                       </button>

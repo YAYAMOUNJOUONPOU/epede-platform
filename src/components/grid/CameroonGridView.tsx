@@ -17,9 +17,12 @@ import {
 import type { CalculatorTabType } from '../calculators/services/calculationReportService';
 import type { SimulationTabType } from '../simulation/SimulationLabView';
 import type { SldTopologyType } from '../diagrams/modules/SldHeaderToolbar';
+import type { InjectedCalculatorContext } from '../../services/routerService';
 import { CameroonContractualDemarcationViewer } from './CameroonContractualDemarcationViewer';
 import { MultiDisciplinaryInterfaceMatrixViewer } from './MultiDisciplinaryInterfaceMatrixViewer';
 import { InteractiveCameroonGridMap } from './InteractiveCameroonGridMap';
+import { SubstationBatchComplianceModal } from '../diagrams/modules/SubstationBatchComplianceModal';
+import type { SubstationSimulationSnapshot } from '../../services/substationBatchComplianceService';
 import { 
   Globe, 
   Zap, 
@@ -44,9 +47,11 @@ import {
 
 interface CameroonGridViewProps {
   locale: 'fr' | 'en';
-  onNavigateCalculator?: (tab: CalculatorTabType) => void;
+  initialCategory?: FilterCategory;
+  onNavigateCalculator?: (tab: CalculatorTabType, context?: InjectedCalculatorContext) => void;
   onNavigateSimulation?: (tab: SimulationTabType) => void;
   onNavigateDiagram?: (topology?: SldTopologyType | 'double-bus' | 'ais-gis-hybrid' | 'generator-stepup' | string) => void;
+  onNavigateEquipment?: (id: string) => void;
   onNavigateStandards?: () => void;
   onNavigateRegulatory?: () => void;
   onNavigateContextStack?: (nodeId?: string) => void;
@@ -57,15 +62,27 @@ type FilterCategory = 'map' | 'all' | 'ris' | 'rin' | 'plants' | 'substations' |
 
 export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
   locale,
+  initialCategory,
   onNavigateCalculator,
   onNavigateSimulation,
   onNavigateDiagram,
+  onNavigateEquipment,
   onNavigateStandards,
   onNavigateRegulatory,
   onNavigateContextStack,
   onNavigateHydropower,
 }) => {
-  const [activeCategory, setActiveCategory] = useState<FilterCategory>('map');
+  const [activeCategory, setActiveCategory] = useState<FilterCategory>(initialCategory || 'map');
+  const [complianceModalData, setComplianceModalData] = useState<{
+    topology: SldTopologyType;
+    snapshot: SubstationSimulationSnapshot;
+  } | null>(null);
+
+  React.useEffect(() => {
+    if (initialCategory) {
+      setActiveCategory(initialCategory);
+    }
+  }, [initialCategory]);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedPlant, setSelectedPlant] = useState<PowerPlantNode | null>(CAMEROON_POWER_PLANTS[0]);
   const [selectedSubstation, setSelectedSubstation] = useState<SubstationNode | null>(CAMEROON_SUBSTATIONS[0]);
@@ -421,7 +438,16 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
           </div>
 
           {demarcationSubTab === 'disciplines_matrix' ? (
-            <MultiDisciplinaryInterfaceMatrixViewer locale={locale} embedded={true} />
+            <MultiDisciplinaryInterfaceMatrixViewer
+              locale={locale}
+              embedded={true}
+              onNavigateCalculator={onNavigateCalculator}
+              onNavigateSimulation={onNavigateSimulation}
+              onNavigateDiagram={onNavigateDiagram}
+              onNavigateStandards={onNavigateStandards}
+              onNavigateRegulatory={onNavigateRegulatory}
+              onNavigateHydropower={onNavigateHydropower}
+            />
           ) : (
             <CameroonContractualDemarcationViewer locale={locale} embedded={true} />
           )}
@@ -621,13 +647,13 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
                   </ul>
                 </div>
 
-                {/* Direct link to SLD CAD Schematic & Spine */}
+                {/* Direct link to SLD CAD Schematic, Spine & Transformer Calculator */}
                 <div className="pt-2 flex flex-wrap items-center gap-2">
                   {onNavigateContextStack && (
                     <button
                       type="button"
                       onClick={() => onNavigateContextStack(sub.code.includes('OYO') ? 'node-trafo-main-30' : sub.code.includes('MAN') ? 'node-trafo-gsu' : 'node-line-225-bekoko')}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-500/30 text-xs font-mono font-bold transition-all"
+                      className="flex-1 min-w-[120px] flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-500/30 text-xs font-mono font-bold transition-all"
                     >
                       <Zap className="h-3.5 w-3.5 text-sky-400" />
                       <span>{locale === 'fr' ? 'Épine & TCC' : 'Spine & TCC'}</span>
@@ -637,10 +663,69 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
                     <button
                       type="button"
                       onClick={() => onNavigateDiagram(sub.associated_diagram_topology)}
-                      className="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-[#161C24] hover:bg-[#1f2733] text-amber-300 hover:text-amber-200 border border-[#252E38] hover:border-amber-400/40 text-xs font-mono font-bold transition-all"
+                      className="flex-1 min-w-[120px] flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-[#161C24] hover:bg-[#1f2733] text-amber-300 hover:text-amber-200 border border-[#252E38] hover:border-amber-400/40 text-xs font-mono font-bold transition-all"
                     >
                       <Activity className="h-3.5 w-3.5 text-amber-400" />
                       <span>{locale === 'fr' ? 'Schéma SLD' : 'Inspect SLD'}</span>
+                    </button>
+                  )}
+
+                  {/* One-Click Batch Substation Compliance Audit Button */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const topo: SldTopologyType = 
+                        sub.associated_diagram_topology === 'ais-gis-hybrid' ? 'breaker_and_half' :
+                        sub.bus_topology?.toLowerCase().includes('simple') ? 'single_bus' :
+                        'double_bus';
+
+                      const mvaVal = parseFloat(sub.transformer_capacity_mva) || 63;
+                      const scKa = parseFloat(sub.short_circuit_level_ka) || 31.5;
+                      const uHv = sub.voltage_levels.includes('225') ? 225 : 90;
+
+                      setComplianceModalData({
+                        topology: topo,
+                        snapshot: {
+                          u_hv_nom: uHv,
+                          u_mv_nom: sub.voltage_levels.includes('30') ? 30 : 15,
+                          activeLoadMw: Math.round(mvaVal * 0.75 * 10) / 10,
+                          gridScMva: Math.round(Math.sqrt(3) * uHv * scKa),
+                          isLineEnergized: true,
+                          isBus225Energized: true,
+                          isTrafoEnergized: true,
+                          isBus30Energized: true,
+                          isBusA_Energized: true,
+                          isBusB_Energized: true,
+                        }
+                      });
+                    }}
+                    className="flex-1 min-w-[120px] flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/40 text-xs font-mono font-bold transition-all cursor-pointer shadow-xs"
+                    title={locale === 'fr' ? 'Auditer la conformité CEI & Code de Réseau SONATREL de ce poste' : 'Audit IEC & SONATREL Grid Code compliance for this substation'}
+                  >
+                    <ShieldCheck className="h-3.5 w-3.5 text-cyan-400" />
+                    <span>{locale === 'fr' ? 'Audit CEI Poste' : 'Substation Audit'}</span>
+                  </button>
+
+                  {onNavigateCalculator && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onNavigateCalculator('transformer', {
+                          equipmentId: sub.id,
+                          equipmentName: `${sub.name} (${sub.voltage_levels})`,
+                          equipmentTag: sub.code,
+                          params: {
+                            trafoKva: (parseFloat(sub.transformer_capacity_mva) || 63) * 1000,
+                            trafoHvKv: sub.voltage_levels.includes('225') ? 225 : 90,
+                            trafoLvV: sub.voltage_levels.includes('30') ? 30000 : 15000,
+                            trafoUkPercent: 12.5,
+                          },
+                        });
+                      }}
+                      className="flex-1 min-w-[120px] flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-mono font-bold transition-all"
+                    >
+                      <Calculator className="h-3.5 w-3.5 text-emerald-400" />
+                      <span>{locale === 'fr' ? 'Calcul Transfo' : 'Trafo Calc'}</span>
                     </button>
                   )}
                 </div>
@@ -712,21 +797,62 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
                     <span className="text-neutral-400">{locale === 'fr' ? 'Origine / Extrémité :' : 'From / To:'} </span>
                     <span className="text-cyan-300">{corridor.from_substation} → {corridor.to_substation}</span>
                   </div>
-                  {onNavigateContextStack && (
-                    <button
-                      type="button"
-                      onClick={() => onNavigateContextStack('node-line-225-bekoko')}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-500/30 text-[11px] font-mono font-bold transition-all"
-                    >
-                      <Zap className="h-3 w-3 text-sky-400" />
-                      <span>{locale === 'fr' ? 'Épine & TCC' : 'Spine & TCC'}</span>
-                    </button>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {onNavigateCalculator && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onNavigateCalculator('transmission-line', {
+                            equipmentId: corridor.id,
+                            equipmentName: corridor.name,
+                            equipmentTag: corridor.code,
+                            params: {
+                              unKv: corridor.voltage_kv,
+                              voltageNominal: corridor.voltage_kv,
+                              lineLengthKm: corridor.length_km,
+                              lengthKm: corridor.length_km,
+                              transferredPowerMw: Math.round(corridor.thermal_rating_mva * 0.9),
+                              powerMw: Math.round(corridor.thermal_rating_mva * 0.9),
+                              conductorCode: corridor.conductor_type,
+                            },
+                          });
+                        }}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[11px] font-mono font-bold transition-all"
+                      >
+                        <Calculator className="h-3 w-3 text-amber-400" />
+                        <span>{locale === 'fr' ? 'Calcul Ligne' : 'Line Calc'}</span>
+                      </button>
+                    )}
+                    {onNavigateContextStack && (
+                      <button
+                        type="button"
+                        onClick={() => onNavigateContextStack('node-line-225-bekoko')}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-500/30 text-[11px] font-mono font-bold transition-all"
+                      >
+                        <Zap className="h-3 w-3 text-sky-400" />
+                        <span>{locale === 'fr' ? 'Épine & TCC' : 'Spine & TCC'}</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
+      )}
+
+      {/* Automated Consolidated Substation Batch Compliance Dossier Modal */}
+      {complianceModalData && (
+        <SubstationBatchComplianceModal
+          isOpen={Boolean(complianceModalData)}
+          onClose={() => setComplianceModalData(null)}
+          topology={complianceModalData.topology}
+          sim={complianceModalData.snapshot}
+          locale={locale}
+          onNavigateCalculator={onNavigateCalculator}
+          onNavigateSimulation={onNavigateSimulation}
+          onNavigateEquipment={onNavigateEquipment}
+        />
       )}
 
     </div>

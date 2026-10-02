@@ -49,6 +49,9 @@ interface EngineeringContextStackProps {
   onNavigateEquipment?: (equipmentId: string) => void;
   onNavigateCalculator?: (tab: CalculatorTabType) => void;
   onNavigateSimulation?: (tab: SimulationTabType) => void;
+  onNavigateDiagram?: (topology?: string) => void;
+  onNavigateCommissioning?: () => void;
+  onNavigateAssetManagement?: (pillar?: string) => void;
   embedded?: boolean;
 }
 
@@ -59,6 +62,8 @@ interface NodeCrossLinks {
   calculatorLabel: string;
   simulationTab: SimulationTabType;
   simulationLabel: string;
+  assetPillar?: string;
+  assetPillarLabel?: string;
 }
 
 const getNodeCrossLinks = (nodeId: string, locale: 'fr' | 'en'): NodeCrossLinks => {
@@ -108,6 +113,8 @@ const getNodeCrossLinks = (nodeId: string, locale: 'fr' | 'en'): NodeCrossLinks 
         calculatorLabel: locale === 'fr' ? 'Pertes & Impédance Transfo Uk%' : 'Transformer Losses & Uk% Sizing',
         simulationTab: 'transformer',
         simulationLabel: locale === 'fr' ? 'Transitoires d’Enclenchement Transfo' : 'Transformer Inrush & Saturation',
+        assetPillar: 'DUVAL_TRIANGLE_DGA',
+        assetPillarLabel: locale === 'fr' ? 'Diagnostic Huile DGA (CEI 60599)' : 'Oil DGA Diagnostics (IEC 60599)',
       };
     case 'node-bus-30-oyomabang':
       return {
@@ -180,6 +187,8 @@ const getNodeCrossLinks = (nodeId: string, locale: 'fr' | 'en'): NodeCrossLinks 
         calculatorLabel: locale === 'fr' ? 'Pertes & Indice de Santé Transfo' : 'Transformer Losses & Health Index',
         simulationTab: 'transformer',
         simulationLabel: locale === 'fr' ? 'Diagnostic Décharges Partielles & Gaz' : 'Partial Discharge & DGA Diagnostics',
+        assetPillar: 'DUVAL_TRIANGLE_DGA',
+        assetPillarLabel: locale === 'fr' ? 'Solveur Triangle Duval 1' : 'Duval Triangle 1 Solver',
       };
     case 'node-bess-10mwh':
       return {
@@ -225,6 +234,8 @@ const getNodeCrossLinks = (nodeId: string, locale: 'fr' | 'en'): NodeCrossLinks 
         calculatorLabel: locale === 'fr' ? 'Mesure Énergie 4 Quadrants & THD' : '4-Quadrant Energy & THD Metering',
         simulationTab: 'oscilloscope',
         simulationLabel: locale === 'fr' ? 'Oscilloscope Réseau & Harmoniques' : 'Grid Oscilloscope & Harmonics',
+        assetPillar: 'AMI_SMART_METERING',
+        assetPillarLabel: locale === 'fr' ? 'Architecture Smart Metering AMI' : 'AMI Smart Metering Platform',
       };
     case 'node-grid-study-psse':
       return {
@@ -274,6 +285,9 @@ export const EngineeringContextStack: React.FC<EngineeringContextStackProps> = (
   onNavigateEquipment,
   onNavigateCalculator,
   onNavigateSimulation,
+  onNavigateDiagram,
+  onNavigateCommissioning,
+  onNavigateAssetManagement,
   embedded = false,
 }) => {
   const [currentNodeId, setCurrentNodeId] = useState<string>(initialNodeId);
@@ -369,17 +383,41 @@ export const EngineeringContextStack: React.FC<EngineeringContextStackProps> = (
             {/* Generate Engineering Dossier */}
             <button
               onClick={() => setIsDossierOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white shadow-md transition"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white shadow-md transition cursor-pointer"
             >
               <FileText className="w-3.5 h-3.5" />
               <span>{locale === 'fr' ? 'Dossier d’Ingénierie (CEI)' : 'Engineering Dossier (IEC)'}</span>
             </button>
 
+            {/* Direct SLD Schematic Jump */}
+            {onNavigateDiagram && (
+              <button
+                onClick={() => onNavigateDiagram(selectedNode.voltageLevel === 'HV' ? 'double_bus' : 'rmu_distribution')}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-300 border border-cyan-500/40 shadow-md transition cursor-pointer"
+                title={locale === 'fr' ? 'Ouvrir le schéma unifilaire dynamique (SLD) de ce poste' : 'Open dynamic single line diagram (SLD)'}
+              >
+                <Activity className="w-3.5 h-3.5 text-cyan-400" />
+                <span>{locale === 'fr' ? 'Schéma SLD Poste' : 'Substation SLD'}</span>
+              </button>
+            )}
+
+            {/* FAT/SAT Commissioning Protocols */}
+            {onNavigateCommissioning && (
+              <button
+                onClick={() => onNavigateCommissioning()}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/40 shadow-md transition cursor-pointer"
+                title={locale === 'fr' ? 'Consulter les fiches d’essais FAT / SAT officielles' : 'View official FAT / SAT test protocols'}
+              >
+                <FileCheck2 className="w-3.5 h-3.5 text-amber-400" />
+                <span>{locale === 'fr' ? 'Essais FAT/SAT' : 'FAT/SAT Protocols'}</span>
+              </button>
+            )}
+
             {/* Audit Findings Visa Inspector Button (if calibrated node) */}
             {currentAuditCalibration && (
               <button
                 onClick={() => setIsAuditInspectorOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white shadow-md transition border border-emerald-400/40 animate-pulse"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white shadow-md transition border border-emerald-400/40 animate-pulse cursor-pointer"
                 title={locale === 'fr' ? 'Consulter le visa d’audit et les réglages calés' : 'View audit signoff and tuned settings'}
               >
                 <Award className="w-3.5 h-3.5 text-emerald-200" />
@@ -738,6 +776,24 @@ export const EngineeringContextStack: React.FC<EngineeringContextStackProps> = (
                         </div>
                         <Activity className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 flex-shrink-0" />
                       </button>
+
+                      {/* Asset Management & Diagnostics (D15) */}
+                      {onNavigateAssetManagement && crossLinks.assetPillar && (
+                        <button
+                          onClick={() => onNavigateAssetManagement(crossLinks.assetPillar)}
+                          className="flex items-center justify-between p-2.5 rounded-lg bg-emerald-950/40 hover:bg-emerald-900/60 border border-emerald-500/30 text-left transition group cursor-pointer"
+                        >
+                          <div className="min-w-0 pr-2">
+                            <span className="text-[10px] uppercase font-mono text-emerald-400 block font-semibold">
+                              {locale === 'fr' ? 'Gestion d\'Actifs (D15)' : 'Asset Management (D15)'}
+                            </span>
+                            <span className="text-xs font-medium text-slate-200 group-hover:text-emerald-300 truncate block">
+                              {crossLinks.assetPillarLabel}
+                            </span>
+                          </div>
+                          <Activity className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                        </button>
+                      )}
                     </div>
                   </div>
                 );

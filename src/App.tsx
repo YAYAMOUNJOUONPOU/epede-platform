@@ -13,6 +13,7 @@ import { EngineeringBackground } from './components/common/EngineeringBackground
 import { HomeView } from './components/home/HomeView';
 import { EngineeringLoadingSkeleton } from './components/common/EngineeringLoadingSkeleton';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { DOMAINS } from './data/epedeData';
 
 // Code-split Lazy Secondary Views for Core Web Vitals Optimization
 const DomainDetailView = lazy(() => import('./components/domain/DomainDetailView').then(m => ({ default: m.DomainDetailView })));
@@ -31,6 +32,7 @@ const RegulatoryView = lazy(() => import('./components/regulatory/RegulatoryView
 const JourneyView = lazy(() => import('./components/journey/JourneyView').then(m => ({ default: m.JourneyView })));
 const EngineeringContextStack = lazy(() => import('./components/common/EngineeringContextStack').then(m => ({ default: m.EngineeringContextStack })));
 const HydropowerVisualJourney = lazy(() => import('./components/production/HydropowerVisualJourney').then(m => ({ default: m.HydropowerVisualJourney })));
+const HydropowerMasterWorkbench = lazy(() => import('./components/hydropower/HydropowerMasterWorkbench').then(m => ({ default: m.HydropowerMasterWorkbench })));
 const IndustrialProjectsView = lazy(() => import('./components/projects/IndustrialProjectsView').then(m => ({ default: m.IndustrialProjectsView })));
 const EngineersChainView = lazy(() => import('./components/engineers/EngineersChainView').then(m => ({ default: m.EngineersChainView })));
 const ElectricalEquipmentReferenceView = lazy(() => import('./components/reference/ElectricalEquipmentReferenceView').then(m => ({ default: m.ElectricalEquipmentReferenceView })));
@@ -43,6 +45,7 @@ const FollowTheEnergyView = lazy(() => import('./components/energy/FollowTheEner
 const PedagogicalScenariosWorkbench = lazy(() => import('./components/scenarios/PedagogicalScenariosWorkbench').then(m => ({ default: m.PedagogicalScenariosWorkbench })));
 const DataProvenanceRegistryView = lazy(() => import('./components/trust/DataProvenanceRegistryView').then(m => ({ default: m.DataProvenanceRegistryView })));
 const ThematicJourneysWorkbench = lazy(() => import('./components/journey/ThematicJourneysWorkbench').then(m => ({ default: m.ThematicJourneysWorkbench })));
+const AssetManagementDiagnosticsWorkbench = lazy(() => import('./components/assets/AssetManagementDiagnosticsWorkbench').then(m => ({ default: m.AssetManagementDiagnosticsWorkbench })));
 
 // Lazy Modals (on-demand loading)
 const SearchModal = lazy(() => import('./components/search/SearchModal').then(m => ({ default: m.SearchModal })));
@@ -99,6 +102,8 @@ export default function App() {
   const [activeTopology, setActiveTopology] = useState<SldTopologyType | undefined>(initialRoute.topology);
   const [activeJourneyStage, setActiveJourneyStage] = useState<StageId | undefined>(initialRoute.journeyStage);
   const [activeContextNodeId, setActiveContextNodeId] = useState<string>(initialRoute.contextNodeId || 'node-trafo-main-30');
+  const [activeGridCategory, setActiveGridCategory] = useState<any>(initialRoute.gridCategory);
+  const [activeAssetPillar, setActiveAssetPillar] = useState<string | undefined>(initialRoute.assetPillar);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -146,6 +151,8 @@ export default function App() {
         if (target.topology !== undefined) setActiveTopology(target.topology);
         if (target.journeyStage !== undefined) setActiveJourneyStage(target.journeyStage);
         if (target.contextNodeId) setActiveContextNodeId(target.contextNodeId);
+        if (target.gridCategory !== undefined) setActiveGridCategory(target.gridCategory);
+        if (target.assetPillar !== undefined) setActiveAssetPillar(target.assetPillar);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
@@ -166,6 +173,8 @@ export default function App() {
       if (route.topology !== undefined) setActiveTopology(route.topology);
       if (route.journeyStage !== undefined) setActiveJourneyStage(route.journeyStage);
       if (route.contextNodeId) setActiveContextNodeId(route.contextNodeId);
+      if (route.gridCategory !== undefined) setActiveGridCategory(route.gridCategory);
+      if (route.assetPillar !== undefined) setActiveAssetPillar(route.assetPillar);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -187,6 +196,7 @@ export default function App() {
         topology: activeTopology,
         journeyStage: activeJourneyStage,
         contextNodeId: activeContextNodeId,
+        assetPillar: activeAssetPillar,
       },
       locale
     );
@@ -228,17 +238,10 @@ export default function App() {
   // Synchronize exploration trail with current view/domain/equipment (Priority 1: Context Memory)
   useEffect(() => {
     if (currentView === 'domain' && activeDomainCode) {
-      const domainNames: Partial<Record<DomainCode, { fr: string; en: string }>> = {
-        D01: { fr: "Production d'Énergie", en: "Power Generation" },
-        D02: { fr: "Énergies Renouvelables", en: "Renewable Energy" },
-        D03: { fr: "Transport Haute Tension", en: "High Voltage Transmission" },
-        D04: { fr: "Postes Électriques", en: "Substations" },
-        D05: { fr: "Distribution Moyenne & Basse Tension", en: "Distribution & Installation" },
-        D06: { fr: "Contrôle Commande & SCADA", en: "Control Systems & SCADA" },
-        D07: { fr: "Protection des Réseaux", en: "Network Protection" },
-        D08: { fr: "Qualité de l'Énergie", en: "Power Quality" }
-      };
-      const info = domainNames[activeDomainCode] || { fr: `Domaine ${activeDomainCode}`, en: `Domain ${activeDomainCode}` };
+      const domainObj = DOMAINS.find((d) => d.code === activeDomainCode);
+      const info = domainObj
+        ? { fr: domainObj.name_fr, en: domainObj.name_en }
+        : { fr: `Domaine ${activeDomainCode}`, en: `Domain ${activeDomainCode}` };
       contextStackSessionStore.addToTrail({
         id: `domain-${activeDomainCode}`,
         name_fr: info.fr,
@@ -370,6 +373,15 @@ export default function App() {
         voltage: '225 kV',
         routeTarget: { view: 'architectures' }
       });
+        } else if (currentView === 'asset-management') {
+      contextStackSessionStore.addToTrail({
+        id: 'view-asset-management',
+        name_fr: "Gestion d'Actifs & Diagnostics DGA (CEI 60599 / ISO 55000)",
+        name_en: 'Asset Management & DGA Diagnostics (IEC 60599 / ISO 55000)',
+        entityType: 'system',
+        domainCode: 'D15',
+        routeTarget: { view: 'asset-management' }
+      });
     } else if (currentView === 'knowledge-graph') {
       contextStackSessionStore.addToTrail({
         id: 'view-knowledge-graph',
@@ -426,6 +438,11 @@ export default function App() {
 
   const handleNavigateJourney = (stageId?: StageId) => {
     navigate({ view: 'journey', journeyStage: stageId });
+  };
+
+    const handleNavigateAssetManagement = (pillar?: string) => {
+    setActiveAssetPillar(pillar);
+    navigate({ view: 'asset-management', assetPillar: pillar });
   };
 
   const handleNavigateContextStack = (nodeId?: string) => {
@@ -706,8 +723,12 @@ export default function App() {
               )}
 
               {currentView === 'hydropower' && (
-                <HydropowerVisualJourney
-                  onBackToOverview={() => navigate({ view: 'home' })}
+                <HydropowerMasterWorkbench
+                  locale={locale}
+                  onBack={() => navigate({ view: 'home' })}
+                  onNavigateStandard={handleNavigateStandard}
+                  onNavigateCalculator={handleNavigateCalculator}
+                  onNavigateSimulation={handleNavigateSimulation}
                 />
               )}
 
@@ -722,6 +743,7 @@ export default function App() {
                   onNavigateSimulation={handleNavigateSimulation}
                   onNavigateContextStack={handleNavigateContextStack}
                   onNavigateArchitectures={() => navigate({ view: 'architectures' })}
+                  onNavigateCommissioning={() => navigate({ view: 'commissioning' })}
                 />
               )}
 
@@ -731,6 +753,7 @@ export default function App() {
                   initialTab={activeSimulationTab}
                   onNavigateContextStack={handleNavigateContextStack}
                   onNavigateCalculator={handleNavigateCalculator}
+                  onNavigateDiagram={handleNavigateDiagram}
                 />
               )}
 
@@ -789,6 +812,7 @@ export default function App() {
                   onNavigateSimulation={handleNavigateSimulation}
                   onNavigateContextStack={handleNavigateContextStack}
                   onNavigateStandard={handleNavigateStandard}
+                  onNavigateAssetManagement={handleNavigateAssetManagement}
                 />
               )}
 
@@ -862,6 +886,7 @@ export default function App() {
               {currentView === 'cameroon-grid' && (
                 <CameroonGridView
                   locale={locale}
+                  initialCategory={activeGridCategory}
                   onNavigateCalculator={handleNavigateCalculator}
                   onNavigateSimulation={handleNavigateSimulation}
                   onNavigateDiagram={(topo) => {
@@ -872,6 +897,7 @@ export default function App() {
                       'double_bus';
                     handleNavigateDiagram(mappedTopo);
                   }}
+                  onNavigateEquipment={handleNavigateEquipment}
                   onNavigateStandards={() => navigate({ view: 'standards' })}
                   onNavigateRegulatory={() => navigate({ view: 'regulatory' })}
                   onNavigateContextStack={handleNavigateContextStack}
@@ -898,6 +924,9 @@ export default function App() {
                   onNavigateEquipment={handleNavigateEquipment}
                   onNavigateCalculator={handleNavigateCalculator}
                   onNavigateSimulation={handleNavigateSimulation}
+                  onNavigateDiagram={handleNavigateDiagram}
+                  onNavigateCommissioning={() => navigate({ view: 'commissioning' })}
+                  onNavigateAssetManagement={handleNavigateAssetManagement}
                 />
               )}
 
@@ -1057,8 +1086,8 @@ export default function App() {
               navigate({ view: 'lifecycle' });
               setIsSearchOpen(false);
             }}
-            onNavigateCameroonGrid={() => {
-              navigate({ view: 'cameroon-grid' });
+            onNavigateCameroonGrid={(cat) => {
+              navigate({ view: 'cameroon-grid', gridCategory: (cat as any) || 'demarcation' });
               setIsSearchOpen(false);
             }}
             onNavigateRegulatory={() => {
@@ -1079,6 +1108,14 @@ export default function App() {
             }}
             onNavigateTraceability={() => {
               navigate({ view: 'traceability' });
+              setIsSearchOpen(false);
+            }}
+            onNavigateCommissioning={() => {
+              navigate({ view: 'commissioning' });
+              setIsSearchOpen(false);
+            }}
+            onNavigateAssetManagement={(pillar) => {
+              handleNavigateAssetManagement(pillar);
               setIsSearchOpen(false);
             }}
           />

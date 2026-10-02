@@ -1,0 +1,7 @@
+# EPEDE - Electrical Power Engineering Digital Environment
+# Authoritative Power System Engineering Platform
+User-agent: *
+Allow: /
+
+# Canonical XML Sitemap
+Sitemap: https://epede.engineering/sitemap.xml

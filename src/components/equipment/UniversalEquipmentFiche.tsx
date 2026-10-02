@@ -29,15 +29,20 @@ import {
   Layers,
   Compass,
   Sliders,
-  Sparkles
+  Sparkles,
+  Calculator,
+  ArrowUpRight
 } from 'lucide-react';
 import type { CanonicalEquipmentObject } from '../../types/equipmentExplorer';
+import type { CalculatorTabType } from '../calculators/services/calculationReportService';
+import type { InjectedCalculatorContext } from '../../services/routerService';
 
 interface UniversalEquipmentFicheProps {
   canonical: CanonicalEquipmentObject;
   locale: 'fr' | 'en';
   onNavigateEquipment?: (equipmentId: string) => void;
   onNavigateSimulation?: (tab?: string) => void;
+  onNavigateCalculator?: (tab?: CalculatorTabType, context?: InjectedCalculatorContext) => void;
   onNavigateStandard?: (ref: string) => void;
   onNavigateCameroonGrid?: () => void;
   onNavigateKnowledgeGraph?: (nodeId: string) => void;
@@ -48,6 +53,7 @@ export const UniversalEquipmentFiche: React.FC<UniversalEquipmentFicheProps> = (
   locale,
   onNavigateEquipment,
   onNavigateSimulation,
+  onNavigateCalculator,
   onNavigateStandard,
   onNavigateCameroonGrid,
   onNavigateKnowledgeGraph,
@@ -329,6 +335,148 @@ export const UniversalEquipmentFiche: React.FC<UniversalEquipmentFicheProps> = (
                   </div>
                 ))}
               </div>
+
+              {/* CAE Solvers & Simulation Bridge for Universal Fiche */}
+              {(onNavigateCalculator || onNavigateSimulation) && (() => {
+                const idLower = canonical.id.toLowerCase();
+                const isTrafo = idLower.includes('trafo') || idLower.includes('gsu') || canonical.category === 'TRANSFORMER';
+                const isBreaker = idLower.includes('breaker') || idLower.includes('bay') || idLower.includes('gis') || canonical.category === 'SWITCHGEAR';
+                const isLine = idLower.includes('line') || idLower.includes('cable') || canonical.category === 'TRANSMISSION';
+
+                // Extract parameters
+                const params: Record<string, any> = {};
+                canonical.keyEngineeringValues.forEach(v => {
+                  const lbl = (typeof v.label === 'string' ? v.label : v.label.fr).toLowerCase();
+                  const numMatch = String(v.value).match(/([0-9]+(?:\.[0-9]+)?)/);
+                  const num = numMatch ? parseFloat(numMatch[1]) : null;
+                  if (num !== null) {
+                    if (v.unit === 'MVA' || lbl.includes('puissance')) {
+                      params.trafoKva = num * 1000;
+                      params.powerMw = num;
+                    }
+                    if (v.unit === 'kV' || lbl.includes('tension')) {
+                      params.trafoHvKv = num;
+                      params.unKv = num;
+                      params.voltageNominal = num;
+                    }
+                    if (v.unit === '%' || lbl.includes('uk')) {
+                      params.trafoUkPercent = num;
+                    }
+                    if (v.unit === 'kA' || lbl.includes('court-circuit')) {
+                      params.breakingCapacityKa = num;
+                      params.faultCurrentKa = num;
+                    }
+                    if (v.unit === 'A' || lbl.includes('courant')) {
+                      params.nominalCurrentA = num;
+                    }
+                  }
+                });
+
+                const injectedContext: InjectedCalculatorContext = {
+                  equipmentId: canonical.id,
+                  equipmentName: isFr ? canonical.name.fr : canonical.name.en,
+                  equipmentTag: canonical.tagIec,
+                  params
+                };
+
+                return (
+                  <div className="p-4 rounded-xl bg-slate-900/90 border border-cyan-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                        <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                          {isFr ? 'Calculs Numériques & Simulations Associés' : 'Associated CAE Numerical Sizing & Simulations'}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-300">
+                        {isFr
+                          ? 'Injecter ces grandeurs nominales directement dans les moteurs de calcul'
+                          : 'Inject these ratings directly into calculation and simulation engines'}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      {isTrafo && onNavigateCalculator && (
+                        <button
+                          type="button"
+                          onClick={() => onNavigateCalculator('transformer', injectedContext)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 font-mono text-xs font-bold transition-all cursor-pointer"
+                        >
+                          <Calculator className="w-3.5 h-3.5 text-cyan-400" />
+                          <span>{isFr ? 'Dimensionner Transfo' : 'Size Transformer'}</span>
+                          <ArrowUpRight className="w-3 h-3 text-cyan-400" />
+                        </button>
+                      )}
+                      {isTrafo && onNavigateSimulation && (
+                        <button
+                          type="button"
+                          onClick={() => onNavigateSimulation('differential-protection')}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40 font-mono text-xs font-bold transition-all cursor-pointer"
+                        >
+                          <Activity className="w-3.5 h-3.5 text-purple-400" />
+                          <span>{isFr ? 'Protection 87T' : '87T Protection'}</span>
+                        </button>
+                      )}
+
+                      {isBreaker && onNavigateCalculator && (
+                        <button
+                          type="button"
+                          onClick={() => onNavigateCalculator('relay-tcc', injectedContext)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 font-mono text-xs font-bold transition-all cursor-pointer"
+                        >
+                          <Calculator className="w-3.5 h-3.5 text-cyan-400" />
+                          <span>{isFr ? 'Plan Sélectivité TCC' : 'TCC Coordination'}</span>
+                          <ArrowUpRight className="w-3 h-3 text-cyan-400" />
+                        </button>
+                      )}
+                      {isBreaker && onNavigateSimulation && (
+                        <button
+                          type="button"
+                          onClick={() => onNavigateSimulation('short-circuit')}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 font-mono text-xs font-bold transition-all cursor-pointer"
+                        >
+                          <Activity className="w-3.5 h-3.5 text-rose-400" />
+                          <span>{isFr ? 'Court-Circuit 60909' : 'Short-Circuit Lab'}</span>
+                        </button>
+                      )}
+
+                      {isLine && onNavigateCalculator && (
+                        <button
+                          type="button"
+                          onClick={() => onNavigateCalculator('transmission-line', injectedContext)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 font-mono text-xs font-bold transition-all cursor-pointer"
+                        >
+                          <Calculator className="w-3.5 h-3.5 text-cyan-400" />
+                          <span>{isFr ? 'Paramètres Ligne SIL' : 'SIL & Line Params'}</span>
+                          <ArrowUpRight className="w-3 h-3 text-cyan-400" />
+                        </button>
+                      )}
+                      {isLine && onNavigateSimulation && (
+                        <button
+                          type="button"
+                          onClick={() => onNavigateSimulation('ferranti')}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40 font-mono text-xs font-bold transition-all cursor-pointer"
+                        >
+                          <Activity className="w-3.5 h-3.5 text-purple-400" />
+                          <span>{isFr ? 'Effet Ferranti' : 'Ferranti Effect'}</span>
+                        </button>
+                      )}
+
+                      {!isTrafo && !isBreaker && !isLine && onNavigateCalculator && (
+                        <button
+                          type="button"
+                          onClick={() => onNavigateCalculator('power', injectedContext)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 font-mono text-xs font-bold transition-all cursor-pointer"
+                        >
+                          <Calculator className="w-3.5 h-3.5 text-cyan-400" />
+                          <span>{isFr ? 'Calculateur CAE' : 'CAE Solver'}</span>
+                          <ArrowUpRight className="w-3 h-3 text-cyan-400" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           )}
         </div>

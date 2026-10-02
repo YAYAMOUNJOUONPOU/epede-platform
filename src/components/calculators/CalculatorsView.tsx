@@ -696,7 +696,21 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
       )}
 
       {/* 15. OVERHEAD TRANSMISSION LINE PARAMETERS & CORONA LOSS (IEC 60826 / PEEK) */}
-      {activeCalc === 'transmission-line' && <TransmissionLineCalculator locale={locale} onOpenReport={() => setIsReportOpen(true)} />}
+      {activeCalc === 'transmission-line' && (
+        <TransmissionLineCalculator
+          locale={locale}
+          initialParams={injectedContext?.params as any}
+          injectedContextInfo={
+            injectedContext?.equipmentId
+              ? {
+                  equipmentName: injectedContext.equipmentName || '',
+                  equipmentTag: injectedContext.equipmentTag,
+                }
+              : undefined
+          }
+          onOpenReport={() => setIsReportOpen(true)}
+        />
+      )}
 
       {/* 16. NEUTRAL GROUNDING RESISTOR (NGR) & PETERSEN COIL TUNING (IEC 60071 / NF C 13-200) */}
       {activeCalc === 'neutral-grounding' && <NeutralGroundingCalculator locale={locale} onOpenReport={() => setIsReportOpen(true)} />}

@@ -403,7 +403,20 @@ export const SldLotoPlaybookModal: React.FC<SldLotoPlaybookModalProps> = ({
                   </div>
                 </div>
 
-                <div className="self-end sm:self-center shrink-0">
+                <div className="self-end sm:self-center shrink-0 flex items-center gap-2">
+                  {onApplyProcedureStep && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onApplyProcedureStep(step.deviceTag, step.expectedState as any);
+                        if (!isDone) toggleStepCompleted(step.stepNumber);
+                      }}
+                      className="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 transition-colors cursor-pointer"
+                    >
+                      {locale === 'fr' ? 'Manœuvrer SLD' : 'Operate SLD'}
+                    </button>
+                  )}
                   <span className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-colors ${
                     isDone
                       ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'

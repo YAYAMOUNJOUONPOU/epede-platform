@@ -1,12 +1,16 @@
-// src/components/equipment/modules/EquipmentEngineeringDossierTabs.tsx
 import React, { useState } from 'react';
 import type { CanonicalEquipmentObject } from '../../../types/equipmentExplorer';
-import { FileText, CheckCircle2, ShieldCheck, Cpu } from 'lucide-react';
+import { FileText, CheckCircle2, ShieldCheck, Cpu, Calculator, Activity, ArrowUpRight } from 'lucide-react';
+import type { CalculatorTabType } from '../../calculators/services/calculationReportService';
+import type { SimulationTabType } from '../../simulation/SimulationLabView';
+import type { InjectedCalculatorContext } from '../../../services/routerService';
 
 interface EquipmentEngineeringDossierTabsProps {
   locale: 'fr' | 'en';
   canonical?: CanonicalEquipmentObject;
   onOpenFullDossier?: () => void;
+  onNavigateCalculator?: (tab?: CalculatorTabType, context?: InjectedCalculatorContext) => void;
+  onNavigateSimulation?: (tab?: SimulationTabType) => void;
 }
 
 type TabType = 'physics_principles' | 'protection' | 'automation' | 'failure_modes' | 'maintenance_testing' | 'standards' | 'cameroon';
@@ -24,7 +28,9 @@ const TAB_LABELS: Record<TabType, { fr: string; en: string }> = {
 export const EquipmentEngineeringDossierTabs: React.FC<EquipmentEngineeringDossierTabsProps> = ({
   locale,
   canonical,
-  onOpenFullDossier
+  onOpenFullDossier,
+  onNavigateCalculator,
+  onNavigateSimulation,
 }) => {
   const [activeTab, setActiveTab] = useState<TabType>(canonical ? 'physics_principles' : 'protection');
 
@@ -206,6 +212,58 @@ export const EquipmentEngineeringDossierTabs: React.FC<EquipmentEngineeringDossi
                 <div className="text-neutral-300">
                   <span className="text-neutral-500">Régime: </span>
                   <span className="text-cyan-300 font-bold">{canonical.earthingAndBonding.earthingRegime}</span> — {locale === 'fr' ? canonical.earthingAndBonding.connectionMethod.fr : canonical.earthingAndBonding.connectionMethod.en}
+                </div>
+              </div>
+            )}
+
+            {/* Quick CAE Protection Launchers */}
+            {(onNavigateCalculator || onNavigateSimulation) && (
+              <div className="p-4 rounded-xl bg-gradient-to-r from-cyan-950/40 via-slate-900 to-[#080B10] border border-cyan-500/30 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <div className="font-mono text-xs font-bold text-cyan-300 uppercase">
+                    {locale === 'fr' ? 'Validation Numérique du Plan de Protection' : 'Digital Protection Plan Verification'}
+                  </div>
+                  <div className="text-[11px] text-neutral-400 font-sans">
+                    {locale === 'fr'
+                      ? 'Vérifiez la sélectivité amont/aval et les seuils de déclenchement dans les simulateurs CEI.'
+                      : 'Verify upstream/downstream discrimination and tripping curves in IEC simulators.'}
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  {onNavigateCalculator && (
+                    <button
+                      type="button"
+                      onClick={() => onNavigateCalculator('relay-tcc')}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-mono font-bold transition-all cursor-pointer"
+                    >
+                      <Calculator className="w-3.5 h-3.5 text-cyan-400" />
+                      <span>{locale === 'fr' ? 'Plan Sélectivité TCC' : 'TCC Grading'}</span>
+                      <ArrowUpRight className="w-3 h-3 text-cyan-400" />
+                    </button>
+                  )}
+
+                  {onNavigateSimulation && (
+                    <button
+                      type="button"
+                      onClick={() => onNavigateSimulation('differential-protection')}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40 text-xs font-mono font-bold transition-all cursor-pointer"
+                    >
+                      <Activity className="w-3.5 h-3.5 text-purple-400" />
+                      <span>{locale === 'fr' ? 'Différentielle 87' : '87 Differential'}</span>
+                    </button>
+                  )}
+
+                  {onNavigateSimulation && (
+                    <button
+                      type="button"
+                      onClick={() => onNavigateSimulation('short-circuit')}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-xs font-mono font-bold transition-all cursor-pointer"
+                    >
+                      <Activity className="w-3.5 h-3.5 text-rose-400" />
+                      <span>{locale === 'fr' ? 'Court-Circuit 60909' : 'Short-Circuit 60909'}</span>
+                    </button>
+                  )}
                 </div>
               </div>
             )}

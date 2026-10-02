@@ -22,6 +22,8 @@ interface SldHeaderToolbarProps {
   onOpenCyberSecurity?: () => void;
   onOpenLotoPlaybook?: () => void;
   onOpenArchitectures?: () => void;
+  onOpenBreakerCutaway?: () => void;
+  onOpenCaeExport?: () => void;
 }
 
 export const SldHeaderToolbar: React.FC<SldHeaderToolbarProps> = ({
@@ -42,6 +44,8 @@ export const SldHeaderToolbar: React.FC<SldHeaderToolbarProps> = ({
   onOpenCyberSecurity,
   onOpenLotoPlaybook,
   onOpenArchitectures,
+  onOpenBreakerCutaway,
+  onOpenCaeExport,
 }) => {
   return (
     <div className="space-y-4">
@@ -89,6 +93,19 @@ export const SldHeaderToolbar: React.FC<SldHeaderToolbarProps> = ({
             >
               <Layers className="h-4 w-4 text-cyan-700" />
               <span>{locale === 'fr' ? 'ARCHITECTURES AIS/GIS' : 'AIS/GIS ARCHITECTURES'}</span>
+            </button>
+          )}
+
+          {/* Electromechanical Circuit Breaker Cutaway Workbench */}
+          {onOpenBreakerCutaway && (
+            <button
+              type="button"
+              onClick={onOpenBreakerCutaway}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-mono font-bold bg-amber-500/15 text-amber-900 hover:bg-amber-500/25 border border-amber-500/40 transition-colors shadow-xs cursor-pointer"
+              title={locale === 'fr' ? 'Écorché électromécanique disjoncteur SF6 & physique de coupure d’arc' : 'SF6 circuit breaker electromechanical cutaway & arc quenching physics'}
+            >
+              <Zap className="h-4 w-4 text-amber-600" />
+              <span>{locale === 'fr' ? 'COUPE DISJONCTEUR SF₆' : 'BREAKER SF₆ CUTAWAY'}</span>
             </button>
           )}
 
@@ -208,6 +225,19 @@ export const SldHeaderToolbar: React.FC<SldHeaderToolbarProps> = ({
             <Download className="h-3.5 w-3.5 text-sky-600" />
             <span>EXPORT SVG</span>
           </button>
+
+          {/* Export CAE (DIgSILENT / ETAP / MATPOWER / Python) */}
+          {onOpenCaeExport && (
+            <button
+              type="button"
+              onClick={onOpenCaeExport}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-mono font-bold bg-indigo-50 text-indigo-800 hover:bg-indigo-100 hover:text-indigo-900 border border-indigo-200 transition-colors shadow-xs cursor-pointer"
+              title={locale === 'fr' ? 'Exporter vers DIgSILENT PowerFactory, ETAP, MATPOWER et Python' : 'Export to DIgSILENT PowerFactory, ETAP, MATPOWER, and Python'}
+            >
+              <Cpu className="h-3.5 w-3.5 text-indigo-600" />
+              <span>EXPORT CAE</span>
+            </button>
+          )}
 
           {/* Reset Switches */}
           <button

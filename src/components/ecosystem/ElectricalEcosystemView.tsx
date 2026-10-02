@@ -440,7 +440,7 @@ export const ElectricalEcosystemView: React.FC<ElectricalEcosystemViewProps> = (
         className={`w-full relative overflow-hidden ${fitMode === 'fit' ? 'h-screen' : ''}`}
         style={{
           height: fitMode === 'fit' ? '100vh' : `${1024 * scale}px`,
-          backgroundColor: 'var(--ecosystem-sky-background, #BFE3F4)',
+          backgroundColor: 'var(--ecosystem-sky-background, #070D14)',
         }}
       >
         {/* 1536x1024 Fixed Canvas Stage with Exact Scaled Transformation */}
@@ -459,7 +459,7 @@ export const ElectricalEcosystemView: React.FC<ElectricalEcosystemViewProps> = (
             backgroundRepeat: 'no-repeat',
             backgroundPosition: '0 0',
             backgroundSize: '1536px 1024px',
-            backgroundColor: is3DMode ? 'var(--ecosystem-sky-background, #BFE3F4)' : '#050b12',
+            backgroundColor: is3DMode ? 'var(--ecosystem-sky-background, #070D14)' : '#050b12',
           }}
         >
           {/* ========================================================================= */}
@@ -872,7 +872,7 @@ export const ElectricalEcosystemView: React.FC<ElectricalEcosystemViewProps> = (
           {is3DMode && (
             <div 
               className="absolute left-[165px] top-[92px] w-[1371px] h-[932px] z-10 overflow-hidden"
-              style={{ backgroundColor: 'var(--ecosystem-sky-background, #BFE3F4)' }}
+              style={{ backgroundColor: 'var(--ecosystem-sky-background, #070D14)' }}
             >
               <EcosystemR3FCanvas
                 viewMode={viewMode}

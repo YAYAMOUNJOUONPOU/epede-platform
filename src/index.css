@@ -33,15 +33,15 @@
     --v-lv: #F59E0B;              /* 400V / 230V BT */
     --v-dc: #EAB308;              /* ±800 kV HVDC */
 
-    /* EPEDE Ecosystem Sky-Blue Environment Tokens (Directive: Ecosystem Sky Canvas) */
-    --ecosystem-sky-background: #BFE3F4;
-    --ecosystem-sky-background-light: #D9F0FA;
-    --ecosystem-sky-background-soft: #CFEAF7;
-    --ecosystem-sky-background-deep: #A9D8EF;
-    --ecosystem-text-primary: #0B0F12;
-    --ecosystem-text-secondary: #33434C;
-    --ecosystem-text-muted: #5E717B;
-    --ecosystem-border: rgba(11, 15, 18, 0.18);
+    /* EPEDE Ecosystem Stage Canvas Tokens (Harmonized to Obsidian Dark Theme) */
+    --ecosystem-sky-background: #070D14;
+    --ecosystem-sky-background-light: #0B131D;
+    --ecosystem-sky-background-soft: #0E1825;
+    --ecosystem-sky-background-deep: #05090F;
+    --ecosystem-text-primary: #F8FAFC;
+    --ecosystem-text-secondary: #94A3B8;
+    --ecosystem-text-muted: #64748B;
+    --ecosystem-border: rgba(148, 163, 184, 0.18);
     --ecosystem-control-surface: #151C1E;
   }
 

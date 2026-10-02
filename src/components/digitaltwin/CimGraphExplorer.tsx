@@ -21,7 +21,9 @@ import {
   Sliders,
   Share2,
   FileCode2,
-  Info
+  Info,
+  Calculator,
+  Play
 } from 'lucide-react';
 import {
   CIM_SUBSTATIONS,
@@ -44,6 +46,9 @@ import type {
 } from '../../types/cim';
 import { AasDrawer } from './AasDrawer';
 import type { Equipment } from '../../types/epede';
+import type { CalculatorTabType } from '../calculators/services/calculationReportService';
+import type { InjectedCalculatorContext } from '../../services/routerService';
+import type { SimulationTabType } from '../simulation/SimulationLabView';
 
 export type CimExplorerMode = 'TOPOLOGY' | 'ISOLATION' | 'CONTINGENCY_N1' | 'GRAPHRAG' | 'CIM_EXPORT';
 
@@ -51,12 +56,16 @@ interface CimGraphExplorerProps {
   locale: 'fr' | 'en';
   onInspectEquipment?: (equipmentId: string) => void;
   onNavigateStandard?: (standardRef: string) => void;
+  onNavigateCalculator?: (tab: CalculatorTabType, context?: InjectedCalculatorContext) => void;
+  onNavigateSimulation?: (tab: SimulationTabType) => void;
 }
 
 export const CimGraphExplorer: React.FC<CimGraphExplorerProps> = ({
   locale,
   onInspectEquipment,
-  onNavigateStandard
+  onNavigateStandard,
+  onNavigateCalculator,
+  onNavigateSimulation,
 }) => {
   const [activeMode, setActiveMode] = useState<CimExplorerMode>('TOPOLOGY');
   const [selectedEquipmentId, setSelectedEquipmentId] = useState<string>('eq-trafo-gsu-01');
@@ -599,6 +608,185 @@ export const CimGraphExplorer: React.FC<CimGraphExplorerProps> = ({
                         <li key={idx}>{fm}</li>
                       ))}
                     </ul>
+                  </div>
+
+                  {/* CAE Sizing & Digital Simulation Bridges */}
+                  <div className="p-3 rounded-xl bg-[#0B1524] border border-cyan-800/40 space-y-2">
+                    <span className="text-[10px] font-bold text-cyan-300 uppercase tracking-wider block flex items-center gap-1.5">
+                      <Zap className="w-3 h-3 text-cyan-400" />
+                      <span>{locale === 'fr' ? 'Calculs & Simulations Numériques (CIM → Solvers) :' : 'Engineering Solvers & Digital Labs:'}</span>
+                    </span>
+                    <div className="flex flex-col gap-1.5 pt-1">
+                      {selectedEquipment.cimType === 'PowerTransformer' && (
+                        <>
+                          {onNavigateCalculator && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                onNavigateCalculator('transformer', {
+                                  equipmentId: selectedEquipment.id,
+                                  equipmentName: selectedEquipment.name,
+                                  equipmentTag: selectedEquipment.id,
+                                  params: {
+                                    trafoKva: (selectedEquipment.ratedMva || 75) * 1000,
+                                    trafoHvKv: selectedEquipment.nominalVoltageKv || 225,
+                                    trafoLvV: 15000,
+                                    trafoUkPercent: 12.0,
+                                  },
+                                });
+                              }}
+                              className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold transition-all"
+                            >
+                              <span className="flex items-center gap-1.5">
+                                <Calculator className="w-3 h-3" />
+                                <span>{locale === 'fr' ? 'Calculateur Transformateur & Icc (CEI 60076)' : 'Transformer & Short-Circuit Sizing'}</span>
+                              </span>
+                              <ArrowRight className="w-3 h-3" />
+                            </button>
+                          )}
+                          {onNavigateSimulation && (
+                            <button
+                              type="button"
+                              onClick={() => onNavigateSimulation('differential-protection')}
+                              className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[10px] font-bold transition-all"
+                            >
+                              <span className="flex items-center gap-1.5">
+                                <Play className="w-3 h-3" />
+                                <span>{locale === 'fr' ? 'Simulateur Protection 87T Différentielle' : '87T Differential Protection Lab'}</span>
+                              </span>
+                              <ArrowRight className="w-3 h-3" />
+                            </button>
+                          )}
+                        </>
+                      )}
+
+                      {selectedEquipment.cimType === 'ACLineSegment' && (
+                        <>
+                          {onNavigateCalculator && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                onNavigateCalculator('transmission-line', {
+                                  equipmentId: selectedEquipment.id,
+                                  equipmentName: selectedEquipment.name,
+                                  equipmentTag: selectedEquipment.id,
+                                  params: {
+                                    unKv: selectedEquipment.nominalVoltageKv || 225,
+                                    voltageNominal: selectedEquipment.nominalVoltageKv || 225,
+                                    lineLengthKm: 50.8,
+                                    transferredPowerMw: (selectedEquipment.ratedMva || 320) * 0.9,
+                                    conductorCode: 'ASTER 570 mm²',
+                                  },
+                                });
+                              }}
+                              className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold transition-all"
+                            >
+                              <span className="flex items-center gap-1.5">
+                                <Calculator className="w-3 h-3" />
+                                <span>{locale === 'fr' ? 'Calculateur Ligne & Effet Couronne' : 'Transmission Line & Corona Calc'}</span>
+                              </span>
+                              <ArrowRight className="w-3 h-3" />
+                            </button>
+                          )}
+                          {onNavigateSimulation && (
+                            <button
+                              type="button"
+                              onClick={() => onNavigateSimulation('ferranti')}
+                              className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[10px] font-bold transition-all"
+                            >
+                              <span className="flex items-center gap-1.5">
+                                <Play className="w-3 h-3" />
+                                <span>{locale === 'fr' ? 'Simulateur Effet Ferranti & Surtensions' : 'Ferranti Overvoltage Lab'}</span>
+                              </span>
+                              <ArrowRight className="w-3 h-3" />
+                            </button>
+                          )}
+                        </>
+                      )}
+
+                      {(selectedEquipment.cimType === 'HydroGeneratingUnit' || selectedEquipment.cimType === 'SynchronousMachine') && (
+                        <>
+                          {onNavigateCalculator && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                onNavigateCalculator('power', {
+                                  equipmentId: selectedEquipment.id,
+                                  equipmentName: selectedEquipment.name,
+                                  equipmentTag: selectedEquipment.id,
+                                  params: {
+                                    voltageKv: selectedEquipment.nominalVoltageKv || 15,
+                                    powerMva: selectedEquipment.ratedMva || 70.5,
+                                    cosPhi: 0.85,
+                                  },
+                                });
+                              }}
+                              className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold transition-all"
+                            >
+                              <span className="flex items-center gap-1.5">
+                                <Calculator className="w-3 h-3" />
+                                <span>{locale === 'fr' ? 'Calculateur Puissance P-Q Alternateur' : 'Generator P-Q Power Solver'}</span>
+                              </span>
+                              <ArrowRight className="w-3 h-3" />
+                            </button>
+                          )}
+                          {onNavigateSimulation && (
+                            <button
+                              type="button"
+                              onClick={() => onNavigateSimulation('generator-capability')}
+                              className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-500/30 text-[10px] font-bold transition-all"
+                            >
+                              <span className="flex items-center gap-1.5">
+                                <Play className="w-3 h-3" />
+                                <span>{locale === 'fr' ? 'Diagramme P-Q & Stabilité Alternateur' : 'P-Q Capability & Stability Curve'}</span>
+                              </span>
+                              <ArrowRight className="w-3 h-3" />
+                            </button>
+                          )}
+                        </>
+                      )}
+
+                      {(selectedEquipment.cimType === 'Breaker' || selectedEquipment.cimType === 'ProtectionRelay') && (
+                        <>
+                          {onNavigateCalculator && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                onNavigateCalculator('relay-tcc', {
+                                  equipmentId: selectedEquipment.id,
+                                  equipmentName: selectedEquipment.name,
+                                  equipmentTag: selectedEquipment.id,
+                                  params: {
+                                    nominalVoltageKv: selectedEquipment.nominalVoltageKv || 225,
+                                    ratedCurrentAmps: selectedEquipment.ratedAmps || 3150,
+                                  },
+                                });
+                              }}
+                              className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold transition-all"
+                            >
+                              <span className="flex items-center gap-1.5">
+                                <Calculator className="w-3 h-3" />
+                                <span>{locale === 'fr' ? 'Calculateur Sélectivité Chronométrique TCC' : 'TCC Relay Grading Solver'}</span>
+                              </span>
+                              <ArrowRight className="w-3 h-3" />
+                            </button>
+                          )}
+                          {onNavigateSimulation && (
+                            <button
+                              type="button"
+                              onClick={() => onNavigateSimulation('coordination')}
+                              className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[10px] font-bold transition-all"
+                            >
+                              <span className="flex items-center gap-1.5">
+                                <Play className="w-3 h-3" />
+                                <span>{locale === 'fr' ? 'Simulateur Déclenchement & Coordination' : 'Protection Coordination Lab'}</span>
+                              </span>
+                              <ArrowRight className="w-3 h-3" />
+                            </button>
+                          )}
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

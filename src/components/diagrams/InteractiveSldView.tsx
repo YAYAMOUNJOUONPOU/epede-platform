@@ -18,6 +18,8 @@ import { Iec61850ConfigModal } from './modules/Iec61850ConfigModal';
 import { SubstationAtsTransferModal } from './modules/SubstationAtsTransferModal';
 import { SldLotoPlaybookModal } from './modules/SldLotoPlaybookModal';
 import { ArchitectureComparisonWorkbench } from '../comparison/ArchitectureComparisonWorkbench';
+import { CircuitBreakerCutawayWorkbench } from '../equipment/CircuitBreakerCutawayWorkbench';
+import { SldCaeExportModal } from './modules/SldCaeExportModal';
 import { auditSettingsStore } from '../../data/auditSettingsStore';
 import { SldFaultInjectionPanel } from './SldFaultInjectionPanel';
 import { AlertTriangle, Layers, ChevronDown, ChevronUp, Zap, Award, FileText, ShieldCheck, Shield, Activity, Cpu, Box, ExternalLink } from 'lucide-react';
@@ -35,6 +37,7 @@ interface InteractiveSldViewProps {
   onNavigateSimulation?: (tab?: SimulationTabType) => void;
   onNavigateContextStack?: (nodeId?: string) => void;
   onNavigateArchitectures?: () => void;
+  onNavigateCommissioning?: () => void;
 }
 
 const TOPOLOGY_EQUIPMENT_MAP: Record<string, Array<{ id: string; tag: string; nameFr: string; nameEn: string; rating: string }>> = {
@@ -76,6 +79,7 @@ export const InteractiveSldView: React.FC<InteractiveSldViewProps> = ({
   onNavigateSimulation,
   onNavigateContextStack,
   onNavigateArchitectures,
+  onNavigateCommissioning,
 }) => {
   const svgContainerRef = useRef<HTMLDivElement>(null);
   const sim = useSldSimulation(locale, initialTopology);
@@ -84,6 +88,8 @@ export const InteractiveSldView: React.FC<InteractiveSldViewProps> = ({
   const [showAtsModal, setShowAtsModal] = useState<boolean>(false);
   const [showLotoModal, setShowLotoModal] = useState<boolean>(false);
   const [showBatchComplianceModal, setShowBatchComplianceModal] = useState<boolean>(false);
+  const [showBreakerCutawayModal, setShowBreakerCutawayModal] = useState<boolean>(false);
+  const [showCaeExportModal, setShowCaeExportModal] = useState<boolean>(false);
   const [showOscillogramViewer, setShowOscillogramViewer] = useState<boolean>(false);
   const [showIec61850Modal, setShowIec61850Modal] = useState<boolean>(false);
   const [showArchitecturesModal, setShowArchitecturesModal] = useState<boolean>(false);
@@ -176,6 +182,8 @@ export const InteractiveSldView: React.FC<InteractiveSldViewProps> = ({
         }}
         onOpenLotoPlaybook={() => setShowLotoModal(true)}
         onOpenArchitectures={() => onNavigateArchitectures ? onNavigateArchitectures() : setShowArchitecturesModal(true)}
+        onOpenBreakerCutaway={() => setShowBreakerCutawayModal(true)}
+        onOpenCaeExport={() => setShowCaeExportModal(true)}
       />
 
       {/* EPEDE Core Charter Mandatory Safety Notice */}
@@ -326,6 +334,8 @@ export const InteractiveSldView: React.FC<InteractiveSldViewProps> = ({
         <CimGraphExplorer
           locale={locale}
           onInspectEquipment={onNavigateEquipment}
+          onNavigateCalculator={onNavigateCalculator}
+          onNavigateSimulation={onNavigateSimulation}
         />
       ) : (
         <>
@@ -546,6 +556,7 @@ export const InteractiveSldView: React.FC<InteractiveSldViewProps> = ({
             onNavigateEquipment={onNavigateEquipment}
             onNavigateCalculator={onNavigateCalculator}
             onNavigateSimulation={onNavigateSimulation}
+            onNavigateCommissioning={onNavigateCommissioning}
             embedded={false}
           />
         </div>
@@ -591,6 +602,8 @@ export const InteractiveSldView: React.FC<InteractiveSldViewProps> = ({
         sim={sim}
         locale={locale}
         onNavigateCalculator={onNavigateCalculator}
+        onNavigateSimulation={onNavigateSimulation}
+        onNavigateEquipment={onNavigateEquipment}
         onSetTrafoTap={sim.setTrafoTap}
         onSetActiveLoadMw={sim.setActiveLoadMw}
         onSimulateFault={sim.handleSimulateFault}
@@ -640,6 +653,22 @@ export const InteractiveSldView: React.FC<InteractiveSldViewProps> = ({
         onClose={() => setShowLotoModal(false)}
         locale={locale}
         currentTopology={sim.activeTopology}
+        onApplyProcedureStep={(deviceTag) => {
+          const tag = deviceTag.toLowerCase();
+          if (tag.includes('q0') || tag.includes('52')) {
+            sim.handleToggle('cb-main');
+          } else if (tag.includes('coupl') || tag.includes('bc')) {
+            sim.handleToggle('cb-bus-coupler');
+          } else if (tag.includes('q1') || tag.includes('89-1')) {
+            sim.handleToggle('ds-bus1');
+          } else if (tag.includes('q2') || tag.includes('89-2')) {
+            sim.handleToggle('ds-bus2');
+          } else if (tag.includes('q9') || tag.includes('89-l')) {
+            sim.handleToggle('ds-line');
+          } else if (tag.includes('8') || tag.includes('earth')) {
+            sim.handleToggle('es-line');
+          }
+        }}
       />
 
       {/* Substation Architectures & TCO Modal */}
@@ -668,6 +697,48 @@ export const InteractiveSldView: React.FC<InteractiveSldViewProps> = ({
           </div>
         </div>
       )}
+
+      {/* Circuit Breaker Cutaway Workbench Modal */}
+      {showBreakerCutawayModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-6 bg-black/85 backdrop-blur-md"
+        >
+          <div className="relative w-full max-w-7xl max-h-[94vh] flex flex-col rounded-2xl border border-amber-500/40 bg-[#0B0F17] shadow-2xl overflow-hidden font-sans">
+            <div className="p-3.5 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between shrink-0">
+              <span className="font-mono text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                <Zap className="w-4 h-4 text-amber-400" />
+                <span>{locale === 'fr' ? 'ÉCORCHÉ ÉLECTROMÉCANIQUE & PHYSIQUE DE COUPURE D\'ARC SF₆ (CEI 62271-100)' : 'ELECTROMECHANICAL CUTAWAY & SF₆ ARC QUENCHING PHYSICS (IEC 62271-100)'}</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => setShowBreakerCutawayModal(false)}
+                className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-mono text-xs font-bold transition-colors cursor-pointer"
+              >
+                {locale === 'fr' ? 'Fermer ✕' : 'Close ✕'}
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-3 sm:p-5">
+              <CircuitBreakerCutawayWorkbench
+                locale={locale}
+                bayName={sim.activeTopology === 'double_bus' ? 'TR-225-OYOMABANG' : 'TR-225-BEKOKO'}
+                voltageKv={225}
+                breakingCapacityKa={40}
+                embedded={true}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CAE Simulation & Grid Analysis Export Modal */}
+      <SldCaeExportModal
+        isOpen={showCaeExportModal}
+        onClose={() => setShowCaeExportModal(false)}
+        topology={sim.activeTopology}
+        locale={locale}
+      />
     </div>
   );
 };

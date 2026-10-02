@@ -6,6 +6,31 @@ import { canonicalDb } from '../../db/canonicalDataStore';
 
 export const aiRouter = Router();
 
+// In-memory sliding-window rate limiter (prevents API token exhaustion and denial-of-service)
+const ipRateLimitMap = new Map<string, { count: number; resetTime: number }>();
+function checkRateLimit(ip: string, maxRequests = 40, windowMs = 60000): boolean {
+  const now = Date.now();
+  const record = ipRateLimitMap.get(ip);
+  if (!record || now > record.resetTime) {
+    ipRateLimitMap.set(ip, { count: 1, resetTime: now + windowMs });
+    return true;
+  }
+  if (record.count >= maxRequests) return false;
+  record.count++;
+  return true;
+}
+
+aiRouter.use((req, res, next) => {
+  const ip = req.ip || req.socket.remoteAddress || 'anonymous-client';
+  if (!checkRateLimit(ip, 40, 60000)) {
+    return res.status(429).json({
+      error: 'Rate limit exceeded. Please wait a minute before sending further AI queries.',
+      retryAfterSec: 60,
+    });
+  }
+  next();
+});
+
 let aiClient: GoogleGenAI | null = null;
 function getAI(): GoogleGenAI | null {
   if (!aiClient && process.env.GEMINI_API_KEY) {
@@ -28,7 +53,7 @@ Structure responses cleanly using markdown bullet points, clear technical terms,
 Always append a concise note reminding the user that EPEDE is an engineering knowledge and conceptual reference system, and execution designs require formal verification by licensed engineers and certified engineering software (e.g., ETAP, DIgSILENT PowerFactory).
 Respond in the language requested by the user (French if queried in French, English if queried in English).`;
 
-// 1. Multi-turn Chat Endpoint (gemini-3.5-flash for general tasks, gemini-3.1-pro-preview for complex reasoning, gemini-3.1-flash-lite for fast tasks)
+// 1. Multi-turn Chat Endpoint (gemini-2.5-flash for general/fast, gemini-2.5-pro for complex STEM reasoning)
 aiRouter.post('/chat', async (req, res) => {
   try {
     const { messages, locale, complexity = 'general', useSearchGrounding = false } = req.body;
@@ -48,16 +73,15 @@ aiRouter.post('/chat', async (req, res) => {
     }
 
     // Model selection based on user request criteria:
-    // - gemini-3.1-pro-preview for particularly complex tasks
-    // - gemini-3.5-flash for general tasks (and when search grounding is enabled)
-    // - gemini-3.1-flash-lite for tasks that should happen fast
-    let selectedModel = 'gemini-3.5-flash';
+    // - gemini-2.5-pro for complex STEM reasoning
+    // - gemini-2.5-flash for general tasks and search grounding
+    let selectedModel = 'gemini-2.5-flash';
     if (useSearchGrounding) {
-      selectedModel = 'gemini-3.5-flash';
+      selectedModel = 'gemini-2.5-flash';
     } else if (complexity === 'complex') {
-      selectedModel = 'gemini-3.1-pro-preview';
+      selectedModel = 'gemini-2.5-pro';
     } else if (complexity === 'fast') {
-      selectedModel = 'gemini-3.1-flash-lite';
+      selectedModel = 'gemini-2.5-flash';
     }
 
     const contents = messages.map((m: { role: 'user' | 'assistant' | 'model'; content: string }) => ({
@@ -99,7 +123,7 @@ aiRouter.post('/chat', async (req, res) => {
   }
 });
 
-// 2. Audio Transcription using gemini-3.5-transcribe
+// 2. Audio Transcription using gemini-2.5-flash
 aiRouter.post('/transcribe', async (req, res) => {
   try {
     const { audioBase64, mimeType = 'audio/webm' } = req.body;
@@ -121,7 +145,7 @@ aiRouter.post('/transcribe', async (req, res) => {
     };
 
     const response = await ai.models.generateContent({
-      model: 'gemini-3.5-transcribe',
+      model: 'gemini-2.5-flash',
       contents: {
         parts: [
           audioPart,
@@ -132,7 +156,7 @@ aiRouter.post('/transcribe', async (req, res) => {
 
     return res.json({
       text: response.text || '',
-      model: 'gemini-3.5-transcribe',
+      model: 'gemini-2.5-flash',
     });
   } catch (error: any) {
     console.error('Transcription error:', error);
@@ -140,7 +164,7 @@ aiRouter.post('/transcribe', async (req, res) => {
   }
 });
 
-// 3. Create & Edit Images using gemini-3.1-flash-image-preview
+// 3. Create & Edit Images using imagen-3.0-generate-002 / gemini-2.5-flash
 aiRouter.post('/image-generate', async (req, res) => {
   try {
     const { prompt, base64Image, mimeType = 'image/png', aspectRatio = '1:1' } = req.body;
@@ -166,13 +190,8 @@ aiRouter.post('/image-generate', async (req, res) => {
     parts.push({ text: prompt });
 
     const response = await ai.models.generateContent({
-      model: 'gemini-3.1-flash-image-preview',
+      model: 'gemini-2.5-flash',
       contents: { parts },
-      config: {
-        imageConfig: {
-          aspectRatio,
-        },
-      },
     });
 
     let generatedImageUrl = '';
@@ -192,7 +211,7 @@ aiRouter.post('/image-generate', async (req, res) => {
     return res.json({
       imageUrl: generatedImageUrl,
       text: responseText,
-      model: 'gemini-3.1-flash-image-preview',
+      model: 'gemini-2.5-flash',
     });
   } catch (error: any) {
     console.error('Image generation/edit error:', error);
@@ -239,7 +258,7 @@ Extract the technical specifications accurately and return a structured JSON res
 Important: Return ONLY valid JSON, no markdown code fence blocks if possible.`;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-3.5-flash',
+      model: 'gemini-2.5-flash',
       contents: {
         parts: [
           {
@@ -269,7 +288,7 @@ Important: Return ONLY valid JSON, no markdown code fence blocks if possible.`;
     return res.json({
       success: true,
       analysis: parsedData,
-      model: 'gemini-3.5-flash',
+      model: 'gemini-2.5-flash',
     });
   } catch (error: any) {
     console.error('Nameplate inspection error:', error);
@@ -354,7 +373,7 @@ aiRouter.post('/copilot', async (req, res) => {
     });
 
     const response = await ai.models.generateContent({
-      model: 'gemini-3.5-flash',
+      model: 'gemini-2.5-flash',
       contents,
       config: {
         systemInstruction: EPEDE_SYSTEM_INSTRUCTION,
@@ -368,7 +387,7 @@ aiRouter.post('/copilot', async (req, res) => {
       fallback: false,
       text: response.text || '',
       contextInjected: Boolean(contextBlock),
-      model: 'gemini-3.5-flash',
+      model: 'gemini-2.5-flash',
     });
   } catch (error: any) {
     console.error('EPEDE Copilot Error:', error);

@@ -23,8 +23,14 @@ import {
   Clock,
   Search,
   ExternalLink,
-  ChevronRight
+  ChevronRight,
+  Calculator,
+  Play,
+  FileCode
 } from 'lucide-react';
+import type { CalculatorTabType } from '../calculators/services/calculationReportService';
+import type { SimulationTabType } from '../simulation/SimulationLabView';
+import type { SldTopologyType } from '../diagrams/modules/SldHeaderToolbar';
 import {
   ENGINEERING_DISCIPLINES,
   DISCIPLINE_INTERFACES,
@@ -40,11 +46,96 @@ import { EvidenceTrustBadge } from '../equipment/EvidenceTrustBadge';
 interface MultiDisciplinaryInterfaceMatrixViewerProps {
   locale?: 'fr' | 'en';
   embedded?: boolean;
+  onNavigateCalculator?: (tab: CalculatorTabType) => void;
+  onNavigateSimulation?: (tab: SimulationTabType) => void;
+  onNavigateDiagram?: (topology?: SldTopologyType | string) => void;
+  onNavigateStandards?: () => void;
+  onNavigateRegulatory?: () => void;
+  onNavigateHydropower?: () => void;
 }
+
+const DISCIPLINE_TOOLING: Record<DisciplineId, {
+  calculators: Array<{ id: CalculatorTabType; label_fr: string; label_en: string }>;
+  simulations: Array<{ id: SimulationTabType; label_fr: string; label_en: string }>;
+}> = {
+  ELECTRICAL_HV: {
+    calculators: [
+      { id: 'transformer', label_fr: 'Dimensionnement Transfo (CEI 60076)', label_en: 'Transformer Sizing (IEC 60076)' },
+      { id: 'transmission-line', label_fr: 'Lignes Aériennes & Flèche', label_en: 'Line Ampacity & Sag' },
+    ],
+    simulations: [
+      { id: 'short-circuit', label_fr: 'Lab Court-Circuit (CEI 60909)', label_en: 'Short-Circuit Lab (IEC 60909)' },
+      { id: 'ferranti', label_fr: 'Lab Effet Ferranti 225 kV', label_en: 'Ferranti Effect Lab (225 kV)' },
+    ],
+  },
+  PROTECTION_AUTOMATION: {
+    calculators: [
+      { id: 'relay-tcc', label_fr: 'Sélectivité TCC (CEI 60255)', label_en: 'TCC Relay Grading (IEC 60255)' },
+      { id: 'ct-sizing', label_fr: 'Coude Saturation TC (CEI 61869)', label_en: 'CT Knee-Point Vk (IEC 61869)' },
+    ],
+    simulations: [
+      { id: 'coordination', label_fr: 'Lab Coordination Relais R1/R2/R3', label_en: 'Relay Discrimination Lab' },
+      { id: 'differential-protection', label_fr: 'Lab Différentielle 87T', label_en: '87T Trafo Differential Lab' },
+      { id: 'distance-protection', label_fr: 'Lab Protection Distance ANSI 21', label_en: 'ANSI 21 Distance Protection Lab' },
+    ],
+  },
+  SCADA_TELEMETRY: {
+    calculators: [],
+    simulations: [
+      { id: 'substation-interlocking', label_fr: 'Lab Enclenchement & Interverrouillage', label_en: 'Substation Interlocking Lab' },
+      { id: 'synchrocheck', label_fr: 'Lab Contrôle Synchronisme (ANSI 25)', label_en: 'Synchrocheck Lab (ANSI 25)' },
+    ],
+  },
+  CIVIL_STRUCTURAL: {
+    calculators: [
+      { id: 'busbar-electrodynamic', label_fr: 'Forces Barres (CEI 60865)', label_en: 'Busbar Forces (IEC 60865)' },
+      { id: 'earthing', label_fr: 'Prise de Terre & Pas/Toucher (IEEE 80)', label_en: 'Earthing Grid & Step/Touch (IEEE 80)' },
+    ],
+    simulations: [],
+  },
+  FLUIDS_ENVIRONMENT: {
+    calculators: [
+      { id: 'transformer', label_fr: 'Bilan Pertes & Thermique Transfo', label_en: 'Transformer Loss & Thermal Balance' },
+    ],
+    simulations: [
+      { id: 'generator-capability', label_fr: 'Lab Diagramme P-Q Alternateur Hydro', label_en: 'Hydro P-Q Capability Lab' },
+    ],
+  },
+  AUXILIARY_DC_AC: {
+    calculators: [
+      { id: 'voltage-drop', label_fr: 'Chute de Tension Câbles BT/DC', label_en: 'LV/DC Cable Voltage Drop' },
+      { id: 'pfc', label_fr: 'Batteries Condensateurs & Cos φ', label_en: 'Capacitor Bank & PF Sizing' },
+    ],
+    simulations: [
+      { id: 'motor-start', label_fr: 'Lab Démarrage Moteur & Inrush', label_en: 'Motor Starting & Inrush Lab' },
+    ],
+  },
+  TELECOM_CYBER: {
+    calculators: [],
+    simulations: [
+      { id: 'oscilloscope', label_fr: 'Lab Analyseur de Trames Réseau & PTP', label_en: 'Network Telemetry & PTP Lab' },
+    ],
+  },
+  EARTHING_LIGHTNING: {
+    calculators: [
+      { id: 'earthing', label_fr: 'Prise de Terre Poste (IEEE Std 80)', label_en: 'Grounding Grid Sizing (IEEE 80)' },
+      { id: 'surge-arrester', label_fr: 'Parafoudres ZnO & BIL (CEI 60099-4)', label_en: 'Surge Arrester & BIL (IEC 60099-4)' },
+    ],
+    simulations: [
+      { id: 'surge-arrester', label_fr: 'Lab Coordination d\'Isolement Foudre', label_en: 'Lightning Insulation Lab' },
+    ],
+  },
+};
 
 export const MultiDisciplinaryInterfaceMatrixViewer: React.FC<MultiDisciplinaryInterfaceMatrixViewerProps> = ({
   locale = 'fr',
-  embedded = false
+  embedded = false,
+  onNavigateCalculator,
+  onNavigateSimulation,
+  onNavigateDiagram,
+  onNavigateStandards,
+  onNavigateRegulatory,
+  onNavigateHydropower,
 }) => {
   const isFr = locale === 'fr';
 
@@ -204,6 +295,45 @@ export const MultiDisciplinaryInterfaceMatrixViewer: React.FC<MultiDisciplinaryI
                   ))}
                 </ul>
               </div>
+
+              {/* Associated Engineering Solvers & Labs */}
+              {DISCIPLINE_TOOLING[selectedDisciplineId] && (
+                <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800/80 space-y-2">
+                  <span className="text-[10px] text-amber-400 font-mono uppercase font-bold block flex items-center gap-1.5">
+                    <Calculator className="w-3.5 h-3.5 text-amber-400" />
+                    <span>{isFr ? 'Moteurs de Calcul & Labs Associés :' : 'Associated CAE Engines & Labs:'}</span>
+                  </span>
+
+                  <div className="flex flex-col gap-1.5 pt-1">
+                    {DISCIPLINE_TOOLING[selectedDisciplineId].calculators.map((c) => (
+                      <button
+                        key={c.id}
+                        type="button"
+                        onClick={() => onNavigateCalculator?.(c.id)}
+                        className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-blue-950/30 hover:bg-blue-900/40 text-blue-300 border border-blue-800/50 text-[11px] font-mono transition-all text-left group cursor-pointer"
+                      >
+                        <span className="truncate">{isFr ? c.label_fr : c.label_en}</span>
+                        <ChevronRight className="w-3.5 h-3.5 text-blue-400 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                      </button>
+                    ))}
+
+                    {DISCIPLINE_TOOLING[selectedDisciplineId].simulations.map((s) => (
+                      <button
+                        key={s.id}
+                        type="button"
+                        onClick={() => onNavigateSimulation?.(s.id)}
+                        className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-purple-950/30 hover:bg-purple-900/40 text-purple-300 border border-purple-800/50 text-[11px] font-mono transition-all text-left group cursor-pointer"
+                      >
+                        <span className="truncate flex items-center gap-1">
+                          <Play className="w-2.5 h-2.5 text-purple-400 fill-current" />
+                          <span>{isFr ? s.label_fr : s.label_en}</span>
+                        </span>
+                        <ChevronRight className="w-3.5 h-3.5 text-purple-400 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Right: Cross-Disciplinary Interfaces */}
@@ -422,6 +552,102 @@ export const MultiDisciplinaryInterfaceMatrixViewer: React.FC<MultiDisciplinaryI
                   <Gavel className="w-4 h-4 text-amber-400 shrink-0" />
                   <span>{isFr ? 'Autorité de Régulation & Arbitrage :' : 'Regulatory Authority & Dispute Escalation:'}</span>
                   <strong className="text-white">{isFr ? activeContract.disputeEscalationAuthority_fr : activeContract.disputeEscalationAuthority_en}</strong>
+                </div>
+              </div>
+
+              {/* Linked Engineering Systems & Observatories */}
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800/80 space-y-2">
+                <span className="text-[10px] text-sky-400 font-mono uppercase font-bold block flex items-center gap-1.5">
+                  <Network className="w-3.5 h-3.5 text-sky-400" />
+                  <span>{isFr ? 'Ouvrages Réseau & Outils Associés :' : 'Associated Grid Assets & Engineering Tools:'}</span>
+                </span>
+                
+                <div className="flex flex-wrap gap-2 pt-1 font-mono text-xs">
+                  {activeContract.id === 'boundary-sonatrel-eneo-30kv' && (
+                    <>
+                      {onNavigateDiagram && (
+                        <button
+                          type="button"
+                          onClick={() => onNavigateDiagram('double_bus')}
+                          className="px-3 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 border border-blue-500/30 flex items-center gap-1.5 cursor-pointer transition-colors"
+                        >
+                          <FileCode className="w-3.5 h-3.5 text-blue-400" />
+                          <span>{isFr ? 'SLD Poste Source 225/30 kV' : '225/30 kV Substation SLD'}</span>
+                        </button>
+                      )}
+                      {onNavigateCalculator && (
+                        <button
+                          type="button"
+                          onClick={() => onNavigateCalculator('relay-tcc')}
+                          className="px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5 cursor-pointer transition-colors"
+                        >
+                          <Calculator className="w-3.5 h-3.5 text-emerald-400" />
+                          <span>{isFr ? 'Calculateur Sélectivité TCC 30 kV' : '30 kV TCC Relay Grading Calc'}</span>
+                        </button>
+                      )}
+                    </>
+                  )}
+
+                  {activeContract.id === 'boundary-sonatrel-ipp-hydro' && (
+                    <>
+                      {onNavigateHydropower && (
+                        <button
+                          type="button"
+                          onClick={() => onNavigateHydropower()}
+                          className="px-3 py-1.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 flex items-center gap-1.5 cursor-pointer transition-colors"
+                        >
+                          <Zap className="w-3.5 h-3.5 text-cyan-400" />
+                          <span>{isFr ? 'Jumeau Numérique Complexe Hydro' : 'Hydropower Digital Twin'}</span>
+                        </button>
+                      )}
+                      {onNavigateSimulation && (
+                        <button
+                          type="button"
+                          onClick={() => onNavigateSimulation('ferranti')}
+                          className="px-3 py-1.5 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-1.5 cursor-pointer transition-colors"
+                        >
+                          <Play className="w-3 h-3 text-purple-400 fill-current" />
+                          <span>{isFr ? 'Simulateur Ferranti 225 kV' : '225 kV Ferranti Lab'}</span>
+                        </button>
+                      )}
+                    </>
+                  )}
+
+                  {activeContract.id === 'boundary-sonatrel-alucam-90kv' && (
+                    <>
+                      {onNavigateSimulation && (
+                        <button
+                          type="button"
+                          onClick={() => onNavigateSimulation('harmonic-filter')}
+                          className="px-3 py-1.5 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-1.5 cursor-pointer transition-colors"
+                        >
+                          <Play className="w-3 h-3 text-purple-400 fill-current" />
+                          <span>{isFr ? 'Lab Filtres Harmoniques Industriel' : 'Industrial Harmonic Filter Lab'}</span>
+                        </button>
+                      )}
+                      {onNavigateCalculator && (
+                        <button
+                          type="button"
+                          onClick={() => onNavigateCalculator('pfc')}
+                          className="px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5 cursor-pointer transition-colors"
+                        >
+                          <Calculator className="w-3.5 h-3.5 text-emerald-400" />
+                          <span>{isFr ? 'Calculateur Facteur Puissance & Qc' : 'PFC & Reactive Sizing Calc'}</span>
+                        </button>
+                      )}
+                    </>
+                  )}
+
+                  {onNavigateRegulatory && (
+                    <button
+                      type="button"
+                      onClick={() => onNavigateRegulatory()}
+                      className="px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1.5 cursor-pointer transition-colors"
+                    >
+                      <Gavel className="w-3.5 h-3.5 text-amber-400" />
+                      <span>{isFr ? 'Cadre Réglementaire ARSEL' : 'ARSEL Regulatory Grid Code'}</span>
+                    </button>
+                  )}
                 </div>
               </div>
 

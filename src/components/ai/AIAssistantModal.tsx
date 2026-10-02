@@ -638,7 +638,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
                       ? 'bg-sky-500/20 text-sky-300 border-sky-500/50 font-bold'
                       : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white'
                   }`}
-                  title="Enable Google Search Grounding with gemini-3.5-flash"
+                  title="Enable Google Search Grounding with Gemini 2.5 Flash"
                 >
                   <Search className="h-3.5 w-3.5 text-sky-400" />
                   <span>{locale === 'fr' ? 'Recherche Web (Google Search Grounding)' : 'Google Search Grounding'}</span>
@@ -648,7 +648,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
                 {transcribing && (
                   <span className="text-xs text-amber-400 font-mono flex items-center gap-1 animate-pulse">
                     <Loader2 className="h-3 w-3 animate-spin" />
-                    <span>{locale === 'fr' ? 'Transcription audio (gemini-3.5-transcribe)...' : 'Transcribing voice...'}</span>
+                    <span>{locale === 'fr' ? 'Transcription audio (Gemini 2.5 Flash)...' : 'Transcribing voice...'}</span>
                   </span>
                 )}
               </div>
@@ -675,7 +675,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
                       ? 'bg-red-500 text-white border-red-400 animate-pulse'
                       : 'bg-slate-900 text-slate-300 border-slate-800 hover:text-white hover:border-slate-700'
                   }`}
-                  title={isRecording ? 'Arrêter l\'enregistrement' : 'Dicter avec le micro (gemini-3.5-transcribe)'}
+                  title={isRecording ? 'Arrêter l\'enregistrement' : 'Dicter avec le micro (Gemini 2.5 Flash)'}
                 >
                   {isRecording ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
                 </button>
@@ -711,13 +711,13 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
           </div>
         )}
 
-        {/* TAB 2: CREATE & EDIT IMAGES WITH gemini-3.1-flash-image-preview */}
+        {/* TAB 2: CREATE & EDIT IMAGES WITH Gemini 2.5 Flash */}
         {activeTab === 'image' && (
           <div className="flex-1 flex flex-col min-h-0 p-4 sm:p-6 space-y-4 overflow-y-auto">
             <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3">
               <div className="flex items-center gap-2 text-purple-400 font-bold text-sm">
                 <ImageIcon className="h-4 w-4" />
-                <span>{locale === 'fr' ? 'Génération & Édition d\'Images avec gemini-3.1-flash-image-preview' : 'Image Generation & Editing with gemini-3.1-flash-image-preview'}</span>
+                <span>{locale === 'fr' ? 'Génération & Édition d\'Images avec Gemini 2.5 Flash' : 'Image Generation & Editing with Gemini 2.5 Flash'}</span>
               </div>
               <p className="text-xs text-slate-400">
                 {locale === 'fr'

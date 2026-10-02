@@ -24,6 +24,19 @@ import {
 interface TransmissionLineCalculatorProps {
   locale: 'fr' | 'en';
   onOpenReport?: () => void;
+  initialParams?: {
+    unKv?: number;
+    voltageNominal?: number;
+    lineLengthKm?: number;
+    lengthKm?: number;
+    transferredPowerMw?: number;
+    powerMw?: number;
+    conductorCode?: string;
+  };
+  injectedContextInfo?: {
+    equipmentName: string;
+    equipmentTag?: string;
+  };
 }
 
 export type LinePreset =
@@ -36,23 +49,52 @@ export type LinePreset =
 export const TransmissionLineCalculator: React.FC<TransmissionLineCalculatorProps> = ({
   locale,
   onOpenReport,
+  initialParams,
+  injectedContextInfo,
 }) => {
   // ---------------------------------------------------------------------------
   // 1. STATE CONFIGURATION
   // ---------------------------------------------------------------------------
-  const [activePreset, setActivePreset] = useState<LinePreset>('nachtigal_nyom_225kv');
+  const [activePreset, setActivePreset] = useState<LinePreset>(
+    initialParams ? 'custom' : 'nachtigal_nyom_225kv'
+  );
 
   // Electrical & Grid Parameters
-  const [unKv, setUnKv] = useState<number>(225); // Line voltage (kV)
+  const [unKv, setUnKv] = useState<number>(
+    initialParams?.unKv || initialParams?.voltageNominal || 225
+  ); // Line voltage (kV)
   const [frequencyHz, setFrequencyHz] = useState<number>(50); // Grid frequency (Hz)
-  const [lineLengthKm, setLineLengthKm] = useState<number>(50.8); // Total route length (km)
-  const [transferredPowerMw, setTransferredPowerMw] = useState<number>(420); // Operating power (MW)
+  const [lineLengthKm, setLineLengthKm] = useState<number>(
+    initialParams?.lineLengthKm || initialParams?.lengthKm || 50.8
+  ); // Total route length (km)
+  const [transferredPowerMw, setTransferredPowerMw] = useState<number>(
+    initialParams?.transferredPowerMw || initialParams?.powerMw || 420
+  ); // Operating power (MW)
   const [operatingCosPhi, setOperatingCosPhi] = useState<number>(0.96); // Power factor
 
   // Conductor & Bundle Configuration
   const [bundleCount, setBundleCount] = useState<number>(2); // 1, 2, 3, 4 conductors per phase
   const [bundleSpacingMm, setBundleSpacingMm] = useState<number>(400); // Distance between subconductors (mm)
-  const [conductorCode, setConductorCode] = useState<string>('Almelec (ASTER 570 mm²)');
+  const [conductorCode, setConductorCode] = useState<string>(
+    initialParams?.conductorCode || 'Almelec (ASTER 570 mm²)'
+  );
+
+  // Sync if initialParams changes
+  React.useEffect(() => {
+    if (initialParams) {
+      if (initialParams.unKv !== undefined) setUnKv(initialParams.unKv);
+      else if (initialParams.voltageNominal !== undefined) setUnKv(initialParams.voltageNominal);
+
+      if (initialParams.lineLengthKm !== undefined) setLineLengthKm(initialParams.lineLengthKm);
+      else if (initialParams.lengthKm !== undefined) setLineLengthKm(initialParams.lengthKm);
+
+      if (initialParams.transferredPowerMw !== undefined) setTransferredPowerMw(initialParams.transferredPowerMw);
+      else if (initialParams.powerMw !== undefined) setTransferredPowerMw(initialParams.powerMw);
+
+      if (initialParams.conductorCode !== undefined) setConductorCode(initialParams.conductorCode);
+      setActivePreset('custom');
+    }
+  }, [initialParams]);
   const [conductorDiameterMm, setConductorDiameterMm] = useState<number>(31.05); // Conductor outer diameter (mm)
   const [subconductorR20, setSubconductorR20] = useState<number>(0.0583); // DC resistance at 20°C (Ω/km)
 

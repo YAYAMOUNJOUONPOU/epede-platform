@@ -26,6 +26,8 @@ import {
   Layers,
   Droplet,
   Wind,
+  Calculator,
+  Play,
 } from 'lucide-react';
 import {
   HYDRO_CANONICAL_GRAPH_NODES,
@@ -39,10 +41,15 @@ import type {
   HydroRelationType,
   HydroSubsystemId,
 } from '../../types/hydropower';
+import type { CalculatorTabType } from '../calculators/services/calculationReportService';
+import type { InjectedCalculatorContext } from '../../services/routerService';
+import type { SimulationTabType } from '../simulation/SimulationLabView';
 
 interface HydropowerGraphViewProps {
   locale: 'fr' | 'en';
   onSelectSubsystem?: (subsystemId: HydroSubsystemId) => void;
+  onNavigateCalculator?: (tab: CalculatorTabType, context?: InjectedCalculatorContext) => void;
+  onNavigateSimulation?: (tab: SimulationTabType) => void;
 }
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -90,6 +97,8 @@ const DOMAIN_EDGE_COLORS: Record<string, string> = {
 export const HydropowerGraphView: React.FC<HydropowerGraphViewProps> = ({
   locale,
   onSelectSubsystem,
+  onNavigateCalculator,
+  onNavigateSimulation,
 }) => {
   const [selectedNodeId, setSelectedNodeId] = useState<string>('node-h09'); // Default: Synchronous Generator
   const [traversalDirection, setTraversalDirection] = useState<'upstream' | 'downstream' | 'all'>('all');
@@ -344,15 +353,71 @@ export const HydropowerGraphView: React.FC<HydropowerGraphViewProps> = ({
                 </div>
               </div>
 
-              {onSelectSubsystem && (
-                <button
-                  type="button"
-                  onClick={() => onSelectSubsystem(selectedNode.subsystemId)}
-                  className="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-mono text-xs font-bold transition-all shadow-xs"
-                >
-                  {locale === 'fr' ? `Détails ${selectedNode.subsystemId}` : `Inspect ${selectedNode.subsystemId}`}
-                </button>
-              )}
+              <div className="flex flex-wrap items-center gap-2">
+                {onSelectSubsystem && (
+                  <button
+                    type="button"
+                    onClick={() => onSelectSubsystem(selectedNode.subsystemId)}
+                    className="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-mono text-xs font-bold transition-all shadow-xs"
+                  >
+                    {locale === 'fr' ? `Détails ${selectedNode.subsystemId}` : `Inspect ${selectedNode.subsystemId}`}
+                  </button>
+                )}
+
+                {/* Direct Solvers & Simulation Bridge */}
+                {selectedNode.category === 'electrical' && onNavigateCalculator && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (selectedNode.id.includes('trafo') || selectedNode.subsystemId === 'H10') {
+                        onNavigateCalculator('transformer', {
+                          equipmentId: selectedNode.id,
+                          equipmentName: locale === 'fr' ? selectedNode.label.fr : selectedNode.label.en,
+                          equipmentTag: selectedNode.id,
+                          params: {
+                            trafoKva: 63000,
+                            trafoHvKv: 225,
+                            trafoLvV: 10500,
+                            trafoUkPercent: 12.0,
+                          },
+                        });
+                      } else {
+                        onNavigateCalculator('power', {
+                          equipmentId: selectedNode.id,
+                          equipmentName: locale === 'fr' ? selectedNode.label.fr : selectedNode.label.en,
+                          equipmentTag: selectedNode.id,
+                          params: {
+                            voltageKv: 10.5,
+                            powerMva: 48,
+                            cosPhi: 0.85,
+                          },
+                        });
+                      }
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 font-mono text-xs font-bold transition-all"
+                  >
+                    <Calculator className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>{locale === 'fr' ? 'Calcul Électrique' : 'Electrical Calc'}</span>
+                  </button>
+                )}
+
+                {selectedNode.category === 'electrical' && onNavigateSimulation && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (selectedNode.id.includes('trafo') || selectedNode.subsystemId === 'H10') {
+                        onNavigateSimulation('differential-protection');
+                      } else {
+                        onNavigateSimulation('generator-capability');
+                      }
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 font-mono text-xs font-bold transition-all"
+                  >
+                    <Play className="w-3.5 h-3.5 text-amber-400" />
+                    <span>{locale === 'fr' ? 'Simulateur' : 'Simulation'}</span>
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Direct Inbound / Outbound Micro-Flow */}

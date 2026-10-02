@@ -45,6 +45,7 @@ import { SubstationSensitivityCurvesView } from './SubstationSensitivityCurvesVi
 import { SubstationCommissioningProtocolView } from './SubstationCommissioningProtocolView';
 import type { SldTopologyType } from './SldHeaderToolbar';
 import type { CalculatorTabType } from '../../calculators/services/calculationReportService';
+import type { SimulationTabType } from '../../simulation/SimulationLabView';
 import type { InjectedCalculatorContext } from '../../../services/routerService';
 
 interface SubstationBatchComplianceModalProps {
@@ -54,6 +55,8 @@ interface SubstationBatchComplianceModalProps {
   sim: SubstationSimulationSnapshot;
   locale: 'fr' | 'en';
   onNavigateCalculator?: (tab?: CalculatorTabType, context?: InjectedCalculatorContext) => void;
+  onNavigateSimulation?: (tab?: SimulationTabType) => void;
+  onNavigateEquipment?: (equipmentId: string) => void;
   onSetTrafoTap?: (tap: number) => void;
   onSetActiveLoadMw?: (mw: number) => void;
   onSimulateFault?: (fault: string | null) => void;
@@ -67,6 +70,8 @@ export const SubstationBatchComplianceModal: React.FC<SubstationBatchComplianceM
   sim,
   locale,
   onNavigateCalculator,
+  onNavigateSimulation,
+  onNavigateEquipment,
   onSetTrafoTap,
   onSetActiveLoadMw,
   onSimulateFault,
@@ -987,8 +992,51 @@ export const SubstationBatchComplianceModal: React.FC<SubstationBatchComplianceM
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 flex-wrap">
                     {getStatusBadge(app.overallStatus)}
+
+                    {onNavigateEquipment && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onClose();
+                          const mappedEqId = 
+                            app.category === 'TRANSFORMER' ? 'eq-exp-sub-trafo-225-30' :
+                            app.category === 'BREAKER' ? 'eq-exp-gis-bay-225k' :
+                            app.category === 'FEEDER' ? 'eq-cell-mv-30k-01' :
+                            app.category === 'PROTECTION' ? 'eq-exp-relay-ied-61850' :
+                            'eq-exp-gis-bay-225k';
+                          onNavigateEquipment(mappedEqId);
+                        }}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-mono font-semibold transition-all cursor-pointer"
+                        title={locale === 'fr' ? 'Consulter la fiche technique et le jumeau numérique' : 'View apparatus technical fiche & twin'}
+                      >
+                        <FileText className="h-3.5 w-3.5 text-cyan-400" />
+                        <span>{locale === 'fr' ? 'Fiche' : 'Fiche'}</span>
+                      </button>
+                    )}
+
+                    {onNavigateSimulation && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onClose();
+                          const simTab: SimulationTabType = 
+                            app.category === 'TRANSFORMER' ? 'differential-protection' :
+                            app.category === 'BREAKER' ? 'short-circuit' :
+                            app.category === 'FEEDER' ? 'coordination' :
+                            app.category === 'PROTECTION' ? 'coordination' :
+                            'substation-interlocking';
+                          onNavigateSimulation(simTab);
+                        }}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 border border-purple-500/40 text-xs font-mono font-bold transition-all cursor-pointer"
+                        title={locale === 'fr' ? 'Lancer le banc d\'essais dynamique' : 'Launch dynamic simulation lab'}
+                      >
+                        <Activity className="h-3.5 w-3.5 text-purple-400" />
+                        <span>{locale === 'fr' ? 'Simuler' : 'Simulate'}</span>
+                      </button>
+                    )}
+
                     {onNavigateCalculator && (
                       <button
                         type="button"

@@ -51,6 +51,7 @@ interface EquipmentDetailViewProps {
   onNavigateSimulation?: (tab?: SimulationTabType) => void;
   onNavigateContextStack?: (nodeId?: string) => void;
   onNavigateStandard?: (ref: string) => void;
+  onNavigateAssetManagement?: (pillar?: string) => void;
 }
 
 export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
@@ -64,6 +65,7 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
   onNavigateSimulation,
   onNavigateContextStack,
   onNavigateStandard,
+  onNavigateAssetManagement,
 }) => {
   const [viewMode, setViewMode] = useState<'overview' | 'universal_fiche' | 'dossier_30_sections' | 'aas_v3_shell' | 'engineering_calculation' | 'documentation'>('overview');
   const [apiEquipment, setApiEquipment] = useState<ApiEquipmentDto | null>(null);
@@ -741,6 +743,7 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
           locale={locale}
           onNavigateEquipment={onNavigateEquipment}
           onNavigateSimulation={onNavigateSimulation}
+          onNavigateCalculator={onNavigateCalculator}
           onNavigateStandard={onNavigateStandard}
           onNavigateCameroonGrid={() => onNavigateDomain('D04')}
           onNavigateKnowledgeGraph={(id) => onNavigateContextStack?.(id)}
@@ -813,8 +816,17 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
                 )}
               </div>
 
-              {/* DENSE TECHNICAL RATINGS TABLE */}
-              <EquipmentRatingsTable technical={equipment.technical} locale={locale} />
+              {/* DENSE TECHNICAL RATINGS TABLE WITH CAE SOLVER INJECTION */}
+              <EquipmentRatingsTable 
+                technical={equipment.technical} 
+                locale={locale} 
+                equipmentId={equipment.id}
+                equipmentName={locale === 'fr' ? equipment.name_fr : equipment.name_en}
+                domainCode={equipment.domain_code}
+                onNavigateCalculator={onNavigateCalculator}
+                onNavigateSimulation={onNavigateSimulation}
+                onNavigateAssetManagement={onNavigateAssetManagement}
+              />
             </div>
 
             {/* Right: Relations Graph & Functional Edges */}
@@ -863,6 +875,8 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
             locale={locale}
             canonical={canonicalEquipment}
             onOpenFullDossier={() => setViewMode('dossier_30_sections')}
+            onNavigateCalculator={onNavigateCalculator}
+            onNavigateSimulation={onNavigateSimulation}
           />
         </>
       )}

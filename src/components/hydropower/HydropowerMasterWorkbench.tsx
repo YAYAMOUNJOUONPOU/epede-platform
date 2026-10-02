@@ -52,6 +52,9 @@ import { HydropowerOtsView } from './HydropowerOtsView';
 import { HydropowerWamsInertiaView } from './HydropowerWamsInertiaView';
 import { HydropowerEsgBioView } from './HydropowerEsgBioView';
 import type { HydroSubsystemId } from '../../types/hydropower';
+import type { CalculatorTabType } from '../calculators/services/calculationReportService';
+import type { InjectedCalculatorContext } from '../../services/routerService';
+import type { SimulationTabType } from '../simulation/SimulationLabView';
 
 export type HydroWorkbenchTab =
   | 'journey'
@@ -84,6 +87,8 @@ interface HydropowerMasterWorkbenchProps {
   onBack?: () => void;
   initialTab?: HydroWorkbenchTab;
   onNavigateStandard?: (reference: string) => void;
+  onNavigateCalculator?: (tab: CalculatorTabType, context?: InjectedCalculatorContext) => void;
+  onNavigateSimulation?: (tab: SimulationTabType) => void;
 }
 
 export const HydropowerMasterWorkbench: React.FC<HydropowerMasterWorkbenchProps> = ({
@@ -91,6 +96,8 @@ export const HydropowerMasterWorkbench: React.FC<HydropowerMasterWorkbenchProps>
   onBack,
   initialTab = 'journey',
   onNavigateStandard,
+  onNavigateCalculator,
+  onNavigateSimulation,
 }) => {
   const [activeTab, setActiveTab] = useState<HydroWorkbenchTab>(initialTab);
   const [selectedSubsystemForInspection, setSelectedSubsystemForInspection] = useState<HydroSubsystemId>('H09');
@@ -404,6 +411,8 @@ export const HydropowerMasterWorkbench: React.FC<HydropowerMasterWorkbenchProps>
             <HydropowerGraphView
               locale={locale}
               onSelectSubsystem={handleSelectSubsystem}
+              onNavigateCalculator={onNavigateCalculator}
+              onNavigateSimulation={onNavigateSimulation}
             />
           )}
           {activeTab === 'subsystems' && (

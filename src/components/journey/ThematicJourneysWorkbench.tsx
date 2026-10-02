@@ -47,7 +47,7 @@ export const ThematicJourneysWorkbench: React.FC<ThematicJourneysWorkbenchProps>
   onNavigate,
   initialJourneyId,
 }) => {
-  const { currentLevel } = useUsageLevel();
+  const { usageLevel } = useUsageLevel();
 
   // Active journey state
   const [selectedJourney, setSelectedJourney] = useState<ThematicJourney>(() => {
@@ -228,36 +228,36 @@ export const ThematicJourneysWorkbench: React.FC<ThematicJourneysWorkbenchProps>
             </button>
             <button
               type="button"
-              onClick={() => setProfileFilter('DECOUVERTE')}
+              onClick={() => setProfileFilter('DISCOVERY')}
               className={`px-3 py-1.5 rounded-lg transition-all font-bold ${
-                profileFilter === 'DECOUVERTE'
+                profileFilter === 'DISCOVERY'
                   ? 'bg-emerald-700 text-white shadow-xs'
                   : 'text-emerald-400 hover:text-white'
               }`}
             >
-              Découverte
+              {locale === 'fr' ? 'Découverte' : 'Discovery'}
             </button>
             <button
               type="button"
-              onClick={() => setProfileFilter('TECHNIQUE')}
+              onClick={() => setProfileFilter('TECHNICAL')}
               className={`px-3 py-1.5 rounded-lg transition-all font-bold ${
-                profileFilter === 'TECHNIQUE'
+                profileFilter === 'TECHNICAL'
                   ? 'bg-sky-700 text-white shadow-xs'
                   : 'text-sky-400 hover:text-white'
               }`}
             >
-              Technique
+              {locale === 'fr' ? 'Technique' : 'Technical'}
             </button>
             <button
               type="button"
-              onClick={() => setProfileFilter('INGENIERIE')}
+              onClick={() => setProfileFilter('ENGINEERING')}
               className={`px-3 py-1.5 rounded-lg transition-all font-bold ${
-                profileFilter === 'INGENIERIE'
+                profileFilter === 'ENGINEERING'
                   ? 'bg-purple-700 text-white shadow-xs'
                   : 'text-purple-400 hover:text-white'
               }`}
             >
-              Ingénierie
+              {locale === 'fr' ? 'Ingénierie' : 'Engineering'}
             </button>
           </div>
         </div>

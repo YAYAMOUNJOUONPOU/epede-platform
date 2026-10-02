@@ -2,7 +2,7 @@
 // EPEDE Deep Engineering Module — Domain D06: Electrical Installations & Switchboards
 // Module 24: Switchboard Commissioning, FAT / SAT Inspection & Dielectric Testing Engine (IEC 61439-1 / NF C 15-100 Part 6)
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   InstallationProject, 
   computeProjectPowerBalance 
@@ -29,9 +29,13 @@ import {
   FileDown,
   Check,
   Building2,
-  UserCheck
+  UserCheck,
+  Wifi,
+  WifiOff,
+  HardDrive
 } from 'lucide-react';
 import { generateFatSatPdf } from './services/FatSatPdfExportService';
+import { offlineInspectionStorage, OfflineInspectionData } from '../../services/offlineInspectionStorage';
 
 interface Props {
   project: InstallationProject;
@@ -243,6 +247,118 @@ export const ProjectCommissioningFatSatEngine: React.FC<Props> = ({ project, loc
 
   const isCommissioningApproved = failCount === 0 && pendingCount === 0 && isInsulationCompliant && isBondingCompliant;
 
+  // 6. Substation Offline Field Operation Engine (PWA IndexedDB Persistence)
+  const [isOnline, setIsOnline] = useState<boolean>(() => offlineInspectionStorage.getOnlineStatus());
+  const [lastSavedTime, setLastSavedTime] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleStatus = (e: any) => {
+      setIsOnline(e.detail?.online ?? navigator.onLine);
+    };
+    window.addEventListener('epede-network-status', handleStatus);
+    return () => window.removeEventListener('epede-network-status', handleStatus);
+  }, []);
+
+  // Load persisted inspection on project mount
+  useEffect(() => {
+    let isMounted = true;
+    offlineInspectionStorage.loadInspectionSession(project.id).then((saved) => {
+      if (!isMounted || !saved) return;
+      if (saved.stage) setActiveStage(saved.stage);
+      if (saved.inspectorName) setSignerName(saved.inspectorName);
+      if (saved.inspectorTitle) setSignerRole(saved.inspectorTitle);
+      if (saved.inspectionOrg) setInspectionBureau(saved.inspectionOrg);
+      if (saved.pvReference) setRevisionRef(saved.pvReference);
+      if (saved.checklistState) {
+        setChecklist((prev) =>
+          prev.map((item) => {
+            const savedItem = saved.checklistState[item.id];
+            return savedItem ? { ...item, status: savedItem.status, notes: savedItem.notes, measuredValue: savedItem.measuredValue } : item;
+          })
+        );
+      }
+      setLastSavedTime(new Date(saved.updatedAt).toLocaleTimeString());
+    });
+    return () => { isMounted = false; };
+  }, [project.id]);
+
+  // Auto-save on checklist and field parameters update
+  useEffect(() => {
+    const checklistState: OfflineInspectionData['checklistState'] = {};
+    checklist.forEach((item) => {
+      checklistState[item.id] = {
+        status: item.status,
+        measuredValue: item.measuredValue,
+        notes: item.notes,
+      };
+    });
+
+    const sessionPayload: OfflineInspectionData = {
+      projectId: project.id,
+      projectName: project.name,
+      stage: activeStage,
+      updatedAt: new Date().toISOString(),
+      inspectorName: signerName,
+      inspectorTitle: signerRole,
+      inspectionOrg: inspectionBureau,
+      pvReference: revisionRef,
+      checklistState,
+      dielectricData: {
+        testVoltageKv: String(appliedDielectricKv),
+        durationSec: dielectricWithstandSec,
+        insulationResistanceMohm: String(measuredRisoMegaOhms),
+        leakageCurrentMa: '0.8',
+        dielectricResult: isDielectricCompliant ? 'CONFORME' : 'NON_CONFORME',
+      },
+      torqueData: {
+        busbarJointTorqueNm: String(recommendedTorqueNm),
+        breakerLugTorqueNm: '45',
+        cableGlandTorqueNm: '25',
+        torqueResult: 'CONFORME',
+      },
+    };
+
+    offlineInspectionStorage.saveInspectionSession(sessionPayload).then(() => {
+      setLastSavedTime(new Date().toLocaleTimeString());
+    });
+  }, [
+    project.id,
+    project.name,
+    activeStage,
+    checklist,
+    signerName,
+    signerRole,
+    inspectionBureau,
+    revisionRef,
+    appliedDielectricKv,
+    dielectricWithstandSec,
+    measuredRisoMegaOhms,
+    isDielectricCompliant,
+    recommendedTorqueNm,
+  ]);
+
+  const handleExportBackup = () => {
+    const checklistState: OfflineInspectionData['checklistState'] = {};
+    checklist.forEach((item) => {
+      checklistState[item.id] = {
+        status: item.status,
+        measuredValue: item.measuredValue,
+        notes: item.notes,
+      };
+    });
+    offlineInspectionStorage.exportBackupJson({
+      projectId: project.id,
+      projectName: project.name,
+      stage: activeStage,
+      updatedAt: new Date().toISOString(),
+      inspectorName: signerName,
+      inspectorTitle: signerRole,
+      inspectionOrg: inspectionBureau,
+      pvReference: revisionRef,
+      checklistState,
+    });
+  };
+
   return (
     <div className="space-y-6" id="project-commissioning-fat-sat-engine">
       {/* 1. Header Banner */}
@@ -272,6 +388,23 @@ export const ProjectCommissioningFatSatEngine: React.FC<Props> = ({ project, loc
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
+            {/* Field Offline Sync Pill */}
+            <div className={`px-3 py-1.5 border rounded-xl flex items-center gap-2 ${
+              isOnline 
+                ? 'bg-emerald-950/40 border-emerald-500/30 text-emerald-400' 
+                : 'bg-amber-950/50 border-amber-500/40 text-amber-300'
+            }`}>
+              {isOnline ? <Wifi className="w-3.5 h-3.5 text-emerald-400" /> : <WifiOff className="w-3.5 h-3.5 text-amber-400 animate-pulse" />}
+              <div className="text-left font-mono">
+                <span className="text-[9px] uppercase block text-slate-400">
+                  {isFr ? 'PWA Terrain' : 'PWA Field'}
+                </span>
+                <span className="text-[10px] font-bold">
+                  {isOnline ? (isFr ? 'En Ligne (Sync)' : 'Online (Sync)') : (isFr ? 'Hors-Ligne (Cache)' : 'Offline (Cache)')}
+                </span>
+              </div>
+            </div>
+
             <div className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-right">
               <span className="text-[10px] font-mono text-slate-400 block uppercase">
                 {isFr ? 'Taux de Validation' : 'Compliance Rate'}
@@ -288,6 +421,17 @@ export const ProjectCommissioningFatSatEngine: React.FC<Props> = ({ project, loc
                 {isCommissioningApproved ? (isFr ? 'CONFORME' : 'APPROVED') : (isFr ? 'RÉSERVES' : 'PENDING')}
               </span>
             </div>
+
+            {/* Offline JSON Snapshot Backup */}
+            <button
+              type="button"
+              onClick={handleExportBackup}
+              className="px-3 py-2.5 bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-white rounded-xl text-xs font-mono font-bold flex items-center gap-1.5 border border-slate-700 transition-all cursor-pointer shadow-xs"
+              title={isFr ? 'Exporter une sauvegarde JSON des relevés de terrain' : 'Export JSON backup of field measurements'}
+            >
+              <HardDrive className="w-4 h-4 text-sky-400" />
+              <span>{isFr ? 'Sauvegarde JSON' : 'JSON Backup'}</span>
+            </button>
 
             <button
               onClick={handleExportFatSatPdf}

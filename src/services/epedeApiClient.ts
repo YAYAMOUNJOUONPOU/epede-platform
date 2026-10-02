@@ -65,8 +65,55 @@ export interface GraphContextDto {
   allRelationshipsCount?: number;
 }
 
+export interface CommissioningProtocolDto {
+  id: string;
+  code: string;
+  title: { fr: string; en: string };
+  standard: string;
+  equipmentType: 'TRANSFORMER' | 'DISTANCE_RELAY' | 'OVERCURRENT_RELAY' | 'SUBSTATION_EARTHING' | 'CIRCUIT_BREAKER';
+  testCategory: 'FAT' | 'SAT' | 'PERIODIC_MAINTENANCE';
+  requiredTools: string[];
+  safetyPrecautions: { fr: string; en: string }[];
+  testSteps: {
+    step: number;
+    description: { fr: string; en: string };
+    acceptanceCriteria: { fr: string; en: string };
+    tolerance: string;
+  }[];
+}
+
 export class EpedeApiClient {
   private baseUrl = '/api/v1';
+
+  public async getFieldEngineeringProtocols(): Promise<CommissioningProtocolDto[]> {
+    try {
+      const res = await fetch(`${this.baseUrl}/field-engineering/protocols`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data)) {
+          return json.data;
+        }
+      }
+    } catch {
+      // offline fallback
+    }
+    return [];
+  }
+
+  public async getFieldEngineeringProtocolById(id: string): Promise<CommissioningProtocolDto | null> {
+    try {
+      const res = await fetch(`${this.baseUrl}/field-engineering/protocols/${encodeURIComponent(id)}`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) {
+          return json.data;
+        }
+      }
+    } catch {
+      // offline fallback
+    }
+    return null;
+  }
 
   public async getDomains(): Promise<ApiDomainDto[]> {
     try {

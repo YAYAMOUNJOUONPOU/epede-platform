@@ -42,6 +42,7 @@ interface SimulationLabViewProps {
   initialTab?: SimulationTabType;
   onNavigateContextStack?: (nodeId?: string) => void;
   onNavigateCalculator?: (tab?: CalculatorTabType) => void;
+  onNavigateDiagram?: (topology?: any) => void;
 }
 
 const SIMULATION_SPINE_LINKS: Record<
@@ -165,6 +166,7 @@ export const SimulationLabView: React.FC<SimulationLabViewProps> = ({
   initialTab,
   onNavigateContextStack,
   onNavigateCalculator,
+  onNavigateDiagram,
 }) => {
   const [activeTab, setActiveTab] = useState<SimulationTabType>(initialTab || 'oscilloscope');
 
@@ -504,7 +506,12 @@ export const SimulationLabView: React.FC<SimulationLabViewProps> = ({
       {activeTab === 'harmonic-filter' && <HarmonicFilterLabTab locale={locale} />}
       {activeTab === 'generator-capability' && <GeneratorCapabilityLabTab locale={locale} />}
       {activeTab === 'synchrocheck' && <SynchrocheckLabTab locale={locale} />}
-      {activeTab === 'substation-interlocking' && <SubstationInterlockingLabTab locale={locale} />}
+      {activeTab === 'substation-interlocking' && (
+        <SubstationInterlockingLabTab
+          locale={locale}
+          onNavigateDiagram={() => onNavigateDiagram?.('double_bus')}
+        />
+      )}
       {activeTab === 'ct-saturation' && <CtSaturationLabTab locale={locale} />}
       {activeTab === 'surge-arrester' && <SurgeArresterLabTab locale={locale} />}
       {activeTab === 'cable-thermal' && <CableThermalTransientLabTab locale={locale} />}

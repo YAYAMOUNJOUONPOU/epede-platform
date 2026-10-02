@@ -52,7 +52,7 @@ const FLOW_PATH_SEGMENTS = [
 
 const CHAIN_NODES = [
   { id: 'gen',   x: 60,  label: { fr: 'Production', en: 'Generation' },   icon: '⚡', color: '#D7A64A', view: 'domain:D01' },
-  { id: 'gsu',   x: 165, label: { fr: 'Élévation',  en: 'Step-Up' },      icon: '🔺', color: '#E07A5F', view: 'domain:D02' },
+  { id: 'gsu',   x: 165, label: { fr: 'Élévation GSU', en: 'GSU Step-Up' }, icon: '🔺', color: '#E07A5F', view: 'domain:D04' },
   { id: 'hv',    x: 290, label: { fr: 'Transport HTB', en: 'HV Trans.' },  icon: '🗼', color: '#7C6FCD', view: 'domain:D03' },
   { id: 'sub',   x: 390, label: { fr: 'Poste THT',   en: 'HV Sub.' },     icon: '🏗', color: '#3A8FC7', view: 'domain:D04' },
   { id: 'mv',    x: 490, label: { fr: 'Distribution HTA', en: 'MV Dist.'}, icon: '🏙', color: '#52C784', view: 'domain:D05' },

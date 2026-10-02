@@ -248,9 +248,9 @@ export const EnergyEcosystemStage: React.FC<EnergyEcosystemStageProps> = ({
         id="wrap"
         style={{ 
           height: `${1024 * scale}px`,
-          backgroundColor: 'var(--ecosystem-sky-background, #BFE3F4)',
+          backgroundColor: 'var(--ecosystem-sky-background, #070D14)',
         }}
-        className="w-full relative overflow-hidden rounded-2xl sm:rounded-3xl border border-[#1f5573]/70 shadow-2xl transition-[height] duration-150"
+        className="w-full relative overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-800 shadow-2xl transition-[height] duration-150"
       >
         {/* 1536x1024 Fixed Coordinate Stage with transform-scale */}
         <div

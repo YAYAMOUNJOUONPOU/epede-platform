@@ -34,7 +34,8 @@ export type AppViewType =
   | 'follow-the-energy'
   | 'scenarios'
   | 'traceability'
-  | 'thematic-journeys';
+  | 'thematic-journeys'
+  | 'asset-management';
 
 export interface InjectedCalculatorContext {
   equipmentId?: string;
@@ -56,6 +57,8 @@ export interface RouteState {
   topology?: SldTopologyType;
   journeyStage?: StageId;
   contextNodeId?: string;
+  gridCategory?: 'map' | 'all' | 'ris' | 'rin' | 'plants' | 'substations' | 'lines' | 'demarcation';
+  assetPillar?: string;
 }
 
 /**
@@ -147,7 +150,12 @@ export function parseRouteHash(hash: string): RouteState {
       };
 
     case 'cameroon-grid':
-      return { view: 'cameroon-grid' };
+    case 'demarcation':
+    case 'multidisciplinary':
+      return { 
+        view: 'cameroon-grid',
+        gridCategory: (secondary as any) || (primary === 'demarcation' || primary === 'multidisciplinary' ? 'demarcation' : undefined)
+      };
 
     case 'regulatory':
       return { view: 'regulatory' };
@@ -227,6 +235,18 @@ export function parseRouteHash(hash: string): RouteState {
         contextNodeId: secondary || undefined,
       };
 
+    case 'asset-management':
+    case 'assets':
+    case 'dga':
+    case 'dga-diagnostics':
+    case 'duval':
+    case 'health-index':
+    case 'fleet-risk':
+      return {
+        view: 'asset-management',
+        assetPillar: secondary || (primary === 'dga' || primary === 'duval' || primary === 'dga-diagnostics' ? 'DUVAL_TRIANGLE_DGA' : primary === 'health-index' ? 'HEALTH_INDEX_ISO55000' : primary === 'fleet-risk' ? 'FLEET_RISK_MATRIX' : undefined),
+      };
+
     default:
       return { view: 'home' };
   }
@@ -264,7 +284,7 @@ export function buildRouteHash(state: RouteState): string {
     case 'context-stack':
       return state.contextNodeId ? `#/context-stack/${encodeURIComponent(state.contextNodeId)}` : '#/context-stack';
     case 'cameroon-grid':
-      return '#/cameroon-grid';
+      return state.gridCategory ? `#/cameroon-grid/${encodeURIComponent(state.gridCategory)}` : '#/cameroon-grid';
     case 'regulatory':
       return '#/regulatory';
     case 'lifecycle':
@@ -307,6 +327,8 @@ export function getDocumentTitle(state: RouteState, locale: 'fr' | 'en'): string
   const base = 'EPEDE — Electrical Power Engineering Digital Environment';
 
   switch (state.view) {
+    case 'asset-management':
+      return locale === 'fr' ? 'Station Expert Gestion d\'Actifs & Diagnostic DGA | EPEDE' : 'Asset Management & DGA Diagnostics | EPEDE';
     case 'thematic-journeys':
       return locale === 'fr'
         ? 'Parcours Guidés Thématiques (7 Cursus d\'Ingénierie) | EPEDE'

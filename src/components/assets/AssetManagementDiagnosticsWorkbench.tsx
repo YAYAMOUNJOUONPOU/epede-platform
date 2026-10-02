@@ -5,10 +5,11 @@
 // Grounded in IEC 60599, IEC 60076-18 (SFRA), IEC 60270 (Partial Discharges), ISO 55000, IEC 62056 (DLMS/COSEM)
 // and authentic Cameroon power assets (Songloulou 60 MVA GSU transformers, Mangombé 225/90 kV autotransformers, Eneo prepaid AMI rollout).
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Activity,
   AlertTriangle,
+  ArrowLeft,
   CheckCircle2,
   XCircle,
   Sliders,
@@ -35,13 +36,7 @@ import {
 } from 'lucide-react';
 import { FieldCausalDiagnosisWorkbench } from '../diagnostics/FieldCausalDiagnosisWorkbench';
 
-interface AssetManagementDiagnosticsWorkbenchProps {
-  locale: 'fr' | 'en';
-  onNavigate?: (view: string, domainCode?: string) => void;
-  onSelectEquipment?: (id: string) => void;
-}
-
-type PillarId =
+export type PillarId =
   | 'DUVAL_TRIANGLE_DGA'
   | 'HEALTH_INDEX_ISO55000'
   | 'PARTIAL_DISCHARGE_PD'
@@ -51,12 +46,28 @@ type PillarId =
   | 'CAMEROON_ASSET_CASES'
   | 'GUIDED_FIELD_DIAGNOSIS';
 
+export interface AssetManagementDiagnosticsWorkbenchProps {
+  locale: 'fr' | 'en';
+  initialPillar?: PillarId;
+  onBack?: () => void;
+  onNavigate?: (view: string, domainCode?: string) => void;
+  onSelectEquipment?: (id: string) => void;
+}
+
 export const AssetManagementDiagnosticsWorkbench: React.FC<AssetManagementDiagnosticsWorkbenchProps> = ({
   locale,
+  initialPillar,
+  onBack,
   onNavigate,
   onSelectEquipment
 }) => {
-  const [activePillar, setActivePillar] = useState<PillarId>('DUVAL_TRIANGLE_DGA');
+  const [activePillar, setActivePillar] = useState<PillarId>(initialPillar || 'DUVAL_TRIANGLE_DGA');
+
+  useEffect(() => {
+    if (initialPillar) {
+      setActivePillar(initialPillar);
+    }
+  }, [initialPillar]);
 
   // ==========================================
   // PILLAR 1: DUVAL'S TRIANGLE 1 (IEC 60599) DGA DIAGNOSTIC SOLVER
@@ -456,6 +467,16 @@ export const AssetManagementDiagnosticsWorkbench: React.FC<AssetManagementDiagno
           </div>
 
           <div className="flex items-center gap-2">
+            {onBack && (
+              <button
+                type="button"
+                onClick={onBack}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-emerald-300 bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-500/40 transition-colors cursor-pointer"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>{locale === 'fr' ? 'Retour' : 'Back'}</span>
+              </button>
+            )}
             <button
               onClick={() => {
                 setGasCH4(85);

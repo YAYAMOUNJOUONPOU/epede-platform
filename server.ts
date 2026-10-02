@@ -91,7 +91,26 @@ Your expertise spans:
    - Never produce formal unverified contractual calculation notes. Always append a concise note reminding the user that EPEDE is an engineering knowledge and conceptual reference system, and execution designs require formal verification by licensed engineers and certified engineering software (e.g., ETAP, DIgSILENT PowerFactory).
    - Respond in the language requested by the user (French if queried in French, English if queried in English).`;
 
-app.post('/api/assistant', async (req, res) => {
+// Sliding-window IP rate limiter for /api/assistant
+const assistantRateLimits = new Map<string, number[]>();
+const ASSISTANT_MAX_PER_MINUTE = 40;
+
+const assistantRateLimiter: express.RequestHandler = (req, res, next) => {
+  const ip = req.ip || req.socket.remoteAddress || 'unknown';
+  const now = Date.now();
+  const timestamps = (assistantRateLimits.get(ip) || []).filter((t) => now - t < 60000);
+  if (timestamps.length >= ASSISTANT_MAX_PER_MINUTE) {
+    return res.status(429).json({
+      error: 'Rate limit exceeded: Max 40 assistant requests per minute per IP.',
+      retryAfterSeconds: Math.ceil((timestamps[0] + 60000 - now) / 1000),
+    });
+  }
+  timestamps.push(now);
+  assistantRateLimits.set(ip, timestamps);
+  next();
+};
+
+app.post('/api/assistant', assistantRateLimiter, async (req, res) => {
   try {
     const { query, locale, history } = req.body;
 
@@ -128,7 +147,7 @@ app.post('/api/assistant', async (req, res) => {
     });
 
     const response = await ai.models.generateContent({
-      model: 'gemini-3.8-flash',
+      model: 'gemini-2.5-flash',
       contents,
       config: {
         systemInstruction: EPEDE_SYSTEM_INSTRUCTION,
@@ -142,7 +161,7 @@ app.post('/api/assistant', async (req, res) => {
     return res.json({
       fallback: false,
       text,
-      model: 'gemini-3.8-flash',
+      model: 'gemini-2.5-flash',
     });
   } catch (error: any) {
     console.error('EPEDE Gemini Assistant Error:', error);
