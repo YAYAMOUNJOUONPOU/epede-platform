@@ -44,7 +44,40 @@ import {
   ArrowRight,
   Scale,
   Waves,
+  FileText,
+  Radio,
+  Box,
+  Factory,
+  Sparkles,
+  Gauge
 } from 'lucide-react';
+import { SanagaHydrometCascadeWorkbench } from './modules/SanagaHydrometCascadeWorkbench';
+import { NationalScadaDispatchingCockpit } from './modules/NationalScadaDispatchingCockpit';
+import { CameroonGridContingencySimulator } from './modules/CameroonGridContingencySimulator';
+import { RegionalInterconnectionPirectWorkbench } from './modules/RegionalInterconnectionPirectWorkbench';
+import { IndustrialOfftakersMatrixViewer } from './modules/IndustrialOfftakersMatrixViewer';
+import { Substation3DFlyoverWorkbench } from './modules/Substation3DFlyoverWorkbench';
+import { ContractualGovernanceFlowViewer } from './modules/ContractualGovernanceFlowViewer';
+import { GenerationMasterPlan2035Workbench } from './modules/GenerationMasterPlan2035Workbench';
+import { CameroonGridBriefingPdfService } from './services/CameroonGridBriefingPdfService';
+
+export type FilterCategory = 
+  | 'map' 
+  | 'scada_dispatching'
+  | 'sanaga_cascade'
+  | 'contingency_n1'
+  | 'pirect_interconnexion'
+  | 'industrial_offtakers'
+  | 'substation_3d_bim'
+  | 'governance_loi2011'
+  | 'masterplan_2035'
+  | 'all' 
+  | 'ris' 
+  | 'rin' 
+  | 'plants' 
+  | 'substations' 
+  | 'lines' 
+  | 'demarcation';
 
 interface CameroonGridViewProps {
   locale: 'fr' | 'en';
@@ -58,8 +91,6 @@ interface CameroonGridViewProps {
   onNavigateContextStack?: (nodeId?: string) => void;
   onNavigateHydropower?: () => void;
 }
-
-type FilterCategory = 'map' | 'all' | 'ris' | 'rin' | 'plants' | 'substations' | 'lines' | 'demarcation';
 
 export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
   locale,
@@ -216,6 +247,16 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
 
             <button
               type="button"
+              onClick={() => CameroonGridBriefingPdfService.generateExecutiveBriefingPdf()}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-mono font-bold transition-all shadow-md cursor-pointer border border-indigo-400/40"
+              title={locale === 'fr' ? 'Générer & Télécharger le Dossier Exécutif A4 Officiel du Réseau Camerounais (PDF Vectoriel)' : 'Generate & Download Official Cameroon Grid Executive Briefing A4 Dossier (Vector PDF)'}
+            >
+              <FileText className="h-4 w-4 text-indigo-200" />
+              <span>{locale === 'fr' ? 'Dossier Exécutif PDF (A4)' : 'Executive Dossier PDF (A4)'}</span>
+            </button>
+
+            <button
+              type="button"
               onClick={handleExportGridData}
               className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-mono font-bold transition-all shadow-xs"
             >
@@ -277,117 +318,200 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
         </div>
       </div>
 
-      {/* Filter Ribbon & Search Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 rounded-xl p-3 shadow-xs">
-        <div className="flex flex-wrap items-center gap-1.5 font-mono text-xs">
+      {/* Cockpit Strategic Navigation Tabs */}
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-3 shadow-xl backdrop-blur-md space-y-3">
+        {/* Row 1: Advanced Operational Workbenches (9 Strategic Pillars) */}
+        <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-emerald-400" />
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300">
+              {locale === 'fr' ? 'Modules Stratégiques de l\'Observatoire National' : 'National Power System Strategic Workbenches'}
+            </span>
+          </div>
+          <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/30">
+            9 Piliers Déployés
+          </span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
+          {/* 1. Map */}
           <button
             type="button"
             onClick={() => setActiveCategory('map')}
-            className={`px-3 py-1.5 rounded-lg transition-colors font-bold flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer ${
               activeCategory === 'map'
-                ? 'bg-sky-600 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                ? 'bg-sky-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
             }`}
           >
             <Compass className="w-3.5 h-3.5 text-sky-300" />
-            <span>{locale === 'fr' ? 'Carte Interactive SIG / SLD' : 'Interactive GIS / SLD Map'}</span>
+            <span>{locale === 'fr' ? 'Carte WGS84 SIG' : 'GIS Map WGS84'}</span>
           </button>
 
+          {/* 2. SCADA Dispatching (Step 2) */}
           <button
             type="button"
-            onClick={() => setActiveCategory('all')}
-            className={`px-3 py-1.5 rounded-lg transition-colors font-bold ${
-              activeCategory === 'all'
-                ? 'bg-emerald-100 text-emerald-900 border border-emerald-300'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+            onClick={() => setActiveCategory('scada_dispatching')}
+            className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer ${
+              activeCategory === 'scada_dispatching'
+                ? 'bg-emerald-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
             }`}
           >
-            {locale === 'fr' ? 'Tous les Éléments' : 'All Elements'}
+            <Gauge className="w-3.5 h-3.5 text-emerald-300" />
+            <span>{locale === 'fr' ? 'Dispatching Mangombé 50Hz' : 'Mangombé Dispatching 50Hz'}</span>
           </button>
 
+          {/* 3. Sanaga Cascade (Step 1) */}
           <button
             type="button"
-            onClick={() => setActiveCategory('ris')}
-            className={`px-3 py-1.5 rounded-lg transition-colors font-bold ${
-              activeCategory === 'ris'
-                ? 'bg-emerald-100 text-emerald-900 border border-emerald-300'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+            onClick={() => setActiveCategory('sanaga_cascade')}
+            className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer ${
+              activeCategory === 'sanaga_cascade'
+                ? 'bg-cyan-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
             }`}
           >
-            RIS (Sud 225/90 kV)
+            <Waves className="w-3.5 h-3.5 text-cyan-300" />
+            <span>{locale === 'fr' ? 'Cascade Sanaga & Lom Pangar' : 'Sanaga Cascade & Lom Pangar'}</span>
           </button>
 
+          {/* 4. Contingency N-1 (Step 3) */}
           <button
             type="button"
-            onClick={() => setActiveCategory('rin')}
-            className={`px-3 py-1.5 rounded-lg transition-colors font-bold ${
-              activeCategory === 'rin'
-                ? 'bg-emerald-100 text-emerald-900 border border-emerald-300'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+            onClick={() => setActiveCategory('contingency_n1')}
+            className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer ${
+              activeCategory === 'contingency_n1'
+                ? 'bg-red-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
             }`}
           >
-            RIN (Nord 110/90 kV)
+            <ShieldCheck className="w-3.5 h-3.5 text-red-300" />
+            <span>{locale === 'fr' ? 'Simulateur N-1 & Incidents' : 'N-1 Contingency Lab'}</span>
           </button>
 
+          {/* 5. Interconnection RIS-RIN & Chad (Step 4) */}
           <button
             type="button"
-            onClick={() => setActiveCategory('plants')}
-            className={`px-3 py-1.5 rounded-lg transition-colors font-bold ${
-              activeCategory === 'plants'
-                ? 'bg-emerald-100 text-emerald-900 border border-emerald-300'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+            onClick={() => setActiveCategory('pirect_interconnexion')}
+            className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer ${
+              activeCategory === 'pirect_interconnexion'
+                ? 'bg-indigo-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
             }`}
           >
-            {locale === 'fr' ? 'Centrales' : 'Power Plants'}
+            <Globe className="w-3.5 h-3.5 text-indigo-300" />
+            <span>{locale === 'fr' ? 'Interconnexion & PIRECT Tchad' : 'Interconnection & Chad PIRECT'}</span>
           </button>
 
+          {/* 6. Industrial Offtakers (Step 5) */}
           <button
             type="button"
-            onClick={() => setActiveCategory('substations')}
-            className={`px-3 py-1.5 rounded-lg transition-colors font-bold ${
-              activeCategory === 'substations'
-                ? 'bg-emerald-100 text-emerald-900 border border-emerald-300'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+            onClick={() => setActiveCategory('industrial_offtakers')}
+            className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer ${
+              activeCategory === 'industrial_offtakers'
+                ? 'bg-amber-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
             }`}
           >
-            {locale === 'fr' ? 'Postes 225/90 kV' : 'Substations'}
+            <Factory className="w-3.5 h-3.5 text-amber-300" />
+            <span>{locale === 'fr' ? 'Grands Comptes HT-B & PPA' : 'Industrial Offtakers & PPA'}</span>
           </button>
 
+          {/* 7. Substation 3D BIM (Step 6) */}
           <button
             type="button"
-            onClick={() => setActiveCategory('lines')}
-            className={`px-3 py-1.5 rounded-lg transition-colors font-bold ${
-              activeCategory === 'lines'
-                ? 'bg-emerald-100 text-emerald-900 border border-emerald-300'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+            onClick={() => setActiveCategory('substation_3d_bim')}
+            className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer ${
+              activeCategory === 'substation_3d_bim'
+                ? 'bg-teal-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
             }`}
           >
-            {locale === 'fr' ? 'Lignes & Interconnexions' : 'Lines & Corridors'}
+            <Box className="w-3.5 h-3.5 text-teal-300" />
+            <span>{locale === 'fr' ? 'Jumeaux 3D Postes HT' : '3D Substation Digital Twins'}</span>
           </button>
 
+          {/* 8. Contractual Governance Loi 2011 (Step 7) */}
+          <button
+            type="button"
+            onClick={() => setActiveCategory('governance_loi2011')}
+            className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer ${
+              activeCategory === 'governance_loi2011'
+                ? 'bg-purple-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            <Scale className="w-3.5 h-3.5 text-purple-300" />
+            <span>{locale === 'fr' ? 'Loi 2011 & Flux Financiers' : 'Law 2011 & Financial Flows'}</span>
+          </button>
+
+          {/* 9. Master Plan 2035 (Step 8) */}
+          <button
+            type="button"
+            onClick={() => setActiveCategory('masterplan_2035')}
+            className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer ${
+              activeCategory === 'masterplan_2035'
+                ? 'bg-emerald-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-emerald-300" />
+            <span>{locale === 'fr' ? 'Master Plan 2035 (Kikot, Eweng)' : 'Master Plan 2035'}</span>
+          </button>
+
+          {/* 10. Demarcation */}
           <button
             type="button"
             onClick={() => setActiveCategory('demarcation')}
-            className={`px-3 py-1.5 rounded-lg transition-colors font-bold flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer ${
               activeCategory === 'demarcation'
-                ? 'bg-amber-100 text-amber-950 border border-amber-400 font-extrabold shadow-sm'
-                : 'text-amber-800 hover:text-amber-950 hover:bg-amber-50 border border-amber-200/80'
+                ? 'bg-amber-600 text-white shadow-md'
+                : 'text-amber-400 hover:text-white hover:bg-slate-800'
             }`}
           >
-            <Scale className="w-3.5 h-3.5 text-amber-600" />
-            <span>{locale === 'fr' ? 'Frontières Contractuelles (Porte 3)' : 'Contractual Boundaries (Gate 3)'}</span>
+            <Scale className="w-3.5 h-3.5 text-amber-300" />
+            <span>{locale === 'fr' ? 'Frontières Porte 3' : 'Gate 3 Demarcation'}</span>
           </button>
         </div>
 
-        <div className="relative w-full sm:w-64">
-          <Search className="h-3.5 w-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={locale === 'fr' ? 'Rechercher ville, centrale, poste...' : 'Search city, plant, station...'}
-            className="w-full bg-slate-50 text-xs font-mono text-slate-900 pl-9 pr-3 py-1.5 rounded-lg border border-slate-300 focus:outline-none focus:border-emerald-500"
-          />
+        {/* Row 2: Equipment Registry & Search Filter */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-800/80">
+          <div className="flex flex-wrap items-center gap-1.5 font-mono text-[11px]">
+            <span className="text-slate-500 mr-1 uppercase">{locale === 'fr' ? 'Registre :' : 'Registry:'}</span>
+            {[
+              { id: 'all', label: locale === 'fr' ? 'Tout le Parc' : 'All Grid' },
+              { id: 'ris', label: 'RIS (Sud 225/90)' },
+              { id: 'rin', label: 'RIN (Nord 110)' },
+              { id: 'plants', label: locale === 'fr' ? 'Centrales' : 'Plants' },
+              { id: 'substations', label: locale === 'fr' ? 'Postes HT' : 'Substations' },
+              { id: 'lines', label: locale === 'fr' ? 'Lignes 225/90 kV' : 'Corridors' },
+            ].map(subTab => (
+              <button
+                key={subTab.id}
+                type="button"
+                onClick={() => setActiveCategory(subTab.id as any)}
+                className={`px-2.5 py-1 rounded-lg transition-all font-bold cursor-pointer ${
+                  activeCategory === subTab.id
+                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-xs'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                }`}
+              >
+                {subTab.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="relative w-full sm:w-64">
+            <Search className="h-3.5 w-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={locale === 'fr' ? 'Rechercher centrale, poste...' : 'Search plant, station...'}
+              className="w-full bg-slate-950 text-xs font-mono text-slate-100 pl-9 pr-3 py-1.5 rounded-lg border border-slate-800 focus:outline-none focus:border-emerald-500"
+            />
+          </div>
         </div>
       </div>
 
@@ -501,6 +625,62 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
           ) : (
             <CameroonContractualDemarcationViewer locale={locale} embedded={true} />
           )}
+        </div>
+      )}
+
+      {/* SECTION: SCADA Dispatching Cockpit (Step 2) */}
+      {activeCategory === 'scada_dispatching' && (
+        <div className="space-y-4">
+          <NationalScadaDispatchingCockpit locale={locale} />
+        </div>
+      )}
+
+      {/* SECTION: Sanaga Hydromet Cascade Workbench (Step 1) */}
+      {activeCategory === 'sanaga_cascade' && (
+        <div className="space-y-4">
+          <SanagaHydrometCascadeWorkbench locale={locale} />
+        </div>
+      )}
+
+      {/* SECTION: Cameroon Grid Contingency Simulator (Step 3) */}
+      {activeCategory === 'contingency_n1' && (
+        <div className="space-y-4">
+          <CameroonGridContingencySimulator locale={locale} />
+        </div>
+      )}
+
+      {/* SECTION: Regional Interconnection & PIRECT Chad Export Hub (Step 4) */}
+      {activeCategory === 'pirect_interconnexion' && (
+        <div className="space-y-4">
+          <RegionalInterconnectionPirectWorkbench />
+        </div>
+      )}
+
+      {/* SECTION: Industrial Heavy Loads & Anchor Offtakers Layer (Step 5) */}
+      {activeCategory === 'industrial_offtakers' && (
+        <div className="space-y-4">
+          <IndustrialOfftakersMatrixViewer />
+        </div>
+      )}
+
+      {/* SECTION: Interactive 3D Substation BIM / Digital Twin (Step 6) */}
+      {activeCategory === 'substation_3d_bim' && (
+        <div className="space-y-4">
+          <Substation3DFlyoverWorkbench />
+        </div>
+      )}
+
+      {/* SECTION: Contractual Flow & Institutional Governance Matrix (Step 7) */}
+      {activeCategory === 'governance_loi2011' && (
+        <div className="space-y-4">
+          <ContractualGovernanceFlowViewer />
+        </div>
+      )}
+
+      {/* SECTION: Horizon 2030-2035 Generation Master Plan Pipeline (Step 8) */}
+      {activeCategory === 'masterplan_2035' && (
+        <div className="space-y-4">
+          <GenerationMasterPlan2035Workbench />
         </div>
       )}
 
