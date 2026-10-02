@@ -13,7 +13,7 @@ import {
 import { FormulaBlock } from '../ui/FormulaBlock';
 import { StandardBadge } from '../ui/StandardBadge';
 import { VoltageIndicator } from '../ui/VoltageIndicator';
-import { ArrowLeft, ExternalLink, Zap, Globe, FileCode, ClipboardList, Award, CheckCircle2, Layers } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Zap, Globe, FileCode, ClipboardList, Award, CheckCircle2, Layers, ChevronDown, Activity } from 'lucide-react';
 import type { DomainCode, Subdomain } from '../../types/epede';
 import { EPEDE_MATURITY_REGISTRY } from '../../data/contentMaturityEngine';
 import { Phase2SpecViewer } from './Phase2SpecViewer';
@@ -172,6 +172,7 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
   const [d04Mode, setD04Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
   const [d05Mode, setD05Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
   const [d06Mode, setD06Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
+  const [showD06Metrics, setShowD06Metrics] = useState<boolean>(false);
   const [d07Mode, setD07Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
   const [d08Mode, setD08Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
   const [d09Mode, setD09Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
@@ -383,27 +384,112 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
         </div>
       </header>
 
-      {/* 10-ACTION UNIVERSAL RELATIONSHIP & TRACE HUB */}
-      <ObjectRelationshipActionBar
-        nodeId={DOMAIN_SPINE_MAPPING[domainCode] || 'node-trafo-main-30'}
-        locale={locale}
-        onNavigateContextStack={onNavigateContextStack}
-        onNavigateDomain={(dCode) => onNavigateView?.('domain', dCode)}
-      />
+      {/* D06 DEDICATED MASTER MODE SWITCHER (Directly underneath header for immediate orientation) */}
+      {isD06 && (
+        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-slate-900/90 border border-amber-800/50 shadow-lg">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
+            <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
+              {locale === 'fr' ? 'Mode d\'Exploration Installations Électriques & Utilisation :' : 'Electrical Installations Exploration Mode:'}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setD06Mode('visual_journey')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all cursor-pointer ${
+                d06Mode === 'visual_journey'
+                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
+                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
+              }`}
+            >
+              {locale === 'fr' ? '⚡ Parcours d\'Ingénierie Basse Tension (5 Grandes Étapes)' : '⚡ Low-Voltage Engineering Lifecycle (5 Master Stages)'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setD06Mode('spec_catalog')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all cursor-pointer ${
+                d06Mode === 'spec_catalog'
+                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
+                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
+              }`}
+            >
+              {locale === 'fr' ? '📋 Fiches Sous-Domaines & Spécifications' : '📋 Subdomain Catalog & Specs'}
+            </button>
+          </div>
+        </div>
+      )}
 
-      {/* DOMAIN ENGINEERING KPI DASHBOARD & APPARATUS CENSUS RIBBON */}
-      <DomainEngineeringKpiBanner
-        domainCode={domainCode}
-        locale={locale}
-        onSelectEquipment={onSelectEquipment}
-        onNavigateView={onNavigateView}
-      />
+      {/* DOMAIN DIAGNOSTICS & METRICS TRAY */}
+      {isD06 ? (
+        <div className="rounded-xl border border-slate-800 bg-slate-900/50 overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setShowD06Metrics(!showD06Metrics)}
+            className="w-full flex items-center justify-between p-2.5 px-4 text-xs font-mono font-bold text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all cursor-pointer"
+          >
+            <div className="flex items-center gap-2">
+              <Activity className="w-4 h-4 text-amber-400" />
+              <span>
+                {locale === 'fr' 
+                  ? 'Traçabilité Système, Métriques KPI & Registre NCR (Conformité)' 
+                  : 'System Traceability, KPI Metrics & NCR Registry'}
+              </span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+                {domainEquipments.length} {locale === 'fr' ? 'équipements' : 'assets'}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-slate-400 text-[11px]">
+              <span>{showD06Metrics ? (locale === 'fr' ? 'Masquer' : 'Hide') : (locale === 'fr' ? 'Afficher les métriques globales' : 'Show global metrics')}</span>
+              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${showD06Metrics ? 'rotate-180' : ''}`} />
+            </div>
+          </button>
+          {showD06Metrics && (
+            <div className="p-4 space-y-4 border-t border-slate-800 bg-slate-950/40">
+              <ObjectRelationshipActionBar
+                nodeId={DOMAIN_SPINE_MAPPING[domainCode] || 'node-trafo-main-30'}
+                locale={locale}
+                onNavigateContextStack={onNavigateContextStack}
+                onNavigateDomain={(dCode) => onNavigateView?.('domain', dCode)}
+              />
+              <DomainEngineeringKpiBanner
+                domainCode={domainCode}
+                locale={locale}
+                onSelectEquipment={onSelectEquipment}
+                onNavigateView={onNavigateView}
+              />
+              <DomainPendingIssuesPanel
+                locale={locale}
+                domainCode={domainCode}
+              />
+            </div>
+          )}
+        </div>
+      ) : (
+        <>
+          {/* 10-ACTION UNIVERSAL RELATIONSHIP & TRACE HUB */}
+          <ObjectRelationshipActionBar
+            nodeId={DOMAIN_SPINE_MAPPING[domainCode] || 'node-trafo-main-30'}
+            locale={locale}
+            onNavigateContextStack={onNavigateContextStack}
+            onNavigateDomain={(dCode) => onNavigateView?.('domain', dCode)}
+          />
 
-      {/* DOMAIN PENDING ISSUES & NCR DEFICIENCY TRACKER */}
-      <DomainPendingIssuesPanel
-        locale={locale}
-        domainCode={domainCode}
-      />
+          {/* DOMAIN ENGINEERING KPI DASHBOARD & APPARATUS CENSUS RIBBON */}
+          <DomainEngineeringKpiBanner
+            domainCode={domainCode}
+            locale={locale}
+            onSelectEquipment={onSelectEquipment}
+            onNavigateView={onNavigateView}
+          />
+
+          {/* DOMAIN PENDING ISSUES & NCR DEFICIENCY TRACKER */}
+          <DomainPendingIssuesPanel
+            locale={locale}
+            domainCode={domainCode}
+          />
+        </>
+      )}
 
       {/* SPECIAL TREATMENT FOR D01: MODE SWITCHER BETWEEN VISUAL JOURNEY & CATALOG */}
       {isD01 && (
@@ -585,41 +671,7 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
         </div>
       )}
 
-      {/* SPECIAL TREATMENT FOR D06: MODE SWITCHER BETWEEN VISUAL INSTALLATIONS WORKBENCH & CATALOG */}
-      {isD06 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-slate-900/90 border border-amber-800/50 shadow-lg">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
-            <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-              {locale === 'fr' ? 'Mode d\'Exploration Installations Électriques & Utilisation :' : 'Electrical Installations Exploration Mode:'}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setD06Mode('visual_journey')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d06Mode === 'visual_journey'
-                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '⚡ Station d\'Ingénierie Basse Tension & TGBT (8 Piliers)' : '⚡ Low-Voltage Installations Workbench (8 Pillars)'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setD06Mode('spec_catalog')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d06Mode === 'spec_catalog'
-                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '📋 Fiches Sous-Domaines & Spécifications' : '📋 Subdomain Catalog & Specs'}
-            </button>
-          </div>
-        </div>
-      )}
+
 
       {/* SPECIAL TREATMENT FOR D07: MODE SWITCHER BETWEEN VISUAL AUTOMATION WORKBENCH & CATALOG */}
       {isD07 && (

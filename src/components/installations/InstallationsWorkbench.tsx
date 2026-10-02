@@ -265,6 +265,7 @@ export const InstallationsWorkbench: React.FC<InstallationsWorkbenchProps> = ({
 
   const handleSelectEquipment = (eqId: string) => {
     setInspectedEquipmentId(eqId);
+    setIsAasOpen(true);
   };
 
   const inspectedComponent: InstallationComponent | undefined = INSTALLATION_EQUIPMENT.find(
@@ -375,36 +376,20 @@ export const InstallationsWorkbench: React.FC<InstallationsWorkbenchProps> = ({
         {activeStage === 'STAGE_ECOSYSTEM_ARCHETYPES' && (
           <div className="space-y-6">
             {activeSubTool === 'ECOSYSTEM_OVERVIEW' && (
-              <>
-                <InstallationEcosystemHero
-                  locale={locale}
-                  selectedArchetype={selectedArchetype}
-                  onSelectArchetype={setSelectedArchetype}
-                  selectedEarthing={selectedEarthing}
-                  onSelectEarthing={setSelectedEarthing}
-                  onNavigateStage={(stg) => {
-                    setActiveStage(stg);
-                    if (stg === 'STAGE_SIZING_ANALYSIS') setActiveSubTool('POWER_BALANCE');
-                    else if (stg === 'STAGE_SWITCHBOARDS_EQUIPMENT') setActiveSubTool('TGBT_BUILDER');
-                    else if (stg === 'STAGE_PROTECTION_SAFETY') setActiveSubTool('SELECTIVE_TCC');
-                    else if (stg === 'STAGE_COMMISSIONING_DELIVERABLES') setActiveSubTool('CAD_DELIVERABLES');
-                  }}
-                />
-                <MasterInstallationChainExplorer
-                  locale={locale}
-                  onNavigateToStage={(stageId) => {
-                    if (stageId.includes('tgbt')) {
-                      setActiveStage('STAGE_SWITCHBOARDS_EQUIPMENT');
-                      setActiveSubTool('TGBT_BUILDER');
-                    } else if (stageId.includes('panel')) {
-                      setActiveStage('STAGE_SWITCHBOARDS_EQUIPMENT');
-                      setActiveSubTool('PANEL_BUILDER');
-                    } else if (stageId.includes('load')) {
-                      setActiveSubTool('LOAD_LIBRARY');
-                    }
-                  }}
-                />
-              </>
+              <InstallationEcosystemHero
+                locale={locale}
+                selectedArchetype={selectedArchetype}
+                onSelectArchetype={setSelectedArchetype}
+                selectedEarthing={selectedEarthing}
+                onSelectEarthing={setSelectedEarthing}
+                onNavigateStage={(stg) => {
+                  setActiveStage(stg);
+                  if (stg === 'STAGE_SIZING_ANALYSIS') setActiveSubTool('POWER_BALANCE');
+                  else if (stg === 'STAGE_SWITCHBOARDS_EQUIPMENT') setActiveSubTool('TGBT_BUILDER');
+                  else if (stg === 'STAGE_PROTECTION_SAFETY') setActiveSubTool('SELECTIVE_TCC');
+                  else if (stg === 'STAGE_COMMISSIONING_DELIVERABLES') setActiveSubTool('CAD_DELIVERABLES');
+                }}
+              />
             )}
 
             {activeSubTool === 'MASTER_CHAIN' && (

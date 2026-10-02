@@ -107,9 +107,9 @@ export const InstallationEcosystemHero: React.FC<InstallationEcosystemHeroProps>
                     IEC 60364 • IEC 61439-1/2 • NF C 15-100 • IEEE 1584
                   </span>
                 </div>
-                <h1 className="text-2xl font-black text-white tracking-tight mt-1">
+                <h2 className="text-2xl font-black text-white tracking-tight mt-1">
                   {isFr ? 'Installations Électriques & Utilisation de l\'Énergie' : 'Electrical Installations & Energy Utilization'}
-                </h1>
+                </h2>
               </div>
             </div>
             
