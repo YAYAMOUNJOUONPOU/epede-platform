@@ -1,5 +1,6 @@
 // src/components/installations/InstallationsWorkbench.tsx
 // EPEDE D06 - Master Orchestrator for Electrical Installations & Utilization
+// Upgraded 5-Stage Progressive Architecture & First View Ecosystem
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -20,14 +21,22 @@ import {
   X,
   FileText,
   Flame,
-  Sparkles
+  Sparkles,
+  ArrowRight,
+  TrendingUp,
+  FileSpreadsheet,
+  Award,
+  CheckSquare,
+  Thermometer,
+  CloudLightning,
+  ChevronRight,
+  Building2
 } from 'lucide-react';
 import { OperatorFabricStream } from '../digitaltwin/OperatorFabricStream';
 import { AasDrawer } from '../digitaltwin/AasDrawer';
 import type { Equipment } from '../../types/epede';
-import {
-  InstallationCommandHeader
-} from './InstallationCommandHeader';
+import { InstallationCommandHeader } from './InstallationCommandHeader';
+import { InstallationEcosystemHero } from './InstallationEcosystemHero';
 import { MasterInstallationJourney } from './MasterInstallationJourney';
 import { InteractiveBuildingSldCanvas } from './InteractiveBuildingSldCanvas';
 import { TgbtSwitchboardExplorer } from './TgbtSwitchboardExplorer';
@@ -39,7 +48,7 @@ import { InstallationEngineeringDrawer } from './InstallationEngineeringDrawer';
 import { InstallationEngineeringKnowledgeExplorer } from './InstallationEngineeringKnowledgeExplorer';
 import { ConceptualProjectDesignWorkbench } from './ConceptualProjectDesignWorkbench';
 
-// New Advanced Engineering Modules
+// Advanced Engineering Modules
 import { MasterInstallationChainExplorer } from '../common/MasterInstallationChainExplorer';
 import { FacilityArchetypesExplorer } from './FacilityArchetypesExplorer';
 import { InteractiveTgbtBuilder } from './InteractiveTgbtBuilder';
@@ -49,7 +58,7 @@ import { SurgeProtectionDeviceLab } from './SurgeProtectionDeviceLab';
 import { StructuredLoadLibrary } from './StructuredLoadLibrary';
 import { InstallationFormulasExplainer } from './InstallationFormulasExplainer';
 
-// 6 New Pro Engineering Modules
+// 6 Pro Engineering Modules
 import { SelectiveCoordinationTccStudio } from './SelectiveCoordinationTccStudio';
 import { ArcFlashHazardCalculator } from './ArcFlashHazardCalculator';
 import { HarmonicsAndPowerQualityAnalyzer } from './HarmonicsAndPowerQualityAnalyzer';
@@ -71,6 +80,13 @@ interface InstallationsWorkbenchProps {
   locale: 'fr' | 'en';
   initialPillar?: InstallationPillar;
 }
+
+export type MasterInstallationStage = 
+  | 'STAGE_ECOSYSTEM_ARCHETYPES'
+  | 'STAGE_SIZING_ANALYSIS'
+  | 'STAGE_SWITCHBOARDS_EQUIPMENT'
+  | 'STAGE_PROTECTION_SAFETY'
+  | 'STAGE_COMMISSIONING_DELIVERABLES';
 
 export type InstallationPillar =
   | 'MASTER_CHAIN'
@@ -103,55 +119,149 @@ export const InstallationsWorkbench: React.FC<InstallationsWorkbenchProps> = ({
   locale,
   initialPillar
 }) => {
-  // Master Orchestrator State
-  const [activePillar, setActivePillar] = useState<InstallationPillar>(initialPillar || 'MASTER_CHAIN');
+  const isFr = locale === 'fr';
 
-  useEffect(() => {
-    if (initialPillar) {
-      setActivePillar(initialPillar);
-    }
-  }, [initialPillar]);
+  // 5 Master Stages State
+  const [activeStage, setActiveStage] = useState<MasterInstallationStage>('STAGE_ECOSYSTEM_ARCHETYPES');
+  const [activeSubTool, setActiveSubTool] = useState<string>('ECOSYSTEM_OVERVIEW');
+
+  // Facilities & Global Context
   const [selectedArchetype, setSelectedArchetype] = useState<FacilityArchetype>('TERTIARY_COMMERCIAL');
   const [activeViewMode, setActiveViewMode] = useState<InstallationViewMode>('ELECTRICAL_SLD');
   const [selectedEarthing, setSelectedEarthing] = useState<EarthingSystemType>('TN_S');
   const [selectedRegime, setSelectedRegime] = useState<OperatingRegime>('NORMAL_GRID');
 
-  // Journey & Equipment Selection State
+  // Journey & Equipment Inspection State
   const [selectedStageId, setSelectedStageId] = useState<string>('stage-04-main-breaker');
   const [inspectedEquipmentId, setInspectedEquipmentId] = useState<string | null>(null);
 
-  // Formulas & Norms Drawer State
+  // Side Drawers State
   const [isEngineeringDrawerOpen, setIsEngineeringDrawerOpen] = useState<boolean>(false);
   const [isAasOpen, setIsAasOpen] = useState<boolean>(false);
   const [selectedWorkbenchStep, setSelectedWorkbenchStep] = useState<any>('POWER_BALANCE');
 
-  const pillars: { id: InstallationPillar; label_fr: string; label_en: string; icon: any; isNew?: boolean }[] = [
-    { id: 'MASTER_CHAIN', label_fr: '🔗 Chaîne Amont-Aval (11 Niveaux)', label_en: '🔗 Master Delivery Spine (11 Stages)', icon: Compass, isNew: true },
-    { id: 'TGBT_BUILDER', label_fr: '⚡ Constructeur TGBT / MDB', label_en: '⚡ Interactive TGBT / MDB Builder', icon: Box, isNew: true },
-    { id: 'PANEL_BUILDER', label_fr: '🎛️ Tableau Modulaire DIN', label_en: '🎛️ Modular DIN Panel Builder', icon: Sliders, isNew: true },
-    { id: 'SELECTIVE_TCC', label_fr: '📈 Sélectivité & Courbes TCC (Log I-t)', label_en: '📈 Selective Coordination (TCC Studio)', icon: Activity, isNew: true },
-    { id: 'ARC_FLASH', label_fr: '⚡ Risque Arc Flash & Énergie (IEEE 1584)', label_en: '⚡ Arc Flash & Incident Energy (IEEE 1584)', icon: Flame, isNew: true },
-    { id: 'HARMONICS_THD', label_fr: '🌊 Harmoniques FFT & Surcharge Neutre', label_en: '🌊 Harmonics FFT & Neutral Surcharge', icon: Activity, isNew: true },
-    { id: 'CABLE_SIZING_K', label_fr: '📏 Câbles & Facteurs k1-k4 (IEC 60364)', label_en: '📏 Cable Sizing & Derating k1-k4', icon: Layers, isNew: true },
-    { id: 'THERMAL_TGBT', label_fr: '🔥 Bilan Thermique & Aéraulique TGBT', label_en: '🔥 TGBT Thermal Dissipation (IEC 60890)', icon: Sparkles, isNew: true },
-    { id: 'CAD_DELIVERABLES', label_fr: '📑 Livrables, BOM CSV & PV Essais', label_en: '📑 Deliverables, BOM CSV & Testing Protocol', icon: FileText, isNew: true },
-    { id: 'DIFF_PROTECTION_LAB', label_fr: '🧲 Labo Différentiel (RCD/RCBO)', label_en: '🧲 Differential Protection Lab', icon: Shield, isNew: true },
-    { id: 'SPD_LAB', label_fr: '⚡ Labo Parafoudre (SPD 10/350 & 8/20)', label_en: '⚡ Surge Protection (SPD) Lab', icon: Zap, isNew: true },
-    { id: 'FACILITY_ARCHETYPES', label_fr: '🏢 8 Archétypes de Bâtiments', label_en: '🏢 8 Facility Archetypes', icon: Layers, isNew: true },
-    { id: 'LOAD_LIBRARY', label_fr: '🔌 Récepteurs & Charges (14 Cat.)', label_en: '🔌 Electrical Load Library (14 Cat.)', icon: Cpu, isNew: true },
-    { id: 'FORMULAS_EXPLAINER', label_fr: '📐 Formules de Dimensionnement', label_en: '📐 Sizing Formulas & Theory', icon: BookOpen, isNew: true },
-    { id: 'PROJECT_DESIGN_WORKBENCH', label_fr: '📊 Bilan & Ingénierie Projet', label_en: '📊 Project Design & Power Balance', icon: Zap },
-    { id: 'KNOWLEDGE_MAP', label_fr: '📚 Référentiel & Cartographie', label_en: '📚 Knowledge Map & Taxonomy', icon: BookOpen },
-    { id: 'INTERACTIVE_SLD', label_fr: 'Schéma Unifilaire Interactif', label_en: 'Interactive SLD & Power Flow', icon: Layers },
-    { id: 'JOURNEY', label_fr: 'Parcours 12 Étapes Amont-Aval', label_en: '12-Stage Master Journey', icon: Compass },
-    { id: 'TGBT_SWITCHBOARD', label_fr: 'TGBT & Formes de Séparation', label_en: 'TGBT & Segregation Forms', icon: Box },
-    { id: 'FINAL_CIRCUITS', label_fr: 'Circuits Terminaux & Câbles', label_en: 'Final Circuits & Cables', icon: Sliders },
-    { id: 'EARTHING_BALANCING', label_fr: 'Régimes de Neutre & Équilibrage', label_en: 'Earthing & Phase Balancing', icon: Scale },
-    { id: 'USEFUL_ENERGY', label_fr: 'Énergie Utile & Onduleur (UPS)', label_en: 'Useful Energy & UPS / ATS', icon: Cpu },
-    { id: 'FAULTS_SAFETY', label_fr: 'Scénarios Défauts & LOTO', label_en: 'Fault Scenarios & LOTO Safety', icon: AlertTriangle },
-    { id: 'EQUIPMENT_CATALOG', label_fr: 'Catalogue Matériels BT', label_en: 'LV Apparatus Catalog', icon: FileText },
-    { id: 'OPERATOR_FABRIC', label_fr: 'Console OperatorFabric', label_en: 'OperatorFabric Console', icon: Activity }
+  // Map legacy initialPillar if provided
+  useEffect(() => {
+    if (initialPillar) {
+      if (['MASTER_CHAIN', 'FACILITY_ARCHETYPES', 'LOAD_LIBRARY', 'JOURNEY', 'INTERACTIVE_SLD', 'KNOWLEDGE_MAP'].includes(initialPillar)) {
+        setActiveStage('STAGE_ECOSYSTEM_ARCHETYPES');
+        setActiveSubTool(initialPillar);
+      } else if (['HARMONICS_THD', 'CABLE_SIZING_K', 'EARTHING_BALANCING', 'FORMULAS_EXPLAINER', 'USEFUL_ENERGY', 'PROJECT_DESIGN_WORKBENCH'].includes(initialPillar)) {
+        setActiveStage('STAGE_SIZING_ANALYSIS');
+        setActiveSubTool(initialPillar);
+      } else if (['TGBT_BUILDER', 'TGBT_SWITCHBOARD', 'PANEL_BUILDER', 'FINAL_CIRCUITS', 'THERMAL_TGBT'].includes(initialPillar)) {
+        setActiveStage('STAGE_SWITCHBOARDS_EQUIPMENT');
+        setActiveSubTool(initialPillar);
+      } else if (['SELECTIVE_TCC', 'ARC_FLASH', 'DIFF_PROTECTION_LAB', 'SPD_LAB', 'FAULTS_SAFETY'].includes(initialPillar)) {
+        setActiveStage('STAGE_PROTECTION_SAFETY');
+        setActiveSubTool(initialPillar);
+      } else if (['CAD_DELIVERABLES', 'OPERATOR_FABRIC', 'EQUIPMENT_CATALOG'].includes(initialPillar)) {
+        setActiveStage('STAGE_COMMISSIONING_DELIVERABLES');
+        setActiveSubTool(initialPillar);
+      }
+    }
+  }, [initialPillar]);
+
+  // The 5 Master Stages Definition
+  const stagesConfig: {
+    id: MasterInstallationStage;
+    number: string;
+    titleFr: string;
+    titleEn: string;
+    subFr: string;
+    subEn: string;
+    icon: any;
+    accentColor: string;
+    tools: { id: string; labelFr: string; labelEn: string; icon: any }[];
+  }[] = [
+    {
+      id: 'STAGE_ECOSYSTEM_ARCHETYPES',
+      number: '01',
+      titleFr: 'Écosystème & Archétypes',
+      titleEn: 'Ecosystem & Archetypes',
+      subFr: 'Vue 360°, Parcours 11 étapes & 8 typologies de sites',
+      subEn: 'Macro orientation, 11-stage spine & facility types',
+      icon: Compass,
+      accentColor: 'amber',
+      tools: [
+        { id: 'ECOSYSTEM_OVERVIEW', labelFr: 'Synoptique & 7 Réponses', labelEn: 'Overview & 7 Answers', icon: Compass },
+        { id: 'MASTER_CHAIN', labelFr: 'Chaîne Amont-Aval (11 Niveaux)', labelEn: '11-Stage Master Spine', icon: Layers },
+        { id: 'FACILITY_ARCHETYPES', labelFr: '8 Archétypes de Bâtiments', labelEn: '8 Facility Archetypes', icon: Building2 },
+        { id: 'LOAD_LIBRARY', labelFr: 'Bibliothèque de Charges (14 Cat.)', labelEn: 'Load Library (14 Cat.)', icon: Cpu },
+        { id: 'INTERACTIVE_SLD', labelFr: 'Schéma Unifilaire Bâtiment', labelEn: 'Interactive Facility SLD', icon: Zap },
+        { id: 'KNOWLEDGE_MAP', labelFr: 'Cartographie & Taxonomie', labelEn: 'Knowledge Taxonomy', icon: BookOpen }
+      ]
+    },
+    {
+      id: 'STAGE_SIZING_ANALYSIS',
+      number: '02',
+      titleFr: 'Dimensionnement & Calculs',
+      titleEn: 'System Sizing & Studies',
+      subFr: 'Bilan de puissance, court-circuit Ik, neutre & harmoniques',
+      subEn: 'Power balance, fault impedances, earthing & harmonics',
+      icon: Activity,
+      accentColor: 'cyan',
+      tools: [
+        { id: 'POWER_BALANCE', labelFr: 'Bilan de Puissance & Transfo', labelEn: 'Power Balance & Trafo Sizing', icon: Zap },
+        { id: 'SHORT_CIRCUIT_IMPEDANCE', labelFr: 'Courants de Court-Circuit (Ik)', labelEn: 'Fault Impedance & Short-Circuit', icon: Flame },
+        { id: 'EARTHING_BALANCING', labelFr: 'Régimes de Neutre TT/TN/IT', labelEn: 'Earthing Systems TT/TN/IT', icon: Scale },
+        { id: 'HARMONICS_THD', labelFr: 'Harmoniques & Surcharge Neutre', labelEn: 'Harmonics THD & Neutral', icon: Activity },
+        { id: 'FORMULAS_EXPLAINER', labelFr: 'Formules de Dimensionnement', labelEn: 'Sizing Formulas & Theory', icon: BookOpen }
+      ]
+    },
+    {
+      id: 'STAGE_SWITCHBOARDS_EQUIPMENT',
+      number: '03',
+      titleFr: 'Tableaux & Équipements',
+      titleEn: 'Switchboards & Cables',
+      subFr: 'Constructeur TGBT, tableaux DIN, câbles k1-k4 & Canalis',
+      subEn: 'TGBT builder, modular DIN panels, cable matrix & busways',
+      icon: Box,
+      accentColor: 'emerald',
+      tools: [
+        { id: 'TGBT_BUILDER', labelFr: 'Constructeur TGBT / MDB (Formes)', labelEn: 'Interactive TGBT Builder (Forms)', icon: Box },
+        { id: 'PANEL_BUILDER', labelFr: 'Tableaux Divisionnaires DIN', labelEn: 'Modular DIN Panel Builder', icon: Sliders },
+        { id: 'CABLE_SIZING_K', labelFr: 'Câbles & Facteurs k1-k4 (CEI 60364)', labelEn: 'Cable Sizing Matrix (IEC 60364)', icon: Layers },
+        { id: 'THERMAL_TGBT', labelFr: 'Bilan Thermique TGBT (CEI 60890)', labelEn: 'TGBT Thermal Dissipation', icon: Thermometer },
+        { id: 'TGBT_SWITCHBOARD', labelFr: 'Formes de Séparation 1 à 4b', labelEn: 'Internal Segregation Forms', icon: Shield }
+      ]
+    },
+    {
+      id: 'STAGE_PROTECTION_SAFETY',
+      number: '04',
+      titleFr: 'Sélectivité & Sécurité',
+      titleEn: 'Protection & Safety',
+      subFr: 'Courbes TCC log I-t, Arc Flash IEEE 1584, RCD & Parafoudres',
+      subEn: 'TCC log curves, Arc Flash IEEE 1584, RCDs & SPDs',
+      icon: Shield,
+      accentColor: 'red',
+      tools: [
+        { id: 'SELECTIVE_TCC', labelFr: 'Sélectivité & Courbes TCC (Log I-t)', labelEn: 'Selective TCC Curves (Log I-t)', icon: Activity },
+        { id: 'ARC_FLASH', labelFr: 'Risque Arc Flash (IEEE 1584)', labelEn: 'Arc Flash Hazard (IEEE 1584)', icon: Flame },
+        { id: 'DIFF_PROTECTION_LAB', labelFr: 'Labo Différentiel (RCD / DDR)', labelEn: 'Differential Protection Lab', icon: Shield },
+        { id: 'SPD_LAB', labelFr: 'Labo Parafoudres (SPD Type 1+2)', labelEn: 'Surge Protection (SPD) Lab', icon: CloudLightning },
+        { id: 'FAULTS_SAFETY', labelFr: 'Scénarios Défauts & Consignation LOTO', labelEn: 'Faults & LOTO Safety', icon: AlertTriangle }
+      ]
+    },
+    {
+      id: 'STAGE_COMMISSIONING_DELIVERABLES',
+      number: '05',
+      titleFr: 'Essais, Recette & Livrables',
+      titleEn: 'Testing & Deliverables',
+      subFr: 'Essais FAT/SAT, audit de conformité, bordereau BOQ & export PDF',
+      subEn: 'FAT/SAT testing, compliance audit, BOQ & master dossier',
+      icon: FileSpreadsheet,
+      accentColor: 'purple',
+      tools: [
+        { id: 'CAD_DELIVERABLES', labelFr: 'Livrables, BOM CSV & PV Essais', labelEn: 'Deliverables & BOM CSV', icon: FileText },
+        { id: 'PROJECT_DESIGN_WORKBENCH', labelFr: 'Dossier Projet Complet (24 Modules)', labelEn: 'Full Project Design Suite', icon: CheckSquare },
+        { id: 'EQUIPMENT_CATALOG', labelFr: 'Catalogue Matériels BT', labelEn: 'LV Apparatus Catalog', icon: FileText },
+        { id: 'OPERATOR_FABRIC', labelFr: 'Console Opérateur & Télémétrie', labelEn: 'Operator Console & Stream', icon: Activity }
+      ]
+    }
   ];
+
+  const currentStageConfig = stagesConfig.find(s => s.id === activeStage) || stagesConfig[0];
 
   const handleSelectEquipment = (eqId: string) => {
     setInspectedEquipmentId(eqId);
@@ -162,12 +272,12 @@ export const InstallationsWorkbench: React.FC<InstallationsWorkbenchProps> = ({
   );
 
   return (
-    <div className="space-y-4 font-mono text-xs text-slate-100">
+    <div className="space-y-6 font-mono text-xs text-slate-100">
       {/* 1. Master Command Header */}
       <InstallationCommandHeader
         locale={locale}
-        activePillar={activePillar}
-        onSelectPillar={(p) => setActivePillar(p as InstallationPillar)}
+        activePillar={activeSubTool}
+        onSelectPillar={(p) => setActiveSubTool(p)}
         selectedArchetype={selectedArchetype}
         onSelectArchetype={setSelectedArchetype}
         activeView={activeViewMode}
@@ -179,457 +289,391 @@ export const InstallationsWorkbench: React.FC<InstallationsWorkbenchProps> = ({
         onOpenEngineeringDrawer={() => setIsEngineeringDrawerOpen(true)}
       />
 
-      {/* 2. Eight Pillars Navigation Bar */}
-      <div className="p-2 rounded-2xl bg-[#0B0F19] border border-[#20293A] overflow-x-auto scrollbar-thin scrollbar-thumb-amber-500/20">
-        <div className="flex items-center gap-1.5 min-w-[880px]">
-          {pillars.map((pil) => {
-            const Icon = pil.icon;
-            const isSelected = pil.id === activePillar;
+      {/* 2. Primary 5-Stage Lifecycle Navigation Ribbon */}
+      <nav aria-label="Cycle d'ingénierie" className="p-3 rounded-2xl bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border border-slate-800 shadow-xl backdrop-blur-md">
+        <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-slate-800/80 text-[11px]">
+          <div className="flex items-center gap-2">
+            <span className="p-1 rounded bg-amber-500/20 text-amber-400 font-bold">D06</span>
+            <span className="font-bold text-white uppercase tracking-wider">
+              {isFr ? 'Parcours d\'Ingénierie des Installations Basse Tension (5 Grandes Étapes)' : '5-Stage Low-Voltage Engineering Lifecycle'}
+            </span>
+          </div>
+          <span className="text-slate-400 font-mono text-[10px] hidden sm:inline">
+            IEC 60364 • NF C 15-100 • IEC 61439
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+          {stagesConfig.map((stg) => {
+            const Icon = stg.icon;
+            const isSelected = stg.id === activeStage;
             return (
               <button
-                key={pil.id}
+                key={stg.id}
                 type="button"
-                onClick={() => setActivePillar(pil.id)}
-                className={`flex-1 py-2.5 px-3 rounded-xl border text-center transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                onClick={() => {
+                  setActiveStage(stg.id);
+                  setActiveSubTool(stg.tools[0].id);
+                }}
+                className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                   isSelected
-                    ? 'bg-amber-500 text-slate-950 border-amber-400 font-black shadow-md shadow-amber-500/20 scale-[1.01]'
-                    : 'bg-[#0E1522] text-slate-300 border-[#1C2538] hover:border-amber-400/50 hover:text-white'
+                    ? 'bg-amber-500/20 border-amber-500 text-white shadow-lg shadow-amber-500/10'
+                    : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
                 }`}
               >
-                <Icon className="h-4 w-4 shrink-0" />
-                <span className="text-[11px] truncate">
-                  {locale === 'fr' ? pil.label_fr : pil.label_en}
-                </span>
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className={`font-mono text-xs font-black ${isSelected ? 'text-amber-400' : 'text-slate-500'}`}>
+                      {stg.number}
+                    </span>
+                    <Icon className={`w-4 h-4 ${isSelected ? 'text-amber-400' : 'text-slate-500'}`} />
+                  </div>
+                  <div className="font-bold text-xs mt-1 text-white">
+                    {isFr ? stg.titleFr : stg.titleEn}
+                  </div>
+                </div>
+                <div className="text-[10px] text-slate-400 mt-1 line-clamp-1">
+                  {isFr ? stg.subFr : stg.subEn}
+                </div>
               </button>
             );
           })}
         </div>
+      </nav>
+
+      {/* 3. Secondary Contextual Sub-Tool Selector */}
+      <div className="flex flex-wrap items-center gap-1.5 p-2 rounded-xl bg-slate-900/90 border border-slate-800">
+        <span className="text-slate-500 text-[10px] uppercase font-mono font-bold mr-2 px-1">
+          {isFr ? 'Outils de l\'Étape :' : 'Stage Tools:'}
+        </span>
+        {currentStageConfig.tools.map((tool) => {
+          const ToolIcon = tool.icon;
+          const isToolActive = activeSubTool === tool.id;
+          return (
+            <button
+              key={tool.id}
+              type="button"
+              onClick={() => setActiveSubTool(tool.id)}
+              className={`px-3 py-1.5 rounded-lg border text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                isToolActive
+                  ? 'bg-amber-500 text-slate-950 border-amber-400 font-black shadow-xs'
+                  : 'bg-slate-950/60 text-slate-300 border-slate-800 hover:border-slate-700 hover:text-white'
+              }`}
+            >
+              <ToolIcon className="w-3.5 h-3.5" />
+              <span>{isFr ? tool.labelFr : tool.labelEn}</span>
+            </button>
+          );
+        })}
       </div>
 
-      {/* 3. Main Workspace Pillar View Rendering */}
+      {/* 4. Main Stage Content Area */}
       <main className="transition-all duration-150">
-        {activePillar === 'MASTER_CHAIN' && (
-          <MasterInstallationChainExplorer
-            locale={locale}
-            onNavigateToStage={(stageId) => {
-              if (stageId.includes('tgbt')) setActivePillar('TGBT_BUILDER');
-              else if (stageId.includes('panel')) setActivePillar('PANEL_BUILDER');
-              else if (stageId.includes('load')) setActivePillar('LOAD_LIBRARY');
-            }}
-          />
-        )}
+        {/* ========================================================================= */}
+        {/* STAGE 1: ECOSYSTEM & FACILITY ARCHETYPES                                 */}
+        {/* ========================================================================= */}
+        {activeStage === 'STAGE_ECOSYSTEM_ARCHETYPES' && (
+          <div className="space-y-6">
+            {activeSubTool === 'ECOSYSTEM_OVERVIEW' && (
+              <>
+                <InstallationEcosystemHero
+                  locale={locale}
+                  selectedArchetype={selectedArchetype}
+                  onSelectArchetype={setSelectedArchetype}
+                  selectedEarthing={selectedEarthing}
+                  onSelectEarthing={setSelectedEarthing}
+                  onNavigateStage={(stg) => {
+                    setActiveStage(stg);
+                    if (stg === 'STAGE_SIZING_ANALYSIS') setActiveSubTool('POWER_BALANCE');
+                    else if (stg === 'STAGE_SWITCHBOARDS_EQUIPMENT') setActiveSubTool('TGBT_BUILDER');
+                    else if (stg === 'STAGE_PROTECTION_SAFETY') setActiveSubTool('SELECTIVE_TCC');
+                    else if (stg === 'STAGE_COMMISSIONING_DELIVERABLES') setActiveSubTool('CAD_DELIVERABLES');
+                  }}
+                />
+                <MasterInstallationChainExplorer
+                  locale={locale}
+                  onNavigateToStage={(stageId) => {
+                    if (stageId.includes('tgbt')) {
+                      setActiveStage('STAGE_SWITCHBOARDS_EQUIPMENT');
+                      setActiveSubTool('TGBT_BUILDER');
+                    } else if (stageId.includes('panel')) {
+                      setActiveStage('STAGE_SWITCHBOARDS_EQUIPMENT');
+                      setActiveSubTool('PANEL_BUILDER');
+                    } else if (stageId.includes('load')) {
+                      setActiveSubTool('LOAD_LIBRARY');
+                    }
+                  }}
+                />
+              </>
+            )}
 
-        {activePillar === 'TGBT_BUILDER' && (
-          <InteractiveTgbtBuilder locale={locale} />
-        )}
+            {activeSubTool === 'MASTER_CHAIN' && (
+              <MasterInstallationChainExplorer
+                locale={locale}
+                onNavigateToStage={(stageId) => {
+                  if (stageId.includes('tgbt')) {
+                    setActiveStage('STAGE_SWITCHBOARDS_EQUIPMENT');
+                    setActiveSubTool('TGBT_BUILDER');
+                  } else if (stageId.includes('panel')) {
+                    setActiveStage('STAGE_SWITCHBOARDS_EQUIPMENT');
+                    setActiveSubTool('PANEL_BUILDER');
+                  } else if (stageId.includes('load')) {
+                    setActiveSubTool('LOAD_LIBRARY');
+                  }
+                }}
+              />
+            )}
 
-        {activePillar === 'PANEL_BUILDER' && (
-          <InteractivePanelBuilder locale={locale} />
-        )}
+            {activeSubTool === 'FACILITY_ARCHETYPES' && (
+              <FacilityArchetypesExplorer locale={locale} />
+            )}
 
-        {activePillar === 'SELECTIVE_TCC' && (
-          <SelectiveCoordinationTccStudio locale={locale} />
-        )}
+            {activeSubTool === 'LOAD_LIBRARY' && (
+              <StructuredLoadLibrary locale={locale} />
+            )}
 
-        {activePillar === 'ARC_FLASH' && (
-          <ArcFlashHazardCalculator locale={locale} />
-        )}
+            {activeSubTool === 'INTERACTIVE_SLD' && (
+              <InteractiveBuildingSldCanvas
+                locale={locale}
+                archetype={selectedArchetype}
+                viewMode={activeViewMode}
+                earthing={selectedEarthing}
+                regime={selectedRegime}
+                onSelectComponent={(nodeId) => {
+                  const eq = INSTALLATION_EQUIPMENT.find((e) => e.id === nodeId);
+                  if (eq) {
+                    setInspectedEquipmentId(eq.id);
+                  } else {
+                    setSelectedStageId(nodeId);
+                    setActiveSubTool('MASTER_CHAIN');
+                  }
+                }}
+              />
+            )}
 
-        {activePillar === 'HARMONICS_THD' && (
-          <HarmonicsAndPowerQualityAnalyzer locale={locale} />
-        )}
-
-        {activePillar === 'CABLE_SIZING_K' && (
-          <CableSizingDeratingMatrix locale={locale} />
-        )}
-
-        {activePillar === 'THERMAL_TGBT' && (
-          <TgbtThermalDissipationCalculator locale={locale} />
-        )}
-
-        {activePillar === 'CAD_DELIVERABLES' && (
-          <PanelCadAndDeliverablesExportEngine locale={locale} />
-        )}
-
-        {activePillar === 'DIFF_PROTECTION_LAB' && (
-          <DifferentialProtectionLab locale={locale} />
-        )}
-
-        {activePillar === 'SPD_LAB' && (
-          <SurgeProtectionDeviceLab locale={locale} />
-        )}
-
-        {activePillar === 'FACILITY_ARCHETYPES' && (
-          <FacilityArchetypesExplorer locale={locale} />
-        )}
-
-        {activePillar === 'LOAD_LIBRARY' && (
-          <StructuredLoadLibrary locale={locale} />
-        )}
-
-        {activePillar === 'FORMULAS_EXPLAINER' && (
-          <InstallationFormulasExplainer locale={locale} />
-        )}
-
-        {activePillar === 'PROJECT_DESIGN_WORKBENCH' && (
-          <ConceptualProjectDesignWorkbench 
-            locale={locale} 
-            initialWorkflowStep={selectedWorkbenchStep}
-          />
-        )}
-
-        {activePillar === 'KNOWLEDGE_MAP' && (
-          <InstallationEngineeringKnowledgeExplorer
-            locale={locale}
-            onSelectEquipment={handleSelectEquipment}
-            onNavigateToWorkbenchTab={(tabKey) => {
-              setSelectedWorkbenchStep(tabKey);
-              setActivePillar('PROJECT_DESIGN_WORKBENCH');
-            }}
-          />
-        )}
-
-        {activePillar === 'INTERACTIVE_SLD' && (
-          <InteractiveBuildingSldCanvas
-            locale={locale}
-            archetype={selectedArchetype}
-            viewMode={activeViewMode}
-            earthing={selectedEarthing}
-            regime={selectedRegime}
-            onSelectComponent={(nodeId) => {
-              // Check if it matches an equipment in the catalog
-              const eq = INSTALLATION_EQUIPMENT.find((e) => e.id === nodeId);
-              if (eq) {
-                setInspectedEquipmentId(eq.id);
-              } else {
-                setSelectedStageId(nodeId);
-                setActivePillar('JOURNEY');
-              }
-            }}
-          />
-        )}
-
-        {activePillar === 'JOURNEY' && (
-          <MasterInstallationJourney
-            locale={locale}
-            selectedStageId={selectedStageId}
-            onSelectStage={setSelectedStageId}
-          />
-        )}
-
-        {activePillar === 'TGBT_SWITCHBOARD' && (
-          <TgbtSwitchboardExplorer
-            locale={locale}
-            onSelectEquipment={handleSelectEquipment}
-            onNavigateToWorkbenchTab={(tabKey) => {
-              setSelectedWorkbenchStep(tabKey);
-              setActivePillar('PROJECT_DESIGN_WORKBENCH');
-            }}
-          />
-        )}
-
-        {activePillar === 'FINAL_CIRCUITS' && (
-          <DistributionBoardsAndCircuitsExplorer
-            locale={locale}
-            onSelectEquipment={handleSelectEquipment}
-            onNavigateToWorkbenchTab={(tabKey) => {
-              setSelectedWorkbenchStep(tabKey);
-              setActivePillar('PROJECT_DESIGN_WORKBENCH');
-            }}
-          />
-        )}
-
-        {activePillar === 'EARTHING_BALANCING' && (
-          <EarthingAndNeutralExplorer
-            locale={locale}
-            selectedEarthing={selectedEarthing}
-            onSelectEarthing={setSelectedEarthing}
-            onNavigateToWorkbenchTab={(tabKey) => {
-              setSelectedWorkbenchStep(tabKey);
-              setActivePillar('PROJECT_DESIGN_WORKBENCH');
-            }}
-          />
-        )}
-
-        {activePillar === 'USEFUL_ENERGY' && (
-          <UsefulEnergyAndLoadsExplorer 
-            locale={locale} 
-            onNavigateToWorkbenchTab={(tabKey) => {
-              setSelectedWorkbenchStep(tabKey);
-              setActivePillar('PROJECT_DESIGN_WORKBENCH');
-            }}
-          />
-        )}
-
-        {activePillar === 'FAULTS_SAFETY' && (
-          <InstallationScenariosAndSafetyExplorer 
-            locale={locale} 
-            onNavigateToWorkbenchTab={(tabKey) => {
-              setSelectedWorkbenchStep(tabKey);
-              setActivePillar('PROJECT_DESIGN_WORKBENCH');
-            }}
-          />
-        )}
-
-        {activePillar === 'EQUIPMENT_CATALOG' && (
-          <div className="p-5 rounded-2xl bg-[#090D15] border border-[#20293A] space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-[#1E2638]">
-              <div>
-                <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold text-[10px]">
-                  LV APPARATUS CATALOG
-                </span>
-                <h2 className="text-sm font-bold text-white mt-1">
-                  {locale === 'fr'
-                    ? 'Catalogue des Matériels & Appareillages Basse Tension'
-                    : 'Low-Voltage Apparatus & Switchgear Catalog'}
-                </h2>
-              </div>
-              <span className="text-slate-400 text-xs">
-                {INSTALLATION_EQUIPMENT.length} {locale === 'fr' ? 'appareillages modélisés' : 'apparatus modeled'}
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {INSTALLATION_EQUIPMENT.map((eq) => (
-                <div
-                  key={eq.id}
-                  onClick={() => handleSelectEquipment(eq.id)}
-                  className="p-4 rounded-xl bg-[#0D131F] border border-[#1E2738] hover:border-amber-400 cursor-pointer transition-all space-y-2 flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex items-center justify-between text-[9px] mb-1">
-                      <span className="px-1.5 py-0.5 rounded bg-slate-800 text-amber-400 font-bold">
-                        {eq.code}
-                      </span>
-                      <span className="text-slate-400">{eq.rating_amps}</span>
-                    </div>
-                    <h3 className="text-xs font-bold text-white mb-1">
-                      {locale === 'fr' ? eq.name_fr : eq.name_en}
-                    </h3>
-                    <p className="text-[10px] text-slate-300 font-sans line-clamp-2 leading-relaxed">
-                      {locale === 'fr' ? eq.purpose_fr : eq.purpose_en}
-                    </p>
-                  </div>
-
-                  <div className="pt-2 border-t border-[#1C2538] flex items-center justify-between text-[10px]">
-                    <span className="text-slate-400">{eq.nominal_voltage}</span>
-                    <span className="text-amber-400 font-bold">
-                      {locale === 'fr' ? 'Inspecter ➔' : 'Inspect ➔'}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
+            {activeSubTool === 'KNOWLEDGE_MAP' && (
+              <InstallationEngineeringKnowledgeExplorer
+                locale={locale}
+                onSelectEquipment={handleSelectEquipment}
+                onNavigateToWorkbenchTab={(tabKey) => {
+                  setSelectedWorkbenchStep(tabKey);
+                  setActiveStage('STAGE_COMMISSIONING_DELIVERABLES');
+                  setActiveSubTool('PROJECT_DESIGN_WORKBENCH');
+                }}
+              />
+            )}
           </div>
         )}
 
-        {activePillar === 'OPERATOR_FABRIC' && (
+        {/* ========================================================================= */}
+        {/* STAGE 2: SYSTEM SIZING & ANALYSIS                                        */}
+        {/* ========================================================================= */}
+        {activeStage === 'STAGE_SIZING_ANALYSIS' && (
           <div className="space-y-6">
-            <OperatorFabricStream
-              locale={locale}
-              onInspectAas={(assetId) => {
-                setInspectedEquipmentId(assetId);
-                setIsAasOpen(true);
-              }}
-            />
+            {activeSubTool === 'POWER_BALANCE' && (
+              <ConceptualProjectDesignWorkbench 
+                locale={locale} 
+                initialWorkflowStep="POWER_BALANCE"
+              />
+            )}
+
+            {activeSubTool === 'SHORT_CIRCUIT_IMPEDANCE' && (
+              <ConceptualProjectDesignWorkbench 
+                locale={locale} 
+                initialWorkflowStep="SHORT_CIRCUIT_IMPEDANCE"
+              />
+            )}
+
+            {activeSubTool === 'EARTHING_BALANCING' && (
+              <div className="space-y-6">
+                <EarthingAndNeutralExplorer
+                  locale={locale}
+                  selectedEarthing={selectedEarthing}
+                  onSelectEarthing={setSelectedEarthing}
+                  onNavigateToWorkbenchTab={(tabKey) => {
+                    setSelectedWorkbenchStep(tabKey);
+                    setActiveStage('STAGE_COMMISSIONING_DELIVERABLES');
+                    setActiveSubTool('PROJECT_DESIGN_WORKBENCH');
+                  }}
+                />
+                <ConceptualProjectDesignWorkbench 
+                  locale={locale} 
+                  initialWorkflowStep="EARTHING_TOUCH_VOLTAGE"
+                />
+              </div>
+            )}
+
+            {activeSubTool === 'HARMONICS_THD' && (
+              <HarmonicsAndPowerQualityAnalyzer locale={locale} />
+            )}
+
+            {activeSubTool === 'FORMULAS_EXPLAINER' && (
+              <InstallationFormulasExplainer locale={locale} />
+            )}
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* STAGE 3: SWITCHBOARDS ARCHITECTURE & EQUIPMENT                           */}
+        {/* ========================================================================= */}
+        {activeStage === 'STAGE_SWITCHBOARDS_EQUIPMENT' && (
+          <div className="space-y-6">
+            {activeSubTool === 'TGBT_BUILDER' && (
+              <InteractiveTgbtBuilder locale={locale} />
+            )}
+
+            {activeSubTool === 'PANEL_BUILDER' && (
+              <InteractivePanelBuilder locale={locale} />
+            )}
+
+            {activeSubTool === 'CABLE_SIZING_K' && (
+              <CableSizingDeratingMatrix locale={locale} />
+            )}
+
+            {activeSubTool === 'THERMAL_TGBT' && (
+              <TgbtThermalDissipationCalculator locale={locale} />
+            )}
+
+            {activeSubTool === 'TGBT_SWITCHBOARD' && (
+              <TgbtSwitchboardExplorer
+                locale={locale}
+                onSelectEquipment={handleSelectEquipment}
+                onNavigateToWorkbenchTab={(tabKey) => {
+                  setSelectedWorkbenchStep(tabKey);
+                  setActiveStage('STAGE_COMMISSIONING_DELIVERABLES');
+                  setActiveSubTool('PROJECT_DESIGN_WORKBENCH');
+                }}
+              />
+            )}
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* STAGE 4: PROTECTION, SAFETY & SELECTIVITY                                */}
+        {/* ========================================================================= */}
+        {activeStage === 'STAGE_PROTECTION_SAFETY' && (
+          <div className="space-y-6">
+            {activeSubTool === 'SELECTIVE_TCC' && (
+              <SelectiveCoordinationTccStudio locale={locale} />
+            )}
+
+            {activeSubTool === 'ARC_FLASH' && (
+              <ArcFlashHazardCalculator locale={locale} />
+            )}
+
+            {activeSubTool === 'DIFF_PROTECTION_LAB' && (
+              <DifferentialProtectionLab locale={locale} />
+            )}
+
+            {activeSubTool === 'SPD_LAB' && (
+              <SurgeProtectionDeviceLab locale={locale} />
+            )}
+
+            {activeSubTool === 'FAULTS_SAFETY' && (
+              <InstallationScenariosAndSafetyExplorer 
+                locale={locale} 
+                onNavigateToWorkbenchTab={(tabKey) => {
+                  setSelectedWorkbenchStep(tabKey);
+                  setActiveStage('STAGE_COMMISSIONING_DELIVERABLES');
+                  setActiveSubTool('PROJECT_DESIGN_WORKBENCH');
+                }}
+              />
+            )}
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* STAGE 5: TESTING, COMMISSIONING & DELIVERABLES                           */}
+        {/* ========================================================================= */}
+        {activeStage === 'STAGE_COMMISSIONING_DELIVERABLES' && (
+          <div className="space-y-6">
+            {activeSubTool === 'CAD_DELIVERABLES' && (
+              <PanelCadAndDeliverablesExportEngine locale={locale} />
+            )}
+
+            {activeSubTool === 'PROJECT_DESIGN_WORKBENCH' && (
+              <ConceptualProjectDesignWorkbench 
+                locale={locale} 
+                initialWorkflowStep={selectedWorkbenchStep}
+              />
+            )}
+
+            {activeSubTool === 'EQUIPMENT_CATALOG' && (
+              <div className="p-5 rounded-2xl bg-[#090D15] border border-[#20293A] space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-[#1E2638]">
+                  <div>
+                    <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold text-[10px]">
+                      LV APPARATUS CATALOG
+                    </span>
+                    <h3 className="text-base font-black text-white mt-1">
+                      {isFr ? 'Catalogue Matériels Basse Tension' : 'Low-Voltage Apparatus Catalog'}
+                    </h3>
+                  </div>
+                  <span className="text-xs text-slate-400 font-mono">
+                    {INSTALLATION_EQUIPMENT.length} {isFr ? 'composants répertoriés' : 'components cataloged'}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {INSTALLATION_EQUIPMENT.map((eq) => (
+                    <div
+                      key={eq.id}
+                      onClick={() => handleSelectEquipment(eq.id)}
+                      className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-amber-400/50 cursor-pointer transition-all space-y-2"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300">
+                          {eq.category}
+                        </span>
+                        <span className="font-mono text-xs font-bold text-amber-400">
+                          {eq.code}
+                        </span>
+                      </div>
+                      <h4 className="font-bold text-white text-xs">{isFr ? eq.name_fr : eq.name_en}</h4>
+                      <p className="text-[10px] text-slate-400 line-clamp-2 leading-relaxed">
+                        {isFr ? eq.purpose_fr : eq.purpose_en}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeSubTool === 'OPERATOR_FABRIC' && (
+              <div className="space-y-4">
+                <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Activity className="w-5 h-5 text-emerald-400 animate-pulse" />
+                    <div>
+                      <h3 className="font-bold text-white text-sm">
+                        {isFr ? 'Console de Télémétrie Opérateur & Événements Réseau' : 'Operator Console & Telemetry Stream'}
+                      </h3>
+                      <p className="text-xs text-slate-400">
+                        {isFr ? 'Flux SCADA & alarmes en temps réel' : 'Real-time SCADA alarms and telemetry'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <OperatorFabricStream locale={locale} />
+              </div>
+            )}
           </div>
         )}
       </main>
 
-      {/* 4. Apparatus Deep Technical Inspector Modal */}
-      {inspectedComponent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs font-mono text-xs">
-          <div className="w-full max-w-3xl max-h-[90vh] bg-[#0A0E17] border border-[#20293A] rounded-2xl shadow-2xl overflow-hidden flex flex-col justify-between">
-            {/* Modal Header */}
-            <div className="p-4 border-b border-[#1E2638] flex items-center justify-between bg-[#080B12]">
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded bg-amber-500 text-slate-950 font-black text-xs">
-                  {inspectedComponent.code}
-                </span>
-                <h3 className="text-sm font-bold text-white">
-                  {locale === 'fr' ? inspectedComponent.name_fr : inspectedComponent.name_en}
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setInspectedEquipmentId(null)}
-                className="p-1.5 rounded-lg bg-[#141C2B] text-slate-400 hover:text-white border border-[#20293A] cursor-pointer"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-
-            {/* Modal Scrollable Body */}
-            <div className="p-5 overflow-y-auto space-y-4 scrollbar-thin scrollbar-thumb-amber-500/20">
-              {/* Ratings Summary Strip */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 rounded-xl bg-[#0E1522] border border-[#1E2738] text-[10px]">
-                <div>
-                  <span className="text-slate-400 block text-[9px]">Courant Assigné :</span>
-                  <strong className="text-amber-400">{inspectedComponent.rating_amps}</strong>
-                </div>
-                <div>
-                  <span className="text-slate-400 block text-[9px]">Tension Nominale :</span>
-                  <strong className="text-white">{inspectedComponent.nominal_voltage}</strong>
-                </div>
-                <div>
-                  <span className="text-slate-400 block text-[9px]">Pouvoir de Coupure :</span>
-                  <strong className="text-emerald-400">
-                    {inspectedComponent.breaking_capacity || 'N/A'}
-                  </strong>
-                </div>
-                <div>
-                  <span className="text-slate-400 block text-[9px]">Indice Protection :</span>
-                  <strong className="text-sky-400">{inspectedComponent.ip_ik_rating}</strong>
-                </div>
-              </div>
-
-              {/* Purpose & Principle */}
-              <div className="space-y-2 text-[11px]">
-                <div className="p-3 rounded-lg bg-[#0E1522] border border-[#1E2738]">
-                  <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider block mb-1">
-                    {locale === 'fr' ? 'Rôle & Finalité Électrotechnique :' : 'Purpose & Electrotechnical Role:'}
-                  </span>
-                  <p className="text-slate-200 font-sans leading-relaxed">
-                    {locale === 'fr' ? inspectedComponent.purpose_fr : inspectedComponent.purpose_en}
-                  </p>
-                </div>
-
-                <div className="p-3 rounded-lg bg-[#0E1522] border border-[#1E2738]">
-                  <span className="text-[10px] font-bold text-sky-400 uppercase tracking-wider block mb-1">
-                    {locale === 'fr' ? 'Principe de Fonctionnement :' : 'Operating Principle:'}
-                  </span>
-                  <p className="text-slate-200 font-sans leading-relaxed">
-                    {locale === 'fr'
-                      ? inspectedComponent.operating_principle_fr
-                      : inspectedComponent.operating_principle_en}
-                  </p>
-                </div>
-
-                <div className="p-3 rounded-lg bg-[#0E1522] border border-[#1E2738]">
-                  <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider block mb-1">
-                    {locale === 'fr' ? 'Construction & Matériaux :' : 'Physical Construction:'}
-                  </span>
-                  <p className="text-slate-200 font-sans leading-relaxed">
-                    {locale === 'fr'
-                      ? inspectedComponent.physical_construction_fr
-                      : inspectedComponent.physical_construction_en}
-                  </p>
-                </div>
-              </div>
-
-              {/* Failure Modes & Safety Rules */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px]">
-                <div className="p-3 rounded-lg bg-[#0E1522] border border-[#1E2738] space-y-1">
-                  <span className="text-[10px] font-bold text-rose-400 uppercase tracking-wider block">
-                    {locale === 'fr' ? 'Modes de Défaillance :' : 'Failure Modes:'}
-                  </span>
-                  <ul className="space-y-1 text-slate-300 font-sans">
-                    {(locale === 'fr'
-                      ? inspectedComponent.failure_modes_fr
-                      : inspectedComponent.failure_modes_en
-                    ).map((m, i) => (
-                      <li key={i} className="flex items-start gap-1.5">
-                        <AlertTriangle className="h-3 w-3 text-rose-400 shrink-0 mt-0.5" />
-                        <span>{m}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="p-3 rounded-lg bg-[#0E1522] border border-[#1E2738] space-y-1">
-                  <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">
-                    {locale === 'fr' ? 'Consignes de Sécurité LOTO :' : 'Safety & LOTO Rules:'}
-                  </span>
-                  <ul className="space-y-1 text-slate-300 font-sans">
-                    {(locale === 'fr'
-                      ? inspectedComponent.safety_precautions_fr
-                      : inspectedComponent.safety_precautions_en
-                    ).map((s, i) => (
-                      <li key={i} className="flex items-start gap-1.5">
-                        <Shield className="h-3 w-3 text-amber-400 shrink-0 mt-0.5" />
-                        <span>{s}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              {/* Standards */}
-              <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                <span className="text-[10px] text-slate-400">Normes :</span>
-                {inspectedComponent.standards.map((std, i) => (
-                  <span
-                    key={i}
-                    className="px-2 py-0.5 rounded bg-sky-950 text-sky-300 font-bold border border-sky-800 text-[10px]"
-                  >
-                    {std}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Modal Footer */}
-            <div className="p-3 border-t border-[#1E2638] bg-[#080B12] flex items-center justify-between">
-              <button
-                type="button"
-                onClick={() => setIsAasOpen(true)}
-                className="px-3.5 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold hover:bg-cyan-500/30 flex items-center gap-1.5 cursor-pointer text-xs"
-              >
-                <Cpu className="w-3.5 h-3.5" />
-                <span>{locale === 'fr' ? 'Jumeau Numérique AAS v3 (IEC 63278)' : 'AAS v3 Digital Twin'}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setInspectedEquipmentId(null)}
-                className="px-4 py-1.5 rounded-xl bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 cursor-pointer"
-              >
-                {locale === 'fr' ? 'Fermer' : 'Close'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 5. Formulas & Norms Side Drawer */}
+      {/* 5. Persistent Engineering Drawer */}
       <InstallationEngineeringDrawer
-        locale={locale}
         isOpen={isEngineeringDrawerOpen}
         onClose={() => setIsEngineeringDrawerOpen(false)}
-        onOpenKnowledgeMap={() => setActivePillar('KNOWLEDGE_MAP')}
+        locale={locale}
       />
 
-      {/* 6. AAS v3 Slide-over Drawer */}
+      {/* 6. Asset Administration Shell (AAS) Drawer */}
       <AasDrawer
-        equipment={inspectedComponent ? {
-          id: inspectedComponent.id,
-          domain_id: 'D06',
-          domain_code: 'D06',
-          entity_type: inspectedComponent.category,
-          name_fr: inspectedComponent.name_fr,
-          name_en: inspectedComponent.name_en,
-          aliases_fr: [inspectedComponent.code],
-          aliases_en: [inspectedComponent.code],
-          description_fr: inspectedComponent.purpose_fr,
-          description_en: inspectedComponent.purpose_en,
-          function_fr: inspectedComponent.purpose_fr,
-          function_en: inspectedComponent.purpose_en,
-          typical_location_fr: 'TGBT & Tableau de Distribution BT',
-          typical_location_en: 'Main LV Switchboard & Distribution Panel',
-          voltage_level: 'LV',
-          is_safety_critical: true,
-          hazard_level: 'low_voltage',
-          technical: {
-            'Courant assigné In': inspectedComponent.rating_amps,
-            'Tension nominale Un': inspectedComponent.nominal_voltage,
-            'Indice de protection IP/IK': inspectedComponent.ip_ik_rating,
-            ...(inspectedComponent.breaking_capacity ? { 'Pouvoir de coupure Icu': inspectedComponent.breaking_capacity } : {}),
-            ...(inspectedComponent.internal_form ? { 'Forme de séparation': inspectedComponent.internal_form } : {})
-          }
-        } : null}
-        isOpen={isAasOpen && !!inspectedComponent}
+        isOpen={isAasOpen}
         onClose={() => setIsAasOpen(false)}
         locale={locale}
+        equipment={inspectedComponent as any}
       />
     </div>
   );
