@@ -21,6 +21,7 @@ import type { InjectedCalculatorContext } from '../../services/routerService';
 import { CameroonContractualDemarcationViewer } from './CameroonContractualDemarcationViewer';
 import { MultiDisciplinaryInterfaceMatrixViewer } from './MultiDisciplinaryInterfaceMatrixViewer';
 import { InteractiveCameroonGridMap } from './InteractiveCameroonGridMap';
+import { RealCameroonGeographicMap } from './RealCameroonGeographicMap';
 import { SubstationBatchComplianceModal } from '../diagrams/modules/SubstationBatchComplianceModal';
 import type { SubstationSimulationSnapshot } from '../../services/substationBatchComplianceService';
 import { 
@@ -87,6 +88,7 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
   const [selectedPlant, setSelectedPlant] = useState<PowerPlantNode | null>(CAMEROON_POWER_PLANTS[0]);
   const [selectedSubstation, setSelectedSubstation] = useState<SubstationNode | null>(CAMEROON_SUBSTATIONS[0]);
   const [demarcationSubTab, setDemarcationSubTab] = useState<'disciplines_matrix' | 'contractual_gate3'>('disciplines_matrix');
+  const [mapDisplayMode, setMapDisplayMode] = useState<'real_geo' | 'topological_sld'>('real_geo');
 
   // Filtered Plants
   const filteredPlants = useMemo(() => {
@@ -391,12 +393,60 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
 
       {/* SECTION: Interactive GIS / SLD Hybrid Map */}
       {activeCategory === 'map' && (
-        <InteractiveCameroonGridMap
-          locale={locale}
-          onNavigateDiagram={onNavigateDiagram}
-          onNavigateCalculator={onNavigateCalculator}
-          onNavigateSimulation={onNavigateSimulation}
-        />
+        <div className="space-y-4">
+          {/* Sub-selector for Real Vector Map vs Orthogonal Topological SLD */}
+          <div className="flex items-center justify-between p-2 rounded-xl bg-[#0D1117] border border-slate-800 shadow-md">
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setMapDisplayMode('real_geo')}
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                  mapDisplayMode === 'real_geo'
+                    ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                }`}
+              >
+                <Globe className="w-3.5 h-3.5" />
+                <span>{locale === 'fr' ? '1. Carte Vectorielle Réelle WGS84 (10 Régions & Fleuves)' : '1. Real Geographic WGS84 Map (10 Regions & Rivers)'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setMapDisplayMode('topological_sld')}
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                  mapDisplayMode === 'topological_sld'
+                    ? 'bg-sky-600 text-white shadow-md'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" />
+                <span>{locale === 'fr' ? '2. Schéma Topologique Unifilaire (SLD Orthogonal)' : '2. Orthogonal Topological SLD Schematic'}</span>
+              </button>
+            </div>
+
+            <div className="hidden md:flex items-center gap-2 text-xs font-mono text-slate-400 pr-2">
+              <Activity className="w-3.5 h-3.5 text-emerald-400" />
+              <span>{locale === 'fr' ? 'Simulation Flux Dynamiques MW' : 'Live MW Power Flow Simulation'}</span>
+            </div>
+          </div>
+
+          {mapDisplayMode === 'real_geo' ? (
+            <RealCameroonGeographicMap
+              locale={locale}
+              onNavigateDiagram={onNavigateDiagram}
+              onNavigateCalculator={onNavigateCalculator}
+              onNavigateSimulation={onNavigateSimulation}
+              onNavigateEquipment={onNavigateEquipment}
+            />
+          ) : (
+            <InteractiveCameroonGridMap
+              locale={locale}
+              onNavigateDiagram={onNavigateDiagram}
+              onNavigateCalculator={onNavigateCalculator}
+              onNavigateSimulation={onNavigateSimulation}
+            />
+          )}
+        </div>
       )}
 
       {/* SECTION: Cameroon Demarcation & Multidisciplinary Interface Matrix */}
