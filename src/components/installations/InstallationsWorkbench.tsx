@@ -66,6 +66,7 @@ import { CableSizingDeratingMatrix } from './CableSizingDeratingMatrix';
 import { TgbtThermalDissipationCalculator } from './TgbtThermalDissipationCalculator';
 import { PanelCadAndDeliverablesExportEngine } from './PanelCadAndDeliverablesExportEngine';
 import { CameroonInstallationGridRealityEngine } from './CameroonInstallationGridRealityEngine';
+import { useInstallationProjectStore } from './services/useInstallationProjectStore';
 
 import {
   INSTALLATION_EQUIPMENT,
@@ -126,11 +127,9 @@ export const InstallationsWorkbench: React.FC<InstallationsWorkbenchProps> = ({
   const [activeStage, setActiveStage] = useState<MasterInstallationStage>('STAGE_ECOSYSTEM_ARCHETYPES');
   const [activeSubTool, setActiveSubTool] = useState<string>('ECOSYSTEM_OVERVIEW');
 
-  // Facilities & Global Context
-  const [selectedArchetype, setSelectedArchetype] = useState<FacilityArchetype>('TERTIARY_COMMERCIAL');
+  // Reactive Engineering Data Mesh Store
+  const project = useInstallationProjectStore('TERTIARY_COMMERCIAL', 'TN_S');
   const [activeViewMode, setActiveViewMode] = useState<InstallationViewMode>('ELECTRICAL_SLD');
-  const [selectedEarthing, setSelectedEarthing] = useState<EarthingSystemType>('TN_S');
-  const [selectedRegime, setSelectedRegime] = useState<OperatingRegime>('NORMAL_GRID');
 
   // Journey & Equipment Inspection State
   const [selectedStageId, setSelectedStageId] = useState<string>('stage-04-main-breaker');
@@ -281,14 +280,14 @@ export const InstallationsWorkbench: React.FC<InstallationsWorkbenchProps> = ({
         locale={locale}
         activePillar={activeSubTool}
         onSelectPillar={(p) => setActiveSubTool(p)}
-        selectedArchetype={selectedArchetype}
-        onSelectArchetype={setSelectedArchetype}
+        selectedArchetype={project.archetype}
+        onSelectArchetype={project.setArchetype}
         activeView={activeViewMode}
         onSelectView={setActiveViewMode}
-        selectedEarthing={selectedEarthing}
-        onSelectEarthing={setSelectedEarthing}
-        selectedRegime={selectedRegime}
-        onSelectRegime={setSelectedRegime}
+        selectedEarthing={project.earthing}
+        onSelectEarthing={project.setEarthing}
+        selectedRegime={project.regime}
+        onSelectRegime={project.setRegime}
         onOpenEngineeringDrawer={() => setIsEngineeringDrawerOpen(true)}
       />
 
@@ -370,6 +369,36 @@ export const InstallationsWorkbench: React.FC<InstallationsWorkbenchProps> = ({
         })}
       </div>
 
+      {/* Reactive Engineering Data Mesh HUD Bar */}
+      <div className="p-2.5 px-4 rounded-xl bg-gradient-to-r from-slate-950 via-[#0C1220] to-slate-950 border border-slate-800 flex flex-wrap items-center justify-between gap-3 text-[11px]">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+          <span className="font-bold text-white uppercase text-[10px] tracking-wider">
+            {isFr ? 'Pipeline Réactif de Dimensionnement :' : 'Reactive Sizing Data Mesh :'}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 flex-wrap font-mono text-[10px]">
+          <span className="p-1 px-2 rounded bg-slate-900 border border-slate-800 text-slate-300">
+            Transfo : <strong className="text-amber-400">{project.trafoKva} kVA</strong>
+          </span>
+          <span className="p-1 px-2 rounded bg-slate-900 border border-slate-800 text-slate-300">
+            Groupe GE : <strong className="text-sky-400">{project.gensetKva} kVA</strong>
+          </span>
+          <span className="p-1 px-2 rounded bg-slate-900 border border-slate-800 text-slate-300">
+            Courant In : <strong className="text-emerald-400">{project.nominalCurrentAmps} A</strong>
+          </span>
+          <span className="p-1 px-2 rounded bg-slate-900 border border-slate-800 text-slate-300">
+            Court-Circuit Isc : <strong className="text-rose-400">{project.upstreamIscKa} kA</strong>
+          </span>
+          <span className="p-1 px-2 rounded bg-slate-900 border border-slate-800 text-slate-300">
+            Jeu de Barres TGBT : <strong className="text-amber-300">{project.mainBusbarRatingAmps} A</strong>
+          </span>
+          <span className="p-1 px-2 rounded bg-slate-900 border border-slate-800 text-slate-300">
+            Coût Estimé : <strong className="text-emerald-300">{(project.estimatedCostFcfa).toLocaleString('fr-FR')} FCFA</strong>
+          </span>
+        </div>
+      </div>
+
       {/* 4. Main Stage Content Area */}
       <main className="transition-all duration-150">
         {/* ========================================================================= */}
@@ -380,10 +409,10 @@ export const InstallationsWorkbench: React.FC<InstallationsWorkbenchProps> = ({
             {activeSubTool === 'ECOSYSTEM_OVERVIEW' && (
               <InstallationEcosystemHero
                 locale={locale}
-                selectedArchetype={selectedArchetype}
-                onSelectArchetype={setSelectedArchetype}
-                selectedEarthing={selectedEarthing}
-                onSelectEarthing={setSelectedEarthing}
+                selectedArchetype={project.archetype}
+                onSelectArchetype={project.setArchetype}
+                selectedEarthing={project.earthing}
+                onSelectEarthing={project.setEarthing}
                 onNavigateStage={(stg) => {
                   setActiveStage(stg);
                   if (stg === 'STAGE_SIZING_ANALYSIS') setActiveSubTool('POWER_BALANCE');
@@ -422,10 +451,10 @@ export const InstallationsWorkbench: React.FC<InstallationsWorkbenchProps> = ({
             {activeSubTool === 'INTERACTIVE_SLD' && (
               <InteractiveBuildingSldCanvas
                 locale={locale}
-                archetype={selectedArchetype}
+                archetype={project.archetype}
                 viewMode={activeViewMode}
-                earthing={selectedEarthing}
-                regime={selectedRegime}
+                earthing={project.earthing}
+                regime={project.regime}
                 onSelectComponent={(nodeId) => {
                   const eq = INSTALLATION_EQUIPMENT.find((e) => e.id === nodeId);
                   if (eq) {
@@ -475,8 +504,8 @@ export const InstallationsWorkbench: React.FC<InstallationsWorkbenchProps> = ({
               <div className="space-y-6">
                 <EarthingAndNeutralExplorer
                   locale={locale}
-                  selectedEarthing={selectedEarthing}
-                  onSelectEarthing={setSelectedEarthing}
+                  selectedEarthing={project.earthing}
+                  onSelectEarthing={project.setEarthing}
                   onNavigateToWorkbenchTab={(tabKey) => {
                     setSelectedWorkbenchStep(tabKey);
                     setActiveStage('STAGE_COMMISSIONING_DELIVERABLES');
@@ -491,7 +520,10 @@ export const InstallationsWorkbench: React.FC<InstallationsWorkbenchProps> = ({
             )}
 
             {activeSubTool === 'CAMEROON_GRID_REALITY' && (
-              <CameroonInstallationGridRealityEngine locale={locale} />
+              <CameroonInstallationGridRealityEngine
+                locale={locale}
+                facilityPowerKW={Math.round(project.trafoKva * 0.8)}
+              />
             )}
 
             {activeSubTool === 'HARMONICS_THD' && (
