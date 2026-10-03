@@ -16,7 +16,8 @@ import {
   CheckCircle2,
   AlertTriangle,
   RotateCw,
-  Box
+  Box,
+  CloudLightning
 } from 'lucide-react';
 import type { FacilityArchetype, EarthingSystemType, OperatingRegime } from './data/installationCatalog';
 
@@ -118,6 +119,17 @@ export const InstallationEcosystemHero: React.FC<InstallationEcosystemHeroProps>
                 ? 'Environnement d\'ingénierie complet pour la conception, le dimensionnement, la sélectivité, la sécurité et la recette des réseaux électriques basse tension (400V/230V) du poste de transformation aux récepteurs terminaux.'
                 : 'Comprehensive engineering platform for the design, sizing, selective coordination, safety and commissioning of low-voltage (400V/230V) distribution networks from substation transformer to end-use loads.'}
             </p>
+
+            <div className="mt-3 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => onNavigateStage('STAGE_SIZING_ANALYSIS')}
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 font-bold text-[10px] transition-all cursor-pointer"
+              >
+                <CloudLightning className="w-3.5 h-3.5 text-amber-400" />
+                <span>{isFr ? '⚡ Réseau Cameroun, Foudre & Facteur k1' : '⚡ Cameroon Grid, Lightning & k1 Factor'}</span>
+              </button>
+            </div>
           </div>
 
           {/* Quick Facility Archetype Switcher */}

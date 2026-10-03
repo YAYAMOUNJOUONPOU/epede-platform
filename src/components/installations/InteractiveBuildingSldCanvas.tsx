@@ -17,7 +17,10 @@ import {
   Lightbulb,
   Building,
   RefreshCw,
-  Info
+  Info,
+  Flame,
+  CloudLightning,
+  ShieldCheck
 } from 'lucide-react';
 import type {
   FacilityArchetype,
@@ -146,6 +149,135 @@ export const InteractiveBuildingSldCanvas: React.FC<InteractiveBuildingSldCanvas
       });
       return updated;
     });
+    setActiveFaultTarget(null);
+    setFaultTimeline([]);
+  };
+
+  // Fault Simulator State
+  const [isFaultModeActive, setIsFaultModeActive] = useState<boolean>(false);
+  const [faultType, setFaultType] = useState<'SHORT_CIRCUIT' | 'EARTH_FAULT' | 'THERMAL_OVERLOAD'>('SHORT_CIRCUIT');
+  const [coordinationMode, setCoordinationMode] = useState<'SELECTIVE' | 'NON_SELECTIVE_CASCADE'>('SELECTIVE');
+  const [activeFaultTarget, setActiveFaultTarget] = useState<string | null>(null);
+  const [faultTimeline, setFaultTimeline] = useState<{ t: string; text: string; type: 'ALARM' | 'TRIP' | 'HOLD' }[]>([]);
+
+  const handleInjectFault = (targetKey: string) => {
+    setActiveFaultTarget(targetKey);
+    const targetBreaker = breakers[targetKey];
+    const targetLabel = locale === 'fr' ? targetBreaker?.label_fr : targetBreaker?.label_en;
+
+    const timeline: { t: string; text: string; type: 'ALARM' | 'TRIP' | 'HOLD' }[] = [];
+
+    if (faultType === 'SHORT_CIRCUIT') {
+      timeline.push({
+        t: '0 ms',
+        text: locale === 'fr'
+          ? `Court-circuit franc phase-neutre (Icc = 8.5 kA) injecté sur ${targetLabel}`
+          : `Phase-to-neutral bolted short-circuit (Isc = 8.5 kA) injected on ${targetLabel}`,
+        type: 'ALARM'
+      });
+      timeline.push({
+        t: '16 ms',
+        text: locale === 'fr'
+          ? `Déclencheur magnétique instantané de ${targetLabel} s'ouvre (Coupure de l'arc)`
+          : `Instantaneous magnetic release of ${targetLabel} trips (Arc cleared)`,
+        type: 'TRIP'
+      });
+
+      if (coordinationMode === 'SELECTIVE') {
+        timeline.push({
+          t: '22 ms',
+          text: locale === 'fr'
+            ? `Disjoncteur général TGBT (Q0) maintenu FERMÉ : Sélectivité Chronométrique & Énergétique TOTALE (CEI 60947-2)`
+            : `Main incoming ACB (Q0) remains CLOSED: Full Time & Energy Selectivity achieved (IEC 60947-2)`,
+          type: 'HOLD'
+        });
+        timeline.push({
+          t: '25 ms',
+          text: locale === 'fr'
+            ? `Reste du bâtiment 100% opérationnel ! Aucun blackout intempestif.`
+            : `Facility remains 100% energized! Zero collateral power disruption.`,
+          type: 'HOLD'
+        });
+        setBreakers(prev => ({
+          ...prev,
+          [targetKey]: { ...prev[targetKey], isClosed: false }
+        }));
+      } else {
+        timeline.push({
+          t: '180 ms',
+          text: locale === 'fr'
+            ? `Énergie traversante I²t trop élevée : le Disjoncteur Général TGBT (Q0) DÉCLENCHE en cascade !`
+            : `Excess let-through I²t energy: Main ACB (Q0) TRIPS in nuisance cascade!`,
+          type: 'TRIP'
+        });
+        timeline.push({
+          t: '210 ms',
+          text: locale === 'fr'
+            ? `DÉFAUT DE SÉLECTIVITÉ : Blackout total de toute l'installation !`
+            : `SELECTIVITY FAILURE: Complete building blackout!`,
+          type: 'ALARM'
+        });
+        setBreakers(prev => ({
+          ...prev,
+          [targetKey]: { ...prev[targetKey], isClosed: false },
+          mainIncomer: { ...prev.mainIncomer, isClosed: false }
+        }));
+      }
+    } else if (faultType === 'EARTH_FAULT') {
+      timeline.push({
+        t: '0 ms',
+        text: locale === 'fr'
+          ? `Défaut d'isolement phase-masse (IΔn = 320 mA) sur ${targetLabel}`
+          : `Phase-to-earth insulation fault (IΔn = 320 mA) on ${targetLabel}`,
+        type: 'ALARM'
+      });
+      timeline.push({
+        t: '28 ms',
+        text: locale === 'fr'
+          ? `Tore différentiel RCD détecte le courant de fuite et déclenche le disjoncteur terminal`
+          : `Residual current detector (RCD) trips the feeder breaker`,
+        type: 'TRIP'
+      });
+      timeline.push({
+        t: '32 ms',
+        text: locale === 'fr'
+          ? `Tension de contact Uc < 50V : Protection des personnes assurée (NF C 15-100 § 411)`
+          : `Touch voltage Uc < 50V: Personnel life safety guaranteed (IEC 60364 § 411)`,
+        type: 'HOLD'
+      });
+      setBreakers(prev => ({
+        ...prev,
+        [targetKey]: { ...prev[targetKey], isClosed: false }
+      }));
+    } else {
+      timeline.push({
+        t: '0 s',
+        text: locale === 'fr'
+          ? `Surcharge thermique continue (135% de In) sur ${targetLabel}`
+          : `Continuous thermal overload (135% In) on ${targetLabel}`,
+        type: 'ALARM'
+      });
+      timeline.push({
+        t: '45 s',
+        text: locale === 'fr'
+          ? `Échauffement exponentiel du bilame thermique (Courbe inverse t = f(I))`
+          : `Bimetallic strip heats up according to inverse time curve`,
+        type: 'ALARM'
+      });
+      timeline.push({
+        t: '62 s',
+        text: locale === 'fr'
+          ? `Déclenchement thermique de protection du câble contre l'incendie`
+          : `Thermal trip prevents conductor overheating & fire hazard`,
+        type: 'TRIP'
+      });
+      setBreakers(prev => ({
+        ...prev,
+        [targetKey]: { ...prev[targetKey], isClosed: false }
+      }));
+    }
+
+    setFaultTimeline(timeline);
   };
 
   // Upstream-downstream energization propagation logic
@@ -195,14 +327,137 @@ export const InteractiveBuildingSldCanvas: React.FC<InteractiveBuildingSldCanvas
         <div className="flex items-center gap-2">
           <button
             type="button"
+            onClick={() => setIsFaultModeActive(!isFaultModeActive)}
+            className={`px-3 py-1.5 rounded-lg border text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+              isFaultModeActive
+                ? 'bg-rose-500 text-slate-950 border-rose-400 shadow-md shadow-rose-500/20'
+                : 'bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-700'
+            }`}
+          >
+            <Flame className="w-3.5 h-3.5 text-rose-400" />
+            <span>{locale === 'fr' ? '⚡ Simulateur de Défauts' : '⚡ Fault Simulator'}</span>
+          </button>
+
+          <button
+            type="button"
             onClick={resetAllBreakers}
-            className="px-2.5 py-1 rounded-lg bg-[#141C2B] text-slate-300 hover:text-white border border-[#20293A] flex items-center gap-1.5 cursor-pointer text-[10px] font-bold"
+            className="px-2.5 py-1.5 rounded-lg bg-[#141C2B] text-slate-300 hover:text-white border border-[#20293A] flex items-center gap-1.5 cursor-pointer text-[10px] font-bold"
           >
             <RotateCcw className="h-3 w-3" />
             <span>{locale === 'fr' ? 'Réarmer Tout' : 'Reset All'}</span>
           </button>
         </div>
       </div>
+
+      {/* Fault Injection Control Bar & Timeline */}
+      {isFaultModeActive && (
+        <div className="p-4 rounded-xl bg-gradient-to-r from-rose-950/40 via-slate-900 to-slate-950 border border-rose-600/40 space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-rose-900/40 text-[11px]">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping" />
+              <span className="font-bold text-white uppercase tracking-wider">
+                {locale === 'fr' ? 'Laboratoire d\'Injection de Défauts & Sélectivité' : 'Fault Injection & Selectivity Lab'}
+              </span>
+            </div>
+
+            {/* Coordination Mode Toggle */}
+            <div className="flex items-center gap-2">
+              <span className="text-slate-400 text-[10px] uppercase font-bold">{locale === 'fr' ? 'Sélectivité :' : 'Selectivity:'}</span>
+              <button
+                type="button"
+                onClick={() => setCoordinationMode('SELECTIVE')}
+                className={`px-2.5 py-1 rounded text-[10px] font-bold border transition-all cursor-pointer ${
+                  coordinationMode === 'SELECTIVE'
+                    ? 'bg-emerald-500 text-slate-950 border-emerald-400'
+                    : 'bg-slate-950 text-slate-400 border-slate-800'
+                }`}
+              >
+                {locale === 'fr' ? 'TOTALE (Amont Temporisé)' : 'TOTAL (Delayed ACB)'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setCoordinationMode('NON_SELECTIVE_CASCADE')}
+                className={`px-2.5 py-1 rounded text-[10px] font-bold border transition-all cursor-pointer ${
+                  coordinationMode === 'NON_SELECTIVE_CASCADE'
+                    ? 'bg-rose-500 text-slate-950 border-rose-400'
+                    : 'bg-slate-950 text-slate-400 border-slate-800'
+                }`}
+              >
+                {locale === 'fr' ? 'CASCADE (Blackout Général)' : 'CASCADE (Total Outage)'}
+              </button>
+            </div>
+          </div>
+
+          {/* Fault Type & Trigger Buttons */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 text-[11px]">
+            <div>
+              <span className="text-slate-400 text-[10px] block mb-1 font-bold">{locale === 'fr' ? 'Type de Défaut :' : 'Fault Type:'}</span>
+              <select
+                value={faultType}
+                onChange={(e) => setFaultType(e.target.value as any)}
+                className="w-full p-1.5 rounded bg-slate-950 text-amber-400 border border-slate-800 font-bold text-xs"
+              >
+                <option value="SHORT_CIRCUIT">{locale === 'fr' ? 'Court-Circuit Franc (8.5 kA)' : 'Bolted Short-Circuit (8.5 kA)'}</option>
+                <option value="EARTH_FAULT">{locale === 'fr' ? 'Défaut Isolement Terre (300 mA)' : 'Earth Residual Fault (300 mA)'}</option>
+                <option value="THERMAL_OVERLOAD">{locale === 'fr' ? 'Surcharge Thermique (135% In)' : 'Thermal Overload (135% In)'}</option>
+              </select>
+            </div>
+
+            <div>
+              <span className="text-slate-400 text-[10px] block mb-1 font-bold">{locale === 'fr' ? 'Injecter sur Moteur Pompe :' : 'Inject on Pump Motor:'}</span>
+              <button
+                type="button"
+                onClick={() => handleInjectFault('branchMotor')}
+                className="w-full p-1.5 rounded bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 font-bold transition-all cursor-pointer"
+              >
+                {locale === 'fr' ? '⚡ Défaut Moteur F3' : '⚡ Fault Motor F3'}
+              </button>
+            </div>
+
+            <div>
+              <span className="text-slate-400 text-[10px] block mb-1 font-bold">{locale === 'fr' ? 'Injecter sur Prises :' : 'Inject on Sockets:'}</span>
+              <button
+                type="button"
+                onClick={() => handleInjectFault('branchSockets')}
+                className="w-full p-1.5 rounded bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 font-bold transition-all cursor-pointer"
+              >
+                {locale === 'fr' ? '⚡ Défaut Prises F2' : '⚡ Fault Sockets F2'}
+              </button>
+            </div>
+
+            <div>
+              <span className="text-slate-400 text-[10px] block mb-1 font-bold">{locale === 'fr' ? 'Injecter sur CVC :' : 'Inject on HVAC Feeder:'}</span>
+              <button
+                type="button"
+                onClick={() => handleInjectFault('feederHvac')}
+                className="w-full p-1.5 rounded bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 font-bold transition-all cursor-pointer"
+              >
+                {locale === 'fr' ? '⚡ Défaut Départ CVC Q_cvc' : '⚡ Fault HVAC Q_cvc'}
+              </button>
+            </div>
+          </div>
+
+          {/* Real-time Fault Cascade Timeline */}
+          {faultTimeline.length > 0 && (
+            <div className="p-3 rounded-lg bg-slate-950 border border-slate-800 space-y-1.5">
+              <div className="text-[10px] uppercase font-bold text-slate-400">{locale === 'fr' ? 'Séquence Chronométrique de Déclenchement :' : 'Tripping Sequence Timeline:'}</div>
+              <div className="space-y-1">
+                {faultTimeline.map((item, idx) => (
+                  <div key={idx} className="flex items-center gap-2 text-[11px]">
+                    <span className="font-mono text-amber-400 font-bold text-[10px] w-14 shrink-0">[{item.t}]</span>
+                    <span className={`font-mono text-xs ${
+                      item.type === 'TRIP' ? 'text-rose-400 font-bold' : item.type === 'HOLD' ? 'text-emerald-400 font-bold' : 'text-amber-300'
+                    }`}>
+                      {item.type === 'TRIP' ? '⛔ ' : item.type === 'HOLD' ? '✓ ' : '⚡ '}
+                      {item.text}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Main Interactive Diagram Canvas */}
       <div className="relative p-6 rounded-xl bg-[#06090F] border border-[#182234] overflow-x-auto min-h-[460px]">

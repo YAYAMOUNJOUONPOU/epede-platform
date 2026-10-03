@@ -41,7 +41,8 @@ interface BomItem {
 export const PanelCadAndDeliverablesExportEngine: React.FC<PanelCadAndDeliverablesExportEngineProps> = ({
   locale
 }) => {
-  const [activeTab, setActiveTab] = useState<'BOM' | 'COMMISSIONING' | 'CAD_SLD'>('BOM');
+  const isFr = locale === 'fr';
+  const [activeTab, setActiveTab] = useState<'BOM' | 'COMMISSIONING' | 'CAD_SLD' | 'PROJECT_DOSSIER'>('BOM');
 
   // Sample Generated BOM Items
   const bomData: BomItem[] = [
@@ -146,11 +147,12 @@ export const PanelCadAndDeliverablesExportEngine: React.FC<PanelCadAndDeliverabl
         </div>
 
         {/* Deliverables Tab Selector */}
-        <div className="flex items-center gap-1.5 bg-[#0A0E17] p-1 rounded-xl border border-[#1E2738]">
+        <div className="flex items-center gap-1.5 bg-[#0A0E17] p-1 rounded-xl border border-[#1E2738] overflow-x-auto">
           {[
-            { id: 'BOM', label: '1. Nomenclature BOM (CSV)', icon: Table },
-            { id: 'COMMISSIONING', label: '2. PV de Réception (Consuel)', icon: ClipboardCheck },
-            { id: 'CAD_SLD', label: '3. Schéma Unifilaire CAO', icon: FileCode }
+            { id: 'BOM', label: isFr ? '1. Nomenclature BOM' : '1. BOM Schedule', icon: Table },
+            { id: 'COMMISSIONING', label: isFr ? '2. PV de Réception' : '2. Commissioning PV', icon: ClipboardCheck },
+            { id: 'CAD_SLD', label: isFr ? '3. Schéma Vectoriel SLD' : '3. Vector SLD', icon: FileCode },
+            { id: 'PROJECT_DOSSIER', label: isFr ? '4. Dossier Projet & Devis FCFA' : '4. Project Dossier & FCFA BOQ', icon: Sparkles }
           ].map((t) => {
             const Icon = t.icon;
             return (
@@ -306,6 +308,141 @@ export const PanelCadAndDeliverablesExportEngine: React.FC<PanelCadAndDeliverabl
               <Download className="w-4 h-4" />
               <span>Télécharger le Fichier CAO / SLD (.SVG)</span>
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* 4. Complete Project Dossier & Cameroon FCFA BOQ View */}
+      {activeTab === 'PROJECT_DOSSIER' && (
+        <div className="space-y-5">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-slate-300">
+              {isFr ? 'Dossier Technique d\'Exécution (DTE) & Bordereau Estimatif FCFA :' : 'Master Engineering Execution Dossier & FCFA BOQ :'}
+            </span>
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="px-3 py-1.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40 font-bold flex items-center gap-1.5 cursor-pointer text-[11px] transition-all"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              <span>{isFr ? 'Imprimer / Exporter PDF Stampé' : 'Print / Export Stamped PDF'}</span>
+            </button>
+          </div>
+
+          {/* Stamped Engineering Cover Page Card */}
+          <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-950 via-[#0B0F19] to-slate-900 border border-slate-700 shadow-2xl space-y-5">
+            <div className="flex items-start justify-between border-b border-slate-800 pb-4">
+              <div>
+                <span className="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-bold text-[10px] border border-purple-500/30">
+                  DOSSIER TECHNIQUE D'EXÉCUTION (DTE)
+                </span>
+                <h3 className="text-lg font-black text-white mt-1">
+                  INSTALLATION ÉLECTRIQUE BASSE TENSION 400 V / 230 V
+                </h3>
+                <p className="text-[11px] text-slate-400">
+                  Projet Tertiaire / Industriel • Conformité NF C 15-100 / CEI 60364 / CEI 61439
+                </p>
+              </div>
+              {/* Official Engineering Stamp Badge */}
+              <div className="p-3 rounded-xl border-2 border-emerald-500/60 bg-emerald-950/30 text-emerald-300 text-center font-mono">
+                <div className="text-[9px] font-black tracking-widest uppercase">VISA INGÉNIERIE</div>
+                <div className="text-xs font-black">BON POUR EXÉCUTION</div>
+                <div className="text-[9px] text-slate-400 mt-0.5">EPEDE D06 • CONFORME</div>
+              </div>
+            </div>
+
+            {/* Project Synthesis Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-[11px]">
+              <div className="p-2.5 rounded-lg bg-slate-900/60 border border-slate-800">
+                <span className="text-slate-400 text-[10px] uppercase font-bold block">{isFr ? 'Puissance Souscrite :' : 'Subscribed Power:'}</span>
+                <span className="font-bold text-white text-xs">800 kVA (Poste MT/BT)</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-slate-900/60 border border-slate-800">
+                <span className="text-slate-400 text-[10px] uppercase font-bold block">{isFr ? 'Régime de Neutre :' : 'Earthing System:'}</span>
+                <span className="font-bold text-emerald-400 text-xs">TN-S (Séparé 5F)</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-slate-900/60 border border-slate-800">
+                <span className="text-slate-400 text-[10px] uppercase font-bold block">{isFr ? 'Courant Court-Circuit :' : 'Fault Level Isc:'}</span>
+                <span className="font-bold text-amber-400 text-xs">Isc = 36.5 kA (400V)</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-slate-900/60 border border-slate-800">
+                <span className="text-slate-400 text-[10px] uppercase font-bold block">{isFr ? 'Séparation Interne :' : 'Form of Separation:'}</span>
+                <span className="font-bold text-purple-400 text-xs">Forme 3b / IP42</span>
+              </div>
+            </div>
+
+            {/* Bill of Quantities (BOQ / Devis Estimatif) Table in FCFA */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-300">
+                <span>{isFr ? 'Bordereau Descriptif & Estimatif Matériel (BOQ) :' : 'Bill of Quantities (BOQ Estimative Schedule) :'}</span>
+                <span className="text-emerald-400 font-mono text-sm">TOTAL ESTIMÉ : 48 650 000 FCFA (~74 160 €)</span>
+              </div>
+
+              <div className="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950">
+                <table className="w-full text-left text-[11px] border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-800 bg-slate-900/80 text-slate-400">
+                      <th className="p-2">Item</th>
+                      <th className="p-2">Désignation Matériel</th>
+                      <th className="p-2">Norme / Spécification</th>
+                      <th className="p-2 text-center">Qté</th>
+                      <th className="p-2 text-right">Prix Unitaire (FCFA)</th>
+                      <th className="p-2 text-right">Total HT (FCFA)</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/60 font-mono">
+                    <tr>
+                      <td className="p-2 text-amber-400 font-bold">1.01</td>
+                      <td className="p-2 text-white">Disjoncteur Général ACB 2000A 4P Débrochable</td>
+                      <td className="p-2 text-slate-400">IEC 60947-2 (Icu=65kA)</td>
+                      <td className="p-2 text-center">1</td>
+                      <td className="p-2 text-right">12 500 000</td>
+                      <td className="p-2 text-right text-emerald-400 font-bold">12 500 000</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 text-amber-400 font-bold">1.02</td>
+                      <td className="p-2 text-white">Enceinte TGBT Modulaire 3 Colonnes Forme 3b</td>
+                      <td className="p-2 text-slate-400">IEC 61439-1/2 (IP42 / IK09)</td>
+                      <td className="p-2 text-center">1 ens.</td>
+                      <td className="p-2 text-right">9 800 000</td>
+                      <td className="p-2 text-right text-emerald-400 font-bold">9 800 000</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 text-amber-400 font-bold">1.03</td>
+                      <td className="p-2 text-white">Batterie de Condensateurs Automatique 250 kvar</td>
+                      <td className="p-2 text-slate-400">Avec selfs anti-harmoniques 189Hz</td>
+                      <td className="p-2 text-center">1</td>
+                      <td className="p-2 text-right">6 450 000</td>
+                      <td className="p-2 text-right text-emerald-400 font-bold">6 450 000</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 text-amber-400 font-bold">1.04</td>
+                      <td className="p-2 text-white">Départs Disjoncteurs Boîtier Moulé MCCB 160A-400A</td>
+                      <td className="p-2 text-slate-400">IEC 60947-2 TMD Déclencheurs</td>
+                      <td className="p-2 text-center">8</td>
+                      <td className="p-2 text-right">850 000</td>
+                      <td className="p-2 text-right text-emerald-400 font-bold">6 800 000</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 text-amber-400 font-bold">1.05</td>
+                      <td className="p-2 text-white">Parafoudres TGBT Type 1+2 Iimp=25kA / In=20kA</td>
+                      <td className="p-2 text-slate-400">NF C 15-100 § 443 / CEI 61643-11</td>
+                      <td className="p-2 text-center">2</td>
+                      <td className="p-2 text-right">1 100 000</td>
+                      <td className="p-2 text-right text-emerald-400 font-bold">2 200 000</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2 text-amber-400 font-bold">1.06</td>
+                      <td className="p-2 text-white">Gaine à Barres Canalis KT 1600A Cuivre (Colonne Montante)</td>
+                      <td className="p-2 text-slate-400">IEC 61439-6 (Longueur 35m)</td>
+                      <td className="p-2 text-center">35 m</td>
+                      <td className="p-2 text-right">310 000</td>
+                      <td className="p-2 text-right text-emerald-400 font-bold">10 900 000</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       )}

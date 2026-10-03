@@ -302,6 +302,126 @@ export const TgbtThermalDissipationCalculator: React.FC<TgbtThermalDissipationCa
             </p>
           </div>
 
+          {/* 2D Front-Elevation Switchboard Rack with Thermal Heatmap */}
+          <div className="p-4 rounded-xl bg-[#090D16] border border-slate-800 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Layers className="w-4 h-4 text-amber-400" />
+                <span className="font-bold text-white text-xs">
+                  {locale === 'fr' ? 'Façade 2D TGBT & Gradient Thermique Vertical (Heatmap)' : '2D Switchboard Front Elevation & Thermal Heatmap'}
+                </span>
+              </div>
+              <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-mono">
+                {cubicleCount} colonnes · {heightMm}×{widthMm * cubicleCount}×{depthMm} mm
+              </span>
+            </div>
+
+            {/* Visual Cubicle Columns */}
+            <div className="relative p-3 rounded-xl bg-slate-950 border border-slate-800 overflow-hidden">
+              {/* Thermal Heatmap Gradient Overlay */}
+              <div
+                className="absolute inset-0 pointer-events-none opacity-40"
+                style={{
+                  background: isNaturalConvectionSufficient
+                    ? 'linear-gradient(to top, rgba(16, 185, 129, 0.1) 0%, rgba(245, 158, 11, 0.25) 60%, rgba(239, 68, 68, 0.4) 100%)'
+                    : 'linear-gradient(to top, rgba(245, 158, 11, 0.2) 0%, rgba(239, 68, 68, 0.5) 50%, rgba(185, 28, 28, 0.75) 100%)'
+                }}
+              />
+
+              <div className="grid grid-cols-3 gap-2 relative z-10">
+                {/* Column 1: Incoming ACB */}
+                <div className="p-3 rounded-lg border border-amber-500/40 bg-slate-900/80 space-y-2 flex flex-col justify-between h-48">
+                  <div>
+                    <div className="flex justify-between items-center text-[9px] border-b border-slate-800 pb-1">
+                      <span className="text-amber-400 font-bold">Col. 1 · Arrivée</span>
+                      <span className="text-rose-400 font-mono font-bold">{(naturalInternalTempC + 4).toFixed(0)}°C</span>
+                    </div>
+                    <div className="text-[10px] text-white font-bold mt-1">Disjoncteur ACB</div>
+                    <div className="text-[9px] text-slate-400">{incomerAcbAmps}A Débrochable</div>
+                  </div>
+
+                  <div className="p-2 rounded bg-amber-950/40 border border-amber-500/30 text-center my-auto">
+                    <div className="text-[10px] font-bold text-amber-300">Jeu de Barres Sup.</div>
+                    <div className="text-[9px] text-slate-400">{busbarRatingAmps}A Cuivre</div>
+                  </div>
+
+                  <div className="text-[9px] text-slate-400 border-t border-slate-800 pt-1 flex justify-between">
+                    <span>Entrée Câbles</span>
+                    <span className="text-emerald-400">{(ambientTempC + 2).toFixed(0)}°C</span>
+                  </div>
+                </div>
+
+                {/* Column 2: Coupler / Distribution */}
+                <div className="p-3 rounded-lg border border-sky-500/40 bg-slate-900/80 space-y-2 flex flex-col justify-between h-48">
+                  <div>
+                    <div className="flex justify-between items-center text-[9px] border-b border-slate-800 pb-1">
+                      <span className="text-sky-400 font-bold">Col. 2 · Répartition</span>
+                      <span className="text-rose-400 font-mono font-bold">{(naturalInternalTempC + 2).toFixed(0)}°C</span>
+                    </div>
+                    <div className="text-[10px] text-white font-bold mt-1">Couplage & Mesure</div>
+                    <div className="text-[9px] text-slate-400">Centrale PM5350</div>
+                  </div>
+
+                  <div className="space-y-1 my-auto">
+                    <div className="p-1 rounded bg-slate-950 text-center text-[9px] text-slate-300 border border-slate-800">
+                      Module Canalis KT
+                    </div>
+                    <div className="p-1 rounded bg-slate-950 text-center text-[9px] text-slate-300 border border-slate-800">
+                      TI 2000/5A Cl. 0.5
+                    </div>
+                  </div>
+
+                  <div className="text-[9px] text-slate-400 border-t border-slate-800 pt-1 flex justify-between">
+                    <span>Grille Inf. IP54</span>
+                    <span className="text-emerald-400">{ambientTempC}°C</span>
+                  </div>
+                </div>
+
+                {/* Column 3: Outgoing Feeders */}
+                <div className="p-3 rounded-lg border border-emerald-500/40 bg-slate-900/80 space-y-2 flex flex-col justify-between h-48">
+                  <div>
+                    <div className="flex justify-between items-center text-[9px] border-b border-slate-800 pb-1">
+                      <span className="text-emerald-400 font-bold">Col. 3 · Départs</span>
+                      <span className="text-rose-400 font-mono font-bold">{(naturalInternalTempC + 3).toFixed(0)}°C</span>
+                    </div>
+                    <div className="text-[10px] text-white font-bold mt-1">{feederMccbCount} Départs MCCB</div>
+                    <div className="text-[9px] text-slate-400">Forme 3b / 4b</div>
+                  </div>
+
+                  <div className="space-y-1 my-auto">
+                    <div className="grid grid-cols-2 gap-1 text-[8px]">
+                      <div className="p-1 rounded bg-slate-950 text-center text-slate-300 border border-slate-800">CVC 400A</div>
+                      <div className="p-1 rounded bg-slate-950 text-center text-slate-300 border border-slate-800">UPS 250A</div>
+                      <div className="p-1 rounded bg-slate-950 text-center text-slate-300 border border-slate-800">Étage 1 160A</div>
+                      <div className="p-1 rounded bg-slate-950 text-center text-slate-300 border border-slate-800">Étage 2 160A</div>
+                    </div>
+                  </div>
+
+                  <div className="text-[9px] text-slate-400 border-t border-slate-800 pt-1 flex justify-between">
+                    <span>Borniers Départs</span>
+                    <span className="text-emerald-400">{(ambientTempC + 3).toFixed(0)}°C</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Thermal Probes Legend */}
+              <div className="mt-2.5 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-rose-500" />
+                  <span>Haut : {(naturalInternalTempC + 4).toFixed(0)}°C (Barres & Échappement)</span>
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-amber-400" />
+                  <span>Milieu : {naturalInternalTempC.toFixed(0)}°C (Disjoncteurs)</span>
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                  <span>Bas : {ambientTempC}°C (Prise d'Air Neuf)</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
           {/* Cooling Solution Dimensioning Card */}
           <div className="p-4 rounded-xl bg-[#0E1522] border border-[#1E2738] space-y-3">
             <span className="text-[11px] font-bold text-sky-400 flex items-center gap-1.5">

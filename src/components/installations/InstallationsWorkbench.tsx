@@ -65,6 +65,7 @@ import { HarmonicsAndPowerQualityAnalyzer } from './HarmonicsAndPowerQualityAnal
 import { CableSizingDeratingMatrix } from './CableSizingDeratingMatrix';
 import { TgbtThermalDissipationCalculator } from './TgbtThermalDissipationCalculator';
 import { PanelCadAndDeliverablesExportEngine } from './PanelCadAndDeliverablesExportEngine';
+import { CameroonInstallationGridRealityEngine } from './CameroonInstallationGridRealityEngine';
 
 import {
   INSTALLATION_EQUIPMENT,
@@ -205,6 +206,7 @@ export const InstallationsWorkbench: React.FC<InstallationsWorkbenchProps> = ({
         { id: 'POWER_BALANCE', labelFr: 'Bilan de Puissance & Transfo', labelEn: 'Power Balance & Trafo Sizing', icon: Zap },
         { id: 'SHORT_CIRCUIT_IMPEDANCE', labelFr: 'Courants de Court-Circuit (Ik)', labelEn: 'Fault Impedance & Short-Circuit', icon: Flame },
         { id: 'EARTHING_BALANCING', labelFr: 'Régimes de Neutre TT/TN/IT', labelEn: 'Earthing Systems TT/TN/IT', icon: Scale },
+        { id: 'CAMEROON_GRID_REALITY', labelFr: 'Réseau Cameroun & Foudre', labelEn: 'Cameroon Grid & Lightning', icon: CloudLightning },
         { id: 'HARMONICS_THD', labelFr: 'Harmoniques & Surcharge Neutre', labelEn: 'Harmonics THD & Neutral', icon: Activity },
         { id: 'FORMULAS_EXPLAINER', labelFr: 'Formules de Dimensionnement', labelEn: 'Sizing Formulas & Theory', icon: BookOpen }
       ]
@@ -486,6 +488,10 @@ export const InstallationsWorkbench: React.FC<InstallationsWorkbenchProps> = ({
                   initialWorkflowStep="EARTHING_TOUCH_VOLTAGE"
                 />
               </div>
+            )}
+
+            {activeSubTool === 'CAMEROON_GRID_REALITY' && (
+              <CameroonInstallationGridRealityEngine locale={locale} />
             )}
 
             {activeSubTool === 'HARMONICS_THD' && (
