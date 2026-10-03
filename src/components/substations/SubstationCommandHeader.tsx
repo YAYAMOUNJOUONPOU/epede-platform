@@ -1,5 +1,5 @@
 // src/components/substations/SubstationCommandHeader.tsx
-// EPEDE D04 - Substation Engineering Interactive Command Header
+// EPEDE D04 - Substation Engineering Interactive Command Header & 5-Stage Journey Orchestrator
 
 import React from 'react';
 import {
@@ -20,42 +20,113 @@ import {
   RefreshCw,
   Info,
   Flame,
-  AlertTriangle
+  AlertTriangle,
+  MapPin,
+  FileCheck,
+  CheckCircle2
 } from 'lucide-react';
 import type { SubstationWorkbenchPillar } from './SubstationsWorkbench';
+import {
+  CAMEROON_SUBSTATION_NODES,
+  type CameroonSubstationNode
+} from './services/useSubstationProjectStore';
 
 export type SubstationRepresentationView = 'PHYSICAL' | 'ELECTRICAL_SLD' | 'FUNCTIONAL';
-export type SubstationVoltageContext = '400kV' | '225kV' | '90kV';
+export type SubstationVoltageContext = '400kV' | '225kV' | '110kV' | '90kV' | '30kV';
 
 interface SubstationCommandHeaderProps {
   locale: 'fr' | 'en';
-  activePillar: SubstationWorkbenchPillar;
-  onSelectPillar: (pillar: SubstationWorkbenchPillar) => void;
+  activePillar?: SubstationWorkbenchPillar;
+  onSelectPillar?: (pillar: SubstationWorkbenchPillar) => void;
+  activeStage: 1 | 2 | 3 | 4 | 5;
+  onSelectStage: (stage: 1 | 2 | 3 | 4 | 5) => void;
   activeView: SubstationRepresentationView;
   onSelectView: (view: SubstationRepresentationView) => void;
   selectedSubstationType: string;
   onSelectSubstationType: (typeId: string) => void;
   selectedVoltage: SubstationVoltageContext;
   onSelectVoltage: (v: SubstationVoltageContext) => void;
+  selectedNodeId?: string;
+  onSelectNode?: (nodeId: string) => void;
   currentBreadcrumb?: string[];
   onOpenPrinciplesDrawer?: () => void;
+  onOpenDossier?: () => void;
+  totalMva?: number;
+  scCurrentKa?: number;
 }
 
 export const SubstationCommandHeader: React.FC<SubstationCommandHeaderProps> = ({
   locale,
   activePillar,
   onSelectPillar,
+  activeStage,
+  onSelectStage,
   activeView,
   onSelectView,
   selectedSubstationType,
   onSelectSubstationType,
   selectedVoltage,
   onSelectVoltage,
-  currentBreadcrumb = ['Nœud Électrique Bekoko 225/90 kV', 'Travée Arrivée Ligne Nachtigal L1'],
-  onOpenPrinciplesDrawer
+  selectedNodeId = 'BEKOKO_225KV',
+  onSelectNode,
+  currentBreadcrumb,
+  onOpenPrinciplesDrawer,
+  onOpenDossier,
+  totalMva = 200,
+  scCurrentKa = 31.5
 }) => {
+  const activeNode = CAMEROON_SUBSTATION_NODES[selectedNodeId] || CAMEROON_SUBSTATION_NODES.BEKOKO_225KV;
+
+  const stages = [
+    {
+      num: 1 as const,
+      title_fr: '1. Nœuds & AIS/GIS',
+      title_en: '1. Nodes & AIS/GIS',
+      sub_fr: 'Écosystème & Climat',
+      sub_en: 'Ecosystem & Climate',
+      icon: MapPin,
+      color: 'amber'
+    },
+    {
+      num: 2 as const,
+      title_fr: '2. Travées & Barres',
+      title_en: '2. Bays & Busbars',
+      sub_fr: 'Topologies & Efforts',
+      sub_en: 'Topologies & Forces',
+      icon: Layers,
+      color: 'sky'
+    },
+    {
+      num: 3 as const,
+      title_fr: '3. Transfos & Auxiliaires',
+      title_en: '3. Power Trafo & Aux',
+      sub_fr: 'OLTC, DC 110V & ATS',
+      sub_en: 'OLTC, DC 110V & ATS',
+      icon: Activity,
+      color: 'emerald'
+    },
+    {
+      num: 4 as const,
+      title_fr: '4. Protections & CEI 61850',
+      title_en: '4. Protection & IEC 61850',
+      sub_fr: '87T, 21, Process Bus',
+      sub_en: '87T, 21, Process Bus',
+      icon: ShieldAlert,
+      color: 'rose'
+    },
+    {
+      num: 5 as const,
+      title_fr: '5. Exploitation & Dossier SAT',
+      title_en: '5. Operations & SAT Dossier',
+      sub_fr: 'LOTO, IEEE 80 & DQE',
+      sub_en: 'LOTO, IEEE 80 & BOQ',
+      icon: FileCheck,
+      color: 'purple'
+    }
+  ];
+
   return (
-    <div className="space-y-3 font-mono">
+    <div className="space-y-4 font-mono">
       {/* 1. Master System Banner */}
       <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-[#0D121B] via-[#090D14] to-[#111722] border border-[#222B38] shadow-2xl relative overflow-hidden">
         {/* Ambient subtle glow & accent gradients */}
@@ -75,7 +146,7 @@ export const SubstationCommandHeader: React.FC<SubstationCommandHeaderProps> = (
                 CEI 62271 · CEI 60076 · CEI 61850 · IEEE 80
               </span>
               <span className="px-2.5 py-0.5 rounded-md text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/25">
-                SONATREL / RIS REPÉRAGE ACTIF
+                {activeNode.network} · {activeNode.region}
               </span>
             </div>
 
@@ -92,56 +163,68 @@ export const SubstationCommandHeader: React.FC<SubstationCommandHeaderProps> = (
 
             <p className="text-xs text-slate-300 max-w-3xl leading-relaxed font-sans font-normal">
               {locale === 'fr'
-                ? 'Station maîtresse d\'ingénierie des postes HTB/HTA : topologie électrique unifilaire, architecture des travées, comparaison AIS/GIS/Hybride, transformateurs de puissance et régleurs en charge (OLTC), protections différentielles (87T/87B), auxiliaires AC/DC (110Vcc) et sécurisation LOTO.'
-                : 'Master engineering workstation for HV/EHV substations: single-line electrical topology, bay architecture, AIS/GIS/Hybrid comparative analysis, power transformers and OLTC tap regulation, differential protection (87T/87B), AC/DC auxiliaries (110Vdc), and interlocking safety.'}
+                ? "Parcours d'ingénierie intégrée des postes HTB/HTA en 5 étapes : écosystème des nœuds de transport du Cameroun, topologies de barres, transformateurs et régleurs en charge (OLTC), protections différentielles (87T/21) et CEI 61850, jusqu'à la mise en service SAT et au bordereau DQE en FCFA."
+                : 'Integrated 5-stage substation engineering journey: Cameroon national transmission nodes, busbar topologies, power transformers & OLTC, differential protection (87T/21) & IEC 61850, down to SAT commissioning & turn-key BOQ in FCFA.'}
             </p>
           </div>
 
-          {/* Right Live Substation Telemetry HUD & Formulas Trigger */}
+          {/* Right Live Substation Telemetry HUD & Triggers */}
           <div className="flex flex-col sm:flex-row lg:flex-col items-start lg:items-end gap-2.5 shrink-0">
             {/* Live Substation Node Telemetry Card */}
-            <div className="p-3 rounded-xl bg-[#070A10] border border-[#222B38] text-[11px] text-slate-300 space-y-1.5 w-full sm:w-auto min-w-[250px]">
+            <div className="p-3 rounded-xl bg-[#070A10] border border-[#222B38] text-[11px] text-slate-300 space-y-1.5 w-full sm:w-auto min-w-[260px]">
               <div className="flex items-center justify-between gap-3 text-slate-400 text-[10px] border-b border-slate-800 pb-1.5">
-                <span className="flex items-center gap-1.5 text-amber-400 font-bold">
-                  <Radio className="h-3 w-3 text-amber-400 animate-pulse" />
-                  POSTE BEKOKO 225/90 kV
+                <span className="flex items-center gap-1.5 text-amber-400 font-bold truncate max-w-[170px]">
+                  <Radio className="h-3 w-3 text-amber-400 animate-pulse shrink-0" />
+                  {activeNode.name_fr.split('(')[0]}
                 </span>
-                <span className="text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
-                  EXPLOITATION NOMINALE
+                <span className="text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 shrink-0">
+                  {selectedVoltage} NOMINAL
                 </span>
               </div>
               <div className="grid grid-cols-3 gap-2">
                 <div>
-                  <span className="text-[9px] text-slate-500 block">Tension Barres :</span>
-                  <span className="text-white font-bold text-xs">227.4 kV</span>
+                  <span className="text-[9px] text-slate-500 block">Capacité :</span>
+                  <span className="text-white font-bold text-xs">{totalMva} MVA</span>
                 </div>
                 <div>
-                  <span className="text-[9px] text-slate-500 block">Charge TR1 :</span>
-                  <span className="text-emerald-400 font-bold text-xs">68.5 MVA</span>
+                  <span className="text-[9px] text-slate-500 block">Court-Circuit :</span>
+                  <span className="text-rose-400 font-bold text-xs">{scCurrentKa} kA</span>
                 </div>
                 <div>
-                  <span className="text-[9px] text-slate-500 block">T° Huile TR :</span>
-                  <span className="text-amber-400 font-bold text-xs">58.2 °C</span>
+                  <span className="text-[9px] text-slate-500 block">Kéraunique :</span>
+                  <span className="text-amber-400 font-bold text-xs">{activeNode.keraunicDaysPerYear} j/an</span>
                 </div>
               </div>
               <div className="pt-1 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400">
-                <span>Batterie 110 Vcc : <strong className="text-emerald-400">126.4 V</strong></span>
-                <span>SF6 Disjoncteur : <strong className="text-sky-400">0.62 MPa</strong></span>
+                <span>Batterie DC : <strong className="text-emerald-400">126.4 V</strong></span>
+                <span>Terre IEEE 80 : <strong className="text-sky-400">{activeNode.soilResistivityOhmM} Ω·m</strong></span>
               </div>
             </div>
 
-            {/* Principles Drawer Quick Trigger Button */}
-            {onOpenPrinciplesDrawer && (
-              <button
-                type="button"
-                onClick={onOpenPrinciplesDrawer}
-                className="w-full sm:w-auto px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-amber-500/10 cursor-pointer"
-              >
-                <Calculator className="h-3.5 w-3.5" />
-                <span>{locale === 'fr' ? 'Formules & Principes de Calcul' : 'Formulas & Substation Laws'}</span>
-                <ChevronRight className="h-3 w-3 text-amber-400/70" />
-              </button>
-            )}
+            {/* Action Buttons */}
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              {onOpenDossier && (
+                <button
+                  type="button"
+                  onClick={onOpenDossier}
+                  className="flex-1 sm:flex-none px-3 py-1.5 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                >
+                  <FileCheck className="h-3.5 w-3.5" />
+                  <span>{locale === 'fr' ? 'Dossier & DQE' : 'Dossier & BOQ'}</span>
+                </button>
+              )}
+
+              {onOpenPrinciplesDrawer && (
+                <button
+                  type="button"
+                  onClick={onOpenPrinciplesDrawer}
+                  className="flex-1 sm:flex-none px-3.5 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                >
+                  <Calculator className="h-3.5 w-3.5" />
+                  <span>{locale === 'fr' ? 'Formulaire' : 'Formulas'}</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -154,13 +237,13 @@ export const SubstationCommandHeader: React.FC<SubstationCommandHeaderProps> = (
             </strong>
             <span className="text-slate-300">
               {locale === 'fr'
-                ? 'Exploration visuelle de la topologie électrique, des appareillages HTB, des protections, du contrôle-commande et de la sécurité. Données représentatives et conceptuelles. Non destiné à la commande en temps réel, aux autorisations de manœuvre réelles ou à l\'approbation de réglages de protection.'
-                : 'Visual exploration of electrical topology, equipment, relationships, protection, control, safety, and operational concepts. Conceptual and representative. Not for live control, switching authorization, final design approval, protection settings, safety authorization, or project acceptance.'}
+                ? 'Simulation interactive de la topologie électrique, des appareillages HTB, des protections, du contrôle-commande et de la sécurité. Données représentatives et conceptuelles pour l\'ingénierie et l\'enseignement.'
+                : 'Interactive simulation of electrical topology, switchgear, protection, automation, and safety. Conceptual engineering models for education and technical reference.'}
             </span>
           </div>
         </div>
 
-        {/* 3. Interactive Tri-View Switcher + Voltage Level + Substation Type Selector */}
+        {/* 3. Interactive Tri-View Switcher + Voltage Level + Cameroon Node Selector */}
         <div className="mt-4 pt-3.5 border-t border-[#222B38] flex flex-wrap items-center justify-between gap-4 text-xs">
           
           {/* Synchronized Tri-View Switcher */}
@@ -205,7 +288,7 @@ export const SubstationCommandHeader: React.FC<SubstationCommandHeaderProps> = (
               }`}
             >
               <Cpu className="h-3.5 w-3.5" />
-              <span>{locale === 'fr' ? '3. Vue Fonctionnelle (Automate/SAS)' : '3. Functional View (SAS / States)'}</span>
+              <span>{locale === 'fr' ? '3. Vue Fonctionnelle (SAS)' : '3. Functional View (SAS)'}</span>
             </button>
           </div>
 
@@ -214,7 +297,7 @@ export const SubstationCommandHeader: React.FC<SubstationCommandHeaderProps> = (
             <span className="text-slate-400 text-[11px] font-bold mr-1">
               {locale === 'fr' ? 'Palier de Tension :' : 'Voltage Level:'}
             </span>
-            {(['400kV', '225kV', '90kV'] as SubstationVoltageContext[]).map((v) => {
+            {(['400kV', '225kV', '110kV', '90kV', '30kV'] as SubstationVoltageContext[]).map((v) => {
               const isSelected = selectedVoltage === v;
               return (
                 <button
@@ -226,91 +309,102 @@ export const SubstationCommandHeader: React.FC<SubstationCommandHeaderProps> = (
                       ? v === '400kV'
                         ? 'bg-rose-500/20 text-rose-300 border-rose-400 shadow-sm'
                         : v === '225kV'
-                        ? 'bg-sky-500/20 text-sky-300 border-sky-400 shadow-sm'
-                        : 'bg-amber-500/20 text-amber-300 border-amber-400 shadow-sm'
+                        ? 'bg-amber-500/20 text-amber-300 border-amber-400 shadow-sm'
+                        : 'bg-sky-500/20 text-sky-300 border-sky-400 shadow-sm'
                       : 'bg-[#070A10] text-slate-400 border-[#222B38] hover:text-white'
                   }`}
                 >
                   <span className="font-extrabold">{v}</span>
-                  <span className="text-[10px] ml-1 font-normal opacity-75 hidden sm:inline">
-                    {v === '400kV' ? '(THT)' : v === '225kV' ? '(Dorsale)' : '(Sous-Trans)'}
-                  </span>
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* 4. Substation Architecture Type Selector Bar */}
-        <div className="mt-3 pt-3 border-t border-[#222B38] flex flex-wrap items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2">
-            <span className="text-slate-400 text-[11px] font-bold">
-              {locale === 'fr' ? 'Type d\'Ouvrage :' : 'Substation Type:'}
-            </span>
-            <select
-              value={selectedSubstationType}
-              onChange={(e) => onSelectSubstationType(e.target.value)}
-              className="px-3 py-1.5 rounded-xl bg-[#070A10] border border-[#222B38] text-amber-300 font-bold text-xs focus:outline-none focus:border-amber-500 cursor-pointer"
-            >
-              <option value="SUB_TRANS_AIS">Poste de Transport Ouvert (AIS 225/400 kV)</option>
-              <option value="SUB_TRANS_GIS">Poste Sous Enveloppe Métallique (GIS Blindé)</option>
-              <option value="SUB_STEP_UP">Poste Évacuateur de Centrale (GSU Step-Up 15/225 kV)</option>
-              <option value="SUB_STEP_DOWN">Poste Source d\'Abaissement (Step-Down 225/90/15 kV)</option>
-              <option value="SUB_SWITCHING">Poste d\'Aiguillage & Manœuvre (Switching Node)</option>
-              <option value="SUB_INTERCO">Poste d\'Interconnexion Régionale / Internationale</option>
-              <option value="SUB_HYBRID">Poste Hybride / Mixte (MTS - Barres AIS + Disjoncteur GIS)</option>
-              <option value="SUB_HV_MV">Poste de Distribution Primaire (HV/MV 90/15 kV)</option>
-            </select>
-          </div>
+        {/* 4. Cameroon Grid Node Switcher */}
+        {onSelectNode && (
+          <div className="mt-3 pt-3 border-t border-[#222B38] flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2">
+              <span className="text-slate-400 text-[11px] font-bold flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5 text-amber-400" />
+                {locale === 'fr' ? 'Nœud Réseau SONATREL :' : 'SONATREL Grid Node:'}
+              </span>
+              <select
+                value={selectedNodeId}
+                onChange={(e) => onSelectNode(e.target.value)}
+                className="px-3 py-1.5 rounded-xl bg-[#070A10] border border-[#222B38] text-amber-300 font-bold text-xs focus:outline-none focus:border-amber-500 cursor-pointer"
+              >
+                {Object.values(CAMEROON_SUBSTATION_NODES).map((n) => (
+                  <option key={n.id} value={n.id}>
+                    {n.name_fr.split('(')[0]} ({n.primaryVoltage}/{n.secondaryVoltage} - {n.network})
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          {/* Quick Jump Action Pills */}
-          <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
-            <span className="text-[10px] text-slate-500 mr-1 uppercase">Accès Direct :</span>
-            <button
-              type="button"
-              onClick={() => onSelectPillar('JOURNEY')}
-              className="px-2.5 py-1 rounded-md bg-[#070A10] text-slate-300 hover:text-white border border-[#222B38] hover:border-slate-500 transition-colors"
-            >
-              Parcours Électrique
-            </button>
-            <button
-              type="button"
-              onClick={() => onSelectPillar('TRANSFORMER')}
-              className="px-2.5 py-1 rounded-md bg-[#070A10] text-amber-300 hover:text-amber-200 border border-[#222B38] hover:border-amber-500/40 transition-colors"
-            >
-              Transformateur & OLTC
-            </button>
-            <button
-              type="button"
-              onClick={() => onSelectPillar('AIS_GIS_COMPARE')}
-              className="px-2.5 py-1 rounded-md bg-[#070A10] text-cyan-300 hover:text-cyan-200 border border-[#222B38] hover:border-cyan-500/40 transition-colors"
-            >
-              AIS vs GIS
-            </button>
-            <button
-              type="button"
-              onClick={() => onSelectPillar('PROTECTION')}
-              className="px-2.5 py-1 rounded-md bg-[#070A10] text-red-300 hover:text-red-200 border border-[#222B38] hover:border-red-500/40 transition-colors"
-            >
-              Protections 87T / 87B
-            </button>
-            <button
-              type="button"
-              onClick={() => onSelectPillar('AUXILIARIES')}
-              className="px-2.5 py-1 rounded-md bg-[#070A10] text-emerald-300 hover:text-emerald-200 border border-[#222B38] hover:border-emerald-500/40 transition-colors"
-            >
-              Auxiliaires 110Vcc
-            </button>
-            <button
-              type="button"
-              onClick={() => onSelectPillar('SCENARIOS')}
-              className="px-2.5 py-1 rounded-md bg-[#070A10] text-orange-300 hover:text-orange-200 border border-[#222B38] hover:border-orange-500/40 transition-colors"
-            >
-              Scénarios LOTO
-            </button>
+            <div className="flex items-center gap-2">
+              <span className="text-slate-400 text-[11px] font-bold">
+                {locale === 'fr' ? 'Technologie :' : 'Technology:'}
+              </span>
+              <select
+                value={selectedSubstationType}
+                onChange={(e) => onSelectSubstationType(e.target.value)}
+                className="px-3 py-1.5 rounded-xl bg-[#070A10] border border-[#222B38] text-sky-300 font-bold text-xs focus:outline-none focus:border-sky-500 cursor-pointer"
+              >
+                <option value="SUB_TRANS_AIS">Poste Ouvert dans l'Air (AIS 225 kV)</option>
+                <option value="SUB_TRANS_GIS">Poste Blindé Métallique (GIS SF6)</option>
+                <option value="SUB_HYBRID">Poste Hybride MTS (Mixte AIS/GIS)</option>
+                <option value="SUB_STEP_UP">Poste Évacuation Centrale (GSU Nachtigal)</option>
+              </select>
+            </div>
           </div>
+        )}
+
+      </div>
+
+      {/* 5. Master 5-Stage Engineering Journey Navigation Tray */}
+      <div className="p-3 rounded-2xl bg-[#090D14] border border-[#222B38] shadow-xl overflow-x-auto">
+        <div className="flex items-center gap-2.5 min-w-max">
+          {stages.map((st) => {
+            const isCurrent = activeStage === st.num;
+            const isCompleted = activeStage > st.num;
+            const Icon = st.icon;
+
+            return (
+              <button
+                key={st.num}
+                type="button"
+                onClick={() => onSelectStage(st.num)}
+                className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex items-center gap-3 min-w-[220px] ${
+                  isCurrent
+                    ? 'bg-amber-500 text-slate-950 font-bold border-amber-400 shadow-md shadow-amber-500/20 ring-1 ring-amber-300'
+                    : isCompleted
+                    ? 'bg-[#0E141F] text-slate-200 border-[#222B38] hover:border-amber-500/40'
+                    : 'bg-[#0A0E17] text-slate-400 border-[#1B2330] hover:border-slate-700'
+                }`}
+              >
+                <div className={`p-2 rounded-lg shrink-0 ${
+                  isCurrent
+                    ? 'bg-slate-950 text-amber-300'
+                    : isCompleted
+                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                    : 'bg-slate-800 text-slate-400'
+                }`}>
+                  {isCompleted ? <CheckCircle2 className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
+                </div>
+
+                <div className="min-w-0">
+                  <div className="text-xs font-bold truncate">
+                    {locale === 'fr' ? st.title_fr : st.title_en}
+                  </div>
+                  <div className={`text-[10px] truncate ${isCurrent ? 'text-slate-900 font-medium' : 'text-slate-500'}`}>
+                    {locale === 'fr' ? st.sub_fr : st.sub_en}
+                  </div>
+                </div>
+              </button>
+            );
+          })}
         </div>
-
       </div>
     </div>
   );
