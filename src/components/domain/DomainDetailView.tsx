@@ -60,6 +60,7 @@ const ScadaAutomationWorkbench = lazy(() => import('../scada/ScadaAutomationWork
 const TelecomIec61850Workbench = lazy(() => import('../telecom/TelecomIec61850Workbench').then(m => ({ default: m.TelecomIec61850Workbench })));
 const PowerQualityEmcWorkbench = lazy(() => import('../power-quality/PowerQualityEmcWorkbench').then(m => ({ default: m.PowerQualityEmcWorkbench })));
 const AssetManagementDiagnosticsWorkbench = lazy(() => import('../assets/AssetManagementDiagnosticsWorkbench').then(m => ({ default: m.AssetManagementDiagnosticsWorkbench })));
+const SmartMeteringGridDigitalizationWorkbench = lazy(() => import('../metering/SmartMeteringGridDigitalizationWorkbench').then(m => ({ default: m.SmartMeteringGridDigitalizationWorkbench })));
 const SubstationEarthingLightningWorkbench = lazy(() => import('../safety/SubstationEarthingLightningWorkbench').then(m => ({ default: m.SubstationEarthingLightningWorkbench })));
 
 const DOMAIN_INFOGRAPHIC_CATEGORY_MAP: Record<string, 'OVERVIEW' | 'SUBSTATION' | 'TRANSMISSION' | 'PROTECTION' | 'SAFETY' | 'GENERATION' | 'DISTRIBUTION' | 'ALL'> = {
@@ -964,7 +965,7 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
             <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300">
-              {locale === 'fr' ? 'Environnement D15 · Gestion d\'Actifs, DGA & Smart Grid :' : 'D15 Environment · Asset Management, DGA & Smart Grid :'}
+              {locale === 'fr' ? 'Environnement D15 · Comptage Intelligent, STS & Smart Grids :' : 'D15 Environment · Smart Metering, STS & Smart Grids :'}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -977,7 +978,7 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
                   : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
               }`}
             >
-              {locale === 'fr' ? '🔬 Workbench Expert Diagnostic & Triangle de Duval (7 Piliers)' : '🔬 Diagnostic & Duval Triangle Workbench (7 Pillars)'}
+              {locale === 'fr' ? '⚡ Station Expert Smart Metering & MDM (5 Piliers)' : '⚡ Smart Metering & MDM Workbench (5 Pillars)'}
             </button>
             <button
               type="button"
@@ -1116,7 +1117,7 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           onSelectEquipment={onSelectEquipment}
         />
       ) : isD15 && d15Mode === 'visual_journey' ? (
-        <AssetManagementDiagnosticsWorkbench
+        <SmartMeteringGridDigitalizationWorkbench
           locale={locale}
           onNavigate={onNavigateView}
           onSelectEquipment={onSelectEquipment}
