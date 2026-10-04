@@ -182,7 +182,7 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
   const [d12Mode, setD12Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
   const [d13Mode, setD13Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
   const [d14Mode, setD14Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
-  const [d15Mode, setD15Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
+  const [d15Mode, setD15Mode] = useState<'visual_journey' | 'asset_management' | 'spec_catalog'>('visual_journey');
   const [d16Mode, setD16Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
   const [d06InitialPillar, setD06InitialPillar] = useState<InstallationPillar>('INTERACTIVE_SLD');
 
@@ -961,14 +961,14 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
 
       {/* D15 WORKBENCH MODE TOGGLE */}
       {isD15 && (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
             <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300">
-              {locale === 'fr' ? 'Environnement D15 · Comptage Intelligent, STS & Smart Grids :' : 'D15 Environment · Smart Metering, STS & Smart Grids :'}
+              {locale === 'fr' ? 'Environnement D15 · Comptage Intelligent & Gestion d\'Actifs :' : 'D15 Environment · Smart Metering & Asset Management :'}
             </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={() => setD15Mode('visual_journey')}
@@ -978,7 +978,18 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
                   : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
               }`}
             >
-              {locale === 'fr' ? '⚡ Station Expert Smart Metering & MDM (5 Piliers)' : '⚡ Smart Metering & MDM Workbench (5 Pillars)'}
+              {locale === 'fr' ? '⚡ Comptage Communicant AMI & MDM' : '⚡ AMI Smart Metering & MDM'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setD15Mode('asset_management')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
+                d15Mode === 'asset_management'
+                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
+                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
+              }`}
+            >
+              {locale === 'fr' ? '🔬 Diagnostic DGA & Health Index' : '🔬 DGA Diagnostics & Health Index'}
             </button>
             <button
               type="button"
@@ -1118,6 +1129,12 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
         />
       ) : isD15 && d15Mode === 'visual_journey' ? (
         <SmartMeteringGridDigitalizationWorkbench
+          locale={locale}
+          onNavigate={onNavigateView}
+          onSelectEquipment={onSelectEquipment}
+        />
+      ) : isD15 && d15Mode === 'asset_management' ? (
+        <AssetManagementDiagnosticsWorkbench
           locale={locale}
           onNavigate={onNavigateView}
           onSelectEquipment={onSelectEquipment}

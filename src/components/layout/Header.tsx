@@ -64,6 +64,9 @@ interface HeaderProps {
   onNavigateEngineersChain?: () => void;
   onNavigateEcosystem?: () => void;
   onNavigateArchitectures?: () => void;
+  onNavigateAssetManagement?: () => void;
+  onToggleContextHUD?: () => void;
+  isContextHUDOpen?: boolean;
   onOpenAudit?: () => void;
   onNavigate?: (view: string) => void;
 }
@@ -97,6 +100,9 @@ export const Header: React.FC<HeaderProps> = ({
   onNavigateEngineersChain,
   onNavigateEcosystem,
   onNavigateArchitectures,
+  onNavigateAssetManagement,
+  onToggleContextHUD,
+  isContextHUDOpen = false,
   onOpenAudit,
   onNavigate,
 }) => {
@@ -196,10 +202,10 @@ export const Header: React.FC<HeaderProps> = ({
         case 'industrial-projects': onNavigateIndustrialProjects?.(); break;
         case 'engineers-chain': onNavigateEngineersChain?.(); break;
         case 'ecosystem': onNavigateEcosystem ? onNavigateEcosystem() : onNavigate?.('ecosystem'); break;
-        case 'roles': onNavigateRoles ? onNavigateRoles() : (onNavigate ? onNavigate('roles') : null); break;
         case 'protection': onNavigate ? onNavigate('protection') : (window.location.hash = '#/protection'); break;
         case 'commissioning': onNavigate ? onNavigate('commissioning') : (window.location.hash = '#/commissioning'); break;
         case 'architectures': onNavigate ? onNavigate('architectures') : onNavigateArchitectures?.(); break;
+        case 'asset-management': onNavigate ? onNavigate('asset-management') : (onNavigateAssetManagement ? onNavigateAssetManagement() : (window.location.hash = '#/asset-management')); break;
         default: onNavigateHome?.(); break;
       }
     }
@@ -391,6 +397,30 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
                 <button
                   type="button"
+                  onClick={() => navigateTo('protection')}
+                  className="w-full text-left px-3.5 py-2 text-slate-300 hover:text-red-400 hover:bg-slate-800/80 transition-colors flex items-center justify-between"
+                >
+                  <span>{locale === 'fr' ? 'Studio Coordination Protections' : 'Protection Studio'}</span>
+                  <span className="text-[10px] text-red-400 font-bold">50/51/87</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigateTo('commissioning')}
+                  className="w-full text-left px-3.5 py-2 text-slate-300 hover:text-emerald-400 hover:bg-slate-800/80 transition-colors flex items-center justify-between"
+                >
+                  <span>{locale === 'fr' ? 'Atelier FAT / SAT & Réception' : 'FAT / SAT Studio'}</span>
+                  <span className="text-[10px] text-emerald-400 font-bold">CEI 61439</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigateTo('asset-management')}
+                  className="w-full text-left px-3.5 py-2 text-slate-300 hover:text-amber-400 hover:bg-slate-800/80 transition-colors flex items-center justify-between"
+                >
+                  <span>{locale === 'fr' ? "Gestion d'Actifs & DGA" : 'Asset Management & DGA'}</span>
+                  <span className="text-[10px] text-amber-400 font-bold">CEI 60599</span>
+                </button>
+                <button
+                  type="button"
                   onClick={() => navigateTo('industrial-projects')}
                   className="w-full text-left px-3.5 py-2 text-slate-300 hover:text-amber-400 hover:bg-slate-800/80 transition-colors flex items-center justify-between border-t border-slate-800/60 mt-1 pt-2"
                 >
@@ -462,6 +492,23 @@ export const Header: React.FC<HeaderProps> = ({
           
           {/* Global Multi-Level Usage Depth Switcher (Priority #6) */}
           <UsageLevelSwitcher locale={locale} />
+
+          {/* Engineering Context HUD Quick Toggle */}
+          {onToggleContextHUD && (
+            <button
+              type="button"
+              onClick={onToggleContextHUD}
+              className={`hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border font-mono text-xs font-bold transition-all cursor-pointer ${
+                isContextHUDOpen
+                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/50 shadow-xs'
+                  : 'bg-slate-900/80 text-slate-400 hover:text-white border-slate-800 hover:border-slate-700'
+              }`}
+              title={locale === 'fr' ? 'Afficher/Masquer le Ruban Contexte Amont/Aval (Ctrl+B)' : 'Toggle Upstream/Downstream Context HUD (Ctrl+B)'}
+            >
+              <Layers className="h-3.5 w-3.5 text-amber-400" />
+              <span className="hidden xl:inline">HUD</span>
+            </button>
+          )}
 
           {/* Audit Status Button (16/16 L5 Excellence) */}
           {onOpenAudit && (

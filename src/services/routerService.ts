@@ -247,6 +247,37 @@ export function parseRouteHash(hash: string): RouteState {
         assetPillar: secondary || (primary === 'dga' || primary === 'duval' || primary === 'dga-diagnostics' ? 'DUVAL_TRIANGLE_DGA' : primary === 'health-index' ? 'HEALTH_INDEX_ISO55000' : primary === 'fleet-risk' ? 'FLEET_RISK_MATRIX' : undefined),
       };
 
+    case 'transmission':
+      return { view: 'domain', domainCode: 'D03' };
+    case 'substations':
+      return { view: 'domain', domainCode: 'D04' };
+    case 'distribution':
+      return { view: 'domain', domainCode: 'D05' };
+    case 'installations':
+      return { view: 'domain', domainCode: 'D06' };
+    case 'automation':
+      return { view: 'domain', domainCode: 'D07' };
+    case 'elv':
+      return { view: 'domain', domainCode: 'D08' };
+    case 'ai':
+      return { view: 'domain', domainCode: 'D09' };
+    case 'storage':
+    case 'bess':
+      return { view: 'domain', domainCode: 'D10' };
+    case 'scada':
+      return { view: 'domain', domainCode: 'D12' };
+    case 'telecom':
+      return { view: 'domain', domainCode: 'D13' };
+    case 'power-quality':
+    case 'cem':
+      return { view: 'domain', domainCode: 'D14' };
+    case 'metering':
+    case 'smart-grids':
+      return { view: 'domain', domainCode: 'D15' };
+    case 'safety':
+    case 'earthing':
+      return { view: 'domain', domainCode: 'D16' };
+
     default:
       return { view: 'home' };
   }
@@ -315,6 +346,8 @@ export function buildRouteHash(state: RouteState): string {
       return '#/traceability';
     case 'thematic-journeys':
       return state.contextNodeId ? `#/thematic-journeys/${encodeURIComponent(state.contextNodeId)}` : '#/thematic-journeys';
+    case 'asset-management':
+      return state.assetPillar ? `#/asset-management/${encodeURIComponent(state.assetPillar)}` : '#/asset-management';
     default:
       return '#/';
   }

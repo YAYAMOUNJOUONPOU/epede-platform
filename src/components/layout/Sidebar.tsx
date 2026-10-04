@@ -37,6 +37,7 @@ interface SidebarProps {
   onNavigateScenarios?: () => void;
   onNavigateTraceability?: () => void;
   onNavigateThematicJourneys?: () => void;
+  onNavigateAssetManagement?: () => void;
   currentView?: string;
 }
 
@@ -70,6 +71,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onNavigateScenarios,
   onNavigateTraceability,
   onNavigateThematicJourneys,
+  onNavigateAssetManagement,
   currentView,
 }) => {
   const chainDomains = DOMAINS.filter((d) => d.domain_group === 'chain');
@@ -96,555 +98,536 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <X className="h-3.5 w-3.5" />
             </button>
           </div>
-          <div className="mt-2 space-y-1">
-            {/* 3D Electrical Energy Ecosystem */}
-            <button
-              type="button"
-              onClick={() => {
-                onNavigateEcosystem?.();
-                onClose();
-              }}
-              className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                currentView === 'ecosystem'
-                  ? 'bg-cyan-950/80 text-cyan-300 font-bold border border-cyan-500/60 shadow-md shadow-cyan-500/20'
-                  : 'text-slate-200 hover:text-white hover:bg-slate-900/80'
-              }`}
-            >
-              {currentView === 'ecosystem' && (
-                <span className="absolute left-0 top-1 bottom-1 w-1 bg-cyan-400 rounded-r" />
-              )}
-              <div className="flex items-center gap-2">
-                <span className="text-amber-400 font-black">⚡</span>
-                <span className="font-bold text-white">
-                  {locale === 'fr' ? 'Écosystème Énergétique 3D' : '3D Electrical Ecosystem'}
+          <div className="mt-3 space-y-4">
+            
+            {/* Cluster 1: Ateliers Réseaux & Systèmes */}
+            <div className="space-y-1">
+              <div className="px-2 py-1 text-[10px] font-black text-cyan-400 uppercase tracking-wider flex items-center gap-1.5 bg-cyan-950/40 rounded-md border border-cyan-900/40">
+                <span>⚡</span>
+                <span>{locale === 'fr' ? 'ATELIERS RÉSEAUX & SYSTÈMES' : 'GRID & SYSTEM WORKBENCHES'}</span>
+              </div>
+
+              {/* 3D Electrical Energy Ecosystem */}
+              <button
+                type="button"
+                onClick={() => {
+                  onNavigateEcosystem?.();
+                  onClose();
+                }}
+                className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
+                  currentView === 'ecosystem'
+                    ? 'bg-cyan-950/80 text-cyan-300 font-bold border border-cyan-500/60 shadow-md shadow-cyan-500/20'
+                    : 'text-slate-200 hover:text-white hover:bg-slate-900/80'
+                }`}
+              >
+                {currentView === 'ecosystem' && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-cyan-400 rounded-r" />
+                )}
+                <div className="flex items-center gap-2">
+                  <span className="text-amber-400 font-black">⚡</span>
+                  <span className="font-bold text-white">
+                    {locale === 'fr' ? 'Écosystème Énergétique 3D' : '3D Electrical Ecosystem'}
+                  </span>
+                </div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-black border border-cyan-500/40">
+                  3D
                 </span>
-              </div>
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-black border border-cyan-500/40">
-                3D
-              </span>
-            </button>
+              </button>
 
-            {/* Knowledge Graph Explorer */}
-            <button
-              type="button"
-              onClick={() => {
-                onNavigateKnowledgeGraph?.();
-                onClose();
-              }}
-              className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                currentView === 'knowledge-graph'
-                  ? 'bg-cyan-950/80 text-cyan-300 font-bold border border-cyan-500/60 shadow-md shadow-cyan-500/20'
-                  : 'text-slate-200 hover:text-white hover:bg-slate-900/80'
-              }`}
-            >
-              {currentView === 'knowledge-graph' && (
-                <span className="absolute left-0 top-1 bottom-1 w-1 bg-cyan-400 rounded-r" />
-              )}
-              <div className="flex items-center gap-2">
-                <Compass className="h-3.5 w-3.5 text-cyan-400" />
-                <span className="font-bold text-white">
-                  {locale === 'fr' ? 'Knowledge Graph Explorer' : 'Knowledge Graph Explorer'}
+              {/* SLD Diagram */}
+              <button
+                type="button"
+                onClick={() => {
+                  onNavigateDiagrams?.();
+                  onClose();
+                }}
+                className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
+                  currentView === 'diagrams'
+                    ? 'bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
+                }`}
+              >
+                {currentView === 'diagrams' && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-500 rounded-r" />
+                )}
+                <div className="flex items-center gap-2">
+                  <Activity className="h-3.5 w-3.5 text-amber-400" />
+                  <span>{locale === 'fr' ? 'Schéma SLD Unifilaire (CAD)' : 'Single-Line SLD (CAD)'}</span>
+                </div>
+                <span className="text-[10px] text-amber-400 font-bold">CAD</span>
+              </button>
+
+              {/* Cameroon National Grid */}
+              <button
+                type="button"
+                data-testid="sidebar-tool-cameroon-grid"
+                onClick={() => {
+                  if (onNavigateCameroonGrid) onNavigateCameroonGrid();
+                  onClose();
+                }}
+                className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
+                  currentView === 'cameroon-grid'
+                    ? 'bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
+                }`}
+              >
+                {currentView === 'cameroon-grid' && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-500 rounded-r" />
+                )}
+                <div className="flex items-center gap-2">
+                  <Globe className="h-3.5 w-3.5 text-emerald-400" />
+                  <span>{locale === 'fr' ? 'Réseau National Cameroun (RIS/RIN)' : 'Cameroon Grid (RIS/RIN)'}</span>
+                </div>
+                <span className="text-[10px] text-emerald-400 font-bold">225 kV</span>
+              </button>
+
+              {/* Hydropower Digital Twin */}
+              <button
+                type="button"
+                onClick={() => {
+                  onNavigateHydropower?.();
+                  onClose();
+                }}
+                className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
+                  currentView === 'hydropower'
+                    ? 'bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
+                }`}
+              >
+                {currentView === 'hydropower' && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-500 rounded-r" />
+                )}
+                <div className="flex items-center gap-2">
+                  <Waves className="h-3.5 w-3.5 text-cyan-400" />
+                  <span>{locale === 'fr' ? 'Jumeau Hydro (Songloulou 384 MW)' : 'Hydro Twin (Songloulou 384 MW)'}</span>
+                </div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">
+                  HYDRO
                 </span>
-              </div>
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-black border border-purple-500/40">
-                GRAPH
-              </span>
-            </button>
+              </button>
 
-            {/* Follow the Energy (8 Stages & 4 Flows) */}
-            <button
-              type="button"
-              onClick={() => {
-                onNavigateFollowTheEnergy?.();
-                onClose();
-              }}
-              className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                currentView === 'follow-the-energy'
-                  ? 'bg-amber-950/80 text-amber-300 font-bold border border-amber-500/60 shadow-md shadow-amber-500/20'
-                  : 'text-slate-200 hover:text-white hover:bg-slate-900/80'
-              }`}
-            >
-              {currentView === 'follow-the-energy' && (
-                <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-400 rounded-r" />
-              )}
-              <div className="flex items-center gap-2">
-                <Zap className="h-3.5 w-3.5 text-amber-400" />
-                <span className="font-bold text-white">
-                  {locale === 'fr' ? 'Follow the Energy (4 Flux)' : 'Follow the Energy (4 Flows)'}
+              {/* Substation Architectures & TCO Comparator */}
+              <button
+                type="button"
+                onClick={() => {
+                  onNavigateArchitectures?.();
+                  onClose();
+                }}
+                className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
+                  currentView === 'architectures'
+                    ? 'bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40 shadow-sm'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-900/80'
+                }`}
+              >
+                {currentView === 'architectures' && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-emerald-400 rounded-r" />
+                )}
+                <div className="flex items-center gap-2">
+                  <Scale className="h-3.5 w-3.5 text-emerald-400" />
+                  <span className="font-bold text-white">{locale === 'fr' ? 'Architectures Postes AIS/GIS & TCO' : 'Substation Architectures & TCO'}</span>
+                </div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-black border border-emerald-500/30">
+                  AIS/GIS
                 </span>
-              </div>
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-black border border-amber-500/40">
-                8 STAGES
-              </span>
-            </button>
+              </button>
 
-            {/* Pedagogical Scenarios & SCADA Incident Replay */}
-            <button
-              type="button"
-              onClick={() => {
-                onNavigateScenarios?.();
-                onClose();
-              }}
-              className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                currentView === 'scenarios'
-                  ? 'bg-red-950/80 text-red-300 font-bold border border-red-500/60 shadow-md shadow-red-500/20'
-                  : 'text-slate-200 hover:text-white hover:bg-slate-900/80'
-              }`}
-            >
-              {currentView === 'scenarios' && (
-                <span className="absolute left-0 top-1 bottom-1 w-1 bg-red-400 rounded-r" />
-              )}
-              <div className="flex items-center gap-2">
-                <Clock className="h-3.5 w-3.5 text-red-400" />
-                <span className="font-bold text-white">
-                  {locale === 'fr' ? 'Scénarios & Replay SCADA' : 'Scenarios & SCADA Replay'}
+              {/* Industrial Projects & Field Case Studies */}
+              <button
+                type="button"
+                onClick={() => {
+                  onNavigateIndustrialProjects?.();
+                  onClose();
+                }}
+                className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
+                  currentView === 'industrial-projects'
+                    ? 'bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
+                }`}
+              >
+                {currentView === 'industrial-projects' && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-500 rounded-r" />
+                )}
+                <div className="flex items-center gap-2">
+                  <Factory className="h-3.5 w-3.5 text-sky-400" />
+                  <span>{locale === 'fr' ? 'Projets Industriels & Chantiers' : 'Industrial Projects & Field Cases'}</span>
+                </div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 font-bold border border-sky-500/30">
+                  FIELD
                 </span>
-              </div>
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 font-black border border-red-500/40">
-                SOE 10 MS
-              </span>
-            </button>
+              </button>
 
-            {/* Trust & Provenance Registry */}
-            <button
-              type="button"
-              onClick={() => {
-                onNavigateTraceability?.();
-                onClose();
-              }}
-              className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                currentView === 'traceability'
-                  ? 'bg-sky-950/80 text-sky-300 font-bold border border-sky-500/60 shadow-md shadow-sky-500/20'
-                  : 'text-slate-200 hover:text-white hover:bg-slate-900/80'
-              }`}
-            >
-              {currentView === 'traceability' && (
-                <span className="absolute left-0 top-1 bottom-1 w-1 bg-sky-400 rounded-r" />
-              )}
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="h-3.5 w-3.5 text-sky-400" />
-                <span className="font-bold text-white">
-                  {locale === 'fr' ? 'Données Fiables & Traçabilité' : 'Trust & Provenance'}
+              {/* Engineers by Domain / Roles */}
+              <button
+                type="button"
+                onClick={() => {
+                  onNavigateEngineersChain?.();
+                  onClose();
+                }}
+                className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
+                  currentView === 'engineers-chain'
+                    ? 'bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
+                }`}
+              >
+                {currentView === 'engineers-chain' && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-500 rounded-r" />
+                )}
+                <div className="flex items-center gap-2">
+                  <Users className="h-3.5 w-3.5 text-amber-400" />
+                  <span>{locale === 'fr' ? 'Chaîne des Métiers & Experts' : 'Engineering Roles & Careers'}</span>
+                </div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-black border border-amber-500/30">
+                  35+ ROLES
                 </span>
-              </div>
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 font-black border border-sky-500/40">
-                AUDIT
-              </span>
-            </button>
+              </button>
+            </div>
 
-            {/* Thematic Guided Journeys */}
-            <button
-              type="button"
-              onClick={() => {
-                onNavigateThematicJourneys?.();
-                onClose();
-              }}
-              className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                currentView === 'thematic-journeys'
-                  ? 'bg-indigo-950/80 text-indigo-300 font-bold border border-indigo-500/60 shadow-md shadow-indigo-500/20'
-                  : 'text-slate-200 hover:text-white hover:bg-slate-900/80'
-              }`}
-            >
-              {currentView === 'thematic-journeys' && (
-                <span className="absolute left-0 top-1 bottom-1 w-1 bg-indigo-400 rounded-r" />
-              )}
-              <div className="flex items-center gap-2">
-                <Compass className="h-3.5 w-3.5 text-indigo-400" />
-                <span className="font-bold text-white">
-                  {locale === 'fr' ? 'Parcours Guidés Thématiques' : 'Thematic Guided Journeys'}
+            {/* Cluster 2: Calculs, Essais & Diagnostics */}
+            <div className="space-y-1">
+              <div className="px-2 py-1 text-[10px] font-black text-amber-400 uppercase tracking-wider flex items-center gap-1.5 bg-amber-950/40 rounded-md border border-amber-900/40">
+                <span>🔬</span>
+                <span>{locale === 'fr' ? 'CALCULS, ESSAIS & DIAGNOSTICS' : 'CALCULATORS, TESTS & DIAGNOSTICS'}</span>
+              </div>
+
+              {/* Calculators */}
+              <button
+                type="button"
+                onClick={() => {
+                  onNavigateCalculators?.();
+                  onClose();
+                }}
+                className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
+                  currentView === 'calculators'
+                    ? 'bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
+                }`}
+              >
+                {currentView === 'calculators' && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-500 rounded-r" />
+                )}
+                <div className="flex items-center gap-2">
+                  <Calculator className="h-3.5 w-3.5 text-amber-400" />
+                  <span>{locale === 'fr' ? '17 Calculateurs CEI / IEEE' : '17 IEC / IEEE Calculators'}</span>
+                </div>
+                <span className="text-[10px] text-amber-400 font-bold">SOLVERS</span>
+              </button>
+
+              {/* Simulation Lab */}
+              <button
+                type="button"
+                onClick={() => {
+                  onNavigateSimulation?.();
+                  onClose();
+                }}
+                className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
+                  currentView === 'simulation'
+                    ? 'bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
+                }`}
+              >
+                {currentView === 'simulation' && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-500 rounded-r" />
+                )}
+                <div className="flex items-center gap-2">
+                  <Zap className="h-3.5 w-3.5 text-amber-400" />
+                  <span>{locale === 'fr' ? '19 Labs Transitoires & Oscilloscope' : '19 Simulation Labs & Scope'}</span>
+                </div>
+                <span className="text-[10px] text-amber-400 font-bold">SIM</span>
+              </button>
+
+              {/* Protection Engineering Studio */}
+              <button
+                type="button"
+                onClick={() => {
+                  onNavigateProtection?.();
+                  onClose();
+                }}
+                className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
+                  currentView === 'protection'
+                    ? 'bg-red-500/20 text-red-300 font-bold border border-red-500/40 shadow-sm'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-900/80'
+                }`}
+              >
+                {currentView === 'protection' && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-red-400 rounded-r" />
+                )}
+                <div className="flex items-center gap-2">
+                  <ShieldAlert className="h-3.5 w-3.5 text-red-400" />
+                  <span className="font-bold text-white">{locale === 'fr' ? 'Coordination Protections (TCC)' : 'Protection Studio & TCC'}</span>
+                </div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 font-black border border-red-500/30">
+                  50/51/87
                 </span>
-              </div>
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-black border border-indigo-500/40">
-                7 CURSUS
-              </span>
-            </button>
+              </button>
 
-            {/* Real-World Electrical Equipment Reference */}
-            <button
-              type="button"
-              onClick={() => {
-                onNavigateEquipmentReference?.();
-                onClose();
-              }}
-              className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                currentView === 'equipment-reference'
-                  ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40 shadow-sm'
-                  : 'text-slate-300 hover:text-white hover:bg-slate-900/80'
-              }`}
-            >
-              {currentView === 'equipment-reference' && (
-                <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-500 rounded-r" />
-              )}
-              <div className="flex items-center gap-2">
-                <Box className="h-3.5 w-3.5 text-amber-400" />
-                <span className="font-bold text-white">{locale === 'fr' ? 'Matériel Électrique Réel' : 'Electrical Equipment Reference'}</span>
-              </div>
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-black border border-emerald-500/30">
-                {locale === 'fr' ? 'RÉFÉRENTIEL' : 'REFERENCE'}
-              </span>
-            </button>
+              {/* Commissioning FAT / SAT Workbench */}
+              <button
+                type="button"
+                onClick={() => {
+                  onNavigateCommissioning?.();
+                  onClose();
+                }}
+                className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
+                  currentView === 'commissioning'
+                    ? 'bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40 shadow-sm'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-900/80'
+                }`}
+              >
+                {currentView === 'commissioning' && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-cyan-400 rounded-r" />
+                )}
+                <div className="flex items-center gap-2">
+                  <CheckSquare className="h-3.5 w-3.5 text-cyan-400" />
+                  <span className="font-bold text-white">{locale === 'fr' ? 'Contrôle FAT / SAT & PV CEI 61439' : 'FAT / SAT & Commissioning'}</span>
+                </div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-black border border-cyan-500/30">
+                  PV PDF
+                </span>
+              </button>
 
-            {/* Substation Architectures & TCO Comparator */}
-            <button
-              type="button"
-              onClick={() => {
-                onNavigateArchitectures?.();
-                onClose();
-              }}
-              className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                currentView === 'architectures'
-                  ? 'bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40 shadow-sm'
-                  : 'text-slate-300 hover:text-white hover:bg-slate-900/80'
-              }`}
-            >
-              {currentView === 'architectures' && (
-                <span className="absolute left-0 top-1 bottom-1 w-1 bg-emerald-400 rounded-r" />
-              )}
-              <div className="flex items-center gap-2">
-                <Scale className="h-3.5 w-3.5 text-emerald-400" />
-                <span className="font-bold text-white">{locale === 'fr' ? 'Architectures Postes & TCO' : 'Substation Architectures & TCO'}</span>
-              </div>
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-black border border-emerald-500/30">
-                AIS/GIS
-              </span>
-            </button>
+              {/* Asset Management & DGA Diagnostics */}
+              <button
+                type="button"
+                onClick={() => {
+                  onNavigateAssetManagement?.();
+                  onClose();
+                }}
+                className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
+                  currentView === 'asset-management'
+                    ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40 shadow-sm'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-900/80'
+                }`}
+              >
+                {currentView === 'asset-management' && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-400 rounded-r" />
+                )}
+                <div className="flex items-center gap-2">
+                  <Activity className="h-3.5 w-3.5 text-amber-400" />
+                  <span className="font-bold text-white">{locale === 'fr' ? "Gestion d'Actifs & DGA (Duval)" : 'Asset Management & DGA'}</span>
+                </div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-black border border-amber-500/30">
+                  CEI 60599
+                </span>
+              </button>
+            </div>
 
-            {/* Protection Engineering Studio */}
-            <button
-              type="button"
-              onClick={() => {
-                onNavigateProtection?.();
-                onClose();
-              }}
-              className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                currentView === 'protection'
-                  ? 'bg-red-500/20 text-red-300 font-bold border border-red-500/40 shadow-sm'
-                  : 'text-slate-300 hover:text-white hover:bg-slate-900/80'
-              }`}
-            >
-              {currentView === 'protection' && (
-                <span className="absolute left-0 top-1 bottom-1 w-1 bg-red-400 rounded-r" />
-              )}
-              <div className="flex items-center gap-2">
-                <ShieldAlert className="h-3.5 w-3.5 text-red-400" />
-                <span className="font-bold text-white">{locale === 'fr' ? 'Atelier Protection & Plan R-X' : 'Protection Studio & R-X Plane'}</span>
+            {/* Cluster 3: Référentiels, Graphes & Parcours */}
+            <div className="space-y-1">
+              <div className="px-2 py-1 text-[10px] font-black text-purple-400 uppercase tracking-wider flex items-center gap-1.5 bg-purple-950/40 rounded-md border border-purple-900/40">
+                <span>📚</span>
+                <span>{locale === 'fr' ? 'RÉFÉRENTIELS, GRAPHES & PARCOURS' : 'REFERENCES, GRAPHS & JOURNEYS'}</span>
               </div>
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 font-black border border-red-500/30">
-                CEI 60255
-              </span>
-            </button>
 
-            {/* Commissioning FAT / SAT Workbench */}
-            <button
-              type="button"
-              onClick={() => {
-                onNavigateCommissioning?.();
-                onClose();
-              }}
-              className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                currentView === 'commissioning'
-                  ? 'bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40 shadow-sm'
-                  : 'text-slate-300 hover:text-white hover:bg-slate-900/80'
-              }`}
-            >
-              {currentView === 'commissioning' && (
-                <span className="absolute left-0 top-1 bottom-1 w-1 bg-cyan-400 rounded-r" />
-              )}
-              <div className="flex items-center gap-2">
-                <CheckSquare className="h-3.5 w-3.5 text-cyan-400" />
-                <span className="font-bold text-white">{locale === 'fr' ? 'Contrôle FAT / SAT & Essais' : 'FAT / SAT & Commissioning'}</span>
-              </div>
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-black border border-cyan-500/30">
-                CEI 61439
-              </span>
-            </button>
+              {/* Real-World Electrical Equipment Reference */}
+              <button
+                type="button"
+                onClick={() => {
+                  onNavigateEquipmentReference?.();
+                  onClose();
+                }}
+                className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
+                  currentView === 'equipment-reference'
+                    ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40 shadow-sm'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-900/80'
+                }`}
+              >
+                {currentView === 'equipment-reference' && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-500 rounded-r" />
+                )}
+                <div className="flex items-center gap-2">
+                  <Box className="h-3.5 w-3.5 text-amber-400" />
+                  <span className="font-bold text-white">{locale === 'fr' ? 'Matériel Électrique Réel & Écorchés' : 'Electrical Equipment Reference'}</span>
+                </div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-black border border-emerald-500/30">
+                  CATALOG
+                </span>
+              </button>
 
-            {/* Journey of Electricity */}
-            <button
-              type="button"
-              onClick={() => {
-                onNavigateJourney?.();
-                onClose();
-              }}
-              className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                currentView === 'journey'
-                  ? 'bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
-              }`}
-            >
-              {currentView === 'journey' && (
-                <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-500 rounded-r" />
-              )}
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-3.5 w-3.5 text-amber-400" />
-                <span>{locale === 'fr' ? "Le Voyage de l'Électricité (13 Étapes)" : 'The Journey of Electricity'}</span>
-              </div>
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-black border border-amber-500/30">
-                {locale === 'fr' ? 'PARCOURS' : 'JOURNEY'}
-              </span>
-            </button>
+              {/* Follow the Energy (8 Stages & 4 Flows) */}
+              <button
+                type="button"
+                onClick={() => {
+                  onNavigateFollowTheEnergy?.();
+                  onClose();
+                }}
+                className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
+                  currentView === 'follow-the-energy'
+                    ? 'bg-amber-950/80 text-amber-300 font-bold border border-amber-500/60 shadow-md shadow-amber-500/20'
+                    : 'text-slate-200 hover:text-white hover:bg-slate-900/80'
+                }`}
+              >
+                {currentView === 'follow-the-energy' && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-400 rounded-r" />
+                )}
+                <div className="flex items-center gap-2">
+                  <Zap className="h-3.5 w-3.5 text-amber-400" />
+                  <span className="font-bold text-white">
+                    {locale === 'fr' ? 'Follow the Energy (4 Flux)' : 'Follow the Energy (4 Flows)'}
+                  </span>
+                </div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-black border border-amber-500/40">
+                  4 FLUX
+                </span>
+              </button>
 
-            {/* SLD Diagram */}
-            <button
-              type="button"
-              onClick={() => {
-                onNavigateDiagrams?.();
-                onClose();
-              }}
-              className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                currentView === 'diagrams'
-                  ? 'bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
-              }`}
-            >
-              {currentView === 'diagrams' && (
-                <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-500 rounded-r" />
-              )}
-              <div className="flex items-center gap-2">
-                <Activity className="h-3.5 w-3.5 text-slate-300" />
-                <span>{locale === 'fr' ? 'Plan Électrique du Poste' : 'Substation Electrical Map'}</span>
-              </div>
-              <span className="text-[10px] text-amber-400 font-bold">{locale === 'fr' ? 'PLAN' : 'MAP'}</span>
-            </button>
+              {/* Knowledge Graph Explorer */}
+              <button
+                type="button"
+                onClick={() => {
+                  onNavigateKnowledgeGraph?.();
+                  onClose();
+                }}
+                className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
+                  currentView === 'knowledge-graph'
+                    ? 'bg-cyan-950/80 text-cyan-300 font-bold border border-cyan-500/60 shadow-md shadow-cyan-500/20'
+                    : 'text-slate-200 hover:text-white hover:bg-slate-900/80'
+                }`}
+              >
+                {currentView === 'knowledge-graph' && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-cyan-400 rounded-r" />
+                )}
+                <div className="flex items-center gap-2">
+                  <Compass className="h-3.5 w-3.5 text-cyan-400" />
+                  <span className="font-bold text-white">
+                    {locale === 'fr' ? 'Knowledge Graph Explorer' : 'Knowledge Graph Explorer'}
+                  </span>
+                </div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-black border border-purple-500/40">
+                  GRAPH
+                </span>
+              </button>
 
-            {/* CIM Semantic Topology Graph */}
-            <button
-              type="button"
-              onClick={() => {
-                onNavigateDiagrams?.('cim_graph');
-                onClose();
-              }}
-              className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                currentView === 'diagrams'
-                  ? 'bg-purple-500/15 text-purple-300 font-bold border border-purple-500/30'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <Layers className="h-3.5 w-3.5 text-purple-400" />
-                <span>{locale === 'fr' ? 'Carte des Équipements du Réseau' : 'Equipment Connectivity Map'}</span>
-              </div>
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-bold border border-purple-500/30">
-                {locale === 'fr' ? 'RÉSEAU' : 'GRAPH'}
-              </span>
-            </button>
+              {/* Pedagogical Scenarios & SCADA Incident Replay */}
+              <button
+                type="button"
+                onClick={() => {
+                  onNavigateScenarios?.();
+                  onClose();
+                }}
+                className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
+                  currentView === 'scenarios'
+                    ? 'bg-red-950/80 text-red-300 font-bold border border-red-500/60 shadow-md shadow-red-500/20'
+                    : 'text-slate-200 hover:text-white hover:bg-slate-900/80'
+                }`}
+              >
+                {currentView === 'scenarios' && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-red-400 rounded-r" />
+                )}
+                <div className="flex items-center gap-2">
+                  <Clock className="h-3.5 w-3.5 text-red-400" />
+                  <span className="font-bold text-white">
+                    {locale === 'fr' ? 'Scénarios & Replay SCADA' : 'Scenarios & SCADA Replay'}
+                  </span>
+                </div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 font-black border border-red-500/40">
+                  SOE 10 MS
+                </span>
+              </button>
 
-            {/* GeoTwin 3D & Dynamic Line Rating */}
-            <button
-              type="button"
-              onClick={() => {
-                onNavigateDiagrams?.('geo_substation_3d');
-                onClose();
-              }}
-              className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                currentView === 'diagrams'
-                  ? 'text-cyan-400 hover:text-cyan-300 hover:bg-slate-900/80'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <Compass className="h-3.5 w-3.5 text-cyan-400" />
-                <span>{locale === 'fr' ? 'Vue 3D des Lignes & Pylônes' : '3D Power Lines & Towers'}</span>
-              </div>
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">
-                3D
-              </span>
-            </button>
+              {/* Thematic Guided Journeys */}
+              <button
+                type="button"
+                onClick={() => {
+                  onNavigateThematicJourneys?.();
+                  onClose();
+                }}
+                className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
+                  currentView === 'thematic-journeys'
+                    ? 'bg-indigo-950/80 text-indigo-300 font-bold border border-indigo-500/60 shadow-md shadow-indigo-500/20'
+                    : 'text-slate-200 hover:text-white hover:bg-slate-900/80'
+                }`}
+              >
+                {currentView === 'thematic-journeys' && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-indigo-400 rounded-r" />
+                )}
+                <div className="flex items-center gap-2">
+                  <Compass className="h-3.5 w-3.5 text-indigo-400" />
+                  <span className="font-bold text-white">
+                    {locale === 'fr' ? 'Parcours Guidés Thématiques' : 'Thematic Guided Journeys'}
+                  </span>
+                </div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-black border border-indigo-500/40">
+                  7 CURSUS
+                </span>
+              </button>
 
-            {/* Canonical Energy Context Stack */}
-            <button
-              type="button"
-              onClick={() => {
-                onNavigateContextStack?.();
-                onClose();
-              }}
-              className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                currentView === 'context-stack'
-                  ? 'bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
-              }`}
-            >
-              {currentView === 'context-stack' && (
-                <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-500 rounded-r" />
-              )}
-              <div className="flex items-center gap-2">
-                <Layers className="h-3.5 w-3.5 text-slate-300" />
-                <span>{locale === 'fr' ? "Vue d'Ensemble du Système" : 'System Architecture Overview'}</span>
-              </div>
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-bold">
-                {locale === 'fr' ? 'APERÇU' : 'OVERVIEW'}
-              </span>
-            </button>
+              {/* Journey of Electricity */}
+              <button
+                type="button"
+                onClick={() => {
+                  onNavigateJourney?.();
+                  onClose();
+                }}
+                className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
+                  currentView === 'journey'
+                    ? 'bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
+                }`}
+              >
+                {currentView === 'journey' && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-500 rounded-r" />
+                )}
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+                  <span>{locale === 'fr' ? "Le Voyage de l'Électricité" : 'The Journey of Electricity'}</span>
+                </div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-black border border-amber-500/30">
+                  STAGES
+                </span>
+              </button>
 
-            {/* Hydropower Digital Twin & Workbench */}
-            <button
-              type="button"
-              onClick={() => {
-                onNavigateHydropower?.();
-                onClose();
-              }}
-              className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                currentView === 'hydropower'
-                  ? 'bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
-              }`}
-            >
-              {currentView === 'hydropower' && (
-                <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-500 rounded-r" />
-              )}
-              <div className="flex items-center gap-2">
-                <Waves className="h-3.5 w-3.5 text-cyan-400" />
-                <span>{locale === 'fr' ? 'Centrale Hydroélectrique Virtuelle' : 'Virtual Hydro Power Plant'}</span>
-              </div>
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">
-                HYDRO
-              </span>
-            </button>
+              {/* Canonical Energy Context Stack */}
+              <button
+                type="button"
+                onClick={() => {
+                  onNavigateContextStack?.();
+                  onClose();
+                }}
+                className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
+                  currentView === 'context-stack'
+                    ? 'bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
+                }`}
+              >
+                {currentView === 'context-stack' && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-500 rounded-r" />
+                )}
+                <div className="flex items-center gap-2">
+                  <Layers className="h-3.5 w-3.5 text-slate-300" />
+                  <span>{locale === 'fr' ? "Graphe Contextuel Amont / Aval" : 'Upstream / Downstream Graph'}</span>
+                </div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-bold">
+                  AMONT/AVAL
+                </span>
+              </button>
 
-            {/* Transmission Networks */}
-            <button
-              type="button"
-              onClick={() => {
-                onSelectDomain?.('D03');
-                onClose();
-              }}
-              className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                activeDomainCode === 'D03'
-                  ? 'bg-sky-500/15 text-sky-300 font-bold border border-sky-500/30'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
-              }`}
-            >
-              {activeDomainCode === 'D03' && (
-                <span className="absolute left-0 top-1 bottom-1 w-1 bg-sky-500 rounded-r" />
-              )}
-              <div className="flex items-center gap-2">
-                <Zap className="h-3.5 w-3.5 text-sky-400" />
-                <span>{locale === 'fr' ? "Grand Réseau de Transport d'Électricité" : 'High-Voltage Transmission Grid'}</span>
-              </div>
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 font-bold border border-sky-500/30">
-                {locale === 'fr' ? 'LIGNES' : 'GRID'}
-              </span>
-            </button>
-
-            {/* Industrial Projects & Field Case Studies */}
-            <button
-              type="button"
-              onClick={() => {
-                onNavigateIndustrialProjects?.();
-                onClose();
-              }}
-              className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                currentView === 'industrial-projects'
-                  ? 'bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
-              }`}
-            >
-              {currentView === 'industrial-projects' && (
-                <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-500 rounded-r" />
-              )}
-              <div className="flex items-center gap-2">
-                <Factory className="h-3.5 w-3.5 text-sky-400" />
-                <span>{locale === 'fr' ? 'Projets & Chantiers Réels' : 'Real Industrial Projects'}</span>
-              </div>
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 font-bold border border-sky-500/30">
-                {locale === 'fr' ? 'TERRAIN' : 'FIELD'}
-              </span>
-            </button>
-
-            {/* Engineers by Domain / Roles */}
-            <button
-              type="button"
-              onClick={() => {
-                onNavigateEngineersChain?.();
-                onClose();
-              }}
-              className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                currentView === 'engineers-chain'
-                  ? 'bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
-              }`}
-            >
-              {currentView === 'engineers-chain' && (
-                <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-500 rounded-r" />
-              )}
-              <div className="flex items-center gap-2">
-                <Users className="h-3.5 w-3.5 text-amber-400" />
-                <span>{locale === 'fr' ? 'Métiers & Ingénieurs du Réseau' : 'Engineering Roles & Careers'}</span>
-              </div>
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-black border border-amber-500/30">
-                {locale === 'fr' ? '35+ MÉTIERS' : '35+ ROLES'}
-              </span>
-            </button>
-
-            {/* Simulation Lab */}
-            <button
-              type="button"
-              onClick={() => {
-                onNavigateSimulation?.();
-                onClose();
-              }}
-              className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                currentView === 'simulation'
-                  ? 'bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
-              }`}
-            >
-              {currentView === 'simulation' && (
-                <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-500 rounded-r" />
-              )}
-              <div className="flex items-center gap-2">
-                <Zap className="h-3.5 w-3.5 text-slate-300" />
-                <span>{locale === 'fr' ? 'Laboratoire de Simulation & Rendement' : 'Simulation & Efficiency Lab'}</span>
-              </div>
-              <span className="text-[10px] text-slate-400 font-bold">{locale === 'fr' ? 'LABO' : 'LAB'}</span>
-            </button>
-
-            {/* Calculators */}
-            <button
-              type="button"
-              onClick={() => {
-                onNavigateCalculators?.();
-                onClose();
-              }}
-              className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                currentView === 'calculators'
-                  ? 'bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
-              }`}
-            >
-              {currentView === 'calculators' && (
-                <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-500 rounded-r" />
-              )}
-              <div className="flex items-center gap-2">
-                <Calculator className="h-3.5 w-3.5 text-slate-300" />
-                <span>{locale === 'fr' ? 'Outils de Calcul Électrique' : 'Electrical Calculators'}</span>
-              </div>
-              <span className="text-[10px] text-slate-400 font-bold">{locale === 'fr' ? 'CALCULS' : 'CALC'}</span>
-            </button>
-
-            {/* Cameroon Grid */}
-            <button
-              type="button"
-              data-testid="sidebar-tool-cameroon-grid"
-              onClick={() => {
-                if (onNavigateCameroonGrid) onNavigateCameroonGrid();
-                onClose();
-              }}
-              className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                currentView === 'cameroon-grid'
-                  ? 'bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
-              }`}
-            >
-              {currentView === 'cameroon-grid' && (
-                <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-500 rounded-r" />
-              )}
-              <div className="flex items-center gap-2">
-                <Globe className="h-3.5 w-3.5 text-emerald-400" />
-                <span>{locale === 'fr' ? 'Carte du Réseau National (Cameroun)' : 'National Grid Map (Cameroon)'}</span>
-              </div>
-              <span className="text-[10px] text-emerald-400 font-bold">{locale === 'fr' ? 'CARTE' : 'MAP'}</span>
-            </button>
+              {/* Trust & Provenance Registry */}
+              <button
+                type="button"
+                onClick={() => {
+                  onNavigateTraceability?.();
+                  onClose();
+                }}
+                className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
+                  currentView === 'traceability'
+                    ? 'bg-sky-950/80 text-sky-300 font-bold border border-sky-500/60 shadow-md shadow-sky-500/20'
+                    : 'text-slate-200 hover:text-white hover:bg-slate-900/80'
+                }`}
+              >
+                {currentView === 'traceability' && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-sky-400 rounded-r" />
+                )}
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="h-3.5 w-3.5 text-sky-400" />
+                  <span className="font-bold text-white">
+                    {locale === 'fr' ? 'Données Fiables & Traçabilité' : 'Trust & Provenance'}
+                  </span>
+                </div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 font-black border border-sky-500/40">
+                  AUDIT
+                </span>
+              </button>
+            </div>
           </div>
         </div>
 

@@ -114,6 +114,25 @@ export default function App() {
   const [isHistoryDrawerOpen, setIsHistoryDrawerOpen] = useState(false);
   const [isQrScannerOpen, setIsQrScannerOpen] = useState(false);
   const [comparisonSeed, setComparisonSeed] = useState<string[]>([]);
+  const [isContextHUDOpen, setIsContextHUDOpen] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('epede_hud_context') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const toggleContextHUD = () => {
+    setIsContextHUDOpen((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('epede_hud_context', String(next));
+      } catch {
+        // ignore
+      }
+      return next;
+    });
+  };
 
   // Open search with optional query
   const handleOpenSearch = (query?: string) => {
@@ -121,12 +140,18 @@ export default function App() {
     setIsSearchOpen(true);
   };
 
-  // Global keyboard shortcut: Ctrl+K or Cmd+K to open Search
+  // Global keyboard shortcuts:
+  // Ctrl+K / Cmd+K: Global Search
+  // Ctrl+B / Cmd+B: Toggle Engineering Context HUD Bar
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         setIsSearchOpen((prev) => !prev);
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+        e.preventDefault();
+        toggleContextHUD();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -515,12 +540,15 @@ export default function App() {
           onNavigateEngineersChain={() => navigate({ view: 'engineers-chain' })}
           onNavigateEcosystem={() => navigate({ view: 'ecosystem' })}
           onNavigateArchitectures={() => navigate({ view: 'architectures' })}
+          onNavigateAssetManagement={() => handleNavigateAssetManagement()}
+          onToggleContextHUD={toggleContextHUD}
+          isContextHUDOpen={isContextHUDOpen}
           onOpenAudit={() => setIsAuditOpen(true)}
         />
       )}
 
-      {/* Persistent Engineering Context Bar & Energy Chain Flow */}
-      {currentView !== 'ecosystem' && (
+      {/* Persistent Engineering Context Bar & Energy Chain Flow (Toggleable via HUD button / Ctrl+B) */}
+      {currentView !== 'ecosystem' && isContextHUDOpen && (
         <PersistentEngineeringContextBar
           locale={locale}
           currentView={currentView}
@@ -667,6 +695,10 @@ export default function App() {
           }}
           onNavigateThematicJourneys={() => {
             navigate({ view: 'thematic-journeys' });
+            setIsSidebarOpen(false);
+          }}
+          onNavigateAssetManagement={() => {
+            handleNavigateAssetManagement();
             setIsSidebarOpen(false);
           }}
           currentView={currentView}
@@ -1055,6 +1087,24 @@ export default function App() {
                       navigate({ view: view as AppViewType });
                     }
                   }}
+                />
+              )}
+
+              {currentView === 'asset-management' && (
+                <AssetManagementDiagnosticsWorkbench
+                  locale={locale}
+                  initialPillar={activeAssetPillar as any}
+                  onBack={() => navigate({ view: 'home' })}
+                  onNavigate={(view, dCode) => {
+                    if (view === 'domain' && dCode) {
+                      handleNavigateDomain(dCode as DomainCode);
+                    } else if (view.startsWith('domain:')) {
+                      handleNavigateDomain(view.split(':')[1] as DomainCode);
+                    } else {
+                      navigate({ view: view as AppViewType });
+                    }
+                  }}
+                  onSelectEquipment={handleNavigateEquipment}
                 />
               )}
             </Suspense>

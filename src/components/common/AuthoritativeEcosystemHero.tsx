@@ -751,8 +751,8 @@ export const AuthoritativeEcosystemHero: React.FC<AuthoritativeEcosystemHeroProp
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
   const isFr = locale === 'fr';
-  const config = STAGE_CONFIG[stage];
-  const manifest = DOMAIN_ECOSYSTEM_MANIFESTS[stage];
+  const config = STAGE_CONFIG[stage] || STAGE_CONFIG.generation;
+  const manifest = DOMAIN_ECOSYSTEM_MANIFESTS[stage] || DOMAIN_ECOSYSTEM_MANIFESTS.generation;
   const energyPipeline = FOLLOW_THE_ENERGY_PIPELINES[stage] || [];
 
   const handleStageClick = (s: typeof CHAIN_STAGES[0]) => {
