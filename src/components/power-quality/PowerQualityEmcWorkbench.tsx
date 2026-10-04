@@ -1,12 +1,11 @@
 // src/components/power-quality/PowerQualityEmcWorkbench.tsx
-// EPEDE Engineering Workbench — Domain D14: Power Quality & Electromagnetic Compatibility (CEM)
-// (Qualité de l'Énergie, Harmoniques, THD CEI 61000-2-4 / IEEE 519, Creux de Tension CEI 61000-4-30 Classe A,
-// Courbes d'Immunité SEMI F47 / ITIC, Filtres Actifs APF & Dé-résonance 7%, Flicker Pst/Plt & Déséquilibre V2/V1)
-// Grounded in IEC 61000-2-4, IEC 61000-4-30 Class A, IEC 61000-4-7, IEEE 519-2022, SEMI F47, and
-// authentic Cameroon industrial power quality cases (ALUCAM aluminum smelter 180 MW rectifiers in Édéa,
-// Prometal induction furnaces in Douala Bassa, and voltage dip mitigation for industrial manufacturing).
+// EPEDE Engineering Workbench — Domain D17 / D14: Power Quality & Electromagnetic Compatibility (CEM)
+// (Qualité de l'Énergie, Harmoniques IEEE 519-2022 / CEI 61000-2-4, Creux de Tension CEI 61000-4-30 Classe A,
+// Courbes d'Immunité SEMI F47 / ITIC, Filtres Actifs APF IGBT 25µs, Dé-résonance LC 7% 189 Hz, Flicker Pst/Plt & DQE FCFA)
+// Grounded in IEC 61000-2-4, IEC 61000-4-30 Class A, IEC 61000-4-7, IEEE 519-2022, SEMI F47, IEEE C57.110,
+// and authentic Cameroon industrial power quality cases (ALUCAM Édéa 180 MW, Prometal Douala Bassa, CIMENCAM).
 
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import {
   Activity,
   Zap,
@@ -29,8 +28,18 @@ import {
   CheckCircle2,
   AlertTriangle,
   Radio,
-  Sparkles
+  Sparkles,
+  BookOpen,
+  Calculator,
+  X
 } from 'lucide-react';
+
+import { AuthoritativeEcosystemHero } from '../common/AuthoritativeEcosystemHero';
+import { PqOrientationBanner } from './PqOrientationBanner';
+import { PqCommandHeader } from './PqCommandHeader';
+import { PqClassAMeasurementEngine } from './modules/PqClassAMeasurementEngine';
+import { PqDeliverablesExportEngine } from './modules/PqDeliverablesExportEngine';
+import { usePqProjectStore } from './services/usePqProjectStore';
 
 interface PowerQualityEmcWorkbenchProps {
   locale: 'fr' | 'en';
@@ -38,885 +47,896 @@ interface PowerQualityEmcWorkbenchProps {
   onSelectEquipment?: (id: string) => void;
 }
 
-type PillarId =
-  | 'HARMONIC_SPECTRUM_THD'
-  | 'VOLTAGE_SAG_SEMI_F47'
-  | 'ACTIVE_FILTER_APF_BENCH'
-  | 'DETUNED_CAPACITOR_LC'
-  | 'FLICKER_UNBALANCE_IEC'
-  | 'TRANSFORMER_K_FACTOR'
-  | 'CAMEROON_PQ_CASES';
-
 export const PowerQualityEmcWorkbench: React.FC<PowerQualityEmcWorkbenchProps> = ({
   locale,
   onNavigate,
   onSelectEquipment
 }) => {
-  const [activePillar, setActivePillar] = useState<PillarId>('HARMONIC_SPECTRUM_THD');
+  // Central Reactive Project Store (default to ALUCAM 180 MW)
+  const store = usePqProjectStore('ALUCAM_EDEA_180MW');
 
-  // ==========================================
-  // PILLAR 1: HARMONIC SPECTRUM & THD ANALYZER (IEEE 519-2022 / IEC 61000-2-4)
-  // ==========================================
-  // Fundamental 50 Hz base parameters
-  const [fundamentalVoltageV, setFundamentalVoltageV] = useState<number>(400); // Volts RMS phase-to-phase
-  const [fundamentalCurrentA, setFundamentalCurrentA] = useState<number>(350); // Amperes RMS fundamental
+  // Stage 3 Sub-tabs
+  const [stage3Tab, setStage3Tab] = useState<'apf' | 'detuned' | 'kfactor'>('apf');
 
-  // Individual harmonic percentages of fundamental: h3, h5, h7, h9, h11, h13, h17, h19
-  const [h3Pct, setH3Pct] = useState<number>(2.5);  // 3rd order (150 Hz)
-  const [h5Pct, setH5Pct] = useState<number>(14.2); // 5th order (250 Hz - dominant 6-pulse rectifier)
-  const [h7Pct, setH7Pct] = useState<number>(8.6);  // 7th order (350 Hz - dominant 6-pulse rectifier)
-  const [h9Pct, setH9Pct] = useState<number>(1.2);  // 9th order (450 Hz)
-  const [h11Pct, setH11Pct] = useState<number>(6.8); // 11th order (550 Hz - 12-pulse)
-  const [h13Pct, setH13Pct] = useState<number>(4.5); // 13th order (650 Hz - 12-pulse)
-  const [h17Pct, setH17Pct] = useState<number>(2.8); // 17th order (850 Hz)
-  const [h19Pct, setH19Pct] = useState<number>(2.1); // 19th order (950 Hz)
+  // Mathematical Formulations & Standards Modal
+  const [isFormulasModalOpen, setIsFormulasModalOpen] = useState<boolean>(false);
 
-  // Presets for industrial typical loads
-  const harmonicPresets = [
-    {
-      label_fr: 'Variateur 6-Pulsations (VFD Standard)',
-      label_en: '6-Pulse VFD Drive (Standard PWM)',
-      h3: 1.5, h5: 22.0, h7: 12.0, h9: 0.8, h11: 7.5, h13: 5.0, h17: 3.2, h19: 2.5
-    },
-    {
-      label_fr: 'Redresseur 12-Pulsations (ALUCAM / Forte Puissance)',
-      label_en: '12-Pulse Smelter Rectifier (ALUCAM)',
-      h3: 0.5, h5: 3.5, h7: 2.0, h9: 0.4, h11: 9.8, h13: 7.2, h17: 2.1, h19: 1.8
-    },
-    {
-      label_fr: 'Four à Arc Électrique (Prometal Bassa)',
-      label_en: 'Electric Arc Furnace (Prometal Bassa)',
-      h3: 9.5, h5: 18.0, h7: 14.5, h9: 4.8, h11: 8.5, h13: 6.2, h17: 4.5, h19: 3.8
-    },
-    {
-      label_fr: 'Réseau Épuré Conforme IEEE 519 (Après Filtrage APF)',
-      label_en: 'Compliant Clean Grid (Post-APF Mitigation)',
-      h3: 0.8, h5: 2.1, h7: 1.5, h9: 0.3, h11: 1.1, h13: 0.8, h17: 0.5, h19: 0.4
-    }
-  ];
-
-  // THD calculations
-  const harmonicCalculations = useMemo(() => {
-    // THDi = sqrt( sum(In^2) ) / I1
-    const sumSquares =
-      Math.pow(h3Pct, 2) +
-      Math.pow(h5Pct, 2) +
-      Math.pow(h7Pct, 2) +
-      Math.pow(h9Pct, 2) +
-      Math.pow(h11Pct, 2) +
-      Math.pow(h13Pct, 2) +
-      Math.pow(h17Pct, 2) +
-      Math.pow(h19Pct, 2);
-
-    const thdCurrentPct = Math.sqrt(sumSquares);
-
-    // RMS current including harmonics: Irms = I1 * sqrt(1 + THDi^2)
-    const iRmsTotalA = fundamentalCurrentA * Math.sqrt(1 + Math.pow(thdCurrentPct / 100, 2));
-
-    // Voltage THDv approximation from network short-circuit ratio (Isc / IL):
-    // Standard network with short-circuit impedance ~ 4.5%
-    const thdVoltagePct = Math.min(18, Math.max(0.8, thdCurrentPct * 0.28));
-
-    // IEEE 519-2022 compliance check for THDv (Standard LV limit is 8.0%, HV limit is 5.0% or 1.5%)
-    const ieee519Compliant = thdVoltagePct <= 5.0 && thdCurrentPct <= 12.0;
-
-    // Transformer K-Factor calculation per IEEE C57.110:
-    // K = sum( (Ih / I1)^2 * h^2 ) / sum( (Ih / I1)^2 )
-    // Standard eddy-current multiplier:
-    const kFactorNumerator =
-      1 +
-      Math.pow(h3Pct / 100, 2) * 9 +
-      Math.pow(h5Pct / 100, 2) * 25 +
-      Math.pow(h7Pct / 100, 2) * 49 +
-      Math.pow(h9Pct / 100, 2) * 81 +
-      Math.pow(h11Pct / 100, 2) * 121 +
-      Math.pow(h13Pct / 100, 2) * 169 +
-      Math.pow(h17Pct / 100, 2) * 289 +
-      Math.pow(h19Pct / 100, 2) * 361;
-
-    const kFactorDenominator = 1 + sumSquares / 10000;
-    const kFactor = Math.max(1, kFactorNumerator / kFactorDenominator);
-
-    return {
-      thdCurrentPct,
-      thdVoltagePct,
-      iRmsTotalA,
-      ieee519Compliant,
-      kFactor: parseFloat(kFactor.toFixed(2))
-    };
-  }, [h3Pct, h5Pct, h7Pct, h9Pct, h11Pct, h13Pct, h17Pct, h19Pct, fundamentalCurrentA]);
-
-  // ==========================================
-  // PILLAR 2: VOLTAGE SAG (CREUX DE TENSION) & SEMI F47 / ITIC CURVE
-  // ==========================================
-  const [sagRetainedVoltagePct, setSagRetainedVoltagePct] = useState<number>(65); // % of nominal voltage
-  const [sagDurationMs, setSagDurationMs] = useState<number>(180); // milliseconds duration
-  const [sagFaultCause, setSagFaultCause] = useState<'REMOTE_SLG_FAULT' | 'INDUCTION_MOTOR_START' | 'TRANSFORMER_INRUSH'>('REMOTE_SLG_FAULT');
-
-  const sagStatus = useMemo(() => {
-    // SEMI F47 Curve:
-    // Retained >= 50% for 200 ms: Pass
-    // Retained >= 70% for 500 ms: Pass
-    // Retained >= 80% for 1000 ms: Pass
-    let semiF47Pass = false;
-    if (sagDurationMs <= 200 && sagRetainedVoltagePct >= 50) semiF47Pass = true;
-    else if (sagDurationMs <= 500 && sagRetainedVoltagePct >= 70) semiF47Pass = true;
-    else if (sagDurationMs <= 1000 && sagRetainedVoltagePct >= 80) semiF47Pass = true;
-    else if (sagDurationMs > 1000 && sagRetainedVoltagePct >= 90) semiF47Pass = true;
-
-    // ITIC (CBEMA) Curve:
-    // Retained 0% allowed for <= 20 ms
-    // Retained 70% allowed for <= 500 ms
-    // Retained 80% allowed for <= 10000 ms
-    let iticPass = false;
-    if (sagDurationMs <= 20) iticPass = true;
-    else if (sagDurationMs <= 500 && sagRetainedVoltagePct >= 70) iticPass = true;
-    else if (sagDurationMs <= 10000 && sagRetainedVoltagePct >= 80) iticPass = true;
-    else if (sagDurationMs > 10000 && sagRetainedVoltagePct >= 90) iticPass = true;
-
-    // IEC 61000-4-30 Class A sag depth:
-    const sagDepthPct = 100 - sagRetainedVoltagePct;
-
-    return {
-      semiF47Pass,
-      iticPass,
-      sagDepthPct
-    };
-  }, [sagRetainedVoltagePct, sagDurationMs]);
-
-  // ==========================================
-  // PILLAR 3: ACTIVE POWER FILTER (APF) COMPENSATION BENCH
-  // ==========================================
-  const [apfInstalled, setApfInstalled] = useState<boolean>(true);
-  const [apfResponseTimeUs, setApfResponseTimeUs] = useState<number>(25); // microseconds (IGBT fast switching)
-  const [apfCurrentRatingA, setApfCurrentRatingA] = useState<number>(200); // APF current capacity
-
-  const apfMitigationResult = useMemo(() => {
-    const rawThdi = harmonicCalculations.thdCurrentPct;
-    let mitigatedThdi = rawThdi;
-    let mitigatedThdv = harmonicCalculations.thdVoltagePct;
-    let status = 'BYPASS';
-
-    if (apfInstalled) {
-      // APF cancels 85% to 92% of harmonic currents if within current rating
-      const harmonicCurrentA = (rawThdi / 100) * fundamentalCurrentA;
-      if (apfCurrentRatingA >= harmonicCurrentA) {
-        mitigatedThdi = Math.max(1.8, rawThdi * 0.12);
-        mitigatedThdv = Math.max(1.2, harmonicCalculations.thdVoltagePct * 0.15);
-        status = 'OPTIMAL_CANCEL';
-      } else {
-        // Derated saturation
-        const ratio = apfCurrentRatingA / harmonicCurrentA;
-        mitigatedThdi = Math.max(3.5, rawThdi * (1 - 0.75 * ratio));
-        mitigatedThdv = Math.max(2.0, harmonicCalculations.thdVoltagePct * (1 - 0.70 * ratio));
-        status = 'CAPACITY_SATURATED';
-      }
-    }
-
-    return {
-      mitigatedThdi: parseFloat(mitigatedThdi.toFixed(1)),
-      mitigatedThdv: parseFloat(mitigatedThdv.toFixed(1)),
-      status
-    };
-  }, [apfInstalled, apfCurrentRatingA, harmonicCalculations, fundamentalCurrentA]);
-
-  // ==========================================
-  // PILLAR 4: DETUNED CAPACITOR BANK & ANTI-RESONANCE (SELF 7% à 189 Hz)
-  // ==========================================
-  const [reactivePowerKvar, setReactivePowerKvar] = useState<number>(150); // kvar
-  const [detuningFactorPct, setDetuningFactorPct] = useState<number>(7); // % (Standard 7% -> 189 Hz)
-  const [trafoShortCircuitMva, setTrafoShortCircuitMva] = useState<number>(25); // MVA
-
-  const detuningStats = useMemo(() => {
-    // Resonant frequency: fr = f1 / sqrt(p)
-    // For 7%: p = 0.07 -> fr = 50 / sqrt(0.07) = 189.0 Hz (Safe between 3rd=150Hz and 5th=250Hz)
-    // For 5.67%: fr = 50 / sqrt(0.0567) = 210 Hz
-    // For 14%: fr = 50 / sqrt(0.14) = 133 Hz
-    const resonanceFreqHz = Math.round(50 / Math.sqrt(detuningFactorPct / 100));
-
-    // Parallel resonance frequency with upstream transformer without detuned reactor:
-    // fp = f1 * sqrt( Ssc / Qcap )
-    const sscKva = trafoShortCircuitMva * 1000;
-    const rawParallelResonanceHz = Math.round(50 * Math.sqrt(sscKva / reactivePowerKvar));
-    const dangerousHarmonicOrder = Math.round(rawParallelResonanceHz / 50);
-
-    return {
-      resonanceFreqHz,
-      rawParallelResonanceHz,
-      dangerousHarmonicOrder
-    };
-  }, [detuningFactorPct, trafoShortCircuitMva, reactivePowerKvar]);
-
-  // ==========================================
-  // PILLAR 5: VOLTAGE FLICKER (Pst/Plt) & PHASE UNBALANCE (V2/V1)
-  // ==========================================
-  const [flickerPst, setFlickerPst] = useState<number>(1.25); // Short-term flicker Pst (limit = 1.0)
-  const [flickerPlt, setFlickerPlt] = useState<number>(0.92); // Long-term flicker Plt (limit = 0.8)
-  const [vNegativeSeqV2, setVNegativeSeqV2] = useState<number>(7.2); // Volts negative sequence
-  const [vPositiveSeqV1, setVPositiveSeqV1] = useState<number>(230); // Volts positive sequence nominal
-
-  const unbalanceStats = useMemo(() => {
-    // Unbalance ratio: u2 = (V2 / V1) * 100 % (IEC 61000-4-27 limit is 2.0% for LV/MV, 1.0% for HV)
-    const unbalancePct = (vNegativeSeqV2 / vPositiveSeqV1) * 100;
-    const unbalanceCompliant = unbalancePct <= 2.0;
-    const flickerCompliant = flickerPst <= 1.0 && flickerPlt <= 0.8;
-
-    return {
-      unbalancePct: parseFloat(unbalancePct.toFixed(2)),
-      unbalanceCompliant,
-      flickerCompliant
-    };
-  }, [vNegativeSeqV2, vPositiveSeqV1, flickerPst, flickerPlt]);
+  // Sag Trigger Cause in Stage 2
+  const [sagFaultCause, setSagFaultCause] = useState<
+    'REMOTE_SLG_FAULT' | 'INDUCTION_MOTOR_START' | 'TRANSFORMER_INRUSH'
+  >('REMOTE_SLG_FAULT');
 
   return (
-    <div className="space-y-6">
-      {/* Workbench Header Banner */}
-      <div className="p-6 rounded-2xl bg-gradient-to-r from-violet-950/80 via-slate-900/90 to-slate-950 border border-violet-800/40 shadow-xl relative overflow-hidden">
-        <div className="absolute -right-12 -top-12 w-64 h-64 bg-violet-600/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-violet-500/20 text-violet-300 border border-violet-500/30">
-                DOMAIN D14 · POWER QUALITY & EMC
-              </span>
-              <span className="flex items-center gap-1 text-xs font-mono text-violet-400">
-                <ShieldCheck className="w-3.5 h-3.5" /> CEI 61000-2-4 · CEI 61000-4-30 · IEEE 519 · SEMI F47
-              </span>
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-violet-500 selection:text-white pb-24">
+      {/* 1. Authoritative Ecosystem Hero Header */}
+      <AuthoritativeEcosystemHero
+        stage="distribution"
+        locale={locale}
+        onNavigateStage={(stg) => {
+          if (onNavigate) onNavigate(stg);
+        }}
+        onNavigateToDomain={(dom) => {
+          if (onNavigate) onNavigate('domain', dom);
+        }}
+        onSelectEquipment={onSelectEquipment}
+        activePillarLabel={
+          locale === 'fr'
+            ? "Qualité de l'Énergie & Dépollution CEM"
+            : 'Power Quality & EMC Engineering'
+        }
+        totalPillarsCount={5}
+      />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-6 space-y-6">
+        {/* 2. Executive 7 Orientation Questions Banner */}
+        <PqOrientationBanner
+          locale={locale}
+          onNavigateStage={(stg) => store.setActiveStage(stg)}
+          onNavigateDomain={(dom) => onNavigate?.('domain', dom)}
+        />
+
+        {/* 3. Reactive Master Command Cockpit */}
+        <PqCommandHeader
+          locale={locale}
+          store={store}
+          onOpenFormulasModal={() => setIsFormulasModalOpen(true)}
+        />
+
+        {/* ========================================================================= */}
+        {/* STAGE 1: CLASS A MEASUREMENT CAMPAIGN & IEEE 519 FFT SPECTRUM ANALYZER */}
+        {/* ========================================================================= */}
+        {store.activeStage === 1 && (
+          <PqClassAMeasurementEngine locale={locale} store={store} />
+        )}
+
+        {/* ========================================================================= */}
+        {/* STAGE 2: VOLTAGE SAG & IMMUNITY GAUGE (SEMI F47 / ITIC / CBEMA) */}
+        {/* ========================================================================= */}
+        {store.activeStage === 2 && (
+          <div className="space-y-6">
+            {/* Header intro */}
+            <div className="p-5 rounded-2xl bg-slate-900/80 border border-violet-500/30 backdrop-blur-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-950 text-amber-300 border border-amber-800">
+                    SEMI F47-0706 / CEI 61000-4-34 / ITIC
+                  </span>
+                  <span className="text-xs text-slate-400 font-mono">
+                    [Sensibilité des Process Continus & Creux de Tension Réseau]
+                  </span>
+                </div>
+                <h2 className="text-lg font-bold text-white mt-1">
+                  {locale === 'fr'
+                    ? 'Immunité Industrielle aux Creux de Tension & Micro-coupures'
+                    : 'Industrial Voltage Sag Ride-Through & Process Immunity'}
+                </h2>
+                <p className="text-xs text-slate-300 mt-1 max-w-3xl">
+                  {locale === 'fr'
+                    ? "Simulez l'amplitude résiduelle (Ures) et la durée (Δt) du creux de tension pour déterminer si les variateurs VFD, automates et contacteurs franchissent l'incident sans interruption de production."
+                    : 'Simulate retained voltage magnitude (Ures) and fault duration (Δt) to determine if drives, PLCs, and contactors ride through the disturbance without tripping manufacturing lines.'}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+                <span className="text-xs font-mono text-slate-400">Statut SEMI F47 :</span>
+                <span
+                  className={`px-3 py-1 rounded text-xs font-mono font-bold border ${
+                    store.sagAnalytics.semiF47Pass
+                      ? 'text-emerald-400 bg-emerald-950/60 border-emerald-700'
+                      : 'text-rose-400 bg-rose-950/60 border-rose-700'
+                  }`}
+                >
+                  {store.sagAnalytics.semiF47Pass ? 'IMMUNITÉ CONFORME' : 'DÉCLENCHEMENT SÉVÈRE'}
+                </span>
+              </div>
             </div>
-            <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">
-              {locale === 'fr'
-                ? 'Station Expert Qualité de l\'Énergie, CEM & Filtrage Harmonique'
-                : 'Power Quality, EMC & Harmonic Mitigation Workbench'}
-            </h2>
-            <p className="text-xs md:text-sm text-slate-300 max-w-3xl">
-              {locale === 'fr'
-                ? 'Analyseur de spectre harmonique Fourier (rangs 2 à 50), solveur de creux de tension avec courbe d\'immunité industrielle SEMI F47 / ITIC, banc d\'injection de filtre actif APF, dimensionnement de self anti-résonance 7%, et surveillance Flicker / Déséquilibre.'
-                : 'Fourier harmonic spectrum analyzer (orders 2-50), voltage sag solver with SEMI F47 / ITIC ride-through curves, Active Power Filter (APF) injection bench, 7% detuned capacitor bank sizing, and flicker/unbalance telemetry.'}
-            </p>
-          </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => {
-                setH3Pct(2.5);
-                setH5Pct(14.2);
-                setH7Pct(8.6);
-                setH9Pct(1.2);
-                setH11Pct(6.8);
-                setH13Pct(4.5);
-                setH17Pct(2.8);
-                setH19Pct(2.1);
-                setSagRetainedVoltagePct(65);
-                setSagDurationMs(180);
-                setApfInstalled(true);
-                setDetuningFactorPct(7);
-                setFlickerPst(1.25);
-                setVNegativeSeqV2(7.2);
-              }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-slate-300 bg-slate-800 hover:bg-slate-700 hover:text-white border border-slate-700 transition-colors"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              {locale === 'fr' ? 'Réinitialiser' : 'Reset Inputs'}
-            </button>
-          </div>
-        </div>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {/* Left Controls Column (5 cols) */}
+              <div className="lg:col-span-5 space-y-4 p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm">
+                <h3 className="text-sm font-bold font-mono text-violet-400 flex items-center gap-2">
+                  <Activity className="w-4 h-4" />
+                  {locale === 'fr'
+                    ? 'TÉLÉMÉTRIE DU CREUX (CEI 61000-4-30 CLASSE A)'
+                    : 'SAG TELEMETRY (IEC 61000-4-30 CLASS A)'}
+                </h3>
 
-        {/* 7 Engineering Pillars Tab Navigation */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 mt-6 pt-4 border-t border-slate-800/80">
-          {[
-            { id: 'HARMONIC_SPECTRUM_THD' as PillarId, icon: Waves, labelFr: '1. Spectre & THD IEEE 519', labelEn: '1. Harmonics & THD' },
-            { id: 'VOLTAGE_SAG_SEMI_F47' as PillarId, icon: Activity, labelFr: '2. Creux SEMI F47 / ITIC', labelEn: '2. Sag SEMI F47 / ITIC' },
-            { id: 'ACTIVE_FILTER_APF_BENCH' as PillarId, icon: Zap, labelFr: '3. Filtre Actif APF', labelEn: '3. Active Filter APF' },
-            { id: 'DETUNED_CAPACITOR_LC' as PillarId, icon: Layers, labelFr: '4. Self Anti-Résonance 7%', labelEn: '4. Detuned Bank 7%' },
-            { id: 'FLICKER_UNBALANCE_IEC' as PillarId, icon: Gauge, labelFr: '5. Flicker & Déséquilibre', labelEn: '5. Flicker & Unbalance' },
-            { id: 'TRANSFORMER_K_FACTOR' as PillarId, icon: Flame, labelFr: '6. Facteur K Transfo', labelEn: '6. Transformer K-Factor' },
-            { id: 'CAMEROON_PQ_CASES' as PillarId, icon: MapPin, labelFr: '7. Cas Réels Cameroun', labelEn: '7. Cameroon PQ Cases' }
-          ].map((pillar) => {
-            const Icon = pillar.icon;
-            const isSelected = activePillar === pillar.id;
-            return (
-              <button
-                key={pillar.id}
-                onClick={() => setActivePillar(pillar.id)}
-                className={`flex items-center justify-center gap-1.5 p-2 rounded-xl text-xs font-medium font-mono transition-all text-center ${
-                  isSelected
-                    ? 'bg-violet-500 text-slate-950 font-bold shadow-lg shadow-violet-500/20'
-                    : 'bg-slate-900/60 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800'
-                }`}
-              >
-                <Icon className="w-3.5 h-3.5 shrink-0" />
-                <span className="truncate">{locale === 'fr' ? pillar.labelFr : pillar.labelEn}</span>
-              </button>
-            );
-          })}
-        </div>
+                <div className="space-y-4">
+                  {/* Retained Voltage Slider */}
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-xs font-mono">
+                      <span className="text-slate-300">Tension Résiduelle (Ures) :</span>
+                      <span className="text-amber-400 font-bold">{store.sagRetainedPct}% Un</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="10"
+                      max="95"
+                      value={store.sagRetainedPct}
+                      onChange={(e) => store.setSagRetainedPct(Number(e.target.value))}
+                      className="w-full accent-amber-500"
+                    />
+                    <div className="flex justify-between text-[10px] text-slate-500 font-mono">
+                      <span>Profondeur creux: {store.sagAnalytics.sagDepthPct}%</span>
+                      <span>Urésiduelle: {((store.nominalVoltageV * store.sagRetainedPct) / 100).toFixed(0)} V</span>
+                    </div>
+                  </div>
+
+                  {/* Sag Duration Slider */}
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-xs font-mono">
+                      <span className="text-slate-300">Durée de l'Événement (Δt) :</span>
+                      <span className="text-cyan-400 font-bold">{store.sagDurationMs} ms</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="20"
+                      max="1500"
+                      step="20"
+                      value={store.sagDurationMs}
+                      onChange={(e) => store.setSagDurationMs(Number(e.target.value))}
+                      className="w-full accent-cyan-500"
+                    />
+                    <div className="flex justify-between text-[10px] text-slate-500 font-mono">
+                      <span>20 ms (1 cycle 50Hz)</span>
+                      <span>1500 ms (Défaut persistant)</span>
+                    </div>
+                  </div>
+
+                  {/* Fault Cause Preset */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-mono text-slate-300 font-bold">
+                      {locale === 'fr' ? 'Origine Physique Simulée :' : 'Simulated Fault Cause:'}
+                    </label>
+                    <select
+                      value={sagFaultCause}
+                      onChange={(e) => setSagFaultCause(e.target.value as any)}
+                      className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs font-mono text-white focus:outline-none focus:border-violet-500"
+                    >
+                      <option value="REMOTE_SLG_FAULT">
+                        Court-circuit monophasé distant 225 kV éliminé en 150 ms (Ligne SONATREL)
+                      </option>
+                      <option value="INDUCTION_MOTOR_START">
+                        Démarrage direct gros moteur asynchrone broyeur (Appel 6 In pendant 800 ms)
+                      </option>
+                      <option value="TRANSFORMER_INRUSH">
+                        Enclenchement transformateur de puissance 63 MVA (Courant d'inrush 200 ms)
+                      </option>
+                    </select>
+                  </div>
+
+                  {/* Presets Quick Jump */}
+                  <div className="pt-2 border-t border-slate-800">
+                    <span className="text-[10px] font-mono text-slate-400 font-bold uppercase">
+                      Scénarios Réels Cameroun :
+                    </span>
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      <button
+                        onClick={() => {
+                          store.setSagRetainedPct(65);
+                          store.setSagDurationMs(180);
+                        }}
+                        className="px-2.5 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-[11px] font-mono text-left hover:border-violet-500 text-slate-300"
+                      >
+                        ⚡ Orage Édéa (65% / 180ms)
+                      </button>
+                      <button
+                        onClick={() => {
+                          store.setSagRetainedPct(35);
+                          store.setSagDurationMs(280);
+                        }}
+                        className="px-2.5 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-[11px] font-mono text-left hover:border-violet-500 text-slate-300"
+                      >
+                        ⚡ Nomayos Broyeur (35% / 280ms)
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Graphical SEMI F47 / ITIC Canvas (7 cols) */}
+              <div className="lg:col-span-7 space-y-4 p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-sm font-bold font-mono text-white flex items-center gap-2">
+                      <ShieldAlert className="w-4 h-4 text-violet-400" />
+                      {locale === 'fr'
+                        ? 'GABARIT VECTORIEL SEMI F47 & COURBE ITIC (CBEMA)'
+                        : 'SEMI F47 & ITIC VECTORIAL RIDE-THROUGH CURVES'}
+                    </h3>
+                    <p className="text-xs text-slate-400 font-mono mt-0.5">
+                      Coordonnées de fonctionnement : Δt = {store.sagDurationMs} ms | Ures = {store.sagRetainedPct}%
+                    </p>
+                  </div>
+
+                  <span
+                    className={`px-3 py-1 rounded text-xs font-mono font-bold border ${
+                      store.sagAnalytics.semiF47Pass
+                        ? 'text-emerald-400 bg-emerald-950/60 border-emerald-700'
+                        : 'text-rose-400 bg-rose-950/60 border-rose-700'
+                    }`}
+                  >
+                    SEMI F47: {store.sagAnalytics.semiF47Pass ? 'RIDE-THROUGH OK' : 'TRIP DÉFAUT'}
+                  </span>
+                </div>
+
+                {/* Vector Canvas */}
+                <div className="relative w-full aspect-[16/9] max-h-[300px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center p-3">
+                  <svg viewBox="0 0 520 240" className="w-full h-full">
+                    {/* Grids */}
+                    <line x1="50" y1="20" x2="50" y2="210" stroke="#334155" strokeWidth="1" />
+                    <line x1="50" y1="210" x2="490" y2="210" stroke="#334155" strokeWidth="1" />
+
+                    {/* Y ticks (Voltage %) */}
+                    <text x="45" y="25" fill="#64748b" fontSize="9" textAnchor="end" fontFamily="monospace">100%</text>
+                    <text x="45" y="65" fill="#64748b" fontSize="9" textAnchor="end" fontFamily="monospace">80%</text>
+                    <text x="45" y="115" fill="#64748b" fontSize="9" textAnchor="end" fontFamily="monospace">50%</text>
+                    <text x="45" y="210" fill="#64748b" fontSize="9" textAnchor="end" fontFamily="monospace">0%</text>
+
+                    {/* X ticks */}
+                    <text x="50" y="225" fill="#64748b" fontSize="9" fontFamily="monospace">20ms</text>
+                    <text x="170" y="225" fill="#64748b" fontSize="9" fontFamily="monospace">200ms</text>
+                    <text x="290" y="225" fill="#64748b" fontSize="9" fontFamily="monospace">500ms</text>
+                    <text x="440" y="225" fill="#64748b" fontSize="9" fontFamily="monospace">1000ms</text>
+
+                    {/* SEMI F47 Area Fill (Ride-through zone) */}
+                    <polygon
+                      points="50,20 490,20 490,65 440,65 290,65 290,85 170,85 170,115 50,115"
+                      fill="#10b981"
+                      fillOpacity="0.08"
+                    />
+
+                    {/* SEMI F47 Boundary Line */}
+                    <polyline
+                      points="50,115 170,115 170,85 290,85 290,65 440,65 490,65"
+                      fill="none"
+                      stroke="#10b981"
+                      strokeWidth="2.5"
+                    />
+                    <text x="300" y="80" fill="#34d399" fontSize="10" fontWeight="bold" fontFamily="monospace">
+                      Gabarit SEMI F47 (Immunité)
+                    </text>
+
+                    {/* Trip Zone Label */}
+                    <text x="180" y="160" fill="#f43f5e" fillOpacity="0.7" fontSize="11" fontWeight="bold" fontFamily="monospace">
+                      ZONE DE DÉCLENCHEMENT / DÉCROCHAGE VFD
+                    </text>
+
+                    {/* Current Sag Event Coordinate Point */}
+                    {(() => {
+                      const cx = 50 + (Math.min(1200, store.sagDurationMs) / 1200) * 420;
+                      const cy = 210 - (store.sagRetainedPct / 100) * 190;
+                      return (
+                        <g>
+                          <circle
+                            cx={cx}
+                            cy={cy}
+                            r="8"
+                            fill={store.sagAnalytics.semiF47Pass ? '#10b981' : '#ef4444'}
+                            stroke="#ffffff"
+                            strokeWidth="2.5"
+                            className="animate-pulse"
+                          />
+                          <line
+                            x1={cx}
+                            y1={cy}
+                            x2={cx}
+                            y2="210"
+                            stroke="#94a3b8"
+                            strokeDasharray="2,2"
+                            strokeWidth="1.5"
+                          />
+                          <line
+                            x1="50"
+                            y1={cy}
+                            x2={cx}
+                            y2={cy}
+                            stroke="#94a3b8"
+                            strokeDasharray="2,2"
+                            strokeWidth="1.5"
+                          />
+                        </g>
+                      );
+                    })()}
+                  </svg>
+                </div>
+
+                {/* Industrial Impact Explanation */}
+                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono space-y-1">
+                  <div className="font-bold text-white flex items-center gap-2">
+                    <span>{locale === 'fr' ? 'Diagnostic d’Exploitation Industrielle :' : 'Industrial Operational Diagnosis:'}</span>
+                    <span className="text-violet-400">
+                      [Indice d'Énergie Perdue : {store.sagAnalytics.lostEnergyIndex}]
+                    </span>
+                  </div>
+                  {store.sagAnalytics.semiF47Pass ? (
+                    <p className="text-emerald-400">
+                      ✓ Le point se situe au-dessus de la courbe SEMI F47. Les automates programmables et les variateurs de vitesse restent en rotation continue sans arrêt des lignes de fabrication.
+                    </p>
+                  ) : (
+                    <p className="text-rose-400 font-bold">
+                      ⚠️ Décrochage immédiat des variateurs sous-tension et ouverture des contacteurs magnétiques. Préconisation : Conditionneur d'Onde Actif (AVC) 250 kVA (inclus en Étape 5 DQE).
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* STAGE 3: ACTIVE FILTER (APF), 7% DETUNED BANK & TRANSFORMER K-FACTOR */}
+        {/* ========================================================================= */}
+        {store.activeStage === 3 && (
+          <div className="space-y-6">
+            {/* Header intro */}
+            <div className="p-5 rounded-2xl bg-slate-900/80 border border-violet-500/30 backdrop-blur-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-violet-950 text-violet-300 border border-violet-800">
+                    FILTRAGE ACTIF SHUNT IGBT / DÉ-RÉSONANCE 7% / IEEE C57.110
+                  </span>
+                  <span className="text-xs text-slate-400 font-mono">
+                    [Dépollution Dynamique & Protection Thermique des Transformateurs]
+                  </span>
+                </div>
+                <h2 className="text-lg font-bold text-white mt-1">
+                  {locale === 'fr'
+                    ? 'Banc de Dépollution Harmonique & Déclassement Thermique Transfo'
+                    : 'Harmonic Mitigation Bench & Transformer Thermal Derating'}
+                </h2>
+                <p className="text-xs text-slate-300 mt-1 max-w-3xl">
+                  {locale === 'fr'
+                    ? "Compensez les harmoniques en temps réel par injection IGBT en opposition de phase, évitez la résonance parallèle des condensateurs au rang 5 (250 Hz) via selfs 7%, et préservez la durée de vie de l'isolant du transformateur."
+                    : 'Mitigate harmonics in real-time via IGBT phase-opposition injection, avoid dangerous 5th-harmonic parallel resonance via 7% detuned reactors, and preserve transformer insulation life.'}
+                </p>
+              </div>
+
+              {/* Sub-tab navigation */}
+              <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-950 border border-slate-800">
+                <button
+                  onClick={() => setStage3Tab('apf')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all ${
+                    stage3Tab === 'apf' ? 'bg-violet-600 text-white' : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  1. Filtre APF
+                </button>
+                <button
+                  onClick={() => setStage3Tab('detuned')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all ${
+                    stage3Tab === 'detuned' ? 'bg-violet-600 text-white' : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  2. Self 7% LC
+                </button>
+                <button
+                  onClick={() => setStage3Tab('kfactor')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all ${
+                    stage3Tab === 'kfactor' ? 'bg-violet-600 text-white' : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  3. Facteur K
+                </button>
+              </div>
+            </div>
+
+            {/* SUB-PILLAR 1: ACTIVE POWER FILTER (APF) */}
+            {stage3Tab === 'apf' && (
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div className="lg:col-span-5 space-y-4 p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm">
+                  <h3 className="text-sm font-bold font-mono text-violet-400 flex items-center gap-2">
+                    <Zap className="w-4 h-4" />
+                    {locale === 'fr' ? 'COMMANDE DU FILTRE ACTIF (APF SHUNT)' : 'SHUNT ACTIVE FILTER CONTROLS'}
+                  </h3>
+
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800">
+                      <div>
+                        <div className="text-xs font-mono font-bold text-white">État du Filtre Shunt :</div>
+                        <div className="text-[10px] font-mono text-slate-400">
+                          Pont d'onduleur à IGBT 20 kHz
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => store.setIsApfActive(!store.isApfActive)}
+                        className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all ${
+                          store.isApfActive
+                            ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30'
+                            : 'bg-slate-800 text-slate-300'
+                        }`}
+                      >
+                        {store.isApfActive ? '⚡ EN SERVICE' : '⚠️ BYPASS'}
+                      </button>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-xs font-mono">
+                        <span className="text-slate-300">Taux d'Atténuation Harmonique :</span>
+                        <span className="text-emerald-400 font-bold">{store.apfCompensationGainPct}%</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="50"
+                        max="98"
+                        value={store.apfCompensationGainPct}
+                        onChange={(e) => store.setApfCompensationGainPct(Number(e.target.value))}
+                        className="w-full accent-emerald-500"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-xs font-mono">
+                        <span className="text-slate-300">Temps de Réponse Dynamique :</span>
+                        <span className="text-cyan-400 font-bold">{store.apfResponseTimeMicroSec} µs</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="15"
+                        max="100"
+                        value={store.apfResponseTimeMicroSec}
+                        onChange={(e) => store.setApfResponseTimeMicroSec(Number(e.target.value))}
+                        className="w-full accent-cyan-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-7 space-y-4 p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm">
+                  <h3 className="text-sm font-bold font-mono text-white flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-violet-400" />
+                    {locale === 'fr' ? 'BILAN D’INJECTION & ASSAINISSEMENT' : 'MITIGATION TELEMETRY & ATTENUATION'}
+                  </h3>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800">
+                      <span className="text-xs font-mono text-slate-400">Courant THDi Brut :</span>
+                      <div className="text-xl font-bold font-mono text-rose-400 mt-1">
+                        {store.harmonicAnalytics.rawThdCurrentPct}%
+                      </div>
+                      <div className="text-[10px] text-slate-500 font-mono">Irms: {store.harmonicAnalytics.rawIrmsA} A</div>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800">
+                      <span className="text-xs font-mono text-slate-400">Courant THDi Atténué :</span>
+                      <div className="text-xl font-bold font-mono text-emerald-400 mt-1">
+                        {store.harmonicAnalytics.effectiveThdCurrentPct}%
+                      </div>
+                      <div className="text-[10px] text-slate-500 font-mono">Irms: {store.harmonicAnalytics.effectiveIrmsA} A</div>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800">
+                      <span className="text-xs font-mono text-slate-400">Courant APF Requis :</span>
+                      <div className="text-xl font-bold font-mono text-violet-400 mt-1">
+                        {store.harmonicAnalytics.harmonicCurrentToCancelA} A
+                      </div>
+                      <div className="text-[10px] text-slate-500 font-mono">Dimensionnement modules 150A</div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300">
+                    <span className="text-violet-400 font-bold">Principe Physique Shunt APF : </span>
+                    L'onduleur mesure le courant de charge non linéaire en amont par des TC Classe 0.2S, calcule en temps réel par transformée de Park la composante harmonique i_h(t) et injecte instantanément -i_h(t) sur le jeu de barres. Le réseau en amont ne voit plus qu'une sinusoïde pure de 50 Hz.
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* SUB-PILLAR 2: DETUNED CAPACITOR BANK WITH ANTI-RESONANCE REACTOR */}
+            {stage3Tab === 'detuned' && (
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div className="lg:col-span-5 space-y-4 p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm">
+                  <h3 className="text-sm font-bold font-mono text-violet-400 flex items-center gap-2">
+                    <Layers className="w-4 h-4" />
+                    {locale === 'fr' ? 'DIMENSIONNEMENT DE LA BATTERIE LC' : 'LC CAPACITOR & REACTOR SIZING'}
+                  </h3>
+
+                  <div className="space-y-4">
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-xs font-mono">
+                        <span className="text-slate-300">Puissance Réactive Cible :</span>
+                        <span className="text-violet-400 font-bold">{store.targetCapacitorKvar} kvar</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="50"
+                        max="600"
+                        step="25"
+                        value={store.targetCapacitorKvar}
+                        onChange={(e) => store.setTargetCapacitorKvar(Number(e.target.value))}
+                        className="w-full accent-violet-500"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-xs font-mono">
+                        <span className="text-slate-300">Facteur de Désaccord (p) :</span>
+                        <span className="text-cyan-400 font-bold">{store.detuningReactorPct}% (189 Hz)</span>
+                      </div>
+                      <select
+                        value={store.detuningReactorPct}
+                        onChange={(e) => store.setDetuningReactorPct(Number(e.target.value))}
+                        className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs font-mono text-white"
+                      >
+                        <option value="5.67">p = 5.67% (fr = 210 Hz - Rang 4.2)</option>
+                        <option value="7.0">p = 7.00% (fr = 189 Hz - Rang 3.78 - Standard Recommandé)</option>
+                        <option value="14.0">p = 14.00% (fr = 134 Hz - Rang 2.68 - Forte Pollution)</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-7 space-y-4 p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm">
+                  <h3 className="text-sm font-bold font-mono text-white flex items-center gap-2">
+                    <ShieldAlert className="w-4 h-4 text-violet-400" />
+                    {locale === 'fr' ? 'ANALYSE DE RISQUE DE RÉSONANCE PARALLÈLE' : 'PARALLEL RESONANCE RISK ANALYSIS'}
+                  </h3>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800">
+                      <span className="text-xs font-mono text-slate-400">Fréq. Résonance Série :</span>
+                      <div className="text-xl font-bold font-mono text-emerald-400 mt-1">
+                        {store.detunedAnalytics.resonanceFreqHz} Hz
+                      </div>
+                      <div className="text-[10px] text-slate-500 font-mono">
+                        Rang {store.detunedAnalytics.harmonicOrderResonance} (&lt; rang 5)
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800">
+                      <span className="text-xs font-mono text-slate-400">Risque sans Self (Condensateur nu) :</span>
+                      <div className="text-xl font-bold font-mono text-rose-400 mt-1">
+                        {store.detunedAnalytics.rawParallelFreqHz} Hz
+                      </div>
+                      <div className="text-[10px] text-slate-500 font-mono">
+                        Rang {store.detunedAnalytics.dangerousHarmonicOrder} (Explosif si ~5 ou ~7)
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800">
+                      <span className="text-xs font-mono text-slate-400">Tension Condensateurs Recommandée :</span>
+                      <div className="text-xl font-bold font-mono text-amber-400 mt-1">
+                        {store.detunedAnalytics.recommendedCapacitorRatingV} V
+                      </div>
+                      <div className="text-[10px] text-slate-500 font-mono">
+                        Surtension self: {store.detunedAnalytics.capacitorWorkingVoltageV} V
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300">
+                    <span className="text-emerald-400 font-bold">Sécurité Anti-Explosion : </span>
+                    L'adjonction de la self en série abaisse l'impédance de la branche sous 189 Hz. Au-delà (rangs 5, 7, 11), le circuit devient inductif, rendant impossible toute résonance parallèle destructrice avec le réseau SONATREL.
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* SUB-PILLAR 3: TRANSFORMER K-FACTOR & THERMAL DERATING */}
+            {stage3Tab === 'kfactor' && (
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div className="lg:col-span-5 space-y-4 p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm">
+                  <h3 className="text-sm font-bold font-mono text-violet-400 flex items-center gap-2">
+                    <Flame className="w-4 h-4" />
+                    {locale === 'fr' ? 'CALCUL DU FACTEUR K (IEEE C57.110)' : 'K-FACTOR COMPUTATION'}
+                  </h3>
+
+                  <div className="space-y-4">
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-xs font-mono">
+                        <span className="text-slate-300">Puissance Assignée Transfo (kVA) :</span>
+                        <span className="text-violet-400 font-bold">{store.transformerRatedKva} kVA</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="250"
+                        max="3150"
+                        step="50"
+                        value={store.transformerRatedKva}
+                        onChange={(e) => store.setTransformerRatedKva(Number(e.target.value))}
+                        className="w-full accent-violet-500"
+                      />
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono space-y-2">
+                      <div className="text-slate-400">Classes Standardisées IEEE C57.110 :</div>
+                      <div className="grid grid-cols-4 gap-2 text-center">
+                        <span className="p-1 rounded bg-slate-900 border border-slate-800 text-slate-300">K-1</span>
+                        <span className="p-1 rounded bg-slate-900 border border-slate-800 text-slate-300">K-4</span>
+                        <span className="p-1 rounded bg-violet-950 border border-violet-800 text-violet-300 font-bold">K-13</span>
+                        <span className="p-1 rounded bg-slate-900 border border-slate-800 text-slate-300">K-20</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-7 space-y-4 p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm">
+                  <h3 className="text-sm font-bold font-mono text-white flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4 text-violet-400" />
+                    {locale === 'fr' ? 'DÉCLASSEMENT THERMIQUE TRANSFO STANDARD' : 'STANDARD TRANSFORMER DERATING'}
+                  </h3>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800">
+                      <span className="text-xs font-mono text-slate-400">Facteur K Calculé :</span>
+                      <div className="text-xl font-bold font-mono text-violet-400 mt-1">
+                        K-{store.harmonicAnalytics.kFactorEffective}
+                      </div>
+                      <div className="text-[10px] text-slate-500 font-mono">
+                        Recommandation : {store.harmonicAnalytics.recommendedKClass}
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800">
+                      <span className="text-xs font-mono text-slate-400">Facteur de Déclassement :</span>
+                      <div className="text-xl font-bold font-mono text-amber-400 mt-1">
+                        {store.harmonicAnalytics.deratingFactor}
+                      </div>
+                      <div className="text-[10px] text-slate-500 font-mono">
+                        Pertes Foucault Pec-r = 15%
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800">
+                      <span className="text-xs font-mono text-slate-400">Puissance Admissible :</span>
+                      <div className="text-xl font-bold font-mono text-emerald-400 mt-1">
+                        {store.harmonicAnalytics.deratedKva} kVA
+                      </div>
+                      <div className="text-[10px] text-slate-500 font-mono">
+                        sur {store.transformerRatedKva} kVA nominal
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300">
+                    <span className="text-amber-400 font-bold">Règle de l'Art : </span>
+                    Un transformateur standard K-1 soumis à un facteur K élevé surchauffe rapidement au niveau des enroulements BT par effet de peau et courants de Foucault. Sans filtre APF, il doit être déclassé de {((1 - store.harmonicAnalytics.deratingFactor) * 100).toFixed(1)}% pour éviter la carbonisation prématurée de l'isolant papier/huile.
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* STAGE 4: FLICKER (Pst/Plt), NEGATIVE UNBALANCE & EMC MITIGATION */}
+        {/* ========================================================================= */}
+        {store.activeStage === 4 && (
+          <div className="space-y-6">
+            <div className="p-5 rounded-2xl bg-slate-900/80 border border-violet-500/30 backdrop-blur-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-violet-950 text-violet-300 border border-violet-800">
+                    CEI 61000-4-15 / EN 50160 / FORTESCUE u2
+                  </span>
+                  <span className="text-xs text-slate-400 font-mono">
+                    [Flickermètre Numérique & Déséquilibre Inverse de Tension]
+                  </span>
+                </div>
+                <h2 className="text-lg font-bold text-white mt-1">
+                  {locale === 'fr'
+                    ? 'Supervision du Flicker (Pst/Plt), Déséquilibre (V2/V1) & Bonnes Pratiques CEM'
+                    : 'Flicker Supervision (Pst/Plt), Unbalance (V2/V1) & EMC Good Practices'}
+                </h2>
+                <p className="text-xs text-slate-300 mt-1 max-w-3xl">
+                  {locale === 'fr'
+                    ? "Mesurez la sévérité du papillotement visuel induit par les fours à arc et compresseurs, évaluez l'échauffement des moteurs asynchrones par la composante inverse, et appliquez les règles CEM de câblage industriel."
+                    : 'Measure visual flicker severity induced by arc furnaces and compressors, evaluate motor rotor overheating from negative sequence unbalance, and apply industrial EMC shielding guidelines.'}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+                <span className="text-xs font-mono text-slate-400">Statut Flicker Pst :</span>
+                <span
+                  className={`px-3 py-1 rounded text-xs font-mono font-bold border ${
+                    store.flickerAnalytics.isPstCompliant
+                      ? 'text-emerald-400 bg-emerald-950/60 border-emerald-700'
+                      : 'text-rose-400 bg-rose-950/60 border-rose-700'
+                  }`}
+                >
+                  Pst = {store.flickerPst} {store.flickerAnalytics.isPstCompliant ? '(&le; 1.0)' : '(&gt; 1.0 HORS NORME)'}
+                </span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {/* Left Column: Flicker & Unbalance Sliders (5 cols) */}
+              <div className="lg:col-span-5 space-y-4 p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm">
+                <h3 className="text-sm font-bold font-mono text-violet-400 flex items-center gap-2">
+                  <Gauge className="w-4 h-4" />
+                  {locale === 'fr' ? 'RÉGLAGES DU FLICKERMÈTRE CEI' : 'IEC FLICKERMETER SETTINGS'}
+                </h3>
+
+                <div className="space-y-4">
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-xs font-mono">
+                      <span className="text-slate-300">Flicker Court Terme (Pst - 10 min) :</span>
+                      <span className="text-amber-400 font-bold">{store.flickerPst}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0.2"
+                      max="3.5"
+                      step="0.05"
+                      value={store.flickerPst}
+                      onChange={(e) => {
+                        const val = Number(e.target.value);
+                        store.setFlickerPst(val);
+                        store.setFlickerPlt(Number((val * 0.82).toFixed(2)));
+                      }}
+                      className="w-full accent-amber-500"
+                    />
+                    <div className="flex justify-between text-[10px] text-slate-500 font-mono">
+                      <span>Limite contractuelle: 1.0</span>
+                      <span>Plt (2h): {store.flickerPlt} (limite 0.8)</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-xs font-mono">
+                      <span className="text-slate-300">Taux de Déséquilibre Inverse (u2 = V2/V1) :</span>
+                      <span className="text-rose-400 font-bold">{store.unbalancePct}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0.2"
+                      max="5.0"
+                      step="0.1"
+                      value={store.unbalancePct}
+                      onChange={(e) => store.setUnbalancePct(Number(e.target.value))}
+                      className="w-full accent-rose-500"
+                    />
+                    <div className="flex justify-between text-[10px] text-slate-500 font-mono">
+                      <span>Limite EN 50160: 2.0%</span>
+                      <span>Déclassement moteur: -{store.flickerAnalytics.motorDeratingPct}%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: EMC Rules & Shielding (7 cols) */}
+              <div className="lg:col-span-7 space-y-4 p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm">
+                <h3 className="text-sm font-bold font-mono text-white flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-violet-400" />
+                  {locale === 'fr'
+                    ? 'GUIDE DE COMPATIBILITÉ ÉLECTROMAGNÉTIQUE (CEM INDUSTRIELLE)'
+                    : 'INDUSTRIAL EMC COMPATIBILITY & SHIELDING GUIDELINES'}
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                    <div className="font-bold text-violet-400 font-mono">1. Ségrégation des Câbles (CEI 61000-5-2)</div>
+                    <p className="text-slate-300 text-[11px]">
+                      Maintenir au minimum 30 cm de séparation entre câbles de puissance VFD (classe 4) et câbles de mesure analogique 4-20 mA (classe 1).
+                    </p>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                    <div className="font-bold text-violet-400 font-mono">2. Raccordement Blindage à 360°</div>
+                    <p className="text-slate-300 text-[11px]">
+                      Proscrire impérativement les tresses en fil de porc (pigtail) créant une self parasite à haute fréquence. Utiliser des colliers CEM 360°.
+                    </p>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                    <div className="font-bold text-violet-400 font-mono">3. Réseau de Masse Maillé (CBN)</div>
+                    <p className="text-slate-300 text-[11px]">
+                      Relier toutes les enveloppes métalliques, chemins de câbles et armoires à une grille équipotentielle à mailles serrées (&le; 2x2 m).
+                    </p>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                    <div className="font-bold text-violet-400 font-mono">4. Ferrites & Filtres d'Entrée VFD</div>
+                    <p className="text-slate-300 text-[11px]">
+                      Installer des tores de ferrite de mode commun sur les câbles moteur pour bloquer les courants de palier destructeurs (EDM).
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* STAGE 5: CAMEROON SITES FEEDBACK & STAMPED BOQ/DQE IN FCFA */}
+        {/* ========================================================================= */}
+        {store.activeStage === 5 && (
+          <PqDeliverablesExportEngine locale={locale} store={store} />
+        )}
       </div>
 
       {/* ========================================================================= */}
-      {/* PILLAR 1: HARMONIC SPECTRUM & THD ANALYZER (IEEE 519 / IEC 61000-2-4) */}
+      {/* MATHEMATICAL FORMULATIONS & NORMATIVE STANDARDS MODAL */}
       {/* ========================================================================= */}
-      {activePillar === 'HARMONIC_SPECTRUM_THD' && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Left Parameter Sliders (5 cols) */}
-            <div className="lg:col-span-5 space-y-4 p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-bold font-mono text-violet-400 flex items-center gap-2">
-                  <Waves className="w-4 h-4" />
-                  {locale === 'fr' ? 'AMPLITUDES HARMONIQUES (% FONDAMENTALE)' : 'HARMONIC COMPONENTS (% FUNDAMENTAL)'}
+      {isFormulasModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+          <div className="relative w-full max-w-3xl bg-slate-900 border border-violet-500/40 rounded-2xl p-6 shadow-2xl space-y-5 max-h-[85vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-violet-400" />
+                <h3 className="text-base font-bold text-white font-mono">
+                  {locale === 'fr'
+                    ? 'Formulations Mathématiques & Normes de Référence'
+                    : 'Mathematical Formulations & Reference Standards'}
                 </h3>
-                <span className="text-xs font-mono text-slate-400">f1 = 50 Hz</span>
+              </div>
+              <button
+                onClick={() => setIsFormulasModalOpen(false)}
+                className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4 text-xs font-mono text-slate-300">
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                <div className="font-bold text-violet-400">1. Taux de Distorsion Harmonique Global (THDi & THDu) :</div>
+                <div className="p-2 rounded bg-slate-900 border border-slate-800/80 text-white font-mono">
+                  THDi = &radic;(&sum; [h=2..50] Ih&sup2;) / I1 &times; 100%
+                </div>
+                <p className="text-[11px] text-slate-400">
+                  Normes : CEI 61000-2-4 Classe 2 / IEEE Std 519-2022. Limite contractuelle HTA : &le; 5.0%.
+                </p>
               </div>
 
-              {/* Presets */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-mono text-slate-400">
-                  {locale === 'fr' ? 'Charges Industrielles Types :' : 'Standard Industrial Profiles:'}
-                </label>
-                <div className="grid grid-cols-2 gap-1.5">
-                  {harmonicPresets.map((p, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => {
-                        setH3Pct(p.h3);
-                        setH5Pct(p.h5);
-                        setH7Pct(p.h7);
-                        setH9Pct(p.h9);
-                        setH11Pct(p.h11);
-                        setH13Pct(p.h13);
-                        setH17Pct(p.h17);
-                        setH19Pct(p.h19);
-                      }}
-                      className="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-left border border-slate-700/80 transition-colors"
-                    >
-                      <div className="text-[11px] font-semibold text-slate-200 truncate">
-                        {locale === 'fr' ? p.label_fr : p.label_en}
-                      </div>
-                    </button>
-                  ))}
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                <div className="font-bold text-violet-400">2. Facteur K des Transformateurs (IEEE C57.110) :</div>
+                <div className="p-2 rounded bg-slate-900 border border-slate-800/80 text-white font-mono">
+                  K = &sum; [h=1..hmax] (Ih / I1)&sup2; &times; h&sup2;
                 </div>
+                <p className="text-[11px] text-slate-400">
+                  Quantifie l'échauffement supplémentaire des enroulements par courants de Foucault.
+                </p>
               </div>
 
-              {/* Sliders for dominant harmonics */}
-              <div className="space-y-3 p-3 rounded-xl bg-slate-950 border border-slate-800">
-                <div className="space-y-1">
-                  <div className="flex justify-between text-xs font-mono">
-                    <span className="text-cyan-400">Rang 5 (250 Hz - Dominant 6P) :</span>
-                    <span className="font-bold text-white">{h5Pct}%</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="40"
-                    step="0.5"
-                    value={h5Pct}
-                    onChange={(e) => setH5Pct(Number(e.target.value))}
-                    className="w-full accent-cyan-400"
-                  />
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                <div className="font-bold text-violet-400">3. Accordement de la Self Anti-Résonance (7%) :</div>
+                <div className="p-2 rounded bg-slate-900 border border-slate-800/80 text-white font-mono">
+                  fr = f0 / &radic;(p) = 50 Hz / &radic;(0.07) &asymp; 189 Hz
                 </div>
+                <p className="text-[11px] text-slate-400">
+                  Fréquence sous le rang 5 (250 Hz) interdisant toute résonance parallèle avec le réseau.
+                </p>
+              </div>
 
-                <div className="space-y-1">
-                  <div className="flex justify-between text-xs font-mono">
-                    <span className="text-blue-400">Rang 7 (350 Hz - Dominant 6P) :</span>
-                    <span className="font-bold text-white">{h7Pct}%</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="30"
-                    step="0.5"
-                    value={h7Pct}
-                    onChange={(e) => setH7Pct(Number(e.target.value))}
-                    className="w-full accent-blue-400"
-                  />
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                <div className="font-bold text-violet-400">4. Taux de Déséquilibre Inverse de Fortescue (u2) :</div>
+                <div className="p-2 rounded bg-slate-900 border border-slate-800/80 text-white font-mono">
+                  u2 = |V2| / |V1| &times; 100% = |Va + a&sup2;Vb + aVc| / |Va + aVb + a&sup2;Vc| &times; 100%
                 </div>
-
-                <div className="space-y-1">
-                  <div className="flex justify-between text-xs font-mono">
-                    <span className="text-amber-400">Rang 3 (150 Hz - Homopolaire / Fours) :</span>
-                    <span className="font-bold text-white">{h3Pct}%</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="25"
-                    step="0.5"
-                    value={h3Pct}
-                    onChange={(e) => setH3Pct(Number(e.target.value))}
-                    className="w-full accent-amber-400"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <div className="flex justify-between text-xs font-mono">
-                    <span className="text-purple-400">Rangs 11 & 13 (550 & 650 Hz - 12P) :</span>
-                    <span className="font-bold text-white">{h11Pct}% / {h13Pct}%</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="range"
-                      min="0"
-                      max="20"
-                      step="0.5"
-                      value={h11Pct}
-                      onChange={(e) => setH11Pct(Number(e.target.value))}
-                      className="w-full accent-purple-400"
-                    />
-                    <input
-                      type="range"
-                      min="0"
-                      max="15"
-                      step="0.5"
-                      value={h13Pct}
-                      onChange={(e) => setH13Pct(Number(e.target.value))}
-                      className="w-full accent-purple-400"
-                    />
-                  </div>
-                </div>
+                <p className="text-[11px] text-slate-400">
+                  Norme : EN 50160. Seuil admissible &le; 2.0%.
+                </p>
               </div>
             </div>
 
-            {/* Right Spectral Histogram & Waveform Plot (7 cols) */}
-            <div className="lg:col-span-7 space-y-4 p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm flex flex-col justify-between">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-bold font-mono text-white flex items-center gap-2">
-                    <BarChart3 className="w-4 h-4 text-violet-400" />
-                    {locale === 'fr' ? 'SPECTRE DE FOURIER DISCRET & THD GLOBAL' : 'FOURIER DISCRETE SPECTRUM & GLOBAL THD'}
-                  </h3>
-                  <p className="text-xs text-slate-400">
-                    THDi = {harmonicCalculations.thdCurrentPct.toFixed(1)}% · THDv estimé = {harmonicCalculations.thdVoltagePct.toFixed(1)}%
-                  </p>
-                </div>
-
-                <span className={`px-2.5 py-1 rounded-full text-xs font-mono font-bold border ${
-                  harmonicCalculations.ieee519Compliant
-                    ? 'text-emerald-400 bg-emerald-950/60 border-emerald-700'
-                    : 'text-red-400 bg-red-950/60 border-red-700 animate-pulse'
-                }`}>
-                  {harmonicCalculations.ieee519Compliant ? 'IEEE 519 CONFORME' : 'NON CONFORME IEEE 519'}
-                </span>
-              </div>
-
-              {/* Histogram Bars SVG */}
-              <div className="relative w-full aspect-[16/9] max-h-[300px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center p-3">
-                <svg viewBox="0 0 500 220" className="w-full h-full">
-                  {/* Grid lines */}
-                  <line x1="40" y1="20" x2="40" y2="180" stroke="#334155" strokeWidth="1" />
-                  <line x1="40" y1="180" x2="480" y2="180" stroke="#334155" strokeWidth="1" />
-                  <line x1="40" y1="100" x2="480" y2="100" stroke="#1e293b" strokeWidth="1" strokeDasharray="3,3" />
-
-                  <text x="35" y="25" fill="#64748b" fontSize="9" textAnchor="end">100%</text>
-                  <text x="35" y="100" fill="#64748b" fontSize="9" textAnchor="end">50%</text>
-                  <text x="35" y="180" fill="#64748b" fontSize="9" textAnchor="end">0%</text>
-
-                  {/* Harmonic Bars */}
-                  {[
-                    { label: 'h1', val: 100, color: '#10b981' },
-                    { label: 'h3', val: h3Pct, color: '#eab308' },
-                    { label: 'h5', val: h5Pct, color: '#06b6d4' },
-                    { label: 'h7', val: h7Pct, color: '#3b82f6' },
-                    { label: 'h9', val: h9Pct, color: '#eab308' },
-                    { label: 'h11', val: h11Pct, color: '#a855f7' },
-                    { label: 'h13', val: h13Pct, color: '#a855f7' },
-                    { label: 'h17', val: h17Pct, color: '#ec4899' },
-                    { label: 'h19', val: h19Pct, color: '#ec4899' }
-                  ].map((bar, i) => {
-                    const barWidth = 28;
-                    const x = 60 + i * 46;
-                    const barHeight = (bar.val / 100) * 155;
-                    const y = 180 - barHeight;
-                    return (
-                      <g key={bar.label}>
-                        <rect
-                          x={x}
-                          y={y}
-                          width={barWidth}
-                          height={barHeight}
-                          fill={bar.color}
-                          rx="3"
-                          fillOpacity="0.85"
-                        />
-                        <text x={x + barWidth / 2} y="195" fill="#94a3b8" fontSize="10" textAnchor="middle" fontFamily="monospace">
-                          {bar.label}
-                        </text>
-                        <text x={x + barWidth / 2} y={y - 4} fill="#ffffff" fontSize="9" textAnchor="middle" fontWeight="bold">
-                          {bar.val.toFixed(1)}%
-                        </text>
-                      </g>
-                    );
-                  })}
-                </svg>
-              </div>
-
-              {/* Metric Card */}
-              <div className="grid grid-cols-3 gap-3 p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono">
-                <div>
-                  <span className="text-slate-400">Courant Total RMS :</span>
-                  <div className="text-sm font-bold text-white mt-0.5">{harmonicCalculations.iRmsTotalA.toFixed(1)} A</div>
-                </div>
-                <div>
-                  <span className="text-slate-400">Facteur K Recommandé :</span>
-                  <div className="text-sm font-bold text-amber-400 mt-0.5">K-{harmonicCalculations.kFactor}</div>
-                </div>
-                <div>
-                  <span className="text-slate-400">Limite IEEE 519 THDv :</span>
-                  <div className="text-sm font-bold text-cyan-400 mt-0.5">&le; 5.0% (HT/MT)</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* PILLAR 2: VOLTAGE SAG (CREUX DE TENSION) & SEMI F47 / ITIC CURVE */}
-      {/* ========================================================================= */}
-      {activePillar === 'VOLTAGE_SAG_SEMI_F47' && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-5 space-y-4 p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm">
-              <h3 className="text-sm font-bold font-mono text-violet-400 flex items-center gap-2">
-                <Activity className="w-4 h-4" />
-                {locale === 'fr' ? 'PARAMÈTRES DU CREUX DE TENSION (CEI 61000-4-30)' : 'VOLTAGE SAG TELEMETRY (IEC 61000-4-30)'}
-              </h3>
-
-              <div className="space-y-3">
-                <div className="space-y-1.5">
-                  <div className="flex justify-between text-xs font-mono">
-                    <span className="text-slate-300">Tension Résiduelle (Ures) :</span>
-                    <span className="text-amber-400 font-bold">{sagRetainedVoltagePct}% Un</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="10"
-                    max="90"
-                    value={sagRetainedVoltagePct}
-                    onChange={(e) => setSagRetainedVoltagePct(Number(e.target.value))}
-                    className="w-full accent-amber-500"
-                  />
-                  <div className="text-[10px] text-slate-500 font-mono">Profondeur du creux : {sagStatus.sagDepthPct}%</div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <div className="flex justify-between text-xs font-mono">
-                    <span className="text-slate-300">Durée de l'Événement (Δt) :</span>
-                    <span className="text-cyan-400 font-bold">{sagDurationMs} ms</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="20"
-                    max="1500"
-                    step="20"
-                    value={sagDurationMs}
-                    onChange={(e) => setSagDurationMs(Number(e.target.value))}
-                    className="w-full accent-cyan-500"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-mono text-slate-300">Cause Déclenchante Simulée :</label>
-                  <select
-                    value={sagFaultCause}
-                    onChange={(e) => setSagFaultCause(e.target.value as any)}
-                    className="w-full p-2 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-white focus:outline-none focus:border-violet-500"
-                  >
-                    <option value="REMOTE_SLG_FAULT">Court-circuit monophasé distant 225 kV éliminé en 150 ms</option>
-                    <option value="INDUCTION_MOTOR_START">Démarrage direct gros moteur asynchrone (Appel 6 In)</option>
-                    <option value="TRANSFORMER_INRUSH">Enclenchement transformateur de puissance (Courant d'inrush)</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* Right SEMI F47 / ITIC Ride-Through Graphical Plane (7 cols) */}
-            <div className="lg:col-span-7 space-y-4 p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm flex flex-col justify-between">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-bold font-mono text-white flex items-center gap-2">
-                    <ShieldAlert className="w-4 h-4 text-violet-400" />
-                    {locale === 'fr' ? 'GABARIT D\'IMMUNITÉ SEMI F47 & COURBE ITIC' : 'SEMI F47 & ITIC RIDE-THROUGH CURVES'}
-                  </h3>
-                  <p className="text-xs text-slate-400">
-                    Durée {sagDurationMs} ms à {sagRetainedVoltagePct}% de tension nominale
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className={`px-2 py-0.5 rounded text-xs font-mono font-bold border ${
-                    sagStatus.semiF47Pass
-                      ? 'text-emerald-400 bg-emerald-950/60 border-emerald-700'
-                      : 'text-red-400 bg-red-950/60 border-red-700'
-                  }`}>
-                    SEMI F47: {sagStatus.semiF47Pass ? 'ACCEPTÉ' : 'DÉCLENCHEMENT'}
-                  </span>
-                </div>
-              </div>
-
-              {/* Ride-through Canvas */}
-              <div className="relative w-full aspect-[16/9] max-h-[300px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center p-3">
-                <svg viewBox="0 0 500 240" className="w-full h-full">
-                  {/* Axis */}
-                  <line x1="50" y1="20" x2="50" y2="210" stroke="#334155" strokeWidth="1" />
-                  <line x1="50" y1="210" x2="470" y2="210" stroke="#334155" strokeWidth="1" />
-
-                  {/* Y ticks (Voltage %) */}
-                  <text x="45" y="25" fill="#64748b" fontSize="9" textAnchor="end">100%</text>
-                  <text x="45" y="65" fill="#64748b" fontSize="9" textAnchor="end">80%</text>
-                  <text x="45" y="115" fill="#64748b" fontSize="9" textAnchor="end">50%</text>
-                  <text x="45" y="210" fill="#64748b" fontSize="9" textAnchor="end">0%</text>
-
-                  {/* X ticks (Duration in ms) */}
-                  <text x="50" y="225" fill="#64748b" fontSize="9">20ms</text>
-                  <text x="160" y="225" fill="#64748b" fontSize="9">200ms</text>
-                  <text x="270" y="225" fill="#64748b" fontSize="9">500ms</text>
-                  <text x="420" y="225" fill="#64748b" fontSize="9">1000ms</text>
-
-                  {/* SEMI F47 Boundary Line */}
-                  <polyline
-                    points="50,115 160,115 160,85 270,85 270,65 420,65 470,65"
-                    fill="none"
-                    stroke="#10b981"
-                    strokeWidth="2.5"
-                  />
-                  <text x="280" y="80" fill="#34d399" fontSize="10" fontWeight="bold">SEMI F47 Limit</text>
-
-                  {/* Operating Sag Event Coordinate */}
-                  {/* Map sagDurationMs (20 to 1200) -> x (50 to 450) */}
-                  {/* Map sagRetainedVoltagePct (0 to 100) -> y (210 to 20) */}
-                  {(() => {
-                    const cx = 50 + (Math.min(1200, sagDurationMs) / 1200) * 400;
-                    const cy = 210 - (sagRetainedVoltagePct / 100) * 190;
-                    return (
-                      <g>
-                        <circle cx={cx} cy={cy} r="7" fill={sagStatus.semiF47Pass ? '#10b981' : '#ef4444'} stroke="#ffffff" strokeWidth="2" className="animate-pulse" />
-                        <line x1={cx} y1={cy} x2={cx} y2="210" stroke="#64748b" strokeDasharray="2,2" strokeWidth="1" />
-                      </g>
-                    );
-                  })()}
-                </svg>
-              </div>
-
-              <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300">
-                <span className="font-bold text-white">Impact Industriel : </span>
-                {sagStatus.semiF47Pass ? (
-                  <span className="text-emerald-400">
-                    Les équipements de contrôle (automates PLC, variateurs et contacteurs magnétiques) franchissent le creux sans arrêt de la ligne de fabrication.
-                  </span>
-                ) : (
-                  <span className="text-red-400 font-bold">
-                    Décrochage des relais sous-tension, déclenchement des variateurs VFD et mise en sécurité d'urgence des machines-outils.
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* PILLAR 3: ACTIVE POWER FILTER (APF) COMPENSATION BENCH */}
-      {/* ========================================================================= */}
-      {activePillar === 'ACTIVE_FILTER_APF_BENCH' && (
-        <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <h3 className="text-sm font-bold font-mono text-white flex items-center gap-2">
-                <Zap className="w-4 h-4 text-violet-400" />
-                {locale === 'fr' ? 'FILTRE ACTIF DE PUISSANCE PARALLÈLE (SHUNT APF)' : 'SHUNT ACTIVE POWER FILTER (APF) BENCH'}
-              </h3>
-              <p className="text-xs text-slate-400">
-                Onduleur IGBT à modulation PWM injectant en temps réel un contre-courant d'opposition de phase.
-              </p>
-            </div>
-
-            <button
-              onClick={() => setApfInstalled(!apfInstalled)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all border ${
-                apfInstalled
-                  ? 'bg-violet-500 text-slate-950 border-violet-400'
-                  : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
-              }`}
-            >
-              {apfInstalled ? '⚡ FILTRE ACTIF EN SERVICE' : '⚠️ APF EN BY-PASS'}
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-              <div className="text-xs font-mono text-slate-400">Courant Harmonique Avant APF :</div>
-              <div className="text-2xl font-bold font-mono text-red-400">
-                THDi {harmonicCalculations.thdCurrentPct.toFixed(1)}%
-              </div>
-              <div className="text-[11px] text-slate-500 font-mono">Pertes Joule supplémentaires dans câbles et transfo</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950 border border-violet-900/50 space-y-2">
-              <div className="text-xs font-mono text-slate-400">Courant Réseau Après APF :</div>
-              <div className="text-2xl font-bold font-mono text-emerald-400">
-                THDi {apfMitigationResult.mitigatedThdi}%
-              </div>
-              <div className="text-[11px] text-emerald-400/80 font-mono">Sinusoïde quasi pure restituée au réseau</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-              <div className="text-xs font-mono text-slate-400">Temps de Réponse Dynamique :</div>
-              <div className="text-2xl font-bold font-mono text-cyan-400">
-                {apfResponseTimeUs} µs
-              </div>
-              <div className="text-[11px] text-slate-500 font-mono">Fréquence de découpage IGBT : 20 kHz</div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* PILLAR 4: DETUNED CAPACITOR BANK & ANTI-RESONANCE (SELF 7% à 189 Hz) */}
-      {/* ========================================================================= */}
-      {activePillar === 'DETUNED_CAPACITOR_LC' && (
-        <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold font-mono text-white flex items-center gap-2">
-              <Layers className="w-4 h-4 text-violet-400" />
-              {locale === 'fr' ? 'BATTERIE DE CONDENSATEURS AVEC SELF ANTI-RÉSONANCE (DÉSACCORD 7%)' : 'DETUNED CAPACITOR BANK WITH ANTI-RESONANCE REACTOR'}
-            </h3>
-            <span className="text-xs font-mono text-slate-400">Protection anti-explosion de condensateurs</span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
-              <div className="text-xs font-mono text-slate-400">Fréquence de Résonance Série :</div>
-              <div className="text-2xl font-bold font-mono text-white">
-                {detuningStats.resonanceFreqHz} Hz
-              </div>
-              <div className="text-[11px] text-emerald-400 font-mono">
-                Située sous le rang 5 (250 Hz), empêche l'amplification du 5ème harmonique
-              </div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
-              <div className="text-xs font-mono text-slate-400">Facteur de Désaccord (p) :</div>
-              <div className="text-2xl font-bold font-mono text-cyan-400">
-                {detuningFactorPct}%
-              </div>
-              <div className="text-[11px] text-slate-500 font-mono">XL / XC = 0.07</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
-              <div className="text-xs font-mono text-slate-400">Risque sans Self de Désaccord :</div>
-              <div className="text-2xl font-bold font-mono text-red-400">
-                fp ~ {detuningStats.rawParallelResonanceHz} Hz (Rang {detuningStats.dangerousHarmonicOrder})
-              </div>
-              <div className="text-[11px] text-red-400/80 font-mono">Surintensité destructive sur condensateurs nus</div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* PILLAR 5: VOLTAGE FLICKER & PHASE UNBALANCE */}
-      {/* ========================================================================= */}
-      {activePillar === 'FLICKER_UNBALANCE_IEC' && (
-        <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm space-y-4">
-          <h3 className="text-sm font-bold font-mono text-white flex items-center gap-2">
-            <Gauge className="w-4 h-4 text-violet-400" />
-            {locale === 'fr' ? 'PAPILLOTEMENT (FLICKER CEI 61000-4-15) & DÉSÉQUILIBRE INVERSE (V2/V1)' : 'VOLTAGE FLICKER & NEGATIVE SEQUENCE UNBALANCE'}
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-mono font-bold text-white">Indice de Flicker Court Terme (Pst)</span>
-                <span className={`px-2 py-0.5 rounded text-[10px] font-mono border ${
-                  flickerPst <= 1.0 ? 'text-emerald-400 bg-emerald-950 border-emerald-800' : 'text-red-400 bg-red-950 border-red-800'
-                }`}>
-                  Pst = {flickerPst} (Limite 1.0)
-                </span>
-              </div>
-              <p className="text-xs text-slate-300">
-                Provoqué par les variations rapides de puissance réactive (four à arc, compresseurs industriels). Génère une gêne visuelle sur l'éclairage et fatigue oculaire.
-              </p>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-mono font-bold text-white">Taux de Déséquilibre Inverse (u2 = V2/V1)</span>
-                <span className={`px-2 py-0.5 rounded text-[10px] font-mono border ${
-                  unbalanceStats.unbalanceCompliant ? 'text-emerald-400 bg-emerald-950 border-emerald-800' : 'text-red-400 bg-red-950 border-red-800'
-                }`}>
-                  u2 = {unbalanceStats.unbalancePct}% (Limite 2.0%)
-                </span>
-              </div>
-              <p className="text-xs text-slate-300">
-                La composante inverse de tension engendre des champs magnétiques tournants inverses dans les moteurs asynchrones, entraînant un échauffement sévère du rotor.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* PILLAR 6: TRANSFORMER K-FACTOR DERATING */}
-      {/* ========================================================================= */}
-      {activePillar === 'TRANSFORMER_K_FACTOR' && (
-        <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm space-y-4">
-          <h3 className="text-sm font-bold font-mono text-white flex items-center gap-2">
-            <Flame className="w-4 h-4 text-violet-400" />
-            {locale === 'fr' ? 'FACTEUR K & DÉTARAGE DES TRANSFORMATEURS (IEEE C57.110)' : 'TRANSFORMER K-FACTOR DERATING (IEEE C57.110)'}
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-2">
-            {[
-              { k: 'K-1', descFr: 'Charges purement résistives, moteurs sans variateur', descEn: 'Resistive loads, non-VFD standard motors', usage: 'Bureaux / Éclairage incandescent' },
-              { k: 'K-4', descFr: 'Équipements avec THDi modéré < 25%', descEn: 'Moderate non-linear loads with THDi < 25%', usage: 'Centres commerciaux, petits VFD' },
-              { k: 'K-13', descFr: 'Charges industrielles VFD 6-pulsations denses', descEn: 'Heavy 6-pulse VFD drives and telecom power', usage: 'Data centers, usines manufacturières' },
-              { k: 'K-20', descFr: 'Redresseurs industriels, fours à induction', descEn: 'Heavy metallurgical rectifiers and induction furnaces', usage: 'ALUCAM, Aciéries, Fours métallurgiques' }
-            ].map((cls) => (
-              <div key={cls.k} className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
-                <div className="text-base font-bold font-mono text-violet-400">{cls.k}</div>
-                <div className="text-xs text-white font-medium">{locale === 'fr' ? cls.descFr : cls.descEn}</div>
-                <div className="text-[11px] text-slate-500 font-mono pt-1 border-t border-slate-800">
-                  {cls.usage}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* PILLAR 7: AUTHENTIC CAMEROON POWER QUALITY CASES */}
-      {/* ========================================================================= */}
-      {activePillar === 'CAMEROON_PQ_CASES' && (
-        <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm space-y-4">
-          <h3 className="text-sm font-bold font-mono text-white flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-violet-400" />
-            {locale === 'fr' ? 'CAS D\'INGÉNIERIE QUALITÉ D\'ONDE AU CAMEROUN' : 'CAMEROON INDUSTRIAL POWER QUALITY CASES'}
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-violet-950 text-violet-300 border border-violet-800">
-                MÉTALLURGIE & ÉLECTROLYSE
-              </span>
-              <h4 className="text-sm font-bold text-white">
-                Dépollution Harmonique de l'Aluminerie d'ALUCAM (Édéa - 180 MW)
-              </h4>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Les groupes de redresseurs de puissance alimentant les séries de cuves d'électrolyse d'ALUCAM constituent la charge non-linéaire la plus concentrée d'Afrique Centrale. Des filtres passifs résonants accordés sur les rangs 5, 7, 11 et 13 sont connectés au jeu de barres 90 kV pour éviter la déformation d'onde vers le Réseau Interconnecté Sud (RIS).
-              </p>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-950 text-cyan-300 border border-cyan-800">
-                ACIÉRIES & FOURS À ARC
-              </span>
-              <h4 className="text-sm font-bold text-white">
-                Compensation Dynamique de Flicker à la Zone Industrielle de Bassa (Douala)
-              </h4>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Les aciéries de Bassa (Prometal et aciéries locales) utilisant des fours à induction et fours à arc créent des à-coups de puissance réactive très rapides. L'installation de gradateurs et de bancs de compensation rapide a permis d'atténuer le flicker Pst sous le seuil contractuel de 1.0 sur le réseau 90 kV de SONATREL.
-              </p>
+            <div className="pt-2 flex justify-end">
+              <button
+                onClick={() => setIsFormulasModalOpen(false)}
+                className="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-mono text-xs font-bold"
+              >
+                {locale === 'fr' ? 'Fermer' : 'Close'}
+              </button>
             </div>
           </div>
         </div>
