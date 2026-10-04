@@ -67,11 +67,17 @@ export const AutomationControlWorkbench: React.FC<AutomationControlWorkbenchProp
   const [isFormulasModalOpen, setIsFormulasModalOpen] = useState<boolean>(false);
 
   // Sub-tabs per progressive stage
-  const [stage1Tab, setStage1Tab] = useState<'420MA_LOOPS' | 'POWER_CABINET'>('420MA_LOOPS');
+  const [stage1Tab, setStage1Tab] = useState<'420MA_LOOPS' | 'NAMUR_NE43' | 'POWER_CABINET'>('420MA_LOOPS');
   const [stage2Tab, setStage2Tab] = useState<'PLC_LOGIC' | 'HOT_STANDBY'>('PLC_LOGIC');
   const [stage3Tab, setStage3Tab] = useState<'PID_TUNING' | 'VFD_FOC'>('PID_TUNING');
   const [stage4Tab, setStage4Tab] = useState<'SIL_SAFETY'>('SIL_SAFETY');
   const [stage5Tab, setStage5Tab] = useState<'CAMEROON_CASES' | 'DELIVERABLES_BOQ'>('CAMEROON_CASES');
+
+  // NAMUR NE 43 Loop Current Telemetry Simulator
+  const [simulatedCurrentMa, setSimulatedCurrentMa] = useState<number>(12.0); // 3.0 to 22.5 mA
+  const [sensorProcessRangeMin, setSensorProcessRangeMin] = useState<number>(0); // e.g. 0 Bar
+  const [sensorProcessRangeMax, setSensorProcessRangeMax] = useState<number>(100); // e.g. 100 Bar
+  const [sensorPhysicalUnit, setSensorPhysicalUnit] = useState<string>('bar');
 
   // Stage Meta Information
   const STAGES_CONFIG = useMemo(() => ({
@@ -346,6 +352,93 @@ export const AutomationControlWorkbench: React.FC<AutomationControlWorkbenchProp
   const [vfdCount, setVfdCount] = useState<number>(14);
   const [vfdTotalPowerKw, setVfdTotalPowerKw] = useState<number>(450);
 
+  // =========================================================================
+  // NAMUR NE 43 ANALOG 4-20 mA DIAGNOSTIC ENGINE
+  // =========================================================================
+  const namurStatus = useMemo(() => {
+    const I = simulatedCurrentMa;
+    const span = sensorProcessRangeMax - sensorProcessRangeMin;
+    const rawS7Can = Math.round(((I - 4.0) / 16.0) * 27648);
+    const pv = sensorProcessRangeMin + ((I - 4.0) / 16.0) * span;
+
+    if (I < 3.6) {
+      return {
+        zone: 'BREAK_WIRE',
+        statusFr: 'Défaut Bas / Rupture de Ligne (Break Wire)',
+        statusEn: 'Low Fault / Loop Wire Break',
+        severity: 'critical' as const,
+        color: 'rose',
+        quality: 'BAD (16#00)',
+        canValue: -32768,
+        pvCalculated: null,
+        pvFormatted: 'REPLI SÉCURISÉ / FAIL-SAFE',
+        descFr: 'Intensité < 3.6 mA : rupture de conducteur, transmetteur hors tension ou défaillance du convertisseur.',
+        descEn: 'Current < 3.6 mA: open circuit / severed cable, transmitter unpowered, or converter failure.',
+        actionFr: 'Alarme prioritaire automate, forçage des actionneurs en position de repli sécuritaire (fail-close / fail-open).'
+      };
+    } else if (I < 3.8) {
+      return {
+        zone: 'UNDER_RANGE',
+        statusFr: 'Sous-Échelle (Under-range)',
+        statusEn: 'Under-range Tolerance',
+        severity: 'warning' as const,
+        color: 'amber',
+        quality: 'UNCERTAIN (16#40)',
+        canValue: rawS7Can,
+        pvCalculated: pv,
+        pvFormatted: `${pv.toFixed(2)} ${sensorPhysicalUnit}`,
+        descFr: 'Intensité entre 3.6 et 3.8 mA : dérive négative du zéro, dépression anormale ou étalonnage nécessaire.',
+        descEn: 'Current between 3.6 and 3.8 mA: zero drift, abnormal negative process, or recalibration required.',
+        actionFr: 'Alerte de maintenance préventive déclenchée, processus maintenu sous surveillance.'
+      };
+    } else if (I <= 20.5) {
+      return {
+        zone: 'NORMAL',
+        statusFr: 'Plage de Mesure Nominale (Normal Process Range)',
+        statusEn: 'Valid Process Measuring Range',
+        severity: 'normal' as const,
+        color: 'emerald',
+        quality: 'GOOD (16#80)',
+        canValue: rawS7Can,
+        pvCalculated: pv,
+        pvFormatted: `${pv.toFixed(2)} ${sensorPhysicalUnit}`,
+        descFr: 'Intensité entre 3.8 et 20.5 mA : mesure linéaire certifiée valide conforme CEI 60381-1 et NAMUR NE 43.',
+        descEn: 'Current between 3.8 and 20.5 mA: certified linear measurement conforming to IEC 60381-1 and NAMUR NE 43.',
+        actionFr: 'Régulation continue nominale par le contrôleur PID / automate programmable.'
+      };
+    } else if (I <= 21.0) {
+      return {
+        zone: 'OVER_RANGE',
+        statusFr: 'Sur-Échelle (Over-range)',
+        statusEn: 'Over-range Tolerance',
+        severity: 'warning' as const,
+        color: 'amber',
+        quality: 'UNCERTAIN (16#40)',
+        canValue: rawS7Can,
+        pvCalculated: pv,
+        pvFormatted: `${pv.toFixed(2)} ${sensorPhysicalUnit}`,
+        descFr: 'Intensité entre 20.5 et 21.0 mA : surpression, débit de pointe ou saturation haute tolérée temporairement.',
+        descEn: 'Current between 20.5 and 21.0 mA: transient surge or allowable temporary saturation.',
+        actionFr: 'Avertissement de saturation haute, maintien de la régulation à 100% de la consigne.'
+      };
+    } else {
+      return {
+        zone: 'SHORT_CIRCUIT',
+        statusFr: 'Défaut Haut / Court-Circuit (Sensor Fault / Short)',
+        statusEn: 'High Fault / Sensor Short-Circuit',
+        severity: 'critical' as const,
+        color: 'rose',
+        quality: 'BAD (16#00)',
+        canValue: 32767,
+        pvCalculated: null,
+        pvFormatted: 'REPLI SÉCURISÉ / FAIL-SAFE',
+        descFr: 'Intensité > 21.0 mA : court-circuit sur la ligne 24V ou défaillance électronique interne du capteur.',
+        descEn: 'Current > 21.0 mA: loop short-circuit on 24V line or internal sensor breakdown.',
+        actionFr: 'Déclencher verrouillage de sécurité procédé, isoler l’entrée analogique et basculer sur capteur redondant.'
+      };
+    }
+  }, [simulatedCurrentMa, sensorProcessRangeMin, sensorProcessRangeMax, sensorPhysicalUnit]);
+
   return (
     <div className="space-y-6 text-[#e8eaf0] font-sans pb-16">
       
@@ -406,7 +499,18 @@ export const AutomationControlWorkbench: React.FC<AutomationControlWorkbenchProp
                 }`}
               >
                 <Network className="w-3.5 h-3.5" />
-                {locale === 'fr' ? '1.1 Boucles 4–20 mA & HART' : '1.1 4–20 mA & HART Loops'}
+                {locale === 'fr' ? '1.1 Boucles 4–20 mA' : '1.1 4–20 mA Loops'}
+              </button>
+              <button
+                onClick={() => setStage1Tab('NAMUR_NE43')}
+                className={`px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 transition-all ${
+                  stage1Tab === 'NAMUR_NE43'
+                    ? 'bg-cyan-500 text-slate-950 shadow-md font-extrabold'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Activity className="w-3.5 h-3.5" />
+                {locale === 'fr' ? '1.2 Diagnostic NAMUR NE 43' : '1.2 NAMUR NE 43'}
               </button>
               <button
                 onClick={() => setStage1Tab('POWER_CABINET')}
@@ -417,7 +521,7 @@ export const AutomationControlWorkbench: React.FC<AutomationControlWorkbenchProp
                 }`}
               >
                 <Zap className="w-3.5 h-3.5" />
-                {locale === 'fr' ? '1.2 Bilan Puissance 24V & Thermique' : '1.2 24V Power & Thermal'}
+                {locale === 'fr' ? '1.3 Puissance & Dissipation' : '1.3 Power & Heat'}
               </button>
             </div>
           </div>
@@ -548,7 +652,408 @@ export const AutomationControlWorkbench: React.FC<AutomationControlWorkbenchProp
             </div>
           )}
 
-          {/* Sub-Tab 1.2: 24V DC Auxiliary Power & Thermal Dissipation */}
+          {/* Sub-Tab 1.2: NAMUR NE 43 Loop Current Telemetry & Diagnostic Engine */}
+          {stage1Tab === 'NAMUR_NE43' && (
+            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+              
+              {/* Header */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-lg font-bold text-white uppercase tracking-wide flex items-center gap-2">
+                      <Activity className="w-5 h-5 text-cyan-400" />
+                      {locale === 'fr' 
+                        ? 'Diagnostic de Boucle 4–20 mA & Télémétrie NAMUR NE 43' 
+                        : 'NAMUR NE 43 4–20 mA Loop Diagnostic & Telemetry Engine'}
+                    </h2>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                      CEI 60381-1 / NAMUR NE 43
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-1">
+                    {locale === 'fr'
+                      ? 'Discrimination physique en temps réel : rupture de fil (< 3.6 mA), dérive basse (3.6-3.8 mA), mesure valide (3.8-20.5 mA), saturation haute (20.5-21.0 mA) et court-circuit (> 21.0 mA) avec mise à l\'échelle automate Siemens S7-1500 (0 à 27648).'
+                      : 'Real-time analog loop discrimination: wire break (< 3.6 mA), under-range (3.6-3.8 mA), valid measurement (3.8-20.5 mA), over-range (20.5-21.0 mA), and sensor short (> 21.0 mA) with Siemens S7-1500 ADC scaling (0 to 27648).'}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <span className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold border flex items-center gap-1.5 ${
+                    namurStatus.severity === 'normal'
+                      ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
+                      : namurStatus.severity === 'warning'
+                      ? 'bg-amber-500/20 text-amber-400 border-amber-500/40'
+                      : 'bg-rose-500/20 text-rose-400 border-rose-500/40'
+                  }`}>
+                    {namurStatus.severity === 'normal' ? (
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    ) : (
+                      <AlertTriangle className="w-4 h-4 text-rose-400" />
+                    )}
+                    {locale === 'fr' ? namurStatus.statusFr : namurStatus.statusEn}
+                  </span>
+                </div>
+              </div>
+
+              {/* Dynamic Spectrum Bar with Cursor */}
+              <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-3">
+                <div className="flex items-center justify-between text-xs font-mono text-slate-400">
+                  <span className="font-bold text-white flex items-center gap-1.5">
+                    <SlidersHorizontal className="w-3.5 h-3.5 text-cyan-400" />
+                    {locale === 'fr' ? 'Spectre Normalisé NAMUR NE 43 (3.0 mA → 22.5 mA)' : 'Normalized NAMUR NE 43 Spectrum (3.0 mA → 22.5 mA)'}
+                  </span>
+                  <span className="text-cyan-400 font-bold">
+                    Courant de boucle mesuré : {simulatedCurrentMa.toFixed(2)} mA
+                  </span>
+                </div>
+
+                {/* Multi-segment Spectrum Bar */}
+                <div className="relative pt-6 pb-2">
+                  {/* Position Cursor Pointer */}
+                  {(() => {
+                    const minI = 3.0;
+                    const maxI = 22.5;
+                    const clampedI = Math.max(minI, Math.min(maxI, simulatedCurrentMa));
+                    const pct = ((clampedI - minI) / (maxI - minI)) * 100;
+                    return (
+                      <div 
+                        className="absolute top-0 -translate-x-1/2 flex flex-col items-center pointer-events-none transition-all duration-150"
+                        style={{ left: `${pct}%` }}
+                      >
+                        <span className="px-2 py-0.5 rounded bg-white text-slate-950 text-[10px] font-mono font-extrabold shadow-lg">
+                          {simulatedCurrentMa.toFixed(2)} mA
+                        </span>
+                        <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[5px] border-t-white" />
+                      </div>
+                    );
+                  })()}
+
+                  {/* Segmented Color Track */}
+                  <div className="h-4 rounded-full overflow-hidden flex bg-slate-900 border border-slate-700 shadow-inner">
+                    {/* Zone 1: < 3.6 mA (Break Wire) */}
+                    <div style={{ width: '3.08%' }} className="bg-rose-600/80 hover:bg-rose-500 transition-colors" title="Rupture Ligne (< 3.6 mA)" />
+                    {/* Zone 2: 3.6 to 3.8 mA (Under-range) */}
+                    <div style={{ width: '1.03%' }} className="bg-amber-500/80 hover:bg-amber-400 transition-colors" title="Sous-échelle (3.6 - 3.8 mA)" />
+                    {/* Zone 3: 3.8 to 20.5 mA (Valid process) */}
+                    <div style={{ width: '85.64%' }} className="bg-emerald-500/80 hover:bg-emerald-400 transition-colors" title="Mesure Valide (3.8 - 20.5 mA)" />
+                    {/* Zone 4: 20.5 to 21.0 mA (Over-range) */}
+                    <div style={{ width: '2.56%' }} className="bg-amber-500/80 hover:bg-amber-400 transition-colors" title="Sur-échelle (20.5 - 21.0 mA)" />
+                    {/* Zone 5: > 21.0 mA (Short-circuit) */}
+                    <div style={{ width: '7.69%' }} className="bg-rose-600/80 hover:bg-rose-500 transition-colors" title="Court-circuit (> 21.0 mA)" />
+                  </div>
+
+                  {/* Scale Labels */}
+                  <div className="flex justify-between items-center text-[10px] font-mono text-slate-500 mt-2 px-1">
+                    <span className="text-rose-400">3.0 mA (Défaut Bas)</span>
+                    <span className="text-rose-400">3.6 mA</span>
+                    <span className="text-emerald-400">4.0 mA (0% PV)</span>
+                    <span className="text-cyan-400">12.0 mA (50% PV)</span>
+                    <span className="text-emerald-400">20.0 mA (100% PV)</span>
+                    <span className="text-amber-400">20.5 mA</span>
+                    <span className="text-rose-400">21.0 mA (Défaut Haut)</span>
+                    <span className="text-rose-400">22.5 mA</span>
+                  </div>
+                </div>
+
+                {/* Quick Calibration / Preset Buttons */}
+                <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-900">
+                  <span className="text-[11px] font-mono text-slate-400 uppercase font-bold mr-1">
+                    {locale === 'fr' ? 'Points de Test Rapides :' : 'Quick Test Injections:'}
+                  </span>
+                  {[
+                    { label: '3.2 mA (Rupture)', val: 3.2, color: 'text-rose-400 border-rose-800/60 bg-rose-950/20' },
+                    { label: '3.7 mA (Sous-plage)', val: 3.7, color: 'text-amber-400 border-amber-800/60 bg-amber-950/20' },
+                    { label: '4.0 mA (0% Procédé)', val: 4.0, color: 'text-emerald-400 border-emerald-800/60 bg-emerald-950/20' },
+                    { label: '12.0 mA (50% Procédé)', val: 12.0, color: 'text-cyan-400 border-cyan-800/60 bg-cyan-950/20' },
+                    { label: '20.0 mA (100% Procédé)', val: 20.0, color: 'text-emerald-400 border-emerald-800/60 bg-emerald-950/20' },
+                    { label: '20.8 mA (Sur-plage)', val: 20.8, color: 'text-amber-400 border-amber-800/60 bg-amber-950/20' },
+                    { label: '21.8 mA (Court-Circuit)', val: 21.8, color: 'text-rose-400 border-rose-800/60 bg-rose-950/20' }
+                  ].map((btn) => (
+                    <button
+                      key={btn.label}
+                      onClick={() => setSimulatedCurrentMa(btn.val)}
+                      className={`px-2.5 py-1 rounded text-[11px] font-mono font-bold border transition-all hover:scale-105 ${btn.color} ${
+                        Math.abs(simulatedCurrentMa - btn.val) < 0.05 ? 'ring-1 ring-white' : ''
+                      }`}
+                    >
+                      {btn.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Interactive Sizing Sliders & Range Setup */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                {/* Column 1: Current Fine Adjustment */}
+                <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-mono font-bold uppercase text-slate-300">
+                      {locale === 'fr' ? 'Courant Injecté (mA)' : 'Injected Current (mA)'}
+                    </label>
+                    <span className="text-lg font-mono font-extrabold text-cyan-400">
+                      {simulatedCurrentMa.toFixed(2)} mA
+                    </span>
+                  </div>
+
+                  <input
+                    type="range"
+                    min="3.0"
+                    max="22.5"
+                    step="0.05"
+                    value={simulatedCurrentMa}
+                    onChange={(e) => setSimulatedCurrentMa(parseFloat(e.target.value))}
+                    className="w-full accent-cyan-400 cursor-pointer"
+                  />
+
+                  <div className="flex items-center justify-between gap-2">
+                    <button
+                      onClick={() => setSimulatedCurrentMa((v) => Math.max(3.0, parseFloat((v - 0.1).toFixed(2))))}
+                      className="px-3 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded font-mono text-xs border border-slate-700 transition-all"
+                    >
+                      -0.10 mA
+                    </button>
+                    <button
+                      onClick={() => setSimulatedCurrentMa(12.0)}
+                      className="px-3 py-1 bg-slate-900 hover:bg-slate-800 text-cyan-400 rounded font-mono text-xs border border-slate-700 transition-all"
+                    >
+                      Reset (12 mA)
+                    </button>
+                    <button
+                      onClick={() => setSimulatedCurrentMa((v) => Math.min(22.5, parseFloat((v + 0.1).toFixed(2))))}
+                      className="px-3 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded font-mono text-xs border border-slate-700 transition-all"
+                    >
+                      +0.10 mA
+                    </button>
+                  </div>
+
+                  <div className="text-[11px] font-mono text-slate-400 leading-relaxed pt-2 border-t border-slate-900">
+                    Transmetteur 2 fils alimenté par la boucle 24V DC. Détection matérielle selon CEI 60381-1.
+                  </div>
+                </div>
+
+                {/* Column 2: Sensor Process Range Parameters */}
+                <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-4">
+                  <div className="text-xs font-mono font-bold uppercase text-slate-300">
+                    {locale === 'fr' ? 'Échelle & Unité du Capteur (PV)' : 'Sensor Process Range & Unit (PV)'}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-[11px] font-mono text-slate-400">
+                        {locale === 'fr' ? 'Plage Min (0% = 4 mA)' : 'Range Min (0% = 4 mA)'}
+                      </label>
+                      <input
+                        type="number"
+                        value={sensorProcessRangeMin}
+                        onChange={(e) => setSensorProcessRangeMin(parseFloat(e.target.value) || 0)}
+                        className="w-full mt-1 px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono text-xs focus:outline-none focus:border-cyan-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-mono text-slate-400">
+                        {locale === 'fr' ? 'Plage Max (100% = 20 mA)' : 'Range Max (100% = 20 mA)'}
+                      </label>
+                      <input
+                        type="number"
+                        value={sensorProcessRangeMax}
+                        onChange={(e) => setSensorProcessRangeMax(parseFloat(e.target.value) || 100)}
+                        className="w-full mt-1 px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono text-xs focus:outline-none focus:border-cyan-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-mono text-slate-400">
+                      {locale === 'fr' ? 'Grandeur Physique / Unité' : 'Engineering Unit'}
+                    </label>
+                    <select
+                      value={sensorPhysicalUnit}
+                      onChange={(e) => setSensorPhysicalUnit(e.target.value)}
+                      className="w-full mt-1 px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono text-xs focus:outline-none focus:border-cyan-500"
+                    >
+                      <option value="bar">Pression (bar) - Nachtigal Bâche Spirale</option>
+                      <option value="°C">Température (°C) - Palier Alternateur</option>
+                      <option value="m³/h">Débit Volumique (m³/h) - Refroidissement</option>
+                      <option value="%">Niveau Réservoir (%) - Bâche Huile Régulation</option>
+                      <option value="rpm">Vitesse de Rotation (rpm) - Turbine Francis</option>
+                      <option value="mbar">Pression Différentielle (mbar) - Colmatage Filtres</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Column 3: Telemetry & Quality Bits */}
+                <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-3">
+                  <div className="text-xs font-mono font-bold uppercase text-slate-300">
+                    {locale === 'fr' ? 'Télémétrie Automate & Sécurité' : 'PLC Telemetry & Quality Tag'}
+                  </div>
+
+                  <div className="space-y-2 font-mono text-xs">
+                    <div className="flex justify-between items-center p-2 rounded bg-slate-900 border border-slate-800">
+                      <span className="text-slate-400">Qualité Signal (OPC UA / Profinet) :</span>
+                      <span className={`font-bold ${
+                        namurStatus.quality.startsWith('GOOD')
+                          ? 'text-emerald-400'
+                          : namurStatus.quality.startsWith('UNCERTAIN')
+                          ? 'text-amber-400'
+                          : 'text-rose-400'
+                      }`}>
+                        {namurStatus.quality}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center p-2 rounded bg-slate-900 border border-slate-800">
+                      <span className="text-slate-400">Mot CAN Siemens S7 (PEW/IW) :</span>
+                      <span className="text-cyan-400 font-extrabold">
+                        {namurStatus.canValue} / 27648
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center p-2 rounded bg-slate-900 border border-slate-800">
+                      <span className="text-slate-400">État Entrée Défaut Automate :</span>
+                      <span className={`font-bold ${
+                        namurStatus.severity === 'critical' ? 'text-rose-400' : 'text-slate-500'
+                      }`}>
+                        {namurStatus.severity === 'critical' ? 'TRUE (Alarme Active)' : 'FALSE (Sain)'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-2.5 rounded-lg bg-cyan-950/20 border border-cyan-800/40 text-[11px] font-mono text-cyan-300">
+                    Protocole HART 7 : Transmission FSK simultanée à 1200 Baud sans altérer le courant moyen 4–20 mA.
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Diagnostic Results KPI Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                
+                {/* KPI 1: NAMUR Zone & Status */}
+                <div className={`p-4 rounded-xl border bg-slate-950 ${
+                  namurStatus.severity === 'normal'
+                    ? 'border-emerald-500/40'
+                    : namurStatus.severity === 'warning'
+                    ? 'border-amber-500/40'
+                    : 'border-rose-500/40'
+                }`}>
+                  <div className="text-[11px] font-mono text-slate-400 uppercase">Zone Normative NAMUR</div>
+                  <div className={`text-base font-bold font-mono mt-1 ${
+                    namurStatus.severity === 'normal'
+                      ? 'text-emerald-400'
+                      : namurStatus.severity === 'warning'
+                      ? 'text-amber-400'
+                      : 'text-rose-400'
+                  }`}>
+                    {namurStatus.zone}
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-sans mt-1 leading-snug">
+                    {locale === 'fr' ? namurStatus.descFr : namurStatus.descEn}
+                  </div>
+                </div>
+
+                {/* KPI 2: Engineering Process Value (PV) */}
+                <div className="p-4 rounded-xl border border-slate-800 bg-slate-950">
+                  <div className="text-[11px] font-mono text-slate-400 uppercase">Grandeur Procédé Décodée (PV)</div>
+                  <div className={`text-2xl font-bold font-mono mt-1 ${
+                    namurStatus.pvCalculated !== null ? 'text-white' : 'text-rose-400'
+                  }`}>
+                    {namurStatus.pvFormatted}
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-mono mt-1">
+                    {namurStatus.pvCalculated !== null
+                      ? `Échelle : ${sensorProcessRangeMin} à ${sensorProcessRangeMax} ${sensorPhysicalUnit}`
+                      : 'Mesure rejetée par le contrôle commande'}
+                  </div>
+                </div>
+
+                {/* KPI 3: Percentage of Span */}
+                <div className="p-4 rounded-xl border border-slate-800 bg-slate-950">
+                  <div className="text-[11px] font-mono text-slate-400 uppercase">Pourcentage d'Échelle (0-100%)</div>
+                  <div className="text-2xl font-bold font-mono text-cyan-400 mt-1">
+                    {(((simulatedCurrentMa - 4.0) / 16.0) * 100).toFixed(1)} %
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-mono mt-1">
+                    Normalisation CEI 61131-3 : NORM_X (0.00 à 1.00)
+                  </div>
+                </div>
+
+                {/* KPI 4: Safety & Actuator Interlock Action */}
+                <div className="p-4 rounded-xl border border-slate-800 bg-slate-950">
+                  <div className="text-[11px] font-mono text-slate-400 uppercase">Action de Repli Automate</div>
+                  <div className={`text-xs font-bold font-mono mt-1 ${
+                    namurStatus.severity === 'critical' ? 'text-rose-400' : 'text-emerald-400'
+                  }`}>
+                    {namurStatus.severity === 'critical' ? 'POSITION DE SÉCURITÉ' : 'RÉGULATION ACTIVE'}
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-sans mt-1 leading-snug">
+                    {locale === 'fr' ? namurStatus.actionFr : 'Safety trip triggered or standard PID closed-loop control.'}
+                  </div>
+                </div>
+
+              </div>
+
+              {/* CEI 61131-3 Structured Text Code & Industrial Application */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                
+                {/* ST Code Card */}
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                  <div className="flex items-center justify-between text-xs font-mono text-slate-400">
+                    <span className="font-bold text-white flex items-center gap-1.5">
+                      <Code className="w-3.5 h-3.5 text-cyan-400" />
+                      Bloc Fonction CEI 61131-3 (Structured Text)
+                    </span>
+                    <span className="text-[10px] text-slate-500">FB_Analog_NAMUR_NE43</span>
+                  </div>
+                  <pre className="p-3 bg-slate-900 rounded-lg text-emerald-300 font-mono text-[11px] overflow-x-auto leading-relaxed border border-slate-800">
+{`// Surveillance d'intégrité de boucle NAMUR NE 43
+IF rCurrent_mA < 3.6 THEN
+    bWireBreak_Fault := TRUE;
+    wSignalQuality := 16#00; // BAD
+    rProcessValue := 0.0;
+    bTripActuatorToSafeState := TRUE;
+ELSIF rCurrent_mA > 21.0 THEN
+    bShortCircuit_Fault := TRUE;
+    wSignalQuality := 16#00; // BAD
+    bTripActuatorToSafeState := TRUE;
+ELSE
+    bWireBreak_Fault := FALSE;
+    bShortCircuit_Fault := FALSE;
+    wSignalQuality := 16#80; // GOOD
+    // Conversion S7-1500 SCALE_X
+    rProcessValue := rPV_Min + ((rCurrent_mA - 4.0) / 16.0) * (rPV_Max - rPV_Min);
+END_IF;`}
+                  </pre>
+                </div>
+
+                {/* Industrial Field Context Card */}
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                  <div className="flex items-center justify-between text-xs font-mono text-slate-400">
+                    <span className="font-bold text-white flex items-center gap-1.5">
+                      <Flame className="w-3.5 h-3.5 text-amber-400" />
+                      Pratiques Chantiers Cameroun (Nachtigal, SABC, CIMENCAM)
+                    </span>
+                    <span className="text-[10px] text-amber-400 font-bold">Régime Tropical</span>
+                  </div>
+                  <div className="text-xs text-slate-300 space-y-2 leading-relaxed font-sans">
+                    <p>
+                      <strong>Immunité aux Transitoires d’Orage :</strong> Dans les régions équatoriales (bassin de la Sanaga, littoral de Douala), les coups de foudre induisent des impulsions capacitives brèves sur les câbles blindés non enterrés.
+                    </p>
+                    <p>
+                      <strong>Temporisation Anti-Rebond (Debounce) :</strong> La norme NAMUR NE 43 et les guides de sécurité CEI 61511 préconisent une temporisation d'intégration de <code className="text-cyan-400 font-mono">100 à 250 ms</code> avant de verrouiller un arrêt d'urgence sur franchissement de 3.6 mA, évitant ainsi les déclenchements intempestifs sur foudre.
+                    </p>
+                    <p>
+                      <strong>Blindage &amp; CEM :</strong> Raccordement du blindage torsadé (STP) à la terre équipotentielle à <em>une seule extrémité</em> (côté armoire automate) pour éviter les courants de boucle de terre destructeurs.
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          )}
+
+          {/* Sub-Tab 1.3: 24V DC Auxiliary Power & Thermal Dissipation */}
           {stage1Tab === 'POWER_CABINET' && (
             <AutomationIoPowerCalculator locale={locale} />
           )}
@@ -1554,6 +2059,28 @@ export const AutomationControlWorkbench: React.FC<AutomationControlWorkbenchProp
                 </div>
                 <p className="text-[11px] text-slate-400 leading-relaxed font-sans">
                   En climat tropical camerounais où T_amb (38°C) est supérieure à la température cible maximale à l'intérieur de l'armoire (T_int = 32°C), le transfert thermique naturel est négatif (la chaleur rentre). L'installation d'un climatiseur à régulation active est obligatoire.
+                </p>
+              </div>
+
+              {/* Formula 7: NAMUR NE 43 & CAN Scaling */}
+              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                <span className="text-cyan-400 font-bold uppercase text-[11px]">7. Surveillance NAMUR NE 43 &amp; Conversion CAN</span>
+                <div className="p-3 bg-slate-900 rounded-lg text-cyan-300 font-mono text-xs">
+                  RAW_S7 = round((I - 4.0) / 16.0 · 27648)  ;  I &lt; 3.6 mA =&gt; WireBreak
+                </div>
+                <p className="text-[11px] text-slate-400 leading-relaxed font-sans">
+                  La norme NAMUR NE 43 réserve les plages de courant &lt; 3.6 mA (défaut bas/rupture) et &gt; 21.0 mA (défaut haut/court-circuit) pour la détection matérielle des pannes. L'automate Siemens S7-1500 convertit 4–20 mA en entier 0 à 27648, et génère un code d'alarme 16#8000 en cas de sous-débordement.
+                </p>
+              </div>
+
+              {/* Formula 8: Control Valve Authority & Shannon-Nyquist */}
+              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                <span className="text-amber-400 font-bold uppercase text-[11px]">8. Autorité de Vanne Régulatrice &amp; Échantillonnage</span>
+                <div className="p-3 bg-slate-900 rounded-lg text-amber-300 font-mono text-xs">
+                  a_v = ΔP_vanne_100% / ΔP_circuit_total &gt;= 0.3 à 0.5  ;  f_ech &gt;= 2 · f_max
+                </div>
+                <p className="text-[11px] text-slate-400 leading-relaxed font-sans">
+                  Une autorité a_v &gt;= 0.3 garantit que la caractéristique installée de la vanne régulatrice ne dérive pas vers un comportement tout-ou-rien. Le théorème de Shannon-Nyquist impose une fréquence d'échantillonnage de boucle au moins 10 fois plus rapide que la bande passante du procédé pour éviter tout repliement de spectre.
                 </p>
               </div>
 
