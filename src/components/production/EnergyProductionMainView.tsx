@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
+// src/components/production/EnergyProductionMainView.tsx
+// EPEDE D01 - Energy Resources & Generation Master Engineering Workbench & 5-Stage Journey Orchestrator
+
+import React, { useState, Suspense, lazy } from 'react';
 import { AuthoritativeEcosystemHero } from '../common/AuthoritativeEcosystemHero';
-import { 
-  Waves, 
-  Sun, 
-  Wind, 
-  Flame, 
-  TreePine, 
-  Zap, 
-  TrendingUp, 
-  Layers, 
-  Sliders, 
-  Cpu, 
-  ArrowRight, 
+import {
+  Waves,
+  Sun,
+  Wind,
+  Flame,
+  TreePine,
+  Zap,
+  TrendingUp,
+  Layers,
+  Sliders,
+  Cpu,
+  ArrowRight,
   CheckCircle2,
   Sparkles,
   ExternalLink,
@@ -21,28 +24,58 @@ import {
   Search,
   Activity,
   Shield,
-  FileText
+  ShieldAlert,
+  ShieldCheck,
+  FileText,
+  FileCheck,
+  Building2,
+  Compass,
+  Gauge,
+  Info,
+  Maximize2,
+  Calendar,
+  RotateCw,
+  Power,
+  ChevronRight,
+  Award
 } from 'lucide-react';
+
+// Data Registries
 import { PRODUCTION_MAJOR_SECTIONS } from './data/productionSectionsData';
-import { HydropowerVisualJourney } from './HydropowerVisualJourney';
-import { OtherGenerationsJourney } from './OtherGenerationsJourney';
+import { HYDRO_PROCESS_STAGES, HYDRO_EQUIPMENT_MAP } from './data/hydropowerData';
+import { HYDRO_PLANT_TYPES, HYDRO_TURBINES } from './data/turbinePlantData';
+import { GENERATOR_PROTECTION_MATRIX } from './data/protectionData';
+import { CAMEROON_GENERATION_FLEET, type CameroonPowerPlant } from './data/cameroonGenerationFleet';
+
+// Sub-components & Specialized Labs
+import { GenerationCommandHeader } from './GenerationCommandHeader';
+import { GenerationOrientationBanner } from './GenerationOrientationBanner';
+import { HydropowerSchematicSvg } from './HydropowerSchematicSvg';
+import { HydroPowerhouseCutawayModal } from './HydroPowerhouseCutawayModal';
+import { EquipmentDetailModal } from './EquipmentDetailModal';
+import { TurbineHillChartSimulator } from './modules/TurbineHillChartSimulator';
+import { TurbineSelectionGuideLab } from './modules/TurbineSelectionGuideLab';
+import { GeneratorPqCapabilityCurveSimulator } from './modules/GeneratorPqCapabilityCurveSimulator';
+import { GridSynchronizationSimulator } from './modules/GridSynchronizationSimulator';
+import { GeneratorNeutralEarthingLab } from './modules/GeneratorNeutralEarthingLab';
+import { HydroAssetHealthVibrationLab } from './modules/HydroAssetHealthVibrationLab';
+import { GenerationDeliverablesExportEngine } from './modules/GenerationDeliverablesExportEngine';
 import { ProductionPowerCalculator } from './ProductionPowerCalculator';
 import { CameroonFleetExplorer } from './CameroonFleetExplorer';
+import { OtherGenerationsJourney } from './OtherGenerationsJourney';
 import { EngineeringInfographicsGallerySection } from '../common/EngineeringInfographicsGallerySection';
-import { EngineeringInfographicCard } from '../common/EngineeringInfographicCard';
-import { EngineeringInfographicsModal } from '../common/EngineeringInfographicsModal';
-import { Image as ImageIcon } from 'lucide-react';
-import { engineeringAssets, getEngineeringImageUrl } from '../../services/engineeringAssets';
-import type { GenerationTechnologyId, ProductionMainSection } from './types';
 
-const SECTION_ICONS: Record<string, React.FC<{ className?: string }>> = {
-  Sun,
-  TrendingUp,
-  Zap,
-  Layers,
-  Sliders,
-  Cpu
-};
+// Central Reactive Data Mesh Store
+import {
+  useGenerationProjectStore,
+  type GenerationTechnology
+} from './services/useGenerationProjectStore';
+import type { ProductionEquipment, ProtectionFunctionDetail, GenerationTechnologyId } from './types';
+
+// Lazy load deep 24-subsystem master workbench
+const HydropowerMasterWorkbench = lazy(() =>
+  import('../hydropower/HydropowerMasterWorkbench').then(m => ({ default: m.HydropowerMasterWorkbench }))
+);
 
 interface EnergyProductionMainViewProps {
   initialTechnology?: GenerationTechnologyId;
@@ -57,764 +90,1027 @@ export const EnergyProductionMainView: React.FC<EnergyProductionMainViewProps> =
   locale = 'fr',
   onSelectEquipment
 }) => {
-  const [activeTech, setActiveTech] = useState<GenerationTechnologyId | null>(initialTechnology || null);
-  const [selectedSectionNumber, setSelectedSectionNumber] = useState<number>(1);
-  const [activeMainTab, setActiveMainTab] = useState<'pillars' | 'simulator' | 'cameroon_fleet' | 'infographics'>('pillars');
-  const [infographicSubTab, setInfographicSubTab] = useState<'how_power_generation_works' | 'main_types_of_power_generation' | 'thermal_power_plant_energy_conversion'>('how_power_generation_works');
-  const [modalInfographicId, setModalInfographicId] = useState<string | null>(null);
+  // 1. Centralized Reactive Engineering Store
+  const store = useGenerationProjectStore('nachtigal');
+
+  // 2. UI Controllers & Modals
   const [isSidePanelOpen, setIsSidePanelOpen] = useState<boolean>(false);
-  const [sidebarSearch, setSidebarSearch] = useState<string>('');
+  const [selectedEquipmentForModal, setSelectedEquipmentForModal] = useState<ProductionEquipment | null>(null);
+  const [isCutawayModalOpen, setIsCutawayModalOpen] = useState<boolean>(false);
+  const [activeStage17Id, setActiveStage17Id] = useState<string>('stage-turbine');
+  const [selectedProtectionDetail, setSelectedProtectionDetail] = useState<ProtectionFunctionDetail | null>(null);
+  const [isPrinciplesModalOpen, setIsPrinciplesModalOpen] = useState<boolean>(false);
 
-  // If a specific technology journey is active, render it directly
-  if (activeTech === 'hydro') {
-    return (
-      <HydropowerVisualJourney 
-        locale={locale}
-        onBackToOverview={() => setActiveTech(null)} 
-        onSelectGlobalEquipment={onSelectEquipment}
-      />
-    );
-  }
+  // Sub-Tab Navigation for each of the 5 Stages
+  const [stage1Tab, setStage1Tab] = useState<'FLEET' | 'SIZING' | 'PHYSICS_SOURCES' | 'OTHER_TECHS'>('FLEET');
+  const [stage2Tab, setStage2Tab] = useState<'SCHEMATIC_17' | 'CUTAWAY' | 'HILL_CHART' | 'TURBINE_SELECTION' | 'TURBINE_TYPES'>('SCHEMATIC_17');
+  const [stage3Tab, setStage3Tab] = useState<'PQ_DIAGRAM' | 'SYNCHRONIZATION' | 'PRIMARY_CONTROL' | 'ELECTROMAGNETIC' | 'ENERGY_BALANCE'>('PQ_DIAGRAM');
+  const [stage4Tab, setStage4Tab] = useState<'PROTECTION_12' | 'NEUTRAL_EARTHING' | 'STATION_BOP'>('PROTECTION_12');
+  const [stage5Tab, setStage5Tab] = useState<'DOSSIER_BOQ' | 'COMMISSIONING' | 'VIBRATION_HEALTH' | 'POSTERS' | 'DEEP_WORKBENCH'>('DOSSIER_BOQ');
 
-  if (activeTech) {
-    return (
-      <OtherGenerationsJourney
-        technologyId={activeTech}
-        locale={locale}
-        onSelectTechnology={(techId) => setActiveTech(techId)}
-        onBackToOverview={() => setActiveTech(null)}
-        onSelectGlobalEquipment={onSelectEquipment}
-      />
-    );
-  }
+  // Active Stage 17 selection
+  const currentStage17 = HYDRO_PROCESS_STAGES.find(s => s.id === activeStage17Id) || HYDRO_PROCESS_STAGES[9];
+  const currentEquipment17 = HYDRO_EQUIPMENT_MAP[currentStage17.equipmentId];
 
-  const selectedSection = PRODUCTION_MAJOR_SECTIONS.find(s => s.number === selectedSectionNumber) || PRODUCTION_MAJOR_SECTIONS[0];
-  const SectionIcon = SECTION_ICONS[selectedSection.icon] || Zap;
+  // Helper for equipment inspection
+  const handleInspectEquipment = (eqId: string) => {
+    const eq = HYDRO_EQUIPMENT_MAP[eqId];
+    if (eq) {
+      setSelectedEquipmentForModal(eq);
+    }
+    onSelectEquipment?.(eqId);
+  };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300 pb-16">
+    <div className="space-y-6 font-mono animate-in fade-in duration-300 pb-16">
       
-      {/* 1. AUTHORITATIVE ECOSYSTEM IMAGE HERO (Primary Visual Entry Point) */}
+      {/* 0. Authoritative Ecosystem Reference Hero (Page 1: Energy Resources & Generation) */}
       <AuthoritativeEcosystemHero
         stage="generation"
         locale={locale}
         onNavigateToDomain={onNavigateToDomain}
-        onSelectEquipment={onSelectEquipment}
+        onSelectEquipment={handleInspectEquipment}
         isSidePanelOpen={isSidePanelOpen}
         onToggleSidePanel={() => setIsSidePanelOpen(!isSidePanelOpen)}
         activePillarLabel={
-          activeMainTab === 'pillars' 
-            ? (locale === 'en' ? `Pillar ${selectedSection.number}: ${selectedSection.titleEn}` : `Pilier ${selectedSection.number}: ${selectedSection.titleFr}`)
-            : activeMainTab === 'simulator'
-            ? (locale === 'en' ? 'Power Simulator' : 'Simulateur de Puissance')
-            : activeMainTab === 'cameroon_fleet'
-            ? (locale === 'en' ? 'Cameroon Generation Fleet' : 'Parc National Cameroun')
-            : (locale === 'en' ? 'IEC Engineering Posters' : 'Schémas CEI')
+          store.activeStage === 1 ? (locale === 'fr' ? 'Étape 1 : Ressources, Hydrologie & Parc National' : 'Stage 1: Resources & National Fleet') :
+          store.activeStage === 2 ? (locale === 'fr' ? 'Étape 2 : Génie Civil, Conduites & Turbines' : 'Stage 2: Civil Works, Penstocks & Turbines') :
+          store.activeStage === 3 ? (locale === 'fr' ? 'Étape 3 : Alternateur, Diagramme P-Q & Stabilité' : 'Stage 3: Alternator, P-Q Curve & Stability') :
+          store.activeStage === 4 ? (locale === 'fr' ? 'Étape 4 : Auxiliaires BoP, Neutre & Protections ANSI' : 'Stage 4: BoP Auxiliaries, Neutral & Protections') :
+          (locale === 'fr' ? 'Étape 5 : Essais SAT, O&M & Dossier DQE FCFA' : 'Stage 5: SAT Tests, O&M & BOQ FCFA')
         }
-        totalPillarsCount={6}
+        totalPillarsCount={5}
       />
 
-      {/* 2. REORGANIZED WORKSPACE: SIDE ENGINEERING NAVIGATOR + MAIN ENGINEERING WORKSPACE */}
+      {/* 0.5 Executive First-View Architecture & 7 Orientation Questions Banner */}
+      <GenerationOrientationBanner
+        locale={locale}
+        onNavigateStage={store.setActiveStage}
+        onNavigateToDomain={onNavigateToDomain}
+      />
+
+      {/* 1. Master Command Header HUD */}
+      <GenerationCommandHeader
+        locale={locale}
+        activeStage={store.activeStage}
+        onSelectStage={store.setActiveStage}
+        activeTechnology={store.activeTechnology}
+        onSelectTechnology={store.setActiveTechnology}
+        selectedPlantId={store.selectedPlantId}
+        onSelectPlant={store.setSelectedPlantId}
+        onOpenPrinciplesDrawer={() => setIsPrinciplesModalOpen(true)}
+        onOpenDossier={() => {
+          store.setActiveStage(5);
+          setStage5Tab('DOSSIER_BOQ');
+        }}
+        activePlant={store.activePlant}
+        powerMw={store.calculations.electricalActivePowerMw}
+        currentAmps={store.calculations.statorNominalCurrentAmps}
+        headM={store.params.headM}
+        flowM3s={store.params.flowM3s}
+        voltageKv={store.params.generatorVoltageKv}
+        stepUpKv={store.params.stepUpVoltageKv}
+      />
+
+      {/* Main Workspace Layout with Side Navigator */}
       <div className="flex flex-col lg:flex-row items-start gap-6">
 
-        {/* SIDE ENGINEERING NAVIGATOR (Accessible, Reorganized to the Side) */}
+        {/* SIDE ENGINEERING NAVIGATOR */}
         {isSidePanelOpen && (
           <aside className="w-full lg:w-80 shrink-0 space-y-4 font-mono text-xs animate-in slide-in-from-left duration-200">
-            <div className="p-4 rounded-2xl bg-slate-950/90 border border-slate-800 shadow-xl space-y-4">
-              
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+            <div className="p-4 rounded-2xl bg-[#090D14] border border-[#222B38] shadow-xl space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-[#222B38]">
                 <div className="flex items-center gap-2">
-                  <Layers className="w-4 h-4 text-emerald-400" />
+                  <Layers className="w-4 h-4 text-sky-400" />
                   <span className="font-bold text-white uppercase tracking-wider text-[11px]">
-                    {locale === 'en' ? 'Engineering Navigator' : 'Volet d\'Ingénierie D01'}
+                    {locale === 'fr' ? 'Parcours 5 Étapes D01' : '5-Stage Engineering'}
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsSidePanelOpen(false)}
-                  className="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-                  title={locale === 'en' ? 'Collapse side panel' : 'Replier le volet'}
+                  className="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                  title={locale === 'fr' ? 'Replier le volet' : 'Collapse side panel'}
                 >
                   <PanelLeftClose className="w-4 h-4" />
                 </button>
               </div>
 
-              {/* Quick Search inside side panel */}
-              <div className="relative">
-                <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-slate-500" />
-                <input
-                  type="text"
-                  placeholder={locale === 'en' ? 'Filter pillars & modules...' : 'Filtrer les piliers & modules...'}
-                  value={sidebarSearch}
-                  onChange={(e) => setSidebarSearch(e.target.value)}
-                  className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-200 placeholder-slate-500 text-xs focus:outline-hidden focus:border-emerald-500/60"
-                />
-              </div>
-
-              {/* Module Categories Tabs */}
-              <div className="space-y-1">
-                <span className="text-[10px] font-bold uppercase text-slate-500 tracking-wider">
-                  {locale === 'en' ? 'Core Engineering Framework' : 'Les 6 Piliers Fondamentaux'}
-                </span>
-                <div className="space-y-1 pt-1">
-                  {PRODUCTION_MAJOR_SECTIONS
-                    .filter(sec => {
-                      if (!sidebarSearch.trim()) return true;
-                      const q = sidebarSearch.toLowerCase();
-                      return (
-                        sec.titleEn.toLowerCase().includes(q) ||
-                        sec.titleFr.toLowerCase().includes(q) ||
-                        sec.subtitleEn.toLowerCase().includes(q) ||
-                        sec.subtitleFr.toLowerCase().includes(q)
-                      );
-                    })
-                    .map((sec) => {
-                      const Icon = SECTION_ICONS[sec.icon] || Zap;
-                      const isSelected = activeMainTab === 'pillars' && sec.number === selectedSectionNumber;
-                      return (
-                        <button
-                          key={sec.id}
-                          type="button"
-                          onClick={() => {
-                            setActiveMainTab('pillars');
-                            setSelectedSectionNumber(sec.number);
-                          }}
-                          className={`w-full p-2 rounded-xl border text-left transition-all flex items-center justify-between cursor-pointer ${
-                            isSelected
-                              ? 'bg-emerald-500/15 border-emerald-500/60 text-white shadow-xs'
-                              : 'bg-slate-900/60 border-slate-800/80 text-slate-400 hover:bg-slate-850 hover:text-slate-200'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2 min-w-0">
-                            <span className={`w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                              isSelected ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-400'
-                            }`}>
-                              {sec.number}
-                            </span>
-                            <span className="text-xs truncate font-medium">
-                              {locale === 'en' ? sec.titleEn : sec.titleFr}
-                            </span>
-                          </div>
-                          <Icon className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-emerald-400' : 'text-slate-500'}`} />
-                        </button>
-                      );
-                    })}
+              {/* Quick Active Plant Telemetry */}
+              <div className="p-2.5 rounded-xl bg-[#0E141F] border border-sky-500/30 text-[11px] space-y-1">
+                <div className="text-[10px] text-slate-400 uppercase">{locale === 'fr' ? 'Centrale Active' : 'Active Plant'}</div>
+                <div className="font-bold text-sky-300 truncate">{store.activePlant.name}</div>
+                <div className="text-[10px] text-slate-400">
+                  {store.calculations.electricalActivePowerMw} MW • {store.activePlant.gridZone} • In = {store.calculations.statorNominalCurrentAmps} A
                 </div>
               </div>
 
-              {/* Specialized Lab Tools */}
-              <div className="space-y-1 pt-2 border-t border-slate-800">
-                <span className="text-[10px] font-bold uppercase text-slate-500 tracking-wider">
-                  {locale === 'en' ? 'Simulation & National Grid' : 'Simulations & Parc National'}
-                </span>
-                <div className="space-y-1 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => setActiveMainTab('simulator')}
-                    className={`w-full p-2 rounded-xl border text-left transition-all flex items-center justify-between cursor-pointer ${
-                      activeMainTab === 'simulator'
-                        ? 'bg-cyan-500/15 border-cyan-500/60 text-cyan-300 shadow-xs'
-                        : 'bg-slate-900/60 border-slate-800/80 text-slate-400 hover:bg-slate-850 hover:text-slate-200'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <Sliders className="w-4 h-4 text-cyan-400" />
-                      <span className="text-xs font-medium">{locale === 'en' ? 'Power Simulator' : 'Simulateur de Puissance'}</span>
-                    </div>
-                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800">Lab</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setActiveMainTab('cameroon_fleet')}
-                    className={`w-full p-2 rounded-xl border text-left transition-all flex items-center justify-between cursor-pointer ${
-                      activeMainTab === 'cameroon_fleet'
-                        ? 'bg-emerald-500/15 border-emerald-500/60 text-emerald-300 shadow-xs'
-                        : 'bg-slate-900/60 border-slate-800/80 text-slate-400 hover:bg-slate-850 hover:text-slate-200'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <Zap className="w-4 h-4 text-emerald-400" />
-                      <span className="text-xs font-medium">{locale === 'en' ? 'Cameroon Assets' : 'Parc National (RIS/RIN)'}</span>
-                    </div>
-                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">1.5 GW</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setActiveMainTab('infographics')}
-                    className={`w-full p-2 rounded-xl border text-left transition-all flex items-center justify-between cursor-pointer ${
-                      activeMainTab === 'infographics'
-                        ? 'bg-amber-400/15 border-amber-400/60 text-amber-300 shadow-xs'
-                        : 'bg-slate-900/60 border-slate-800/80 text-slate-400 hover:bg-slate-850 hover:text-slate-200'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <ImageIcon className="w-4 h-4 text-amber-400" />
-                      <span className="text-xs font-medium">{locale === 'en' ? 'IEC Engineering Posters' : 'Schémas & Infographies CEI'}</span>
-                    </div>
-                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-800">HD</span>
-                  </button>
-                </div>
+              {/* 5 Stages Navigation List */}
+              <div className="space-y-1.5">
+                {[
+                  { stage: 1 as const, titleFr: '1. Ressources & Parc National', titleEn: '1. Resources & Fleet', desc: 'Hydrologie & Sizing' },
+                  { stage: 2 as const, titleFr: '2. Génie Civil & Turbines', titleEn: '2. Civil Works & Turbines', desc: '17 Étapes SVG & Hill Chart' },
+                  { stage: 3 as const, titleFr: '3. Alternateur & Stabilité', titleEn: '3. Alternator & Stability', desc: 'Plan P-Q & Boucles AVR' },
+                  { stage: 4 as const, titleFr: '4. Auxiliaires BoP & Protections', titleEn: '4. Station BoP & Protection', desc: 'Neutre & 12 Relais ANSI' },
+                  { stage: 5 as const, titleFr: '5. Essais, O&M & Dossier DQE', titleEn: '5. Commissioning & BOQ', desc: 'Délestage & DQE FCFA' }
+                ].map((st) => {
+                  const isSelected = store.activeStage === st.stage;
+                  return (
+                    <button
+                      key={st.stage}
+                      type="button"
+                      onClick={() => store.setActiveStage(st.stage)}
+                      className={`w-full p-2.5 rounded-xl border text-left transition-all flex items-center justify-between cursor-pointer ${
+                        isSelected
+                          ? 'bg-sky-500/20 border-sky-400 text-white shadow-xs'
+                          : 'bg-[#0E141F]/80 border-[#222B38] text-slate-400 hover:bg-[#161B22] hover:text-slate-200'
+                      }`}
+                    >
+                      <div>
+                        <div className={`text-xs font-bold ${isSelected ? 'text-sky-300' : 'text-slate-300'}`}>
+                          {locale === 'fr' ? st.titleFr : st.titleEn}
+                        </div>
+                        <div className="text-[10px] text-slate-500">
+                          {st.desc}
+                        </div>
+                      </div>
+                      {isSelected && <ChevronRight className="w-3.5 h-3.5 text-sky-400 shrink-0" />}
+                    </button>
+                  );
+                })}
               </div>
-
-              {/* Dedicated Technology Journeys */}
-              <div className="space-y-1 pt-2 border-t border-slate-800">
-                <span className="text-[10px] font-bold uppercase text-slate-500 tracking-wider">
-                  {locale === 'en' ? 'Technology Journeys' : 'Filières de Génération'}
-                </span>
-                <div className="grid grid-cols-1 gap-1.5 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => setActiveTech('hydro')}
-                    className="p-2 rounded-xl bg-gradient-to-r from-sky-950/80 to-slate-900 border border-sky-500/40 hover:border-sky-400 text-left transition-all flex items-center justify-between group cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Waves className="w-3.5 h-3.5 text-sky-400" />
-                      <span className="text-xs text-white font-semibold group-hover:text-sky-300">{locale === 'en' ? 'Hydropower (Flagship)' : 'Hydroélectricité (Majeur)'}</span>
-                    </div>
-                    <ArrowRight className="w-3 h-3 text-sky-400 group-hover:translate-x-0.5 transition-transform" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setActiveTech('solar')}
-                    className="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-amber-500/50 text-left transition-all flex items-center justify-between group cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Sun className="w-3.5 h-3.5 text-amber-400" />
-                      <span className="text-xs text-slate-300 group-hover:text-amber-300">{locale === 'en' ? 'Solar Photovoltaic' : 'Solaire Photovoltaïque'}</span>
-                    </div>
-                    <ArrowRight className="w-3 h-3 text-amber-400 group-hover:translate-x-0.5 transition-transform" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setActiveTech('wind')}
-                    className="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-cyan-500/50 text-left transition-all flex items-center justify-between group cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Wind className="w-3.5 h-3.5 text-cyan-400" />
-                      <span className="text-xs text-slate-300 group-hover:text-cyan-300">{locale === 'en' ? 'Wind Generation' : 'Énergie Éolienne'}</span>
-                    </div>
-                    <ArrowRight className="w-3 h-3 text-cyan-400 group-hover:translate-x-0.5 transition-transform" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setActiveTech('thermal')}
-                    className="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-orange-500/50 text-left transition-all flex items-center justify-between group cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Flame className="w-3.5 h-3.5 text-orange-400" />
-                      <span className="text-xs text-slate-300 group-hover:text-orange-300">{locale === 'en' ? 'Thermal CCGT & Gas' : 'Thermique CCGT & Gaz'}</span>
-                    </div>
-                    <ArrowRight className="w-3 h-3 text-orange-400 group-hover:translate-x-0.5 transition-transform" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setActiveTech('biomass')}
-                    className="p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-emerald-500/50 text-left transition-all flex items-center justify-between group cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2">
-                      <TreePine className="w-3.5 h-3.5 text-emerald-400" />
-                      <span className="text-xs text-slate-300 group-hover:text-emerald-300">{locale === 'en' ? 'Biomass Cogeneration' : 'Biomasse & Dérivés'}</span>
-                    </div>
-                    <ArrowRight className="w-3 h-3 text-emerald-400 group-hover:translate-x-0.5 transition-transform" />
-                  </button>
-                </div>
-              </div>
-
             </div>
           </aside>
         )}
 
-        {/* MAIN ENGINEERING WORKSPACE AREA */}
-        <main className="flex-1 min-w-0 space-y-6">
+        {/* MAIN STAGE CONTENT CANVAS */}
+        <main className="flex-1 min-w-0 w-full space-y-6">
 
-          {/* Quick toggle if side panel is closed */}
-          {!isSidePanelOpen && (
-            <button
-              type="button"
-              onClick={() => setIsSidePanelOpen(true)}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 text-slate-300 hover:text-white text-xs font-mono transition-all cursor-pointer shadow-md"
-            >
-              <PanelLeftOpen className="w-4 h-4 text-emerald-400" />
-              <span>{locale === 'en' ? 'Show Engineering Navigator (6 Pillars)' : 'Ouvrir le Volet d\'Ingénierie (6 Piliers)'}</span>
-            </button>
-          )}
-          
-          {/* Quick Technology Selector Bar with Industrial Images */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-          {/* Hydropower Card (Flagship) */}
-          <div 
-            onClick={() => setActiveTech('hydro')}
-            className="group relative rounded-2xl bg-gradient-to-b from-sky-950/80 to-slate-900/90 border border-sky-500/50 hover:border-sky-400 hover:shadow-lg hover:shadow-sky-500/20 transition-all cursor-pointer flex flex-col justify-between overflow-hidden"
-          >
-            <div className="relative h-24 w-full overflow-hidden bg-slate-900">
-              <img
-                src={getEngineeringImageUrl(engineeringAssets.generation.hydroRunner)}
-                alt="Francis Turbine Runner"
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80 group-hover:opacity-100"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-              <div className="absolute top-2 left-2 flex items-center gap-1">
-                <div className="w-6 h-6 rounded-lg bg-sky-900/90 border border-sky-500/40 flex items-center justify-center text-sky-300">
-                  <Waves className="w-3.5 h-3.5" />
-                </div>
-              </div>
-              <span className="absolute top-2 right-2 px-1.5 py-0.5 rounded-full text-[9px] font-bold font-mono bg-sky-500 text-slate-950">
-                24 PTS
-              </span>
-              <div className="absolute bottom-1.5 left-2 text-[10px] font-mono text-sky-300 font-semibold">
-                IEC 60034 / Nachtigal
-              </div>
-            </div>
-
-            <div className="p-3.5 space-y-1.5 flex-1 flex flex-col justify-between">
-              <div>
-                <h3 className="font-bold text-white group-hover:text-sky-300 transition-colors text-sm">
-                  Hydroélectricité
-                </h3>
-                <p className="text-xs text-slate-400 leading-snug line-clamp-2">
-                  Parcours 17 étapes de la retenue au réseau 225 kV. Turbines Francis, Pelton, Kaplan & GSU.
-                </p>
-              </div>
-              <div className="pt-2 flex items-center gap-1 text-xs font-semibold text-sky-400 group-hover:translate-x-0.5 transition-transform">
-                <span>Lancer le Parcours</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </div>
-            </div>
-          </div>
-
-          {/* Solar PV Card */}
-          <div 
-            onClick={() => setActiveTech('solar')}
-            className="group relative rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-amber-500/50 hover:bg-slate-800/60 transition-all cursor-pointer flex flex-col justify-between overflow-hidden"
-          >
-            <div className="relative h-24 w-full overflow-hidden bg-slate-900">
-              <img
-                src={getEngineeringImageUrl(engineeringAssets.generation.solarPlant)}
-                alt="Solar PV Array"
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80 group-hover:opacity-100"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-              <div className="absolute top-2 left-2 flex items-center gap-1">
-                <div className="w-6 h-6 rounded-lg bg-amber-950/90 border border-amber-600/40 flex items-center justify-center text-amber-400">
-                  <Sun className="w-3.5 h-3.5" />
-                </div>
-              </div>
-              <span className="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[9px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold">
-                1500 V DC
-              </span>
-              <div className="absolute bottom-1.5 left-2 text-[10px] font-mono text-amber-300 font-semibold">
-                IEC 62446
-              </div>
-            </div>
-
-            <div className="p-3.5 space-y-1.5 flex-1 flex flex-col justify-between">
-              <div>
-                <h3 className="font-bold text-white group-hover:text-amber-300 transition-colors text-sm">
-                  Solaire Photovoltaïque
-                </h3>
-                <p className="text-xs text-slate-400 leading-snug line-clamp-2">
-                  Rayonnement, chaînes 1 500 Vcc, boîtes DC, onduleurs centraux et postes MT.
-                </p>
-              </div>
-              <div className="pt-2 flex items-center gap-1 text-xs font-semibold text-amber-400">
-                <span>Explorer la Chaîne</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </div>
-            </div>
-          </div>
-
-          {/* Wind Power Card */}
-          <div 
-            onClick={() => setActiveTech('wind')}
-            className="group relative rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyan-500/50 hover:bg-slate-800/60 transition-all cursor-pointer flex flex-col justify-between overflow-hidden"
-          >
-            <div className="relative h-24 w-full overflow-hidden bg-slate-900">
-              <img
-                src={getEngineeringImageUrl(engineeringAssets.generation.windTurbines)}
-                alt="Wind Turbines"
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80 group-hover:opacity-100"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-              <div className="absolute top-2 left-2 flex items-center gap-1">
-                <div className="w-6 h-6 rounded-lg bg-cyan-950/90 border border-cyan-600/40 flex items-center justify-center text-cyan-400">
-                  <Wind className="w-3.5 h-3.5" />
-                </div>
-              </div>
-              <span className="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[9px] font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold">
-                DFIG / PMSG
-              </span>
-              <div className="absolute bottom-1.5 left-2 text-[10px] font-mono text-cyan-300 font-semibold">
-                IEC 61400
-              </div>
-            </div>
-
-            <div className="p-3.5 space-y-1.5 flex-1 flex flex-col justify-between">
-              <div>
-                <h3 className="font-bold text-white group-hover:text-cyan-300 transition-colors text-sm">
-                  Énergie Éolienne
-                </h3>
-                <p className="text-xs text-slate-400 leading-snug line-clamp-2">
-                  Pales pitch, multiplicateur, génératrice DFIG/PMSG, convertisseur et transformateur.
-                </p>
-              </div>
-              <div className="pt-2 flex items-center gap-1 text-xs font-semibold text-cyan-400">
-                <span>Explorer la Chaîne</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </div>
-            </div>
-          </div>
-
-          {/* Thermal CCGT Card */}
-          <div 
-            onClick={() => setActiveTech('thermal')}
-            className="group relative rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-orange-500/50 hover:bg-slate-800/60 transition-all cursor-pointer flex flex-col justify-between overflow-hidden"
-          >
-            <div className="relative h-24 w-full overflow-hidden bg-slate-900">
-              <img
-                src={getEngineeringImageUrl(engineeringAssets.generation.thermalCcgt)}
-                alt="Combined Cycle Gas Turbine"
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80 group-hover:opacity-100"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-              <div className="absolute top-2 left-2 flex items-center gap-1">
-                <div className="w-6 h-6 rounded-lg bg-orange-950/90 border border-orange-600/40 flex items-center justify-center text-orange-400">
-                  <Flame className="w-3.5 h-3.5" />
-                </div>
-              </div>
-              <span className="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[9px] font-mono bg-orange-500/20 text-orange-300 border border-orange-500/30 font-bold">
-                η ≈ 60%
-              </span>
-              <div className="absolute bottom-1.5 left-2 text-[10px] font-mono text-orange-300 font-semibold">
-                Brayton-Rankine
-              </div>
-            </div>
-
-            <div className="p-3.5 space-y-1.5 flex-1 flex flex-col justify-between">
-              <div>
-                <h3 className="font-bold text-white group-hover:text-orange-300 transition-colors text-sm">
-                  Thermique & Gaz (CCGT)
-                </h3>
-                <p className="text-xs text-slate-400 leading-snug line-clamp-2">
-                  Cycle Brayton, turbine à gaz, chaudière HRSG, turbine vapeur Rankine et turbo-alternateur.
-                </p>
-              </div>
-              <div className="pt-2 flex items-center gap-1 text-xs font-semibold text-orange-400">
-                <span>Explorer la Chaîne</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </div>
-            </div>
-          </div>
-
-          {/* Biomass Card */}
-          <div 
-            onClick={() => setActiveTech('biomass')}
-            className="group relative rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-800/60 transition-all cursor-pointer flex flex-col justify-between overflow-hidden"
-          >
-            <div className="relative h-24 w-full overflow-hidden bg-slate-900">
-              <img
-                src={getEngineeringImageUrl(engineeringAssets.generation.biomassPlant)}
-                alt="Biomass Power Plant"
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80 group-hover:opacity-100"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-              <div className="absolute top-2 left-2 flex items-center gap-1">
-                <div className="w-6 h-6 rounded-lg bg-emerald-950/90 border border-emerald-600/40 flex items-center justify-center text-emerald-400">
-                  <TreePine className="w-3.5 h-3.5" />
-                </div>
-              </div>
-              <span className="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[9px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">
-                Cogénération
-              </span>
-              <div className="absolute bottom-1.5 left-2 text-[10px] font-mono text-emerald-300 font-semibold">
-                EN 12952
-              </div>
-            </div>
-
-            <div className="p-3.5 space-y-1.5 flex-1 flex flex-col justify-between">
-              <div>
-                <h3 className="font-bold text-white group-hover:text-emerald-300 transition-colors text-sm">
-                  Biomasse & Dérivés
-                </h3>
-                <p className="text-xs text-slate-400 leading-snug line-clamp-2">
-                  Combustion sur lit fluidisé, cogénération vapeur, traitement des fumées et alternateur.
-                </p>
-              </div>
-              <div className="pt-2 flex items-center gap-1 text-xs font-semibold text-emerald-400">
-                <span>Explorer la Chaîne</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-      {/* DOMAIN MODULE SWITCHER TABS */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-2 rounded-2xl bg-slate-950/80 border border-slate-800 shadow-md">
-        <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
-          <button
-            onClick={() => setActiveMainTab('pillars')}
-            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 ${
-              activeMainTab === 'pillars'
-                ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/20'
-                : 'text-slate-400 hover:text-white hover:bg-slate-900'
-            }`}
-          >
-            <Layers className="w-4 h-4" />
-            <span>{locale === 'en' ? '1. The 6 Engineering Pillars' : '1. Les 6 Piliers Fondamentaux'}</span>
-          </button>
-          <button
-            onClick={() => setActiveMainTab('simulator')}
-            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 ${
-              activeMainTab === 'simulator'
-                ? 'bg-cyan-500 text-slate-950 font-bold shadow-lg shadow-cyan-500/20'
-                : 'text-slate-400 hover:text-white hover:bg-slate-900'
-            }`}
-          >
-            <Sliders className="w-4 h-4" />
-            <span>{locale === 'en' ? '2. Power Simulator & Efficiencies' : '2. Simulateur de Puissance & Rendements'}</span>
-          </button>
-          <button
-            onClick={() => setActiveMainTab('cameroon_fleet')}
-            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 ${
-              activeMainTab === 'cameroon_fleet'
-                ? 'bg-emerald-500 text-slate-950 font-bold shadow-lg shadow-emerald-500/20'
-                : 'text-slate-400 hover:text-white hover:bg-slate-900'
-            }`}
-          >
-            <Zap className="w-4 h-4" />
-            <span>{locale === 'en' ? '3. Cameroon Fleet & National Assets (RIS/RIN)' : '3. Parc National & Actifs Cameroun (RIS/RIN)'}</span>
-          </button>
-          <button
-            onClick={() => setActiveMainTab('infographics')}
-            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 ${
-              activeMainTab === 'infographics'
-                ? 'bg-amber-400 text-slate-950 font-bold shadow-lg shadow-amber-400/20'
-                : 'text-slate-400 hover:text-white hover:bg-slate-900'
-            }`}
-          >
-            <ImageIcon className="w-4 h-4" />
-            <span>{locale === 'en' ? '4. Engineering Infographics' : '4. Schémas & Infographies CEI'}</span>
-          </button>
-        </div>
-
-        <div className="hidden lg:flex items-center gap-2 px-3 text-xs text-slate-500 font-mono">
-          <span>Ingénierie D01 • CEI / IEEE / SONATREL</span>
-        </div>
-      </div>
-
-      {/* VIEW 1: THE 6 MAJOR SECTIONS OF ENERGY PRODUCTION */}
-      {activeMainTab === 'pillars' && (
-        <div className="space-y-6">
-          {/* Visual Engineering Infographic Reference */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 overflow-x-auto pb-1">
-              <button
-                type="button"
-                onClick={() => setInfographicSubTab('how_power_generation_works')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  infographicSubTab === 'how_power_generation_works'
-                    ? 'bg-sky-400 text-slate-950 shadow-sm'
-                    : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
-                }`}
-              >
-                {locale === 'fr' ? '1. Chaîne de Production' : '1. Power Generation Chain'}
-              </button>
-              <button
-                type="button"
-                onClick={() => setInfographicSubTab('main_types_of_power_generation')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  infographicSubTab === 'main_types_of_power_generation'
-                    ? 'bg-sky-400 text-slate-950 shadow-sm'
-                    : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
-                }`}
-              >
-                {locale === 'fr' ? '2. Typologies de Centrales' : '2. Generation Typologies'}
-              </button>
-              <button
-                type="button"
-                onClick={() => setInfographicSubTab('thermal_power_plant_energy_conversion')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  infographicSubTab === 'thermal_power_plant_energy_conversion'
-                    ? 'bg-sky-400 text-slate-950 shadow-sm'
-                    : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
-                }`}
-              >
-                {locale === 'fr' ? '3. Cycle Thermique (Rankine)' : '3. Thermal Cycle'}
-              </button>
-            </div>
-
-            <EngineeringInfographicCard
-              infographicId={infographicSubTab}
-              locale={locale}
-              onOpenModal={(id) => setModalInfographicId(id)}
-            />
-          </div>
-
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <span className="text-xs font-mono font-semibold uppercase tracking-wider text-sky-400">
-                {locale === 'en' ? 'Core Engineering Framework' : 'Cadre d\'Ingénierie Fondamental'}
-              </span>
-              <h2 className="text-2xl font-bold text-white">
-                {locale === 'en' ? 'The 6 Pillars of Power Generation' : 'Les 6 Piliers de la Production d\'Énergie'}
-              </h2>
-            </div>
-            <div className="text-xs text-slate-400 font-mono">
-              {locale === 'en' ? 'Select a section to explore core concepts and equations' : 'Sélectionnez une section pour examiner ses concepts et équations clés'}
-            </div>
-          </div>
-
-          {/* 6 Section Selector Pills */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-            {PRODUCTION_MAJOR_SECTIONS.map((sec) => {
-              const Icon = SECTION_ICONS[sec.icon] || Zap;
-              const isSelected = sec.number === selectedSectionNumber;
-              return (
+          {/* ========================================================
+              STAGE 1: RESSOURCES, HYDROLOGIE & PARC NATIONAL
+             ======================================================== */}
+          {store.activeStage === 1 && (
+            <div className="space-y-5">
+              {/* Sub-Tabs Selector */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-[#222B38]">
                 <button
-                  key={sec.id}
-                  onClick={() => setSelectedSectionNumber(sec.number)}
-                  className={`p-3 rounded-xl border text-left transition-all flex flex-col justify-between h-28 ${
-                    isSelected
-                      ? 'bg-sky-950/90 border-sky-500 shadow-md shadow-sky-500/20 text-white'
-                      : 'bg-slate-900/70 border-slate-800 text-slate-400 hover:bg-slate-800/80 hover:text-slate-200'
+                  type="button"
+                  onClick={() => setStage1Tab('FLEET')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    stage1Tab === 'FLEET'
+                      ? 'bg-sky-400 text-slate-950 shadow-md'
+                      : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-mono font-bold ${
-                      isSelected ? 'bg-sky-500 text-white' : 'bg-slate-800 text-slate-400'
-                    }`}>
-                      {sec.number}
-                    </span>
-                    <Icon className="w-4 h-4" />
-                  </div>
-                  <div className="text-xs font-semibold leading-tight line-clamp-2">
-                    {locale === 'en' ? sec.titleEn : sec.titleFr}
-                  </div>
+                  <Building2 className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? '1. Parc de Production Cameroun (RIS/RIN)' : '1. Cameroon Generation Fleet'}</span>
                 </button>
-              );
-            })}
-          </div>
-
-          {/* Selected Section Deep-Dive Card */}
-          <div className="p-6 sm:p-8 rounded-2xl bg-slate-900 border border-slate-800 space-y-6 shadow-xl">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-sky-950 border border-sky-600/40 flex items-center justify-center text-sky-400 shrink-0">
-                  <SectionIcon className="w-6 h-6" />
-                </div>
-                <div>
-                  <span className="text-xs font-mono px-2.5 py-0.5 rounded-full bg-slate-800 text-sky-300 border border-slate-700">
-                    {locale === 'en' ? `Section ${selectedSection.number} • ${selectedSection.subtitleEn}` : `Section ${selectedSection.number} • ${selectedSection.subtitleFr}`}
-                  </span>
-                  <h3 className="text-2xl font-bold text-white mt-1">
-                    {locale === 'en' ? selectedSection.titleEn : selectedSection.titleFr}
-                  </h3>
-                  <p className="text-xs text-slate-400 italic">
-                    {locale === 'en' ? selectedSection.titleFr : selectedSection.titleEn}
-                  </p>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setStage1Tab('SIZING')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    stage1Tab === 'SIZING'
+                      ? 'bg-sky-400 text-slate-950 shadow-md'
+                      : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                  }`}
+                >
+                  <Sliders className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? '2. Simulateur de Dimensionnement Multi-Énergies' : '2. Multi-Energy Sizing Simulator'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStage1Tab('PHYSICS_SOURCES')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    stage1Tab === 'PHYSICS_SOURCES'
+                      ? 'bg-sky-400 text-slate-950 shadow-md'
+                      : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                  }`}
+                >
+                  <Sun className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? '3. Physique des Sources Primaires' : '3. Primary Energy Physics'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStage1Tab('OTHER_TECHS')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    stage1Tab === 'OTHER_TECHS'
+                      ? 'bg-sky-400 text-slate-950 shadow-md'
+                      : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                  }`}
+                >
+                  <Layers className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? '4. Filières Solaire, Éolien, CCGT & Biomasse' : '4. Solar, Wind, CCGT & Biomass'}</span>
+                </button>
               </div>
 
-              {selectedSection.number === 4 && (
-                <button
-                  onClick={() => setActiveTech('hydro')}
-                  className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-md shadow-sky-600/20 shrink-0"
-                >
-                  <span>{locale === 'en' ? 'Open Hydropower Environment' : 'Accéder à l\'Environnement Hydro'}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+              {stage1Tab === 'FLEET' && (
+                <CameroonFleetExplorer locale={locale} />
               )}
-            </div>
 
-            <p className="text-sm text-slate-300 leading-relaxed max-w-4xl">
-              {locale === 'en' ? selectedSection.introEn : selectedSection.introFr}
-            </p>
+              {stage1Tab === 'SIZING' && (
+                <ProductionPowerCalculator locale={locale} />
+              )}
 
-            {/* Section Items Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {selectedSection.items.map((item, idx) => (
-                <div 
-                  key={idx} 
-                  className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-2 hover:border-slate-700 transition-colors flex flex-col justify-between"
-                >
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between gap-2">
-                      <h4 className="font-bold text-white text-sm">
-                        {locale === 'en' ? item.titleEn : item.titleFr}
-                      </h4>
-                      {item.badge && (
-                        <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold bg-sky-950 text-sky-300 border border-sky-800/60 shrink-0">
-                          {item.badge}
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-xs text-slate-300 leading-relaxed">
-                      {locale === 'en' ? item.descriptionEn : item.descriptionFr}
+              {stage1Tab === 'PHYSICS_SOURCES' && (
+                <div className="p-6 rounded-2xl bg-[#090D14] border border-[#222B38] space-y-4">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase text-sky-400">PILIER 1 · ORIGINES PHYSIQUES DE L'ÉNERGIE</span>
+                    <h3 className="text-base font-bold text-white">
+                      {locale === 'fr' ? PRODUCTION_MAJOR_SECTIONS[0].titleFr : PRODUCTION_MAJOR_SECTIONS[0].titleEn}
+                    </h3>
+                    <p className="text-xs text-slate-400 leading-relaxed">
+                      {locale === 'fr' ? PRODUCTION_MAJOR_SECTIONS[0].introFr : PRODUCTION_MAJOR_SECTIONS[0].introEn}
                     </p>
                   </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    {PRODUCTION_MAJOR_SECTIONS[0].items.map((it, idx) => (
+                      <div key={idx} className="p-4 rounded-xl bg-[#0E141F] border border-[#222B38] space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-white text-xs">{locale === 'fr' ? it.titleFr : it.titleEn}</span>
+                          {it.badge && (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-sky-500/20 text-sky-300">
+                              {it.badge}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-slate-300 text-xs leading-relaxed">
+                          {locale === 'fr' ? it.descriptionFr : it.descriptionEn}
+                        </p>
+                        {it.equation && (
+                          <div className="p-2 rounded-lg bg-[#090D14] text-sky-300 font-bold text-[11px] border border-[#222B38]">
+                            {it.equation}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
-                  {item.equation && (
-                    <div className="mt-3 p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-cyan-300">
-                      {item.equation}
+              {stage1Tab === 'OTHER_TECHS' && (
+                <OtherGenerationsJourney
+                  technologyId="solar"
+                  locale={locale}
+                  onSelectTechnology={() => {}}
+                  onSelectGlobalEquipment={handleInspectEquipment}
+                />
+              )}
+            </div>
+          )}
+
+          {/* ========================================================
+              STAGE 2: GÉNIE CIVIL, CONDUITES & TURBINES HYDRAULIQUES
+             ======================================================== */}
+          {store.activeStage === 2 && (
+            <div className="space-y-5">
+              {/* Sub-Tabs Selector */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-[#222B38]">
+                <button
+                  type="button"
+                  onClick={() => setStage2Tab('SCHEMATIC_17')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    stage2Tab === 'SCHEMATIC_17'
+                      ? 'bg-sky-400 text-slate-950 shadow-md'
+                      : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                  }`}
+                >
+                  <Waves className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? '1. Schéma 17 Étapes (Bassin versant à 225 kV)' : '1. 17-Stage Schematic Flow'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStage2Tab('CUTAWAY')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    stage2Tab === 'CUTAWAY'
+                      ? 'bg-sky-400 text-slate-950 shadow-md'
+                      : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                  }`}
+                >
+                  <Maximize2 className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? '2. Écorché 2D Usine de Puissance' : '2. Machine Hall 2D Cutaway'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStage2Tab('HILL_CHART')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    stage2Tab === 'HILL_CHART'
+                      ? 'bg-sky-400 text-slate-950 shadow-md'
+                      : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                  }`}
+                >
+                  <Activity className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? '3. Colline de Rendement Turbine (Hill Chart)' : '3. Turbine Hill Chart'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStage2Tab('TURBINE_SELECTION')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    stage2Tab === 'TURBINE_SELECTION'
+                      ? 'bg-sky-400 text-slate-950 shadow-md'
+                      : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                  }`}
+                >
+                  <Compass className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? '4. Matrice Sélection & Vitesse Spécifique (ns)' : '4. Selection & Specific Speed (ns)'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStage2Tab('TURBINE_TYPES')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    stage2Tab === 'TURBINE_TYPES'
+                      ? 'bg-sky-400 text-slate-950 shadow-md'
+                      : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                  }`}
+                >
+                  <Cpu className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? '5. Typologies Pelton / Francis / Kaplan' : '5. Turbine Technologies'}</span>
+                </button>
+              </div>
+
+              {stage2Tab === 'SCHEMATIC_17' && (
+                <div className="space-y-4">
+                  {/* SVG Canvas Box */}
+                  <div className="p-4 rounded-2xl bg-[#090D14] border border-[#222B38] shadow-xl">
+                    <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#222B38] text-xs">
+                      <span className="font-bold text-sky-400 uppercase flex items-center gap-1.5">
+                        <Waves className="w-3.5 h-3.5" />
+                        <span>{locale === 'fr' ? 'Parcours d’Énergie Hydraulique Dynamique' : 'Dynamic Hydraulic Energy Path'}</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setIsCutawayModalOpen(true)}
+                        className="px-2.5 py-1 rounded-lg bg-sky-500/20 text-sky-300 hover:bg-sky-500/30 border border-sky-500/30 font-bold transition-all flex items-center gap-1 cursor-pointer"
+                      >
+                        <Maximize2 className="w-3 h-3" />
+                        <span>{locale === 'fr' ? 'Voir l’Écorché Usine' : 'Open Powerhouse Cutaway'}</span>
+                      </button>
+                    </div>
+
+                    <HydropowerSchematicSvg
+                      currentStageId={activeStage17Id}
+                      onSelectStage={(sId) => setActiveStage17Id(sId)}
+                      onOpenEquipment={handleInspectEquipment}
+                    />
+                  </div>
+
+                  {/* Active Step Detailed Card */}
+                  <div className="p-5 rounded-2xl bg-[#0E141F] border border-[#222B38] shadow-xl flex flex-col md:flex-row items-start justify-between gap-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 text-xs font-bold">
+                          Étape {currentStage17.stepNumber} / 17
+                        </span>
+                        <h4 className="text-base font-bold text-white">
+                          {locale === 'fr' ? currentStage17.labelFr : currentStage17.labelEn}
+                        </h4>
+                      </div>
+                      <p className="text-xs text-slate-300">
+                        {locale === 'fr' ? currentStage17.subtitleFr : currentStage17.subtitleEn}
+                      </p>
+                      <div className="text-xs text-sky-400 font-bold flex items-center gap-1.5">
+                        <span>État Énergétique :</span>
+                        <span className="text-white font-normal">{locale === 'fr' ? currentStage17.energyStateFr : currentStage17.energyStateEn}</span>
+                      </div>
+                    </div>
+
+                    {currentEquipment17 && (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedEquipmentForModal(currentEquipment17)}
+                        className="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-slate-950 font-black text-xs transition-all flex items-center gap-1.5 shrink-0 shadow-lg shadow-sky-500/20 cursor-pointer"
+                      >
+                        <FileText className="w-3.5 h-3.5" />
+                        <span>{locale === 'fr' ? 'Dossier 24 Points Équipement' : '24-Point Equipment Dossier'}</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {stage2Tab === 'CUTAWAY' && (
+                <div className="p-6 rounded-2xl bg-[#090D14] border border-[#222B38] space-y-4 text-center">
+                  <div className="max-w-xl mx-auto space-y-2">
+                    <h3 className="text-base font-bold text-white">
+                      {locale === 'fr' ? 'Écorché Architectural de l’Usine de Production' : 'Powerhouse Architectural Cutaway'}
+                    </h3>
+                    <p className="text-xs text-slate-400">
+                      {locale === 'fr'
+                        ? 'Visualisez en coupe transversale la disposition relative de la bâche spirale, du vannage, de la roue Francis, de l’arbre et de l’alternateur vertical.'
+                        : 'Explore the cross-sectional arrangement of the spiral case, distributor, Francis runner, vertical shaft, and alternator.'}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setIsCutawayModalOpen(true)}
+                      className="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs transition-all shadow-lg shadow-sky-500/20 inline-flex items-center gap-2 cursor-pointer mt-2"
+                    >
+                      <Maximize2 className="w-4 h-4" />
+                      <span>{locale === 'fr' ? 'Ouvrir l’Écorché Plein Écran' : 'Open Fullscreen Cutaway'}</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {stage2Tab === 'HILL_CHART' && (
+                <TurbineHillChartSimulator locale={locale} />
+              )}
+
+              {stage2Tab === 'TURBINE_SELECTION' && (
+                <TurbineSelectionGuideLab
+                  locale={locale}
+                  initialHeadM={store.params.headM}
+                  initialFlowM3s={store.params.flowM3s}
+                  initialPowerMw={store.calculations.electricalActivePowerMw}
+                />
+              )}
+
+              {stage2Tab === 'TURBINE_TYPES' && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {HYDRO_TURBINES.map((turb) => (
+                    <div key={turb.id} className="p-4 rounded-xl bg-[#0E141F] border border-[#222B38] space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-white text-xs">{turb.name}</span>
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-sky-500/20 text-sky-300">
+                          {turb.headRange}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-300">{turb.typicalCharacteristics}</p>
+                      <div className="p-2 rounded-lg bg-[#090D14] text-[11px] text-slate-400 border border-[#222B38]">
+                        <span className="text-sky-400 font-bold block">Débit : {turb.flowRange}</span>
+                        <span>Rendement crête : {turb.efficiencyPeak}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ========================================================
+              STAGE 3: ALTERNATEUR, DIAGRAMME P-Q & STABILITÉ
+             ======================================================== */}
+          {store.activeStage === 3 && (
+            <div className="space-y-5">
+              {/* Sub-Tabs Selector */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-[#222B38]">
+                <button
+                  type="button"
+                  onClick={() => setStage3Tab('PQ_DIAGRAM')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    stage3Tab === 'PQ_DIAGRAM'
+                      ? 'bg-sky-400 text-slate-950 shadow-md'
+                      : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                  }`}
+                >
+                  <Activity className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? '1. Diagramme P-Q & Limites de Capabilité' : '1. P-Q Capability Curve'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStage3Tab('SYNCHRONIZATION')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    stage3Tab === 'SYNCHRONIZATION'
+                      ? 'bg-sky-400 text-slate-950 shadow-md'
+                      : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                  }`}
+                >
+                  <RotateCw className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? '2. Couplage & Synchronisation Réseau (ANSI 25)' : '2. Grid Synchronization (ANSI 25)'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStage3Tab('PRIMARY_CONTROL')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    stage3Tab === 'PRIMARY_CONTROL'
+                      ? 'bg-sky-400 text-slate-950 shadow-md'
+                      : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                  }`}
+                >
+                  <Sliders className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? '3. Régulation f-P (Statisme) & AVR U-Q' : '3. Speed & Voltage Governance'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStage3Tab('ELECTROMAGNETIC')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    stage3Tab === 'ELECTROMAGNETIC'
+                      ? 'bg-sky-400 text-slate-950 shadow-md'
+                      : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                  }`}
+                >
+                  <Zap className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? '4. Conversion Électrique & Faraday-Lenz' : '4. Electromechanical Conversion'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStage3Tab('ENERGY_BALANCE')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    stage3Tab === 'ENERGY_BALANCE'
+                      ? 'bg-sky-400 text-slate-950 shadow-md'
+                      : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                  }`}
+                >
+                  <TrendingUp className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? '5. Rendements & Limites de Carnot' : '5. Efficiencies & Carnot Limits'}</span>
+                </button>
+              </div>
+
+              {stage3Tab === 'PQ_DIAGRAM' && (
+                <GeneratorPqCapabilityCurveSimulator
+                  locale={locale}
+                  ratedMva={store.calculations.apparentPowerMva}
+                  ratedPowerFactor={store.params.generatorPowerFactor}
+                  voltageKv={store.params.generatorVoltageKv}
+                />
+              )}
+
+              {stage3Tab === 'SYNCHRONIZATION' && (
+                <GridSynchronizationSimulator
+                  locale={locale}
+                  nominalVoltageKv={store.params.generatorVoltageKv}
+                />
+              )}
+
+              {stage3Tab === 'ELECTROMAGNETIC' && (
+                <div className="p-6 rounded-2xl bg-[#090D14] border border-[#222B38] space-y-4">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase text-sky-400">PILIER 3 · ÉLECTROMAGNÉTISME & SYNCHRONISME</span>
+                    <h3 className="text-base font-bold text-white">
+                      {locale === 'fr' ? PRODUCTION_MAJOR_SECTIONS[2].titleFr : PRODUCTION_MAJOR_SECTIONS[2].titleEn}
+                    </h3>
+                    <p className="text-xs text-slate-400 leading-relaxed">
+                      {locale === 'fr' ? PRODUCTION_MAJOR_SECTIONS[2].introFr : PRODUCTION_MAJOR_SECTIONS[2].introEn}
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    {PRODUCTION_MAJOR_SECTIONS[2].items.map((it, idx) => (
+                      <div key={idx} className="p-4 rounded-xl bg-[#0E141F] border border-[#222B38] space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-white text-xs">{locale === 'fr' ? it.titleFr : it.titleEn}</span>
+                          {it.badge && (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300">
+                              {it.badge}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-slate-300 text-xs leading-relaxed">
+                          {locale === 'fr' ? it.descriptionFr : it.descriptionEn}
+                        </p>
+                        {it.equation && (
+                          <div className="p-2 rounded-lg bg-[#090D14] text-amber-300 font-bold text-[11px] border border-[#222B38]">
+                            {it.equation}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {stage3Tab === 'PRIMARY_CONTROL' && (
+                <div className="p-6 rounded-2xl bg-[#090D14] border border-[#222B38] space-y-4">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase text-sky-400">PILIER 5 · BOUCLES D'ASSERVISSEMENT DYNAMIQUES</span>
+                    <h3 className="text-base font-bold text-white">
+                      {locale === 'fr' ? PRODUCTION_MAJOR_SECTIONS[4].titleFr : PRODUCTION_MAJOR_SECTIONS[4].titleEn}
+                    </h3>
+                    <p className="text-xs text-slate-400 leading-relaxed">
+                      {locale === 'fr' ? PRODUCTION_MAJOR_SECTIONS[4].introFr : PRODUCTION_MAJOR_SECTIONS[4].introEn}
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    {PRODUCTION_MAJOR_SECTIONS[4].items.map((it, idx) => (
+                      <div key={idx} className="p-4 rounded-xl bg-[#0E141F] border border-[#222B38] space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-white text-xs">{locale === 'fr' ? it.titleFr : it.titleEn}</span>
+                          {it.badge && (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300">
+                              {it.badge}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-slate-300 text-xs leading-relaxed">
+                          {locale === 'fr' ? it.descriptionFr : it.descriptionEn}
+                        </p>
+                        {it.equation && (
+                          <div className="p-2 rounded-lg bg-[#090D14] text-emerald-300 font-bold text-[11px] border border-[#222B38]">
+                            {it.equation}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {stage3Tab === 'ENERGY_BALANCE' && (
+                <div className="p-6 rounded-2xl bg-[#090D14] border border-[#222B38] space-y-4">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase text-sky-400">PILIER 2 · THERMODYNAMIQUE & CONSERVATION</span>
+                    <h3 className="text-base font-bold text-white">
+                      {locale === 'fr' ? PRODUCTION_MAJOR_SECTIONS[1].titleFr : PRODUCTION_MAJOR_SECTIONS[1].titleEn}
+                    </h3>
+                    <p className="text-xs text-slate-400 leading-relaxed">
+                      {locale === 'fr' ? PRODUCTION_MAJOR_SECTIONS[1].introFr : PRODUCTION_MAJOR_SECTIONS[1].introEn}
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    {PRODUCTION_MAJOR_SECTIONS[1].items.map((it, idx) => (
+                      <div key={idx} className="p-4 rounded-xl bg-[#0E141F] border border-[#222B38] space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-white text-xs">{locale === 'fr' ? it.titleFr : it.titleEn}</span>
+                          {it.badge && (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/20 text-cyan-300">
+                              {it.badge}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-slate-300 text-xs leading-relaxed">
+                          {locale === 'fr' ? it.descriptionFr : it.descriptionEn}
+                        </p>
+                        {it.equation && (
+                          <div className="p-2 rounded-lg bg-[#090D14] text-cyan-300 font-bold text-[11px] border border-[#222B38]">
+                            {it.equation}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ========================================================
+              STAGE 4: AUXILIAIRES BOP, NEUTRE & PROTECTIONS ANSI
+             ======================================================== */}
+          {store.activeStage === 4 && (
+            <div className="space-y-5">
+              {/* Sub-Tabs Selector */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-[#222B38]">
+                <button
+                  type="button"
+                  onClick={() => setStage4Tab('PROTECTION_12')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    stage4Tab === 'PROTECTION_12'
+                      ? 'bg-sky-400 text-slate-950 shadow-md'
+                      : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                  }`}
+                >
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? '1. Matrice des 12 Protections ANSI Alternateur' : '1. 12 ANSI Generator Protections'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStage4Tab('NEUTRAL_EARTHING')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    stage4Tab === 'NEUTRAL_EARTHING'
+                      ? 'bg-sky-400 text-slate-950 shadow-md'
+                      : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                  }`}
+                >
+                  <ShieldAlert className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? '2. Mise à la Terre Neutre Statorique (NGT)' : '2. Stator Neutral Grounding Lab'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStage4Tab('STATION_BOP')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    stage4Tab === 'STATION_BOP'
+                      ? 'bg-sky-400 text-slate-950 shadow-md'
+                      : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                  }`}
+                >
+                  <Cpu className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? '3. Services Propres (BoP) & Black Start' : '3. Station Auxiliaries & Black Start'}</span>
+                </button>
+              </div>
+
+              {stage4Tab === 'PROTECTION_12' && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {GENERATOR_PROTECTION_MATRIX.map((prot) => (
+                      <div
+                        key={prot.ansiCode}
+                        onClick={() => setSelectedProtectionDetail(prot)}
+                        className="p-3.5 rounded-xl bg-[#0E141F] border border-[#222B38] hover:border-sky-500/50 transition-all cursor-pointer space-y-2 hover:bg-[#141B26]"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 font-bold text-xs">
+                            ANSI {prot.ansiCode}
+                          </span>
+                          <span className="text-[10px] text-slate-500">{prot.standard}</span>
+                        </div>
+                        <div className="font-bold text-white text-xs">
+                          {locale === 'fr' ? prot.nameFr : prot.nameEn}
+                        </div>
+                        <p className="text-slate-400 text-[11px] line-clamp-2">
+                          {prot.whatItProtects}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Protection Detail Modal / Box */}
+                  {selectedProtectionDetail && (
+                    <div className="p-4 rounded-xl bg-[#131A26] border border-sky-500/40 space-y-3">
+                      <div className="flex items-center justify-between border-b border-[#222B38] pb-2">
+                        <span className="font-bold text-sky-300 text-xs">
+                          ANSI {selectedProtectionDetail.ansiCode} — {locale === 'fr' ? selectedProtectionDetail.nameFr : selectedProtectionDetail.nameEn}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedProtectionDetail(null)}
+                          className="text-slate-400 hover:text-white text-xs cursor-pointer"
+                        >
+                          ✕ Fermer
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                        <div>
+                          <span className="text-slate-400 block text-[10px] uppercase">Condition Anormale Détectée :</span>
+                          <span className="text-white">{selectedProtectionDetail.abnormalCondition}</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block text-[10px] uppercase">Méthode de Mesure / Relais :</span>
+                          <span className="text-slate-200">{selectedProtectionDetail.detectionMethod}</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block text-[10px] uppercase">Ordre de Déclenchement :</span>
+                          <span className="text-amber-400 font-bold">{selectedProtectionDetail.actionOccurs}</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block text-[10px] uppercase">Équipements Affectés :</span>
+                          <span className="text-emerald-400">{selectedProtectionDetail.equipmentAffected}</span>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
-              ))}
+              )}
+
+              {stage4Tab === 'NEUTRAL_EARTHING' && (
+                <GeneratorNeutralEarthingLab
+                  locale={locale}
+                  voltageKv={store.params.generatorVoltageKv}
+                  ratedMva={store.calculations.apparentPowerMva}
+                />
+              )}
+
+              {stage4Tab === 'STATION_BOP' && (
+                <div className="p-6 rounded-2xl bg-[#090D14] border border-[#222B38] space-y-4">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase text-sky-400">PILIER 6 · BALANCE OF PLANT (BOP)</span>
+                    <h3 className="text-base font-bold text-white">
+                      {locale === 'fr' ? PRODUCTION_MAJOR_SECTIONS[5].titleFr : PRODUCTION_MAJOR_SECTIONS[5].titleEn}
+                    </h3>
+                    <p className="text-xs text-slate-400 leading-relaxed">
+                      {locale === 'fr' ? PRODUCTION_MAJOR_SECTIONS[5].introFr : PRODUCTION_MAJOR_SECTIONS[5].introEn}
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    {PRODUCTION_MAJOR_SECTIONS[5].items.map((it, idx) => (
+                      <div key={idx} className="p-4 rounded-xl bg-[#0E141F] border border-[#222B38] space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-white text-xs">{locale === 'fr' ? it.titleFr : it.titleEn}</span>
+                          {it.badge && (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300">
+                              {it.badge}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-slate-300 text-xs leading-relaxed">
+                          {locale === 'fr' ? it.descriptionFr : it.descriptionEn}
+                        </p>
+                        {it.equation && (
+                          <div className="p-2 rounded-lg bg-[#090D14] text-emerald-300 font-bold text-[11px] border border-[#222B38]">
+                            {it.equation}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      {/* VIEW 2: PRODUCTION POWER CALCULATOR */}
-      {activeMainTab === 'simulator' && (
-        <ProductionPowerCalculator locale={locale} />
-      )}
+          {/* ========================================================
+              STAGE 5: ESSAIS, O&M & DOSSIER DQE FCFA
+             ======================================================== */}
+          {store.activeStage === 5 && (
+            <div className="space-y-5">
+              {/* Sub-Tabs Selector */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-[#222B38]">
+                <button
+                  type="button"
+                  onClick={() => setStage5Tab('DOSSIER_BOQ')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    stage5Tab === 'DOSSIER_BOQ'
+                      ? 'bg-sky-400 text-slate-950 shadow-md'
+                      : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                  }`}
+                >
+                  <FileCheck className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? '1. Dossier d’Ingénierie & Devis DQE (FCFA)' : '1. Engineering Dossier & BOQ (FCFA)'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStage5Tab('COMMISSIONING')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    stage5Tab === 'COMMISSIONING'
+                      ? 'bg-sky-400 text-slate-950 shadow-md'
+                      : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                  }`}
+                >
+                  <Award className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? '2. Protocoles d’Essais SAT & Délestage' : '2. SAT Commissioning & Load Rejection'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStage5Tab('VIBRATION_HEALTH')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    stage5Tab === 'VIBRATION_HEALTH'
+                      ? 'bg-sky-400 text-slate-950 shadow-md'
+                      : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                  }`}
+                >
+                  <Activity className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? '3. Diagnostic Vibratoire ISO 10816-5 & Cavitation' : '3. ISO 10816-5 Vibration & Cavitation'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStage5Tab('POSTERS')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    stage5Tab === 'POSTERS'
+                      ? 'bg-sky-400 text-slate-950 shadow-md'
+                      : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                  }`}
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? '4. Posters d’Ingénierie CEI' : '4. IEC Engineering Posters'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStage5Tab('DEEP_WORKBENCH')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    stage5Tab === 'DEEP_WORKBENCH'
+                      ? 'bg-sky-400 text-slate-950 shadow-md'
+                      : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                  }`}
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? '5. Station Complète 24 Sous-Systèmes' : '5. 24-Subsystem Deep Workbench'}</span>
+                </button>
+              </div>
 
-      {/* VIEW 3: CAMEROON GENERATION FLEET */}
-      {activeMainTab === 'cameroon_fleet' && (
-        <CameroonFleetExplorer locale={locale} />
-      )}
+              {stage5Tab === 'DOSSIER_BOQ' && (
+                <GenerationDeliverablesExportEngine
+                  locale={locale}
+                  selectedPlantId={store.selectedPlantId}
+                  technology={store.activeTechnology}
+                  headM={store.params.headM}
+                  flowM3s={store.params.flowM3s}
+                  voltageKv={store.params.generatorVoltageKv}
+                  stepUpKv={store.params.stepUpVoltageKv}
+                  calculations={store.calculations}
+                />
+              )}
 
-      {/* VIEW 4: DEDICATED ENGINEERING INFOGRAPHICS & POSTERS */}
-      {activeMainTab === 'infographics' && (
-        <div className="space-y-6">
-          <EngineeringInfographicsGallerySection
-            locale={locale}
-            filterCategory="GENERATION"
-            title={locale === 'fr' ? 'Schémas et Infographies CEI - Production Électrique' : 'IEC Engineering Infographics - Power Generation'}
-            subtitle={locale === 'fr' ? 'Diagrammes électromécaniques haute précision : conversion d\'énergie, thermodynamique, et technologies de centrales.' : 'High-precision electromechanical diagrams: energy conversion, thermodynamics, and power station architectures.'}
-          />
-        </div>
-      )}
+              {stage5Tab === 'COMMISSIONING' && (
+                <div className="p-6 rounded-2xl bg-[#090D14] border border-[#222B38] space-y-4">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase text-emerald-400">PROCÉDURES DE RÉCEPTION EN USINE & SUR SITE (CEI 60041 / CEI 61362)</span>
+                    <h3 className="text-base font-bold text-white">
+                      {locale === 'fr' ? 'Protocoles d’Essais de Mise en Service Usine' : 'Plant Commissioning & Acceptance Test Protocols'}
+                    </h3>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    <div className="p-4 rounded-xl bg-[#0E141F] border border-[#222B38] space-y-2">
+                      <span className="text-xs font-bold text-sky-400 block uppercase">1. Essais à Sec (Dry Commissioning)</span>
+                      <ul className="list-disc pl-4 text-xs text-slate-300 space-y-1">
+                        <li>Contrôle de rigidité diélectrique des enroulements statoriques (test de tenue 2·Un + 1 kV).</li>
+                        <li>Mesure de l’indice de polarisation (PI) et résistance d’isolement R_iso &gt; 1000 MΩ.</li>
+                        <li>Contrôle d’étanchéité et mise sous pression hydrostatique de la bâche spirale (1.5 × P_max).</li>
+                        <li>Essai de fonctionnement à sec du vannage et réglage des fins de course servomoteurs.</li>
+                      </ul>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-[#0E141F] border border-[#222B38] space-y-2">
+                      <span className="text-xs font-bold text-emerald-400 block uppercase">2. Essais en Eau (Wet Commissioning)</span>
+                      <ul className="list-disc pl-4 text-xs text-slate-300 space-y-1">
+                        <li>Premier remplissage en eau et contrôle de fuites des joints de palier.</li>
+                        <li>Montée en vitesse progressive jusqu’à la vitesse nominale n_nom et contrôle de survitesse.</li>
+                        <li>Essais de délestage à 25%, 50%, 75% et 100% Pn avec mesure de surpression d'onde.</li>
+                        <li>Contrôle de synchronisation automatique (ANSI 25) et prise de charge sur le réseau 225 kV.</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {stage5Tab === 'VIBRATION_HEALTH' && (
+                <HydroAssetHealthVibrationLab
+                  locale={locale}
+                  plantName={store.activePlant.name}
+                  ratedMw={store.calculations.electricalActivePowerMw}
+                />
+              )}
+
+              {stage5Tab === 'POSTERS' && (
+                <EngineeringInfographicsGallerySection
+                  locale={locale}
+                  filterCategory="GENERATION"
+                />
+              )}
+
+              {stage5Tab === 'DEEP_WORKBENCH' && (
+                <Suspense fallback={<div className="p-8 text-center text-slate-400 font-mono text-xs">Chargement de la station 24 sous-systèmes...</div>}>
+                  <HydropowerMasterWorkbench
+                    locale={locale}
+                    onBack={() => setStage5Tab('DOSSIER_BOQ')}
+                  />
+                </Suspense>
+              )}
+            </div>
+          )}
 
         </main>
       </div>
 
-      {/* Fullscreen Engineering Infographics Modal */}
-      {modalInfographicId && (
-        <EngineeringInfographicsModal
-          isOpen={!!modalInfographicId}
-          onClose={() => setModalInfographicId(null)}
-          initialInfographicId={modalInfographicId}
+      {/* 2. Modals */}
+      {/* 24-Point Equipment Dossier Modal */}
+      {selectedEquipmentForModal && (
+        <EquipmentDetailModal
+          equipment={selectedEquipmentForModal}
+          onClose={() => setSelectedEquipmentForModal(null)}
+          allEquipmentMap={HYDRO_EQUIPMENT_MAP}
           locale={locale}
         />
       )}
+
+      {/* Powerhouse Machine Hall Cutaway Modal */}
+      <HydroPowerhouseCutawayModal
+        isOpen={isCutawayModalOpen}
+        onClose={() => setIsCutawayModalOpen(false)}
+        locale={locale}
+      />
+
+      {/* Engineering Principles Modal */}
+      {isPrinciplesModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="relative w-full max-w-3xl bg-[#090D14] border border-[#222B38] rounded-2xl p-6 text-slate-100 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-[#222B38]">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-amber-400" />
+                <h3 className="text-base font-bold text-white">
+                  {locale === 'fr' ? 'Formulations Mathématiques & Principes d’Ingénierie D01' : 'Mathematical Principles & Engineering Formulations D01'}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsPrinciplesModalOpen(false)}
+                className="text-slate-400 hover:text-white cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-4 text-xs">
+              <div className="p-3.5 rounded-xl bg-[#0E141F] border border-[#222B38] space-y-1.5">
+                <div className="font-bold text-sky-300">1. Équation de Puissance Hydraulique Brute</div>
+                <div className="font-mono text-sm text-white bg-[#090D14] p-2 rounded border border-[#222B38]">
+                  P_hyd = ρ · g · Q · H = 9.81 · Q · H [kW]
+                </div>
+                <p className="text-slate-400 text-[11px]">
+                  Où ρ = 1000 kg/m³, g = 9.81 m/s², Q est le débit turbiné en m³/s et H est la chute nette d’eau en mètres après pertes de charge singulières et régulières.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-[#0E141F] border border-[#222B38] space-y-1.5">
+                <div className="font-bold text-amber-300">2. Coup de Bélier Hydraulique (Formule d’Allievi-Joukowsky)</div>
+                <div className="font-mono text-sm text-white bg-[#090D14] p-2 rounded border border-[#222B38]">
+                  Δp = ρ · a · Δv [Pa]  ;  h_max = (a · v0) / g [m]
+                </div>
+                <p className="text-slate-400 text-[11px]">
+                  Onde de surpression créée lors de la fermeture rapide du vannage en temps Ta &lt; 2L/a, nécessitant une cheminée d'équilibre pour protéger la conduite forcée.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-[#0E141F] border border-[#222B38] space-y-1.5">
+                <div className="font-bold text-emerald-300">3. Vitesse Synchrone & Constante d’Inertie H</div>
+                <div className="font-mono text-sm text-white bg-[#090D14] p-2 rounded border border-[#222B38]">
+                  n = (60 · f) / p  ;  H = E_cin / S_nom = (0.5 · J · ω²) / S_nom [secondes]
+                </div>
+                <p className="text-slate-400 text-[11px]">
+                  À 50 Hz avec 24 paires de pôles (Nachtigal), la vitesse nominale est n = (60 * 50) / 24 = 125 tr/min. H = 3.8 s procure l'inertie vitale au réseau RIS.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

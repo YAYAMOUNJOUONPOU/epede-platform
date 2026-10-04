@@ -99,6 +99,31 @@ const VOLTAGE_DATABASE: Record<TransmissionVoltageContext, VoltageData> = {
     cameroon_context_fr: 'Réseau opérationnel clé SONATREL : Ligne 225 kV double terne Nachtigal - Nyom 2 (50 km) et boucle 225 kV Yaoundé - Douala.',
     cameroon_context_en: 'Core operational SONATREL grid: Nachtigal - Nyom 2 double-circuit line (50 km) and Yaoundé - Douala 225 kV loop.'
   },
+  '110kV': {
+    voltage: '110kV',
+    nominal_kv: 110,
+    max_continuous_kv: 123,
+    title_fr: '110 kV — Sous-Transport Régional & Alimentations Minières / Industrielles',
+    title_en: '110 kV — Sub-Transmission & Industrial/Mining Infeed Corridors',
+    role_fr: 'Transport d\'énergie régional intermédiaire et alimentation des pôles industriels ou miniers isolés à forte puissance.',
+    role_en: 'Intermediate regional sub-transmission and bulk power supply for mining and heavy industrial sites.',
+    why_selected_fr: 'Alternative technico-économique au 225 kV sur des distances de 50 à 120 km avec gabarit d\'emprise réduit.',
+    why_selected_en: 'Techno-economic alternative to 225 kV over 50–120 km distances requiring smaller right-of-way width.',
+    bundle_type_fr: 'Conducteur Simple ou Biconducteur (Aster 228 / 366 mm²)',
+    bundle_type_en: 'Single or Twin Bundle (Aster 228 / 366 mm²)',
+    sil_mw: 33,
+    row_width_m: 25,
+    insulator_discs: 8,
+    creepage_mm_per_kv: 22,
+    substation_interface_fr: 'Postes 110/30 kV et transformateurs d\'évacuation ou abaisseurs industriels.',
+    substation_interface_en: '110/30 kV substations and industrial step-down transformer bays.',
+    reactive_issues_fr: 'Production réactive modérée, compensation par gradins de condensateurs MT en poste source.',
+    reactive_issues_en: 'Moderate reactive power generation, compensated by MV shunt capacitor banks at substations.',
+    protection_focus_fr: 'Protection de distance 21 numérique et protection de surintensité 50/51/51N avec téléaction.',
+    protection_focus_en: 'Numerical distance relay 21 and backup overcurrent 50/51/51N with teleprotection signaling.',
+    cameroon_context_fr: 'Liaisons régionales et projets d\'interconnexion avec les corridors miniers de l\'Est et de l\'Adamaoua.',
+    cameroon_context_en: 'Regional links and interconnection schemes for Eastern & Adamawa mining corridors.'
+  },
   '90kV': {
     voltage: '90kV',
     nominal_kv: 90,
@@ -138,7 +163,7 @@ export const VoltageLevelExplorer: React.FC<VoltageLevelExplorerProps> = ({
   const [transitDistanceKm, setTransitDistanceKm] = useState<number>(150);
 
   // Losses calculation: I = P / (sqrt(3) * U * cosPhi)
-  // Approximate R per km: 400kV (0.018 ohm/km quad), 225kV (0.030 ohm/km twin), 90kV (0.090 ohm/km single)
+  // Approximate R per km: 400kV (0.018 ohm/km quad), 225kV (0.030 ohm/km twin), 110kV (0.065 ohm/km single), 90kV (0.090 ohm/km single)
   const calcLosses = (kv: number, rKm: number) => {
     const current = (transitPowerMw * 1e6) / (Math.sqrt(3) * kv * 1e3 * 0.95);
     const rTotal = rKm * transitDistanceKm;
@@ -149,6 +174,7 @@ export const VoltageLevelExplorer: React.FC<VoltageLevelExplorerProps> = ({
 
   const loss400 = calcLosses(400, 0.018);
   const loss225 = calcLosses(225, 0.030);
+  const loss110 = calcLosses(110, 0.065);
   const loss90 = calcLosses(90, 0.090);
 
   return (
@@ -167,7 +193,7 @@ export const VoltageLevelExplorer: React.FC<VoltageLevelExplorerProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
-            {(['400kV', '225kV', '90kV'] as TransmissionVoltageContext[]).map((v) => {
+            {(['400kV', '225kV', '110kV', '90kV'] as TransmissionVoltageContext[]).map((v) => {
               const isSelected = activeVoltage === v;
               return (
                 <button
@@ -249,17 +275,17 @@ export const VoltageLevelExplorer: React.FC<VoltageLevelExplorerProps> = ({
             </div>
           </div>
 
-          <div className="lg:col-span-7 grid grid-cols-3 gap-3 text-center">
+          <div className="lg:col-span-7 grid grid-cols-2 lg:grid-cols-4 gap-2.5 text-center">
             {/* 400 kV Card */}
-            <div className={`p-3.5 rounded-xl border flex flex-col justify-between ${
+            <div className={`p-3 rounded-xl border flex flex-col justify-between ${
               activeVoltage === '400kV' ? 'bg-cyan-500/15 border-cyan-400 shadow-md' : 'bg-[#0D1117] border-[#252E38]'
             }`}>
               <div>
                 <span className="text-[10px] text-cyan-400 font-bold uppercase block">Palier 400 kV</span>
-                <span className="text-xs text-slate-400 mt-1 block">Courant: {loss400.current} A</span>
+                <span className="text-[11px] text-slate-400 mt-1 block">Courant: {loss400.current} A</span>
               </div>
               <div className="my-2">
-                <span className="text-xl font-black text-emerald-400">{loss400.lossesMw} MW</span>
+                <span className="text-lg font-black text-emerald-400">{loss400.lossesMw} MW</span>
                 <span className="text-[10px] text-slate-500 block">Pertes ({loss400.lossPercent}%)</span>
               </div>
               <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">
@@ -268,15 +294,15 @@ export const VoltageLevelExplorer: React.FC<VoltageLevelExplorerProps> = ({
             </div>
 
             {/* 225 kV Card */}
-            <div className={`p-3.5 rounded-xl border flex flex-col justify-between ${
+            <div className={`p-3 rounded-xl border flex flex-col justify-between ${
               activeVoltage === '225kV' ? 'bg-cyan-500/15 border-cyan-400 shadow-md' : 'bg-[#0D1117] border-[#252E38]'
             }`}>
               <div>
                 <span className="text-[10px] text-amber-400 font-bold uppercase block">Palier 225 kV</span>
-                <span className="text-xs text-slate-400 mt-1 block">Courant: {loss225.current} A</span>
+                <span className="text-[11px] text-slate-400 mt-1 block">Courant: {loss225.current} A</span>
               </div>
               <div className="my-2">
-                <span className="text-xl font-black text-amber-400">{loss225.lossesMw} MW</span>
+                <span className="text-lg font-black text-amber-400">{loss225.lossesMw} MW</span>
                 <span className="text-[10px] text-slate-500 block">Pertes ({loss225.lossPercent}%)</span>
               </div>
               <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">
@@ -284,16 +310,35 @@ export const VoltageLevelExplorer: React.FC<VoltageLevelExplorerProps> = ({
               </span>
             </div>
 
+            {/* 110 kV Card */}
+            <div className={`p-3 rounded-xl border flex flex-col justify-between ${
+              activeVoltage === '110kV' ? 'bg-cyan-500/15 border-cyan-400 shadow-md' : 'bg-[#0D1117] border-[#252E38]'
+            }`}>
+              <div>
+                <span className="text-[10px] text-sky-400 font-bold uppercase block">Palier 110 kV</span>
+                <span className="text-[11px] text-slate-400 mt-1 block">Courant: {loss110.current} A</span>
+              </div>
+              <div className="my-2">
+                <span className="text-lg font-black text-sky-400">{loss110.lossesMw} MW</span>
+                <span className="text-[10px] text-slate-500 block">Pertes ({loss110.lossPercent}%)</span>
+              </div>
+              <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold ${
+                loss110.lossPercent > 10 ? 'bg-amber-500/20 text-amber-300' : 'bg-sky-500/20 text-sky-300'
+              }`}>
+                {loss110.lossPercent > 10 ? 'Pertes Élevées' : 'Régional / Mines'}
+              </span>
+            </div>
+
             {/* 90 kV Card */}
-            <div className={`p-3.5 rounded-xl border flex flex-col justify-between ${
+            <div className={`p-3 rounded-xl border flex flex-col justify-between ${
               activeVoltage === '90kV' ? 'bg-cyan-500/15 border-cyan-400 shadow-md' : 'bg-[#0D1117] border-[#252E38]'
             }`}>
               <div>
                 <span className="text-[10px] text-red-400 font-bold uppercase block">Palier 90 kV</span>
-                <span className="text-xs text-slate-400 mt-1 block">Courant: {loss90.current} A</span>
+                <span className="text-[11px] text-slate-400 mt-1 block">Courant: {loss90.current} A</span>
               </div>
               <div className="my-2">
-                <span className="text-xl font-black text-red-400">{loss90.lossesMw} MW</span>
+                <span className="text-lg font-black text-red-400">{loss90.lossesMw} MW</span>
                 <span className="text-[10px] text-slate-500 block">Pertes ({loss90.lossPercent}%)</span>
               </div>
               <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold ${

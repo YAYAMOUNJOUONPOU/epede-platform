@@ -1,4 +1,7 @@
-import React, { useState, useMemo } from 'react';
+// src/components/transmission/TransmissionWorkbench.tsx
+// EPEDE D03 - Transmission Networks Master Engineering Workbench & 5-Stage Journey Orchestrator
+
+import React, { useState } from 'react';
 import { AuthoritativeEcosystemHero } from '../common/AuthoritativeEcosystemHero';
 import {
   Zap,
@@ -26,7 +29,9 @@ import {
   Cpu,
   Globe,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  MapPin,
+  FileCheck
 } from 'lucide-react';
 import {
   TransmissionCommandHeader,
@@ -48,16 +53,21 @@ import { EpedeDataReuseMap } from './EpedeDataReuseMap';
 import { EngineeringPrinciplesDrawer } from './EngineeringPrinciplesDrawer';
 import { EngineeringInfographicCard } from '../common/EngineeringInfographicCard';
 import { EngineeringInfographicsModal } from '../common/EngineeringInfographicsModal';
+
+// Specialized Labs & Engines
 import { DynamicLineRatingLab } from './DynamicLineRatingLab';
 import { SurgeImpedanceAndFerrantiLab } from './SurgeImpedanceAndFerrantiLab';
 import { HvdcAndFactsWorkbench } from './HvdcAndFactsWorkbench';
 import { AdvancedDistanceRelayLab } from './AdvancedDistanceRelayLab';
+import { CameroonTransmissionCorridorEngine } from './modules/CameroonTransmissionCorridorEngine';
+import { InteractiveCatenarySagCanvas } from './modules/InteractiveCatenarySagCanvas';
+import { TransmissionDeliverablesExportEngine } from './modules/TransmissionDeliverablesExportEngine';
 
-interface TransmissionWorkbenchProps {
-  locale: 'fr' | 'en';
-  onNavigate?: (view: string, domainCode?: string) => void;
-  onSelectEquipment?: (equipmentId: string) => void;
-}
+// Central Reactive Data Mesh Store
+import {
+  useTransmissionProjectStore,
+  CAMEROON_TRANSMISSION_CORRIDORS
+} from './services/useTransmissionProjectStore';
 
 export type TransmissionWorkbenchPillar =
   | 'JOURNEY'
@@ -77,19 +87,10 @@ export type TransmissionWorkbenchPillar =
   | 'HVDC_FACTS'
   | 'DISTANCE_RELAY_LAB';
 
-export interface PillarMeta {
-  id: TransmissionWorkbenchPillar;
-  cluster: 'TECH' | 'MODELS' | 'OPS' | 'DATA';
-  label_fr: string;
-  label_en: string;
-  short_fr: string;
-  short_en: string;
-  description_fr: string;
-  description_en: string;
-  icon: React.ComponentType<{ className?: string }>;
-  tag: string;
-  color: string;
-  keywords: string[];
+interface TransmissionWorkbenchProps {
+  locale: 'fr' | 'en';
+  onNavigate?: (view: string, domainCode?: string) => void;
+  onSelectEquipment?: (equipmentId: string) => void;
 }
 
 export const TransmissionWorkbench: React.FC<TransmissionWorkbenchProps> = ({
@@ -97,281 +98,26 @@ export const TransmissionWorkbench: React.FC<TransmissionWorkbenchProps> = ({
   onNavigate,
   onSelectEquipment
 }) => {
-  const [activePillar, setActivePillar] = useState<TransmissionWorkbenchPillar>('JOURNEY');
+  // 1. Reactive Central Data Store
+  const store = useTransmissionProjectStore('CORRIDOR_SONG_LOULOU_BEKOKO');
+
+  // 2. UI Navigation & Drawer Controllers
   const [selectedTechnology, setSelectedTechnology] = useState<TransmissionTechnology>('OVERHEAD_LINE');
-  const [selectedVoltage, setSelectedVoltage] = useState<TransmissionVoltageContext>('225kV');
   const [isPrinciplesDrawerOpen, setIsPrinciplesDrawerOpen] = useState<boolean>(false);
   const [modalInfographicId, setModalInfographicId] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'tabs' | 'bento'>('tabs');
-  const [selectedClusterFilter, setSelectedClusterFilter] = useState<'ALL' | 'TECH' | 'MODELS' | 'OPS' | 'DATA'>('ALL');
-  const [searchQuery, setSearchQuery] = useState<string>('');
   const [isSidePanelOpen, setIsSidePanelOpen] = useState<boolean>(false);
 
-  const pillarsConfig: PillarMeta[] = [
-    // CLUSTER 1: TECHNOLOGIES & FONDAMENTAUX
-    {
-      id: 'JOURNEY',
-      cluster: 'TECH',
-      label_fr: '1. Parcours Maître',
-      label_en: '1. Master Journey',
-      short_fr: 'Parcours Maître',
-      short_en: 'Master Journey',
-      description_fr: 'Corridor haute tension complet en 8 étapes synchronisées, de l\'élévation GSU au poste source.',
-      description_en: '8-stage synchronous transmission corridor from power plant step-up to regional primary substation.',
-      icon: Zap,
-      tag: '8 Étapes',
-      color: 'sky',
-      keywords: ['parcours', 'étape', 'gsu', 'corridor', 'nachtigal', 'bekoko', 'journey', 'ligne']
-    },
-    {
-      id: 'OHL_EXPLORER',
-      cluster: 'TECH',
-      label_fr: '2. Lignes Aériennes',
-      label_en: '2. Overhead Lines',
-      short_fr: 'Lignes Aériennes (OHL)',
-      short_en: 'Overhead Lines (OHL)',
-      description_fr: 'Arborescence électromécanique, pylônes treillis en acier, isolateurs, faisceaux Aster et schéma CAD interactif.',
-      description_en: 'Electromechanical breakdown, steel lattice towers, composite insulators, bundle conductors and CAD view.',
-      icon: FolderTree,
-      tag: 'Pylônes & CAD',
-      color: 'amber',
-      keywords: ['ohl', 'pylone', 'treillis', 'conducteur', 'aster', 'quincaillerie', 'isolateur', 'cad', 'fondation']
-    },
-    {
-      id: 'UGC_EXPLORER',
-      cluster: 'TECH',
-      label_fr: '3. Câbles Souterrains',
-      label_en: '3. Underground Cables',
-      short_fr: 'Câbles Souterrains (UGC)',
-      short_en: 'Underground Cables (UGC)',
-      description_fr: 'Coupe radiale 11 couches XLPE, écran métallique plomb/alu, mise à la terre cross-bonding et tranchée.',
-      description_en: '11-layer radial XLPE cross-section, metallic sheath bonding, cross-bonding link boxes, and civil trench.',
-      icon: Layers,
-      tag: '11 Couches XLPE',
-      color: 'emerald',
-      keywords: ['ugc', 'cable', 'xlpe', 'tranchee', 'cross-bonding', 'ecran', 'jonction', 'sheath', 'dts']
-    },
-    {
-      id: 'VOLTAGE_EXPLORER',
-      cluster: 'TECH',
-      label_fr: '4. Paliers de Tension',
-      label_en: '4. Voltage Levels',
-      short_fr: 'Paliers 400/225/90 kV',
-      short_en: '400/225/90 kV Levels',
-      description_fr: 'Explorateur comparatif des classes de tension 400 kV (Interco), 225 kV (Dorsale RIS) et 90 kV (Sous-transport).',
-      description_en: 'Comparative analysis of voltage classes: 400 kV bulk supergrid, 225 kV national backbone, and 90 kV sub-transmission.',
-      icon: Sliders,
-      tag: '400 / 225 / 90 kV',
-      color: 'cyan',
-      keywords: ['tension', 'palier', '400kv', '225kv', '90kv', 'sil', 'ferranti', 'faisceau', 'interconnexion']
-    },
-
-    // CLUSTER 2: MODÉLISATION & VUES
-    {
-      id: 'COMPARISON',
-      cluster: 'MODELS',
-      label_fr: '5. Comparatif OHL vs UGC',
-      label_en: '5. OHL vs UGC',
-      short_fr: 'Comparatif OHL/UGC',
-      short_en: 'OHL vs UGC Benchmark',
-      description_fr: 'Benchmark multi-critères sur 12 dimensions d\'ingénierie et simulateur de production réactive Qc = ω·C·U².',
-      description_en: 'Multi-criteria 12-dimension benchmark and reactive power capacitive charging simulator.',
-      icon: Scale,
-      tag: '12 Dimensions',
-      color: 'indigo',
-      keywords: ['comparatif', 'benchmark', 'capacitif', 'qc', 'cout', 'capex', 'emprise', 'reparation', 'foudre']
-    },
-    {
-      id: 'VIEWS',
-      cluster: 'MODELS',
-      label_fr: '6. Vues Synchronisées',
-      label_en: '6. Tri-Views',
-      short_fr: 'Vues Tri-Dimensionnelles',
-      short_en: 'Synchronized Tri-Views',
-      description_fr: '3 perspectives synchronisées : Vue Physique (flèche caténaire IEEE 738), Vue Électrique (modèle en Pi distribué), Vue Fonctionnelle.',
-      description_en: 'Synchronized physical catenary sag, distributed Pi-model electrical parameters, and functional operating states.',
-      icon: Compass,
-      tag: 'Phys / Élec / Fct',
-      color: 'purple',
-      keywords: ['vue', 'catenaire', 'fleche', 'modele en pi', 'quadripole', 'admittance', 'reactance', 'verrouillage']
-    },
-    {
-      id: 'RELATIONSHIPS',
-      cluster: 'MODELS',
-      label_fr: '7. Topologie & Automate FSM',
-      label_en: '7. Topology & FSM',
-      short_fr: 'Topologie & Automate',
-      short_en: 'Topology & State FSM',
-      description_fr: 'Graphe topologique de réseau de transport et automate à états finis 13 positions (Consigné, Sous tension, En charge).',
-      description_en: 'Transmission network topology graph and 13-state finite machine (De-energized, Grounded, Energized, Loaded).',
-      icon: Network,
-      tag: 'Trace & 13 États',
-      color: 'pink',
-      keywords: ['topologie', 'graphe', 'fsm', 'automate', 'etat', 'consignation', 'mALT', 'enclenchement']
-    },
-
-    // CLUSTER 3: EXPLOITATION & PROTECTIONS
-    {
-      id: 'PROTECTION',
-      cluster: 'OPS',
-      label_fr: '8. Protections & OPGW',
-      label_en: '8. Relaying & Telecom',
-      short_fr: 'Protections 21 / 87L',
-      short_en: '21 / 87L Relaying',
-      description_fr: 'Plan de protection Main 1 (distance 21/21N, zones R-X) et Main 2 (différentielle de ligne 87L) avec téléprotection OPGW 48 fibres.',
-      description_en: 'Main 1 distance protection (ANSI 21, impedance zones) and Main 2 optical current differential (ANSI 87L) over OPGW.',
-      icon: ShieldAlert,
-      tag: 'ANSI 21 & 87L',
-      color: 'red',
-      keywords: ['protection', '21', '87l', 'distance', 'differentielle', 'opgw', 'fibre', 'pott', 'impedance', 'r-x']
-    },
-    {
-      id: 'SCENARIOS',
-      cluster: 'OPS',
-      label_fr: '9. Scénarios Réseau',
-      label_en: '9. Scenarios',
-      short_fr: '16 Scénarios Réseau',
-      short_en: '16 Operating Cases',
-      description_fr: 'Simulateur interactif de 16 scénarios d\'exploitation : transit lourd, Ferranti à vide, court-circuit franc, perte de terne N-1.',
-      description_en: 'Interactive simulator with 16 operational cases: peak transit, no-load Ferranti rise, phase-to-ground fault, N-1 contingency.',
-      icon: Activity,
-      tag: '16 Cas Simulat.',
-      color: 'amber',
-      keywords: ['scenario', 'simulation', 'defaut', 'court-circuit', 'ferranti', 'n-1', 'surcharge', 'foudre', 'declenchement']
-    },
-    {
-      id: 'PLANNING',
-      cluster: 'OPS',
-      label_fr: '10. Planification Réseau',
-      label_en: '10. Planning',
-      short_fr: 'Processus Projet',
-      short_en: 'Asset Lifecycle',
-      description_fr: 'Processus d\'ingénierie et de développement d\'un ouvrage de transport : études de fuseau, DUP, essais de réception SAT.',
-      description_en: 'End-to-end transmission project development workflow: routing feasibility, environmental clearances, commissioning tests.',
-      icon: GitPullRequest,
-      tag: 'Cycle Projet',
-      color: 'teal',
-      keywords: ['planification', 'projet', 'dup', 'trace', 'commissioning', 'sat', 'essais', 'reception', 'sonatrel']
-    },
-
-    // CLUSTER 4: SPÉCIFICATIONS & INTÉGRATION
-    {
-      id: 'SCHEMA',
-      cluster: 'DATA',
-      label_fr: '11. Schéma d\'Objet',
-      label_en: '11. Object Schema',
-      short_fr: 'Schéma d\'Objet (30 Sec.)',
-      short_en: 'Object Schema (30 Sec.)',
-      description_fr: 'Inspecteur technique et structure normalisée d\'un composant de transport en 30 sections électrotechniques.',
-      description_en: 'Technical inspector and structured schema of transmission equipment spanning 30 standardized sections.',
-      icon: FileCode2,
-      tag: '30 Sections',
-      color: 'blue',
-      keywords: ['schema', 'objet', 'donnees', 'attributs', 'plaque signaletique', 'maintenance', 'securite']
-    },
-    {
-      id: 'DATA_REUSE',
-      cluster: 'DATA',
-      label_fr: '12. Écosystème EPEDE',
-      label_en: '12. EPEDE Reuse',
-      short_fr: 'Interfaces EPEDE (7 Dom.)',
-      short_en: 'EPEDE Matrix (7 Dom.)',
-      description_fr: 'Matrice de liaison et réutilisation de données avec les autres modules : Production (D01), Postes (D04), Protections (D11).',
-      description_en: 'Cross-module data exchange matrix interfacing D01 Generation, D04 Substations, and D11 Protection systems.',
-      icon: Share2,
-      tag: '7 Domaines',
-      color: 'emerald',
-      keywords: ['ecosysteme', 'epede', 'reuse', 'd01', 'd04', 'd11', 'd02', 'interface', 'calculateur']
-    },
-    {
-      id: 'DLR_LAB',
-      cluster: 'TECH',
-      label_fr: '13. Ampacité DLR (IEEE 738)',
-      label_en: '13. Dynamic Line Rating (DLR)',
-      short_fr: 'DLR & Ampacité',
-      short_en: 'DLR & Ampacity',
-      description_fr: 'Bilan thermique dynamique des conducteurs selon IEEE 738 / CIGRÉ TB 299, refroidissement par vent et calcul de flèche en temps réel.',
-      description_en: 'Dynamic line thermal balance under IEEE 738 / CIGRÉ TB 299, real-time wind cooling ampacity, and catenary clearance solver.',
-      icon: Activity,
-      tag: 'IEEE 738 & Flèche',
-      color: 'sky',
-      keywords: ['dlr', 'ampacite', 'ieee 738', 'vent', 'fleche', 'thermique', 'temperature', 'gabarit']
-    },
-    {
-      id: 'SIL_FERRANTI',
-      cluster: 'MODELS',
-      label_fr: '14. Puissance Naturelle & Ferranti',
-      label_en: '14. SIL & Ferranti Dynamics',
-      short_fr: 'SIL & Effet Ferranti',
-      short_en: 'SIL & Ferranti',
-      description_fr: 'Courbe de chargeabilité de St. Clair, puissance naturelle P_SIL = U²/Zc, bilan réactif et dimensionnement des réactances shunt.',
-      description_en: 'St. Clair loadability curve, Surge Impedance Loading P_SIL = U²/Zc, net reactive balance and shunt reactor sizing.',
-      icon: TrendingUp,
-      tag: 'St. Clair & SIL',
-      color: 'indigo',
-      keywords: ['sil', 'st clair', 'ferranti', 'reactance shunt', 'reactif', 'stabilite', 'compensation']
-    },
-    {
-      id: 'HVDC_FACTS',
-      cluster: 'OPS',
-      label_fr: '15. HVDC VSC & FACTS',
-      label_en: '15. HVDC VSC & FACTS',
-      short_fr: 'HVDC & FACTS (STATCOM)',
-      short_en: 'HVDC & FACTS (STATCOM)',
-      description_fr: 'Liaisons à courant continu VSC-MMC 4 quadrants, STATCOM sub-cycle, SVC, déphaseur PST et interconnexions CEMAC (Cameroun-Tchad).',
-      description_en: 'VSC-MMC 4-quadrant HVDC interconnectors, sub-cycle STATCOM, SVC, Phase Shifting Transformers (PST), and Central African power pool.',
-      icon: Globe,
-      tag: 'VSC & STATCOM',
-      color: 'emerald',
-      keywords: ['hvdc', 'facts', 'statcom', 'svc', 'pst', 'tcsc', 'vsc', 'mmc', 'peac', 'tchad', 'interconnexion']
-    },
-    {
-      id: 'DISTANCE_RELAY_LAB',
-      cluster: 'OPS',
-      label_fr: '16. Plan R-X & Téléprotection',
-      label_en: '16. R-X Plane & Relaying',
-      short_fr: 'Plan R-X & ANSI 21',
-      short_en: 'R-X Plane & ANSI 21',
-      description_fr: 'Plan complexe R-X avec caractéristiques quadrilatérale et Mho, résistance d\'arc Warrington, facteur k₀ et schéma POTT sur OPGW.',
-      description_en: 'Complex R-X impedance plane with quadrilateral and Mho zones, Warrington arc resistance, k₀ factor, and POTT over OPGW.',
-      icon: ShieldAlert,
-      tag: 'R-X & POTT / OPGW',
-      color: 'red',
-      keywords: ['distance', 'rx', 'r-x', 'mho', 'quadrilatere', 'warrington', 'k0', 'pott', 'opgw', 'pendulage', 'ansi 68']
-    }
-  ];
-
-  // Filtered pillars based on cluster and search
-  const filteredPillars = useMemo(() => {
-    return pillarsConfig.filter((p) => {
-      const matchesCluster = selectedClusterFilter === 'ALL' || p.cluster === selectedClusterFilter;
-      if (!matchesCluster) return false;
-      if (!searchQuery.trim()) return true;
-      const q = searchQuery.toLowerCase();
-      return (
-        p.label_fr.toLowerCase().includes(q) ||
-        p.label_en.toLowerCase().includes(q) ||
-        p.description_fr.toLowerCase().includes(q) ||
-        p.description_en.toLowerCase().includes(q) ||
-        p.keywords.some((k) => k.includes(q))
-      );
-    });
-  }, [selectedClusterFilter, searchQuery, pillarsConfig]);
-
-  const clustersConfig = [
-    { id: 'ALL', label_fr: 'Tous les Piliers (16)', label_en: 'All Pillars (16)' },
-    { id: 'TECH', label_fr: '1. Technologies & Paliers (5)', label_en: '1. Technologies & Levels (5)' },
-    { id: 'MODELS', label_fr: '2. Vues & Modélisation (4)', label_en: '2. Views & Models (4)' },
-    { id: 'OPS', label_fr: '3. Exploitation & Protections (5)', label_en: '3. Operations & Relays (5)' },
-    { id: 'DATA', label_fr: '4. Spécifications & Données (2)', label_en: '4. Specs & Data (2)' }
-  ];
-
-  const activePillarConfig = pillarsConfig.find((p) => p.id === activePillar);
+  // Sub-Tab Navigation inside each of the 5 Stages
+  const [stage1Tab, setStage1Tab] = useState<'CORRIDORS' | 'JOURNEY' | 'VOLTAGE_LEVELS' | 'PLANNING'>('CORRIDORS');
+  const [stage2Tab, setStage2Tab] = useState<'CATENARY_SAG' | 'OHL_EXPLORER' | 'STRUCTURAL_VIEWS'>('CATENARY_SAG');
+  const [stage3Tab, setStage3Tab] = useState<'SIL_FERRANTI' | 'SCENARIOS' | 'SCHEMA_RELATIONSHIPS'>('SIL_FERRANTI');
+  const [stage4Tab, setStage4Tab] = useState<'DLR_LAB' | 'UGC_EXPLORER' | 'OHL_UGC_BENCHMARK' | 'HVDC_FACTS'>('DLR_LAB');
+  const [stage5Tab, setStage5Tab] = useState<'DOSSIER_BOQ' | 'DISTANCE_RELAY' | 'PROTECTION_TELECOM' | 'DATA_REUSE'>('DOSSIER_BOQ');
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-mono">
       
-      {/* 0. Authoritative Ecosystem Reference Hero (Page 2: Power Transmission) */}
+      {/* 0. Authoritative Ecosystem Reference Hero (Page 2: Transmission Network) */}
       <AuthoritativeEcosystemHero
         stage="transmission"
         locale={locale}
@@ -379,23 +125,29 @@ export const TransmissionWorkbench: React.FC<TransmissionWorkbenchProps> = ({
         onSelectEquipment={onSelectEquipment}
         isSidePanelOpen={isSidePanelOpen}
         onToggleSidePanel={() => setIsSidePanelOpen(!isSidePanelOpen)}
-        activePillarLabel={activePillarConfig ? (locale === 'fr' ? activePillarConfig.label_fr : activePillarConfig.label_en) : undefined}
-        totalPillarsCount={16}
+        activePillarLabel={
+          store.activeStage === 1 ? (locale === 'fr' ? 'Étape 1 : Corridors & Niveaux Tension' : 'Stage 1: Corridors & Voltages') :
+          store.activeStage === 2 ? (locale === 'fr' ? 'Étape 2 : Pylônes & Flèche Caténaire' : 'Stage 2: Towers & Catenary Sag') :
+          store.activeStage === 3 ? (locale === 'fr' ? 'Étape 3 : Propagation d’Onde & SIL' : 'Stage 3: Wave Propagation & SIL') :
+          store.activeStage === 4 ? (locale === 'fr' ? 'Étape 4 : Ampacité DLR & Câbles/HVDC' : 'Stage 4: DLR Ampacity & Cables/HVDC') :
+          (locale === 'fr' ? 'Étape 5 : Protections & Dossier SAT' : 'Stage 5: Protection & SAT Dossier')
+        }
+        totalPillarsCount={5}
       />
 
-      {/* Reorganized Engineering Workspace: Side Navigator + Main Workspace */}
+      {/* Main Workspace Layout */}
       <div className="flex flex-col lg:flex-row items-start gap-6">
 
         {/* SIDE ENGINEERING NAVIGATOR */}
         {isSidePanelOpen && (
           <aside className="w-full lg:w-80 shrink-0 space-y-4 font-mono text-xs animate-in slide-in-from-left duration-200">
-            <div className="p-4 rounded-2xl bg-[#0F141C] border border-[#222B38] shadow-xl space-y-4">
+            <div className="p-4 rounded-2xl bg-[#090D14] border border-[#222B38] shadow-xl space-y-4">
               
               <div className="flex items-center justify-between pb-3 border-b border-[#222B38]">
                 <div className="flex items-center gap-2">
                   <Layers className="w-4 h-4 text-sky-400" />
                   <span className="font-bold text-white uppercase tracking-wider text-[11px]">
-                    {locale === 'fr' ? 'Piliers Transport (16)' : 'Transmission Pillars (16)'}
+                    {locale === 'fr' ? 'Parcours 5 Étapes' : '5-Stage Engineering'}
                   </span>
                 </div>
                 <button
@@ -408,81 +160,73 @@ export const TransmissionWorkbench: React.FC<TransmissionWorkbenchProps> = ({
                 </button>
               </div>
 
-              {/* Quick Search */}
-              <div className="relative">
-                <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-slate-500" />
-                <input
-                  type="text"
-                  placeholder={locale === 'fr' ? 'Filtrer (ex. 87L, caténaire, SIL)...' : 'Search pillars...'}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-[#090D14] border border-[#222B38] text-slate-200 placeholder-slate-600 text-xs focus:outline-hidden focus:border-sky-500"
-                />
+              {/* Quick Active Corridor Telemetry */}
+              <div className="p-2.5 rounded-xl bg-[#0E141F] border border-sky-500/30 text-[11px] space-y-1">
+                <div className="text-[10px] text-slate-400 uppercase">{locale === 'fr' ? 'Corridor Actif' : 'Active Corridor'}</div>
+                <div className="font-bold text-sky-300 truncate">{store.activeCorridor.name_fr.split('(')[0]}</div>
+                <div className="text-[10px] text-slate-400">
+                  {store.voltage} • {store.lineLengthKm} km • SIL {store.linePhysics.silMw} MW
+                </div>
               </div>
 
-              {/* Cluster Filters */}
-              <div className="flex flex-wrap gap-1">
-                {clustersConfig.map((cl) => {
-                  const isSelected = selectedClusterFilter === cl.id;
+              {/* 5 Stages Navigation List */}
+              <div className="space-y-1.5">
+                {[
+                  { stage: 1 as const, title_fr: '1. Corridors & Tension', title_en: '1. Corridors & Voltages', desc: 'Tracés, Climat & Niveaux' },
+                  { stage: 2 as const, title_fr: '2. Pylônes & Flèche', title_en: '2. Towers & Catenary Sag', desc: 'CEI 60826 & Gabarit Sol' },
+                  { stage: 3 as const, title_fr: '3. Propagation & SIL', title_en: '3. Waves, SIL & Ferranti', desc: 'Lignes Longues & Shunt' },
+                  { stage: 4 as const, title_fr: '4. Ampacité DLR & Câbles', title_en: '4. DLR Ampacity & Cables', desc: 'IEEE 738, XLPE & FACTS' },
+                  { stage: 5 as const, title_fr: '5. Protections & DQE', title_en: '5. Protection & BOQ', desc: 'Distance 21, OPGW & DQE' }
+                ].map((st) => {
+                  const isSelected = store.activeStage === st.stage;
                   return (
                     <button
-                      key={cl.id}
+                      key={st.stage}
                       type="button"
-                      onClick={() => setSelectedClusterFilter(cl.id as any)}
-                      className={`px-2 py-0.5 rounded text-[10px] font-semibold transition-all cursor-pointer ${
-                        isSelected
-                          ? 'bg-sky-500 text-slate-950 font-bold'
-                          : 'bg-[#090D14] text-slate-400 hover:text-white border border-[#222B38]'
-                      }`}
-                    >
-                      {locale === 'fr' ? cl.label_fr.split('(')[0].trim() : cl.label_en.split('(')[0].trim()}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* 16 Pillars Vertical List */}
-              <div className="space-y-1 max-h-[580px] overflow-y-auto pr-1 scrollbar-thin">
-                {filteredPillars.map((p) => {
-                  const Icon = p.icon;
-                  const isSelected = activePillar === p.id;
-                  return (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => setActivePillar(p.id)}
+                      onClick={() => store.setActiveStage(st.stage)}
                       className={`w-full p-2.5 rounded-xl border text-left transition-all flex items-center justify-between cursor-pointer ${
                         isSelected
                           ? 'bg-sky-500/20 border-sky-400 text-white shadow-xs'
-                          : 'bg-[#090D14]/80 border-[#222B38] text-slate-400 hover:bg-[#161B22] hover:text-slate-200'
+                          : 'bg-[#0E141F]/80 border-[#222B38] text-slate-400 hover:bg-[#161B22] hover:text-slate-200'
                       }`}
                     >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <Icon className={`w-4 h-4 shrink-0 ${isSelected ? 'text-sky-400' : 'text-slate-500'}`} />
-                        <div className="min-w-0">
-                          <div className={`text-xs font-semibold truncate ${isSelected ? 'text-white' : 'text-slate-300'}`}>
-                            {locale === 'fr' ? p.short_fr : p.short_en}
-                          </div>
-                          <div className="text-[10px] text-slate-500 truncate">
-                            {p.tag}
-                          </div>
+                      <div>
+                        <div className={`text-xs font-bold ${isSelected ? 'text-sky-300' : 'text-slate-300'}`}>
+                          {locale === 'fr' ? st.title_fr : st.title_en}
+                        </div>
+                        <div className="text-[10px] text-slate-500">
+                          {st.desc}
                         </div>
                       </div>
-                      <ChevronRight className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-sky-400' : 'text-slate-600'}`} />
+                      <ChevronRight className={`w-3.5 h-3.5 ${isSelected ? 'text-sky-400' : 'text-slate-600'}`} />
                     </button>
                   );
                 })}
               </div>
 
-              {/* Quick Formulaire Drawer Shortcut */}
-              <button
-                type="button"
-                onClick={() => setIsPrinciplesDrawerOpen(true)}
-                className="w-full p-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
-              >
-                <Calculator className="w-3.5 h-3.5" />
-                <span>{locale === 'fr' ? 'Formulaire Électrotechnique' : 'Formulas Drawer'}</span>
-              </button>
+              {/* Direct Jump to BOQ & Principles Drawer */}
+              <div className="pt-2 border-t border-[#222B38] space-y-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    store.setActiveStage(5);
+                    setStage5Tab('DOSSIER_BOQ');
+                  }}
+                  className="w-full p-2 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 text-sky-400 text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                >
+                  <FileCheck className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? 'Bordereau des Prix (DQE / BOQ)' : 'Bill of Quantities (BOQ)'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIsPrinciplesDrawerOpen(true)}
+                  className="w-full p-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                >
+                  <Calculator className="w-3.5 h-3.5" />
+                  <span>{locale === 'fr' ? 'Formulaire Électrotechnique' : 'Formulas Drawer'}</span>
+                </button>
+              </div>
 
             </div>
           </aside>
@@ -494,399 +238,434 @@ export const TransmissionWorkbench: React.FC<TransmissionWorkbenchProps> = ({
             <button
               type="button"
               onClick={() => setIsSidePanelOpen(true)}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0F141C] border border-[#222B38] hover:border-sky-500/50 text-slate-300 hover:text-white text-xs font-mono transition-all cursor-pointer shadow-md"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#090D14] border border-[#222B38] hover:border-sky-500/50 text-slate-300 hover:text-white text-xs font-mono transition-all cursor-pointer shadow-md"
             >
               <PanelLeftOpen className="w-4 h-4 text-sky-400" />
-              <span>{locale === 'fr' ? 'Ouvrir le Volet des 16 Piliers Transport' : 'Open 16 Transmission Pillars Navigator'}</span>
+              <span>{locale === 'fr' ? 'Ouvrir le Navigateur d’Ingénierie Lignes' : 'Open Transmission Navigator'}</span>
             </button>
           )}
 
-          {/* 1. Command Header with Technology & Voltage Switcher */}
+          {/* 1. Master Transmission Command Header */}
           <TransmissionCommandHeader
-        locale={locale}
-        activePillar={activePillar}
-        onSelectPillar={setActivePillar}
-        selectedTechnology={selectedTechnology}
-        onSelectTechnology={(tech) => {
-          setSelectedTechnology(tech);
-          if (tech === 'OVERHEAD_LINE') setActivePillar('OHL_EXPLORER');
-          else if (tech === 'UNDERGROUND_CABLE') setActivePillar('UGC_EXPLORER');
-          else if (tech === 'COMPARISON') setActivePillar('COMPARISON');
-        }}
-        selectedVoltage={selectedVoltage}
-        onSelectVoltage={(v) => {
-          setSelectedVoltage(v);
-          setActivePillar('VOLTAGE_EXPLORER');
-        }}
-        currentBreadcrumb={
-          activePillar === 'JOURNEY'
-            ? ['Corridor National RIS', 'Parcours Maître Production → Poste']
-            : activePillar === 'OHL_EXPLORER'
-            ? ['Ligne Aérienne 225 kV', 'Structure Treillis, Faisceaux & Quincaillerie']
-            : activePillar === 'UGC_EXPLORER'
-            ? ['Liaison Souterraine 225 kV', 'Coupe Radiale 11 Couches & Cross-Bonding']
-            : activePillar === 'VOLTAGE_EXPLORER'
-            ? ['Paliers de Tension', `${selectedVoltage} (Rôle & Caractéristiques)`]
-            : activePillar === 'COMPARISON'
-            ? ['Étude Comparative', 'Lignes Aériennes vs Câbles Souterrains']
-            : activePillar === 'VIEWS'
-            ? ['Vues Synchronisées', 'Flèche Caténaire, Modèle en Pi & Verrouillages']
-            : activePillar === 'RELATIONSHIPS'
-            ? ['Topologie & Traçage', 'Graphe de Réseau & Automate 13 États']
-            : activePillar === 'PROTECTION'
-            ? ['Plan de Protection', 'Zones R-X 21, Différentielle 87L & OPGW']
-            : activePillar === 'SCENARIOS'
-            ? ['Simulateur de Scénarios', '16 Cas d\'Exploitation & Défauts']
-            : activePillar === 'PLANNING'
-            ? ['Planification Réseau', 'Processus de Développement d\'un Ouvrage']
-            : activePillar === 'SCHEMA'
-            ? ['Inspecteur Technique', 'Schéma d\'Objet Électrotechnique 30 Sections']
-            : activePillar === 'DLR_LAB'
-            ? ['Ampacité Dynamique DLR', 'Bilan Thermique IEEE 738 & Gabarit Flèche']
-            : activePillar === 'SIL_FERRANTI'
-            ? ['Régime d\'Onde & Ferranti', 'Puissance SIL, St. Clair & Réactances Shunt']
-            : activePillar === 'HVDC_FACTS'
-            ? ['Interconnexions HVDC & FACTS', 'Liaisons VSC-MMC & Soutien STATCOM/SVC/PST']
-            : activePillar === 'DISTANCE_RELAY_LAB'
-            ? ['Protection de Distance Avancée', 'Plan R-X, Résistance Warrington & Téléprotection']
-            : ['Interconnexion EPEDE', 'Matrice d\'Échange de Données & Calculs']
-        }
-        onOpenPrinciplesDrawer={() => setIsPrinciplesDrawerOpen(true)}
-      />
+            locale={locale}
+            activeStage={store.activeStage}
+            onSelectStage={(st) => store.setActiveStage(st)}
+            selectedTechnology={selectedTechnology}
+            onSelectTechnology={setSelectedTechnology}
+            selectedVoltage={store.voltage as any}
+            onSelectVoltage={(v) => store.setVoltage(v as any)}
+            selectedCorridorId={store.selectedCorridorId}
+            onSelectCorridor={(corrId) => store.selectCorridor(corrId)}
+            onOpenPrinciplesDrawer={() => setIsPrinciplesDrawerOpen(true)}
+            onOpenDossier={() => {
+              store.setActiveStage(5);
+              setStage5Tab('DOSSIER_BOQ');
+            }}
+            lineLengthKm={store.lineLengthKm}
+            silMw={store.linePhysics.silMw}
+          />
 
-      {/* 2. SCADA Telemetry & Corridor Operational HUD */}
-      <div className="p-4 rounded-2xl bg-gradient-to-r from-[#0F141C] via-[#111722] to-[#0F141C] border border-[#222B38] shadow-lg font-mono text-xs">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          
-          {/* Dispatching Station & Grid State */}
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[11px] font-bold">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              SONATREL DISPATCHING NATIONAL
-            </span>
-            <div className="text-slate-400 flex items-center gap-1.5 text-[11px]">
-              <Radio className="h-3.5 w-3.5 text-sky-400" />
-              <span>Corridor Clé :</span>
-              <span className="text-white font-bold">Nachtigal → Bekoko (225 kV)</span>
-            </div>
-          </div>
+          {/* 2. DYNAMIC STAGE WORKSPACE VIEW */}
+          <div className="transition-all duration-200 space-y-6">
 
-          {/* Real-Time Transmission Operating Vector Calculations */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:flex lg:items-center gap-3 lg:gap-5 text-[11px]">
-            <div className="p-2 rounded-lg bg-[#090D14] border border-[#222B38] lg:bg-transparent lg:border-0 lg:p-0">
-              <span className="text-slate-500 block text-[10px]">Transit Actif :</span>
-              <span className="text-emerald-400 font-bold">420 MW</span>
-              <span className="text-[9px] text-slate-500 ml-1">(Charge 68%)</span>
-            </div>
-            <div className="p-2 rounded-lg bg-[#090D14] border border-[#222B38] lg:bg-transparent lg:border-0 lg:p-0">
-              <span className="text-slate-500 block text-[10px]">Bilan Réactif :</span>
-              <span className="text-amber-400 font-bold">-34 Mvar</span>
-              <span className="text-[9px] text-slate-500 ml-1">(Consommateur)</span>
-            </div>
-            <div className="p-2 rounded-lg bg-[#090D14] border border-[#222B38] lg:bg-transparent lg:border-0 lg:p-0">
-              <span className="text-slate-500 block text-[10px]">Puissance SIL :</span>
-              <span className="text-sky-400 font-bold">135 MW</span>
-              <span className="text-[9px] text-slate-500 ml-1">(P &gt; SIL)</span>
-            </div>
-            <div className="p-2 rounded-lg bg-[#090D14] border border-[#222B38] lg:bg-transparent lg:border-0 lg:p-0">
-              <span className="text-slate-500 block text-[10px]">Pertes Joule :</span>
-              <span className="text-rose-400 font-bold">2.1%</span>
-              <span className="text-[9px] text-slate-500 ml-1">(8.8 MW)</span>
-            </div>
-          </div>
-
-          {/* Quick Trigger for Principles Drawer */}
-          <button
-            type="button"
-            onClick={() => setIsPrinciplesDrawerOpen(true)}
-            className="px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer self-start lg:self-auto"
-          >
-            <Calculator className="h-3.5 w-3.5" />
-            <span>{locale === 'fr' ? 'Formulaire Électrotechnique' : 'Formulas Drawer'}</span>
-          </button>
-
-        </div>
-      </div>
-
-      {/* 3. Master 12-Pillar Navigation Console with Search & View Toggles */}
-      <div className="p-4 rounded-2xl bg-[#0F141C] border border-[#222B38] shadow-xl space-y-3 font-mono">
-        
-        {/* Navigation Toolbar: Cluster Filter Chips + Search + Layout Switcher */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs border-b border-[#222B38] pb-3">
-          
-          {/* Cluster Filter Buttons */}
-          <div className="flex flex-wrap items-center gap-1.5">
-            {clustersConfig.map((cl) => {
-              const isSelected = selectedClusterFilter === cl.id;
-              return (
-                <button
-                  key={cl.id}
-                  type="button"
-                  onClick={() => setSelectedClusterFilter(cl.id as any)}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
-                    isSelected
-                      ? 'bg-sky-500 text-slate-950 font-bold shadow-sm'
-                      : 'bg-[#090D14] text-slate-400 hover:text-white border border-[#222B38] hover:border-slate-600'
-                  }`}
-                >
-                  {locale === 'fr' ? cl.label_fr : cl.label_en}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Search Box & View Mode Toggle */}
-          <div className="flex items-center gap-2">
-            {/* Search Input */}
-            <div className="relative">
-              <Search className="h-3.5 w-3.5 text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-              <input
-                type="text"
-                placeholder={locale === 'fr' ? 'Filtrer (ex. 87L, caténaire, SIL)...' : 'Search pillars...'}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 pr-2.5 py-1 rounded-lg bg-[#090D14] border border-[#222B38] text-[11px] text-white placeholder:text-slate-600 focus:outline-none focus:border-sky-500 w-44 sm:w-56"
-              />
-            </div>
-
-            {/* View Mode Toggle: Tabs vs Bento Matrix */}
-            <div className="flex items-center bg-[#090D14] p-0.5 rounded-lg border border-[#222B38]">
-              <button
-                type="button"
-                onClick={() => setViewMode('tabs')}
-                title={locale === 'fr' ? 'Mode Onglets' : 'Tabs Mode'}
-                className={`p-1.5 rounded-md transition-all cursor-pointer ${
-                  viewMode === 'tabs' ? 'bg-sky-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                <ListFilter className="h-3.5 w-3.5" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('bento')}
-                title={locale === 'fr' ? 'Mode Tableau Bento' : 'Bento Matrix Mode'}
-                className={`p-1.5 rounded-md transition-all cursor-pointer ${
-                  viewMode === 'bento' ? 'bg-sky-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                <LayoutGrid className="h-3.5 w-3.5" />
-              </button>
-            </div>
-          </div>
-
-        </div>
-
-        {/* View Mode 1: Compact Categorized Tabs */}
-        {viewMode === 'tabs' ? (
-          <div className="overflow-x-auto pb-1 scrollbar-thin">
-            <div className="flex items-center gap-2 min-w-max">
-              {filteredPillars.map((p) => {
-                const Icon = p.icon;
-                const isSelected = activePillar === p.id;
-                return (
+            {/* ========================================================
+                STAGE 1: CORRIDORS, NIVEAUX DE TENSION & TRACÉS
+               ======================================================== */}
+            {store.activeStage === 1 && (
+              <div className="space-y-5">
+                {/* Stage 1 Sub-Tab Selector */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-[#222B38]">
                   <button
-                    key={p.id}
                     type="button"
-                    onClick={() => setActivePillar(p.id)}
-                    className={`px-3 py-2 rounded-xl text-xs transition-all flex items-center gap-2 border cursor-pointer ${
-                      isSelected
-                        ? 'bg-sky-500 text-slate-950 font-bold border-sky-400 shadow-md shadow-sky-500/20 ring-1 ring-sky-300'
-                        : 'bg-[#090D14] text-slate-300 border-[#222B38] hover:text-white hover:border-slate-500'
+                    onClick={() => setStage1Tab('CORRIDORS')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      stage1Tab === 'CORRIDORS'
+                        ? 'bg-sky-400 text-slate-950 shadow-md'
+                        : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
                     }`}
                   >
-                    <Icon className="h-3.5 w-3.5 shrink-0" />
-                    <span>{locale === 'fr' ? p.short_fr : p.short_en}</span>
-                    <span
-                      className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${
-                        isSelected ? 'bg-slate-950/25 text-slate-950 font-bold' : 'bg-slate-800 text-slate-400'
-                      }`}
-                    >
-                      {p.tag}
-                    </span>
+                    <Compass className="w-3.5 h-3.5" />
+                    <span>{locale === 'fr' ? '1. Corridors Nationaux Cameroun (SONATREL)' : '1. Cameroon Grid Corridors (SONATREL)'}</span>
                   </button>
-                );
-              })}
-            </div>
-          </div>
-        ) : (
-          /* View Mode 2: Interactive Bento Grid Overview */
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 pt-1">
-            {filteredPillars.map((p) => {
-              const Icon = p.icon;
-              const isSelected = activePillar === p.id;
-              return (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => {
-                    setActivePillar(p.id);
-                    setViewMode('tabs');
-                  }}
-                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between group ${
-                    isSelected
-                      ? 'bg-sky-500/15 border-sky-400 text-white shadow-lg ring-1 ring-sky-400'
-                      : 'bg-[#090D14] border-[#222B38] text-slate-300 hover:border-slate-500 hover:bg-[#111722]'
-                  }`}
-                >
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className="p-1.5 rounded-lg bg-[#161B22] border border-[#222B38] text-sky-400 group-hover:text-amber-400 transition-colors">
-                        <Icon className="h-4 w-4" />
-                      </span>
-                      <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
-                        {p.tag}
-                      </span>
-                    </div>
-                    <div className="font-bold text-xs text-white group-hover:text-sky-300 transition-colors">
-                      {locale === 'fr' ? p.label_fr : p.label_en}
-                    </div>
-                    <p className="text-[11px] text-slate-400 leading-snug font-sans font-normal line-clamp-2">
-                      {locale === 'fr' ? p.description_fr : p.description_en}
-                    </p>
+                  <button
+                    type="button"
+                    onClick={() => setStage1Tab('JOURNEY')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      stage1Tab === 'JOURNEY'
+                        ? 'bg-sky-400 text-slate-950 shadow-md'
+                        : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                    }`}
+                  >
+                    <Zap className="w-3.5 h-3.5" />
+                    <span>{locale === 'fr' ? '2. Parcours Énergétique (8 Étapes)' : '2. Power Transfer Journey (8 Steps)'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStage1Tab('VOLTAGE_LEVELS')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      stage1Tab === 'VOLTAGE_LEVELS'
+                        ? 'bg-sky-400 text-slate-950 shadow-md'
+                        : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                    }`}
+                  >
+                    <Layers className="w-3.5 h-3.5" />
+                    <span>{locale === 'fr' ? '3. Niveaux de Tension (400 / 225 / 110 / 90 kV)' : '3. Voltage Hierarchy (400 / 225 / 110 / 90 kV)'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStage1Tab('PLANNING')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      stage1Tab === 'PLANNING'
+                        ? 'bg-sky-400 text-slate-950 shadow-md'
+                        : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                    }`}
+                  >
+                    <GitPullRequest className="w-3.5 h-3.5" />
+                    <span>{locale === 'fr' ? '4. Critère de Sécurité N-1 & Planification' : '4. Deterministic N-1 & Planning'}</span>
+                  </button>
+                </div>
+
+                {stage1Tab === 'CORRIDORS' && (
+                  <CameroonTransmissionCorridorEngine
+                    locale={locale}
+                    selectedCorridorId={store.selectedCorridorId}
+                    onSelectCorridor={store.selectCorridor}
+                    onNavigateToStage={(st) => store.setActiveStage(st)}
+                  />
+                )}
+
+                {stage1Tab === 'JOURNEY' && (
+                  <div className="space-y-6">
+                    <EngineeringInfographicCard
+                      infographicId="transmission_corridor"
+                      locale={locale}
+                      onOpenModal={(id) => setModalInfographicId(id)}
+                    />
+                    <MasterTransmissionJourney
+                      locale={locale}
+                      onSelectEquipment={onSelectEquipment}
+                    />
                   </div>
+                )}
 
-                  <div className="mt-2 pt-2 border-t border-[#222B38]/60 flex items-center justify-between text-[10px] text-slate-500 group-hover:text-sky-400">
-                    <span>{locale === 'fr' ? 'Ouvrir l\'outil' : 'Open Tool'}</span>
-                    <ChevronRight className="h-3 w-3" />
+                {stage1Tab === 'VOLTAGE_LEVELS' && (
+                  <VoltageLevelExplorer
+                    locale={locale}
+                    activeVoltage={store.voltage}
+                    onSelectVoltage={store.setVoltage}
+                  />
+                )}
+
+                {stage1Tab === 'PLANNING' && (
+                  <TransmissionPlanningInterface locale={locale} />
+                )}
+              </div>
+            )}
+
+            {/* ========================================================
+                STAGE 2: PYLÔNES, ISOLATEURS & FLÈCHE CATÉNAIRE
+               ======================================================== */}
+            {store.activeStage === 2 && (
+              <div className="space-y-5">
+                {/* Stage 2 Sub-Tab Selector */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-[#222B38]">
+                  <button
+                    type="button"
+                    onClick={() => setStage2Tab('CATENARY_SAG')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      stage2Tab === 'CATENARY_SAG'
+                        ? 'bg-sky-400 text-slate-950 shadow-md'
+                        : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                    }`}
+                  >
+                    <Sliders className="w-3.5 h-3.5" />
+                    <span>{locale === 'fr' ? '1. Simulateur Flèche Caténaire & Gabarit Sol (CEI 60826)' : '1. Catenary Sag & Ground Clearance (IEC 60826)'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStage2Tab('OHL_EXPLORER')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      stage2Tab === 'OHL_EXPLORER'
+                        ? 'bg-sky-400 text-slate-950 shadow-md'
+                        : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                    }`}
+                  >
+                    <FolderTree className="w-3.5 h-3.5" />
+                    <span>{locale === 'fr' ? '2. Pylônes Treillis & Faisceaux Aster' : '2. Steel Lattice Towers & Aster Bundles'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStage2Tab('STRUCTURAL_VIEWS')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      stage2Tab === 'STRUCTURAL_VIEWS'
+                        ? 'bg-sky-400 text-slate-950 shadow-md'
+                        : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                    }`}
+                  >
+                    <Layers className="w-3.5 h-3.5" />
+                    <span>{locale === 'fr' ? '3. Vues CAO Tri-Dimensionnelles & Schéma Électrique' : '3. CAD Elevation & Electrical Model'}</span>
+                  </button>
+                </div>
+
+                {stage2Tab === 'CATENARY_SAG' && (
+                  <InteractiveCatenarySagCanvas
+                    locale={locale}
+                    voltage={store.voltage}
+                  />
+                )}
+
+                {stage2Tab === 'OHL_EXPLORER' && (
+                  <OverheadLineExplorerTree
+                    locale={locale}
+                    onSelectEquipment={onSelectEquipment}
+                  />
+                )}
+
+                {stage2Tab === 'STRUCTURAL_VIEWS' && (
+                  <PhysicalElectricalFunctionalViews
+                    locale={locale}
+                  />
+                )}
+              </div>
+            )}
+
+            {/* ========================================================
+                STAGE 3: PROPAGATION D'ONDE, SIL & EFFET FERRANTI
+               ======================================================== */}
+            {store.activeStage === 3 && (
+              <div className="space-y-5">
+                {/* Stage 3 Sub-Tab Selector */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-[#222B38]">
+                  <button
+                    type="button"
+                    onClick={() => setStage3Tab('SIL_FERRANTI')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      stage3Tab === 'SIL_FERRANTI'
+                        ? 'bg-sky-400 text-slate-950 shadow-md'
+                        : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                    }`}
+                  >
+                    <Zap className="w-3.5 h-3.5" />
+                    <span>{locale === 'fr' ? '1. Laboratoire SIL & Effet Ferranti (CIGRÉ TB 207)' : '1. SIL & Ferranti Effect Lab (CIGRE TB 207)'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStage3Tab('SCENARIOS')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      stage3Tab === 'SCENARIOS'
+                        ? 'bg-sky-400 text-slate-950 shadow-md'
+                        : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                    }`}
+                  >
+                    <Activity className="w-3.5 h-3.5" />
+                    <span>{locale === 'fr' ? '2. Simulateur de 16 Scénarios d’Incidents Réseau' : '2. 16 Grid Contingency Scenarios'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStage3Tab('SCHEMA_RELATIONSHIPS')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      stage3Tab === 'SCHEMA_RELATIONSHIPS'
+                        ? 'bg-sky-400 text-slate-950 shadow-md'
+                        : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                    }`}
+                  >
+                    <Network className="w-3.5 h-3.5" />
+                    <span>{locale === 'fr' ? '3. Modèle d’États & Relations Système' : '3. System States & Relationships'}</span>
+                  </button>
+                </div>
+
+                {stage3Tab === 'SIL_FERRANTI' && (
+                  <SurgeImpedanceAndFerrantiLab locale={locale} />
+                )}
+
+                {stage3Tab === 'SCENARIOS' && (
+                  <TransmissionScenarioSimulator locale={locale} />
+                )}
+
+                {stage3Tab === 'SCHEMA_RELATIONSHIPS' && (
+                  <div className="space-y-6">
+                    <RelationshipAndStateModel locale={locale} />
+                    <EquipmentObjectSchemaInspector locale={locale} />
                   </div>
-                </button>
-              );
-            })}
-          </div>
-        )}
+                )}
+              </div>
+            )}
 
+            {/* ========================================================
+                STAGE 4: AMPACITÉ DYNAMIQUE DLR, CÂBLES & HVDC/FACTS
+               ======================================================== */}
+            {store.activeStage === 4 && (
+              <div className="space-y-5">
+                {/* Stage 4 Sub-Tab Selector */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-[#222B38]">
+                  <button
+                    type="button"
+                    onClick={() => setStage4Tab('DLR_LAB')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      stage4Tab === 'DLR_LAB'
+                        ? 'bg-sky-400 text-slate-950 shadow-md'
+                        : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                    }`}
+                  >
+                    <Activity className="w-3.5 h-3.5" />
+                    <span>{locale === 'fr' ? '1. Laboratoire DLR Ampacité Dynamique (IEEE 738)' : '1. Dynamic Line Rating Lab (IEEE 738)'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStage4Tab('UGC_EXPLORER')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      stage4Tab === 'UGC_EXPLORER'
+                        ? 'bg-sky-400 text-slate-950 shadow-md'
+                        : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                    }`}
+                  >
+                    <Layers className="w-3.5 h-3.5" />
+                    <span>{locale === 'fr' ? '2. Câbles Souterrains XLPE (CEI 60840 / 62067)' : '2. XLPE Underground Cables (IEC 60840)'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStage4Tab('OHL_UGC_BENCHMARK')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      stage4Tab === 'OHL_UGC_BENCHMARK'
+                        ? 'bg-sky-400 text-slate-950 shadow-md'
+                        : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                    }`}
+                  >
+                    <Scale className="w-3.5 h-3.5" />
+                    <span>{locale === 'fr' ? '3. Matrice Comparative OHL vs UGC (16 Critères)' : '3. OHL vs UGC Benchmark (16 Criteria)'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStage4Tab('HVDC_FACTS')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      stage4Tab === 'HVDC_FACTS'
+                        ? 'bg-sky-400 text-slate-950 shadow-md'
+                        : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                    }`}
+                  >
+                    <Zap className="w-3.5 h-3.5" />
+                    <span>{locale === 'fr' ? '4. Liaisons HVDC & Compensateurs FACTS' : '4. HVDC Links & FACTS Controllers'}</span>
+                  </button>
+                </div>
+
+                {stage4Tab === 'DLR_LAB' && (
+                  <DynamicLineRatingLab locale={locale} />
+                )}
+
+                {stage4Tab === 'UGC_EXPLORER' && (
+                  <UndergroundCableExplorerTree
+                    locale={locale}
+                    onSelectEquipment={onSelectEquipment}
+                  />
+                )}
+
+                {stage4Tab === 'OHL_UGC_BENCHMARK' && (
+                  <OverheadUndergroundComparison locale={locale} />
+                )}
+
+                {stage4Tab === 'HVDC_FACTS' && (
+                  <HvdcAndFactsWorkbench locale={locale} />
+                )}
+              </div>
+            )}
+
+            {/* ========================================================
+                STAGE 5: PROTECTIONS DE LIGNE, OPGW & DOSSIER DQE
+               ======================================================== */}
+            {store.activeStage === 5 && (
+              <div className="space-y-5">
+                {/* Stage 5 Sub-Tab Selector */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-[#222B38]">
+                  <button
+                    type="button"
+                    onClick={() => setStage5Tab('DOSSIER_BOQ')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      stage5Tab === 'DOSSIER_BOQ'
+                        ? 'bg-sky-400 text-slate-950 shadow-md'
+                        : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                    }`}
+                  >
+                    <FileCheck className="w-3.5 h-3.5" />
+                    <span>{locale === 'fr' ? '1. Dossier d’Ingénierie & DQE (FCFA)' : '1. Engineering Dossier & BOQ (FCFA)'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStage5Tab('DISTANCE_RELAY')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      stage5Tab === 'DISTANCE_RELAY'
+                        ? 'bg-sky-400 text-slate-950 shadow-md'
+                        : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                    }`}
+                  >
+                    <ShieldAlert className="w-3.5 h-3.5" />
+                    <span>{locale === 'fr' ? '2. Protection de Distance 21 (Plan R-X Quad/Mho)' : '2. Distance Relay 21 (R-X Plane Quad/Mho)'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStage5Tab('PROTECTION_TELECOM')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      stage5Tab === 'PROTECTION_TELECOM'
+                        ? 'bg-sky-400 text-slate-950 shadow-md'
+                        : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                    }`}
+                  >
+                    <Radio className="w-3.5 h-3.5" />
+                    <span>{locale === 'fr' ? '3. Téléprotection POTT/PUTT & Câble OPGW' : '3. Teleprotection POTT/PUTT & OPGW'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStage5Tab('DATA_REUSE')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      stage5Tab === 'DATA_REUSE'
+                        ? 'bg-sky-400 text-slate-950 shadow-md'
+                        : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                    }`}
+                  >
+                    <Network className="w-3.5 h-3.5" />
+                    <span>{locale === 'fr' ? '4. Interconnexions Plateforme EPEDE' : '4. EPEDE Data Interconnections'}</span>
+                  </button>
+                </div>
+
+                {stage5Tab === 'DOSSIER_BOQ' && (
+                  <TransmissionDeliverablesExportEngine
+                    locale={locale}
+                    selectedCorridorId={store.selectedCorridorId}
+                    voltage={store.voltage}
+                    technology={store.technology}
+                    lineLengthKm={store.lineLengthKm}
+                    circuitType={store.circuitType}
+                    bundleType={store.bundleType}
+                    linePhysics={store.linePhysics}
+                  />
+                )}
+
+                {stage5Tab === 'DISTANCE_RELAY' && (
+                  <AdvancedDistanceRelayLab locale={locale} />
+                )}
+
+                {stage5Tab === 'PROTECTION_TELECOM' && (
+                  <ProtectionAndTelecomOverlay locale={locale} />
+                )}
+
+                {stage5Tab === 'DATA_REUSE' && (
+                  <EpedeDataReuseMap locale={locale} />
+                )}
+              </div>
+            )}
+
+          </div>
+
+        </main>
       </div>
 
-      {/* 4. Active Pillar Workspace Container with Crisp Frame */}
-      <div className="transition-all duration-150 space-y-6">
-        {activePillar === 'JOURNEY' && (
-          <div className="space-y-6">
-            <EngineeringInfographicCard
-              infographicId="how-power-transmission-works"
-              locale={locale}
-              onOpenModal={(id) => setModalInfographicId(id)}
-            />
-            <MasterTransmissionJourney
-              locale={locale}
-              onSelectEquipment={onSelectEquipment}
-            />
-          </div>
-        )}
-
-        {activePillar === 'OHL_EXPLORER' && (
-          <OverheadLineExplorerTree
-            locale={locale}
-            onSelectEquipment={onSelectEquipment}
-          />
-        )}
-
-        {activePillar === 'UGC_EXPLORER' && (
-          <UndergroundCableExplorerTree
-            locale={locale}
-            onSelectEquipment={onSelectEquipment}
-          />
-        )}
-
-        {activePillar === 'VOLTAGE_EXPLORER' && (
-          <div className="space-y-6">
-            <EngineeringInfographicCard
-              infographicId="why-high-voltage-reduces-losses"
-              locale={locale}
-              onOpenModal={(id) => setModalInfographicId(id)}
-            />
-            <VoltageLevelExplorer
-              locale={locale}
-              activeVoltage={selectedVoltage}
-              onSelectVoltage={setSelectedVoltage}
-            />
-          </div>
-        )}
-
-        {activePillar === 'COMPARISON' && (
-          <OverheadUndergroundComparison
-            locale={locale}
-          />
-        )}
-
-        {activePillar === 'VIEWS' && (
-          <PhysicalElectricalFunctionalViews
-            locale={locale}
-          />
-        )}
-
-        {activePillar === 'RELATIONSHIPS' && (
-          <RelationshipAndStateModel
-            locale={locale}
-          />
-        )}
-
-        {activePillar === 'PROTECTION' && (
-          <ProtectionAndTelecomOverlay
-            locale={locale}
-          />
-        )}
-
-        {activePillar === 'SCENARIOS' && (
-          <TransmissionScenarioSimulator
-            locale={locale}
-          />
-        )}
-
-        {activePillar === 'PLANNING' && (
-          <TransmissionPlanningInterface
-            locale={locale}
-            onNavigate={onNavigate}
-          />
-        )}
-
-        {activePillar === 'SCHEMA' && (
-          <EquipmentObjectSchemaInspector
-            locale={locale}
-          />
-        )}
-
-        {activePillar === 'DATA_REUSE' && (
-          <EpedeDataReuseMap
-            locale={locale}
-            onNavigate={onNavigate}
-          />
-        )}
-
-        {activePillar === 'DLR_LAB' && (
-          <DynamicLineRatingLab
-            locale={locale}
-          />
-        )}
-
-        {activePillar === 'SIL_FERRANTI' && (
-          <SurgeImpedanceAndFerrantiLab
-            locale={locale}
-          />
-        )}
-
-        {activePillar === 'HVDC_FACTS' && (
-          <HvdcAndFactsWorkbench
-            locale={locale}
-          />
-        )}
-
-        {activePillar === 'DISTANCE_RELAY_LAB' && (
-          <AdvancedDistanceRelayLab
-            locale={locale}
-          />
-        )}
-      </div>
-      </main>
-      </div>
-
-      {/* 5. Engineering Principles & Mathematical Formulation Drawer */}
+      {/* 4. Mathematical Engineering Principles Drawer */}
       <EngineeringPrinciplesDrawer
-        locale={locale}
         isOpen={isPrinciplesDrawerOpen}
         onClose={() => setIsPrinciplesDrawerOpen(false)}
+        locale={locale}
       />
 
-      {/* 6. Fullscreen Engineering Infographics Modal */}
+      {/* 5. Fullscreen Engineering Infographics Modal */}
       {modalInfographicId && (
         <EngineeringInfographicsModal
           isOpen={!!modalInfographicId}
@@ -895,7 +674,6 @@ export const TransmissionWorkbench: React.FC<TransmissionWorkbenchProps> = ({
           locale={locale}
         />
       )}
-
     </div>
   );
 };
