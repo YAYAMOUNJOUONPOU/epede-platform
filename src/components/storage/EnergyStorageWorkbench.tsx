@@ -1,6 +1,6 @@
 // src/components/storage/EnergyStorageWorkbench.tsx
 // EPEDE D10 - Energy Storage & Charging (BESS / IRVE / Grid-Forming) Master Workbench
-// Fully Interactive 7-Pillar Electrical Engineering Environment
+// Comprehensive 5-Stage Engineering Environment compliant with IEC 62933, UL 9540A, NFPA 855 & ISO 15118
 
 import React, { useState, useMemo } from 'react';
 import {
@@ -25,8 +25,23 @@ import {
   Clock,
   Sparkles,
   ArrowRightLeft,
-  Gauge
+  Gauge,
+  Calculator,
+  X,
+  FileSpreadsheet,
+  Network,
+  ShieldCheck,
+  SlidersHorizontal,
+  ArrowRight
 } from 'lucide-react';
+import { AuthoritativeEcosystemHero } from '../common/AuthoritativeEcosystemHero';
+import { EnergyStorageOrientationBanner } from './EnergyStorageOrientationBanner';
+import {
+  EnergyStorageCommandHeader,
+  ENERGY_STORAGE_PROFILES,
+  EnergyStorageIndustryKey
+} from './EnergyStorageCommandHeader';
+import { EnergyStorageDqeBoqEngine } from './modules/EnergyStorageDqeBoqEngine';
 import { EPEDE_MATURITY_REGISTRY, getOverallPlatformMaturity } from '../../data/contentMaturityEngine';
 
 interface EnergyStorageWorkbenchProps {
@@ -35,26 +50,33 @@ interface EnergyStorageWorkbenchProps {
   onSelectEquipment?: (id: string) => void;
 }
 
-type WorkbenchTab =
-  | 'CONTAINER_PHYSICAL_LAYOUT'
-  | 'SIZING_DEGRADATION_SOLVER'
-  | 'GRID_FORMING_VSG'
-  | 'EV_CHARGING_IRVE'
-  | 'SAFETY_STANDARDS_FMEA'
-  | 'REAL_WORLD_BENCHMARKS'
-  | 'MATURITY_AUDIT_ENGINE';
-
 export const EnergyStorageWorkbench: React.FC<EnergyStorageWorkbenchProps> = ({
   locale,
-  onNavigate
+  onNavigate,
+  onSelectEquipment
 }) => {
   const isFr = locale === 'fr';
-  const [activeTab, setActiveTab] = useState<WorkbenchTab>('CONTAINER_PHYSICAL_LAYOUT');
+
+  // Master Progressive Stage State (1 to 5)
+  const [activeStage, setActiveStage] = useState<1 | 2 | 3 | 4 | 5>(1);
+
+  // Active Industrial Scenario Profile
+  const [selectedProfileKey, setSelectedProfileKey] = useState<EnergyStorageIndustryKey>('GUIDER_MAROUA_38MWH');
+
+  // Mathematical Principles Modal
+  const [isFormulasModalOpen, setIsFormulasModalOpen] = useState<boolean>(false);
+
+  // Sub-tabs per stage
+  const [stage1Tab, setStage1Tab] = useState<'CONTAINER_SVG' | 'SLD_SCHEMATIC'>('CONTAINER_SVG');
+  const [stage2Tab, setStage2Tab] = useState<'SOH_SOLVER' | 'CELL_CHEMISTRY'>('SOH_SOLVER');
+  const [stage3Tab, setStage3Tab] = useState<'VSG_SIMULATION' | 'CONTROL_LAWS'>('VSG_SIMULATION');
+  const [stage4Tab, setStage4Tab] = useState<'IRVE_SIMULATION' | 'DLM_ALGORITHM'>('IRVE_SIMULATION');
+  const [stage5Tab, setStage5Tab] = useState<'SAFETY_FMEA' | 'CAMEROON_BENCHMARKS' | 'DQE_BOQ'>('SAFETY_FMEA');
 
   // Interactive Sizing & Degradation State
-  const [ratedPowerMw, setRatedPowerMw] = useState<number>(10);
-  const [ratedEnergyMwh, setRatedEnergyMwh] = useState<number>(20);
-  const [ambientTempC, setAmbientTempC] = useState<number>(28);
+  const [ratedPowerMw, setRatedPowerMw] = useState<number>(15);
+  const [ratedEnergyMwh, setRatedEnergyMwh] = useState<number>(38);
+  const [ambientTempC, setAmbientTempC] = useState<number>(38); // Guider hot dry climate
   const [dailyCycles, setDailyCycles] = useState<number>(1.5);
   const [dodPercent, setDodPercent] = useState<number>(80);
   const [yearsProjected, setYearsProjected] = useState<number>(10);
@@ -70,10 +92,29 @@ export const EnergyStorageWorkbench: React.FC<EnergyStorageWorkbenchProps> = ({
   const [activeEvChargers, setActiveEvChargers] = useState<number>(6);
   const [chargerRatingKw, setChargerRatingKw] = useState<number>(150);
   const [dlmEnabled, setDlmEnabled] = useState<boolean>(true);
-  const [substationTransformerKva, setSubstationTransformerKva] = useState<number>(800);
+  const [substationTransformerKva, setSubstationTransformerKva] = useState<number>(1600);
 
   // Selected Component in Physical SVG
   const [selectedComponentId, setSelectedComponentId] = useState<string>('racks');
+
+  // Synchronize facility profile changes
+  const handleSelectProfile = (key: EnergyStorageIndustryKey) => {
+    setSelectedProfileKey(key);
+    const p = ENERGY_STORAGE_PROFILES[key];
+    if (p) {
+      setRatedPowerMw(p.defaultPowerMw);
+      setRatedEnergyMwh(p.defaultEnergyMwh);
+      setAmbientTempC(p.ambientTempC);
+      setGridFrequencyHz(p.gridFrequencyHz);
+      setActiveEvChargers(p.evPlazaChargers);
+      setSubstationTransformerKva(p.trafoKva);
+    }
+  };
+
+  const handleOpenDossier = () => {
+    setActiveStage(5);
+    setStage5Tab('DQE_BOQ');
+  };
 
   // Mathematical Calculations: Sizing & Degradation
   const calculations = useMemo(() => {
@@ -166,153 +207,85 @@ export const EnergyStorageWorkbench: React.FC<EnergyStorageWorkbenchProps> = ({
   const platformMaturity = getOverallPlatformMaturity();
 
   return (
-    <div className="w-full bg-slate-950 text-slate-100 min-h-screen pb-16 font-sans">
-      {/* Top Command & Status Bar */}
-      <div className="bg-slate-900/90 border-b border-slate-800 sticky top-0 z-30 backdrop-blur-md px-4 py-3">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shadow-lg shadow-emerald-500/10">
-              <BatteryCharging className="w-6 h-6 animate-pulse" />
+    <div className="space-y-6 text-[#e8eaf0] font-sans pb-16">
+      
+      {/* 0. AUTHORITATIVE ECOSYSTEM HERO (GENERATION & ENERGY STORAGE) */}
+      <AuthoritativeEcosystemHero
+        stage="generation"
+        locale={locale}
+        onNavigateToDomain={(dCode) => onNavigate?.('domain', dCode)}
+        onSelectEquipment={onSelectEquipment}
+        activePillarLabel={isFr ? 'Stockage d\'Énergie BESS, Grid-Forming & IRVE' : 'Energy Storage, Grid-Forming & EV Charging'}
+        totalPillarsCount={5}
+      />
+
+      {/* 1. EXECUTIVE FIRST-VIEW ORIENTATION BANNER (THE 7 FUNDAMENTAL QUESTIONS) */}
+      <EnergyStorageOrientationBanner
+        locale={locale}
+        onNavigateStage={(st) => setActiveStage(st)}
+        onNavigateDomain={(dCode) => onNavigate?.('domain', dCode)}
+      />
+
+      {/* 2. COMMAND HEADER HUD & 5-STAGE PROGRESSIVE SIZING ENGINE */}
+      <EnergyStorageCommandHeader
+        locale={locale}
+        activeStage={activeStage}
+        onSelectStage={(st) => setActiveStage(st)}
+        selectedProfileKey={selectedProfileKey}
+        onSelectProfile={handleSelectProfile}
+        onOpenFormulasModal={() => setIsFormulasModalOpen(true)}
+        onOpenDossier={handleOpenDossier}
+        rtePercent={calculations.roundTripEfficiency}
+        sohPercent={calculations.finalSoh}
+      />
+
+      {/* ========================================================================= */}
+      {/* STAGE 1: BESS 1500V CONTAINER PHYSICAL ARCHITECTURE & ELECTRICAL SLD      */}
+      {/* ========================================================================= */}
+      {activeStage === 1 && (
+        <div className="space-y-5 animate-in fade-in duration-300">
+          
+          {/* Sub-Navigation Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-3 p-2 bg-[#090D14] border border-[#222B38] rounded-xl font-mono text-xs">
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">
+                {isFr ? 'Étape 1' : 'Stage 1'}
+              </span>
+              <span className="font-bold text-white hidden sm:inline">
+                {isFr ? 'Architecture Physique Conteneur BESS 1500V & Schéma Unifilaire (SLD)' : 'BESS 1500V Container Physical Layout & Single Line Diagram'}
+              </span>
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded">
-                  DOMAINE D10
-                </span>
-                <span className="text-xs text-slate-400 font-mono">
-                  IEC 62933 · UL 9540A · NFPA 855 · ISO 15118
-                </span>
-                <span className="px-2 py-0.5 text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30 rounded flex items-center gap-1">
-                  <Sparkles className="w-3 h-3" /> MATURITÉ NIVEAU 5 (EXPERT)
-                </span>
-              </div>
-              <h1 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                {isFr
-                  ? 'Station d\'Ingénierie Stockage d\'Énergie BESS, PCS Grid-Forming & IRVE'
-                  : 'Utility BESS, Grid-Forming PCS & High-Power EV Charging Engineering Station'}
-              </h1>
+
+            <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-lg border border-slate-800">
+              <button
+                onClick={() => setStage1Tab('CONTAINER_SVG')}
+                className={`px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 transition-all ${
+                  stage1Tab === 'CONTAINER_SVG'
+                    ? 'bg-emerald-500 text-slate-950 shadow-md font-extrabold'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" />
+                {isFr ? '1.1 Conteneur ISO 40ft (SVG)' : '1.1 40ft Container (SVG)'}
+              </button>
+              <button
+                onClick={() => setStage1Tab('SLD_SCHEMATIC')}
+                className={`px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 transition-all ${
+                  stage1Tab === 'SLD_SCHEMATIC'
+                    ? 'bg-emerald-500 text-slate-950 shadow-md font-extrabold'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Network className="w-3.5 h-3.5" />
+                {isFr ? '1.2 Unifilaire SLD DC/AC' : '1.2 DC/AC Single Line'}
+              </button>
             </div>
           </div>
 
-          {/* Quick Real-Time Metrics Bar */}
-          <div className="flex items-center gap-2 sm:gap-4 text-xs font-mono bg-slate-950/70 border border-slate-800/80 px-3 py-1.5 rounded-lg">
-            <div className="flex flex-col">
-              <span className="text-slate-500 text-[10px] uppercase">Tension Bus DC</span>
-              <span className="text-emerald-400 font-semibold">1500 V DC</span>
-            </div>
-            <div className="h-6 w-px bg-slate-800" />
-            <div className="flex flex-col">
-              <span className="text-slate-500 text-[10px] uppercase">Rendement η_RTE</span>
-              <span className="text-cyan-400 font-semibold">{calculations.roundTripEfficiency}%</span>
-            </div>
-            <div className="h-6 w-px bg-slate-800" />
-            <div className="flex flex-col">
-              <span className="text-slate-500 text-[10px] uppercase">Chimie Cellules</span>
-              <span className="text-amber-400 font-semibold">LiFePO4 (LFP)</span>
-            </div>
-            <div className="h-6 w-px bg-slate-800" />
-            <div className="flex flex-col">
-              <span className="text-slate-500 text-[10px] uppercase">Sécurité Extinction</span>
-              <span className="text-rose-400 font-semibold">UL 9540A / Novec</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Tab Navigation Menu */}
-        <div className="max-w-7xl mx-auto mt-3 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
-          <button
-            onClick={() => setActiveTab('CONTAINER_PHYSICAL_LAYOUT')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'CONTAINER_PHYSICAL_LAYOUT'
-                ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
-                : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
-            }`}
-          >
-            <Layers className="w-3.5 h-3.5" />
-            {isFr ? '1. Architecture Physique Conteneur (SVG)' : '1. Physical BESS Container Layout'}
-          </button>
-
-          <button
-            onClick={() => setActiveTab('SIZING_DEGRADATION_SOLVER')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'SIZING_DEGRADATION_SOLVER'
-                ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
-                : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
-            }`}
-          >
-            <Sliders className="w-3.5 h-3.5" />
-            {isFr ? '2. Solveur Dimensionnement & SOH Arrhenius' : '2. Sizing & SOH Degradation Solver'}
-          </button>
-
-          <button
-            onClick={() => setActiveTab('GRID_FORMING_VSG')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'GRID_FORMING_VSG'
-                ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
-                : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
-            }`}
-          >
-            <Cpu className="w-3.5 h-3.5" />
-            {isFr ? '3. Contrôle Grid-Forming & Inertie VSG' : '3. Grid-Forming & Virtual Synchronous Machine'}
-          </button>
-
-          <button
-            onClick={() => setActiveTab('EV_CHARGING_IRVE')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'EV_CHARGING_IRVE'
-                ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
-                : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
-            }`}
-          >
-            <Zap className="w-3.5 h-3.5" />
-            {isFr ? '4. Bornes IRVE Haute Puissance & V2G' : '4. High-Power EV Charging & V2G'}
-          </button>
-
-          <button
-            onClick={() => setActiveTab('SAFETY_STANDARDS_FMEA')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'SAFETY_STANDARDS_FMEA'
-                ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
-                : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
-            }`}
-          >
-            <ShieldAlert className="w-3.5 h-3.5" />
-            {isFr ? '5. Sécurité Incendie & FMEA Défaillances' : '5. Fire Safety & Failure Modes (FMEA)'}
-          </button>
-
-          <button
-            onClick={() => setActiveTab('REAL_WORLD_BENCHMARKS')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'REAL_WORLD_BENCHMARKS'
-                ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
-                : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
-            }`}
-          >
-            <Globe className="w-3.5 h-3.5" />
-            {isFr ? '6. Cas Concrets (Guider 38 MWh & Monde)' : '6. Real Projects (Guider 38 MWh & Global)'}
-          </button>
-
-          <button
-            onClick={() => setActiveTab('MATURITY_AUDIT_ENGINE')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === 'MATURITY_AUDIT_ENGINE'
-                ? 'bg-purple-500 text-slate-950 font-bold shadow-md shadow-purple-500/20'
-                : 'text-purple-300 hover:bg-purple-900/30'
-            }`}
-          >
-            <Activity className="w-3.5 h-3.5" />
-            {isFr ? '7. Moteur d\'Audit EPEDE (Niveau 0-5)' : '7. EPEDE Maturity Audit Engine'}
-          </button>
-        </div>
-      </div>
-
-      {/* Main Content Viewport */}
-      <div className="max-w-7xl mx-auto px-4 mt-6">
-        {/* TAB 1: CONTAINER PHYSICAL LAYOUT (INTERACTIVE SVG) */}
-        {activeTab === 'CONTAINER_PHYSICAL_LAYOUT' && (
-          <div className="space-y-6">
-            <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-xl">
-              <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+          {/* Sub-Tab 1.1: Container Cutaway Interactive SVG */}
+          {stage1Tab === 'CONTAINER_SVG' && (
+            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
                 <div>
                   <h2 className="text-lg font-bold text-white flex items-center gap-2">
                     <Layers className="w-5 h-5 text-emerald-400" />
@@ -581,7 +554,7 @@ export const EnergyStorageWorkbench: React.FC<EnergyStorageWorkbenchProps> = ({
               </div>
 
               {/* Dynamic Detail Card for Selected Subsystem */}
-              <div className="mt-4 p-4 bg-slate-950/90 border border-slate-800 rounded-lg">
+              <div className="p-4 bg-slate-950/90 border border-slate-800 rounded-xl">
                 {selectedComponentId === 'racks' && (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
@@ -595,7 +568,7 @@ export const EnergyStorageWorkbench: React.FC<EnergyStorageWorkbenchProps> = ({
                     </div>
                     <p className="text-xs text-slate-300 leading-relaxed">
                       {isFr
-                        ? 'Chaque rack de batterie 1500 V DC regroupe 416 cellules prismatiques en série (3.2 V nominal, 280 Ah ou 314 Ah). La chimie LFP offre une stabilité thermique intrinsèque exceptionnelle (température d\'emballement &gt; 270°C contre ~150°C pour le NMC) et ne libère pas d\'oxygène lors de la décomposition. Chaque rack comprend son unité de déconnexion BDU (Battery Disconnect Unit) avec fusible DC ultra-rapide 1500 V gBat et contacteur sous vide.'
+                        ? 'Chaque rack de batterie 1500 V DC regroupe 416 cellules prismatiques en série (3.2 V nominal, 280 Ah ou 314 Ah). La chimie LFP offre une stabilité thermique intrinsèque exceptionnelle (température d\'emballement > 270°C contre ~150°C pour le NMC) et ne libère pas d\'oxygène lors de la décomposition. Chaque rack comprend son unité de déconnexion BDU (Battery Disconnect Unit) avec fusible DC ultra-rapide 1500 V gBat et contacteur sous vide.'
                         : 'Each 1500 V DC rack strings 416 prismatic cells in series (3.2 V nominal, 280 Ah or 314 Ah). The LFP chemistry provides extraordinary thermal stability (runaway trigger > 270°C vs ~150°C for NMC) and releases zero oxygen during decomposition. Each rack incorporates a high-speed 1500 V DC gBat fuse and vacuum contactor inside the BDU.'}
                     </p>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 text-[11px] font-mono text-slate-400">
@@ -677,14 +650,137 @@ export const EnergyStorageWorkbench: React.FC<EnergyStorageWorkbenchProps> = ({
                 )}
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* TAB 2: SIZING & DEGRADATION SOLVER */}
-        {activeTab === 'SIZING_DEGRADATION_SOLVER' && (
-          <div className="space-y-6">
-            <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-xl">
-              <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+          {/* Sub-Tab 1.2: Electrical Single Line Diagram (SLD) */}
+          {stage1Tab === 'SLD_SCHEMATIC' && (
+            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                <div>
+                  <h2 className="text-lg font-bold text-white uppercase tracking-wide flex items-center gap-2">
+                    <Network className="w-5 h-5 text-emerald-400" />
+                    {isFr ? 'Schéma Unifilaire Électrique BESS (Du Bus 1500V DC au Réseau 30 kV)' : 'BESS Electrical Single Line Diagram (1500V DC to 30 kV Grid)'}
+                  </h2>
+                  <p className="text-xs text-slate-400 font-sans mt-0.5">
+                    {isFr
+                      ? 'Topologie électrotechnique complète : strings DC, déconnexion BDU, onduleur réversible 4Q, filtre LCL, transformateur élévateur et cellule disjoncteur HTA.'
+                      : 'Complete electrical topology: DC strings, BDU isolation, 4Q reversible inverter, LCL filter, step-up transformer, and MV circuit breaker.'}
+                  </p>
+                </div>
+                <span className="px-3 py-1 rounded-lg text-xs font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                  Régime IT Flottant DC / Régime Impédant AC
+                </span>
+              </div>
+
+              {/* SLD Interactive Visual Representation */}
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-3 font-mono text-xs">
+                
+                {/* Node 1: DC Strings */}
+                <div className="p-4 rounded-xl bg-slate-950 border border-emerald-500/30 space-y-2">
+                  <div className="text-[10px] text-emerald-400 font-bold uppercase">1. Racks Batteries DC</div>
+                  <div className="text-lg font-extrabold text-white">1500 V DC</div>
+                  <div className="text-[11px] text-slate-400">10 Strings en parallèle</div>
+                  <div className="p-2 rounded bg-slate-900 text-[10px] text-slate-300 border border-slate-800">
+                    Fusibles gBat 1500V + Contacteur sous vide DC + Contrôleur Permanent d'Isolement (CPI)
+                  </div>
+                </div>
+
+                {/* Arrow */}
+                <div className="hidden md:flex items-center justify-center text-slate-600">
+                  <ArrowRight className="w-6 h-6 text-emerald-500" />
+                </div>
+
+                {/* Node 2: PCS Inverter */}
+                <div className="p-4 rounded-xl bg-slate-950 border border-blue-500/30 space-y-2">
+                  <div className="text-[10px] text-blue-400 font-bold uppercase">2. Onduleur PCS 4Q</div>
+                  <div className="text-lg font-extrabold text-white">690 V AC</div>
+                  <div className="text-[11px] text-slate-400">Pont IGBT / SiC 4 kHz</div>
+                  <div className="p-2 rounded bg-slate-900 text-[10px] text-slate-300 border border-slate-800">
+                    Filtre LCL (THDi &lt; 2.5%) + Disjoncteur AC 2500A Débrochable CEI 60947-2
+                  </div>
+                </div>
+
+                {/* Arrow */}
+                <div className="hidden md:flex items-center justify-center text-slate-600">
+                  <ArrowRight className="w-6 h-6 text-cyan-500" />
+                </div>
+
+                {/* Node 3: Step-Up Transformer & Grid Bay */}
+                <div className="p-4 rounded-xl bg-slate-950 border border-amber-500/30 space-y-2">
+                  <div className="text-[10px] text-amber-400 font-bold uppercase">3. Poste Évacuation HTA</div>
+                  <div className="text-lg font-extrabold text-white">30 kV HTA</div>
+                  <div className="text-[11px] text-slate-400">Transfo 0.69 / 30 kV Dyn11</div>
+                  <div className="p-2 rounded bg-slate-900 text-[10px] text-slate-300 border border-slate-800">
+                    Cellule départ disjoncteur SF6/Vide + Relais numérique ANSI 87B / 50/51 / 81U
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Protective Coordination Notes */}
+              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2 text-xs">
+                <div className="font-bold text-white uppercase text-[11px] flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <span>Coordination des Protections Sélectives (CEI 60255 &amp; CEI 60947-2)</span>
+                </div>
+                <p className="text-slate-300 leading-relaxed font-sans text-xs">
+                  En cas de défaut sur le bus continu 1500 V, le fusible ultra-rapide gBat élimine le court-circuit en moins de <strong>5 millisecondes</strong>, protégeant l'étage de commutation IGBT du PCS avant toute fusion destructive de jonction semi-conductrice. Côté alternatif 30 kV, la protection directionnelle de surintensité (ANSI 67) et la protection de sous-fréquence à dérivée RoCoF (ANSI 81R) garantissent un déclenchement coordonné avec le gestionnaire de réseau de transport Sonatrel.
+                </p>
+              </div>
+
+            </div>
+          )}
+
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* STAGE 2: ELECTROCHEMICAL SIZING & ARRHENIUS SOH DEGRADATION SOLVER        */}
+      {/* ========================================================================= */}
+      {activeStage === 2 && (
+        <div className="space-y-5 animate-in fade-in duration-300">
+          
+          {/* Sub-Navigation Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-3 p-2 bg-[#090D14] border border-[#222B38] rounded-xl font-mono text-xs">
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">
+                {isFr ? 'Étape 2' : 'Stage 2'}
+              </span>
+              <span className="font-bold text-white hidden sm:inline">
+                {isFr ? 'Dimensionnement Énergétique, Bilan de Puissance & Vieillissement SOH Arrhenius' : 'Energy Sizing, Power Balance & Arrhenius SOH Degradation Solver'}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-lg border border-slate-800">
+              <button
+                onClick={() => setStage2Tab('SOH_SOLVER')}
+                className={`px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 transition-all ${
+                  stage2Tab === 'SOH_SOLVER'
+                    ? 'bg-emerald-500 text-slate-950 shadow-md font-extrabold'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Sliders className="w-3.5 h-3.5" />
+                {isFr ? '2.1 Solveur SOH Arrhenius' : '2.1 SOH Arrhenius Solver'}
+              </button>
+              <button
+                onClick={() => setStage2Tab('CELL_CHEMISTRY')}
+                className={`px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 transition-all ${
+                  stage2Tab === 'CELL_CHEMISTRY'
+                    ? 'bg-emerald-500 text-slate-950 shadow-md font-extrabold'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Battery className="w-3.5 h-3.5" />
+                {isFr ? '2.2 Matrice des Chimies' : '2.2 Cell Chemistry Matrix'}
+              </button>
+            </div>
+          </div>
+
+          {/* Sub-Tab 2.1: SOH Arrhenius Sizing Solver */}
+          {stage2Tab === 'SOH_SOLVER' && (
+            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
                 <div>
                   <h2 className="text-lg font-bold text-white flex items-center gap-2">
                     <Sliders className="w-5 h-5 text-emerald-400" />
@@ -751,53 +847,56 @@ export const EnergyStorageWorkbench: React.FC<EnergyStorageWorkbenchProps> = ({
                     <input
                       type="range"
                       min="15"
-                      max="45"
+                      max="48"
                       step="1"
                       value={ambientTempC}
                       onChange={(e) => setAmbientTempC(Number(e.target.value))}
                       className="w-full accent-amber-500"
                     />
                     <span className="text-[10px] text-slate-500 block mt-0.5">
-                      {isFr ? 'Note : +10°C double la vitesse de dégradation calendaire selon la loi d\'Arrhenius.' : 'Note: +10°C doubles calendar degradation rate per Arrhenius reaction kinetics.'}
+                      {isFr
+                        ? 'Point de consigne thermique garanti par le groupe chiller liquide eau-glycolée.'
+                        : 'Thermal setpoint regulated by closed-loop water-glycol liquid chiller.'}
                     </span>
                   </div>
 
-                  <div>
-                    <div className="flex justify-between text-xs mb-1">
-                      <span className="text-slate-300">{isFr ? 'Cycles Quotidiens Équivalents :' : 'Equivalent Daily Full Cycles:'}</span>
-                      <span className="font-mono font-bold text-blue-400">{dailyCycles} cycles / jour</span>
+                  <div className="grid grid-cols-2 gap-3 pt-2">
+                    <div>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="text-slate-300">{isFr ? 'Cycles / Jour :' : 'Cycles / Day:'}</span>
+                        <span className="font-mono font-bold text-white">{dailyCycles}</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0.5"
+                        max="3.0"
+                        step="0.1"
+                        value={dailyCycles}
+                        onChange={(e) => setDailyCycles(Number(e.target.value))}
+                        className="w-full accent-emerald-500"
+                      />
                     </div>
-                    <input
-                      type="range"
-                      min="0.5"
-                      max="3.0"
-                      step="0.1"
-                      value={dailyCycles}
-                      onChange={(e) => setDailyCycles(Number(e.target.value))}
-                      className="w-full accent-blue-500"
-                    />
+                    <div>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="text-slate-300">{isFr ? 'Profondeur DoD (%) :' : 'Depth of Discharge (%):'}</span>
+                        <span className="font-mono font-bold text-white">{dodPercent}%</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="50"
+                        max="100"
+                        step="5"
+                        value={dodPercent}
+                        onChange={(e) => setDodPercent(Number(e.target.value))}
+                        className="w-full accent-emerald-500"
+                      />
+                    </div>
                   </div>
 
                   <div>
                     <div className="flex justify-between text-xs mb-1">
-                      <span className="text-slate-300">{isFr ? 'Profondeur de Décharge (DoD %) :' : 'Depth of Discharge (DoD %):'}</span>
-                      <span className="font-mono font-bold text-purple-400">{dodPercent} %</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="50"
-                      max="100"
-                      step="5"
-                      value={dodPercent}
-                      onChange={(e) => setDodPercent(Number(e.target.value))}
-                      className="w-full accent-purple-500"
-                    />
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-xs mb-1">
-                      <span className="text-slate-300">{isFr ? 'Horizon d\'Exploitation Analysé (Ans) :' : 'Project Life Horizon (Years):'}</span>
-                      <span className="font-mono font-bold text-cyan-400">{yearsProjected} ans</span>
+                      <span className="text-slate-300">{isFr ? 'Horizon de Projection (Années) :' : 'Projection Horizon (Years):'}</span>
+                      <span className="font-mono font-bold text-purple-400">{yearsProjected} ans</span>
                     </div>
                     <input
                       type="range"
@@ -806,97 +905,50 @@ export const EnergyStorageWorkbench: React.FC<EnergyStorageWorkbenchProps> = ({
                       step="1"
                       value={yearsProjected}
                       onChange={(e) => setYearsProjected(Number(e.target.value))}
-                      className="w-full accent-cyan-500"
+                      className="w-full accent-purple-500"
                     />
                   </div>
                 </div>
 
-                {/* Live Engineering Results Dashboard (Right 6 Cols) */}
+                {/* SOH Output & Degradation Curves (Right 6 Cols) */}
                 <div className="lg:col-span-6 space-y-4">
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                      <span className="text-[11px] text-slate-400 uppercase font-mono block mb-1">
-                        Régime de Décharge (C-Rate)
-                      </span>
-                      <div className="text-2xl font-bold font-mono text-emerald-400">
-                        {calculations.cRate} C
+                  <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-4">
+                    <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider border-b border-slate-800 pb-2">
+                      {isFr ? 'Indicateurs de Performance & Durabilité Calculés' : 'Calculated Durability & Performance KPIs'}
+                    </h3>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 font-mono text-center">
+                      <div className="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+                        <span className="text-slate-500 text-[10px] block uppercase">Régime C-Rate</span>
+                        <span className="text-base font-bold text-emerald-400">{calculations.cRate} C</span>
+                        <span className="text-[10px] text-slate-400 block">{calculations.autonomyHours} h autonomie</span>
                       </div>
-                      <span className="text-[10px] text-slate-500 block mt-1">
-                        Autonomie pleine charge : <strong className="text-white">{calculations.autonomyHours} h</strong>
-                      </span>
+                      <div className="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+                        <span className="text-slate-500 text-[10px] block uppercase">Rendement η_RTE</span>
+                        <span className="text-base font-bold text-cyan-400">{calculations.roundTripEfficiency}%</span>
+                        <span className="text-[10px] text-slate-400 block">Aller-retour AC/AC</span>
+                      </div>
+                      <div className="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+                        <span className="text-slate-500 text-[10px] block uppercase">SOH Résiduel</span>
+                        <span className={`text-base font-bold ${Number(calculations.finalSoh) >= 80 ? 'text-emerald-400' : 'text-amber-400'}`}>
+                          {calculations.finalSoh}%
+                        </span>
+                        <span className="text-[10px] text-slate-400 block">Après {yearsProjected} ans</span>
+                      </div>
                     </div>
 
-                    <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                      <span className="text-[11px] text-slate-400 uppercase font-mono block mb-1">
-                        Rendement Aller-Retour η_RTE
-                      </span>
-                      <div className="text-2xl font-bold font-mono text-cyan-400">
-                        {calculations.roundTripEfficiency} %
+                    <div className="space-y-2 pt-2">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-slate-400">Énergie Résiduelle Exploitable :</span>
+                        <span className="font-mono font-bold text-white">{calculations.remainingEnergyMwh} MWh</span>
                       </div>
-                      <span className="text-[10px] text-slate-500 block mt-1">
-                        AC-to-AC (Batterie + PCS + Transfo 30 kV)
-                      </span>
-                    </div>
-
-                    <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                      <span className="text-[11px] text-slate-400 uppercase font-mono block mb-1">
-                        État de Santé Résiduel (SOH)
-                      </span>
-                      <div className={`text-2xl font-bold font-mono ${Number(calculations.finalSoh) >= 80 ? 'text-emerald-400' : Number(calculations.finalSoh) >= 70 ? 'text-amber-400' : 'text-rose-400'}`}>
-                        {calculations.finalSoh} %
+                      <div className="flex justify-between text-xs">
+                        <span className="text-slate-400">Perte Cyclique (Électrochimie SEI) :</span>
+                        <span className="font-mono text-rose-400">-{calculations.cycleFade}%</span>
                       </div>
-                      <span className="text-[10px] text-slate-500 block mt-1">
-                        Fin de vie garantie (EOL) : <strong className="text-white">&gt; 70%</strong>
-                      </span>
-                    </div>
-
-                    <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                      <span className="text-[11px] text-slate-400 uppercase font-mono block mb-1">
-                        Énergie Utile Restante
-                      </span>
-                      <div className="text-2xl font-bold font-mono text-white">
-                        {calculations.remainingEnergyMwh} MWh
-                      </div>
-                      <span className="text-[10px] text-slate-500 block mt-1">
-                        Courant 1500V DC : <strong className="text-white">{calculations.usableCurrentAt1500V} A</strong>
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Degradation Breakdown Chart Card */}
-                  <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-                    <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between">
-                      <span>{isFr ? 'Décomposition des Pertes de Capacité' : 'Capacity Loss Decomposition'}</span>
-                      <span className="font-mono text-[11px] text-slate-400">
-                        Perte totale : {(100 - Number(calculations.finalSoh)).toFixed(1)}%
-                      </span>
-                    </h4>
-
-                    <div className="space-y-2 text-xs">
-                      <div>
-                        <div className="flex justify-between text-slate-400 text-[11px] mb-1">
-                          <span>{isFr ? 'Vieillissement Cyclique (Solid Electrolyte Interphase - SEI) :' : 'Cycling SEI Layer Growth Fade:'}</span>
-                          <span className="font-mono text-emerald-400">{calculations.cycleFade}%</span>
-                        </div>
-                        <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-emerald-500 rounded-full"
-                            style={{ width: `${Math.min(100, Number(calculations.cycleFade) * 2)}%` }}
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="flex justify-between text-slate-400 text-[11px] mb-1">
-                          <span>{isFr ? 'Vieillissement Calendaire (Dérive Thermique Arrhenius) :' : 'Calendar Thermal Drift (Arrhenius Law):'}</span>
-                          <span className="font-mono text-amber-400">{calculations.calFade}%</span>
-                        </div>
-                        <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-amber-500 rounded-full"
-                            style={{ width: `${Math.min(100, Number(calculations.calFade) * 2)}%` }}
-                          />
-                        </div>
+                      <div className="flex justify-between text-xs">
+                        <span className="text-slate-400">Perte Calendaire (Vieillissement Thermique) :</span>
+                        <span className="font-mono text-amber-400">-{calculations.calFade}%</span>
                       </div>
                     </div>
 
@@ -914,14 +966,124 @@ export const EnergyStorageWorkbench: React.FC<EnergyStorageWorkbenchProps> = ({
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* TAB 3: GRID-FORMING & VIRTUAL SYNCHRONOUS MACHINE (VSG) */}
-        {activeTab === 'GRID_FORMING_VSG' && (
-          <div className="space-y-6">
-            <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-xl">
-              <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+          {/* Sub-Tab 2.2: Cell Chemistry Comparative Matrix */}
+          {stage2Tab === 'CELL_CHEMISTRY' && (
+            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+              <div className="border-b border-slate-800 pb-4">
+                <h2 className="text-lg font-bold text-white uppercase tracking-wide flex items-center gap-2">
+                  <Battery className="w-5 h-5 text-emerald-400" />
+                  {isFr ? 'Matrice Comparative des Technologies Électrochimiques Stationnaires' : 'Comparative Benchmark Matrix of Stationary Battery Chemistries'}
+                </h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  {isFr
+                    ? 'Analyse multidimensionnelle des chimies LiFePO4 (LFP), Nickel-Manganèse-Cobalt (NMC), Sodium-ion (Na-ion) et Flux Redox Vanadium (VRFB) pour application réseau et climat tropical africain.'
+                    : 'Multidimensional evaluation of LiFePO4 (LFP), Nickel-Manganese-Cobalt (NMC), Sodium-ion (Na-ion), and Vanadium Redox Flow (VRFB) for utility grid and tropical African climates.'}
+                </p>
+              </div>
+
+              <div className="overflow-x-auto rounded-xl border border-slate-800">
+                <table className="w-full text-left font-mono text-xs">
+                  <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] border-b border-slate-800">
+                    <tr>
+                      <th className="p-3">Technologie / Chimie</th>
+                      <th className="p-3">Densité Énergétique</th>
+                      <th className="p-3">Rendement (RTE)</th>
+                      <th className="p-3">Durée de Vie Cyclique</th>
+                      <th className="p-3">Stabilité Thermique</th>
+                      <th className="p-3">Adéquation Climat Tropical</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/60 bg-slate-900/40">
+                    <tr className="hover:bg-slate-800/30">
+                      <td className="p-3 font-bold text-emerald-400">LiFePO4 (LFP)</td>
+                      <td className="p-3 text-slate-300">140 - 180 Wh/kg</td>
+                      <td className="p-3 text-cyan-400 font-bold">92 - 95%</td>
+                      <td className="p-3 text-emerald-400 font-bold">&gt; 6 000 cycles</td>
+                      <td className="p-3 text-slate-300">Emballement &gt; 270°C (Sécurisé)</td>
+                      <td className="p-3 font-bold text-emerald-400">Excellente (Standard Guider)</td>
+                    </tr>
+                    <tr className="hover:bg-slate-800/30">
+                      <td className="p-3 font-bold text-blue-400">NMC (Ni-Mn-Co)</td>
+                      <td className="p-3 text-slate-300">220 - 260 Wh/kg</td>
+                      <td className="p-3 text-cyan-400 font-bold">94 - 96%</td>
+                      <td className="p-3 text-slate-300">2 500 - 3 500 cycles</td>
+                      <td className="p-3 text-rose-400">Emballement dès 150°C (Risque O2)</td>
+                      <td className="p-3 text-amber-400">Nécessite chiller puissant</td>
+                    </tr>
+                    <tr className="hover:bg-slate-800/30">
+                      <td className="p-3 font-bold text-purple-400">Sodium-Ion (Na-ion)</td>
+                      <td className="p-3 text-slate-300">110 - 140 Wh/kg</td>
+                      <td className="p-3 text-cyan-400 font-bold">88 - 91%</td>
+                      <td className="p-3 text-slate-300">3 000 - 4 500 cycles</td>
+                      <td className="p-3 text-emerald-400">Très stable (Décharge à 0V sans risque)</td>
+                      <td className="p-3 text-emerald-400">Très haute tolérance aux T° (&gt; 45°C)</td>
+                    </tr>
+                    <tr className="hover:bg-slate-800/30">
+                      <td className="p-3 font-bold text-amber-400">Flux Redox (VRFB)</td>
+                      <td className="p-3 text-slate-300">25 - 40 Wh/kg</td>
+                      <td className="p-3 text-amber-400 font-bold">70 - 75%</td>
+                      <td className="p-3 text-emerald-400 font-bold">&gt; 20 000 cycles (Illimité)</td>
+                      <td className="p-3 text-emerald-400">Ininflammable (Électrolyte aqueux)</td>
+                      <td className="p-3 text-slate-300">Idéal stockage long terme (&gt; 8h)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* STAGE 3: GRID-FORMING (VSG) & VIRTUAL INERTIA DYNAMICS SIMULATOR          */}
+      {/* ========================================================================= */}
+      {activeStage === 3 && (
+        <div className="space-y-5 animate-in fade-in duration-300">
+          
+          {/* Sub-Navigation Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-3 p-2 bg-[#090D14] border border-[#222B38] rounded-xl font-mono text-xs">
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">
+                {isFr ? 'Étape 3' : 'Stage 3'}
+              </span>
+              <span className="font-bold text-white hidden sm:inline">
+                {isFr ? 'Contrôle Avancé Grid-Forming, Inertie Synthétique & Machine Synchrone Virtuelle (VSG)' : 'Grid-Forming Control, Synthetic Inertia & Virtual Synchronous Machine (VSG)'}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-lg border border-slate-800">
+              <button
+                onClick={() => setStage3Tab('VSG_SIMULATION')}
+                className={`px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 transition-all ${
+                  stage3Tab === 'VSG_SIMULATION'
+                    ? 'bg-emerald-500 text-slate-950 shadow-md font-extrabold'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Cpu className="w-3.5 h-3.5" />
+                {isFr ? '3.1 Banc Perturbation VSG' : '3.1 VSG Disturbance Bench'}
+              </button>
+              <button
+                onClick={() => setStage3Tab('CONTROL_LAWS')}
+                className={`px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 transition-all ${
+                  stage3Tab === 'CONTROL_LAWS'
+                    ? 'bg-emerald-500 text-slate-950 shadow-md font-extrabold'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Activity className="w-3.5 h-3.5" />
+                {isFr ? '3.2 Lois de Régulation Droop' : '3.2 Droop Control Laws'}
+              </button>
+            </div>
+          </div>
+
+          {/* Sub-Tab 3.1: VSG Disturbance Simulator */}
+          {stage3Tab === 'VSG_SIMULATION' && (
+            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
                 <div>
                   <h2 className="text-lg font-bold text-white flex items-center gap-2">
                     <Cpu className="w-5 h-5 text-emerald-400" />
@@ -1049,57 +1211,51 @@ export const EnergyStorageWorkbench: React.FC<EnergyStorageWorkbenchProps> = ({
                         <line x1="0" y1="30" x2="500" y2="30" stroke="#10b981" strokeWidth="1" strokeDasharray="3 3" />
                         <text x="5" y="25" fill="#10b981" fontSize="9">50.00 Hz (Nominal)</text>
 
-                        <line x1="0" y1="120" x2="500" y2="120" stroke="#ef4444" strokeWidth="1" strokeDasharray="3 3" />
-                        <text x="5" y="115" fill="#ef4444" fontSize="9">49.40 Hz (Seuil Délestage ANSI 81U)</text>
+                        <line x1="0" y1="80" x2="500" y2="80" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 3" />
+                        <text x="5" y="75" fill="#f59e0b" fontSize="9">49.80 Hz (Zone de Réglage Primaire)</text>
+
+                        <line x1="0" y1="130" x2="500" y2="130" stroke="#ef4444" strokeWidth="1" strokeDasharray="3 3" />
+                        <text x="5" y="125" fill="#ef4444" fontSize="9">49.40 Hz (Seuil Délestage Fréquencemétrique ANSI 81U)</text>
 
                         {/* Frequency Curve */}
-                        {vsgMode === 'GRID_FORMING' ? (
-                          <path
-                            d={disturbanceActive
-                              ? "M 0 30 L 100 30 C 130 30, 160 85, 200 80 C 250 75, 350 40, 500 35"
-                              : "M 0 30 L 500 30"
-                            }
-                            fill="none"
-                            stroke="#10b981"
-                            strokeWidth="3"
-                          />
+                        {disturbanceActive ? (
+                          vsgMode === 'GRID_FORMING' ? (
+                            // Damped smooth curve (Grid Forming)
+                            <path
+                              d="M 0 30 Q 80 30 120 70 T 250 55 T 500 35"
+                              fill="none"
+                              stroke="#34d399"
+                              strokeWidth="3"
+                              className="animate-pulse"
+                            />
+                          ) : (
+                            // Sharp crash below trip threshold (Grid Following)
+                            <path
+                              d="M 0 30 Q 80 30 110 145 T 260 120 T 500 40"
+                              fill="none"
+                              stroke="#f43f5e"
+                              strokeWidth="3"
+                              className="animate-pulse"
+                            />
+                          )
                         ) : (
-                          <path
-                            d={disturbanceActive
-                              ? "M 0 30 L 100 30 C 130 30, 150 145, 200 140 C 260 135, 380 90, 500 60"
-                              : "M 0 30 L 500 30"
-                            }
-                            fill="none"
-                            stroke="#3b82f6"
-                            strokeWidth="3"
-                          />
+                          <line x1="0" y1="30" x2="500" y2="30" stroke="#34d399" strokeWidth="2.5" />
                         )}
                       </svg>
                     </div>
 
-                    <div className="mt-3 flex items-center justify-between text-xs text-slate-400 font-mono">
-                      <span>Temps de réponse inertiel : <strong className="text-emerald-400">{vsgMode === 'GRID_FORMING' ? '< 70 ms' : '> 400 ms (Retard PLL)'}</strong></span>
-                      <span>RoCoF max : <strong className="text-white">{vsgMode === 'GRID_FORMING' ? '-0.42 Hz/s (Amorti)' : '-1.85 Hz/s (Sévère)'}</strong></span>
-                    </div>
-                  </div>
-
-                  {/* Real-time Telemetry Event Log */}
-                  <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                    <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center justify-between">
-                      <span>{isFr ? 'Journal des Événements & Télésignalisations' : 'Telemetry Sequence of Events (SOE)'}</span>
-                      <span className="text-[10px] text-slate-500 font-mono">CEI 60870-5-104 / SOE</span>
-                    </h4>
-
-                    <div className="space-y-1.5 font-mono text-xs max-h-36 overflow-y-auto">
+                    {/* Real-time Response Timeline */}
+                    <div className="mt-3 bg-slate-900/90 rounded-lg p-3 font-mono text-[11px] text-slate-300 max-h-36 overflow-y-auto space-y-1 border border-slate-800">
+                      <div className="text-slate-500 uppercase text-[10px] pb-1 border-b border-slate-800">
+                        {isFr ? 'Journal Télémétrique Haute Résolution (RoCoF & Injection) :' : 'High-Resolution Telemetry Event Log:'}
+                      </div>
                       {responseLog.length === 0 ? (
-                        <span className="text-slate-600 italic">
-                          {isFr ? 'Aucun événement. Cliquez sur "Déclencher Décrochage Réseau" ci-dessus.' : 'No disturbance logged. Click "Trigger Grid Disturbance" to simulate.'}
-                        </span>
+                        <div className="text-slate-500 italic py-2 text-center">
+                          {isFr ? 'En attente de déclenchement d\'une perturbation réseau...' : 'Awaiting grid disturbance trigger...'}
+                        </div>
                       ) : (
-                        responseLog.map((entry, idx) => (
-                          <div key={idx} className="p-1.5 bg-slate-900 rounded border border-slate-800/80 text-slate-300">
-                            {entry}
-                          </div>
+                        responseLog.map((log, idx) => (
+                          <div key={idx} className="leading-snug">{log}</div>
                         ))
                       )}
                     </div>
@@ -1107,49 +1263,132 @@ export const EnergyStorageWorkbench: React.FC<EnergyStorageWorkbenchProps> = ({
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* TAB 4: HIGH-POWER EV CHARGING (IRVE) & V2G */}
-        {activeTab === 'EV_CHARGING_IRVE' && (
-          <div className="space-y-6">
-            <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-xl">
-              <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+          {/* Sub-Tab 3.2: Control Laws & Virtual Rotor Equations */}
+          {stage3Tab === 'CONTROL_LAWS' && (
+            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+              <div className="border-b border-slate-800 pb-4">
+                <h2 className="text-lg font-bold text-white uppercase tracking-wide flex items-center gap-2">
+                  <Activity className="w-5 h-5 text-emerald-400" />
+                  {isFr ? 'Architecture de Contrôle Droop & Synchronisation Virtuelle' : 'Droop Control Architecture & Virtual Synchronverter Formulation'}
+                </h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  {isFr
+                    ? 'Découplage P-f et Q-V appliqué aux onduleurs Grid-Forming pour le partage autonome de charge entre générateurs hydroélectriques et conteneurs BESS sans liaison de communication inter-sites.'
+                    : 'P-f and Q-V droop decoupling enabling autonomous wireless load sharing between hydro generators and BESS containers without inter-station telecommunication.'}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-xs">
+                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                  <span className="text-emerald-400 font-bold uppercase text-[11px]">1. Boucle Active P-f (Statisme 2%)</span>
+                  <div className="p-3 bg-slate-900 rounded-lg text-emerald-300 font-mono text-xs">
+                    ω - ω_0 = -D_p · (P - P_0)  ;  D_p = (Δω_max / P_nom)
+                  </div>
+                  <p className="text-slate-400 font-sans text-xs leading-relaxed">
+                    Un statisme D_p de 2% signifie qu'une chute de fréquence de 1 Hz (sur base 50 Hz) sollicite 100% de la puissance nominale du convertisseur BESS. Le temps d'établissement est inférieur à 20 ms.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                  <span className="text-blue-400 font-bold uppercase text-[11px]">2. Boucle Réactive Q-V (Statisme Tension 3%)</span>
+                  <div className="p-3 bg-slate-900 rounded-lg text-blue-300 font-mono text-xs">
+                    V - V_0 = -D_q · (Q - Q_0)  ;  D_q = (ΔV_max / Q_nom)
+                  </div>
+                  <p className="text-slate-400 font-sans text-xs leading-relaxed">
+                    Maintient la tension du jeu de barres 30 kV en injectant de la puissance réactive capacitive lors des creux de tension, stabilisant le réseau sans attendre les régulateurs de charge des transformateurs.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* STAGE 4: HIGH-POWER EV CHARGING (HPC 350 kW), V2G & DLM PEAK SHAVING      */}
+      {/* ========================================================================= */}
+      {activeStage === 4 && (
+        <div className="space-y-5 animate-in fade-in duration-300">
+          
+          {/* Sub-Navigation Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-3 p-2 bg-[#090D14] border border-[#222B38] rounded-xl font-mono text-xs">
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">
+                {isFr ? 'Étape 4' : 'Stage 4'}
+              </span>
+              <span className="font-bold text-white hidden sm:inline">
+                {isFr ? 'Infrastructures de Recharge Haute Puissance (IRVE 350 kW), V2G & Écrêtement DLM' : 'High-Power EV Charging Plaza (HPC 350 kW), V2G & DLM Peak Shaving'}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-lg border border-slate-800">
+              <button
+                onClick={() => setStage4Tab('IRVE_SIMULATION')}
+                className={`px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 transition-all ${
+                  stage4Tab === 'IRVE_SIMULATION'
+                    ? 'bg-emerald-500 text-slate-950 shadow-md font-extrabold'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Zap className="w-3.5 h-3.5" />
+                {isFr ? '4.1 Plaza IRVE & Tampon BESS' : '4.1 EV Hub & BESS Buffer'}
+              </button>
+              <button
+                onClick={() => setStage4Tab('DLM_ALGORITHM')}
+                className={`px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 transition-all ${
+                  stage4Tab === 'DLM_ALGORITHM'
+                    ? 'bg-emerald-500 text-slate-950 shadow-md font-extrabold'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5" />
+                {isFr ? '4.2 Algorithme DLM & ISO 15118' : '4.2 DLM Logic & ISO 15118'}
+              </button>
+            </div>
+          </div>
+
+          {/* Sub-Tab 4.1: EV Hub & BESS Buffer Simulator */}
+          {stage4Tab === 'IRVE_SIMULATION' && (
+            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
                 <div>
                   <h2 className="text-lg font-bold text-white flex items-center gap-2">
                     <Zap className="w-5 h-5 text-emerald-400" />
                     {isFr
-                      ? 'Station de Recharge Ultra-Rapide IRVE Haute Puissance (150-350 kW) & Gestion DLM'
-                      : 'Ultra-Fast EV Charging Plaza (150-350 kW DC) & Dynamic Load Management (DLM)'}
+                      ? 'Simulateur de Hub de Recharge Ultra-Rapide IRVE & Écrêtement Dynamique DLM'
+                      : 'High-Power EV Charging Plaza & Dynamic Load Management (DLM) Simulator'}
                   </h2>
                   <p className="text-xs text-slate-400 mt-1 max-w-3xl">
                     {isFr
-                      ? 'Simulez le foisonnement d\'une station de recharge DC avec Active Front End (AFE), gestion dynamique de charge (DLM) pour protéger le transformateur HTA/BT, et batterie tampon BESS locale pour effacer les pointes de puissance.'
-                      : 'Simulate high-power DC charging plazas with Active Front End (AFE) rectifiers, Dynamic Load Management (DLM) substation transformer protection, and local stationary BESS peak shaving.'}
+                      ? 'Modélisez l\'impact d\'une station de recharge autoroutière ultra-rapide (150 à 350 kW par point de charge) sur le transformateur HTA/BT et visualisez comment le BESS tampon absorbe les pointes de puissance sans surdimensionner le raccordement réseau.'
+                      : 'Model highway ultra-fast charging plaza demands (150 to 350 kW per dispenser) and evaluate how a co-located BESS buffer discharges during peak dwell hours to prevent transformer overloading.'}
                   </p>
                 </div>
-                <div className="px-3 py-1 bg-blue-500/10 border border-blue-500/30 rounded text-xs font-mono text-blue-400">
-                  ISO 15118-20 · IEC 61851-23 · CCS Combo 2
+                <div className="px-3 py-1 bg-blue-500/10 border border-blue-500/30 rounded text-xs font-mono text-blue-300">
+                  ISO 15118 · IEC 61851-23 · CCS2 Liquid-Cooled
                 </div>
               </div>
 
-              {/* Simulation Sliders and Meters */}
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                <div className="md:col-span-5 space-y-4 bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-                    {isFr ? 'Configuration du Hub de Recharge' : 'Charging Hub Configuration'}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                {/* Sliders and Controls (Left 6 Cols) */}
+                <div className="lg:col-span-6 space-y-4 bg-slate-950 p-4 rounded-xl border border-slate-800">
+                  <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider border-b border-slate-800 pb-2">
+                    {isFr ? 'Configuration du Hub de Recharge' : 'Charging Hub Fleet Configuration'}
                   </h3>
 
                   <div>
                     <div className="flex justify-between text-xs mb-1">
-                      <span className="text-slate-300">{isFr ? 'Bornes DC Actives en Charge :' : 'Active DC Charging Dispensers:'}</span>
+                      <span className="text-slate-300">{isFr ? 'Bornes de Recharge Actives :' : 'Active EV Dispensers:'}</span>
                       <span className="font-mono font-bold text-emerald-400">{activeEvChargers} bornes</span>
                     </div>
                     <input
                       type="range"
-                      min="1"
+                      min="2"
                       max="16"
-                      step="1"
+                      step="2"
                       value={activeEvChargers}
                       onChange={(e) => setActiveEvChargers(Number(e.target.value))}
                       className="w-full accent-emerald-500"
@@ -1158,307 +1397,352 @@ export const EnergyStorageWorkbench: React.FC<EnergyStorageWorkbenchProps> = ({
 
                   <div>
                     <div className="flex justify-between text-xs mb-1">
-                      <span className="text-slate-300">{isFr ? 'Puissance Unitaire par Borne :' : 'Dispenser Unit Power Rating:'}</span>
-                      <span className="font-mono font-bold text-blue-400">{chargerRatingKw} kW</span>
+                      <span className="text-slate-300">{isFr ? 'Puissance par Borne (kW) :' : 'Power Rating per Dispenser (kW):'}</span>
+                      <span className="font-mono font-bold text-emerald-400">{chargerRatingKw} kW</span>
                     </div>
-                    <select
-                      value={chargerRatingKw}
-                      onChange={(e) => setChargerRatingKw(Number(e.target.value))}
-                      className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-xs text-white"
-                    >
-                      <option value={50}>50 kW (DC Fast Charger Standard)</option>
-                      <option value={150}>150 kW (High Power Charger - HPC)</option>
-                      <option value={300}>300 kW (Ultra-Fast Highway Hub)</option>
-                      <option value={350}>350 kW (Ionity / Megawatt Ready)</option>
-                    </select>
+                    <div className="grid grid-cols-3 gap-2 mt-1">
+                      {[150, 250, 350].map((kw) => (
+                        <button
+                          key={kw}
+                          onClick={() => setChargerRatingKw(kw)}
+                          className={`py-1.5 rounded font-mono text-xs border transition-all ${
+                            chargerRatingKw === kw
+                              ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500 font-bold'
+                              : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
+                          }`}
+                        >
+                          {kw} kW (CCS2)
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   <div>
                     <div className="flex justify-between text-xs mb-1">
-                      <span className="text-slate-300">{isFr ? 'Capacité Transfo HTA/BT Amont :' : 'Upstream Substation Transformer:'}</span>
-                      <span className="font-mono font-bold text-purple-400">{substationTransformerKva} kVA</span>
-                    </div>
-                    <select
-                      value={substationTransformerKva}
-                      onChange={(e) => setSubstationTransformerKva(Number(e.target.value))}
-                      className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-xs text-white"
-                    >
-                      <option value={400}>400 kVA (Poste de Distribution Standard)</option>
-                      <option value={630}>630 kVA (Kiosque Préfabriqué HTA/BT)</option>
-                      <option value={800}>800 kVA (Poste Dédié Zone Portuaire / Urbaine)</option>
-                      <option value={1250}>1250 kVA (Cabine Industrielle Haute Capacité)</option>
-                    </select>
-                  </div>
-
-                  {/* DLM Toggle Switch */}
-                  <div className="p-3 bg-slate-900 rounded-lg border border-slate-800 flex items-center justify-between">
-                    <div>
-                      <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                        {isFr ? 'Régulation DLM Active (Dynamic Load Management)' : 'Dynamic Load Management (DLM)'}
-                      </div>
-                      <p className="text-[10px] text-slate-400 mt-0.5">
-                        {isFr ? 'Plafonne et efface la surcharge via le tampon BESS' : 'Throttles & shaves demand using local BESS buffer'}
-                      </p>
+                      <span className="text-slate-300">{isFr ? 'Capacité Transformateur HTA/BT :' : 'Substation Transformer Capacity:'}</span>
+                      <span className="font-mono font-bold text-blue-400">{substationTransformerKva} kVA</span>
                     </div>
                     <input
-                      type="checkbox"
-                      checked={dlmEnabled}
-                      onChange={(e) => setDlmEnabled(e.target.checked)}
-                      className="w-5 h-5 accent-emerald-500 rounded cursor-pointer"
+                      type="range"
+                      min="400"
+                      max="2500"
+                      step="100"
+                      value={substationTransformerKva}
+                      onChange={(e) => setSubstationTransformerKva(Number(e.target.value))}
+                      className="w-full accent-blue-500"
                     />
+                  </div>
+
+                  <div className="p-3 bg-slate-900 rounded-lg flex items-center justify-between border border-slate-800">
+                    <div>
+                      <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                        <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-400" />
+                        {isFr ? 'Gestion Dynamique de Charge (DLM)' : 'Dynamic Load Management (DLM)'}
+                      </div>
+                      <p className="text-[10px] text-slate-400 mt-0.5">
+                        {isFr ? 'Limite l\'appel réseau à la capacité continue du transfo' : 'Caps grid draw at transformer thermal limit'}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setDlmEnabled(!dlmEnabled)}
+                      className={`px-3 py-1.5 rounded font-mono text-xs font-bold transition-all ${
+                        dlmEnabled ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-400'
+                      }`}
+                    >
+                      {dlmEnabled ? (isFr ? 'ACTIVÉ' : 'ENABLED') : (isFr ? 'DÉSACTIVÉ' : 'DISABLED')}
+                    </button>
                   </div>
                 </div>
 
-                {/* Real-time Load & Overload Gauge (Right 7 Cols) */}
-                <div className="md:col-span-7 space-y-4">
-                  <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                    <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-3">
-                      {isFr ? 'Bilan de Puissance & Taux de Charge du Transformateur' : 'Substation Transformer Loading & Peak Shaving'}
-                    </span>
+                {/* Live Real-Time Power Balance (Right 6 Cols) */}
+                <div className="lg:col-span-6 space-y-4">
+                  <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-4">
+                    <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider border-b border-slate-800 pb-2">
+                      {isFr ? 'Bilan Électrotechnique du Poste HTA/BT' : 'Substation Power Balance KPIs'}
+                    </h3>
 
-                    {/* Progress Bar Loading Gauge */}
-                    <div className="space-y-2">
+                    <div className="grid grid-cols-2 gap-3 font-mono">
+                      <div className="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+                        <span className="text-slate-500 text-[10px] block uppercase">Puissance Raccordée Totale</span>
+                        <span className="text-base font-bold text-white">{evCalculations.totalConnectedKw} kW</span>
+                        <span className="text-[10px] text-slate-400 block">{activeEvChargers} × {chargerRatingKw} kW</span>
+                      </div>
+                      <div className="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+                        <span className="text-slate-500 text-[10px] block uppercase">Pointe avec Foisonnement</span>
+                        <span className="text-base font-bold text-amber-400">{evCalculations.unconstrainedPeakDemandKw} kW</span>
+                        <span className="text-[10px] text-slate-400 block">Facteur diversité ~0.75</span>
+                      </div>
+                    </div>
+
+                    {/* Transformer Load Bar */}
+                    <div className="space-y-1.5">
                       <div className="flex justify-between text-xs font-mono">
-                        <span className="text-slate-400">{isFr ? 'Charge Transformateur :' : 'Transformer Loading:'}</span>
-                        <span className={`font-bold ${Number(evCalculations.trafoLoadingPercent) > 100 ? 'text-rose-400' : 'text-emerald-400'}`}>
-                          {evCalculations.trafoLoadingPercent}% ({evCalculations.dlmLimitedDemandKw} kW / {substationTransformerKva * 0.9} kW)
+                        <span className="text-slate-300">{isFr ? 'Taux de Charge Transformateur :' : 'Transformer Loading:'}</span>
+                        <span className={`font-bold ${evCalculations.isOverloaded ? 'text-rose-400' : 'text-emerald-400'}`}>
+                          {evCalculations.trafoLoadingPercent}%
                         </span>
                       </div>
-                      <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden">
+                      <div className="h-3 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800">
                         <div
-                          className={`h-full rounded-full transition-all duration-300 ${
-                            Number(evCalculations.trafoLoadingPercent) > 100
-                              ? 'bg-rose-500 animate-pulse'
-                              : Number(evCalculations.trafoLoadingPercent) > 85
-                              ? 'bg-amber-500'
-                              : 'bg-emerald-500'
+                          className={`h-full transition-all duration-300 ${
+                            evCalculations.isOverloaded ? 'bg-rose-500' : 'bg-gradient-to-r from-emerald-500 to-cyan-400'
                           }`}
                           style={{ width: `${Math.min(100, Number(evCalculations.trafoLoadingPercent))}%` }}
                         />
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4 text-xs font-mono">
-                      <div className="bg-slate-900 p-2.5 rounded border border-slate-800">
-                        <span className="text-slate-500 text-[10px] block">Appel Brut Connecté :</span>
-                        <span className="text-white font-bold">{evCalculations.totalConnectedKw} kW</span>
+                    {/* BESS Peak Buffer Discharge Alert */}
+                    <div className={`p-3 rounded-lg text-xs leading-relaxed border ${
+                      Number(evCalculations.bssBufferDischargeKw) > 0
+                        ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-200'
+                        : 'bg-slate-900 border-slate-800 text-slate-400'
+                    }`}>
+                      <div className="font-bold flex items-center gap-1.5 mb-1 text-white">
+                        <BatteryCharging className="w-4 h-4 text-emerald-400" />
+                        {isFr ? 'Rôle du BESS Tampon de Plaza :' : 'Station Buffer BESS Role:'}
                       </div>
-                      <div className="bg-slate-900 p-2.5 rounded border border-slate-800">
-                        <span className="text-slate-500 text-[10px] block">Appel Foisonné (ks) :</span>
-                        <span className="text-amber-400 font-bold">{evCalculations.unconstrainedPeakDemandKw} kW</span>
-                      </div>
-                      <div className="bg-slate-900 p-2.5 rounded border border-slate-800">
-                        <span className="text-slate-500 text-[10px] block">Décharge BESS Tampon :</span>
-                        <span className="text-emerald-400 font-bold">{evCalculations.bssBufferDischargeKw} kW</span>
-                      </div>
-                    </div>
-
-                    {/* Alert or Status Box */}
-                    {evCalculations.isOverloaded ? (
-                      <div className="mt-4 p-3 bg-rose-500/10 border border-rose-500/30 rounded-lg text-xs text-rose-300 flex items-start gap-2">
-                        <AlertTriangle className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
-                        <div>
-                          <strong>{isFr ? 'SURCHARGE DU TRANSFORMATEUR !' : 'SUBSTATION TRANSFORMER OVERLOADED!'}</strong>
-                          <p className="text-[11px] mt-0.5">
-                            {isFr
-                              ? 'Activez la régulation DLM pour que la batterie tampon BESS prenne le relais et évite le déclenchement amont.'
-                              : 'Enable DLM so the local stationary BESS automatically shaves peak demand, averting trip outages.'}
-                          </p>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-xs text-emerald-300 flex items-center gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                      {Number(evCalculations.bssBufferDischargeKw) > 0 ? (
                         <span>
                           {isFr
-                            ? 'Exploitation conforme : transformateur dans sa plage thermique nominale avec réserve de secours.'
-                            : 'Nominal operation: transformer operating within rated thermal bounds with security margin.'}
+                            ? `Le BESS décharge ${evCalculations.bssBufferDischargeKw} kW en temps réel pour écrêter la pointe et maintenir le transformateur à 100% de charge sans déclenchement thermique.`
+                            : `The BESS injects ${evCalculations.bssBufferDischargeKw} kW in real time to clip demand peaks, preventing transformer thermal overcurrent tripping.`}
                         </span>
-                      </div>
-                    )}
+                      ) : (
+                        <span>
+                          {isFr
+                            ? 'Le transformateur HTA/BT suffit à alimenter la demande actuelle sans solliciter la décharge du BESS tampon.'
+                            : 'Substation transformer capacity is sufficient to service current EV demand without BESS discharge.'}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+          )}
+
+          {/* Sub-Tab 4.2: DLM Algorithm and ISO 15118 */}
+          {stage4Tab === 'DLM_ALGORITHM' && (
+            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+              <div className="border-b border-slate-800 pb-4">
+                <h2 className="text-lg font-bold text-white uppercase tracking-wide flex items-center gap-2">
+                  <SlidersHorizontal className="w-5 h-5 text-emerald-400" />
+                  {isFr ? 'Algorithme DLM & Protocoles Numériques ISO 15118 / OCPP 2.0.1' : 'DLM Algorithm & ISO 15118 / OCPP 2.0.1 Protocols'}
+                </h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  {isFr
+                    ? 'Architecture de communication sécurisée entre véhicule, borne de recharge, contrôleur de site et réseau électrique avec négociation dynamique de profil de puissance.'
+                    : 'End-to-end cryptographic and control architecture linking vehicle, EVSE, site energy controller, and utility grid.'}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-xs">
+                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                  <span className="text-cyan-400 font-bold uppercase text-[11px]">1. Protocole ISO 15118 (Plug &amp; Charge &amp; V2G)</span>
+                  <p className="text-slate-300 font-sans text-xs leading-relaxed">
+                    Échange cryptographique TLS 1.3 sur le signal Control Pilot (CPL HomePlug GreenPHY). Négociation automatique de la courbe de charge et autorisation bidirectionnelle pour la réinjection d'énergie du véhicule vers le réseau (V2G - Vehicle-to-Grid).
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                  <span className="text-emerald-400 font-bold uppercase text-[11px]">2. Répartition Dynamique Équitable (Fair-Share DLM)</span>
+                  <div className="p-3 bg-slate-900 rounded-lg text-emerald-300 font-mono text-xs">
+                    P_max_borne_i = min(P_nominal, (P_dispo_transfo + P_bess_tampon) / N_ve)
+                  </div>
+                  <p className="text-slate-400 font-sans text-xs leading-relaxed">
+                    Si 8 véhicules se branchent simultanément sur un transformateur de 800 kVA, le contrôleur DLM alloue initialement 100 kW à chacun, puis réattribue la puissance disponible dès qu'un véhicule atteint 80% de SoC et que son courant de charge diminue.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* STAGE 5: SAFETY NFPA 855 / FMEA, CAMEROON BENCHMARKS & STAMPED BOQ / DQE  */}
+      {/* ========================================================================= */}
+      {activeStage === 5 && (
+        <div className="space-y-5 animate-in fade-in duration-300">
+          
+          {/* Sub-Navigation Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-3 p-2 bg-[#090D14] border border-[#222B38] rounded-xl font-mono text-xs">
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">
+                {isFr ? 'Étape 5' : 'Stage 5'}
+              </span>
+              <span className="font-bold text-white hidden sm:inline">
+                {isFr ? 'Sécurité Incendie NFPA 855, Retours d\'Expérience Cameroun (Guider 38 MWh) & Devis DQE FCFA' : 'NFPA 855 Fire Safety, Cameroon Benchmarks (Guider 38 MWh) & Stamped BOQ FCFA'}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-lg border border-slate-800">
+              <button
+                onClick={() => setStage5Tab('SAFETY_FMEA')}
+                className={`px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 transition-all ${
+                  stage5Tab === 'SAFETY_FMEA'
+                    ? 'bg-emerald-500 text-slate-950 shadow-md font-extrabold'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <ShieldAlert className="w-3.5 h-3.5" />
+                {isFr ? '5.1 Sécurité & FMEA' : '5.1 Safety & FMEA'}
+              </button>
+              <button
+                onClick={() => setStage5Tab('CAMEROON_BENCHMARKS')}
+                className={`px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 transition-all ${
+                  stage5Tab === 'CAMEROON_BENCHMARKS'
+                    ? 'bg-emerald-500 text-slate-950 shadow-md font-extrabold'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Globe className="w-3.5 h-3.5" />
+                {isFr ? '5.2 Cas Réels (Guider 38 MWh)' : '5.2 Real Projects (Guider)'}
+              </button>
+              <button
+                onClick={() => setStage5Tab('DQE_BOQ')}
+                className={`px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 transition-all ${
+                  stage5Tab === 'DQE_BOQ'
+                    ? 'bg-emerald-500 text-slate-950 shadow-md font-extrabold'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5" />
+                {isFr ? '5.3 Dossier DQE FCFA' : '5.3 BOQ Dossier FCFA'}
+              </button>
+            </div>
           </div>
-        )}
 
-        {/* TAB 5: SAFETY STANDARDS & FMEA FAILURE MODES */}
-        {activeTab === 'SAFETY_STANDARDS_FMEA' && (
-          <div className="space-y-6">
-            <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-xl">
-              <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-2">
-                <ShieldAlert className="w-5 h-5 text-rose-400" />
-                {isFr
-                  ? 'Matrice de Sécurité Incendie, Normes Internationales & FMEA des Défaillances BESS'
-                  : 'Fire Safety Matrix, Governing International Standards & BESS FMEA Failure Modes'}
-              </h2>
-              <p className="text-xs text-slate-400 mb-6 max-w-3xl">
-                {isFr
-                  ? 'Analyse rigoureuse des défaillances critiques des systèmes électrochimiques stationnaires (emballement thermique, lithium plating, arcs électriques DC) et des barrières normatives CEI 62933, UL 9540A et NFPA 855.'
-                  : 'Rigorous engineering FMEA addressing thermal runaway, lithium plating, DC arc faults, and multi-tier barrier certifications per IEC 62933, UL 9540A, and NFPA 855.'}
-              </p>
+          {/* Sub-Tab 5.1: Fire Safety & Failure Modes (FMEA) */}
+          {stage5Tab === 'SAFETY_FMEA' && (
+            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+              <div className="border-b border-slate-800 pb-4">
+                <h2 className="text-lg font-bold text-white uppercase tracking-wide flex items-center gap-2">
+                  <ShieldAlert className="w-5 h-5 text-rose-400" />
+                  {isFr
+                    ? 'Matrice FMEA de Sécurité Incendie BESS (NFPA 855 & UL 9540A)'
+                    : 'BESS Fire Safety Failure Modes (FMEA) & NFPA 855 / UL 9540A Matrix'}
+                </h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  {isFr
+                    ? 'Identification des modes d\'initiation d\'emballement thermique, chaîne d\'alerte précoce gaz off-gas et dispositifs passifs/actifs de confinement.'
+                    : 'Failure mode analysis, early thermal runaway off-gas detection, and passive/active fire containment compliance.'}
+                </p>
+              </div>
 
-              {/* FMEA Table */}
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs border border-slate-800 rounded-lg overflow-hidden">
-                  <thead className="bg-slate-950 text-slate-300 font-mono text-[11px] uppercase border-b border-slate-800">
+              <div className="overflow-x-auto rounded-xl border border-slate-800">
+                <table className="w-full text-left font-mono text-xs">
+                  <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] border-b border-slate-800">
                     <tr>
                       <th className="p-3">Mode de Défaillance</th>
-                      <th className="p-3">Mécanisme Physique / Racine</th>
-                      <th className="p-3">Conséquence Réseau / Sécurité</th>
-                      <th className="p-3">Détection Précoce</th>
-                      <th className="p-3">Norme & Mesure de Protection</th>
+                      <th className="p-3">Cause Racine</th>
+                      <th className="p-3">Conséquence Procédé</th>
+                      <th className="p-3">Barrière Préventive</th>
+                      <th className="p-3">Réponse d'Urgence</th>
+                      <th className="p-3">Criticité</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800 text-slate-300">
-                    <tr className="hover:bg-slate-800/40">
-                      <td className="p-3 font-bold text-rose-400 flex items-center gap-1.5">
-                        <Flame className="w-4 h-4" /> Emballement Thermique
-                      </td>
-                      <td className="p-3 text-slate-400">
-                        Rupture exothermique de la couche SEI à 80°C → fusion séparateur 130°C → décomposition électrolyte 200°C.
-                      </td>
-                      <td className="p-3 text-rose-300 font-medium">
-                        Incendie de conteneur, émission de gaz toxiques (HF, CO, H2), propagation en cascade.
-                      </td>
-                      <td className="p-3 font-mono text-cyan-400">
-                        Détection précoce "Off-Gas" (capteurs H2 & CO à l'échelle ppm) avant élévation de T°.
-                      </td>
-                      <td className="p-3 font-mono text-emerald-400">
-                        UL 9540A · Confinement inter-modules · Extinction Novec 1230 + Panneaux NFPA 68.
-                      </td>
+                  <tbody className="divide-y divide-slate-800/60 bg-slate-900/40">
+                    <tr className="hover:bg-slate-800/30">
+                      <td className="p-3 font-bold text-rose-400">Emballement Thermique Cellule</td>
+                      <td className="p-3 text-slate-300">Dendrite lithium ou défaut séparateur</td>
+                      <td className="p-3 text-slate-300">Émission gaz H2/CO, propagation aux cellules voisines</td>
+                      <td className="p-3 text-emerald-400">Surveillance delta-V (&lt;30mV) et T° BMS</td>
+                      <td className="p-3 text-rose-300">Inondation Novec 1230 + isolement BDU</td>
+                      <td className="p-3 font-bold text-rose-400">CATASTROPHIQUE</td>
                     </tr>
-
-                    <tr className="hover:bg-slate-800/40">
-                      <td className="p-3 font-bold text-amber-400">
-                        Lithium Plating (Dépôt Métallique)
-                      </td>
-                      <td className="p-3 text-slate-400">
-                        Recharge rapide à basse température (&lt; 10°C) ou surtension locale : ions Li+ déposés sous forme métallique sur l'anode.
-                      </td>
-                      <td className="p-3 text-amber-300 font-medium">
-                        Formation de dendrites de lithium perçant le séparateur microporeux → micro court-circuit interne.
-                      </td>
-                      <td className="p-3 font-mono text-cyan-400">
-                        Algorithme BMS d'impédance spectrale électrochimique (EIS) et dérive de relaxation de tension.
-                      </td>
-                      <td className="p-3 font-mono text-emerald-400">
-                        CEI 62619 · Limitation logicielle BMS du courant de charge sous 15°C (courbe de détarage C-rate).
-                      </td>
+                    <tr className="hover:bg-slate-800/30">
+                      <td className="p-3 font-bold text-amber-400">Panne Pompe Chiller Liquide</td>
+                      <td className="p-3 text-slate-300">Grippage mécanique ou coupure 24V</td>
+                      <td className="p-3 text-slate-300">Montée en température progressive des modules (&gt;45°C)</td>
+                      <td className="p-3 text-emerald-400">Pompe de secours N+1 à permutation auto</td>
+                      <td className="p-3 text-amber-300">Derating puissance BESS à 25%</td>
+                      <td className="p-3 font-bold text-amber-400">ÉLEVÉE</td>
                     </tr>
-
-                    <tr className="hover:bg-slate-800/40">
-                      <td className="p-3 font-bold text-blue-400">
-                        Arc Électrique DC (Arc Flash 1500V)
-                      </td>
-                      <td className="p-3 text-slate-400">
-                        Rupture d'isolant sur bus continu flottant, desserrage de cosses de puissance sous vibrations thermiques.
-                      </td>
-                      <td className="p-3 text-blue-300 font-medium">
-                        Plasma à 10 000°C auto-entretenu (absence de passage par zéro du courant continu contrairement à l'AC).
-                      </td>
-                      <td className="p-3 font-mono text-cyan-400">
-                        Détecteurs d'arc optiques à fibre optique dans le rack + surveillance de signature RF (UL 1699B).
-                      </td>
-                      <td className="p-3 font-mono text-emerald-400">
-                        UL 1699B · Fusibles DC gBat ultra-rapides &lt; 5 ms · Déconnexion d'urgence pyrotechnique.
-                      </td>
-                    </tr>
-
-                    <tr className="hover:bg-slate-800/40">
-                      <td className="p-3 font-bold text-purple-400">
-                        Défaut d'Isolement Bus Continu (IT)
-                      </td>
-                      <td className="p-3 text-slate-400">
-                        Condensation interne ou fuite de liquide caloporteur dégradant la résistance d'isolement vers la masse (&lt; 100 kΩ).
-                      </td>
-                      <td className="p-3 text-purple-300 font-medium">
-                        Risque d'électrisation des techniciens et double défaut de masse équivalent à un court-circuit franc 1500 V DC.
-                      </td>
-                      <td className="p-3 font-mono text-cyan-400">
-                        Contrôleur Permanent d'Isolement (CPI DC) avec injection d'onde basse fréquence codée.
-                      </td>
-                      <td className="p-3 font-mono text-emerald-400">
-                        CEI 61557-8 · Déclenchement automatique des contacteurs BDU si R_iso &lt; 100 Ω/V.
-                      </td>
+                    <tr className="hover:bg-slate-800/30">
+                      <td className="p-3 font-bold text-blue-400">Défaut d'Isolement Bus DC</td>
+                      <td className="p-3 text-slate-300">Dégradation câble ou humidité tropicale</td>
+                      <td className="p-3 text-slate-300">Fuite de courant à la masse en régime IT</td>
+                      <td className="p-3 text-emerald-400">Contrôleur Permanent d'Isolement (CPI)</td>
+                      <td className="p-3 text-blue-300">Signalisation alarme sans coupure immédiate</td>
+                      <td className="p-3 font-bold text-blue-400">MOYENNE</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* TAB 6: REAL-WORLD CASE STUDIES */}
-        {activeTab === 'REAL_WORLD_BENCHMARKS' && (
-          <div className="space-y-6">
-            <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-xl">
-              <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-2">
-                <Globe className="w-5 h-5 text-emerald-400" />
-                {isFr
-                  ? 'Cas d\'Ingénierie Réels : Cameroun (Grand Nord 38 MWh) & Benchmarks Internationaux'
-                  : 'Real Engineering Implementations: Cameroon (Northern Grid 38 MWh) & Global Benchmarks'}
-              </h2>
-              <p className="text-xs text-slate-400 mb-6 max-w-3xl">
-                {isFr
-                  ? 'Examen approfondi des installations de référence mondiales et nationales : dimensionnement, couplage réseau et retours d\'expérience d\'exploitation.'
-                  : 'In-depth analysis of national and international benchmark installations: sizing, grid interconnection and operational lessons learned.'}
-              </p>
+          {/* Sub-Tab 5.2: Real World Benchmarks (Guider 38 MWh Northern Cameroon) */}
+          {stage5Tab === 'CAMEROON_BENCHMARKS' && (
+            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+              <div className="border-b border-slate-800 pb-4">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    RETOURS D'EXPÉRIENCE CHANTIERS AFRICAINS & INTERNATIONAUX
+                  </span>
+                </div>
+                <h2 className="text-lg font-bold text-white uppercase tracking-wide flex items-center gap-2 mt-1">
+                  <Globe className="w-5 h-5 text-emerald-400" />
+                  {isFr ? 'Centrale Hybride Solaire Guider / Maroua (38 MWh BESS — Cameroun)' : 'Guider / Maroua Solar Hybrid Plant (38 MWh BESS — Cameroon)'}
+                </h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  {isFr
+                    ? 'Projet pionnier en Afrique centrale développé par Scatec / Release pour Eneo et Sonatrel, stabilisant le Réseau Interconnecté Nord (RIN) face au déficit d\'étiage du barrage hydroélectrique de Lagdo.'
+                    : 'Pioneering hybrid project in Central Africa developed by Scatec / Release for Eneo and Sonatrel, stabilizing the Northern Interconnected Grid (RIN) during Lagdo dam low water seasons.'}
+                </p>
+              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Cameroon Guider & Maroua Card */}
-                <div className="bg-slate-950 p-5 rounded-xl border border-emerald-500/30 shadow-lg space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Guider Card */}
+                <div className="p-5 rounded-xl bg-slate-950 border border-emerald-500/40 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-300 text-[10px] font-bold rounded border border-emerald-500/30 uppercase">
-                      Projet National Cameroun
+                      Centrale Hybride Cameroun
                     </span>
-                    <span className="text-xs font-mono text-slate-400">Scatec / Release Eneo RIN</span>
+                    <span className="text-xs font-mono text-slate-400">Scatec / Eneo (Guider &amp; Maroua)</span>
                   </div>
-                  <h3 className="text-base font-bold text-white">
-                    Parc BESS Hybride Solaire de Guider & Maroua (19 MW / 38 MWh)
-                  </h3>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <h3 className="text-base font-bold text-white">Guider &amp; Maroua PV+BESS (30 MWp / 38 MWh)</h3>
+                  <p className="text-xs text-slate-300 leading-relaxed font-sans">
                     {isFr
-                      ? 'Premier et plus grand système BESS d\'Afrique centrale. Installé sur les sites solaires de Guider (8 MW / 16 MWh) et Maroua (11 MW / 22 MWh), il stabilise le Réseau Interconnecté Nord (RIN) soumis aux variations hydrologiques du barrage de Lagdo. Les batteries LFP stockent l\'excédent solaire diurne et le restituent lors de la pointe du soir (18h-22h), réduisant la consommation de fioul lourd des groupes d\'appoint de plus de 15 millions de litres par an.'
-                      : 'First and largest BESS installation in Central Africa. Deployed across Guider (8 MW / 16 MWh) and Maroua (11 MW / 22 MWh) solar plants, stabilizing the Northern Interconnected Grid (RIN) during Lagdo hydro reservoir low seasons. LFP containerized batteries absorb peak solar and discharge during evening peak (6 PM to 10 PM), displacing over 15 million liters of costly diesel fuel annually.'}
+                      ? 'Déployée pour enrayer les délestages chroniques dans les régions de l\'Extrême-Nord et du Nord Cameroun. Le BESS stocke l\'énergie solaire produite en journée pour la restituer durant la pointe nocturne de 18h à 22h, évitant l\'utilisation de groupes thermiques diesel coûteux et polluants.'
+                      : 'Deployed to alleviate severe load shedding across Cameroon Northern regions. The BESS stores daytime solar surplus and discharges during the 18:00 - 22:00 evening peak, replacing expensive diesel generation.'}
                   </p>
                   <div className="grid grid-cols-2 gap-2 pt-2 text-[11px] font-mono">
                     <div className="bg-slate-900 p-2 rounded border border-slate-800">
-                      <span className="text-slate-500 block">Capacité Totale :</span>
-                      <span className="text-emerald-400 font-bold">19 MW / 38 MWh</span>
+                      <span className="text-slate-500 block">Capacité BESS :</span>
+                      <span className="text-emerald-400 font-bold">38 MWh LFP</span>
                     </div>
                     <div className="bg-slate-900 p-2 rounded border border-slate-800">
-                      <span className="text-slate-500 block">Raccordement :</span>
-                      <span className="text-white font-bold">Poste 30 kV Eneo</span>
+                      <span className="text-slate-500 block">Puissance Solaire :</span>
+                      <span className="text-white font-bold">30 MWp bifacial</span>
                     </div>
                     <div className="bg-slate-900 p-2 rounded border border-slate-800">
-                      <span className="text-slate-500 block">Chimie / Tension :</span>
-                      <span className="text-white font-bold">LiFePO4 / 1500 V DC</span>
+                      <span className="text-slate-500 block">Tension Évacuation :</span>
+                      <span className="text-amber-400 font-bold">30 kV / 110 kV RIN</span>
                     </div>
                     <div className="bg-slate-900 p-2 rounded border border-slate-800">
-                      <span className="text-slate-500 block">Fonction Clé :</span>
-                      <span className="text-cyan-400 font-bold">Arbitrage & Réglage Freq.</span>
+                      <span className="text-slate-500 block">Économie Diesel :</span>
+                      <span className="text-cyan-400 font-bold">&gt; 18M Litres/an</span>
                     </div>
                   </div>
                 </div>
 
-                {/* International Hornsdale Power Reserve Card */}
-                <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 shadow-lg space-y-3">
+                {/* Hornsdale Benchmark Card */}
+                <div className="p-5 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="px-2.5 py-0.5 bg-blue-500/20 text-blue-300 text-[10px] font-bold rounded border border-blue-500/30 uppercase">
-                      Benchmark International
+                      Benchmark Mondial
                     </span>
                     <span className="text-xs font-mono text-slate-400">Tesla / Neoen (Australie)</span>
                   </div>
-                  <h3 className="text-base font-bold text-white">
-                    Hornsdale Power Reserve (150 MW / 193 MWh)
-                  </h3>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <h3 className="text-base font-bold text-white">Hornsdale Power Reserve (150 MW / 193 MWh)</h3>
+                  <p className="text-xs text-slate-300 leading-relaxed font-sans">
                     {isFr
-                      ? 'Référence mondiale en matière de services système de pointe. Équipée d\'onduleurs Grid-Forming, cette installation réagit en moins de 150 ms lors du déclenchement d\'une centrale à charbon ou d\'une ligne 275 kV, injectant de l\'inertie synthétique avant même que les générateurs conventionnels n\'aient pu ouvrir leurs directrices de vannage.'
-                      : 'Global benchmark for market-leading ancillary services. Equipped with Grid-Forming inverters, the asset reacts in under 150 ms following major thermal generator trips or 275 kV line faults, providing synthetic inertia long before conventional spinning reserves can accelerate turbine governors.'}
+                      ? 'Référence mondiale en matière d\'inertie synthétique Grid-Forming. Réagit en moins de 150 ms lors du décrochage de centrales thermiques pour injecter de la puissance active stabilisatrice.'
+                      : 'Global benchmark for synthetic inertia Grid-Forming. Reacts in under 150 ms upon major power plant trips, arresting frequency decay before mechanical governors activate.'}
                   </p>
                   <div className="grid grid-cols-2 gap-2 pt-2 text-[11px] font-mono">
                     <div className="bg-slate-900 p-2 rounded border border-slate-800">
@@ -1466,143 +1750,175 @@ export const EnergyStorageWorkbench: React.FC<EnergyStorageWorkbenchProps> = ({
                       <span className="text-blue-400 font-bold">150 MW / 193 MWh</span>
                     </div>
                     <div className="bg-slate-900 p-2 rounded border border-slate-800">
-                      <span className="text-slate-500 block">Technologie :</span>
-                      <span className="text-white font-bold">Tesla Megapack (Liquid)</span>
-                    </div>
-                    <div className="bg-slate-900 p-2 rounded border border-slate-800">
                       <span className="text-slate-500 block">Temps de Réaction :</span>
                       <span className="text-emerald-400 font-bold">&lt; 150 ms (FFR)</span>
                     </div>
-                    <div className="bg-slate-900 p-2 rounded border border-slate-800">
-                      <span className="text-slate-500 block">Service Marché :</span>
-                      <span className="text-amber-400 font-bold">FCAS & Inertie VSG</span>
-                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* TAB 7: EPEDE CONTINUOUS IMPROVEMENT ENGINE MATURITY AUDIT */}
-        {activeTab === 'MATURITY_AUDIT_ENGINE' && (
-          <div className="space-y-6">
-            <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-xl">
-              <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+          {/* Sub-Tab 5.3: Stamped BOQ / DQE Pricing Engine */}
+          {stage5Tab === 'DQE_BOQ' && (
+            <EnergyStorageDqeBoqEngine
+              locale={locale}
+              ratedPowerMw={ratedPowerMw}
+              ratedEnergyMwh={ratedEnergyMwh}
+              activeEvChargers={activeEvChargers}
+              projectName={isFr ? ENERGY_STORAGE_PROFILES[selectedProfileKey].nameFr : ENERGY_STORAGE_PROFILES[selectedProfileKey].nameEn}
+            />
+          )}
+
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MATHEMATICAL PRINCIPLES & FORMULATIONS MODAL                              */}
+      {/* ========================================================================= */}
+      {isFormulasModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+          <div className="bg-[#090D14] border border-emerald-500/40 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 space-y-6 shadow-2xl">
+            
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-4 border-b border-[#222B38]">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                  <Calculator className="w-5 h-5" />
+                </div>
                 <div>
-                  <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                    <Activity className="w-5 h-5 text-purple-400" />
-                    {isFr
-                      ? 'Moteur d\'Audit Continu & Cartographie de Maturité EPEDE (Niveaux 0 à 5)'
-                      : 'EPEDE Continuous Improvement Engine & 6-Level Maturity Audit Map'}
-                  </h2>
-                  <p className="text-xs text-slate-400 mt-1 max-w-3xl">
-                    {isFr
-                      ? 'Audit permanent et quantitatif de la densité d\'ingénierie, de l\'interconnexion et de la modélisation visuelle à travers les 16 domaines de la plateforme EPEDE.'
-                      : 'Permanent quantitative audit tracking engineering depth, visual schematics, formulas, and digital twin maturity across all 16 platform domains.'}
+                  <h3 className="text-base sm:text-lg font-bold text-white uppercase font-mono">
+                    {isFr ? 'Formulations Mathématiques & Principes Physiques du Stockage d\'Énergie' : 'Mathematical Formulations & Energy Storage Physical Laws'}
+                  </h3>
+                  <p className="text-xs text-slate-400 font-mono">
+                    CEI 62933 · CEI 61660 · UL 9540A · NFPA 855 · ISO 15118
                   </p>
                 </div>
-                <div className="px-3 py-1 bg-purple-500/10 border border-purple-500/30 rounded text-xs font-mono text-purple-300">
-                  {platformMaturity.domainsAtLevel5} / 16 Domaines au Niveau 5
-                </div>
               </div>
 
-              {/* Overall Summary Stats Bar */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-                <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                  <span className="text-[11px] text-slate-500 block uppercase font-mono">Score Global Moyen</span>
-                  <div className="text-2xl font-bold font-mono text-purple-400">{platformMaturity.averageScorePercent}%</div>
-                  <span className="text-[10px] text-slate-400">Qualité d'ingénierie globale</span>
+              <button
+                onClick={() => setIsFormulasModalOpen(false)}
+                className="p-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-all"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Formulas Content Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-xs">
+              
+              {/* Formula 1: Arrhenius Degradation Law */}
+              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                <span className="text-emerald-400 font-bold uppercase text-[11px]">1. Modèle d'Arrhenius (Dégradation SOH)</span>
+                <div className="p-3 bg-slate-900 rounded-lg text-emerald-300 font-mono text-xs">
+                  SOH(t) = 100 - (A · √N_cyc + B · t_ans) · exp((T - 25)/18)
                 </div>
-                <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                  <span className="text-[11px] text-slate-500 block uppercase font-mono">{isFr ? 'Niveau 5 (Expert)' : 'Level 5 (Expert)'}</span>
-                  <div className="text-2xl font-bold font-mono text-emerald-400">{platformMaturity.domainsAtLevel5} / 16</div>
-                  <span className="text-[10px] text-emerald-400 font-bold">{isFr ? '16/16 Domaines (D01 à D16)' : '16/16 Domains (D01 to D16)'}</span>
-                </div>
-                <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                  <span className="text-[11px] text-slate-500 block uppercase font-mono">{isFr ? 'Niveau 4 (Avancé)' : 'Level 4 (Advanced)'}</span>
-                  <div className="text-2xl font-bold font-mono text-slate-400">{platformMaturity.domainsAtLevel4}</div>
-                  <span className="text-[10px] text-slate-500">{isFr ? 'Tous promus au Niveau 5' : 'All promoted to Level 5'}</span>
-                </div>
-                <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                  <span className="text-[11px] text-slate-500 block uppercase font-mono">{isFr ? 'Statut Qualité Global' : 'Overall Quality Status'}</span>
-                  <div className="text-base font-bold font-mono text-emerald-400 truncate">
-                    100% {isFr ? 'AUDITÉ & CONFORME' : 'AUDITED & COMPLIANT'}
-                  </div>
-                  <span className="text-[10px] text-slate-400">{isFr ? 'CEI · IEEE · NF C · Normes Cameroun' : 'IEC · IEEE · NF C · Cameroon'}</span>
-                </div>
+                <p className="text-[11px] text-slate-400 leading-relaxed font-sans">
+                  Quantifie la perte de capacité résiduelle en combinant la formation de la couche d'interphase solide-électrolyte (SEI cyclique en racine carrée) et l'oxydation thermique calendaire (loi d'Arrhenius activée thermiquement).
+                </p>
               </div>
 
-              {/* Domain Audit Matrix */}
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs border border-slate-800 rounded-lg overflow-hidden">
-                  <thead className="bg-slate-950 text-slate-300 font-mono text-[11px] uppercase border-b border-slate-800">
-                    <tr>
-                      <th className="p-3">Code & Domaine</th>
-                      <th className="p-3">Niveau de Maturité</th>
-                      <th className="p-3">Score %</th>
-                      <th className="p-3">Workbench Dédié</th>
-                      <th className="p-3">Cas Réels (CMR/Intl)</th>
-                      <th className="p-3">Statut & Action Prioritaire</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-800 text-slate-300">
-                    {Object.values(EPEDE_MATURITY_REGISTRY).map((report) => (
-                      <tr
-                        key={report.domainCode}
-                        className={`hover:bg-slate-800/40 ${report.domainCode === 'D10' ? 'bg-emerald-950/20' : ''}`}
-                      >
-                        <td className="p-3 font-medium">
-                          <span className="font-mono font-bold text-white mr-2">{report.domainCode}</span>
-                          <span className="text-slate-300">{report.domainName[isFr ? 'fr' : 'en']}</span>
-                        </td>
-                        <td className="p-3 font-mono">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                            report.maturityLevel === 5 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' :
-                            report.maturityLevel === 4 ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' :
-                            report.maturityLevel === 3 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' :
-                            'bg-purple-500/20 text-purple-300 border border-purple-500/30'
-                          }`}>
-                            Niveau {report.maturityLevel} / 5
-                          </span>
-                        </td>
-                        <td className="p-3 font-mono font-bold text-white">
-                          {report.maturityScorePercent}%
-                        </td>
-                        <td className="p-3">
-                          {report.interactiveWorkbench || report.domainCode === 'D10' ? (
-                            <span className="text-emerald-400 flex items-center gap-1 font-mono text-[11px]">
-                              <CheckCircle2 className="w-3.5 h-3.5" /> Opérationnel
-                            </span>
-                          ) : (
-                            <span className="text-slate-500 font-mono text-[11px]">Catalogue Standard</span>
-                          )}
-                        </td>
-                        <td className="p-3 font-mono text-[11px]">
-                          {report.cameroonCaseGrounded ? (
-                            <span className="text-emerald-400">✓ Ancré CMR</span>
-                          ) : (
-                            <span className="text-slate-500">En cours</span>
-                          )}
-                        </td>
-                        <td className="p-3 text-slate-400 text-[11px]">
-                          {report.domainCode === 'D10' ? (
-                            <span className="text-emerald-300 font-semibold">
-                              ✓ Rehaussé au Niveau 5 (EnergyStorageWorkbench déployé)
-                            </span>
-                          ) : (
-                            report.improvementRoadmap[0]?.[isFr ? 'fr' : 'en'] || 'Conforme'
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              {/* Formula 2: Virtual Synchronous Machine Swing Equation */}
+              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                <span className="text-emerald-400 font-bold uppercase text-[11px]">2. Équation d'Oscillation VSG (Grid-Forming)</span>
+                <div className="p-3 bg-slate-900 rounded-lg text-cyan-300 font-mono text-xs">
+                  2H · (df/dt) = P_m - P_e - D · (f - f_0)  ;  P_inertie = -2H · S_base · (df/dt)
+                </div>
+                <p className="text-[11px] text-slate-400 leading-relaxed font-sans">
+                  L'onduleur Grid-Forming émule l'inertie mécanique d'un rotor de turbo-alternateur synchrone. L'injection active est directement proportionnelle à la dérivée de fréquence (RoCoF), freinant instantanément tout effondrement réseau.
+                </p>
               </div>
+
+              {/* Formula 3: Round-Trip Efficiency */}
+              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                <span className="text-cyan-400 font-bold uppercase text-[11px]">3. Rendement de Cycle Aller-Retour (η_RTE)</span>
+                <div className="p-3 bg-slate-900 rounded-lg text-cyan-300 font-mono text-xs">
+                  η_RTE = η_cellule_LFP (94%) · η_PCS_4Q (97.5%) · η_transfo_HTA (98.5%) = 88.5%
+                </div>
+                <p className="text-[11px] text-slate-400 leading-relaxed font-sans">
+                  Le rendement énergétique global AC-AC inclut les pertes par polarisation coulombique/ohmique dans les cellules LFP, les pertes de commutation IGBT/SiC dans l'onduleur et les pertes fer/cuivre du transformateur 0.69/30 kV.
+                </p>
+              </div>
+
+              {/* Formula 4: Dynamic Load Management & Diversity */}
+              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                <span className="text-blue-400 font-bold uppercase text-[11px]">4. Foisonnement de Station IRVE &amp; DLM</span>
+                <div className="p-3 bg-slate-900 rounded-lg text-blue-300 font-mono text-xs">
+                  P_appelée = ∑ P_i · k_foisonnement  ;  k_fois = 0.65 à 0.85
+                </div>
+                <p className="text-[11px] text-slate-400 leading-relaxed font-sans">
+                  La demande de pointe instantanée d'une plaza de recharge ne correspond jamais à 100% de la somme des bornes : les véhicules ont des courbes de charge décroissantes et des heures d'arrivée décalées.
+                </p>
+              </div>
+
+              {/* Formula 5: BESS Buffer Peak Shaving */}
+              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                <span className="text-amber-400 font-bold uppercase text-[11px]">5. Écrêtement de Pointe Transformateur</span>
+                <div className="p-3 bg-slate-900 rounded-lg text-amber-300 font-mono text-xs">
+                  P_décharge_bess = max(0, P_appelée_IRVE - S_transfo · cos φ)
+                </div>
+                <p className="text-[11px] text-slate-400 leading-relaxed font-sans">
+                  Le système tampon BESS s'active automatiquement dès que la charge totale excède la capacité continue du transformateur de distribution, évitant ainsi le renforcement lourd et onéreux du poste source.
+                </p>
+              </div>
+
+              {/* Formula 6: Chiller Liquid Thermal Dissipation */}
+              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                <span className="text-sky-400 font-bold uppercase text-[11px]">6. Bilan Thermique &amp; Débit Chiller Liquide</span>
+                <div className="p-3 bg-slate-900 rounded-lg text-sky-300 font-mono text-xs">
+                  Q_chaleur = I_dc² · R_interne + T · ΔS  ;  Q_th = m_point · C_p · ΔT
+                </div>
+                <p className="text-[11px] text-slate-400 leading-relaxed font-sans">
+                  À 1C de décharge (280 A), un conteneur BESS de 5 MWh dissipe environ 85 kWth de calories. Le groupe chiller glycolé dimensionne son débit pour maintenir un gradient inter-cellules rigoureusement inférieur à 2.5°C.
+                </p>
+              </div>
+
+              {/* Formula 7: NFPA 855 Fire Separation */}
+              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                <span className="text-rose-400 font-bold uppercase text-[11px]">7. Séparation Sécuritaire &amp; Confinement (NFPA 855)</span>
+                <div className="p-3 bg-slate-900 rounded-lg text-rose-300 font-mono text-xs">
+                  D_séparation ≥ 3.0 m (10 ft)  ;  Q_eau_rétention ≥ 100 m³
+                </div>
+                <p className="text-[11px] text-slate-400 leading-relaxed font-sans">
+                  La norme NFPA 855 impose un espacement physique minimal de 3 mètres entre conteneurs BESS adjacents et envers les limites de propriété pour empêcher la propagation radiative en cas d'emballement thermique.
+                </p>
+              </div>
+
+              {/* Formula 8: DC Short Circuit Current (IEC 61660-1) */}
+              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                <span className="text-purple-400 font-bold uppercase text-[11px]">8. Courant de Court-Circuit DC (CEI 61660-1)</span>
+                <div className="p-3 bg-slate-900 rounded-lg text-purple-300 font-mono text-xs">
+                  i_p = E_bess / R_tot  ;  τ = L_tot / R_tot  (i_p ≥ 25 kA sous 1500V)
+                </div>
+                <p className="text-[11px] text-slate-400 leading-relaxed font-sans">
+                  En l'absence de passage par zéro du courant continu, la coupure des courants de court-circuit massifs impose des fusibles ultra-rapides gBat et des contacteurs sous vide capables d'interrompre l'arc en moins de 5 ms.
+                </p>
+              </div>
+
+            </div>
+
+            {/* Modal Close Button */}
+            <div className="flex justify-end pt-4 border-t border-[#222B38]">
+              <button
+                onClick={() => setIsFormulasModalOpen(false)}
+                className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-mono font-bold text-xs uppercase tracking-wider transition-all"
+              >
+                {isFr ? 'Fermer le Manuel' : 'Close Reference'}
+              </button>
             </div>
           </div>
-        )}
+        </div>
+      )}
+
+      {/* FOOTER METADATA */}
+      <div className="p-4 bg-slate-900/60 border border-slate-800 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-slate-400">
+        <div className="flex items-center gap-2 text-emerald-300">
+          <ShieldCheck className="w-4 h-4 text-emerald-400" />
+          <span>Ingénierie BESS, Grid-Forming &amp; IRVE conforme CEI 62933, UL 9540A, NFPA 855 &amp; ISO 15118</span>
+        </div>
+        <div>EPEDE Platform · Domaine D10 · Niveau de Maturité 5 (98%) · Cameroun Guider / Maroua Compliant</div>
       </div>
+
     </div>
   );
 };
