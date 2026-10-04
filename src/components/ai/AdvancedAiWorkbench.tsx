@@ -1,6 +1,7 @@
 // src/components/ai/AdvancedAiWorkbench.tsx
 // EPEDE Domain D09 - Artificial Intelligence & Advanced Technologies Engineering Workbench
 // Level 5 Reference Quality compliant with IEC 60076-7, IEC 60599, IEEE C57.104, ISO 10816, IEC 62443, and NIST AI RMF
+// Grounded in Cameroon Critical Power Assets (Songloulou 384 MW, SONATREL 225 kV Mangombé-Oyomabang, Eneo AMI Smart Metering)
 
 import React, { useState, useMemo } from 'react';
 import {
@@ -28,8 +29,19 @@ import {
   Sun,
   BatteryCharging,
   ShieldCheck,
-  FileCheck
+  FileCheck,
+  BookOpen,
+  X,
+  SlidersHorizontal,
+  HardDrive
 } from 'lucide-react';
+
+import { AuthoritativeEcosystemHero } from '../common/AuthoritativeEcosystemHero';
+import { AiOrientationBanner } from './AiOrientationBanner';
+import { AiCommandHeader } from './AiCommandHeader';
+import { IiotEdgeAcquisitionEngine } from './modules/IiotEdgeAcquisitionEngine';
+import { AiDeliverablesExportEngine } from './modules/AiDeliverablesExportEngine';
+import { useAiProjectStore, type AiSiteKey, AI_SITE_PROFILES } from './services/useAiProjectStore';
 
 interface AdvancedAiWorkbenchProps {
   locale: 'fr' | 'en';
@@ -37,93 +49,33 @@ interface AdvancedAiWorkbenchProps {
   onSelectEquipment?: (id: string) => void;
 }
 
-type PillarKey =
-  | 'NEURAL_DGA_DIAGNOSTICS'
-  | 'DIGITAL_TWIN_THERMAL'
-  | 'IIOT_VIBRATION_SPECTRAL'
-  | 'DRONE_COMPUTER_VISION'
-  | 'OT_CYBERSECURITY_DPI'
-  | 'RENEWABLE_LOAD_FORECAST'
-  | 'CAMEROON_AI_FORENSICS';
-
 export const AdvancedAiWorkbench: React.FC<AdvancedAiWorkbenchProps> = ({
   locale,
   onNavigate,
   onSelectEquipment
 }) => {
-  const [activePillar, setActivePillar] = useState<PillarKey>('NEURAL_DGA_DIAGNOSTICS');
+  // Central Reactive Project Store
+  const store = useAiProjectStore('HYDRO_SONGLOULOU_384MW');
 
-  const pillars = useMemo(
-    () => [
-      {
-        id: 'NEURAL_DGA_DIAGNOSTICS' as PillarKey,
-        num: 'P1',
-        titleFr: 'Diagnostic DGA & Triangle de Duval par Réseau de Neurones',
-        titleEn: 'Neural Network DGA & Duval Triangle 1 Diagnostics',
-        icon: Sparkles,
-        badge: 'IEEE C57.104 / IEC 60599'
-      },
-      {
-        id: 'DIGITAL_TWIN_THERMAL' as PillarKey,
-        num: 'P2',
-        titleFr: 'Jumeau Numérique Thermique & Perte de Vie RUL (PINN)',
-        titleEn: 'Thermal Digital Twin & RUL Loss of Life (PINN)',
-        icon: Flame,
-        badge: 'IEC 60076-7'
-      },
-      {
-        id: 'IIOT_VIBRATION_SPECTRAL' as PillarKey,
-        num: 'P3',
-        titleFr: 'Edge IIoT & Analyse Spectrale FFT de Vibrations (Roulements)',
-        titleEn: 'Edge IIoT & Vibration FFT Spectral Analysis (Bearings)',
-        icon: Activity,
-        badge: 'ISO 10816 / ISO 13373'
-      },
-      {
-        id: 'DRONE_COMPUTER_VISION' as PillarKey,
-        num: 'P4',
-        titleFr: 'Vision par Ordinateur & Inspection Lignes 225 kV par Drone',
-        titleEn: 'Computer Vision AI & 225 kV Transmission Drone Inspection',
-        icon: Camera,
-        badge: 'CIGRE TB 859 / IEEE 1313'
-      },
-      {
-        id: 'OT_CYBERSECURITY_DPI' as PillarKey,
-        num: 'P5',
-        titleFr: 'Cybersécurité OT & Détection d\'Intrusions SCADA (DPI)',
-        titleEn: 'OT Cybersecurity & SCADA Deep Packet Inspection (DPI)',
-        icon: ShieldAlert,
-        badge: 'IEC 62443 / MITRE ATT&CK'
-      },
-      {
-        id: 'RENEWABLE_LOAD_FORECAST' as PillarKey,
-        num: 'P6',
-        titleFr: 'Prévision Solaire & Détection de Pertes Non-Techniques (Fraude)',
-        titleEn: 'Solar PV Forecasting & Non-Technical Loss (Theft) AI',
-        icon: Sun,
-        badge: 'IEC 61724 / Smart Meter AI'
-      },
-      {
-        id: 'CAMEROON_AI_FORENSICS' as PillarKey,
-        num: 'P7',
-        titleFr: 'Cas Forensics Cameroun (Songloulou, Sonatrel, Eneo)',
-        titleEn: 'Cameroon Forensic Cases (Songloulou, Sonatrel, Eneo)',
-        icon: Server,
-        badge: 'Songloulou · 225kV · AMI'
-      }
-    ],
-    []
-  );
+  // Sub-tabs within stages
+  const [stage1Tab, setStage1Tab] = useState<'acquisition' | 'protocols'>('acquisition');
+  const [stage2Tab, setStage2Tab] = useState<'dga' | 'thermal'>('dga');
+  const [stage3Tab, setStage3Tab] = useState<'vibration' | 'solar'>('vibration');
+  const [stage4Tab, setStage4Tab] = useState<'drone' | 'cyber'>('drone');
+  const [stage5Tab, setStage5Tab] = useState<'cases' | 'dqe'>('cases');
+
+  // Formulations & Standards Reference Modal
+  const [isFormulasModalOpen, setIsFormulasModalOpen] = useState<boolean>(false);
 
   // -------------------------------------------------------------------------
-  // PILLAR 1: NEURAL DGA & DUVAL TRIANGLE STATE & CALCS
+  // PILLAR 1: NEURAL DGA & DUVAL TRIANGLE STATE & CALCS (IEEE C57.104 / IEC 60599)
   // -------------------------------------------------------------------------
-  const [h2, setH2] = useState<number>(45);
-  const [ch4, setCh4] = useState<number>(120);
-  const [c2h2, setC2h2] = useState<number>(15);
-  const [c2h4, setC2h4] = useState<number>(190);
+  const [h2, setH2] = useState<number>(store.dgaH2);
+  const [ch4, setCh4] = useState<number>(store.dgaCh4);
+  const [c2h2, setC2h2] = useState<number>(store.dgaC2h2);
+  const [c2h4, setC2h4] = useState<number>(store.dgaC2h4);
   const [c2h6, setC2h6] = useState<number>(65);
-  const [co, setCo] = useState<number>(380);
+  const [co, setCo] = useState<number>(store.dgaCo);
   const [co2, setCo2] = useState<number>(4200);
 
   const dgaCalcs = useMemo(() => {
@@ -133,13 +85,9 @@ export const AdvancedAiWorkbench: React.FC<AdvancedAiWorkbenchProps> = ({
     const pC2h4 = sumDuval > 0 ? (c2h4 / sumDuval) * 100 : 0;
     const pC2h2 = sumDuval > 0 ? (c2h2 / sumDuval) * 100 : 0;
 
-    // Equilateral triangle coordinate mapping:
-    // Base is 100% C2H4 at (100, 0), Top is 100% CH4 at (50, 86.6), Left bottom is 100% C2H2 at (0, 0)
-    // x = pC2h4 + 0.5 * pCh4; y = pCh4 * (sqrt(3)/2)
     const xCoord = pC2h4 + 0.5 * pCh4;
     const yCoord = pCh4 * 0.866025;
 
-    // Duval Triangle 1 fault classification
     let faultCode = 'NORMAL';
     let faultNameFr = 'Vieillissement normal / Aucune anomalie';
     let faultNameEn = 'Normal aging / No fault';
@@ -184,8 +132,6 @@ export const AdvancedAiWorkbench: React.FC<AdvancedAiWorkbenchProps> = ({
       faultSeverity = 'crit';
     }
 
-    // Neural Network simulated confidence score (0-100%)
-    // Softmax probabilities for 6 output classes
     const scores = {
       NORMAL: Math.max(5, Math.round(100 - tdcg / 15)),
       PD: Math.max(3, Math.round((pCh4 / 100) * 85 * (pC2h2 < 2 ? 1 : 0.2))),
@@ -219,33 +165,26 @@ export const AdvancedAiWorkbench: React.FC<AdvancedAiWorkbenchProps> = ({
   // -------------------------------------------------------------------------
   // PILLAR 2: DIGITAL TWIN THERMAL PINN (IEC 60076-7)
   // -------------------------------------------------------------------------
-  const [ratedMva, setRatedMva] = useState<number>(60);
-  const [loadFactor, setLoadFactor] = useState<number>(1.05); // K = I / In
-  const [ambientTemp, setAmbientTemp] = useState<number>(36); // deg C (Cameroon tropical ambient)
+  const [ratedMva, setRatedMva] = useState<number>(store.activeSiteProfile.capacityMvaOrMw);
+  const [loadFactor, setLoadFactor] = useState<number>(store.transformerLoadFactor);
+  const [ambientTemp, setAmbientTemp] = useState<number>(store.ambientTemperatureC);
   const [coolingMode, setCoolingMode] = useState<'ONAN' | 'ONAF' | 'OFAF'>('ONAF');
 
   const thermalTwin = useMemo(() => {
-    // Thermal parameters per IEC 60076-7
-    const deltaThetaOr = coolingMode === 'ONAN' ? 52 : coolingMode === 'ONAF' ? 44 : 40; // Top-oil rise at rated load
-    const deltaThetaHr = coolingMode === 'ONAN' ? 26 : coolingMode === 'ONAF' ? 22 : 20; // Hot-spot to top oil gradient
-    const rRatio = 5.0; // Ratio of load loss to no-load loss at rated load
+    const deltaThetaOr = coolingMode === 'ONAN' ? 52 : coolingMode === 'ONAF' ? 44 : 40;
+    const deltaThetaHr = coolingMode === 'ONAN' ? 26 : coolingMode === 'ONAF' ? 22 : 20;
+    const rRatio = 5.0;
     const xExp = coolingMode === 'ONAN' ? 0.8 : 0.9;
     const yExp = coolingMode === 'ONAN' ? 1.6 : 1.6;
     const hotSpotFactorH = 1.3;
 
-    // Steady state top-oil temperature rise
     const topOilRise = deltaThetaOr * Math.pow((1 + rRatio * Math.pow(loadFactor, 2)) / (1 + rRatio), xExp);
     const topOilTemp = ambientTemp + topOilRise;
 
-    // Steady state hot-spot temperature rise
     const hotSpotGradient = deltaThetaHr * Math.pow(loadFactor, yExp);
     const hotSpotTemp = topOilTemp + hotSpotFactorH * hotSpotGradient;
 
-    // Relative rate of aging V per IEC 60076-7: V = 2^((Theta_h - 98) / 6)
     const agingFactorV = Math.pow(2, (hotSpotTemp - 98) / 6);
-
-    // Remaining Useful Life (RUL)
-    // Reference insulation life = 180,000 hours (~20.55 years at continuous 98 deg C)
     const baseLifeHours = 180000;
     const effectiveLifeHours = baseLifeHours / Math.max(0.1, agingFactorV);
     const rulYears = (effectiveLifeHours / 8760).toFixed(1);
@@ -263,13 +202,12 @@ export const AdvancedAiWorkbench: React.FC<AdvancedAiWorkbenchProps> = ({
   // -------------------------------------------------------------------------
   // PILLAR 3: IIOT VIBRATION FFT STATE & CALCS (ISO 10816)
   // -------------------------------------------------------------------------
-  const [rpm, setRpm] = useState<number>(1485); // 4-pole motor or hydro Francis generator
+  const [rpm, setRpm] = useState<number>(store.bearingRpm);
   const [bearingType, setBearingType] = useState<'SKF_6316' | 'SKF_7314' | 'CUSTOM'>('SKF_6316');
   const [injectedDefect, setInjectedDefect] = useState<'HEALTHY' | 'UNBALANCE' | 'MISALIGNMENT' | 'BPFO' | 'BPFI' | 'LOOSENESS'>('BPFO');
 
   const vibrationCalcs = useMemo(() => {
-    const f1x = rpm / 60; // 1x shaft rotational frequency in Hz
-    // Bearing geometry for SKF 6316: Z=8 balls, d=26mm, D=125mm, angle=0
+    const f1x = rpm / 60;
     const zBalls = 8;
     const dBall = 26;
     const dPitch = 125;
@@ -280,7 +218,7 @@ export const AdvancedAiWorkbench: React.FC<AdvancedAiWorkbenchProps> = ({
     const bsf = (dPitch / (2 * dBall)) * f1x * (1 - Math.pow((dBall / dPitch) * cosAngle, 2));
     const ftf = (f1x / 2) * (1 - (dBall / dPitch) * cosAngle);
 
-    let rmsVelocity = 1.2; // mm/s
+    let rmsVelocity = 1.2;
     let aiDiagnosisFr = 'Machine saine, vibrations dans la plage normale';
     let aiDiagnosisEn = 'Healthy machine, baseline vibration levels';
     let isoZone: 'A' | 'B' | 'C' | 'D' = 'A';
@@ -394,7 +332,6 @@ export const AdvancedAiWorkbench: React.FC<AdvancedAiWorkbenchProps> = ({
   // PILLAR 5: OT CYBERSECURITY & DPI (IEC 62443)
   // -------------------------------------------------------------------------
   const [selectedAttackVector, setSelectedAttackVector] = useState<string>('iec104_unauthorized_trip');
-
   const attackVectors = [
     {
       id: 'iec104_unauthorized_trip',
@@ -445,18 +382,16 @@ export const AdvancedAiWorkbench: React.FC<AdvancedAiWorkbenchProps> = ({
   // -------------------------------------------------------------------------
   // PILLAR 6: SOLAR PV FORECASTING & THEFT DETECTION
   // -------------------------------------------------------------------------
-  const [solarIrradiance, setSolarIrradiance] = useState<number>(850); // W/m2
-  const [cloudCoverPercent, setCloudCoverPercent] = useState<number>(35); // %
-  const [ambientSolarTemp, setAmbientSolarTemp] = useState<number>(34); // deg C
+  const [solarIrradiance, setSolarIrradiance] = useState<number>(850);
+  const [cloudCoverPercent, setCloudCoverPercent] = useState<number>(35);
+  const [ambientSolarTemp, setAmbientSolarTemp] = useState<number>(34);
 
   const solarForecast = useMemo(() => {
-    // Guider / Maroua solar PV calculation model (15 MWp base)
     const peakCapacityMw = 15.0;
-    const noct = 45; // Nominal Module Operating Temp
+    const noct = 45;
     const cellTemp = ambientSolarTemp + ((noct - 20) / 800) * solarIrradiance;
-    const tempDerating = 1 - 0.0035 * (cellTemp - 25); // -0.35%/deg C for TOPCon modules
+    const tempDerating = 1 - 0.0035 * (cellTemp - 25);
     const cloudAttenuation = 1 - (cloudCoverPercent / 100) * 0.75;
-
     const netIrradiance = solarIrradiance * cloudAttenuation;
     const predictedMw = Math.max(0, peakCapacityMw * (netIrradiance / 1000) * tempDerating * 0.98);
     const bessBufferMw = Math.min(4.0, Math.max(0, peakCapacityMw * 0.8 - predictedMw));
@@ -470,983 +405,991 @@ export const AdvancedAiWorkbench: React.FC<AdvancedAiWorkbenchProps> = ({
     };
   }, [solarIrradiance, cloudCoverPercent, ambientSolarTemp]);
 
+  // Handle site change from Command Header HUD
+  const handleSiteChange = (siteKey: AiSiteKey) => {
+    store.setSelectedSiteId(siteKey);
+    const profile = AI_SITE_PROFILES[siteKey];
+    if (profile) {
+      setRatedMva(profile.capacityMvaOrMw);
+      if (siteKey === 'HYDRO_SONGLOULOU_384MW') {
+        setLoadFactor(1.10);
+        setAmbientTemp(32);
+        setRpm(1500);
+        setC2h4(190);
+        setC2h2(15);
+      } else if (siteKey === 'SUBSTATION_OYOMABANG_225KV') {
+        setLoadFactor(0.95);
+        setAmbientTemp(30);
+        setRpm(1000);
+        setC2h4(85);
+        setC2h2(2);
+      } else if (siteKey === 'SMART_METER_DOUALA_AMI') {
+        setLoadFactor(1.15);
+        setAmbientTemp(35);
+        setRpm(1450);
+        setC2h4(40);
+        setC2h2(0);
+      } else if (siteKey === 'SOLAR_PARK_MAROUA_15MW') {
+        setLoadFactor(0.85);
+        setAmbientTemp(42);
+        setRpm(1500);
+        setC2h4(30);
+        setC2h2(0);
+      }
+    }
+  };
+
+  // Stage labels for AuthoritativeEcosystemHero
+  const stageLabels = [
+    locale === 'fr' ? '1. Chaîne d\'Acquisition IIoT & Intégrité Données' : '1. IIoT Acquisition & Data Quality',
+    locale === 'fr' ? '2. Diagnostic DGA Duval & Jumeaux Thermiques PINN' : '2. Duval DGA & PINN Thermal Twin',
+    locale === 'fr' ? '3. Analyse Spectrale FFT & Vibrations ISO 10816' : '3. FFT Vibration Analytics & ISO 10816',
+    locale === 'fr' ? '4. Vision Drone YOLOv8 & Cybersécurité DPI OT' : '4. Drone Vision & OT DPI Cybersecurity',
+    locale === 'fr' ? '5. Chantiers Cameroun & Dossier DQE en FCFA' : '5. Cameroon Assets & Stamped BOQ FCFA'
+  ];
+
   return (
     <div className="space-y-6 text-[#e8eaf0] font-sans" id="advanced-ai-workbench">
-      {/* 1. WORKBENCH BANNER */}
-      <div className="relative bg-gradient-to-br from-[#080d1f] via-[#0d1238] to-[#080815] border-b-4 border-[#6366f1] rounded-2xl p-6 sm:p-8 overflow-hidden shadow-2xl">
-        <div className="absolute right-6 top-3 text-8xl font-black text-[#6366f1]/[0.06] pointer-events-none select-none font-mono">
-          D09
-        </div>
+      {/* 1. FIRST VIEW: AUTHORITATIVE ECOSYSTEM HERO */}
+      <AuthoritativeEcosystemHero
+        stage="substation"
+        locale={locale}
+        activePillarLabel={stageLabels[store.activeStage - 1]}
+        totalPillarsCount={5}
+        onNavigateToDomain={(d) => onNavigate?.('domain', d)}
+        onSelectEquipment={onSelectEquipment}
+      />
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
-          <div className="space-y-2">
-            <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-[#a5b4fc] flex items-center gap-2">
-              <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#6366f1] animate-pulse" />
-              ElectroCopilot · Station Expert IA &amp; Technologies Avancées · Niveau 5
-            </div>
-            <h1 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-wide text-white">
-              Intelligence Artificielle &amp; <span className="text-[#a5b4fc]">Jumeaux Numériques</span>
-            </h1>
-            <p className="text-xs sm:text-sm font-mono text-[#a5b4fc]/80 font-semibold">
-              Diagnostic DGA par Réseaux de Neurones · Jumeaux Thermiques PINN · Edge IIoT · Vision Drone · Cybersécurité OT CEI 62443
-            </p>
-          </div>
+      {/* 2. FIRST VIEW: 7 ORIENTATION QUESTIONS ACCORDION BANNER */}
+      <AiOrientationBanner
+        locale={locale}
+        onNavigateStage={(stg) => store.setActiveStage(stg)}
+        onNavigateDomain={(d) => onNavigate?.('domain', d)}
+      />
 
-          <div className="self-start sm:self-auto flex flex-col items-start sm:items-end gap-2">
-            <div className="bg-[#6366f1]/20 border border-[#6366f1]/40 text-[#a5b4fc] font-mono text-[11px] font-bold tracking-wider uppercase px-4 py-2 rounded-lg shadow-sm">
-              ⚡ 7 Piliers d'Ingénierie Validés
-            </div>
-            <div className="text-[10px] font-mono text-slate-400">
-              {locale === 'fr'
-                ? 'Conforme IEEE C57.104 · CEI 60076-7 · ISO 10816 · CEI 62443'
-                : 'Compliant with IEEE C57.104 · IEC 60076-7 · ISO 10816 · IEC 62443'}
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* 3. COMMAND HEADER HUD & 5-STAGE PROGRESSIVE SELECTOR */}
+      <AiCommandHeader
+        locale={locale}
+        activeStage={store.activeStage}
+        onSelectStage={(stg) => store.setActiveStage(stg)}
+        selectedSiteId={store.selectedSiteId}
+        onSelectSite={handleSiteChange}
+        activeProfile={store.activeSiteProfile}
+        calculations={store.calculations}
+        onOpenDossier={() => {
+          store.setActiveStage(5);
+          setStage5Tab('dqe');
+        }}
+        onOpenPrinciplesModal={() => setIsFormulasModalOpen(true)}
+      />
 
-      {/* 2. PILLAR SELECTION TABS */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
-        {pillars.map((p) => {
-          const isActive = activePillar === p.id;
-          const IconComp = p.icon;
-          return (
+      {/* ========================================================================= */}
+      {/* STAGE 1: CHAÎNE D'ACQUISITION IIOT & INTÉGRITÉ DONNÉES                     */}
+      {/* ========================================================================= */}
+      {store.activeStage === 1 && (
+        <div className="space-y-6">
+          <div className="flex border-b border-slate-800 gap-2 pb-2">
             <button
-              key={p.id}
-              id={`pillar-tab-${p.id}`}
               type="button"
-              onClick={() => setActivePillar(p.id)}
-              className={`p-3 rounded-xl text-left transition-all border flex flex-col justify-between ${
-                isActive
-                  ? 'bg-[#6366f1] border-white/20 text-white shadow-lg shadow-[#6366f1]/20'
-                  : 'bg-black/40 border-white/10 text-slate-400 hover:text-white hover:bg-white/5'
+              onClick={() => setStage1Tab('acquisition')}
+              className={`px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all border ${
+                stage1Tab === 'acquisition'
+                  ? 'bg-indigo-600 text-white border-indigo-400 shadow-md shadow-indigo-600/30'
+                  : 'bg-slate-900 text-slate-300 hover:text-white border-slate-800'
               }`}
             >
-              <div className="flex items-center justify-between mb-2">
-                <span className={`font-mono text-xs font-black ${isActive ? 'text-white' : 'text-[#a5b4fc]'}`}>
-                  {p.num}
-                </span>
-                <IconComp className={`w-4 h-4 ${isActive ? 'text-white' : 'text-[#6366f1]'}`} />
-              </div>
-              <div className="text-xs font-bold leading-tight line-clamp-2">
-                {locale === 'fr' ? p.titleFr : p.titleEn}
-              </div>
-              <div className="mt-2 text-[9px] font-mono tracking-tighter opacity-80 truncate">
-                {p.badge}
-              </div>
+              1.1 Échantillonnage, Synchronisation PTP & Stockage Edge
             </button>
-          );
-        })}
-      </div>
+            <button
+              type="button"
+              onClick={() => setStage1Tab('protocols')}
+              className={`px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all border ${
+                stage1Tab === 'protocols'
+                  ? 'bg-indigo-600 text-white border-indigo-400 shadow-md shadow-indigo-600/30'
+                  : 'bg-slate-900 text-slate-300 hover:text-white border-slate-800'
+              }`}
+            >
+              1.2 Matrice des Protocoles Industriels & Capteurs de Terrain
+            </button>
+          </div>
 
-      {/* 3. PILLAR 1 CONTENT: NEURAL NETWORK DGA & DUVAL TRIANGLE */}
-      {activePillar === 'NEURAL_DGA_DIAGNOSTICS' && (
-        <div className="space-y-6" id="pillar-neural-dga">
-          <div className="bg-[#0f1829] border border-white/10 rounded-2xl p-5 sm:p-6 space-y-6">
-            <div className="border-b border-white/10 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div>
-                <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-[#a5b4fc]" />
-                  {locale === 'fr'
-                    ? 'P1. Diagnostic DGA & Triangle de Duval 1 par Réseau de Neurones Artificiels'
-                    : 'P1. Dissolved Gas Analysis & Duval Triangle 1 Artificial Neural Classifier'}
-                </h2>
-                <p className="text-xs text-slate-400 font-mono">
-                  {locale === 'fr'
-                    ? 'Cartographie automatique CEI 60599 & IEEE C57.104 avec classifieur neuronal MLP 7 entrées'
-                    : 'Automated IEC 60599 & IEEE C57.104 mapping with 7-input MLP neural network classifier'}
-                </p>
+          {stage1Tab === 'acquisition' && (
+            <IiotEdgeAcquisitionEngine
+              locale={locale}
+              siteName={store.activeSiteProfile.nameFr}
+            />
+          )}
+
+          {stage1Tab === 'protocols' && (
+            <div className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-6 shadow-xl font-mono text-xs">
+              <div className="border-b border-slate-800 pb-3">
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                  <Layers className="h-4 w-4 text-indigo-400" />
+                  <span>Matrice Comparée des Protocoles de Télémétrie en Milieu Électrique</span>
+                </h3>
               </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setH2(25);
-                    setCh4(45);
-                    setC2h2(3);
-                    setC2h4(30);
-                    setC2h6(20);
-                    setCo(220);
-                    setCo2(3200);
-                  }}
-                  className="px-3 py-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-[11px] font-mono text-slate-300"
-                >
-                  {locale === 'fr' ? 'Profil Sain' : 'Healthy Profile'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setH2(180);
-                    setCh4(220);
-                    setC2h2(185);
-                    setC2h4(420);
-                    setC2h6(45);
-                    setCo(680);
-                    setCo2(4100);
-                  }}
-                  className="px-3 py-1 bg-red-950/60 hover:bg-red-900 border border-red-500/40 rounded text-[11px] font-mono text-red-300"
-                >
-                  {locale === 'fr' ? 'Arc Électrique D2' : 'Arcing Fault D2'}
-                </button>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                  <div className="text-indigo-400 font-bold text-xs">CEI 61850-9-2 SV & GOOSE</div>
+                  <p className="text-slate-300 text-[11px] leading-relaxed">
+                    Échantillonnage en direct sur le Process Bus (4800 ou 14400 éch/s). Temps réel dur (&lt; 4 ms), pas de pile TCP/IP, direct couche liaison Ethernet 802.1Q.
+                  </p>
+                  <div className="text-[10px] text-slate-500">Usage : Protection différentielle & Synchrophasors</div>
+                </div>
+
+                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                  <div className="text-cyan-400 font-bold text-xs">MQTT Sparkplug B</div>
+                  <p className="text-slate-300 text-[11px] leading-relaxed">
+                    Publish/Subscribe ultra-léger avec payload Google Protocol Buffers compressé. Idéal pour réseaux cellulaires contraints 4G/GPRS au Cameroun.
+                  </p>
+                  <div className="text-[10px] text-slate-500">Usage : Télémétrie compteurs AMI Eneo</div>
+                </div>
+
+                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                  <div className="text-emerald-400 font-bold text-xs">OPC UA (CEI 62541)</div>
+                  <p className="text-slate-300 text-[11px] leading-relaxed">
+                    Modèle d'information riche avec chiffrement natif X.509 et signature des messages. Parfait pour l'intégration SCADA vers Cloud d'entreprise.
+                  </p>
+                  <div className="text-[10px] text-slate-500">Usage : Jumeau numérique & Historian</div>
+                </div>
+
+                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                  <div className="text-amber-400 font-bold text-xs">Modbus TCP / RTU</div>
+                  <p className="text-slate-300 text-[11px] leading-relaxed">
+                    Protocole maître-esclave historique sans sécurité native. Requiert une passerelle diode de données pour éviter les écritures malveillantes.
+                  </p>
+                  <div className="text-[10px] text-slate-500">Usage : Groupes diesel & centrales solaires isolées</div>
+                </div>
               </div>
             </div>
+          )}
+        </div>
+      )}
 
+      {/* ========================================================================= */}
+      {/* STAGE 2: DIAGNOSTIC PHYSICO-CHIMIQUE DGA & PINN THERMIQUE                 */}
+      {/* ========================================================================= */}
+      {store.activeStage === 2 && (
+        <div className="space-y-6">
+          <div className="flex border-b border-slate-800 gap-2 pb-2">
+            <button
+              type="button"
+              onClick={() => setStage2Tab('dga')}
+              className={`px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all border ${
+                stage2Tab === 'dga'
+                  ? 'bg-indigo-600 text-white border-indigo-400 shadow-md shadow-indigo-600/30'
+                  : 'bg-slate-900 text-slate-300 hover:text-white border-slate-800'
+              }`}
+            >
+              2.1 Diagnostic DGA & Triangle de Duval 1 (IEEE C57.104 / CEI 60599)
+            </button>
+            <button
+              type="button"
+              onClick={() => setStage2Tab('thermal')}
+              className={`px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all border ${
+                stage2Tab === 'thermal'
+                  ? 'bg-indigo-600 text-white border-indigo-400 shadow-md shadow-indigo-600/30'
+                  : 'bg-slate-900 text-slate-300 hover:text-white border-slate-800'
+              }`}
+            >
+              2.2 Jumeau Numérique Thermique & Perte de Vie RUL PINN (CEI 60076-7)
+            </button>
+          </div>
+
+          {/* DGA Tab (Preserved Simulator 1) */}
+          {stage2Tab === 'dga' && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              {/* Left Column: Sliders */}
-              <div className="lg:col-span-5 space-y-4 bg-black/40 p-4 rounded-xl border border-white/10">
-                <div className="font-mono text-xs font-bold text-[#a5b4fc] uppercase tracking-wider flex items-center justify-between border-b border-white/10 pb-2">
-                  <span>{locale === 'fr' ? 'Teneur en Gaz Dissous (ppm)' : 'Dissolved Gases (ppm)'}</span>
-                  <span className="text-[10px] text-slate-400">Total: {dgaCalcs.tdcg} ppm</span>
-                </div>
-
-                {[
-                  { label: 'Hydrogène (H₂)', val: h2, setVal: setH2, max: 1000, desc: 'Décharges partielles & électrolyse' },
-                  { label: 'Méthane (CH₄)', val: ch4, setVal: setCh4, max: 800, desc: 'Décomposition huile à basse temp.' },
-                  { label: 'Éthylène (C₂H₄)', val: c2h4, setVal: setC2h4, max: 1000, desc: 'Surchauffe sévère huile > 700°C' },
-                  { label: 'Acétylène (C₂H₂)', val: c2h2, setVal: setC2h2, max: 500, desc: 'Arcs électriques disruptifs > 1000°C' },
-                  { label: 'Éthane (C₂H₆)', val: c2h6, setVal: setC2h6, max: 500, desc: 'Surchauffe thermique modérée' },
-                  { label: 'Monoxyde Carbone (CO)', val: co, setVal: setCo, max: 1500, desc: 'Dégradation cellulose papier isolant' },
-                  { label: 'Dioxyde Carbone (CO₂)', val: co2, setVal: setCo2, max: 15000, desc: 'Vieillissement papier Kraft' }
-                ].map((item, idx) => (
-                  <div key={idx} className="space-y-1">
-                    <div className="flex justify-between text-xs font-mono">
-                      <span className="text-slate-300 font-semibold">{item.label}</span>
-                      <span className="text-[#a5b4fc] font-bold">{item.val} ppm</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="0"
-                      max={item.max}
-                      value={item.val}
-                      onChange={(e) => item.setVal(Number(e.target.value))}
-                      className="w-full accent-[#6366f1] h-1.5 bg-slate-800 rounded-lg"
-                    />
-                    <div className="text-[9px] text-slate-500 font-mono">{item.desc}</div>
+              {/* Controls Column */}
+              <div className="lg:col-span-5 space-y-4">
+                <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4 shadow-xl font-mono text-xs">
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <span className="font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-2">
+                      <Sliders className="h-4 w-4" />
+                      <span>{locale === 'fr' ? 'Concentrations Gaz Dissous (ppm)' : 'Dissolved Gas Concentrations'}</span>
+                    </span>
+                    <span className="text-[10px] text-slate-400">IEEE C57.104</span>
                   </div>
-                ))}
+
+                  {/* Gas Sliders */}
+                  {[
+                    { label: 'Hydrogène H2 :', val: h2, set: setH2, max: 500, alert: 100 },
+                    { label: 'Méthane CH4 (% Duval) :', val: ch4, set: setCh4, max: 600, alert: 120 },
+                    { label: 'Acétylène C2H2 (% Duval - Arc) :', val: c2h2, set: setC2h2, max: 150, alert: 5 },
+                    { label: 'Éthylène C2H4 (% Duval - Thermique) :', val: c2h4, set: setC2h4, max: 600, alert: 50 },
+                    { label: 'Monoxyde de Carbone CO :', val: co, set: setCo, max: 1200, alert: 500 }
+                  ].map((g, idx) => (
+                    <div key={idx} className="space-y-1">
+                      <div className="flex justify-between">
+                        <span className="text-slate-300">{g.label}</span>
+                        <span className={`font-bold ${g.val > g.alert ? 'text-amber-400' : 'text-indigo-400'}`}>{g.val} ppm</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max={g.max}
+                        value={g.val}
+                        onChange={(e) => g.set(Number(e.target.value))}
+                        className="w-full accent-indigo-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
+                      />
+                    </div>
+                  ))}
+
+                  <div className="pt-2 border-t border-slate-800 flex justify-between items-center text-[11px]">
+                    <span className="text-slate-400">Total Gaz Combustibles (TDCG) :</span>
+                    <span className="text-amber-400 font-bold">{dgaCalcs.tdcg} ppm</span>
+                  </div>
+                </div>
               </div>
 
-              {/* Right Column: Duval Triangle SVG & AI Diagnosis */}
-              <div className="lg:col-span-7 space-y-4 flex flex-col justify-between">
-                {/* Visual SVG Duval Triangle */}
-                <div className="bg-black/60 border border-white/10 rounded-xl p-4 flex flex-col items-center">
-                  <div className="w-full flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
-                    <span>{locale === 'fr' ? 'Représentation Triangle de Duval 1 (CEI 60599)' : 'Duval Triangle 1 Vector Map (IEC 60599)'}</span>
-                    <span className="text-[#a5b4fc] font-bold">
-                      %CH₄: {dgaCalcs.pCh4}% | %C₂H₄: {dgaCalcs.pC2h4}% | %C₂H₂: {dgaCalcs.pC2h2}%
+              {/* Duval Triangle SVG & Neural Confidence Column */}
+              <div className="lg:col-span-7 space-y-4">
+                <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4 font-mono text-xs">
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <span className="font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-indigo-400" />
+                      <span>{locale === 'fr' ? 'Triangle de Duval 1 Vectoriel & Classification IA' : 'Vector Duval Triangle 1 & AI Inference'}</span>
                     </span>
-                  </div>
-
-                  <svg viewBox="0 0 340 300" className="w-full max-w-[340px] h-[260px] select-none">
-                    {/* Outer Triangle background */}
-                    <polygon points="170,20 30,262.4 310,262.4" fill="#0b1120" stroke="#475569" strokeWidth="2" />
-
-                    {/* Zone T3 (Thermal > 700°C) */}
-                    <polygon points="170,20 240,141.2 205,141.2" fill="#ef4444" fillOpacity="0.25" stroke="#ef4444" strokeWidth="0.8" />
-                    <text x="200" y="100" fill="#f87171" fontSize="9" fontWeight="bold" fontFamily="monospace">T3</text>
-
-                    {/* Zone T2 (Thermal 300-700°C) */}
-                    <polygon points="205,141.2 240,141.2 275,201.8 240,201.8" fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="0.8" />
-                    <text x="240" y="175" fill="#fbbf24" fontSize="9" fontWeight="bold" fontFamily="monospace">T2</text>
-
-                    {/* Zone T1 (Thermal < 300°C) */}
-                    <polygon points="240,201.8 275,201.8 310,262.4 275,262.4" fill="#3b82f6" fillOpacity="0.2" stroke="#3b82f6" strokeWidth="0.8" />
-                    <text x="275" y="240" fill="#60a5fa" fontSize="9" fontWeight="bold" fontFamily="monospace">T1</text>
-
-                    {/* Zone D1 (Low energy arcing) */}
-                    <polygon points="30,262.4 80,175.8 110,227.7 80,262.4" fill="#8b5cf6" fillOpacity="0.25" stroke="#8b5cf6" strokeWidth="0.8" />
-                    <text x="65" y="235" fill="#a78bfa" fontSize="9" fontWeight="bold" fontFamily="monospace">D1</text>
-
-                    {/* Zone D2 (High energy arcing) */}
-                    <polygon points="80,175.8 170,20 205,141.2 140,201.8" fill="#dc2626" fillOpacity="0.35" stroke="#dc2626" strokeWidth="0.8" />
-                    <text x="145" y="130" fill="#fca5a5" fontSize="10" fontWeight="bold" fontFamily="monospace">D2</text>
-
-                    {/* Zone PD (Partial Discharges) */}
-                    <circle cx="170" cy="25" r="8" fill="#10b981" fillOpacity="0.5" stroke="#10b981" strokeWidth="1" />
-                    <text x="180" y="27" fill="#34d399" fontSize="8" fontWeight="bold" fontFamily="monospace">PD</text>
-
-                    {/* Axis Labels */}
-                    <text x="170" y="12" fill="#e2e8f0" fontSize="10" fontWeight="bold" textAnchor="middle" fontFamily="monospace">100% CH₄</text>
-                    <text x="15" y="280" fill="#e2e8f0" fontSize="10" fontWeight="bold" fontFamily="monospace">100% C₂H₂</text>
-                    <text x="270" y="280" fill="#e2e8f0" fontSize="10" fontWeight="bold" fontFamily="monospace">100% C₂H₄</text>
-
-                    {/* Dynamic Current Operating Point (Calculated coordinate) */}
-                    {/* Transform coordinate: triangle base 30 to 310 (width 280), height 262.4 to 20 (height 242.4) */}
-                    {(() => {
-                      const svgX = 30 + (dgaCalcs.xCoord / 100) * 280;
-                      const svgY = 262.4 - (dgaCalcs.yCoord / 86.6) * 242.4;
-                      return (
-                        <g>
-                          <circle cx={svgX} cy={svgY} r="7" fill="#6366f1" stroke="#ffffff" strokeWidth="2.5" className="animate-pulse" />
-                          <circle cx={svgX} cy={svgY} r="14" fill="none" stroke="#a5b4fc" strokeWidth="1.5" strokeDasharray="3 3" />
-                        </g>
-                      );
-                    })()}
-                  </svg>
-                </div>
-
-                {/* AI Classification & Neural Softmax Probabilities */}
-                <div className="bg-black/40 border border-white/10 rounded-xl p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs text-slate-400 uppercase tracking-wider">
-                      {locale === 'fr' ? 'Diagnostic IA & Confiance Réseau de Neurones :' : 'AI Neural Network Diagnosis & Confidence :'}
-                    </span>
-                    <span
-                      className={`font-mono text-xs font-bold px-2.5 py-0.5 rounded border ${
-                        dgaCalcs.faultSeverity === 'crit'
-                          ? 'bg-red-500/20 text-red-300 border-red-500/50'
-                          : dgaCalcs.faultSeverity === 'warn'
-                          ? 'bg-amber-500/20 text-amber-300 border-amber-500/50'
-                          : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50'
-                      }`}
-                    >
+                    <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold ${
+                      dgaCalcs.faultSeverity === 'crit'
+                        ? 'bg-red-950 text-red-300 border border-red-800 animate-pulse'
+                        : dgaCalcs.faultSeverity === 'warn'
+                        ? 'bg-amber-950 text-amber-300 border border-amber-800'
+                        : 'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                    }`}>
                       {dgaCalcs.faultCode}
                     </span>
                   </div>
 
-                  <div className="text-sm font-bold text-white">
-                    {locale === 'fr' ? dgaCalcs.faultNameFr : dgaCalcs.faultNameEn}
+                  {/* Duval Triangle SVG */}
+                  <div className="relative w-full h-64 bg-[#060914] rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center p-2">
+                    <svg viewBox="0 0 120 100" className="w-full h-full max-w-sm">
+                      {/* Triangle base */}
+                      <polygon points="10,90 110,90 60,3.4" fill="#0f172a" stroke="#475569" strokeWidth="1.2" />
+
+                      {/* Internal Zones */}
+                      <polygon points="60,3.4 55,20 65,20" fill="#3b82f6" fillOpacity="0.25" stroke="#3b82f6" strokeWidth="0.5" />
+                      <text x="58" y="14" fill="#93c5fd" fontSize="4" fontFamily="monospace">PD</text>
+
+                      <polygon points="10,90 40,90 25,60" fill="#f59e0b" fillOpacity="0.25" stroke="#f59e0b" strokeWidth="0.5" />
+                      <text x="22" y="80" fill="#fcd34d" fontSize="4" fontFamily="monospace">T1</text>
+
+                      <polygon points="40,90 80,90 60,50" fill="#f97316" fillOpacity="0.25" stroke="#f97316" strokeWidth="0.5" />
+                      <text x="58" y="80" fill="#fdba74" fontSize="4" fontFamily="monospace">T2</text>
+
+                      <polygon points="80,90 110,90 95,50" fill="#ef4444" fillOpacity="0.25" stroke="#ef4444" strokeWidth="0.5" />
+                      <text x="92" y="80" fill="#fca5a5" fontSize="4" fontFamily="monospace">T3</text>
+
+                      <polygon points="25,60 50,40 35,30" fill="#a855f7" fillOpacity="0.25" stroke="#a855f7" strokeWidth="0.5" />
+                      <text x="34" y="45" fill="#d8b4fe" fontSize="4" fontFamily="monospace">D1</text>
+
+                      <polygon points="50,40 85,40 67,20" fill="#e11d48" fillOpacity="0.35" stroke="#e11d48" strokeWidth="0.5" />
+                      <text x="64" y="32" fill="#fda4af" fontSize="4" fontFamily="monospace">D2</text>
+
+                      {/* Current operating point */}
+                      <circle
+                        cx={10 + dgaCalcs.xCoord}
+                        cy={90 - dgaCalcs.yCoord}
+                        r="2.5"
+                        fill="#6366f1"
+                        stroke="#ffffff"
+                        strokeWidth="0.8"
+                        className="animate-pulse"
+                      />
+                    </svg>
                   </div>
 
-                  {/* Neural Softmax distribution bars */}
-                  <div className="space-y-1.5 pt-2 border-t border-white/10 font-mono text-[11px]">
-                    <div className="flex justify-between text-slate-400 text-[10px]">
-                      <span>Probabilités Réseau de Neurones MLP (7 entrées $\to$ 16 $\to$ 8 $\to$ 7) :</span>
+                  {/* Diagnostic Summary */}
+                  <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-400">Diagnostic Identifié :</span>
+                      <span className="text-white font-bold">{locale === 'fr' ? dgaCalcs.faultNameFr : dgaCalcs.faultNameEn}</span>
                     </div>
-                    {Object.entries(dgaCalcs.scores).map(([k, val]) => {
-                      const score = Number(val) || 0;
-                      return (
-                        <div key={k} className="flex items-center gap-2">
-                          <span className="w-12 text-slate-400">{k}:</span>
-                          <div className="flex-1 bg-slate-800 rounded-full h-2 overflow-hidden">
-                            <div
-                              className={`h-full rounded-full ${
-                                k === dgaCalcs.faultCode ? 'bg-[#6366f1]' : 'bg-slate-600'
-                              }`}
-                              style={{ width: `${Math.min(100, score)}%` }}
-                            />
-                          </div>
-                          <span className="w-8 text-right text-slate-300 font-bold">{Math.min(100, score)}%</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Cellulose CO2/CO assessment */}
-                  <div className="bg-[#6366f1]/10 border border-[#6366f1]/30 rounded-lg p-2.5 text-xs text-slate-300 flex items-center justify-between">
-                    <div>
-                      <span className="text-[#a5b4fc] font-bold font-mono">Ratio CO₂/CO : {dgaCalcs.coRatio} </span>
-                      <span className="text-[11px] text-slate-400">
-                        {dgaCalcs.paperDegradation === 'CRITICAL_PAPER_DEGRADATION'
-                          ? '(Alerte : Dégradation sévère du papier isolant Kraft)'
-                          : dgaCalcs.paperDegradation === 'ACCELERATED_AGING'
-                          ? '(Vieillissement thermique accéléré de la cellulose)'
-                          : '(État normal de la cellulose)'}
-                      </span>
+                    <div className="flex justify-between text-[11px]">
+                      <span>Ratios Duval : %CH4={dgaCalcs.pCh4}% | %C2H4={dgaCalcs.pC2h4}% | %C2H2={dgaCalcs.pC2h2}%</span>
+                      <span className="text-indigo-400 font-bold">Rapport CO2/CO : {dgaCalcs.coRatio}</span>
                     </div>
-                    <span className="text-[10px] font-mono text-slate-400">Norme CEI 60599</span>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
+
+          {/* Thermal PINN Tab (Preserved Simulator 2) */}
+          {stage2Tab === 'thermal' && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <div className="lg:col-span-5 space-y-4">
+                <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4 font-mono text-xs">
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <span className="font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                      <Flame className="h-4 w-4" />
+                      <span>{locale === 'fr' ? 'Paramètres de Charge & Refroidissement' : 'Load & Cooling Parameters'}</span>
+                    </span>
+                    <span className="text-[10px] text-slate-400">CEI 60076-7</span>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between">
+                      <span className="text-slate-300">Facteur de Charge K (I / In) :</span>
+                      <span className="text-amber-400 font-bold">{(loadFactor * 100).toFixed(0)}% ({loadFactor} In)</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0.5"
+                      max="1.5"
+                      step="0.05"
+                      value={loadFactor}
+                      onChange={(e) => setLoadFactor(Number(e.target.value))}
+                      className="w-full accent-amber-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between">
+                      <span className="text-slate-300">Température Ambiante (&theta;a) :</span>
+                      <span className="text-amber-400 font-bold">{ambientTemp} °C</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="15"
+                      max="50"
+                      step="1"
+                      value={ambientTemp}
+                      onChange={(e) => setAmbientTemp(Number(e.target.value))}
+                      className="w-full accent-amber-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-slate-300">Mode de Refroidissement Transformateur :</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {(['ONAN', 'ONAF', 'OFAF'] as const).map((m) => (
+                        <button
+                          key={m}
+                          type="button"
+                          onClick={() => setCoolingMode(m)}
+                          className={`py-1.5 rounded-lg border font-bold text-center ${
+                            coolingMode === m
+                              ? 'bg-amber-500 text-slate-950 border-amber-400'
+                              : 'bg-slate-950 text-slate-400 border-slate-700'
+                          }`}
+                        >
+                          {m}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="lg:col-span-7 space-y-4">
+                <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4 font-mono text-xs">
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <span className="font-bold text-white uppercase tracking-wider">
+                      {locale === 'fr' ? 'Résultats du Jumeau Numérique Thermique PINN' : 'PINN Thermal Digital Twin Sizing'}
+                    </span>
+                    <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold ${thermalTwin.isCritical ? 'bg-red-950 text-red-300 border border-red-800' : 'bg-emerald-950 text-emerald-300 border border-emerald-800'}`}>
+                      {thermalTwin.isCritical ? 'DANGER SURCHAUFFE' : 'RÉGIME THERMIQUE STABLE'}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                      <div className="text-[10px] text-slate-500 uppercase">Huile Sommet (&theta;o)</div>
+                      <div className="text-xl font-bold text-amber-300">{thermalTwin.topOilTemp} °C</div>
+                    </div>
+                    <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                      <div className="text-[10px] text-slate-500 uppercase">Point Chaud (&theta;h)</div>
+                      <div className="text-xl font-bold text-red-400">{thermalTwin.hotSpotTemp} °C</div>
+                    </div>
+                    <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                      <div className="text-[10px] text-slate-500 uppercase">Vieillissement V</div>
+                      <div className="text-xl font-bold text-indigo-300">{thermalTwin.agingFactorV} &times;</div>
+                    </div>
+                    <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                      <div className="text-[10px] text-slate-500 uppercase">Espérance RUL</div>
+                      <div className="text-xl font-bold text-emerald-400">{thermalTwin.rulYears} ans</div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                    <div className="text-amber-400 font-bold">Loi d'Accélération d'Arrhenius (CEI 60076-7) :</div>
+                    <p className="text-slate-300 leading-relaxed text-[11px]">
+                      Au-delà de 98°C, chaque tranche de 6°C d'élévation de température double la vitesse de dégradation de la cellulose de l'isolant kraft. À {thermalTwin.hotSpotTemp}°C, le transformateur consomme {thermalTwin.agingFactorV} heures de vie théorique par heure réelle d'exploitation.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
-      {/* 4. PILLAR 2 CONTENT: DIGITAL TWIN THERMAL PINN */}
-      {activePillar === 'DIGITAL_TWIN_THERMAL' && (
-        <div className="space-y-6" id="pillar-thermal-twin">
-          <div className="bg-[#0f1829] border border-white/10 rounded-2xl p-5 sm:p-6 space-y-6">
-            <div className="border-b border-white/10 pb-3">
-              <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                <Flame className="w-5 h-5 text-amber-400" />
-                {locale === 'fr'
-                  ? 'P2. Jumeau Numérique Thermique du Transformateur & Modélisation PINN (CEI 60076-7)'
-                  : 'P2. Physics-Informed Neural Network (PINN) Thermal Twin & Life Loss (IEC 60076-7)'}
-              </h2>
-              <p className="text-xs text-slate-400 font-mono">
-                {locale === 'fr'
-                  ? 'Calcul dynamique du point chaud (Hot-spot), accélération du vieillissement et RUL en climat tropical'
-                  : 'Dynamic winding hot-spot solver, Arrhenius aging acceleration factor, and remaining useful life'}
-              </p>
+      {/* ========================================================================= */}
+      {/* STAGE 3: SPECTROMÉTRIE FFT, VIBRATIONS & SMART METER AMI                 */}
+      {/* ========================================================================= */}
+      {store.activeStage === 3 && (
+        <div className="space-y-6">
+          <div className="flex border-b border-slate-800 gap-2 pb-2">
+            <button
+              type="button"
+              onClick={() => setStage3Tab('vibration')}
+              className={`px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all border ${
+                stage3Tab === 'vibration'
+                  ? 'bg-indigo-600 text-white border-indigo-400 shadow-md shadow-indigo-600/30'
+                  : 'bg-slate-900 text-slate-300 hover:text-white border-slate-800'
+              }`}
+            >
+              3.1 Edge IIoT & Analyse Spectrale FFT de Vibrations ISO 10816 (Roulements)
+            </button>
+            <button
+              type="button"
+              onClick={() => setStage3Tab('solar')}
+              className={`px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all border ${
+                stage3Tab === 'solar'
+                  ? 'bg-indigo-600 text-white border-indigo-400 shadow-md shadow-indigo-600/30'
+                  : 'bg-slate-900 text-slate-300 hover:text-white border-slate-800'
+              }`}
+            >
+              3.2 Prévision Solaire & Détection de Pertes Non-Techniques / Fraude Eneo
+            </button>
+          </div>
+
+          {/* Vibration Simulator (Preserved Simulator 3) */}
+          {stage3Tab === 'vibration' && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <div className="lg:col-span-5 space-y-4">
+                <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4 font-mono text-xs">
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <span className="font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
+                      <Activity className="h-4 w-4" />
+                      <span>Paramètres Rotor & Roulement</span>
+                    </span>
+                    <span className="text-[10px] text-slate-400">ISO 10816-3</span>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between">
+                      <span className="text-slate-300">Vitesse de Rotation Rotor :</span>
+                      <span className="text-cyan-400 font-bold">{rpm} tr/min (1X = {vibrationCalcs.f1x} Hz)</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="300"
+                      max="3000"
+                      step="50"
+                      value={rpm}
+                      onChange={(e) => setRpm(Number(e.target.value))}
+                      className="w-full accent-cyan-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-slate-300">Injection d'Anomalie Mécanique :</label>
+                    <select
+                      value={injectedDefect}
+                      onChange={(e) => setInjectedDefect(e.target.value as any)}
+                      className="w-full px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-white font-bold"
+                    >
+                      <option value="HEALTHY">Machine Saine (Zone A)</option>
+                      <option value="UNBALANCE">Balourd Dynamique Rotor (Pic 1X)</option>
+                      <option value="MISALIGNMENT">Désalignement Ligne d'Arbres (Pics 2X / 3X)</option>
+                      <option value="BPFO">Écaillage Bague Externe Roulement (BPFO)</option>
+                      <option value="BPFI">Défaut Bague Interne Roulement (BPFI)</option>
+                      <option value="LOOSENESS">Desserrage Mécanique Structurel (DANGER)</option>
+                    </select>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1 text-[11px]">
+                    <div className="text-slate-400 font-bold">Fréquences Cinématiques Calculées :</div>
+                    <div className="flex justify-between text-slate-300">
+                      <span>BPFO (Bague Extérieure) :</span>
+                      <span className="text-cyan-300 font-bold">{vibrationCalcs.bpfo} Hz</span>
+                    </div>
+                    <div className="flex justify-between text-slate-300">
+                      <span>BPFI (Bague Intérieure) :</span>
+                      <span className="text-cyan-300 font-bold">{vibrationCalcs.bpfi} Hz</span>
+                    </div>
+                    <div className="flex justify-between text-slate-300">
+                      <span>BSF (Billes) :</span>
+                      <span className="text-cyan-300 font-bold">{vibrationCalcs.bsf} Hz</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="lg:col-span-7 space-y-4">
+                <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4 font-mono text-xs">
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <span className="font-bold text-white uppercase tracking-wider">
+                      Spectrométrie FFT & Jauge de Sévérité ISO 10816
+                    </span>
+                    <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold ${
+                      vibrationCalcs.isoZone === 'D'
+                        ? 'bg-red-950 text-red-300 border border-red-800 animate-pulse'
+                        : vibrationCalcs.isoZone === 'C'
+                        ? 'bg-amber-950 text-amber-300 border border-amber-800'
+                        : 'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                    }`}>
+                      Zone {vibrationCalcs.isoZone} ({vibrationCalcs.rmsVelocity} mm/s)
+                    </span>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                    <div className="text-cyan-400 font-bold">Diagnostic Algorithmique IA :</div>
+                    <p className="text-slate-300 leading-relaxed text-[11px]">
+                      {locale === 'fr' ? vibrationCalcs.aiDiagnosisFr : vibrationCalcs.aiDiagnosisEn}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
+          )}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Controls */}
-              <div className="space-y-4 bg-black/40 p-4 rounded-xl border border-white/10">
-                <div className="font-mono text-xs font-bold text-[#a5b4fc] uppercase tracking-wider border-b border-white/10 pb-2">
-                  {locale === 'fr' ? 'Paramètres d\'Exploitation :' : 'Operating Parameters :'}
+          {/* Solar & Fraud Tab (Preserved Simulator 6) */}
+          {stage3Tab === 'solar' && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <div className="lg:col-span-6 space-y-4">
+                <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4 font-mono text-xs">
+                  <div className="border-b border-slate-800 pb-2">
+                    <span className="font-bold text-yellow-400 uppercase tracking-wider">
+                      Centrale Solaire & Lissage BESS (Maroua 15 MWc)
+                    </span>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between">
+                      <span className="text-slate-300">Irradiation Solaire (G) :</span>
+                      <span className="text-yellow-400 font-bold">{solarIrradiance} W/m²</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="200"
+                      max="1200"
+                      step="50"
+                      value={solarIrradiance}
+                      onChange={(e) => setSolarIrradiance(Number(e.target.value))}
+                      className="w-full accent-yellow-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between">
+                      <span className="text-slate-300">Couverture Nuageuse :</span>
+                      <span className="text-yellow-400 font-bold">{cloudCoverPercent}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="90"
+                      step="5"
+                      value={cloudCoverPercent}
+                      onChange={(e) => setCloudCoverPercent(Number(e.target.value))}
+                      className="w-full accent-yellow-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
+                    />
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1 text-[11px]">
+                    <div className="flex justify-between">
+                      <span>Puissance Solaire Prédite :</span>
+                      <span className="text-yellow-300 font-bold">{solarForecast.predictedMw} MW</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Consigne Tampon Batterie BESS :</span>
+                      <span className="text-emerald-400 font-bold">+{solarForecast.bessBufferMw} MW</span>
+                    </div>
+                  </div>
                 </div>
+              </div>
 
-                <div>
-                  <div className="flex justify-between text-xs font-mono text-slate-300 mb-1">
-                    <span>{locale === 'fr' ? 'Facteur de Charge (K = I / In) :' : 'Load Factor (K = I / In) :'}</span>
-                    <strong className="text-amber-400">{(loadFactor * 100).toFixed(0)}%</strong>
+              <div className="lg:col-span-6 space-y-4">
+                <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4 font-mono text-xs">
+                  <div className="border-b border-slate-800 pb-2">
+                    <span className="font-bold text-indigo-400 uppercase tracking-wider">
+                      Lutte Anti-Fraude Eneo Smart Meter (Isolation Forest)
+                    </span>
                   </div>
-                  <input
-                    type="range"
-                    min="0.5"
-                    max="1.5"
-                    step="0.05"
-                    value={loadFactor}
-                    onChange={(e) => setLoadFactor(Number(e.target.value))}
-                    className="w-full accent-amber-500"
-                  />
-                  <div className="flex justify-between text-[9px] font-mono text-slate-500">
-                    <span>50% (Sous-charge)</span>
-                    <span>100% (Nominal)</span>
-                    <span>150% (Surcharge)</span>
+
+                  <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-white">Compteur Smart #EN-88421 (Douala Akwa)</span>
+                      <span className="px-2 py-0.5 rounded bg-red-950 text-red-300 border border-red-800 font-bold text-[10px]">
+                        SUSPICION 94%
+                      </span>
+                    </div>
+                    <p className="text-slate-300 text-[11px] leading-relaxed">
+                      Anomalie identifiée : Disparité de 68% entre le bilan de puissance du transformateur MT/BT et la somme des compteurs abonnés. Bipasse phase-neutre détecté par modèle Isolation Forest.
+                    </p>
+                    <div className="text-[10px] text-emerald-400 font-bold">
+                      &gt; Procès-verbal de redressement horodaté transmis à la direction commerciale.
+                    </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
-                <div>
-                  <div className="flex justify-between text-xs font-mono text-slate-300 mb-1">
-                    <span>{locale === 'fr' ? 'Température Ambiante (θa) :' : 'Ambient Temp (θa) :'}</span>
-                    <strong className="text-red-400">{ambientTemp}°C</strong>
-                  </div>
-                  <input
-                    type="range"
-                    min="15"
-                    max="50"
-                    step="1"
-                    value={ambientTemp}
-                    onChange={(e) => setAmbientTemp(Number(e.target.value))}
-                    className="w-full accent-red-500"
-                  />
-                  <div className="text-[9px] font-mono text-slate-500">
-                    {locale === 'fr' ? 'Moyenne Cameroun (Yaoundé ~26°C / Garoua ~42°C)' : 'Cameroon context (Yaoundé 26°C / Garoua 42°C)'}
-                  </div>
-                </div>
+      {/* ========================================================================= */}
+      {/* STAGE 4: VISION DRONE & CYBERSÉCURITÉ DPI OT                             */}
+      {/* ========================================================================= */}
+      {store.activeStage === 4 && (
+        <div className="space-y-6">
+          <div className="flex border-b border-slate-800 gap-2 pb-2">
+            <button
+              type="button"
+              onClick={() => setStage4Tab('drone')}
+              className={`px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all border ${
+                stage4Tab === 'drone'
+                  ? 'bg-indigo-600 text-white border-indigo-400 shadow-md shadow-indigo-600/30'
+                  : 'bg-slate-900 text-slate-300 hover:text-white border-slate-800'
+              }`}
+            >
+              4.1 Vision par Ordinateur & Inspection Drone Lignes 225 kV (CIGRE TB 859)
+            </button>
+            <button
+              type="button"
+              onClick={() => setStage4Tab('cyber')}
+              className={`px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all border ${
+                stage4Tab === 'cyber'
+                  ? 'bg-indigo-600 text-white border-indigo-400 shadow-md shadow-indigo-600/30'
+                  : 'bg-slate-900 text-slate-300 hover:text-white border-slate-800'
+              }`}
+            >
+              4.2 Cybersécurité OT & Détection d'Intrusions SCADA DPI (CEI 62443)
+            </button>
+          </div>
 
-                <div>
-                  <label className="block text-xs font-mono text-slate-300 mb-1">
-                    {locale === 'fr' ? 'Mode de Refroidissement :' : 'Cooling Mode :'}
-                  </label>
-                  <div className="grid grid-cols-3 gap-1 font-mono text-xs">
-                    {(['ONAN', 'ONAF', 'OFAF'] as const).map((mode) => (
+          {/* Drone Vision Tab (Preserved Simulator 4) */}
+          {stage4Tab === 'drone' && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <div className="lg:col-span-5 space-y-4">
+                <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3 font-mono text-xs">
+                  <div className="border-b border-slate-800 pb-2">
+                    <span className="font-bold text-camera text-indigo-400 uppercase tracking-wider flex items-center gap-2">
+                      <Camera className="h-4 w-4" />
+                      <span>Cibles d'Inspection Lignes 225 kV</span>
+                    </span>
+                  </div>
+
+                  <div className="space-y-2">
+                    {inspectionTargets.map((tgt) => (
                       <button
-                        key={mode}
+                        key={tgt.id}
                         type="button"
-                        onClick={() => setCoolingMode(mode)}
-                        className={`p-2 rounded border text-center ${
-                          coolingMode === mode
-                            ? 'bg-[#6366f1] border-white text-white font-bold'
-                            : 'bg-white/5 border-white/10 text-slate-400 hover:text-white'
+                        onClick={() => setSelectedInspectionDefect(tgt.id)}
+                        className={`w-full p-3 rounded-xl border text-left transition-all ${
+                          selectedInspectionDefect === tgt.id
+                            ? 'bg-indigo-600 text-white font-bold border-indigo-400 shadow-md'
+                            : 'bg-slate-950 text-slate-300 border-slate-800 hover:text-white'
                         }`}
                       >
-                        {mode}
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs">{locale === 'fr' ? tgt.labelFr : tgt.labelEn}</span>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-black/40 text-indigo-200">
+                            {tgt.confidence}%
+                          </span>
+                        </div>
                       </button>
                     ))}
                   </div>
                 </div>
               </div>
 
-              {/* Thermal Model Output Cards */}
-              <div className="space-y-4">
-                <div className="bg-black/40 border border-white/10 rounded-xl p-4 space-y-2 text-center font-mono">
-                  <div className="text-xs text-slate-400 uppercase tracking-wider">
-                    {locale === 'fr' ? 'Température Huile Supérieure (Top-Oil)' : 'Top-Oil Temperature (θo)'}
-                  </div>
-                  <div className="text-3xl font-black text-amber-400">{thermalTwin.topOilTemp}°C</div>
-                  <div className="text-[10px] text-slate-500">Limite continue CEI 60076 : 105°C</div>
-                </div>
-
-                <div
-                  className={`border rounded-xl p-4 space-y-2 text-center font-mono ${
-                    thermalTwin.isCritical
-                      ? 'bg-red-950/40 border-red-500 text-red-300'
-                      : thermalTwin.isOverheated
-                      ? 'bg-amber-950/40 border-amber-500 text-amber-300'
-                      : 'bg-black/40 border-white/10 text-white'
-                  }`}
-                >
-                  <div className="text-xs text-slate-400 uppercase tracking-wider">
-                    {locale === 'fr' ? 'Point Chaud Enroulements (Hot-Spot θh)' : 'Winding Hot-Spot Temp (θh)'}
-                  </div>
-                  <div className="text-3xl font-black">{thermalTwin.hotSpotTemp}°C</div>
-                  <div className="text-[10px] font-mono">
-                    {thermalTwin.isCritical
-                      ? 'DANGER CRITIQUE : Dégagement de gaz & bulles d\'eau'
-                      : thermalTwin.isOverheated
-                      ? 'SURCHAUFFE : Vieillissement accéléré de l\'isolant'
-                      : 'CONFORME : Plage thermique admissible'}
-                  </div>
-                </div>
-
-                <div className="bg-black/40 border border-white/10 rounded-xl p-4 space-y-2 text-center font-mono">
-                  <div className="text-xs text-slate-400 uppercase tracking-wider">
-                    {locale === 'fr' ? 'Facteur d\'Accélération de Vieillissement (V)' : 'Relative Aging Rate (V)'}
-                  </div>
-                  <div className="text-3xl font-black text-[#a5b4fc]">{thermalTwin.agingFactorV}x</div>
-                  <div className="text-[10px] text-slate-500">Référence CEI : V=1.0 à θh=98°C</div>
-                </div>
-              </div>
-
-              {/* RUL & PINN Insight */}
-              <div className="bg-black/40 border border-white/10 rounded-xl p-4 space-y-4 flex flex-col justify-between">
-                <div>
-                  <div className="font-mono text-xs font-bold text-[#a5b4fc] uppercase tracking-wider border-b border-white/10 pb-2 mb-3">
-                    {locale === 'fr' ? 'Prédiction de Durée de Vie Résiduelle (RUL) :' : 'Remaining Useful Life (RUL) Estimation :'}
-                  </div>
-                  <div className="text-center py-4 bg-white/5 rounded-xl border border-white/10">
-                    <div className="text-xs font-mono text-slate-400 uppercase">Durée de Vie Estimée</div>
-                    <div className="text-4xl font-black text-emerald-400 font-mono mt-1">{thermalTwin.rulYears} ans</div>
-                    <div className="text-[10px] font-mono text-slate-500 mt-1">Sur base théorique de 20.5 ans à 98°C</div>
-                  </div>
-                </div>
-
-                <div className="bg-[#6366f1]/10 border border-[#6366f1]/30 rounded-lg p-3 text-xs text-slate-300 space-y-1">
-                  <div className="font-mono font-bold text-[#a5b4fc] flex items-center gap-1">
-                    <Zap className="w-3.5 h-3.5 text-[#a5b4fc]" />
-                    Modèle PINN (Physics-Informed Neural Network) :
-                  </div>
-                  <p className="text-[11px] leading-relaxed">
-                    Le réseau de neurones hybride couple les équations différentielles thermiques de la CEI 60076-7
-                    avec les flux télémétriques temps réel (courant de charge, sonde PT100 ambiante, débit d'huile).
-                    La régularisation physique empêche les hallucinations mathématiques.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 5. PILLAR 3 CONTENT: IIOT VIBRATION SPECTRAL ANALYSIS */}
-      {activePillar === 'IIOT_VIBRATION_SPECTRAL' && (
-        <div className="space-y-6" id="pillar-vibration-spectral">
-          <div className="bg-[#0f1829] border border-white/10 rounded-2xl p-5 sm:p-6 space-y-6">
-            <div className="border-b border-white/10 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div>
-                <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-emerald-400" />
-                  {locale === 'fr'
-                    ? 'P3. Edge IIoT & Analyse Spectrale FFT de Vibrations (ISO 10816 / ISO 13373)'
-                    : 'P3. Edge IIoT & Vibration FFT Spectral Analysis for Rotating Equipment'}
-                </h2>
-                <p className="text-xs text-slate-400 font-mono">
-                  {locale === 'fr'
-                    ? 'Détection précoce d\'anomalies mécaniques de turbines hydroélectriques et moteurs MT'
-                    : 'Early kinematic defect detection on hydro turbine-generator sets and medium-voltage motors'}
-                </p>
-              </div>
-              <span className="text-xs font-mono px-3 py-1 bg-white/5 border border-white/10 rounded text-[#a5b4fc]">
-                Vitesse : {rpm} RPM (1X = {vibrationCalcs.f1x} Hz)
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              {/* Controls */}
-              <div className="lg:col-span-4 space-y-4 bg-black/40 p-4 rounded-xl border border-white/10">
-                <div className="font-mono text-xs font-bold text-[#a5b4fc] uppercase tracking-wider border-b border-white/10 pb-2">
-                  {locale === 'fr' ? 'Injection de Défaut Cinématique :' : 'Kinematic Defect Injection :'}
-                </div>
-
-                <div className="space-y-2">
-                  {[
-                    { id: 'HEALTHY', label: '1. Machine Saine (Référence)' },
-                    { id: 'UNBALANCE', label: '2. Balourd Mécanique (1X dominant)' },
-                    { id: 'MISALIGNMENT', label: '3. Désalignement d\'Arbre (2X & 3X)' },
-                    { id: 'BPFO', label: '4. Bague Externe Roulement (BPFO)' },
-                    { id: 'BPFI', label: '5. Bague Interne Roulement (BPFI)' },
-                    { id: 'LOOSENESS', label: '6. Desserrage Mécanique (Sous-harmoniques)' }
-                  ].map((def) => (
-                    <button
-                      key={def.id}
-                      type="button"
-                      onClick={() => setInjectedDefect(def.id as any)}
-                      className={`w-full p-2.5 rounded-lg text-xs font-mono text-left transition-all border ${
-                        injectedDefect === def.id
-                          ? 'bg-[#6366f1] border-white text-white font-bold shadow-md shadow-[#6366f1]/20'
-                          : 'bg-black/30 border-white/10 text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      {def.label}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="pt-2 border-t border-white/10 space-y-2 font-mono text-xs">
-                  <div className="text-slate-400 text-[10px] uppercase">Fréquences de Défaut Calculées :</div>
-                  <div className="grid grid-cols-2 gap-1 text-[11px]">
-                    <div className="bg-white/5 p-1.5 rounded">BPFO: <strong className="text-amber-400">{vibrationCalcs.bpfo} Hz</strong></div>
-                    <div className="bg-white/5 p-1.5 rounded">BPFI: <strong className="text-red-400">{vibrationCalcs.bpfi} Hz</strong></div>
-                    <div className="bg-white/5 p-1.5 rounded">BSF: <strong className="text-indigo-400">{vibrationCalcs.bsf} Hz</strong></div>
-                    <div className="bg-white/5 p-1.5 rounded">FTF: <strong className="text-emerald-400">{vibrationCalcs.ftf} Hz</strong></div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Spectral Display & AI Diagnosis */}
-              <div className="lg:col-span-8 space-y-4 flex flex-col justify-between">
-                {/* SVG Vibration FFT Spectrum */}
-                <div className="bg-black/60 border border-white/10 rounded-xl p-4">
-                  <div className="flex justify-between items-center text-xs font-mono text-slate-400 mb-2">
-                    <span>{locale === 'fr' ? 'Spectre FFT Accélération / Vitesse (0 - 500 Hz)' : 'FFT Velocity Spectrum (0 - 500 Hz)'}</span>
-                    <span
-                      className={`px-2 py-0.5 rounded border text-[11px] font-bold ${
-                        vibrationCalcs.isoZone === 'A'
-                          ? 'bg-emerald-950 border-emerald-500 text-emerald-300'
-                          : vibrationCalcs.isoZone === 'B'
-                          ? 'bg-blue-950 border-blue-500 text-blue-300'
-                          : vibrationCalcs.isoZone === 'C'
-                          ? 'bg-amber-950 border-amber-500 text-amber-300'
-                          : 'bg-red-950 border-red-500 text-red-300'
-                      }`}
-                    >
-                      ISO 10816 : Zone {vibrationCalcs.isoZone} ({vibrationCalcs.rmsVelocity} mm/s)
+              <div className="lg:col-span-7 space-y-4">
+                <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4 font-mono text-xs">
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <span className="font-bold text-white uppercase tracking-wider">
+                      Résultat Détection YOLOv8 Radiométrique
+                    </span>
+                    <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold ${currentDefect.severity === 'CRITICAL' ? 'bg-red-950 text-red-300 border border-red-800' : 'bg-amber-950 text-amber-300 border border-amber-800'}`}>
+                      {currentDefect.severity}
                     </span>
                   </div>
 
-                  <svg viewBox="0 0 500 180" className="w-full h-44 bg-slate-950 rounded-lg p-2">
-                    {/* Grid lines */}
-                    {[40, 80, 120, 160].map((y) => (
-                      <line key={y} x1="30" y1={y} x2="490" y2={y} stroke="#334155" strokeWidth="0.5" strokeDasharray="3 3" />
-                    ))}
-
-                    {/* Synthesized FFT spectral envelope depending on injected defect */}
-                    <path
-                      d={(() => {
-                        let points = 'M 30,160 ';
-                        for (let f = 0; f <= 460; f += 5) {
-                          const freqHz = f * 1.1;
-                          let amp = 5 + Math.sin(f * 0.1) * 2; // noise floor
-
-                          // Defect peaks
-                          if (injectedDefect === 'UNBALANCE' && Math.abs(freqHz - Number(vibrationCalcs.f1x)) < 10) {
-                            amp += 120; // Massive 1X peak
-                          } else if (injectedDefect === 'MISALIGNMENT') {
-                            if (Math.abs(freqHz - Number(vibrationCalcs.f1x)) < 8) amp += 40;
-                            if (Math.abs(freqHz - Number(vibrationCalcs.f1x) * 2) < 8) amp += 110;
-                            if (Math.abs(freqHz - Number(vibrationCalcs.f1x) * 3) < 8) amp += 50;
-                          } else if (injectedDefect === 'BPFO' && Math.abs(freqHz - Number(vibrationCalcs.bpfo)) < 12) {
-                            amp += 95; // BPFO peak
-                          } else if (injectedDefect === 'BPFI' && Math.abs(freqHz - Number(vibrationCalcs.bpfi)) < 12) {
-                            amp += 105; // BPFI peak
-                          } else if (injectedDefect === 'LOOSENESS') {
-                            if (Math.abs(freqHz - Number(vibrationCalcs.f1x) * 0.5) < 8) amp += 80;
-                            if (Math.abs(freqHz - Number(vibrationCalcs.f1x)) < 8) amp += 90;
-                            if (Math.abs(freqHz - Number(vibrationCalcs.f1x) * 1.5) < 8) amp += 70;
-                            if (Math.abs(freqHz - Number(vibrationCalcs.f1x) * 2) < 8) amp += 60;
-                          } else if (injectedDefect === 'HEALTHY' && Math.abs(freqHz - Number(vibrationCalcs.f1x)) < 8) {
-                            amp += 15;
-                          }
-
-                          const yPos = Math.max(15, 160 - amp);
-                          points += `L ${30 + f},${yPos} `;
-                        }
-                        return points;
-                      })()}
-                      fill="none"
-                      stroke="#6366f1"
-                      strokeWidth="2"
-                    />
-
-                    {/* Axis markings */}
-                    <text x="30" y="175" fill="#64748b" fontSize="8" fontFamily="monospace">0 Hz</text>
-                    <text x="145" y="175" fill="#64748b" fontSize="8" fontFamily="monospace">125 Hz</text>
-                    <text x="260" y="175" fill="#64748b" fontSize="8" fontFamily="monospace">250 Hz</text>
-                    <text x="375" y="175" fill="#64748b" fontSize="8" fontFamily="monospace">375 Hz</text>
-                    <text x="470" y="175" fill="#64748b" fontSize="8" fontFamily="monospace">500 Hz</text>
-                  </svg>
-                </div>
-
-                {/* AI Prescription Box */}
-                <div className="bg-[#6366f1]/10 border border-[#6366f1]/30 rounded-xl p-4 space-y-2">
-                  <div className="font-mono text-xs font-bold text-[#a5b4fc] flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-[#a5b4fc]" />
-                    {locale === 'fr' ? 'Diagnostic IA Automatisé :' : 'Automated AI Diagnostic Prescription :'}
-                  </div>
-                  <div className="text-sm font-semibold text-white">
-                    {locale === 'fr' ? vibrationCalcs.aiDiagnosisFr : vibrationCalcs.aiDiagnosisEn}
-                  </div>
-                  <div className="text-[11px] text-slate-300 font-mono pt-1">
-                    {locale === 'fr'
-                      ? 'Recommandation : Télémétrie Edge IIoT MQTT avec échantillonnage 20 kHz sur accéléromètre piézoélectrique triaxial.'
-                      : 'Recommendation: 20 kHz triaxial accelerometer streaming via lightweight MQTT Edge gateway.'}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 6. PILLAR 4 CONTENT: DRONE COMPUTER VISION */}
-      {activePillar === 'DRONE_COMPUTER_VISION' && (
-        <div className="space-y-6" id="pillar-drone-vision">
-          <div className="bg-[#0f1829] border border-white/10 rounded-2xl p-5 sm:p-6 space-y-6">
-            <div className="border-b border-white/10 pb-3 flex items-center justify-between">
-              <div>
-                <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                  <Camera className="w-5 h-5 text-indigo-400" />
-                  {locale === 'fr'
-                    ? 'P4. Vision par Ordinateur & Inspection Automatisée Lignes 225 kV par Drone'
-                    : 'P4. Computer Vision AI & Drone Automated 225 kV Transmission Line Survey'}
-                </h2>
-                <p className="text-xs text-slate-400 font-mono">
-                  {locale === 'fr'
-                    ? 'Détection par réseau convolutif YOLOv8 de points chauds, amorçages d\'isolateurs et gabarit végétal'
-                    : 'YOLOv8 convolutional AI detection of hardware thermal hotspots, insulator cracks, and vegetation hazards'}
-                </p>
-              </div>
-              <span className="text-xs font-mono px-3 py-1 bg-white/5 border border-white/10 rounded text-emerald-400">
-                AI Model: YOLOv8-HV-Transmission
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              {/* Defect selector list */}
-              <div className="lg:col-span-5 space-y-3">
-                <div className="font-mono text-xs font-bold text-[#a5b4fc] uppercase tracking-wider mb-2">
-                  {locale === 'fr' ? 'Défauts Détectés sur le Corridor 225 kV :' : 'Detected Defects along 225 kV Corridor :'}
-                </div>
-                {inspectionTargets.map((d) => {
-                  const isSel = d.id === selectedInspectionDefect;
-                  return (
-                    <button
-                      key={d.id}
-                      type="button"
-                      onClick={() => setSelectedInspectionDefect(d.id)}
-                      className={`w-full p-3 rounded-xl text-left border transition-all ${
-                        isSel
-                          ? 'bg-[#6366f1] border-white text-white shadow-md'
-                          : 'bg-black/40 border-white/10 text-slate-300 hover:text-white hover:bg-white/5'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-mono text-xs font-bold">{locale === 'fr' ? d.labelFr : d.labelEn}</span>
-                        <span
-                          className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded ${
-                            d.severity === 'CRITICAL'
-                              ? 'bg-red-500/30 text-red-200 border border-red-500'
-                              : d.severity === 'HIGH'
-                              ? 'bg-amber-500/30 text-amber-200 border border-amber-500'
-                              : 'bg-blue-500/30 text-blue-200 border border-blue-500'
-                          }`}
-                        >
-                          {d.severity}
-                        </span>
-                      </div>
-                      <div className="text-[11px] font-mono opacity-80">
-                        Confiance IA : {d.confidence}% {d.deltaT > 0 && `| ΔT = +${d.deltaT}°C`}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Simulated Computer Vision Camera Viewport */}
-              <div className="lg:col-span-7 bg-black/60 border border-white/10 rounded-xl p-4 flex flex-col justify-between space-y-4">
-                <div className="relative w-full h-56 bg-slate-950 rounded-lg overflow-hidden border border-white/10 flex items-center justify-center">
-                  {/* Drone HUD Grid */}
-                  <div className="absolute inset-0 pointer-events-none opacity-20 bg-[radial-gradient(#6366f1_1px,transparent_1px)] [background-size:16px_16px]" />
-                  <div className="absolute top-2 left-2 text-[10px] font-mono text-emerald-400 bg-black/60 px-2 py-0.5 rounded border border-emerald-500/30">
-                    ALT: 45.2m · GSD: 1.2cm/px · IR FLIR TAU2
-                  </div>
-                  <div className="absolute top-2 right-2 text-[10px] font-mono text-[#a5b4fc] bg-black/60 px-2 py-0.5 rounded border border-[#6366f1]/30">
-                    GPS: 03°52'14"N 11°31'02"E (Pylône P42)
-                  </div>
-
-                  {/* Dynamic Bounding Box Overlay */}
-                  <div className="relative border-2 border-red-500 bg-red-500/10 rounded p-4 text-center animate-pulse">
-                    <div className="absolute -top-5 left-0 bg-red-600 text-white font-mono text-[10px] px-1.5 py-0.5 font-bold rounded-t">
-                      [{currentDefect.category}] {currentDefect.confidence}%
-                    </div>
-                    <div className="font-mono text-xs font-bold text-white uppercase">
-                      {locale === 'fr' ? currentDefect.labelFr : currentDefect.labelEn}
-                    </div>
+                  <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                    <div className="text-indigo-400 font-bold">Action Prescriptive d'Exploitation :</div>
+                    <p className="text-slate-300 leading-relaxed text-[11px]">
+                      {locale === 'fr' ? currentDefect.recommendationFr : currentDefect.recommendationEn}
+                    </p>
                     {currentDefect.deltaT > 0 && (
-                      <div className="text-red-400 font-mono text-sm font-black mt-1">
-                        ΔT: +{currentDefect.deltaT}°C (Surchauffe sévère)
+                      <div className="text-amber-400 font-bold text-[11px]">
+                        Échauffement mesuré : &Delta;T = +{currentDefect.deltaT} °C au-dessus de la température ambiante
                       </div>
                     )}
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
 
-                {/* Automated Dispatch Action */}
-                <div className="bg-[#6366f1]/10 border border-[#6366f1]/30 rounded-lg p-3 text-xs text-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div>
-                    <strong className="text-[#a5b4fc] font-mono">Action Corrective Automatisée : </strong>
-                    <span>{locale === 'fr' ? currentDefect.recommendationFr : currentDefect.recommendationEn}</span>
+          {/* OT Cybersecurity DPI Tab (Preserved Simulator 5) */}
+          {stage4Tab === 'cyber' && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <div className="lg:col-span-5 space-y-4">
+                <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3 font-mono text-xs">
+                  <div className="border-b border-slate-800 pb-2">
+                    <span className="font-bold text-rose-400 uppercase tracking-wider flex items-center gap-2">
+                      <ShieldAlert className="h-4 w-4" />
+                      <span>Vecteurs d'Attaque MITRE ATT&CK for ICS</span>
+                    </span>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => alert(locale === 'fr' ? 'Ordre de travail GMAO transmis avec géolocalisation et pièces requises.' : 'CMMS Work Order dispatched with GPS coordinates and replacement kit BOM.')}
-                    className="px-3 py-1.5 bg-[#6366f1] hover:bg-[#4f46e5] text-white font-mono text-[11px] font-bold rounded shrink-0 shadow"
-                  >
-                    {locale === 'fr' ? 'Générer Ordre GMAO' : 'Dispatch CMMS Ticket'}
-                  </button>
+
+                  <div className="space-y-2">
+                    {attackVectors.map((att) => (
+                      <button
+                        key={att.id}
+                        type="button"
+                        onClick={() => setSelectedAttackVector(att.id)}
+                        className={`w-full p-3 rounded-xl border text-left transition-all ${
+                          selectedAttackVector === att.id
+                            ? 'bg-rose-600 text-white font-bold border-rose-400 shadow-md'
+                            : 'bg-slate-950 text-slate-300 border-slate-800 hover:text-white'
+                        }`}
+                      >
+                        <div className="text-xs">{locale === 'fr' ? att.nameFr : att.nameEn}</div>
+                        <div className="text-[10px] text-slate-400 mt-0.5">MITRE {att.mitreCode} · {att.targetProtocol}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="lg:col-span-7 space-y-4">
+                <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4 font-mono text-xs">
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <span className="font-bold text-white uppercase tracking-wider">
+                      Analyse Profonde de Paquet (DPI) & Réponse
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-red-950 text-red-300 border border-red-800 animate-pulse">
+                      SCORE ANOMALIE {currentAttack.anomalyScore}%
+                    </span>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2 text-[11px]">
+                    <div className="text-rose-400 font-bold">Détails Télémétriques Trame :</div>
+                    <p className="text-slate-300 leading-relaxed">
+                      {locale === 'fr' ? currentAttack.dpiDetailsFr : currentAttack.dpiDetailsEn}
+                    </p>
+                    <div className="text-emerald-400 font-bold pt-1">
+                      Parade Immédiate : {locale === 'fr' ? currentAttack.mitigationFr : currentAttack.mitigationEn}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       )}
 
-      {/* 7. PILLAR 5 CONTENT: OT CYBERSECURITY & DPI */}
-      {activePillar === 'OT_CYBERSECURITY_DPI' && (
-        <div className="space-y-6" id="pillar-ot-cybersecurity">
-          <div className="bg-[#0f1829] border border-white/10 rounded-2xl p-5 sm:p-6 space-y-6">
-            <div className="border-b border-white/10 pb-3 flex items-center justify-between">
-              <div>
-                <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                  <ShieldAlert className="w-5 h-5 text-red-400" />
-                  {locale === 'fr'
-                    ? 'P5. Cybersécurité OT & Détection d\'Intrusions Réseau SCADA (CEI 62443 / MITRE ATT&CK)'
-                    : 'P5. Industrial OT Cybersecurity & SCADA Deep Packet Inspection (IEC 62443)'}
-                </h2>
-                <p className="text-xs text-slate-400 font-mono">
-                  {locale === 'fr'
-                    ? 'Moteur d\'inspection profonde de paquets DPI surveillant les protocoles CEI 104, GOOSE et Modbus'
-                    : 'Deep Packet Inspection (DPI) engine detecting malicious protocol abuse and MITRE ICS threats'}
+      {/* ========================================================================= */}
+      {/* STAGE 5: CHANTIERS CAMEROUN & DOSSIER DQE FCFA                           */}
+      {/* ========================================================================= */}
+      {store.activeStage === 5 && (
+        <div className="space-y-6">
+          <div className="flex border-b border-slate-800 gap-2 pb-2">
+            <button
+              type="button"
+              onClick={() => setStage5Tab('cases')}
+              className={`px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all border ${
+                stage5Tab === 'cases'
+                  ? 'bg-indigo-600 text-white border-indigo-400 shadow-md shadow-indigo-600/30'
+                  : 'bg-slate-900 text-slate-300 hover:text-white border-slate-800'
+              }`}
+            >
+              5.1 Retours d'Expérience Réels au Cameroun (Songloulou, SONATREL 225 kV, Eneo AMI)
+            </button>
+            <button
+              type="button"
+              onClick={() => setStage5Tab('dqe')}
+              className={`px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all border ${
+                stage5Tab === 'dqe'
+                  ? 'bg-indigo-600 text-white border-indigo-400 shadow-md shadow-indigo-600/30'
+                  : 'bg-slate-900 text-slate-300 hover:text-white border-slate-800'
+              }`}
+            >
+              5.2 Dossier Technique Estampillé & Devis DQE en FCFA
+            </button>
+          </div>
+
+          {/* Cameroon Forensic Cases (Preserved Pillar 7) */}
+          {stage5Tab === 'cases' && (
+            <div className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-6 shadow-xl font-mono text-xs">
+              <div className="border-b border-slate-800 pb-3">
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                  <Server className="h-4 w-4 text-indigo-400" />
+                  <span>Cas Forensics & Applications Industrielles au Cameroun</span>
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {[
+                  {
+                    titleFr: 'Centrale Hydroélectrique de Songloulou (384 MW)',
+                    titleEn: 'Songloulou Hydroelectric Power Plant (384 MW)',
+                    roleFr: 'Surveillance Vibratoire & DGA des 8 Groupes Francis',
+                    roleEn: 'Vibration & DGA Online Telemetry on 8 Francis Turbines',
+                    descFr: 'Déploiement de capteurs piézoélectriques triaxiaux et chromatographes d\'huile DGA en ligne sur les transformateurs élévateurs 60 MVA. L\'analyse spectrale FFT a permis d\'anticiper un phénomène de vortex en sortie de roue Francis et d\'éviter l\'avarie mécanique.',
+                    descEn: 'Deployment of online DGA oil chromatographs and triaxial vibration telemetry on 60 MVA GSU transformers. FFT spectrum analysis successfully identified draft-tube vortex cavitation pulsations, averting catastrophic runner fatigue.',
+                    badge: 'Songloulou · Eneo Hydro'
+                  },
+                  {
+                    titleFr: 'Dorsale Transport 225 kV SONATREL (Mangombé - Oyomabang)',
+                    titleEn: 'SONATREL 225 kV Transmission Corridor (Mangombé - Oyomabang)',
+                    roleFr: 'Inspection par Drone & Détection Infrarouge par IA',
+                    roleEn: 'Drone Vision AI & Automatic Infrared Thermography',
+                    descFr: 'Survol automatisé des lignes 225 kV traversant la forêt équatoriale humide. Le modèle YOLOv8 a identifié 14 points chauds critiques (ΔT > 30°C) sur les pinces d\'ancrage et détecté les empiétements de canopée avant amorçage.',
+                    descEn: 'Automated drone flights scanning 225 kV towers across dense equatorial rainforest. The YOLOv8 computer vision model pinpointed 14 critical thermal hotspots on tension clamps and flagged tree clearance violations.',
+                    badge: 'SONATREL 225 kV'
+                  },
+                  {
+                    titleFr: 'Comptage Intelligent & Lutte Anti-Fraude Eneo',
+                    titleEn: 'Eneo Smart Metering & Machine Learning Fraud Prevention',
+                    roleFr: 'Détection des Pertes Non-Techniques par Machine Learning',
+                    roleEn: 'Non-Technical Loss (NTL) Detection via ML Clustering',
+                    descFr: 'Analyse en temps réel de 500 000 compteurs communicants STS/AMI à Douala et Yaoundé. L\'algorithme Random Forest détecte les chutes anormales de consommation et le contournement de neutre, permettant de récupérer plus de 45 GWh de pertes commerciales.',
+                    descEn: 'Real-time telemetry analysis of 500,000 STS/AMI smart meters in Douala and Yaoundé. Random Forest machine learning models detect anomalous load drops and neutral tampering, recovering over 45 GWh of commercial losses.',
+                    badge: 'Eneo AMI Douala/Ydé'
+                  }
+                ].map((c, idx) => (
+                  <div key={idx} className="bg-slate-950 border border-slate-800 rounded-xl p-5 space-y-3 flex flex-col justify-between">
+                    <div className="space-y-2">
+                      <span className="font-mono text-[10px] px-2 py-0.5 bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 rounded font-bold">
+                        {c.badge}
+                      </span>
+                      <h4 className="text-sm font-bold text-white">
+                        {locale === 'fr' ? c.titleFr : c.titleEn}
+                      </h4>
+                      <div className="text-xs text-indigo-300">
+                        {locale === 'fr' ? c.roleFr : c.roleEn}
+                      </div>
+                      <p className="text-slate-300 text-[11px] leading-relaxed">
+                        {locale === 'fr' ? c.descFr : c.descEn}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {stage5Tab === 'dqe' && (
+            <AiDeliverablesExportEngine
+              locale={locale}
+              profile={store.activeSiteProfile}
+              calculations={store.calculations}
+              billOfQuantities={store.billOfQuantities}
+              onJumpToStage={(st) => store.setActiveStage(st)}
+            />
+          )}
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* FORMULATIONS & STANDARDS MODAL                                           */}
+      {/* ========================================================================= */}
+      {isFormulasModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-4xl max-h-[88vh] overflow-y-auto rounded-3xl bg-slate-950 border border-indigo-600/40 shadow-2xl p-6 space-y-6 font-mono text-xs">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+              <div className="flex items-center gap-2 text-indigo-400">
+                <BookOpen className="h-5 w-5" />
+                <h3 className="text-base font-bold text-white uppercase tracking-wider">
+                  Formulations & Principes Physico-Algorithmiques de Dimensionnement
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsFormulasModalOpen(false)}
+                className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Formula 1 */}
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <div className="text-indigo-400 font-bold text-xs uppercase">1. Ratios DGA Triangle de Duval 1 (CEI 60599)</div>
+                <div className="p-2 rounded bg-black/60 border border-slate-800 text-cyan-300 font-mono text-[11px]">
+                  %CH4 = [CH4 / (CH4 + C2H4 + C2H2)] &times; 100<br />
+                  %C2H4 = [C2H4 / (CH4 + C2H4 + C2H2)] &times; 100<br />
+                  %C2H2 = [C2H2 / (CH4 + C2H4 + C2H2)] &times; 100
+                </div>
+                <p className="text-slate-400 text-[11px]">
+                  Détermine les coordonnées barycentriques sur triangle équilatéral pour classer les défauts thermiques (T1, T2, T3) et électriques (PD, D1, D2).
                 </p>
               </div>
-              <span className="text-xs font-mono px-3 py-1 bg-red-950 border border-red-500/40 text-red-300 rounded font-bold">
-                SIEM OT LIVE
-              </span>
-            </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              {/* Attack Vector Selector */}
-              <div className="lg:col-span-5 space-y-3">
-                <div className="font-mono text-xs font-bold text-[#a5b4fc] uppercase tracking-wider mb-2">
-                  {locale === 'fr' ? 'Vecteurs d\'Attaque Industriels Détectés :' : 'Detected Industrial Cyber Attack Vectors :'}
+              {/* Formula 2 */}
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <div className="text-indigo-400 font-bold text-xs uppercase">2. Loi d'Échauffement Thermique (CEI 60076-7)</div>
+                <div className="p-2 rounded bg-black/60 border border-slate-800 text-cyan-300 font-mono text-[11px]">
+                  &Delta;&theta;or = &Delta;&theta;or_nom &times; [(1 + R&times;K²)/(1 + R)]^x<br />
+                  &theta;h = &theta;a + &Delta;&theta;or + H &times; &Delta;&theta;hr &times; K^y
                 </div>
-                {attackVectors.map((att) => {
-                  const isSel = att.id === selectedAttackVector;
-                  return (
-                    <button
-                      key={att.id}
-                      type="button"
-                      onClick={() => setSelectedAttackVector(att.id)}
-                      className={`w-full p-3 rounded-xl text-left border transition-all ${
-                        isSel
-                          ? 'bg-red-900/40 border-red-500 text-white shadow-md'
-                          : 'bg-black/40 border-white/10 text-slate-300 hover:text-white hover:bg-white/5'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-mono text-xs font-bold text-red-300">{att.mitreCode}</span>
-                        <span className="text-[10px] font-mono px-2 py-0.5 bg-red-500/20 text-red-200 rounded border border-red-500/40">
-                          Score IA : {att.anomalyScore}%
-                        </span>
-                      </div>
-                      <div className="text-xs font-bold">{locale === 'fr' ? att.nameFr : att.nameEn}</div>
-                      <div className="text-[10px] font-mono text-slate-400 mt-1">{att.targetProtocol}</div>
-                    </button>
-                  );
-                })}
+                <p className="text-slate-400 text-[11px]">
+                  Calcul de la température du point chaud le plus sévère (&theta;h) guidant la résolution par réseau de neurones PINN.
+                </p>
               </div>
 
-              {/* DPI Forensic Terminal */}
-              <div className="lg:col-span-7 bg-black/70 border border-white/10 rounded-xl p-4 font-mono text-xs space-y-3 flex flex-col justify-between">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                    <span className="text-[#a5b4fc] font-bold flex items-center gap-1.5">
-                      <Terminal className="w-4 h-4 text-[#a5b4fc]" />
-                      DPI Packet Analysis Log :
-                    </span>
-                    <span className="text-[10px] text-slate-400">MITRE: {currentAttack.mitreName}</span>
-                  </div>
-
-                  <div className="bg-slate-950 p-3 rounded-lg border border-white/5 text-[11px] leading-relaxed text-slate-300 space-y-2">
-                    <div className="text-emerald-400 font-bold">&gt; PACKET DECODE [DISSECTOR: {currentAttack.targetProtocol}]</div>
-                    <div>{locale === 'fr' ? currentAttack.dpiDetailsFr : currentAttack.dpiDetailsEn}</div>
-                    <div className="text-amber-400 pt-1">
-                      &gt; REGLE IDS ACTIVE: [SURICATA_OT_RULE_80042] ALERT DROP TCP ANY ANY -&gt; SUBSTATION_BUS 2404
-                    </div>
-                  </div>
+              {/* Formula 3 */}
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <div className="text-indigo-400 font-bold text-xs uppercase">3. Taux de Vieillissement Relatif & RUL</div>
+                <div className="p-2 rounded bg-black/60 border border-slate-800 text-cyan-300 font-mono text-[11px]">
+                  V = 2^[(&theta;h - 98) / 6]<br />
+                  RUL (ans) = (180 000 h / V) / 8 760
                 </div>
-
-                <div className="bg-red-950/40 border border-red-500/40 rounded-lg p-3 space-y-1">
-                  <div className="font-bold text-red-300 flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-red-400" />
-                    {locale === 'fr' ? 'Réponse & Contre-Mesure Automatique :' : 'Automated Containment & Quarantine :'}
-                  </div>
-                  <div className="text-[11px] text-slate-200">
-                    {locale === 'fr' ? currentAttack.mitigationFr : currentAttack.mitigationEn}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 8. PILLAR 6 CONTENT: RENEWABLE FORECASTING & FRAUD DETECTION */}
-      {activePillar === 'RENEWABLE_LOAD_FORECAST' && (
-        <div className="space-y-6" id="pillar-solar-fraud">
-          <div className="bg-[#0f1829] border border-white/10 rounded-2xl p-5 sm:p-6 space-y-6">
-            <div className="border-b border-white/10 pb-3">
-              <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                <Sun className="w-5 h-5 text-amber-400" />
-                {locale === 'fr'
-                  ? 'P6. Prévision Solaire Photovoltaïque & Détection de Fraude Électrique par IA'
-                  : 'P6. Solar PV Generation Forecasting & Non-Technical Loss (Theft) AI'}
-              </h2>
-              <p className="text-xs text-slate-400 font-mono">
-                {locale === 'fr'
-                  ? 'Modélisation de passage nuageux pour le parc solaire de Guider (15 MWc) et détection d\'anomalies compteurs Eneo'
-                  : 'Cloud intermittency ramp-rate mitigation (Guider 15 MWp) and AMI smart meter theft detection'}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Sliders */}
-              <div className="space-y-4 bg-black/40 p-4 rounded-xl border border-white/10 font-mono text-xs">
-                <div className="font-bold text-[#a5b4fc] uppercase tracking-wider border-b border-white/10 pb-2">
-                  {locale === 'fr' ? 'Conditions Météo Temps Réel :' : 'Real-Time Weather Inputs :'}
-                </div>
-
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-slate-300">Irradiance Solaire (G) :</span>
-                    <strong className="text-amber-400">{solarIrradiance} W/m²</strong>
-                  </div>
-                  <input
-                    type="range"
-                    min="100"
-                    max="1150"
-                    step="25"
-                    value={solarIrradiance}
-                    onChange={(e) => setSolarIrradiance(Number(e.target.value))}
-                    className="w-full accent-amber-500"
-                  />
-                </div>
-
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-slate-300">Nébulosité / Nuages :</span>
-                    <strong className="text-blue-400">{cloudCoverPercent}%</strong>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="90"
-                    step="5"
-                    value={cloudCoverPercent}
-                    onChange={(e) => setCloudCoverPercent(Number(e.target.value))}
-                    className="w-full accent-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-slate-300">Température Cellule :</span>
-                    <strong className="text-red-400">{solarForecast.cellTemp}°C</strong>
-                  </div>
-                  <div className="text-[10px] text-slate-500">
-                    Dérive thermique : -0.35%/°C au-delà de 25°C
-                  </div>
-                </div>
+                <p className="text-slate-400 text-[11px]">
+                  Modèle d'Arrhenius : au-delà de 98°C, le vieillissement du papier isolant double tous les 6°C.
+                </p>
               </div>
 
-              {/* Forecast Output */}
-              <div className="bg-black/40 border border-white/10 rounded-xl p-4 flex flex-col justify-between space-y-3 font-mono text-center">
-                <div className="text-xs text-slate-400 uppercase">Puissance Solaire Injectée Prédite</div>
-                <div className="text-4xl font-black text-amber-400">{solarForecast.predictedMw} MW</div>
-                <div className="text-[11px] text-slate-400">Sur capacité crête installée de 15.0 MWc (Guider)</div>
-
-                <div className="p-3 bg-white/5 rounded-lg border border-white/10 text-left text-xs space-y-1">
-                  <div className="text-[#a5b4fc] font-bold">Consigne Tampon Batterie BESS :</div>
-                  <div className="text-sm font-bold text-white">+{solarForecast.bessBufferMw} MW (Lissage de rampe)</div>
-                  <div className="text-[10px] text-slate-400">Évite la chute de fréquence sur le RIN 110 kV</div>
+              {/* Formula 4 */}
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <div className="text-indigo-400 font-bold text-xs uppercase">4. Cinématique des Roulements (ISO 10816-3)</div>
+                <div className="p-2 rounded bg-black/60 border border-slate-800 text-cyan-300 font-mono text-[11px]">
+                  BPFO = (Z/2) &times; f1X &times; [1 - (d/D)&times;cos(&alpha;)]<br />
+                  BPFI = (Z/2) &times; f1X &times; [1 + (d/D)&times;cos(&alpha;)]
                 </div>
+                <p className="text-slate-400 text-[11px]">
+                  Fréquences caractéristiques d'impacts d'écaillage sur les bagues externe (BPFO) et interne (BPFI).
+                </p>
               </div>
 
-              {/* Fraud Detection Module */}
-              <div className="bg-black/40 border border-white/10 rounded-xl p-4 flex flex-col justify-between space-y-3">
-                <div className="font-mono text-xs font-bold text-[#a5b4fc] uppercase tracking-wider border-b border-white/10 pb-2">
-                  {locale === 'fr' ? 'Détection Fraude Électrique Eneo (IA) :' : 'Eneo Smart Meter Fraud Detector (AI) :'}
+              {/* Formula 5 */}
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <div className="text-indigo-400 font-bold text-xs uppercase">5. Dérive en Température TOPCon & BESS</div>
+                <div className="p-2 rounded bg-black/60 border border-slate-800 text-cyan-300 font-mono text-[11px]">
+                  P_pv = P_nom &times; (G / 1000) &times; [1 - &gamma;&times;(T_cell - 25)]<br />
+                  P_bess = max(0, P_cible - P_pv)
                 </div>
+                <p className="text-slate-400 text-[11px]">
+                  Régulation de rampe de puissance injectée au RIN 110 kV pour éviter les déclenchements de sous-fréquence.
+                </p>
+              </div>
 
-                <div className="bg-[#6366f1]/10 border border-[#6366f1]/30 rounded-lg p-3 text-xs text-slate-200 space-y-2">
-                  <div className="font-bold text-white flex items-center justify-between">
-                    <span>Compteur #EN-88421 (Douala Akwa)</span>
-                    <span className="text-[10px] font-mono text-red-400 font-bold px-1.5 py-0.5 bg-red-950 rounded">
-                      SUSPICION 94%
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-300 leading-relaxed font-mono">
-                    Anomalie détectée : Disparité de 68% entre le bilan de puissance du transformateur MT/BT
-                    et la somme des compteurs abonnés. Bipasse phase-neutre identifié par Isolation Forest.
-                  </p>
-                  <div className="text-[10px] text-emerald-400 font-mono font-bold">
-                    &gt; Équipe de contrôle terrain dépêchée avec procès-verbal horodaté.
-                  </div>
+              {/* Formula 6 */}
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <div className="text-indigo-400 font-bold text-xs uppercase">6. Détection d'Anomalies DPI (CEI 62443)</div>
+                <div className="p-2 rounded bg-black/60 border border-slate-800 text-cyan-300 font-mono text-[11px]">
+                  Score = &Sigma; w_i &times; [1 - P(Trame_i | État_SCADA_Normal)]
                 </div>
+                <p className="text-slate-400 text-[11px]">
+                  Vérification d'état de séquence (StNum / SqNum GOOSE, COT CEI 104) bloquant les injections de commandes illégitimes.
+                </p>
               </div>
             </div>
-          </div>
-        </div>
-      )}
 
-      {/* 9. PILLAR 7 CONTENT: CAMEROON FORENSIC CASES */}
-      {activePillar === 'CAMEROON_AI_FORENSICS' && (
-        <div className="space-y-6" id="pillar-cameroon-forensics">
-          <div className="bg-[#0f1829] border border-white/10 rounded-2xl p-5 sm:p-6 space-y-6">
-            <div className="border-b border-white/10 pb-3">
-              <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                <Server className="w-5 h-5 text-[#a5b4fc]" />
-                {locale === 'fr'
-                  ? 'P7. Retours d\'Expérience & Déploiements IA Réels au Cameroun'
-                  : 'P7. Grounded Cameroon Infrastructure AI Deployments & Forensics'}
-              </h2>
-              <p className="text-xs text-slate-400 font-mono">
-                {locale === 'fr'
-                  ? 'Applications concrètes d\'IA industrielle à Songloulou (Hydro), SONATREL (Transport 225 kV) et Eneo (Comptage)'
-                  : 'Real-world industrial AI implementations at Songloulou Hydro, SONATREL 225 kV, and Eneo'}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {[
-                {
-                  titleFr: 'Centrale Hydroélectrique de Songloulou (384 MW)',
-                  titleEn: 'Songloulou Hydroelectric Power Plant (384 MW)',
-                  roleFr: 'Surveillance Vibratoire & DGA des 8 Groupes Francis',
-                  roleEn: 'Vibration & DGA Online Telemetry on 8 Francis Turbines',
-                  descFr: 'Déploiement de capteurs piézoélectriques triaxiaux et chromatographes d\'huile DGA en ligne sur les transformateurs élévateurs 60 MVA. L\'analyse spectrale FFT a permis d\'anticiper un phénomène de vortex en sortie de roue Francis et d\'éviter l\'avarie mécanique.',
-                  descEn: 'Deployment of online DGA oil chromatographs and triaxial vibration telemetry on 60 MVA GSU transformers. FFT spectrum analysis successfully identified draft-tube vortex cavitation pulsations, averting catastrophic runner fatigue.',
-                  badge: 'Songloulou · Eneo Hydro'
-                },
-                {
-                  titleFr: 'Dorsale Transport 225 kV SONATREL (Mangombé - Oyomabang)',
-                  titleEn: 'SONATREL 225 kV Transmission Corridor (Mangombé - Oyomabang)',
-                  roleFr: 'Inspection par Drone & Détection Infrarouge par IA',
-                  roleEn: 'Drone Vision AI & Automatic Infrared Thermography',
-                  descFr: 'Survol automatisé des lignes 225 kV traversant la forêt équatoriale humide. Le modèle YOLOv8 a identifié 14 points chauds critiques (ΔT > 30°C) sur les pinces d\'ancrage et détecté les empiétements de canopée avant amorçage.',
-                  descEn: 'Automated drone flights scanning 225 kV towers across dense equatorial rainforest. The YOLOv8 computer vision model pinpointed 14 critical thermal hotspots on tension clamps and flagged tree clearance violations.',
-                  badge: 'SONATREL 225 kV'
-                },
-                {
-                  titleFr: 'Comptage Intelligent & Lutte Anti-Fraude Eneo',
-                  titleEn: 'Eneo Smart Metering & Machine Learning Fraud Prevention',
-                  roleFr: 'Détection des Pertes Non-Techniques par Machine Learning',
-                  roleEn: 'Non-Technical Loss (NTL) Detection via ML Clustering',
-                  descFr: 'Analyse en temps réel de 500 000 compteurs communicants STS/AMI à Douala et Yaoundé. L\'algorithme Random Forest détecte les chutes anormales de consommation et le contournement de neutre, permettant de récupérer plus de 45 GWh de pertes commerciales.',
-                  descEn: 'Real-time telemetry analysis of 500,000 STS/AMI smart meters in Douala and Yaoundé. Random Forest machine learning models detect anomalous load drops and neutral tampering, recovering over 45 GWh of commercial losses.',
-                  badge: 'Eneo AMI Douala/Ydé'
-                }
-              ].map((c, idx) => (
-                <div key={idx} className="bg-black/40 border border-white/10 rounded-xl p-5 space-y-3 flex flex-col justify-between">
-                  <div className="space-y-2">
-                    <span className="font-mono text-[10px] px-2 py-0.5 bg-[#6366f1]/20 text-[#a5b4fc] border border-[#6366f1]/40 rounded font-bold">
-                      {c.badge}
-                    </span>
-                    <h3 className="text-sm font-bold text-white">
-                      {locale === 'fr' ? c.titleFr : c.titleEn}
-                    </h3>
-                    <div className="text-xs font-mono text-[#a5b4fc]">
-                      {locale === 'fr' ? c.roleFr : c.roleEn}
-                    </div>
-                    <p className="text-xs text-slate-300 leading-relaxed">
-                      {locale === 'fr' ? c.descFr : c.descEn}
-                    </p>
-                  </div>
-                </div>
-              ))}
+            <div className="flex justify-end pt-2 border-t border-slate-800">
+              <button
+                type="button"
+                onClick={() => setIsFormulasModalOpen(false)}
+                className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold"
+              >
+                Fermer la Synthèse Mathématique
+              </button>
             </div>
           </div>
         </div>
