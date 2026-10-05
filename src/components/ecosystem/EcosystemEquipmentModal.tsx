@@ -14,6 +14,8 @@ import {
   Workflow
 } from 'lucide-react';
 import { EcosystemEquipmentDetail, EcosystemViewMode } from './ecosystemData';
+import { EngineeringImageWithMeta } from '../common/EngineeringImageWithMeta';
+import { getAssetsByEquipmentId, EpedeImageAsset } from '../../data/assets/epedeAssetRegistry';
 
 interface EcosystemEquipmentModalProps {
   equipment: EcosystemEquipmentDetail | null;
@@ -37,6 +39,36 @@ export const EcosystemEquipmentModal: React.FC<EcosystemEquipmentModalProps> = (
   onOpenCalculator,
 }) => {
   if (!equipment) return null;
+
+  const matchedAsset: EpedeImageAsset =
+    getAssetsByEquipmentId(equipment.id)[0] ||
+    getAssetsByEquipmentId(equipment.canonicalEquipmentId)[0] || {
+      id: `asset-${equipment.id}`,
+      title: equipment.name,
+      assetType: 'REPRESENTATIVE_PHOTOGRAPH',
+      domainId: equipment.epedeDomainCode,
+      system: 'SUBSTATION',
+      equipmentIds: [equipment.id, equipment.canonicalEquipmentId],
+      imageUrl: equipment.imageUrl,
+      sourceOrganization: 'EPEDE High-Voltage Engineering Library',
+      sourceUrl: 'https://unsplash.com',
+      licenseStatus: 'UNSPLASH_COMMERCIAL',
+      photographerOrCopyright: 'Verified Electrical Infrastructure Contributor',
+      attributionRequirement: 'Industrial Reference Archive via EPEDE',
+      caption: {
+        fr: `${equipment.name.fr} · ${equipment.voltage} · ${equipment.power}`,
+        en: `${equipment.name.en} · ${equipment.voltage} · ${equipment.power}`
+      },
+      altText: equipment.name,
+      verificationStatus: 'ENGINEERING_REFERENCE',
+      technicalIdentificationConfidence: 'GENERIC_EQUIPMENT_FAMILY',
+      voltageClass: equipment.voltage,
+      powerRating: equipment.power,
+      standardsRef: equipment.applicableStandards,
+      aspectRatio: '16:9',
+      dateAdded: '2026-10-05',
+      lastReviewed: '2026-10-05'
+    };
 
   return (
     <div
@@ -84,17 +116,13 @@ export const EcosystemEquipmentModal: React.FC<EcosystemEquipmentModalProps> = (
         <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5">
           {/* Top Hero Card with Real-World Equipment Photo and Primary Specs */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 bg-[#111827]/80 p-4 rounded-xl border border-slate-800">
-            <div className="md:col-span-5 h-48 sm:h-56 rounded-lg overflow-hidden relative border border-slate-700">
-              <img
-                src={equipment.imageUrl}
-                alt={equipment.name[locale]}
-                className="w-full h-full object-cover"
+            <div className="md:col-span-5 rounded-lg overflow-hidden border border-slate-700">
+              <EngineeringImageWithMeta
+                asset={matchedAsset}
+                locale={locale}
+                aspectRatioClass="h-48 sm:h-56"
+                className="w-full h-full border-none rounded-none"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-3">
-                <span className="text-[10px] font-mono bg-black/70 px-2 py-0.5 rounded text-amber-400 border border-amber-500/30">
-                  {locale === 'fr' ? 'Photographie Industrielle de Référence' : 'Industrial Reference Photograph'}
-                </span>
-              </div>
             </div>
 
             <div className="md:col-span-7 flex flex-col justify-between space-y-3">

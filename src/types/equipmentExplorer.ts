@@ -194,6 +194,7 @@ export interface PhotographicAsset {
   identificationConfidence?: 'DEFINITIVE_MATCH' | 'REPRESENTATIVE_TYPE' | 'CONCEPTUAL_EQUIVALENT';
   technicalReviewStatus?: 'APPROVED_BY_LEAD_ENGINEER' | 'PROVISIONAL' | 'REQUIRES_FIELD_PHOTO';
   locationContext?: { fr: string; en: string };
+  disclaimer?: { fr: string; en: string };
   calloutAnnotations?: {
     x: number; // percent
     y: number; // percent

@@ -30,7 +30,7 @@ export const engineeringAssets = {
     },
     generatorHall: {
       url: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1600&q=80', // Power plant generator hall
-      fallbackUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=80',
+      fallbackUrl: 'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=1600&q=80',
       altFr: 'Salle des machines centrale hydroélectrique avec alternateurs verticaux',
       altEn: 'Hydroelectric powerhouse machine hall with vertical shaft generators',
       captionFr: 'Alternateurs synchrones à pôles saillants couplés aux turbines hydrauliques',
@@ -62,7 +62,7 @@ export const engineeringAssets = {
       standardRef: 'IEC 61400',
     },
     thermalCcgt: {
-      url: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=80',
+      url: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1600&q=80',
       fallbackUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1600&q=80',
       altFr: 'Centrale thermique à cycle combiné gaz CCGT (Turbine à gaz + HRSG + Turbine vapeur)',
       altEn: 'Combined Cycle Gas Turbine (CCGT) power station (Gas Turbine + HRSG + Steam Turbine)',
@@ -89,7 +89,7 @@ export const engineeringAssets = {
   transformation: {
     powerTransformer: {
       url: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=1600&q=80', // Substation transformer
-      fallbackUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=80',
+      fallbackUrl: 'https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?auto=format&fit=crop&w=1600&q=80',
       altFr: 'Transformateur de puissance élévateur THT 225 kV avec traversées RIP',
       altEn: 'EHV 225 kV step-up power transformer with RIP bushings',
       captionFr: 'Transformateur triphasé immergé dans l’huile minérale, refroidissement ONAF / OFAF',
@@ -250,7 +250,7 @@ export const engineeringAssets = {
   automation: {
     scadaControlRoom: {
       url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1600&q=80', // Control room / telemetry screens
-      fallbackUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=80',
+      fallbackUrl: 'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=1600&q=80',
       altFr: 'Centre de conduite national de réseau électrique (Dispatching SCADA / EMS)',
       altEn: 'National power grid dispatching control center (SCADA / EMS / DMS)',
       captionFr: 'Supervision temps réel de l’équilibre production-consommation, réserve primaire et tension',
@@ -333,7 +333,7 @@ export const engineeringAssets = {
     },
     hospitalUps: {
       url: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80',
-      fallbackUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80',
+      fallbackUrl: 'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=1200&q=80',
       altFr: 'Onduleurs modulaires 800 kVA N+1 et salle batteries secours médical critique',
       altEn: '800 kVA N+1 modular static UPS and critical medical backup battery room',
       captionFr: 'Onduleurs 0 ms, régime IT médicalisé et autonomie batterie 4h per NF C 15-211',

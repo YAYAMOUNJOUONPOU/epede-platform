@@ -4,22 +4,26 @@ import { Layers, Info, CheckCircle2, Zap, Shield, Sparkles } from 'lucide-react'
 import type { CanonicalEquipmentObject } from '../../../types/equipmentExplorer';
 
 interface EquipmentCutawaySvgFallbackProps {
-  equipment: CanonicalEquipmentObject;
+  equipment?: Partial<CanonicalEquipmentObject>;
+  category?: string;
+  isOperating?: boolean;
   locale: 'fr' | 'en';
 }
 
 export const EquipmentCutawaySvgFallback: React.FC<EquipmentCutawaySvgFallbackProps> = ({
   equipment,
+  category,
+  isOperating = true,
   locale
 }) => {
   const isFr = locale === 'fr';
   const [selectedOrgan, setSelectedOrgan] = useState<string | null>(null);
 
-  const eqType = equipment.equipmentType?.toLowerCase() || '';
-  const eqId = equipment.id?.toLowerCase() || '';
+  const eqType = equipment?.equipmentType?.toLowerCase() || category?.toLowerCase() || '';
+  const eqId = equipment?.id?.toLowerCase() || '';
 
   // Determine apparatus schema style
-  const isTrafo = eqType.includes('transformer') || eqId.includes('trafo');
+  const isTrafo = eqType.includes('transformer') || eqId.includes('trafo') || eqType.includes('trafo');
   const isBreaker = eqType.includes('breaker') || eqType.includes('switchgear') || eqId.includes('cb') || eqId.includes('gis');
   const isMotor = eqType.includes('motor') || eqType.includes('generator') || eqId.includes('gen') || eqId.includes('motor');
   const isStorage = eqType.includes('battery') || eqType.includes('inverter') || eqType.includes('evse') || eqId.includes('bess') || eqId.includes('statcom');

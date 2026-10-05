@@ -1,7 +1,7 @@
 // src/components/ecosystem/EcosystemR3FCanvas.tsx
 import React, { useRef, useMemo, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Stars, Grid } from '@react-three/drei';
+import { OrbitControls, PerspectiveCamera, Stars, Grid, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import {
   EcosystemEquipmentDetail,
@@ -558,18 +558,21 @@ const ContinuousEnergyFlowStream: React.FC<{ viewMode: EcosystemViewMode }> = ({
   }, []);
 
   const particleCount = 200;
-  const { positions, offsets } = useMemo(() => {
+  const { offsets, particleGeometry } = useMemo(() => {
     const pos = new Float32Array(particleCount * 3);
     const offs = new Float32Array(particleCount);
     for (let i = 0; i < particleCount; i++) {
       offs[i] = i / particleCount;
     }
-    return { positions: pos, offsets: offs };
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    return { offsets: offs, particleGeometry: geo };
   }, []);
 
   useFrame((_, delta) => {
     if (!pointsRef.current) return;
-    const posAttr = pointsRef.current.geometry.attributes.position as THREE.BufferAttribute;
+    const posAttr = pointsRef.current.geometry?.attributes?.position as THREE.BufferAttribute | undefined;
+    if (!posAttr) return;
 
     for (let i = 0; i < particleCount; i++) {
       offsets[i] = (offsets[i] + delta * 0.18) % 1.0;
@@ -592,13 +595,7 @@ const ContinuousEnergyFlowStream: React.FC<{ viewMode: EcosystemViewMode }> = ({
       </mesh>
 
       {/* Moving Energy Photons */}
-      <points ref={pointsRef}>
-        <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            args={[positions, 3]}
-          />
-        </bufferGeometry>
+      <points ref={pointsRef} geometry={particleGeometry}>
         <pointsMaterial
           size={0.65}
           color={viewMode === 'electrical' ? EPEDE_COLORS.ELECTRIC_CYAN : '#FFE57F'}
@@ -747,10 +744,6 @@ export const EcosystemR3FCanvas: React.FC<EcosystemR3FCanvasProps> = ({
   currentStageId,
   locale,
 }) => {
-  const [projectedBadges, setProjectedBadges] = React.useState<
-    { id: string; stageBadge: string | number; tag: string; screenX: number; screenY: number; visible: boolean }[]
-  >([]);
-
   return (
     <div className="w-full h-full relative select-none">
       <Canvas
@@ -813,56 +806,76 @@ export const EcosystemR3FCanvas: React.FC<EcosystemR3FCanvasProps> = ({
         {/* 2. High-Voltage Transmission Corridor (225 kV Towers & Spans) */}
         <TransmissionCorridor
           onSelect={() => {
-            const eq = ECOSYSTEM_EQUIPMENTS.find((e) => e.id === 'eq-trans-towers-03');
+            const eq = ECOSYSTEM_EQUIPMENTS.find((e) => e.id === 'eq-transmission-line-03');
             if (eq) onSelectEquipment(eq);
           }}
-          isSelected={selectedEquipment?.id === 'eq-trans-towers-03'}
+          isSelected={selectedEquipment?.id === 'eq-transmission-line-03'}
           viewMode={viewMode}
         />
 
         {/* 3. Transmission Substation & 225/30 kV Power Transformer */}
         <TransmissionSubstation
           onSelect={() => {
-            const eq = ECOSYSTEM_EQUIPMENTS.find((e) => e.id === 'eq-power-trafo-05');
+            const eq = ECOSYSTEM_EQUIPMENTS.find((e) => e.id === 'eq-power-transformer-05');
             if (eq) onSelectEquipment(eq);
           }}
-          isSelected={selectedEquipment?.id === 'eq-power-trafo-05'}
+          isSelected={selectedEquipment?.id === 'eq-power-transformer-05'}
           viewMode={viewMode}
         />
 
         {/* 4. Medium-Voltage Distribution Network & Kiosk Substation */}
         <DistributionNetwork
           onSelect={() => {
-            const eq = ECOSYSTEM_EQUIPMENTS.find((e) => e.id === 'eq-dist-trafo-07');
+            const eq = ECOSYSTEM_EQUIPMENTS.find((e) => e.id === 'eq-distribution-transformer-07');
             if (eq) onSelectEquipment(eq);
           }}
-          isSelected={selectedEquipment?.id === 'eq-dist-trafo-07'}
+          isSelected={selectedEquipment?.id === 'eq-distribution-transformer-07'}
           viewMode={viewMode}
         />
 
         {/* 5. Industrial Facility, Building & Final Load (Electric Motor Useful Work) */}
         <InstallationAndFinalLoad
           onSelect={() => {
-            const eq = ECOSYSTEM_EQUIPMENTS.find((e) => e.id === 'eq-useful-work-09');
+            const eq = ECOSYSTEM_EQUIPMENTS.find((e) => e.id === 'eq-final-load-09');
             if (eq) onSelectEquipment(eq);
           }}
-          isSelected={selectedEquipment?.id === 'eq-useful-work-09'}
+          isSelected={selectedEquipment?.id === 'eq-final-load-09'}
           viewMode={viewMode}
         />
 
         {/* Continuous Animated Energy Pulse Flow Stream */}
         <ContinuousEnergyFlowStream viewMode={viewMode} />
 
-        {/* Screen Projection Tracker */}
-        <ScreenProjectionTracker onUpdateCoords={setProjectedBadges} />
+        {/* Native 3D HTML Badges directly projected via Drei (Zero React parent re-renders) */}
+        {ECOSYSTEM_EQUIPMENTS.map((eq) => {
+          const isSelected = selectedEquipment?.id === eq.id;
+          return (
+            <group key={eq.id} position={[eq.coords.x, eq.coords.y + 4.5, eq.coords.z]}>
+              <Html center distanceFactor={45} zIndexRange={[50, 0]}>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelectEquipment(eq);
+                  }}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-all cursor-pointer shadow-xl ${
+                    isSelected
+                      ? 'bg-amber-500 border-white text-slate-950 scale-125 ring-4 ring-amber-400/40 font-black'
+                      : 'bg-[#151C1E]/95 border-[rgba(11,15,18,0.4)] text-[#F4F1E8] hover:border-amber-400 hover:scale-110 shadow-lg'
+                  }`}
+                >
+                  <span className="w-5 h-5 rounded-full bg-slate-900/90 text-amber-400 flex items-center justify-center text-[10px] font-mono font-bold">
+                    {eq.badgeNumber}
+                  </span>
+                  <span className="text-[10px] font-mono whitespace-nowrap pr-1 hidden sm:inline text-[#F4F1E8]">
+                    {eq.tagIec}
+                  </span>
+                </button>
+              </Html>
+            </group>
+          );
+        })}
       </Canvas>
-
-      {/* Screen-projected Badges (Zero nested React roots) */}
-      <InteractiveEquipmentBadgesOverlay
-        onSelect={onSelectEquipment}
-        selectedId={selectedEquipment?.id}
-        stageBadges={projectedBadges}
-      />
     </div>
   );
 };

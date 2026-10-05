@@ -31,6 +31,75 @@ import {
 } from 'lucide-react';
 import { EcosystemEquipmentModal } from './EcosystemEquipmentModal';
 import { EcosystemR3FCanvas } from './EcosystemR3FCanvas';
+import { EcosystemThreeCanvas } from './EcosystemThreeCanvas';
+
+interface ErrorBoundary3DProps {
+  children: React.ReactNode;
+  fallbackToDirect: () => void;
+  fallbackTo2D: () => void;
+  locale: 'fr' | 'en';
+}
+
+interface ErrorBoundary3DState {
+  hasError: boolean;
+  error: Error | null;
+}
+
+class Ecosystem3DErrorBoundary extends React.Component<ErrorBoundary3DProps, ErrorBoundary3DState> {
+  constructor(props: ErrorBoundary3DProps) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundary3DState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    console.error('EPEDE 3D Ecosystem WebGL Error:', error, info);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      const isFr = this.props.locale === 'fr';
+      return (
+        <div className="w-full h-full flex flex-col items-center justify-center p-6 bg-[#070D14] text-slate-100 font-sans z-30">
+          <div className="max-w-lg w-full bg-[#0E1520]/95 border border-amber-500/40 rounded-2xl p-6 shadow-2xl backdrop-blur-md text-center">
+            <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mx-auto mb-3">
+              <Box className="w-6 h-6" />
+            </div>
+            <h3 className="text-base font-bold text-white mb-1">
+              {isFr ? 'Initialisation du Jumeau Numérique 3D' : '3D Digital Twin Initialization'}
+            </h3>
+            <p className="text-xs text-slate-400 mb-4 leading-relaxed font-mono">
+              {this.state.error?.message || (isFr ? 'Le contexte WebGL 3D a rencontré une anomalie de rendu.' : 'The 3D WebGL context encountered a rendering anomaly.')}
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  this.setState({ hasError: false, error: null });
+                  this.props.fallbackToDirect();
+                }}
+                className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold font-mono text-xs cursor-pointer shadow-lg transition-all"
+              >
+                {isFr ? 'Basculer en Three.js Direct' : 'Switch to Direct Three.js'}
+              </button>
+              <button
+                type="button"
+                onClick={this.props.fallbackTo2D}
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-mono text-xs border border-slate-700 cursor-pointer transition-all"
+              >
+                {isFr ? 'Vue 2D Master CAD' : '2D Master CAD View'}
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 import {
   EcosystemEquipmentDetail,
   EcosystemViewMode,
@@ -70,6 +139,7 @@ export const ElectricalEcosystemView: React.FC<ElectricalEcosystemViewProps> = (
   const [scale, setScale] = useState<number>(1);
   const [viewMode, setViewMode] = useState<EcosystemViewMode>('physical');
   const [is3DMode, setIs3DMode] = useState<boolean>(false);
+  const [threeEngine, setThreeEngine] = useState<'r3f' | 'direct'>('r3f');
   const [activeEnergySource, setActiveEnergySource] = useState<EnergySourceType>('hydro');
   const [selectedEquipment, setSelectedEquipment] = useState<EcosystemEquipmentDetail | null>(null);
   const [isPlayingJourney, setIsPlayingJourney] = useState<boolean>(false);
@@ -874,15 +944,60 @@ export const ElectricalEcosystemView: React.FC<ElectricalEcosystemViewProps> = (
               className="absolute left-[165px] top-[92px] w-[1371px] h-[932px] z-10 overflow-hidden"
               style={{ backgroundColor: 'var(--ecosystem-sky-background, #070D14)' }}
             >
-              <EcosystemR3FCanvas
-                viewMode={viewMode}
-                activeEnergySource={activeEnergySource}
-                selectedEquipment={selectedEquipment}
-                onSelectEquipment={(eq) => setSelectedEquipment(eq)}
-                isPlayingJourney={isPlayingJourney}
-                currentStageId={currentStageStep}
+              <Ecosystem3DErrorBoundary
+                fallbackToDirect={() => setThreeEngine('direct')}
+                fallbackTo2D={() => setIs3DMode(false)}
                 locale={locale}
-              />
+              >
+                {threeEngine === 'r3f' ? (
+                  <EcosystemR3FCanvas
+                    viewMode={viewMode}
+                    activeEnergySource={activeEnergySource}
+                    selectedEquipment={selectedEquipment}
+                    onSelectEquipment={(eq) => setSelectedEquipment(eq)}
+                    isPlayingJourney={isPlayingJourney}
+                    currentStageId={currentStageStep}
+                    locale={locale}
+                  />
+                ) : (
+                  <EcosystemThreeCanvas
+                    viewMode={viewMode}
+                    activeEnergySource={activeEnergySource}
+                    selectedEquipment={selectedEquipment}
+                    onSelectEquipment={(eq) => setSelectedEquipment(eq)}
+                    isPlayingJourney={isPlayingJourney}
+                    currentStageId={currentStageStep}
+                    locale={locale}
+                  />
+                )}
+              </Ecosystem3DErrorBoundary>
+
+              {/* 3D Engine Selector Pill (Top-Right of 3D stage) */}
+              <div className="absolute top-3 right-4 z-20 flex items-center gap-1 bg-[#0b141e]/90 border border-slate-700/80 rounded-lg p-1 backdrop-blur-md shadow-lg text-[10px] font-mono">
+                <span className="text-slate-400 px-1.5 hidden sm:inline">{locale === 'fr' ? 'Moteur 3D :' : '3D Engine:'}</span>
+                <button
+                  type="button"
+                  onClick={() => setThreeEngine('r3f')}
+                  className={`px-2 py-0.5 rounded transition-all cursor-pointer ${
+                    threeEngine === 'r3f'
+                      ? 'bg-cyan-500/30 text-cyan-300 font-bold border border-cyan-500/50'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  R3F Canvas
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setThreeEngine('direct')}
+                  className={`px-2 py-0.5 rounded transition-all cursor-pointer ${
+                    threeEngine === 'direct'
+                      ? 'bg-amber-500/30 text-amber-300 font-bold border border-amber-500/50'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  Three.js Direct
+                </button>
+              </div>
             </div>
           )}
 

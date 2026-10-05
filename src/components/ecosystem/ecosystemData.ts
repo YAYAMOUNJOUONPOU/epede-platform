@@ -251,7 +251,7 @@ export const ECOSYSTEM_EQUIPMENTS: EcosystemEquipmentDetail[] = [
     downstream: 'Tableau de distribution HTA 30 kV (Rames blindées SF6/Air)',
     epedeDomainCode: 'D04',
     canonicalEquipmentId: 'eq-exp-trafo-pwr-01',
-    imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=800&q=80',
     coords: { x: 5, y: -2, z: 8 },
     screenPos: { left: '50%', top: '44%' }
   },
@@ -295,7 +295,7 @@ export const ECOSYSTEM_EQUIPMENTS: EcosystemEquipmentDetail[] = [
     downstream: 'Postes de transformation HTA/BT de distribution',
     epedeDomainCode: 'D05',
     canonicalEquipmentId: 'eq-exp-recloser-30kv-01',
-    imageUrl: 'https://images.unsplash.com/photo-1509390144018-eeaf65049365?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1516937941344-00b4e0337589?auto=format&fit=crop&w=800&q=80',
     coords: { x: 18, y: 6, z: -10 },
     screenPos: { left: '71%', top: '26%' }
   },
@@ -339,7 +339,7 @@ export const ECOSYSTEM_EQUIPMENTS: EcosystemEquipmentDetail[] = [
     downstream: 'Tableau général basse tension (TGBT) et réseau public BT',
     epedeDomainCode: 'D06',
     canonicalEquipmentId: 'eq-exp-trafo-dist-01',
-    imageUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80',
     coords: { x: 28, y: 4, z: -5 },
     screenPos: { left: '83%', top: '33%' }
   },
@@ -383,7 +383,7 @@ export const ECOSYSTEM_EQUIPMENTS: EcosystemEquipmentDetail[] = [
     downstream: 'Tableaux divisionnaires, variateurs de vitesse et charges finales',
     epedeDomainCode: 'D07',
     canonicalEquipmentId: 'eq-exp-tgbt-main-01',
-    imageUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=800&q=80',
     coords: { x: 38, y: -2, z: 2 },
     screenPos: { left: '91%', top: '41%' }
   },
@@ -427,7 +427,7 @@ export const ECOSYSTEM_EQUIPMENTS: EcosystemEquipmentDetail[] = [
     downstream: 'Travail mécanique utile : débit d\'eau, air comprimé, climatisation, chaîne de fabrication',
     epedeDomainCode: 'D08',
     canonicalEquipmentId: 'eq-exp-motor-indus-01',
-    imageUrl: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80',
     coords: { x: 42, y: -7, z: 12 },
     screenPos: { left: '94%', top: '63%' }
   }
@@ -485,7 +485,7 @@ export const JOURNEY_STAGES = [
     },
     iconName: 'GitBranch',
     badge: '30 kV HTA',
-    image: 'https://images.unsplash.com/photo-1509390144018-eeaf65049365?auto=format&fit=crop&w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1516937941344-00b4e0337589?auto=format&fit=crop&w=600&q=80',
     equipmentTarget: 'eq-distribution-network-06',
     cameraPos: { x: 18, y: 16, z: 18 },
     cameraLookAt: { x: 18, y: 5, z: -8 }
@@ -499,7 +499,7 @@ export const JOURNEY_STAGES = [
     },
     iconName: 'Layers',
     badge: '400 V / 230 V',
-    image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=600&q=80',
     equipmentTarget: 'eq-distribution-transformer-07',
     cameraPos: { x: 28, y: 12, z: 14 },
     cameraLookAt: { x: 28, y: 3, z: -5 }
@@ -513,7 +513,7 @@ export const JOURNEY_STAGES = [
     },
     iconName: 'Building2',
     badge: 'TGBT / MDB',
-    image: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=600&q=80',
     equipmentTarget: 'eq-building-installation-08',
     cameraPos: { x: 38, y: 10, z: 16 },
     cameraLookAt: { x: 38, y: 0, z: 0 }
@@ -527,7 +527,7 @@ export const JOURNEY_STAGES = [
     },
     iconName: 'Home',
     badge: 'Travail Utile',
-    image: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=600&q=80',
     equipmentTarget: 'eq-final-load-09',
     cameraPos: { x: 42, y: 8, z: 22 },
     cameraLookAt: { x: 42, y: -4, z: 10 }

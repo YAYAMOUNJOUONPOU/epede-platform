@@ -4,7 +4,9 @@ import type { DomainCode } from '../../../types/epede';
 import { InteractiveSldDiagram } from '../../visual/InteractiveSldDiagram';
 import { InteractiveScadaHmiView } from '../../visual/InteractiveScadaHmiView';
 import { CircuitBreakerCutawayWorkbench } from '../../equipment/CircuitBreakerCutawayWorkbench';
-import { Eye, Network, Cpu, Box } from 'lucide-react';
+import { Eye, Network, Cpu, Box, Camera } from 'lucide-react';
+import { EngineeringImageWithMeta } from '../../common/EngineeringImageWithMeta';
+import { getAssetsByDomain, getAllAssets } from '../../../data/assets/epedeAssetRegistry';
 
 interface DomainVisualEngineeringAssetProps {
   domainCode: DomainCode;
@@ -15,7 +17,11 @@ export const DomainVisualEngineeringAsset: React.FC<DomainVisualEngineeringAsset
   domainCode,
   locale,
 }) => {
-  const [viewMode, setViewMode] = useState<'schematic' | 'sld' | 'scada' | 'cutaway'>('schematic');
+  const [viewMode, setViewMode] = useState<'schematic' | 'sld' | 'scada' | 'cutaway' | 'field_photos'>('schematic');
+
+  const domainAssets = getAssetsByDomain(domainCode).length > 0 
+    ? getAssetsByDomain(domainCode) 
+    : getAllAssets().slice(0, 2);
 
   const sldTopology =
     ['D01', 'D09'].includes(domainCode) ? 'generation_transmission' :
@@ -45,7 +51,7 @@ export const DomainVisualEngineeringAsset: React.FC<DomainVisualEngineeringAsset
           </span>
         </div>
 
-        {/* 4 Visualization Modes */}
+        {/* Visualization Modes */}
         <div className="flex items-center gap-1.5 self-start sm:self-auto flex-wrap">
           <button
             type="button"
@@ -58,6 +64,19 @@ export const DomainVisualEngineeringAsset: React.FC<DomainVisualEngineeringAsset
           >
             <Eye className="h-3.5 w-3.5" />
             <span>{locale === 'fr' ? 'Schéma de Principe' : 'Schematic'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setViewMode('field_photos')}
+            className={`px-3 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all ${
+              viewMode === 'field_photos'
+                ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40'
+                : 'text-slate-400 hover:text-slate-200 border border-transparent'
+            }`}
+          >
+            <Camera className="h-3.5 w-3.5" />
+            <span>{locale === 'fr' ? 'Photos Terrain & Normes' : 'Field Photos & Standards'}</span>
           </button>
 
           <button
@@ -102,7 +121,42 @@ export const DomainVisualEngineeringAsset: React.FC<DomainVisualEngineeringAsset
       </div>
 
       {/* Render selected view */}
-      {viewMode === 'sld' ? (
+      {viewMode === 'field_photos' ? (
+        <div className="p-4 sm:p-5 bg-slate-950 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-2">
+            <div>
+              <h4 className="text-sm font-bold text-white font-mono flex items-center gap-2">
+                <Camera className="h-4 w-4 text-purple-400" />
+                <span>
+                  {locale === 'fr' 
+                    ? `Photothèque Industrielle Réelle · Domaine ${domainCode}` 
+                    : `Real Industrial Photographic Archive · Domain ${domainCode}`}
+                </span>
+              </h4>
+              <p className="text-xs text-slate-400 mt-0.5">
+                {locale === 'fr' 
+                  ? 'Équipements réels, métadonnées techniques, conformité CEI/IEEE et traçabilité d\'attribution' 
+                  : 'Authentic equipment, technical metadata, IEC/IEEE standards compliance, and provenance'}
+              </p>
+            </div>
+            <span className="text-[11px] font-mono px-2.5 py-1 rounded bg-purple-950/80 text-purple-300 border border-purple-700/50 self-start sm:self-auto font-bold">
+              {domainAssets.length} {locale === 'fr' ? 'Équipement(s) Référencé(s)' : 'Referenced Asset(s)'}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {domainAssets.map((asset) => (
+              <EngineeringImageWithMeta
+                key={asset.id}
+                asset={asset}
+                locale={locale}
+                className="w-full"
+                aspectRatioClass="aspect-video"
+              />
+            ))}
+          </div>
+        </div>
+      ) : viewMode === 'sld' ? (
         <div className="p-3 bg-slate-950">
           <InteractiveSldDiagram
             initialTopology={sldTopology}

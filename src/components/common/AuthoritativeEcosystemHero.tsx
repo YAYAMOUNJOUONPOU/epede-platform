@@ -51,6 +51,51 @@ import { ProgressiveEngineeringIntelligenceDrawer } from './ProgressiveEngineeri
 const EcosystemR3FCanvas = lazy(() => 
   import('../ecosystem/EcosystemR3FCanvas').then(m => ({ default: m.EcosystemR3FCanvas }))
 );
+const EcosystemThreeCanvas = lazy(() => 
+  import('../ecosystem/EcosystemThreeCanvas').then(m => ({ default: m.EcosystemThreeCanvas }))
+);
+
+class Hero3DErrorBoundary extends React.Component<
+  { children: React.ReactNode; onFallback: () => void; isFr: boolean },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error: Error, info: any) {
+    console.error('AuthoritativeEcosystemHero 3D Error:', error, info);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="w-full h-full flex flex-col items-center justify-center p-6 bg-[#070B11] text-slate-200">
+          <div className="max-w-md w-full bg-slate-900/90 border border-amber-500/30 rounded-xl p-5 text-center shadow-2xl">
+            <span className="text-amber-400 font-bold font-mono text-sm block mb-2">
+              {this.props.isFr ? 'Anomalie Contexte 3D' : '3D Context Notice'}
+            </span>
+            <p className="text-xs text-slate-400 mb-4 font-mono">
+              {this.props.isFr
+                ? 'Le moteur 3D Three.js a rencontré une limitation matérielle.'
+                : 'The 3D engine encountered a hardware limitation.'}
+            </p>
+            <button
+              type="button"
+              onClick={this.props.onFallback}
+              className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-mono font-bold rounded-lg transition-colors cursor-pointer"
+            >
+              {this.props.isFr ? 'Basculer en Vue Vectorielle CAD' : 'Switch to CAD Vector View'}
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 export type EcosystemStageKey = 
   | 'generation' 
@@ -1532,22 +1577,24 @@ export const AuthoritativeEcosystemHero: React.FC<AuthoritativeEcosystemHeroProp
           {/* ======================================================================= */}
           {activeMode === '3d' && (
             <div className="relative w-full h-full bg-[#070B11]">
-              <Suspense fallback={
-                <div className="w-full h-full flex flex-col items-center justify-center space-y-3 text-slate-400">
-                  <div className="w-8 h-8 rounded-full border-2 border-amber-400 border-t-transparent animate-spin" />
-                  <span className="text-xs font-mono">{isFr ? 'Initialisation de la scène 3D Three.js WebGL...' : 'Initializing 3D Three.js WebGL...'}</span>
-                </div>
-              }>
-                <EcosystemR3FCanvas
-                  viewMode="electrical"
-                  activeEnergySource="hydro"
-                  selectedEquipment={null}
-                  onSelectEquipment={(eq) => onSelectEquipment?.(eq.id)}
-                  isPlayingJourney={isPlayingAnimation}
-                  currentStageId={config.r3fStageId}
-                  locale={locale}
-                />
-              </Suspense>
+              <Hero3DErrorBoundary onFallback={() => setActiveMode('animated')} isFr={isFr}>
+                <Suspense fallback={
+                  <div className="w-full h-full flex flex-col items-center justify-center space-y-3 text-slate-400">
+                    <div className="w-8 h-8 rounded-full border-2 border-amber-400 border-t-transparent animate-spin" />
+                    <span className="text-xs font-mono">{isFr ? 'Initialisation de la scène 3D Three.js WebGL...' : 'Initializing 3D Three.js WebGL...'}</span>
+                  </div>
+                }>
+                  <EcosystemR3FCanvas
+                    viewMode="electrical"
+                    activeEnergySource="hydro"
+                    selectedEquipment={null}
+                    onSelectEquipment={(eq) => onSelectEquipment?.(eq.id)}
+                    isPlayingJourney={isPlayingAnimation}
+                    currentStageId={config.r3fStageId}
+                    locale={locale}
+                  />
+                </Suspense>
+              </Hero3DErrorBoundary>
 
               {/* 3D Controls Helper */}
               <div className="absolute top-3 left-3 z-20 px-3 py-1.5 rounded-lg bg-slate-950/80 border border-slate-800 text-[10px] text-slate-300 font-mono pointer-events-none backdrop-blur-md">

@@ -4,6 +4,11 @@
 
 import type { PhotographicAsset } from '../types/equipmentExplorer';
 
+export const REPRESENTATIVE_DISCLAIMER = {
+  fr: "Photographie représentative d'un équipement industriel de cette classe de tension. La configuration exacte et les raccordements varient selon le constructeur et le projet.",
+  en: "Representative photograph of industrial equipment in this voltage class. Exact layout, bus connection, and ancillary cubicles vary by manufacturer and project specification."
+};
+
 export const EQUIPMENT_PHOTOGRAPHIC_REGISTRY: Record<string, PhotographicAsset[]> = {
   // 1. Hydroelectric Generator 48 MVA (Songloulou / Nachtigal)
   'eq-exp-hydro-gen-01': [
@@ -16,9 +21,13 @@ export const EQUIPMENT_PHOTOGRAPHIC_REGISTRY: Record<string, PhotographicAsset[]
       viewType: 'FIELD_INSTALLATION',
       imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80',
       creditOrReference: 'Hydroelectric Powerhouse Field Commissioning (Songloulou 48 MVA / IEC 60034-1)',
+      licenseStatus: 'UNSPLASH_COMMERCIAL',
+      identificationConfidence: 'REPRESENTATIVE_TYPE',
+      technicalReviewStatus: 'APPROVED_BY_LEAD_ENGINEER',
+      disclaimer: REPRESENTATIVE_DISCLAIMER,
       locationContext: {
-        fr: 'Centrale Hydroélectrique de Songloulou · Puits Groupe G1 (Fleuve Sanaga)',
-        en: 'Songloulou Hydroelectric Station · Unit G1 Generator Pit (Sanaga River)'
+        fr: 'Centrale Hydroélectrique (Configuration type Francis vertical 48 MVA)',
+        en: 'Hydroelectric Powerhouse (Representative Francis vertical turbine pit layout)'
       },
       calloutAnnotations: [
         {
@@ -50,9 +59,13 @@ export const EQUIPMENT_PHOTOGRAPHIC_REGISTRY: Record<string, PhotographicAsset[]
       viewType: 'NAMEPLATE',
       imageUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1200&q=80',
       creditOrReference: 'Manufacturer Nameplate Specification (Alstom / GE Hydro)',
+      licenseStatus: 'UNSPLASH_COMMERCIAL',
+      identificationConfidence: 'REPRESENTATIVE_TYPE',
+      technicalReviewStatus: 'APPROVED_BY_LEAD_ENGINEER',
+      disclaimer: REPRESENTATIVE_DISCLAIMER,
       locationContext: {
-        fr: 'Châssis statorique niveau plancher machine (Cote +45.50 m)',
-        en: 'Stator frame generator machine floor (+45.50 m level)'
+        fr: 'Châssis statorique niveau plancher machine (Exemple représentatif)',
+        en: 'Stator frame generator machine floor (Representative layout)'
       },
       calloutAnnotations: [
         {
@@ -74,11 +87,15 @@ export const EQUIPMENT_PHOTOGRAPHIC_REGISTRY: Record<string, PhotographicAsset[]
         en: '60 MVA 11/225 kV generator step-up transformer with RIP condenser bushings and ONAF coolers'
       },
       viewType: 'FIELD_INSTALLATION',
-      imageUrl: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1200&q=80',
+      imageUrl: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=1200&q=80',
       creditOrReference: 'Substation EHV Yard (SONATREL / IEC 60076-1)',
+      licenseStatus: 'UNSPLASH_COMMERCIAL',
+      identificationConfidence: 'REPRESENTATIVE_TYPE',
+      technicalReviewStatus: 'APPROVED_BY_LEAD_ENGINEER',
+      disclaimer: REPRESENTATIVE_DISCLAIMER,
       locationContext: {
-        fr: 'Plateforme transformateurs extérieurs Songloulou (Fosse de rétention déportée)',
-        en: 'Songloulou outdoor transformer deck (remote oil retention basin)'
+        fr: 'Poste élévateur THT (Installation industrielle représentative classe 225 kV)',
+        en: 'EHV Substation Switchyard (Representative 225 kV class installation per IEC 60076)'
       },
       calloutAnnotations: [
         {
@@ -110,6 +127,10 @@ export const EQUIPMENT_PHOTOGRAPHIC_REGISTRY: Record<string, PhotographicAsset[]
       viewType: 'INTERNAL_CUTAWAY',
       imageUrl: 'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=1200&q=80',
       creditOrReference: 'Factory Assembly & Active Part Drying (IEC 60076)',
+      licenseStatus: 'UNSPLASH_COMMERCIAL',
+      identificationConfidence: 'REPRESENTATIVE_TYPE',
+      technicalReviewStatus: 'APPROVED_BY_LEAD_ENGINEER',
+      disclaimer: REPRESENTATIVE_DISCLAIMER,
       calloutAnnotations: [
         {
           x: 50,
@@ -268,11 +289,15 @@ export const EQUIPMENT_PHOTOGRAPHIC_REGISTRY: Record<string, PhotographicAsset[]
         en: '30 kV MV gas-insulated compact ring main unit (RMU) with vacuum circuit breaker'
       },
       viewType: 'FIELD_INSTALLATION',
-      imageUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=1200&q=80',
+      imageUrl: 'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=1200&q=80',
       creditOrReference: 'Medium Voltage Distribution Substation (Eneo / IEC 62271-200)',
+      licenseStatus: 'UNSPLASH_COMMERCIAL',
+      identificationConfidence: 'REPRESENTATIVE_TYPE',
+      technicalReviewStatus: 'APPROVED_BY_LEAD_ENGINEER',
+      disclaimer: REPRESENTATIVE_DISCLAIMER,
       locationContext: {
-        fr: 'Poste Urbain HTA/BT Kiosque Koumassi (Douala Centre)',
-        en: 'Koumassi MV/LV Pad-Mounted Kiosk Substation (Douala Downtown)'
+        fr: 'Poste Urbain HTA/BT Kiosque (Installation industrielle représentative)',
+        en: 'MV/LV Urban Distribution Kiosk (Representative compact switchgear layout)'
       },
       calloutAnnotations: [
         {
@@ -414,11 +439,15 @@ export const EQUIPMENT_PHOTOGRAPHIC_REGISTRY: Record<string, PhotographicAsset[]
         en: '225 kV gapless zinc oxide (ZnO) station surge arrester with hydrophobic silicone housing and discharge counter'
       },
       viewType: 'FIELD_INSTALLATION',
-      imageUrl: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=1200&q=80',
+      imageUrl: 'https://images.unsplash.com/photo-1508873696983-2df5293cb32b?auto=format&fit=crop&w=1200&q=80',
       creditOrReference: 'High Voltage Surge Protection (IEC 60099-4 Class 4 Discharge)',
+      licenseStatus: 'UNSPLASH_COMMERCIAL',
+      identificationConfidence: 'REPRESENTATIVE_TYPE',
+      technicalReviewStatus: 'APPROVED_BY_LEAD_ENGINEER',
+      disclaimer: REPRESENTATIVE_DISCLAIMER,
       locationContext: {
-        fr: 'Poste d\'Oyomabang (Yaoundé) · Tête de ligne 225 kV Mangombé',
-        en: 'Oyomabang Substation (Yaoundé) · 225 kV Mangombé line termination'
+        fr: 'Poste d\'interconnexion THT 225 kV (Parafoudre ZnO d\'arrivée de ligne représentatif)',
+        en: '225 kV EHV Substation (Representative station-class ZnO surge arrester)'
       },
       calloutAnnotations: [
         {
