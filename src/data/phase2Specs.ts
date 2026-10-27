@@ -136,7 +136,7 @@ export const PHASE2_D01_01_SPEC: Phase2SubdomainSpec = {
 7. Dewatering, Drainage, Cooling Water & Compressed Air Utilities.
 8. Supervisory Control, Data Acquisition & Machine Protection Systems.`,
       content_fr: `1. Système de Génie Civil, Rétention & Adduction Hydraulique (Barrage, Évacuateur de crues, Prises d'eau, Conduites forcées).
-2. Groupe Turbo-Alternateur Électromécanique Principal.
+2. Groupe Hydro-Alternateur Électromécanique Principal.
 3. Système de Régulation de Vitesse, Servomoteurs & Groupe Oléohydraulique Haute Pression (40 à 160 bar).
 4. Système d'Excitation & Régulation Automatique de Tension (AVR).
 5. Système d'Évacuation de Puissance, Gaines à Barres & Disjoncteur Groupe (GCB).
@@ -568,10 +568,10 @@ export const PHASE2_D01_01_SPEC: Phase2SubdomainSpec = {
       title_fr: 'Taxonomie de Recherche & Navigation',
       content_en: `• Primary Keywords: Hydroelectric, Francis, Kaplan, Pelton, Synchronous Alternator, GSU Transformer, Governor, Wicket Gates, Cavitation, Water Hammer, Joukowsky, Black-Start.
 • Navigation Category: Primary Generation / Hydraulic Power.
-• Synonyms: Hydro power plant, Centrale hydraulique, Usine hydroélectrique, Groupe turbo-alternateur.`,
+• Synonyms: Hydro power plant, Centrale hydraulique, Usine hydroélectrique, Groupe hydro-alternateur.`,
       content_fr: `• Mots-clés Principaux : Hydroélectricité, Francis, Kaplan, Pelton, Alternateur Synchrone, Transformateur Élévateur, Régulateur de Vitesse, Directrices, Cavitation, Coup de Bélier, Joukowsky, Démarrage Autonome.
 • Arborescence : Production Électrique / Filière Hydraulique.
-• Synonymes : Hydro power plant, Centrale hydraulique, Usine hydroélectrique, Groupe turbo-alternateur.`
+• Synonymes : Hydro power plant, Centrale hydraulique, Usine hydroélectrique, Groupe hydro-alternateur.`
     },
     {
       number: 40,

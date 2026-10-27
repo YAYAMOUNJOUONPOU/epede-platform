@@ -67,9 +67,9 @@ const PLATFORM_FEATURES = [
     bg: 'rgba(215,166,74,0.12)',
     border: 'rgba(215,166,74,0.35)',
     label: { fr: 'Référentiel Matériel', en: 'Equipment Reference' },
-    desc: { fr: '57 équipements · 10 onglets techniques · AMDEC', en: '57 equipment · 10 technical tabs · FMEA' },
+    desc: { fr: '39 fiches matériels réelles · AMDEC · Normes', en: '39 deep-dive equipment sheets · FMEA · Standards' },
     view: 'equipment-reference',
-    badge: '57 EQ',
+    badge: '39 EQ',
   },
   {
     id: 'calculators',
@@ -370,8 +370,8 @@ export const LivePowerFlowHero: React.FC<LivePowerFlowHeroProps> = ({
               </h1>
               <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl font-normal">
                 {locale === 'fr'
-                  ? 'De la production hydroélectrique au consommateur final — 16 domaines, 57 équipements, 17 calculateurs CEI/IEEE, 16 laboratoires de simulation.'
-                  : 'From hydroelectric generation to the final consumer — 16 domains, 57 equipment, 17 IEC/IEEE calculators, 16 simulation labs.'}
+                  ? 'De la production hydroélectrique au consommateur final — 16 domaines, 39 fiches matériels réelles, 17 calculateurs CEI/IEEE, 16 laboratoires de simulation.'
+                  : 'From hydroelectric generation to the final consumer — 16 domains, 39 real equipment sheets, 17 IEC/IEEE calculators, 16 simulation labs.'}
               </p>
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <motion.button

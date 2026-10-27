@@ -113,7 +113,7 @@ export const CAMEROON_POWER_PLANTS: PowerPlantNode[] = [
     region: 'Centre',
     grid_system: 'RIS',
     river_or_fuel: 'Fleuve Sanaga (régularisé par Lom Pangar)',
-    units_description: '7 groupes turbo-alternateurs Francis de 60 MW chacun (chute 51,5 m)',
+    units_description: '7 groupes hydro-alternateurs Francis de 60 MW chacun (chute 51,5 m)',
     commissioning_year: '2024 - 2025',
     operator: 'NHPC (Nachtigal Hydro Power Company) · Évacuation SONATREL',
     technical_specs: {
@@ -140,7 +140,7 @@ export const CAMEROON_POWER_PLANTS: PowerPlantNode[] = [
     region: 'Littoral',
     grid_system: 'RIS',
     river_or_fuel: 'Fleuve Sanaga',
-    units_description: '8 groupes turbo-alternateurs Francis de 48 MW chacun',
+    units_description: '8 groupes hydro-alternateurs Francis de 48 MW chacun',
     commissioning_year: '1981 (Phase 1) · 1988 (Phase 2)',
     operator: 'Eneo Cameroon · Transport SONATREL',
     technical_specs: {

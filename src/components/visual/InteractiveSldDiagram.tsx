@@ -208,8 +208,8 @@ export const InteractiveSldDiagram: React.FC<InteractiveSldDiagramProps> = ({
     },
     G1: {
       tag: 'G1',
-      nameFr: 'Groupe Turbo-Alternateur Synchrone (G1)',
-      nameEn: 'Synchronous Turbo-Generator Unit (G1)',
+      nameFr: 'Groupe Hydro-Alternateur Synchrone (G1)',
+      nameEn: 'Synchronous Hydro-Generator Unit (G1)',
       typeFr: 'Alternateur synchrone à pôles saillants',
       typeEn: 'Salient-Pole Synchronous Alternator',
       ratedVoltage: '15 kV',

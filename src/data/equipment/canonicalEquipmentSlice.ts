@@ -9,12 +9,12 @@ export const BACKBONE_EQUIPMENT_ITEMS: CanonicalEquipmentObject[] = [
     id: 'eq-exp-hydro-gen-01',
     tagIec: '--G01',
     name: {
-      fr: 'Groupe Turbo-Alternateur Hydroélectrique (Songloulou 48 MVA)',
-      en: 'Hydroelectric Turbo-Generator Unit (Songloulou 48 MVA)'
+      fr: 'Groupe Hydro-Alternateur à Pôles Saillants (Songloulou 48 MW / 57.6 MVA)',
+      en: 'Salient-Pole Hydroelectric Generator Unit (Songloulou 48 MW / 57.6 MVA)'
     },
     aliases: {
-      fr: ['Alternateur synchrone Songloulou', 'Groupe 1 Francis', 'Générateur hydroélectrique'],
-      en: ['Salient-pole Hydro Generator', 'Francis Turbo-Alternator G1', '48 MVA Generator']
+      fr: ['Alternateur synchrone Songloulou', 'Groupe 1 Francis', 'Hydro-alternateur 57.6 MVA'],
+      en: ['Salient-pole Hydro Generator', 'Francis Hydro-Alternator G1', '48 MW Generator']
     },
     equipmentType: 'HydroGeneratorUnit',
     category: 'GENERATION',
@@ -49,8 +49,8 @@ export const BACKBONE_EQUIPMENT_ITEMS: CanonicalEquipmentObject[] = [
       en: 'Rotating electrical machine converting mechanical shaft torque delivered by hydraulic turbine into balanced three-phase 10.5 kV alternating electrical power.'
     },
     purpose: {
-      fr: 'Injecter une puissance active de 40.8 MW et fournir un soutien réactif dynamique pour réguler la tension de transport.',
-      en: 'Inject 40.8 MW of active power while supplying dynamic reactive power to regulate transmission voltage.'
+      fr: 'Injecter une puissance active de 48 MW (57.6 MVA à cos φ = 0.83) et fournir un soutien réactif dynamique pour réguler la tension de transport.',
+      en: 'Inject 48 MW of active power (57.6 MVA at PF = 0.83) while supplying dynamic reactive power to regulate transmission voltage.'
     },
     engineeringProblemSolved: {
       fr: 'Assure la conversion électromécanique avec un rendement supérieur à 97% et une inertie H=3.85s indispensable à la stabilité fréquentielle.',
@@ -553,7 +553,7 @@ export const BACKBONE_EQUIPMENT_ITEMS: CanonicalEquipmentObject[] = [
       }
     ],
     effectsOfFailureSummary: {
-      fr: 'Perte de l\'évacuation du groupe turbo-alternateur associé, nécessitant 3 à 6 mois de réparation en usine.',
+      fr: 'Perte de l\'évacuation du groupe hydro-alternateur associé, nécessitant 3 à 6 mois de réparation en usine.',
       en: 'Complete loss of unit evacuation, requiring 3 to 6 months of heavy workshop overhaul.'
     },
     safetyAndHazards: {

@@ -99,7 +99,7 @@ export const CAMEROON_CONTINGENCY_SCENARIOS: ContingencyScenario[] = [
     affectedCorridor: 'Réseau Interconnecté Sud (RIS)',
     overloadPercentage: 78,
     voltageSagPu: 0.91,
-    descriptionFr: 'Défaut interne transfo élévateur GSU 2 coupant 3 groupes turbo-alternateurs (180 MW). Chute brutale de la fréquence à 49.25 Hz. Le plan de délestage fréquencemétrique (UFLS) s\'active.',
+    descriptionFr: 'Défaut interne transfo élévateur GSU 2 coupant 3 groupes hydro-alternateurs (180 MW). Chute brutale de la fréquence à 49.25 Hz. Le plan de délestage fréquencemétrique (UFLS) s\'active.',
     descriptionEn: 'Internal fault on GSU step-up transformer tripping 3 hydro units (180 MW). Sudden frequency dip to 49.25 Hz, triggering Stage 1 load shedding.',
     automatedActionsFr: [
       'Chute de fréquence détectée : RoCoF = -0.42 Hz/s.',

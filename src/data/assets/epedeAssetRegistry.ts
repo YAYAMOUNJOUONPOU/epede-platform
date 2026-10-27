@@ -111,7 +111,7 @@ export const EPEDE_ASSET_REGISTRY: Record<string, EpedeImageAsset> = {
     lastReviewed: '2026-10-05',
     calloutAnnotations: [
       { xPercent: 32, yPercent: 45, label: { fr: 'Retenue d\'Eau Amont', en: 'Upstream Reservoir' }, detail: { fr: 'Énergie potentielle gravitationnelle Ep = m·g·H', en: 'Gravitational potential energy Ep = m·g·H' } },
-      { xPercent: 55, yPercent: 68, label: { fr: 'Usine de Pied', en: 'Powerhouse Pit' }, detail: { fr: 'Groupes turbo-alternateurs synchrones 150 tr/min', en: '150 RPM synchronous hydro generator units' } },
+      { xPercent: 55, yPercent: 68, label: { fr: 'Usine de Pied', en: 'Powerhouse Pit' }, detail: { fr: 'Groupes hydro-alternateurs synchrones 150 tr/min', en: '150 RPM synchronous hydro generator units' } },
       { xPercent: 78, yPercent: 35, label: { fr: 'Poste Évacuation Énergie', en: 'Step-Up Switchyard' }, detail: { fr: 'Transformateurs GSU 15/225 kV et départs THT', en: '15/225 kV GSU transformers and outgoing EHV bays' } }
     ]
   },

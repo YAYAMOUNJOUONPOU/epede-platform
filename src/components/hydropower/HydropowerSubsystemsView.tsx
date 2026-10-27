@@ -95,8 +95,8 @@ export const HydropowerSubsystemsView: React.FC<HydropowerSubsystemsViewProps> =
             </h2>
             <p className="text-sm text-neutral-300 mt-1 max-w-3xl">
               {locale === 'fr'
-                ? 'Couverture exhaustive de la centrale hydroélectrique : génie civil, circuit hydraulique, groupes turbo-alternateurs, postes d\'évacuation HTB, automatisation et auxiliaires d\'usine.'
-                : 'Exhaustive hydroelectric powerhouse coverage: civil works, hydraulic waterways, turbo-generator units, HV substation evacuation, DCS automation, and plant auxiliaries.'}
+                ? 'Couverture exhaustive de la centrale hydroélectrique : génie civil, circuit hydraulique, groupes hydro-alternateurs, postes d\'évacuation HTB, automatisation et auxiliaires d\'usine.'
+                : 'Exhaustive hydroelectric powerhouse coverage: civil works, hydraulic waterways, hydro-generator units, HV substation evacuation, DCS automation, and plant auxiliaries.'}
             </p>
           </div>
 

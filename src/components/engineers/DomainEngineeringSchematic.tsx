@@ -39,8 +39,8 @@ export const DomainEngineeringSchematic: React.FC<DomainEngineeringSchematicProp
     hotspots: Hotspot[];
   }> = {
     production: {
-      titleFr: "Coupe Technique Groupe Turbo-Alternateur Hydroélectrique",
-      titleEn: "Hydroelectric Turbine-Generator Cross-Section Technical Blueprint",
+      titleFr: "Coupe Technique Groupe Hydro-Alternateur Hydroélectrique",
+      titleEn: "Hydroelectric Generator Cross-Section Technical Blueprint",
       subtitleFr: "Visualisation des composants mécaniques, électriques et d'automatisme associés aux ingénieurs",
       subtitleEn: "Visualization of mechanical, electrical and control components mapped to engineers",
       diagramType: "hydro-generator",

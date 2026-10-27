@@ -238,10 +238,15 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </button>
 
-          <button
-            type="button"
-            onClick={() => navigateTo('home')}
-            className="flex items-center gap-3 text-left group focus:outline-none cursor-pointer"
+          <a
+            href="#/"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                navigateTo('home');
+              }
+            }}
+            className="flex items-center gap-3 text-left group focus:outline-none cursor-pointer select-none no-underline"
           >
             <div className="relative flex items-center justify-center h-9 w-9 rounded-xl bg-gradient-to-br from-amber-500/25 via-slate-900 to-slate-950 border border-amber-500/50 group-hover:border-amber-400 group-hover:shadow-[0_0_18px_rgba(245,158,11,0.45)] transition-all shadow-md shrink-0">
               <span className="font-mono font-black text-sm text-amber-400 group-hover:scale-110 transition-transform">
@@ -264,60 +269,59 @@ export const Header: React.FC<HeaderProps> = ({
                 Electrical Power Engineering Digital Environment
               </p>
             </div>
-          </button>
+          </a>
         </div>
 
-        {/* Center / Right: Minimal Navigation Links (EXPLORE, DOMAINS, SYSTEMS, SEARCH, ABOUT) */}
+        {/* Center / Right: Minimal Navigation Links (EXPLORE, CALCULATE, EQUIPMENT, DOMAINS, SYSTEMS) */}
         <nav className="hidden md:flex items-center gap-1.5 lg:gap-2 font-mono text-xs font-semibold text-slate-300">
           
-          {/* 3D ECOSYSTEM (Primary Interactive Gateway) */}
-          <button
-            type="button"
-            onClick={() => navigateTo('ecosystem')}
-            className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
-              currentView === 'ecosystem'
-                ? 'text-cyan-300 bg-gradient-to-r from-cyan-950/90 to-sky-950/80 border border-cyan-500/70 font-bold shadow-md shadow-cyan-500/25 ring-1 ring-cyan-500/30'
-                : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800'
-            }`}
-          >
-            <span className="text-amber-400">⚡</span>
-            <span>{locale === 'fr' ? 'ÉCOSYSTÈME 3D' : '3D ECOSYSTEM'}</span>
-            <span className="text-[8px] px-1 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-mono font-bold border border-cyan-500/40">
-              3D
-            </span>
-          </button>
-
-          {/* EXPLORE */}
-          <button
-            type="button"
-            onClick={() => navigateTo('journey')}
-            className={`px-3 py-1.5 rounded-xl transition-all ${
+          {/* APPRENDRE / EXPLORER */}
+          <a
+            href="#/journey"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                navigateTo('journey');
+              }
+            }}
+            className={`px-3 py-1.5 rounded-xl transition-all select-none no-underline ${
               ['journey', 'home'].includes(currentView)
                 ? 'text-amber-300 bg-amber-500/15 border border-amber-500/40 font-bold shadow-sm shadow-amber-500/20'
                 : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800'
             }`}
           >
-            {locale === 'fr' ? 'EXPLORER' : 'EXPLORE'}
-          </button>
+            {locale === 'fr' ? 'APPRENDRE' : 'LEARN'}
+          </a>
 
-          {/* DOMAINS */}
-          <button
-            type="button"
-            onClick={() => navigateTo('domains')}
-            className={`px-3 py-1.5 rounded-xl transition-all ${
-              currentView === 'domains'
-                ? 'text-amber-300 bg-amber-500/15 border border-amber-500/40 font-bold shadow-sm shadow-amber-500/20'
+          {/* CALCULER (Direct Core Door) */}
+          <a
+            href="#/calculators"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                navigateTo('calculators');
+              }
+            }}
+            className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 select-none no-underline ${
+              currentView === 'calculators'
+                ? 'text-cyan-300 bg-cyan-950/90 border border-cyan-500/70 font-bold shadow-md shadow-cyan-500/25 ring-1 ring-cyan-500/30'
                 : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800'
             }`}
           >
-            {locale === 'fr' ? 'DOMAINES' : 'DOMAINS'}
-          </button>
+            <span className="text-cyan-400">⚡</span>
+            <span>{locale === 'fr' ? 'CALCULER' : 'CALCULATE'}</span>
+          </a>
 
-          {/* REAL-WORLD ELECTRICAL EQUIPMENT REFERENCE */}
-          <button
-            type="button"
-            onClick={() => navigateTo('equipment-reference')}
-            className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
+          {/* MATÉRIEL */}
+          <a
+            href="#/equipment"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                navigateTo('equipment-reference');
+              }
+            }}
+            className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 select-none no-underline ${
               currentView === 'equipment-reference' || currentView === 'equipment' || currentView === 'equipment-list'
                 ? 'text-amber-300 bg-amber-500/15 border border-amber-500/40 font-bold shadow-sm shadow-amber-500/20'
                 : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800'
@@ -325,9 +329,45 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <span>{locale === 'fr' ? 'MATÉRIEL' : 'EQUIPMENT'}</span>
             <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 font-black border border-amber-500/40">
-              {locale === 'fr' ? 'RÉEL' : 'REAL'}
+              39
             </span>
-          </button>
+          </a>
+
+          {/* DOMAINS */}
+          <a
+            href="#/domains"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                navigateTo('domains');
+              }
+            }}
+            className={`px-3 py-1.5 rounded-xl transition-all select-none no-underline ${
+              currentView === 'domains'
+                ? 'text-amber-300 bg-amber-500/15 border border-amber-500/40 font-bold shadow-sm shadow-amber-500/20'
+                : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800'
+            }`}
+          >
+            {locale === 'fr' ? 'DOMAINES' : 'DOMAINS'}
+          </a>
+
+          {/* RÉSEAU CAMEROUN */}
+          <a
+            href="#/cameroon-grid"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                navigateTo('cameroon-grid');
+              }
+            }}
+            className={`px-3 py-1.5 rounded-xl transition-all select-none no-underline ${
+              currentView === 'cameroon-grid'
+                ? 'text-emerald-300 bg-emerald-950/80 border border-emerald-500/60 font-bold shadow-sm shadow-emerald-500/20'
+                : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800'
+            }`}
+          >
+            <span>{locale === 'fr' ? 'RÉSEAU CAMEROUN' : 'CAMEROON GRID'}</span>
+          </a>
 
           {/* SYSTEMS Dropdown */}
           <div ref={systemsMenuRef} className="relative">

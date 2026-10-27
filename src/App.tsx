@@ -561,8 +561,8 @@ export default function App() {
         />
       )}
 
-      {/* Persistent Engineering Context Stack Dock (Priorities 1 & 12) */}
-      {currentView !== 'ecosystem' && (
+      {/* Persistent Engineering Context Stack Dock (Deep-Dive views only) */}
+      {currentView !== 'ecosystem' && currentView !== 'home' && (
         <PersistentEngineeringContextDock
           locale={locale}
           onNavigateToTarget={(target) => {

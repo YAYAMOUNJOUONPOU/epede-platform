@@ -4,4 +4,4 @@ User-agent: *
 Allow: /
 
 # Canonical XML Sitemap
-Sitemap: https://epede.engineering/sitemap.xml
+Sitemap: https://epede-platform.vercel.app/sitemap.xml

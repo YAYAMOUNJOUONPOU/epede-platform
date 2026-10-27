@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import type { DomainCode, Equipment } from '../../types/epede';
 import { EquipmentComparisonModal } from './EquipmentComparisonModal';
+import { formatEntityType } from '../../utils/engineeringDisplayUtils';
 
 interface EquipmentListViewProps {
   locale: 'fr' | 'en';
@@ -238,11 +239,17 @@ export const EquipmentListView: React.FC<EquipmentListViewProps> = ({
           const canSelect = isSelected || selectedForComparison.length < 3;
 
           return (
-            <div
+            <a
               key={eq.id}
+              href={`#/equipment/${eq.id}`}
               data-testid={`equipment-card-${eq.id}`}
-              onClick={() => onSelectEquipment(eq.id)}
-              className={`rounded-xl border bg-[#0D1117] p-5 hover:border-cyan-400 transition-all cursor-pointer group shadow-md flex flex-col justify-between relative ${
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onSelectEquipment(eq.id);
+                }
+              }}
+              className={`rounded-xl border bg-[#0D1117] p-5 hover:border-cyan-400 transition-all cursor-pointer group shadow-md flex flex-col justify-between relative select-none no-underline block ${
                 isSelected 
                   ? 'border-cyan-500 bg-cyan-950/10 shadow-[0_0_15px_rgba(6,182,212,0.15)]' 
                   : 'border-[#252E38]'
@@ -315,13 +322,15 @@ export const EquipmentListView: React.FC<EquipmentListViewProps> = ({
               </div>
 
               <div className="mt-4 pt-3 border-t border-[#252E38] flex items-center justify-between text-xs font-mono">
-                <span className="text-neutral-500 font-bold uppercase tracking-wider text-[11px]">{eq.entity_type}</span>
-                <span className="text-cyan-400 font-bold uppercase tracking-wider group-hover:translate-x-1 transition-transform flex items-center gap-1">
+                <span className="text-neutral-400 font-medium tracking-wide text-[11px] truncate max-w-[180px]">
+                  {formatEntityType(eq.entity_type, locale)}
+                </span>
+                <span className="text-cyan-400 font-bold uppercase tracking-wider group-hover:translate-x-1 transition-transform flex items-center gap-1 shrink-0">
                   <span>{locale === 'fr' ? 'Fiche complète' : 'Details'}</span>
                   <ArrowRight className="h-3 w-3" />
                 </span>
               </div>
-            </div>
+            </a>
           );
         })}
       </div>

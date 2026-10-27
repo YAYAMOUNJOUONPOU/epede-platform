@@ -118,8 +118,8 @@ export const ScadaTelemetryBar: React.FC<ScadaTelemetryBarProps> = ({ locale }) 
       <div
         id="scada-telemetry-bar"
         role="region"
-        aria-label="SCADA Grid Status and Telemetry"
-        className={`w-full backdrop-blur-xl border-b text-xs font-mono select-none px-3 sm:px-6 py-1.5 transition-colors shadow-sm ${
+        aria-label="Grid Simulation Telemetry"
+        className={`hidden sm:block w-full backdrop-blur-xl border-b text-xs font-mono select-none px-3 sm:px-6 py-1.5 transition-colors shadow-sm ${
           isAlarm
             ? 'bg-rose-950/90 border-rose-500/80 text-rose-100 animate-pulse'
             : 'bg-[#02050E]/95 border-white/[0.06] text-slate-300'
@@ -127,12 +127,13 @@ export const ScadaTelemetryBar: React.FC<ScadaTelemetryBarProps> = ({ locale }) 
       >
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-y-1.5 gap-x-4">
           
-          {/* Left: SCADA Status indicator & Bus Voltage */}
+          {/* Left: Simulation Status indicator & Bus Voltage */}
           <div className="flex items-center gap-3 overflow-x-auto">
             {/* Status Badge */}
             <button
               type="button"
               onClick={() => setIsConsoleOpen(true)}
+              title={isFr ? "Modèle didactique temps réel (Cliquer pour ouvrir la console d'incidents)" : "Pedagogical real-time model (Click to open incident console)"}
               className={`flex items-center gap-2 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider cursor-pointer transition-all active:scale-95 shadow-xs ${
                 isAlarm
                   ? 'bg-rose-600 text-white border border-rose-400 shadow-md shadow-rose-900/50'
@@ -143,7 +144,7 @@ export const ScadaTelemetryBar: React.FC<ScadaTelemetryBarProps> = ({ locale }) 
                 <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${isAlarm ? 'bg-rose-200' : 'bg-sky-400'}`} />
                 <span className={`relative inline-flex rounded-full h-2 w-2 ${isAlarm ? 'bg-white' : 'bg-sky-400'}`} />
               </span>
-              <span>{isAlarm ? (isFr ? 'ALERTE CCR · INCIDENT' : 'CCR ALERT · FAULT') : 'SCADA · LIVE'}</span>
+              <span>{isAlarm ? (isFr ? 'SIMULATION · INCIDENT' : 'SIMULATION · FAULT') : (isFr ? 'SIMULATEUR DIDACTIQUE' : 'GRID SIMULATOR')}</span>
             </button>
 
             {/* Substation Identity */}

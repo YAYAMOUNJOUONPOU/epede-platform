@@ -80,7 +80,7 @@ const CALCULATOR_SPINE_LINKS: Record<
 > = {
   power: {
     nodeId: 'node-gen-g1',
-    nodeName: { fr: 'Alternateur Hydro 48 MVA (Songloulou G1)', en: '48 MVA Hydro Generator (Songloulou G1)' },
+    nodeName: { fr: 'Hydro-alternateur 48 MW / 57.6 MVA (Songloulou G1)', en: '48 MW / 57.6 MVA Hydro Generator (Songloulou G1)' },
     simTab: 'generator-capability',
     simName: { fr: 'Diagramme P-Q & Stabilité', en: 'P-Q Capability & Stability' },
   },
@@ -336,228 +336,50 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* Semantic Crawlable Tabs */}
       <div className="flex gap-2 overflow-x-auto border-b border-white/[0.07] pb-3.5 pt-1 scrollbar-thin">
-        <button
-          type="button"
-          onClick={() => handleSelectCalc('power')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-tech text-xs font-bold whitespace-nowrap transition-all border shadow-sm ${
-            activeCalc === 'power'
-              ? 'border-amber-400/80 bg-gradient-to-r from-amber-500/20 to-amber-500/10 text-amber-300 shadow-[0_0_16px_rgba(245,158,11,0.25)] ring-1 ring-amber-400/40'
-              : 'border-white/[0.07] bg-white/[0.02] text-slate-400 hover:text-white hover:bg-white/[0.06] hover:border-white/[0.15]'
-          }`}
-        >
-          <Zap className="h-4 w-4 text-amber-400" />
-          <span>{locale === 'fr' ? 'Puissance & Courant Triphasé' : '3-Phase Power & Current'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleSelectCalc('voltage-drop')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-tech text-xs font-bold whitespace-nowrap transition-all border shadow-sm ${
-            activeCalc === 'voltage-drop'
-              ? 'border-amber-400/80 bg-gradient-to-r from-amber-500/20 to-amber-500/10 text-amber-300 shadow-[0_0_16px_rgba(245,158,11,0.25)] ring-1 ring-amber-400/40'
-              : 'border-white/[0.07] bg-white/[0.02] text-slate-400 hover:text-white hover:bg-white/[0.06] hover:border-white/[0.15]'
-          }`}
-        >
-          <Activity className="h-4 w-4 text-cyan-400" />
-          <span>{locale === 'fr' ? 'Chute de Tension Câble (ΔU)' : 'Cable Voltage Drop (ΔU)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleSelectCalc('transformer')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-tech text-xs font-bold whitespace-nowrap transition-all border shadow-sm ${
-            activeCalc === 'transformer'
-              ? 'border-amber-400/80 bg-gradient-to-r from-amber-500/20 to-amber-500/10 text-amber-300 shadow-[0_0_16px_rgba(245,158,11,0.25)] ring-1 ring-amber-400/40'
-              : 'border-white/[0.07] bg-white/[0.02] text-slate-400 hover:text-white hover:bg-white/[0.06] hover:border-white/[0.15]'
-          }`}
-        >
-          <Cpu className="h-4 w-4 text-emerald-400" />
-          <span>{locale === 'fr' ? 'Transformateur & Isc' : 'Transformer & Short-Circuit'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleSelectCalc('motor')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeCalc === 'motor'
-              ? 'border-amber-400 bg-amber-500/15 text-amber-300 font-bold shadow-md shadow-amber-500/10 ring-1 ring-amber-400/30'
-              : 'border-slate-800 bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800/80 hover:border-slate-700'
-          }`}
-        >
-          <Sliders className="h-4 w-4" />
-          <span>{locale === 'fr' ? 'Moteur & Démarrage' : 'Motor & Inrush Current'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleSelectCalc('sil')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeCalc === 'sil'
-              ? 'border-amber-400 bg-amber-500/15 text-amber-300 font-bold shadow-md shadow-amber-500/10 ring-1 ring-amber-400/30'
-              : 'border-slate-800 bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800/80 hover:border-slate-700'
-          }`}
-        >
-          <Globe className="h-4 w-4" />
-          <span>{locale === 'fr' ? 'Ligne HTB & SIL (Ferranti)' : 'HV Line SIL & Ferranti'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleSelectCalc('earthing')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeCalc === 'earthing'
-              ? 'border-amber-400 bg-amber-500/15 text-amber-300 font-bold shadow-md shadow-amber-500/10 ring-1 ring-amber-400/30'
-              : 'border-slate-800 bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800/80 hover:border-slate-700'
-          }`}
-        >
-          <ShieldAlert className="h-4 w-4" />
-          <span>{locale === 'fr' ? 'Mise à la Terre IEEE 80' : 'IEEE 80 Substation Grounding'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleSelectCalc('arc-flash')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeCalc === 'arc-flash'
-              ? 'border-amber-400 bg-amber-500/15 text-amber-300 font-bold shadow-md shadow-amber-500/10 ring-1 ring-amber-400/30'
-              : 'border-slate-800 bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800/80 hover:border-slate-700'
-          }`}
-        >
-          <Flame className="h-4 w-4 text-amber-400" />
-          <span>{locale === 'fr' ? 'Arc Flash (IEEE 1584 / NFPA 70E)' : 'Arc Flash (IEEE 1584 / NFPA 70E)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleSelectCalc('ct-sizing')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeCalc === 'ct-sizing'
-              ? 'border-amber-400 bg-amber-500/15 text-amber-300 font-bold shadow-md shadow-amber-500/10 ring-1 ring-amber-400/30'
-              : 'border-slate-800 bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800/80 hover:border-slate-700'
-          }`}
-        >
-          <Gauge className="h-4 w-4 text-sky-400" />
-          <span>{locale === 'fr' ? 'Transformateur de Courant (TC CEI 61869)' : 'CT Sizing & Saturation'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleSelectCalc('pfc')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeCalc === 'pfc'
-              ? 'border-amber-400 bg-amber-500/15 text-amber-300 font-bold shadow-md shadow-amber-500/10 ring-1 ring-amber-400/30'
-              : 'border-slate-800 bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800/80 hover:border-slate-700'
-          }`}
-        >
-          <Layers className="h-4 w-4 text-sky-400" />
-          <span>{locale === 'fr' ? 'Compensation Réactive (Qc Condensateurs)' : 'Power Factor Correction (Capacitors)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleSelectCalc('solar-sizing')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeCalc === 'solar-sizing'
-              ? 'border-amber-400 bg-amber-500/15 text-amber-300 font-bold shadow-md shadow-amber-500/10 ring-1 ring-amber-400/30'
-              : 'border-slate-800 bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800/80 hover:border-slate-700'
-          }`}
-        >
-          <Sun className="h-4 w-4 text-amber-400" />
-          <span>{locale === 'fr' ? 'Solaire PV & Chaînes (CEI 62548)' : 'Solar PV String Sizing (IEC 62548)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleSelectCalc('bess-sizing')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeCalc === 'bess-sizing'
-              ? 'border-amber-400 bg-amber-500/15 text-amber-300 font-bold shadow-md shadow-amber-500/10 ring-1 ring-amber-400/30'
-              : 'border-slate-800 bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800/80 hover:border-slate-700'
-          }`}
-        >
-          <Battery className="h-4 w-4 text-emerald-400" />
-          <span>{locale === 'fr' ? 'Stockage BESS & C-Rate (CEI 62933)' : 'BESS Battery Sizing (IEC 62933)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleSelectCalc('surge-arrester')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeCalc === 'surge-arrester'
-              ? 'border-amber-400 bg-amber-500/15 text-amber-300 font-bold shadow-md shadow-amber-500/10 ring-1 ring-amber-400/30'
-              : 'border-slate-800 bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800/80 hover:border-slate-700'
-          }`}
-        >
-          <ShieldAlert className="h-4 w-4 text-sky-400" />
-          <span>{locale === 'fr' ? 'Parafoudre & Isolement (CEI 60099-4 / 60071)' : 'Surge Arrester & Insulation (IEC 60099/60071)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleSelectCalc('busbar-electrodynamic')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeCalc === 'busbar-electrodynamic'
-              ? 'border-amber-400 bg-amber-500/15 text-amber-300 font-bold shadow-md shadow-amber-500/10 ring-1 ring-amber-400/30'
-              : 'border-slate-800 bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800/80 hover:border-slate-700'
-          }`}
-        >
-          <Layers className="h-4 w-4 text-sky-400" />
-          <span>{locale === 'fr' ? 'Jeu de Barres & Électrodynamique (CEI 60865-1)' : 'Busbar Electrodynamic Forces (IEC 60865-1)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleSelectCalc('cable-ampacity')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeCalc === 'cable-ampacity'
-              ? 'border-amber-400 bg-amber-500/15 text-amber-300 font-bold shadow-md shadow-amber-500/10 ring-1 ring-amber-400/30'
-              : 'border-slate-800 bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800/80 hover:border-slate-700'
-          }`}
-        >
-          <Zap className="h-4 w-4 text-sky-400" />
-          <span>{locale === 'fr' ? 'Dimensionnement Câbles & Déclassement (CEI 60364/60287)' : 'Cable Sizing & Thermal Ampacity (IEC 60364/60287)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleSelectCalc('transmission-line')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeCalc === 'transmission-line'
-              ? 'border-amber-400 bg-amber-500/15 text-amber-300 font-bold shadow-md shadow-amber-500/10 ring-1 ring-amber-400/30'
-              : 'border-slate-800 bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800/80 hover:border-slate-700'
-          }`}
-        >
-          <Globe className="h-4 w-4 text-sky-400" />
-          <span>{locale === 'fr' ? 'Ligne THT, Faisceaux & Corona (CEI 60826 / Peek)' : 'Overhead Line Bundles & Corona (IEC 60826 / Peek)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleSelectCalc('neutral-grounding')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeCalc === 'neutral-grounding'
-              ? 'border-amber-400 bg-amber-500/15 text-amber-300 font-bold shadow-md shadow-amber-500/10 ring-1 ring-amber-400/30'
-              : 'border-slate-800 bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800/80 hover:border-slate-700'
-          }`}
-        >
-          <ShieldAlert className="h-4 w-4 text-amber-400" />
-          <span>{locale === 'fr' ? 'Régimes de Neutre RPN & Petersen (CEI 60071 / NF C 13-200)' : 'Neutral Earthing NGR & Petersen (IEC 60071 / NF C 13-200)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleSelectCalc('relay-tcc')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeCalc === 'relay-tcc'
-              ? 'border-cyan-400 bg-cyan-500/15 text-cyan-300 font-bold shadow-md shadow-cyan-500/10 ring-1 ring-cyan-400/30'
-              : 'border-slate-800 bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800/80 hover:border-slate-700'
-          }`}
-        >
-          <ShieldCheck className="h-4 w-4 text-cyan-400" />
-          <span>{locale === 'fr' ? 'Sélectivité & Courbes TCC (CEI 60255 / IEEE 242)' : 'Relay Coordination & TCC Curves (IEC 60255 / IEEE 242)'}</span>
-        </button>
+        {[
+          { id: 'power' as CalculatorTabType, labelFr: 'Puissance & Courant Triphasé', labelEn: '3-Phase Power & Current', icon: Zap },
+          { id: 'voltage-drop' as CalculatorTabType, labelFr: 'Chute de Tension Câble (ΔU)', labelEn: 'Cable Voltage Drop (ΔU)', icon: Activity },
+          { id: 'transformer' as CalculatorTabType, labelFr: 'Transformateur & Isc', labelEn: 'Transformer & Short-Circuit', icon: Cpu },
+          { id: 'motor' as CalculatorTabType, labelFr: 'Moteur & Démarrage', labelEn: 'Motor & Inrush Current', icon: Sliders },
+          { id: 'sil' as CalculatorTabType, labelFr: 'Ligne HTB & SIL (Ferranti)', labelEn: 'HV Line SIL & Ferranti', icon: Globe },
+          { id: 'earthing' as CalculatorTabType, labelFr: 'Mise à la Terre IEEE 80', labelEn: 'IEEE 80 Substation Grounding', icon: ShieldAlert },
+          { id: 'arc-flash' as CalculatorTabType, labelFr: 'Arc Flash (IEEE 1584 / NFPA 70E)', labelEn: 'Arc Flash (IEEE 1584 / NFPA 70E)', icon: Flame },
+          { id: 'ct-sizing' as CalculatorTabType, labelFr: 'Transformateur de Courant (TC CEI 61869)', labelEn: 'CT Sizing & Saturation', icon: Gauge },
+          { id: 'pfc' as CalculatorTabType, labelFr: 'Compensation Réactive (Qc Condensateurs)', labelEn: 'Power Factor Correction (Capacitors)', icon: Layers },
+          { id: 'solar-sizing' as CalculatorTabType, labelFr: 'Solaire PV & Chaînes (CEI 62548)', labelEn: 'Solar PV String Sizing (IEC 62548)', icon: Sun },
+          { id: 'bess-sizing' as CalculatorTabType, labelFr: 'Stockage BESS & C-Rate (CEI 62933)', labelEn: 'BESS Battery Sizing (IEC 62933)', icon: Battery },
+          { id: 'surge-arrester' as CalculatorTabType, labelFr: 'Parafoudre & Isolement (CEI 60099/60071)', labelEn: 'Surge Arrester & Insulation (IEC 60099/60071)', icon: ShieldAlert },
+          { id: 'busbar-electrodynamic' as CalculatorTabType, labelFr: 'Jeu de Barres & Électrodynamique (CEI 60865-1)', labelEn: 'Busbar Electrodynamic Forces (IEC 60865-1)', icon: Layers },
+          { id: 'cable-ampacity' as CalculatorTabType, labelFr: 'Dimensionnement Câbles & Déclassement (CEI 60364/60287)', labelEn: 'Cable Sizing & Ampacity (IEC 60364/60287)', icon: Zap },
+          { id: 'transmission-line' as CalculatorTabType, labelFr: 'Ligne THT, Faisceaux & Corona (CEI 60826)', labelEn: 'Overhead Line Bundles & Corona (IEC 60826)', icon: Globe },
+          { id: 'neutral-grounding' as CalculatorTabType, labelFr: 'Régimes de Neutre RPN & Petersen (CEI 60071)', labelEn: 'Neutral Earthing NGR & Petersen (IEC 60071)', icon: ShieldAlert },
+          { id: 'relay-tcc' as CalculatorTabType, labelFr: 'Sélectivité & Courbes TCC (CEI 60255 / IEEE 242)', labelEn: 'Relay Coordination & TCC Curves (IEC 60255 / IEEE 242)', icon: ShieldCheck },
+        ].map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeCalc === tab.id;
+          return (
+            <a
+              key={tab.id}
+              href={`#/calculators/${tab.id}`}
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  handleSelectCalc(tab.id);
+                }
+              }}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border shadow-sm select-none ${
+                isActive
+                  ? 'border-amber-400 bg-amber-500/15 text-amber-300 font-bold shadow-md shadow-amber-500/10 ring-1 ring-amber-400/30'
+                  : 'border-slate-800 bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800/80 hover:border-slate-700'
+              }`}
+            >
+              <Icon className={`h-4 w-4 ${isActive ? 'text-amber-400' : 'text-slate-400'}`} />
+              <span>{locale === 'fr' ? tab.labelFr : tab.labelEn}</span>
+            </a>
+          );
+        })}
       </div>
 
       {/* Dynamic Context Link to Physical Spine & Simulation Lab */}
@@ -615,8 +437,10 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
             governingStandard={CALCULATOR_STANDARDS[activeCalc]?.standard || 'CEI / IEEE'}
           />
         </div>
-        <div className="text-[10px] text-slate-500">
-          {locale === 'fr' ? 'Modèle analytique déterministe vérifié' : 'Verified deterministic analytical model'}
+        <div className="text-[10px] text-slate-400 font-mono">
+          {locale === 'fr' 
+            ? 'Équations analytiques conformes aux référentiels CEI & IEEE — Dérivations détaillées ci-dessous' 
+            : 'Analytical equations conforming to IEC & IEEE standards — Detailed derivations below'}
         </div>
       </div>
 

@@ -836,7 +836,7 @@ export const PROGRESSIVE_EQUIPMENT_DATA: Record<string, ProgressiveEquipmentData
     id: 'pin-hydro',
     badgeNumber: 1,
     engineeringName: {
-      fr: "Groupe Turbo-Alternateur Synchrone Triphasé Hydraulique",
+      fr: "Groupe Hydro-Alternateur Synchrone Triphasé Hydraulique",
       en: "Hydroelectric Three-Phase Synchronous Generator Set"
     },
     commonName: {

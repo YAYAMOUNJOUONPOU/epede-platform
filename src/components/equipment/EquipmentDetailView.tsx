@@ -28,6 +28,7 @@ import { epedeApi, ApiEquipmentDto, GraphContextDto } from '../../services/epede
 import { getDocumentsForEquipment } from '../../data/epedeDocumentationRegistry';
 import { getPhotographsForEquipment } from '../../data/equipmentPhotographicRegistry';
 import { EquipmentPhotographicGallery } from './modules/EquipmentPhotographicGallery';
+import { formatEntityType } from '../../utils/engineeringDisplayUtils';
 import { GlobalBreadcrumbs } from '../common/GlobalBreadcrumbs';
 import { EpedeDocumentDetailModal } from '../docs/EpedeDocumentDetailModal';
 import type { EpedeDocumentRecord } from '../../types/filesAndDocs';
@@ -509,7 +510,7 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
             {equipment.domain_code}
           </button>
           <span className="text-neutral-600">/</span>
-          <span className="uppercase text-neutral-300">{equipment.entity_type}</span>
+          <span className="text-neutral-300 font-medium">{formatEntityType(equipment.entity_type, locale)}</span>
           <span className="text-neutral-600">/</span>
           <span className="text-white font-bold">{equipment.id}</span>
         </nav>
@@ -593,8 +594,8 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="font-mono text-xs font-bold text-cyan-400 uppercase tracking-widest bg-[#080B10] px-2.5 py-1 rounded border border-[#252E38]">
-                {equipment.entity_type}
+              <span className="font-mono text-xs font-bold text-cyan-400 tracking-wide bg-[#080B10] px-2.5 py-1 rounded border border-[#252E38]">
+                {formatEntityType(equipment.entity_type, locale)}
               </span>
               <span className="font-mono text-xs font-bold text-neutral-400">
                 Domaine {equipment.domain_code}

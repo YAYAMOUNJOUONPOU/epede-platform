@@ -497,10 +497,10 @@ export const FIELD_DIAGNOSIS_CASES: FieldDiagnosisCase[] = [
     urgency: 'TRIP_IMMEDIATE',
     trustLevel: 'VERIFIED_STANDARD',
     targetEquipmentFamilies: ['generator', 'hydro_turbine'],
-    symptomTitle_fr: 'Défaut de masse stator / Déclenchement ANSI 59N ou 64G sur turbo-alternateur',
+    symptomTitle_fr: 'Défaut de masse stator / Déclenchement ANSI 59N ou 64G sur hydro-alternateur',
     symptomTitle_en: 'Stator Ground Fault / ANSI 59N or 64G trip on hydro generator',
     observableIndicators_fr: [
-      'Déclenchement d\'urgence du groupe turbo-alternateur avec fermeture des vannes de pied',
+      'Déclenchement d\'urgence du groupe hydro-alternateur avec fermeture des vannes de pied',
       'Alarme SCADA : « Défaut Terre Stator 100% (ANSI 64G / 59N) »',
       'Tension homopolaire V₀ > 5% Un aux bornes du transformateur de point neutre',
       'Arrêt brutal du groupe et décrochage du disjoncteur d\'alternateur (GCB)'

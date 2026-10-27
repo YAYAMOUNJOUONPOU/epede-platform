@@ -28,6 +28,21 @@ export class ErrorBoundary extends Component<Props, State> {
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('EPEDE Uncaught Engineering View Error:', error, errorInfo);
     this.setState({ errorInfo });
+
+    const msg = error?.message || '';
+    if (
+      msg.includes('dynamically imported') ||
+      msg.includes('Importing a module script failed') ||
+      msg.includes('Failed to fetch dynamically imported module')
+    ) {
+      const storageKey = 'epede_chunk_reload_guard';
+      const lastReload = sessionStorage.getItem(storageKey);
+      const now = Date.now();
+      if (!lastReload || now - parseInt(lastReload, 10) > 10000) {
+        sessionStorage.setItem(storageKey, now.toString());
+        window.location.reload();
+      }
+    }
   }
 
   private handleReset = () => {
@@ -45,6 +60,47 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
+      const errorMsg = this.state.error?.message || '';
+      const isChunkError =
+        errorMsg.includes('dynamically imported') ||
+        errorMsg.includes('Importing a module script failed') ||
+        errorMsg.includes('Failed to fetch dynamically imported module');
+
+      if (isChunkError) {
+        return (
+          <div className="min-h-[400px] flex items-center justify-center p-6 bg-slate-950 text-slate-100 font-sans">
+            <div className="max-w-xl w-full bg-slate-900/90 border border-cyan-500/40 rounded-2xl p-6 sm:p-8 shadow-2xl backdrop-blur-md">
+              <div className="flex items-center gap-3 text-cyan-400 mb-4">
+                <div className="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20">
+                  <RefreshCw className="h-6 w-6 animate-spin" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-slate-100">
+                    Mise à Jour de la Plateforme EPEDE Détectée
+                  </h3>
+                  <p className="text-xs text-cyan-300 font-mono">
+                    ACTUALISATION DES COMPOSANTS EN COURS
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-sm text-slate-300 leading-relaxed mb-6 font-sans">
+                Une nouvelle version de la plateforme vient d'être déployée. Les fichiers de code en cache doivent être rechargés pour accéder à ce module.
+              </p>
+
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold font-mono rounded-lg transition-colors cursor-pointer shadow-lg shadow-cyan-500/20"
+              >
+                <RefreshCw className="h-4 w-4" />
+                Recharger la dernière version
+              </button>
+            </div>
+          </div>
+        );
+      }
+
       return (
         <div className="min-h-[400px] flex items-center justify-center p-6 bg-slate-950 text-slate-100 font-sans">
           <div className="max-w-xl w-full bg-slate-900/90 border border-amber-500/30 rounded-2xl p-6 sm:p-8 shadow-2xl backdrop-blur-md">

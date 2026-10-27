@@ -849,12 +849,12 @@ export const HydropowerFleetView: React.FC<HydropowerFleetViewProps> = ({
               </div>
             </div>
 
-            {/* Turbo-Generator Units */}
+            {/* Hydro-Generator Units */}
             <div className="mt-6 pt-5 border-t border-[#252E38]">
               <div className="flex items-center justify-between mb-3">
                 <h4 className="font-mono text-xs font-bold text-neutral-400 uppercase tracking-wider flex items-center gap-2">
                   <Gauge className="w-4 h-4 text-sky-400" />
-                  <span>{locale === 'fr' ? 'Groupes Turbo-Alternateurs' : 'Turbo-Generator Units'}</span>
+                  <span>{locale === 'fr' ? 'Groupes Hydro-Alternateurs' : 'Hydro-Generator Units'}</span>
                 </h4>
                 {onSelectSubsystem && (
                   <button

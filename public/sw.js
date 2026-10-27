@@ -1,6 +1,6 @@
 // public/sw.js
 // EPEDE - Service Worker for Remote Substation Offline Field Operation
-const CACHE_NAME = 'epede-field-cache-v2.1';
+const CACHE_NAME = 'epede-field-cache-v2.3';
 
 const PRECACHE_URLS = [
   '/',
@@ -38,15 +38,30 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // 1. HTML Navigation / Document requests: Network-First so new deployment hashes are immediately active
+  if (event.request.mode === 'navigate' || url.pathname.endsWith('.html') || url.pathname === '/') {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          }
+          return networkResponse;
+        })
+        .catch(() => {
+          return caches.match(event.request).then((cached) => cached || caches.match('/index.html'));
+        })
+    );
+    return;
+  }
+
+  // 2. Static Assets (JS, CSS, images): Cache-first with network fallback
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
-        // Return cached asset immediately, but revalidate in background (stale-while-revalidate)
-        fetch(event.request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse.clone()));
-          }
-        }).catch(() => {});
         return cachedResponse;
       }
 
@@ -61,11 +76,6 @@ self.addEventListener('fetch', (event) => {
         });
 
         return networkResponse;
-      }).catch(() => {
-        // Offline fallback for HTML navigation
-        if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
-        }
       });
     })
   );

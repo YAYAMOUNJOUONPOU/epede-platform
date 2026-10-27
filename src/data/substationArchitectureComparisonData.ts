@@ -462,8 +462,8 @@ export const SYSTEM_EARTHING_SCHEMES: SystemEarthingScheme[] = [
       'Requires physical grounding resistor cubicle with 10-second thermal thermal rating',
       'Still trips circuit on first fault (no prolonged operation permitted)'
     ],
-    typicalUtilityIndustrialUse_fr: 'Réseaux de distribution HTA 15 kV et 30 kV Eneo, groupes turbo-alternateurs de Songloulou et Nachtigal.',
-    typicalUtilityIndustrialUse_en: 'Eneo 15 kV & 30 kV MV distribution, Songloulou & Nachtigal turbine-generator neutral grounding.'
+    typicalUtilityIndustrialUse_fr: 'Réseaux de distribution HTA 15 kV et 30 kV Eneo, groupes hydro-alternateurs de Songloulou et Nachtigal.',
+    typicalUtilityIndustrialUse_en: 'Eneo 15 kV & 30 kV MV distribution, Songloulou & Nachtigal hydro-generator neutral grounding.'
   },
   {
     id: 'ISOLATED_NEUTRAL',

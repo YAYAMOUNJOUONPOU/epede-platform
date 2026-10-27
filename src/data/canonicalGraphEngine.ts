@@ -47,8 +47,8 @@ export const CANONICAL_GRAPH_NODES: CanonicalGraphNode[] = [
     voltageLevel: 'HV',
     tag: '==H1.PL01',
     description: {
-      fr: 'Principale centrale hydroélectrique du Réseau Interconnecté Sud (RIS), sur le fleuve Sanaga. 8 groupes turbo-alternateurs Francis de 48 MVA pour une puissance totale de 384 MW.',
-      en: 'Primary hydroelectric power station of the Southern Interconnected Grid (RIS) on the Sanaga River. 8 Francis hydro-generator units of 48 MVA totaling 384 MW.',
+      fr: 'Principale centrale hydroélectrique du Réseau Interconnecté Sud (RIS), sur le fleuve Sanaga. 8 groupes hydro-alternateurs Francis de 48 MW (57.6 MVA) pour une puissance totale de 384 MW.',
+      en: 'Primary hydroelectric power station of the Southern Interconnected Grid (RIS) on the Sanaga River. 8 Francis hydro-generator units of 48 MW (57.6 MVA) totaling 384 MW.',
     },
     technicalSpecs: {
       capacity_mw: 384,

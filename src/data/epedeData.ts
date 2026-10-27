@@ -981,8 +981,8 @@ export const EQUIPMENT_ITEMS: Equipment[] = [
     typical_location_en: 'Main transmission substations (e.g. Ahala substation Yaoundé, Mangombé substation)',
     voltage_level: 'HV',
     technical: {
-      'Tension primaire (HT)': '225 kV',
-      'Tension secondaire (BT)': '30 kV',
+      'Tension primaire (HTB)': '225 kV',
+      'Tension secondaire (HTA)': '30 kV',
       'Puissance assignée': '40 MVA / 63 MVA',
       'Mode de refroidissement': 'ONAN / ONAF',
       'Fréquence nominale': '50 Hz',
@@ -1061,7 +1061,7 @@ export const EQUIPMENT_ITEMS: Equipment[] = [
     function_en: 'Continuously measures phase vectors entering and leaving the transformer, tripping in <25 ms upon internal fault detection.',
     typical_location_fr: 'Armoire de tranche de protection en salle de commande de poste',
     typical_location_en: 'Substation control room protection relay cubicle',
-    voltage_level: 'LV',
+    voltage_level: 'HV',
     technical: {
       'Fonctions intégrées': '87T, 50/51, 50N/51N, 49 (Thermique), 24 (Surfluxage), 81',
       'Pente différentielle (Slope 1)': '20% - 30%',
@@ -1089,10 +1089,10 @@ export const EQUIPMENT_ITEMS: Equipment[] = [
     domain_code: 'D01',
     subdomain_id: 'sub-d01-01',
     entity_type: 'HydroGeneratorUnit',
-    name_fr: 'Groupe Turbo-Alternateur Hydroélectrique Songloulou (48 MW)',
-    name_en: 'Songloulou Hydroelectric Turbo-Generator Unit (48 MW)',
-    aliases_fr: ['Groupe 1 Songloulou', 'Turbine Francis Songloulou', 'Alternateur 48 MW'],
-    aliases_en: ['Songloulou Unit 48 MW', 'Francis Hydro Unit'],
+    name_fr: 'Groupe Hydro-Alternateur à Pôles Saillants Songloulou (48 MW / 57.6 MVA)',
+    name_en: 'Songloulou Salient-Pole Hydroelectric Generator Unit (48 MW / 57.6 MVA)',
+    aliases_fr: ['Groupe 1 Songloulou', 'Hydro-alternateur Francis Songloulou', 'Alternateur 48 MW'],
+    aliases_en: ['Songloulou Unit 48 MW', 'Salient-Pole Hydro Unit'],
     description_fr: 'Unité de production hydroélectrique composée d\'une turbine Francis à axe vertical couplée à un alternateur synchrone à pôles saillants, sur le fleuve Sanaga.',
     description_en: 'Hydroelectric power generation unit comprising a vertical-shaft Francis hydraulic turbine coupled to a salient-pole synchronous alternator.',
     function_fr: 'Convertit l\'énergie potentielle et cinétique de l\'eau du fleuve Sanaga en énergie électrique sous une tension nominale de 11 kV.',
@@ -5897,7 +5897,7 @@ export const SUBDOMAIN_CONTENTS: Record<string, SubdomainContent> = {
 3. Virtual Synchronous Generator (VSG) emulation: real-time digital rotor swing equation implementation (J·dω/dt = Tm - Te - D·Δω) and decoupled P-f / Q-V droop loops.
 4. Fast inverter current limiting: sub-millisecond current clipping (1.2 to 1.5 rated In) safeguarding power semiconductors while maintaining virtual voltage source integrity.`,
     engineering_fr: `Calculs et dimensionnement critique de contrôle :
-- Constante d'inertie virtuelle H_synth : calculée selon H = (0.5 × J × ω0²) / S_base, paramétrée généralement entre 2 et 6 secondes pour reproduire l'effet stabilisateur d'un gros turbo-alternateur hydroélectrique.
+- Constante d'inertie virtuelle H_synth : calculée selon H = (0.5 × J × ω0²) / S_base, paramétrée généralement entre 2 et 6 secondes pour reproduire l'effet stabilisateur d'un groupe hydro-alternateur synchrone.
 - Réserve de fréquence rapide (FFR) : injection de puissance active à pleine échelle en moins de 150 ms lors d'un décrochage brutal de fréquence sous 49.80 Hz.
 - Puissance de court-circuit apportée : contrairement aux alternateurs classiques délivrant 5 à 7 In en régime transitoire, les onduleurs BESS sont limités thermiquement et nécessitent des relais de protection adaptés (CEI 60255 fonctions différentielles et impédancemétriques insensibles au faible Icc).`,
     engineering_en: `Critical control engineering metrics and design calculations:

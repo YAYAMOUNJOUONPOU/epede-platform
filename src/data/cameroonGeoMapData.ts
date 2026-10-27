@@ -349,7 +349,7 @@ export const CAMEROON_INFRASTRUCTURE_NODES: CameroonApparatusNode[] = [
     operator: 'Eneo',
     commissioningYear: 1953,
     specDetails: {
-      baysOrGroups: '14 groupes turbo-alternateurs (Edéa I: 3x11 MW, Edéa II: 6x20 MW, Edéa III: 5x21 MW)',
+      baysOrGroups: '14 groupes hydro-alternateurs (Edéa I: 3x11 MW, Edéa II: 6x20 MW, Edéa III: 5x21 MW)',
       transformationRatio: '10.5 kV / 90 kV & 225 kV vers Mangombé',
       flowOrEfficiency: 'Alimentation directe ALUCAM (cuves d\'électrolyse) et réseau interconnecté',
       governance: 'Doyen des aménagements hydroélectriques du Golfe de Guinée',

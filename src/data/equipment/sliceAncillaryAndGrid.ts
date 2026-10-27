@@ -33,8 +33,8 @@ export const ANCILLARY_AND_GRID_ITEMS: CanonicalEquipmentObject[] = [
       en: 'Bay protection and circuit breaker control for 225 kV high voltage bay at Oyomabang substation'
     },
     voltageContext: {
-      nominalVoltage: '110 V DC (Auxiliaire) / 100 V AC (Entrées mesure)',
-      level: 'LV',
+      nominalVoltage: '110 V DC (Auxiliaire) / 100 V AC (Entrées mesure TC/TT 225 kV)',
+      level: 'HV',
       frequencyHz: 50,
       phases: '3-phase measurement'
     },

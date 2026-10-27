@@ -1172,7 +1172,7 @@ export const EnergyStorageWorkbench: React.FC<EnergyStorageWorkbenchProps> = ({
                     />
                     <span className="text-[10px] text-slate-500 block mt-0.5">
                       {isFr
-                        ? 'Reproduit l\'énergie cinétique d\'un groupe turbo-alternateur hydroélectrique (H = 3 à 5 s).'
+                        ? 'Reproduit l\'énergie cinétique d\'un groupe hydro-alternateur synchrone (H = 3 à 5 s).'
                         : 'Replicates kinetic rotational stored energy of hydro alternator units (H = 3 to 5 s).'}
                     </span>
                   </div>
