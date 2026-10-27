@@ -41,6 +41,7 @@ export type AppViewType =
   | 'asset-management'
   | 'glossary'
   | 'laboratory'
+  | 'reference-hub'
   | 'about'
   | 'not-found';
 
@@ -244,6 +245,16 @@ export function parseRouteHash(hash: string): RouteState {
         gridCategory: (secondary as any) || (primary === 'demarcation' || primary === 'multidisciplinary' ? 'demarcation' : undefined),
       };
 
+    // TECHNICAL REFERENCE HUB (Espace Centralisé de Référence Technique)
+    case 'centre-reference':
+    case 'reference-hub':
+    case 'reference-technique':
+    case 'hub':
+      return {
+        view: 'reference-hub',
+        lang: detectedLang,
+      };
+
     // 7. LABORATOIRE (Consolidated Laboratory Portal)
     case 'laboratoire':
     case 'laboratory':
@@ -429,6 +440,9 @@ export function buildRouteHash(state: RouteState, localeOverride?: 'fr' | 'en'):
     case 'glossary':
       return isEn ? `${prefix}/glossary` : `${prefix}/glossaire`;
 
+    case 'reference-hub':
+      return isEn ? `${prefix}/reference-hub` : `${prefix}/centre-reference`;
+
     case 'about':
       return isEn ? `${prefix}/about` : `${prefix}/a-propos`;
 
@@ -484,6 +498,10 @@ export function getDocumentTitle(state: RouteState, locale: 'fr' | 'en'): string
       return isFr
         ? `Laboratoire Virtuel & Ateliers de Simulation (${state.simulationTab || 'Index'}) | EPEDE`
         : `Virtual Power System Lab & Workbenches (${state.simulationTab || 'Index'}) | EPEDE`;
+    case 'reference-hub':
+      return isFr
+        ? 'Centre de Référence Technique & Calculs Électrotechniques | EPEDE'
+        : 'Technical Reference Hub & Power Engineering Solvers | EPEDE';
     case 'standards':
       return isFr
         ? `Référentiel Normatif International (${state.standardRef || 'CEI / IEEE'}) | EPEDE`

@@ -1164,7 +1164,7 @@ export function generateCalculationReport(
       ],
       results: [
         { label: locale === 'fr' ? 'Puissance apparente totale foisonnée (S)' : 'Total Apparent Power (S)', value: `${apparentPowerKva.toFixed(1)}`, unit: 'kVA', highlight: true, status: 'OK' },
-        { label: locale === 'fr' ? 'Facteur de puissance résultant (cos φ)' : 'Resulting Power Factor (cos φ)', value: `${globalCosPhi.toFixed(2)}`, status: globalCosPhi >= 0.88 ? 'OK' : 'WARNING' },
+        { label: locale === 'fr' ? 'Facteur de puissance résultant (cos φ)' : 'Resulting Power Factor (cos φ)', value: `${globalCosPhi.toFixed(2)}`, status: globalCosPhi >= 0.88 ? 'OK' : 'WARN' },
         { label: locale === 'fr' ? 'Courant nominal d\'emploi (Ib)' : 'Operating Full Load Current (Ib)', value: `${currentA.toFixed(1)}`, unit: 'A', status: 'OK' },
         { label: locale === 'fr' ? 'Calibre normalisé transfo recommandé' : 'Recommended Standard Transformer', value: `${Math.ceil(recommendedTrafoKva / 50) * 50}`, unit: 'kVA', highlight: true, status: 'OK' },
       ],

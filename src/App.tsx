@@ -49,6 +49,7 @@ const AssetManagementDiagnosticsWorkbench = lazy(() => import('./components/asse
 const GlossaryView = lazy(() => import('./components/glossary/GlossaryView').then(m => ({ default: m.GlossaryView })));
 const LaboratoryView = lazy(() => import('./components/laboratory/LaboratoryView').then(m => ({ default: m.LaboratoryView })));
 const AboutView = lazy(() => import('./components/about/AboutView').then(m => ({ default: m.AboutView })));
+const TechnicalReferenceHubView = lazy(() => import('./components/reference/TechnicalReferenceHubView').then(m => ({ default: m.TechnicalReferenceHubView })));
 const NotFoundView = lazy(() => import('./components/common/NotFoundView').then(m => ({ default: m.NotFoundView })));
 
 // Lazy Modals (on-demand loading)
@@ -554,6 +555,7 @@ export default function App() {
           onNavigateDomains={() => navigate({ view: 'domains' })}
           onNavigateEquipment={() => navigate({ view: 'equipment-list' })}
           onNavigateEquipmentReference={() => navigate({ view: 'equipment-reference' })}
+          onNavigateReferenceHub={() => navigate({ view: 'reference-hub' })}
           onNavigateRoles={() => navigate({ view: 'roles' })}
           onNavigateStandards={() => navigate({ view: 'standards' })}
           onNavigateDiagrams={() => navigate({ view: 'diagrams' })}
@@ -1157,32 +1159,38 @@ export default function App() {
               {currentView === 'laboratory' && (
                 <LaboratoryView
                   locale={locale}
-                  onNavigate={(view, params) => {
-                    navigate({
-                      view: view as AppViewType,
-                      simulationTab: params?.simulationTab,
-                      calculatorTab: params?.calculatorTab,
-                      topology: params?.topology,
-                      assetPillar: params?.assetPillar,
-                    });
-                  }}
+                  onNavigateSimulation={(tab) => navigate({ view: 'simulation', simulationTab: tab })}
+                  onNavigateDiagrams={(topology) => navigate({ view: 'diagrams', topology })}
+                  onNavigateHydropower={() => navigate({ view: 'hydropower' })}
+                  onNavigateProtection={() => navigate({ view: 'protection' })}
+                  onNavigateEcosystem={() => navigate({ view: 'ecosystem' })}
+                  onNavigateAssetManagement={() => navigate({ view: 'asset-management' })}
                 />
               )}
 
               {currentView === 'glossary' && (
                 <GlossaryView
                   locale={locale}
+                  onNavigateEquipment={handleNavigateEquipment}
+                  onNavigateCalculator={(tab) => handleNavigateCalculator(tab as any)}
+                  onNavigateDomain={(dCode) => handleNavigateDomain(dCode as any)}
+                />
+              )}
+
+              {currentView === 'reference-hub' && (
+                <TechnicalReferenceHubView
+                  locale={locale}
                   onNavigate={(view, params) => {
-                    if (view === 'domain' && params?.domainCode) {
-                      handleNavigateDomain(params.domainCode);
-                    } else if (view === 'equipment' && params?.equipmentId) {
-                      handleNavigateEquipment(params.equipmentId);
-                    } else if (view === 'calculators') {
-                      handleNavigateCalculator(params?.calculatorTab);
-                    } else {
-                      navigate({ view: view as AppViewType });
-                    }
+                    navigate({
+                      view: view as AppViewType,
+                      calculatorTab: params?.calculatorTab,
+                      simulationTab: params?.simulationTab,
+                      topology: params?.topology,
+                      equipmentId: params?.equipmentId,
+                    });
                   }}
+                  onNavigateCalculator={handleNavigateCalculator}
+                  onNavigateSimulation={handleNavigateSimulation}
                 />
               )}
 
@@ -1196,8 +1204,11 @@ export default function App() {
               {currentView === 'not-found' && (
                 <NotFoundView
                   locale={locale}
+                  currentPath={typeof window !== 'undefined' ? window.location.hash : ''}
                   onNavigateHome={() => navigate({ view: 'home' })}
-                  onNavigateView={(v) => navigate({ view: v })}
+                  onNavigateJourney={() => navigate({ view: 'journey' })}
+                  onNavigateCalculators={() => navigate({ view: 'calculators' })}
+                  onNavigateEquipment={() => navigate({ view: 'equipment-list' })}
                 />
               )}
             </Suspense>

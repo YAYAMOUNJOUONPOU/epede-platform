@@ -91,7 +91,7 @@ export const LaboratoryView: React.FC<LaboratoryViewProps> = ({
       icon: Zap,
       badge: 'STUDIO SLD',
       standardRef: 'CEI 61936-1 / CEI 62271',
-      action: () => onNavigateDiagrams('double-bus'),
+      action: () => onNavigateDiagrams('double_bus'),
     },
     {
       id: 'protection-coordination',

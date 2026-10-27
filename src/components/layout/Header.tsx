@@ -75,6 +75,7 @@ interface HeaderProps {
   onNavigate?: (view: string) => void;
   theme?: 'dark' | 'light';
   onToggleTheme?: () => void;
+  onNavigateReferenceHub?: () => void;
   onNavigateLaboratory?: () => void;
   onNavigateGlossary?: () => void;
   onNavigateAbout?: () => void;
@@ -116,6 +117,7 @@ export const Header: React.FC<HeaderProps> = ({
   onNavigate,
   theme = 'dark',
   onToggleTheme,
+  onNavigateReferenceHub,
   onNavigateLaboratory,
   onNavigateGlossary,
   onNavigateAbout,
@@ -207,6 +209,11 @@ export const Header: React.FC<HeaderProps> = ({
         case 'domains': onNavigateDomains?.(); break;
         case 'equipment': onNavigateEquipment?.(); break;
         case 'equipment-reference': onNavigateEquipmentReference ? onNavigateEquipmentReference() : onNavigateEquipment?.(); break;
+        case 'reference-hub':
+          if (onNavigateReferenceHub) onNavigateReferenceHub();
+          else if (onNavigate) onNavigate('reference-hub');
+          else window.location.hash = '#/centre-reference';
+          break;
         case 'diagrams': onNavigateDiagrams?.(); break;
         case 'calculators': onNavigateCalculators?.(); break;
         case 'cameroon-grid': onNavigateCameroonGrid?.(); break;
@@ -289,47 +296,28 @@ export const Header: React.FC<HeaderProps> = ({
           </a>
         </div>
 
-        {/* Center / Right: Minimal Navigation Links (EXPLORE, CALCULATE, EQUIPMENT, DOMAINS, SYSTEMS) */}
+        {/* Center: 5 Core Doors per Audit Report + Systems Dropdown + Search + About */}
         <nav className="hidden md:flex items-center gap-1.5 lg:gap-2 font-mono text-xs font-semibold text-slate-300">
           
-          {/* APPRENDRE / EXPLORER */}
+          {/* 1. DOMAINES */}
           <a
-            href="#/journey"
+            href="#/domains"
             onClick={(e) => {
               if (!e.ctrlKey && !e.metaKey && e.button === 0) {
                 e.preventDefault();
-                navigateTo('journey');
+                navigateTo('domains');
               }
             }}
             className={`px-3 py-1.5 rounded-xl transition-all select-none no-underline ${
-              ['journey', 'home'].includes(currentView)
+              currentView === 'domains' || currentView === 'domain'
                 ? 'text-amber-300 bg-amber-500/15 border border-amber-500/40 font-bold shadow-sm shadow-amber-500/20'
                 : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800'
             }`}
           >
-            {locale === 'fr' ? 'APPRENDRE' : 'LEARN'}
+            {locale === 'fr' ? 'DOMAINES' : 'DOMAINS'}
           </a>
 
-          {/* CALCULER (Direct Core Door) */}
-          <a
-            href="#/calculators"
-            onClick={(e) => {
-              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
-                e.preventDefault();
-                navigateTo('calculators');
-              }
-            }}
-            className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 select-none no-underline ${
-              currentView === 'calculators'
-                ? 'text-cyan-300 bg-cyan-950/90 border border-cyan-500/70 font-bold shadow-md shadow-cyan-500/25 ring-1 ring-cyan-500/30'
-                : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800'
-            }`}
-          >
-            <span className="text-cyan-400">⚡</span>
-            <span>{locale === 'fr' ? 'CALCULER' : 'CALCULATE'}</span>
-          </a>
-
-          {/* MATÉRIEL */}
+          {/* 2. MATÉRIEL */}
           <a
             href="#/equipment"
             onClick={(e) => {
@@ -350,25 +338,44 @@ export const Header: React.FC<HeaderProps> = ({
             </span>
           </a>
 
-          {/* DOMAINS */}
+          {/* 3. CENTRE DE RÉFÉRENCE (Plaques, 19 Calculateurs, Labs) */}
           <a
-            href="#/domains"
+            href="#/centre-reference"
             onClick={(e) => {
               if (!e.ctrlKey && !e.metaKey && e.button === 0) {
                 e.preventDefault();
-                navigateTo('domains');
+                navigateTo('reference-hub');
+              }
+            }}
+            className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 select-none no-underline ${
+              currentView === 'reference-hub' || currentView === 'calculators'
+                ? 'text-cyan-300 bg-cyan-950/90 border border-cyan-500/70 font-bold shadow-md shadow-cyan-500/25 ring-1 ring-cyan-500/30'
+                : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800'
+            }`}
+          >
+            <span className="text-cyan-400">⚡</span>
+            <span>{locale === 'fr' ? 'RÉFÉRENCE & CALCULS' : 'REFERENCE & SOLVERS'}</span>
+          </a>
+
+          {/* 4. NORMES */}
+          <a
+            href="#/standards"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                navigateTo('standards');
               }
             }}
             className={`px-3 py-1.5 rounded-xl transition-all select-none no-underline ${
-              currentView === 'domains'
+              currentView === 'standards'
                 ? 'text-amber-300 bg-amber-500/15 border border-amber-500/40 font-bold shadow-sm shadow-amber-500/20'
                 : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800'
             }`}
           >
-            {locale === 'fr' ? 'DOMAINES' : 'DOMAINS'}
+            {locale === 'fr' ? 'NORMES' : 'STANDARDS'}
           </a>
 
-          {/* RÉSEAU CAMEROUN */}
+          {/* 5. RÉSEAU CAMEROUN */}
           <a
             href="#/cameroon-grid"
             onClick={(e) => {
@@ -611,22 +618,6 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           )}
 
-          {/* Audit Status Button (16/16 L5 Excellence) */}
-          {onOpenAudit && (
-            <button
-              type="button"
-              onClick={onOpenAudit}
-              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/70 border border-emerald-500/40 text-emerald-300 font-mono text-xs font-bold transition-all shadow-xs hover:border-emerald-400 hover:shadow-emerald-500/20 active:scale-95 cursor-pointer"
-              title={locale === 'fr' ? 'Audit Qualité & Maturité EPEDE (16 Domaines L5)' : 'EPEDE Platform Maturity Audit (16 L5 Domains)'}
-            >
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
-              <span>16/16 L5</span>
-              <span className="bg-emerald-500/20 text-emerald-300 text-[10px] px-1 py-0.2 rounded font-mono">
-                98%
-              </span>
-            </button>
-          )}
-
           {/* PWA Network / Field Status */}
           <div 
             className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[10px] font-mono font-bold border transition-colors ${
@@ -643,24 +634,6 @@ export const Header: React.FC<HeaderProps> = ({
             )}
             <span className="hidden lg:inline">{isOnline ? 'GRID SYNC' : 'OFFLINE'}</span>
           </div>
-
-          {/* Audio Haptics / Synthesizer Sound Toggle */}
-          <button
-            type="button"
-            onClick={() => {
-              const newMuted = soundEffects.toggleMute();
-              if (!newMuted) soundEffects.playBreakerClose();
-            }}
-            className={`p-2 rounded-xl border transition-all flex items-center justify-center cursor-pointer active:scale-95 shadow-xs ${
-              !isMuted 
-                ? 'bg-amber-500/15 text-amber-400 border-amber-500/40 hover:bg-amber-500/25 shadow-amber-500/10' 
-                : 'bg-slate-900/90 text-slate-500 border-slate-800 hover:text-slate-300 hover:bg-slate-800'
-            }`}
-            title={!isMuted ? (locale === 'fr' ? 'Effets Sonores Électriques Activés' : 'Electrical Sound Effects ON') : (locale === 'fr' ? 'Effets Sonores Désactivés' : 'Electrical Sound Effects OFF')}
-            aria-label="Sound Toggle"
-          >
-            {!isMuted ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
-          </button>
 
           {/* Language Switch */}
           <button
@@ -685,19 +658,6 @@ export const Header: React.FC<HeaderProps> = ({
               aria-label="Theme Toggle"
             >
               {theme === 'light' ? <Moon className="h-4 w-4 text-amber-400" /> : <Sun className="h-4 w-4 text-amber-400" />}
-            </button>
-          )}
-
-          {/* AI Field Equipment Vision Inspector trigger */}
-          {onOpenVisionInspector && (
-            <button
-              type="button"
-              onClick={onOpenVisionInspector}
-              className="p-2 rounded-xl bg-slate-900/90 text-slate-300 hover:text-purple-300 border border-slate-800 hover:border-purple-500/40 transition-all flex items-center justify-center cursor-pointer active:scale-95 shadow-xs"
-              title={locale === 'fr' ? 'Diagnostic Photo & Plaque Signalétique' : 'AI Nameplate Photo Diagnostics'}
-              aria-label="Vision IA"
-            >
-              <Camera className="h-4 w-4" />
             </button>
           )}
 

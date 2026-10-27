@@ -54,6 +54,7 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
   );
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIssuer, setSelectedIssuer] = useState<string>('ALL');
+  const [selectedDomain, setSelectedDomain] = useState<string>('ALL');
   const [clauseCategoryFilter, setClauseCategoryFilter] = useState<string>('ALL');
   
   // Audit Checklist State per standard & clause
@@ -104,6 +105,9 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
       if (selectedIssuer !== 'ALL' && (s.issuer || 'Other') !== selectedIssuer) {
         return false;
       }
+      if (selectedDomain !== 'ALL' && (!s.domain_codes || !s.domain_codes.includes(selectedDomain as DomainCode))) {
+        return false;
+      }
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         const matchesRef = s.reference.toLowerCase().includes(q);
@@ -121,7 +125,7 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
       }
       return true;
     });
-  }, [selectedIssuer, searchQuery, locale]);
+  }, [selectedIssuer, selectedDomain, searchQuery, locale]);
 
   const selectedStandard =
     STANDARDS.find((s) => s.reference === selectedRef) ||
@@ -170,36 +174,35 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
   const applicableTotal = totalClauses - naClauses;
   const compliancePercentage = applicableTotal > 0 ? Math.round((passedClauses / applicableTotal) * 100) : 100;
 
-  // Generate Inspection Certificate / Audit Report
+  // Generate Educational Self-Assessment / Clause Guide Note
   const handleExportAuditReport = () => {
     const dateStr = new Date().toISOString().replace('T', ' ').substring(0, 19);
     const langFr = locale === 'fr';
 
     const header = [
       '================================================================================',
-      langFr ? 'PROCÈS-VERBAL D\'ESSAIS NORMATIFS & AUDIT DE CONFORMITÉ FAT / SAT' : 'NORMATIVE INSPECTION & FAT/SAT CONFORMITY AUDIT REPORT',
+      langFr ? 'FICHE D\'AUTO-ÉVALUATION TECHNIQUE & AIDE-MÉMOIRE NORMATIF' : 'NORMATIVE SELF-EVALUATION GUIDE & CLAUSE SUMMARY',
       'EPEDE · Plateforme Numérique d\'Ingénierie Électrique & Énergétique',
       '================================================================================',
       `${langFr ? 'NORME DE RÉFÉRENCE' : 'STANDARD REFERENCE'} : ${selectedStandard.reference}`,
       `${langFr ? 'TITRE' : 'TITLE'}               : ${langFr ? selectedStandard.title_fr : selectedStandard.title_en}`,
       `${langFr ? 'ORGANISME ÉMETTEUR' : 'ISSUER'}         : ${selectedStandard.issuer || 'N/A'} (Édition: ${selectedStandard.edition || 'N/A'})`,
       `${langFr ? 'JURIDICTION' : 'JURISDICTION'}          : ${selectedStandard.jurisdiction}`,
-      `${langFr ? 'DATE D\'INSPECTION' : 'AUDIT TIMESTAMP'}   : ${dateStr} UTC`,
-      `${langFr ? 'AUDITEUR ASSIGNÉ' : 'AUDITING ENGINEER'}   : Ingénieur Contrôle & Essais (EPEDE Certification)`,
-      `${langFr ? 'APPAREILS AUDITÉS' : 'AUDITED EQUIPMENT'}  : ${selectedStandard.applicable_equipment.join(', ')}`,
+      `${langFr ? 'DATE DE GÉNÉRATION' : 'TIMESTAMP'}        : ${dateStr} UTC`,
+      `${langFr ? 'APPAREILS ASSOCIÉS' : 'ASSOCIATED EQUIPMENT'} : ${selectedStandard.applicable_equipment.join(', ')}`,
       '--------------------------------------------------------------------------------',
-      `${langFr ? 'BILAN GLOBAL DE CONFORMITÉ' : 'OVERALL CONFORMITY RATING'} : ${compliancePercentage}% ${compliancePercentage === 100 ? (langFr ? 'CONFORME' : 'COMPLIANT') : (langFr ? 'AVEC RÉSERVES' : 'CONDITIONAL')}`,
-      `${langFr ? 'DÉCOMPTE' : 'BREAKDOWN'} : ${passedClauses} ${langFr ? 'Conformes' : 'Pass'} | ${failedClauses} ${langFr ? 'Non-conformes' : 'Fail'} | ${pendingClauses} ${langFr ? 'En attente' : 'Pending'} | ${naClauses} N/A`,
+      `${langFr ? 'SCORE D\'AUTO-ÉVALUATION' : 'SELF-EVALUATION SCORE'} : ${compliancePercentage}% (${passedClauses}/${applicableTotal} ${langFr ? 'critères validés' : 'criteria passed'})`,
+      `${langFr ? 'DÉCOMPTE' : 'BREAKDOWN'} : ${passedClauses} ${langFr ? 'Validés' : 'Pass'} | ${failedClauses} ${langFr ? 'Non-remplis' : 'Fail'} | ${pendingClauses} ${langFr ? 'En attente' : 'Pending'} | ${naClauses} N/A`,
       '================================================================================',
       '',
-      langFr ? 'DÉTAIL DU PROTOCOLE DE VÉRIFICATION PAR CLAUSE :' : 'CLAUSE-BY-CLAUSE VERIFICATION PROTOCOL DETAIL:',
+      langFr ? 'DÉTAIL DES CLAUSES NORMATIVES CONSULTÉES :' : 'DETAIL OF CONSULTED NORMATIVE CLAUSES:',
       ''
     ];
 
     const body = (selectedStandard.clauses || []).map((c, idx) => {
       const status = currentStandardAudit[c.clause_number] || 'pending';
-      const statusLabel = status === 'pass' ? '[ CONFORME / PASS ]' :
-                          status === 'fail' ? '[ NON-CONFORME / FAIL ]' :
+      const statusLabel = status === 'pass' ? '[ VALIDÉ / PASS ]' :
+                          status === 'fail' ? '[ NON-REMPLI / FAIL ]' :
                           status === 'na' ? '[ NON APPLICABLE / N/A ]' :
                           '[ EN ATTENTE / PENDING ]';
       return [
@@ -207,7 +210,7 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
         `    ${langFr ? 'Catégorie' : 'Category'}     : ${c.category.toUpperCase().replace('_', ' ')}`,
         `    ${langFr ? 'Exigence' : 'Requirement'}   : ${langFr ? c.requirement_fr : c.requirement_en}`,
         `    ${langFr ? 'Critère Seuil' : 'Tolerance'} : ${c.acceptance_criteria}`,
-        `    >>> VERDICT D'AUDIT : ${statusLabel}`,
+        `    >>> STATUT GUIDE : ${statusLabel}`,
         ''
       ].join('\n');
     });
@@ -215,8 +218,8 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
     const footer = [
       '--------------------------------------------------------------------------------',
       langFr 
-        ? 'VISA TECHNIQUE & ENGAGEMENT QUALITÉ :\nCe procès-verbal est établi conformément aux prescriptions d\'essais en usine (FAT) et sur site (SAT).\nVisa Bureau d\'Études : [ APPROUVÉ ]       Visa Responsable Qualité / Client : [ CONFORME ]'
-        : 'TECHNICAL CLEARANCE & QA/QC SIGN-OFF:\nThis protocol conforms to factory acceptance (FAT) and site commissioning (SAT) standards.\nConsulting Engineer Visa: [ APPROVED ]     Quality Assurance Officer: [ ACCEPTED ]',
+        ? 'AVERTISSEMENT LÉGAL & NATURE DU DOCUMENT (NON-CERTIFICATION) :\nCe document constitue un support pédagogique d\'apprentissage et d\'auto-évaluation technique préliminaire.\nIl ne remplace en aucun cas un procès-verbal officiel d\'essais en usine (FAT) ou sur site (SAT), ni une certification de conformité réglementaire délivrée par un organisme agréé.'
+        : 'LEGAL NOTICE & DOCUMENT STATUS (NON-CERTIFICATION):\nThis document is an educational training support and preliminary technical self-evaluation tool.\nIt does not replace an official FAT/SAT test protocol signed by an accredited inspection body or certifying authority.',
       '================================================================================'
     ];
 
@@ -508,6 +511,39 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
           </div>
         </div>
 
+        {/* Domain Filter Toolbar */}
+        <div className="mt-3 pt-3 border-t border-slate-800/80 flex flex-wrap items-center gap-1.5">
+          <span className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider mr-1">
+            {locale === 'fr' ? 'DOMAINE :' : 'DOMAIN:'}
+          </span>
+          {[
+            { code: 'ALL', label: locale === 'fr' ? 'TOUS LES DOMAINES' : 'ALL DOMAINS' },
+            { code: 'D01', label: 'D01 PRODUCTION' },
+            { code: 'D02', label: 'D02 TRANSPORT' },
+            { code: 'D03', label: 'D03 POSTES' },
+            { code: 'D04', label: 'D04 DISTRIBUTION' },
+            { code: 'D05', label: 'D05 INDUSTRIE' },
+            { code: 'D06', label: 'D06 BÂTIMENTS' },
+            { code: 'D07', label: 'D07 PROTECTION' },
+            { code: 'D08', label: 'D08 SCADA' },
+            { code: 'D09', label: 'D09 SMART GRIDS' },
+            { code: 'D10', label: 'D10 MAINTENANCE' },
+          ].map(d => (
+            <button
+              key={d.code}
+              type="button"
+              onClick={() => setSelectedDomain(d.code)}
+              className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-all border ${
+                selectedDomain === d.code
+                  ? 'border-sky-400 bg-sky-500/15 text-sky-300 shadow-xs'
+                  : 'border-slate-800 bg-slate-950 text-slate-400 hover:text-white hover:bg-slate-800/80'
+              }`}
+            >
+              {d.label}
+            </button>
+          ))}
+        </div>
+
         {/* Standards Navigation Chips */}
         <div className="mt-4 flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
           {filteredStandards.map((s) => {
@@ -534,6 +570,47 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
         </div>
       </header>
 
+      {/* Cameroon National Grid Context & Tropical Specifications */}
+      <div className="rounded-xl border border-emerald-900/60 bg-gradient-to-r from-emerald-950/40 via-slate-950 to-slate-900 p-4 sm:p-5 text-xs font-mono shadow-md">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+          <div className="flex items-center gap-2">
+            <span className="text-emerald-400 font-bold text-sm">🇨🇲</span>
+            <span className="font-bold text-emerald-300 uppercase tracking-wider">
+              {locale === 'fr' ? 'Contexte Réseau National Cameroun (ARSEL / SONATREL / ENEO)' : 'Cameroon National Grid & Tropical Operating Envelope'}
+            </span>
+          </div>
+          <span className="bg-emerald-950 border border-emerald-800/60 text-emerald-300 px-2 py-0.5 rounded text-[10px] font-bold uppercase">
+            Code Réseau & Climat Tropical
+          </span>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-slate-300 font-sans text-xs">
+          <div className="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800">
+            <span className="text-[10px] font-mono font-bold text-emerald-400 block uppercase mb-1">
+              {locale === 'fr' ? 'Fréquence & Tolérance' : 'Frequency & Tolerance'}
+            </span>
+            <p className="leading-snug">
+              <strong>50.00 Hz</strong> nom. (Plage normale : 49.80 – 50.20 Hz ; exceptionnelle : 49.50 – 50.50 Hz). Déclenchement délestage UFLS sous 49.00 Hz.
+            </p>
+          </div>
+          <div className="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800">
+            <span className="text-[10px] font-mono font-bold text-amber-400 block uppercase mb-1">
+              {locale === 'fr' ? 'Déclassement Thermique Tropical' : 'Tropical Thermal Derating'}
+            </span>
+            <p className="leading-snug">
+              Température ambiante de calcul <strong>40 °C à 45 °C</strong> (versus 30 °C CEI 60076). Déclassement puissance continue k_θ ≈ 0.90–0.93.
+            </p>
+          </div>
+          <div className="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800">
+            <span className="text-[10px] font-mono font-bold text-sky-400 block uppercase mb-1">
+              {locale === 'fr' ? 'Densité Kéraunique & Foudre' : 'Isokeraunic Level & Lightning'}
+            </span>
+            <p className="leading-snug">
+              Niveau kéraunique <strong>Nk &gt; 80 j/an</strong>. Parafoudres ZnO classe 1 &amp; 2 (CEI 60099-4) impératifs sur arrivées aériennes et transformateurs.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Selected Standard Detail Card */}
       <div className="rounded-2xl border border-slate-800 bg-slate-900/90 overflow-hidden shadow-xl">
         
@@ -545,7 +622,7 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
                 {selectedStandard.reference}
               </span>
               <span className="font-mono text-[10px] text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-800/60 font-bold uppercase tracking-wider">
-                VALIDÉ ISO / CEI / IEEE
+                RÉFÉRENCE TECHNIQUE CEI / IEEE / NF C
               </span>
             </div>
 
@@ -719,16 +796,16 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
                 <div className="flex items-center gap-2">
                   <h3 className="text-sm font-mono font-black text-white uppercase tracking-wider flex items-center gap-2">
                     <FileText className="h-4 w-4 text-cyan-400" />
-                    <span>{locale === 'fr' ? 'Protocole d\'Essais en Usine (FAT) & sur Site (SAT)' : 'FAT & SAT Inspection & Testing Protocol'}</span>
+                    <span>{locale === 'fr' ? 'Guide d\'Auto-Évaluation Normative (FAT / SAT & Conception)' : 'Normative Self-Evaluation Guide (FAT / SAT & Design)'}</span>
                   </h3>
                   <span className="font-mono text-[11px] text-cyan-400 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800/80 font-bold">
-                    {totalClauses} {locale === 'fr' ? 'CLAUSES AUDITÉES' : 'CLAUSES LOGGED'}
+                    {totalClauses} {locale === 'fr' ? 'POINTS DE CONTRÔLE' : 'CHECKPOINTS'}
                   </span>
                 </div>
                 <p className="text-xs text-neutral-400 font-sans mt-1">
                   {locale === 'fr'
-                    ? 'Vérification normative en temps réel avec critères d\'acceptabilité et génération du procès-verbal officiel.'
-                    : 'Real-time normative checklist with acceptance tolerances and inspection protocol certificate generation.'}
+                    ? 'Aide-mémoire interactif des clauses normatives avec critères d\'acceptabilité. Outil indicatif non opposable comme procès-verbal officiel ou certification réglementaire.'
+                    : 'Interactive normative clause guide with tolerance criteria. Pedagogical reference not legally binding as official certification.'}
                 </p>
               </div>
 
@@ -736,7 +813,7 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
               <div className="flex flex-wrap items-center gap-3">
                 <div className="bg-[#080B10] border border-[#252E38] rounded-xl px-4 py-2 text-right">
                   <div className="font-mono text-[10px] text-neutral-400 uppercase font-bold tracking-wider">
-                    {locale === 'fr' ? 'CONFORMITÉ TECHNIQUE' : 'COMPLIANCE SCORE'}
+                    {locale === 'fr' ? 'SCORE D\'AUTO-ÉVALUATION' : 'SELF-EVALUATION SCORE'}
                   </div>
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className={`font-mono text-base font-black ${
@@ -760,12 +837,12 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
                   {copiedReport ? (
                     <>
                       <Check className="h-4 w-4 text-black" />
-                      <span>{locale === 'fr' ? 'PV COPIÉ !' : 'REPORT COPIED!'}</span>
+                      <span>{locale === 'fr' ? 'FICHE COPIÉE !' : 'REPORT COPIED!'}</span>
                     </>
                   ) : (
                     <>
                       <Download className="h-4 w-4 text-black" />
-                      <span>{locale === 'fr' ? 'EXPORTER LE PV' : 'EXPORT REPORT'}</span>
+                      <span>{locale === 'fr' ? 'EXPORTER LA FICHE' : 'EXPORT SUMMARY'}</span>
                     </>
                   )}
                 </button>
