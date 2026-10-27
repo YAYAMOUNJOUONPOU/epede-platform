@@ -38,6 +38,9 @@ interface SidebarProps {
   onNavigateTraceability?: () => void;
   onNavigateThematicJourneys?: () => void;
   onNavigateAssetManagement?: () => void;
+  onNavigateLaboratory?: () => void;
+  onNavigateGlossary?: () => void;
+  onNavigateAbout?: () => void;
   currentView?: string;
 }
 
@@ -72,6 +75,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onNavigateTraceability,
   onNavigateThematicJourneys,
   onNavigateAssetManagement,
+  onNavigateLaboratory,
+  onNavigateGlossary,
+  onNavigateAbout,
   currentView,
 }) => {
   const chainDomains = DOMAINS.filter((d) => d.domain_group === 'chain');
@@ -307,32 +313,35 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 )}
                 <div className="flex items-center gap-2">
                   <Calculator className="h-3.5 w-3.5 text-amber-400" />
-                  <span>{locale === 'fr' ? '17 Calculateurs CEI / IEEE' : '17 IEC / IEEE Calculators'}</span>
+                  <span>{locale === 'fr' ? '19 Calculateurs CEI / IEEE' : '19 IEC / IEEE Solvers'}</span>
                 </div>
                 <span className="text-[10px] text-amber-400 font-bold">SOLVERS</span>
               </button>
 
-              {/* Simulation Lab */}
+              {/* Laboratoire Unifié */}
               <button
                 type="button"
                 onClick={() => {
-                  onNavigateSimulation?.();
+                  if (onNavigateLaboratory) onNavigateLaboratory();
+                  else onNavigateSimulation?.();
                   onClose();
                 }}
                 className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
-                  currentView === 'simulation'
-                    ? 'bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-900/80'
+                  currentView === 'laboratory' || currentView === 'simulation'
+                    ? 'bg-purple-950/80 text-purple-300 font-bold border border-purple-500/60 shadow-md shadow-purple-500/20'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-900/80'
                 }`}
               >
-                {currentView === 'simulation' && (
-                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-500 rounded-r" />
+                {(currentView === 'laboratory' || currentView === 'simulation') && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-purple-400 rounded-r" />
                 )}
                 <div className="flex items-center gap-2">
-                  <Zap className="h-3.5 w-3.5 text-amber-400" />
-                  <span>{locale === 'fr' ? '19 Labs Transitoires & Oscilloscope' : '19 Simulation Labs & Scope'}</span>
+                  <Zap className="h-3.5 w-3.5 text-purple-400" />
+                  <span className="font-bold text-white">{locale === 'fr' ? 'Laboratoire de Simulation' : 'Simulation Laboratory'}</span>
                 </div>
-                <span className="text-[10px] text-amber-400 font-bold">SIM</span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-bold border border-purple-500/30">
+                  9 BANCS
+                </span>
               </button>
 
               {/* Protection Engineering Studio */}
@@ -625,6 +634,60 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </div>
                 <span className="text-[9px] px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 font-black border border-sky-500/40">
                   AUDIT
+                </span>
+              </button>
+
+              {/* Bilingual Electrotechnical Glossary */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (onNavigateGlossary) onNavigateGlossary();
+                  onClose();
+                }}
+                className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
+                  currentView === 'glossary'
+                    ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40 shadow-sm'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-900/80'
+                }`}
+              >
+                {currentView === 'glossary' && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-amber-400 rounded-r" />
+                )}
+                <div className="flex items-center gap-2">
+                  <BookOpen className="h-3.5 w-3.5 text-amber-400" />
+                  <span className="font-bold text-white">
+                    {locale === 'fr' ? 'Glossaire Technique FR/EN' : 'Bilingual FR/EN Glossary'}
+                  </span>
+                </div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-black border border-amber-500/40">
+                  LEXIQUE
+                </span>
+              </button>
+
+              {/* À Propos (Lead Engineer) */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (onNavigateAbout) onNavigateAbout();
+                  onClose();
+                }}
+                className={`relative overflow-hidden w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-200 text-left ${
+                  currentView === 'about'
+                    ? 'bg-cyan-950/80 text-cyan-300 font-bold border border-cyan-500/60 shadow-md shadow-cyan-500/20'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-900/80'
+                }`}
+              >
+                {currentView === 'about' && (
+                  <span className="absolute left-0 top-1 bottom-1 w-1 bg-cyan-400 rounded-r" />
+                )}
+                <div className="flex items-center gap-2">
+                  <span className="text-cyan-400 text-xs font-mono font-bold">MY</span>
+                  <span className="font-bold text-white">
+                    {locale === 'fr' ? 'À Propos (Mounjouonpou Yaya)' : 'About (Mounjouonpou Yaya)'}
+                  </span>
+                </div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-black border border-cyan-500/40">
+                  BIO
                 </span>
               </button>
             </div>

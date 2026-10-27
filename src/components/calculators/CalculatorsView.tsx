@@ -41,6 +41,10 @@ import { CableAmpacityCalculator } from './modules/CableAmpacityCalculator';
 import { TransmissionLineCalculator } from './modules/TransmissionLineCalculator';
 import { NeutralGroundingCalculator } from './modules/NeutralGroundingCalculator';
 import { RelayTccCalculator } from './modules/RelayTccCalculator';
+import { CableEndShortCircuitCalculator } from './modules/CableEndShortCircuitCalculator';
+import { LoadScheduleCalculator } from './modules/LoadScheduleCalculator';
+import { favoritesAndHistoryService } from '../../services/favoritesAndHistoryService';
+import { Share2, Check } from 'lucide-react';
 import { FormulaDerivationPanel } from './FormulaDerivationPanel';
 import { generateCalculationReport, CalculatorTabType } from './services/calculationReportService';
 import type { SimulationTabType } from '../simulation/SimulationLabView';
@@ -52,6 +56,8 @@ import { EvidenceBadgeType } from '../../types/contextStack';
 const CALCULATOR_STANDARDS: Record<string, { standard: string; badgeType: EvidenceBadgeType }> = {
   power: { standard: 'CEI 60038 / IEEE 1459', badgeType: 'VERIFIED_STANDARD' },
   'voltage-drop': { standard: 'CEI 60364-5-52 / NF C 15-105', badgeType: 'VERIFIED_STANDARD' },
+  'cable-short-circuit': { standard: 'CEI 60909-0 / NF C 15-105', badgeType: 'VERIFIED_STANDARD' },
+  'load-schedule': { standard: 'NF C 14-100 / CEI 60364-5-52', badgeType: 'VERIFIED_STANDARD' },
   transformer: { standard: 'CEI 60076 / CEI 60909', badgeType: 'VERIFIED_STANDARD' },
   motor: { standard: 'CEI 60034-12 / IEEE 399', badgeType: 'VERIFIED_STANDARD' },
   sil: { standard: 'CIGRE TB 575 / CEI 60826', badgeType: 'ENGINEERING_REFERENCE' },
@@ -89,6 +95,18 @@ const CALCULATOR_SPINE_LINKS: Record<
     nodeName: { fr: 'Départ HTA 30 kV Industriel', en: '30 kV MV Industrial Feeder' },
     simTab: 'short-circuit',
     simName: { fr: 'Calcul Court-Circuit CEI 60909', en: 'IEC 60909 Short-Circuit' },
+  },
+  'cable-short-circuit': {
+    nodeId: 'node-feeder-30-ind',
+    nodeName: { fr: 'Départ Câble HTA/BT (Icc bout de ligne)', en: 'MV/LV Cable Feeder (End-of-line Icc)' },
+    simTab: 'short-circuit',
+    simName: { fr: 'Calcul Court-Circuit CEI 60909', en: 'IEC 60909 Short-Circuit' },
+  },
+  'load-schedule': {
+    nodeId: 'node-tgbt-400',
+    nodeName: { fr: 'TGBT & Bilan de Puissance Usine', en: 'Main Switchboard & Load Balance' },
+    simTab: 'transient-stability',
+    simName: { fr: 'Impact Démarrage Moteurs', en: 'Motor Impact Simulation' },
   },
   transformer: {
     nodeId: 'node-trafo-main-30',
@@ -203,6 +221,8 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [isSavedStudiesOpen, setIsSavedStudiesOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [currentCalcParams, setCurrentCalcParams] = useState<Record<string, any>>({});
   const { calculationNotes } = useAuth();
 
   useEffect(() => {
@@ -214,6 +234,16 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
   const handleSelectCalc = (tab: CalculatorTabType) => {
     soundEffects.playSwitchClick();
     setActiveCalc(tab);
+  };
+
+  const handleShareLink = () => {
+    soundEffects.playSuccessChime();
+    const url = favoritesAndHistoryService.buildShareableUrl(activeCalc, currentCalcParams, locale);
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(url);
+    }
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2500);
   };
 
   const handleOpenReport = () => {
@@ -304,6 +334,20 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
         <div className="flex items-center gap-2.5 self-start md:self-center shrink-0">
           <button
             type="button"
+            onClick={handleShareLink}
+            className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl font-tech text-xs font-bold border transition-all cursor-pointer shadow-sm active:scale-[0.98] ${
+              copiedLink
+                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                : 'bg-white/[0.03] hover:bg-white/[0.08] text-cyan-300 border-white/[0.08] hover:border-cyan-400/50'
+            }`}
+            title={locale === 'fr' ? 'Copier le lien partageable avec paramètres' : 'Copy shareable URL with parameters'}
+          >
+            {copiedLink ? <Check className="h-4 w-4 text-emerald-400" /> : <Share2 className="h-4 w-4 text-cyan-400" />}
+            <span>{copiedLink ? (locale === 'fr' ? 'Lien Copié !' : 'Link Copied !') : (locale === 'fr' ? 'Partager Calcul' : 'Share Calc')}</span>
+          </button>
+
+          <button
+            type="button"
             onClick={handleOpenHistory}
             className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl font-tech text-xs font-bold bg-white/[0.03] hover:bg-white/[0.08] text-sky-300 border border-white/[0.08] hover:border-sky-400/50 transition-all cursor-pointer shadow-sm active:scale-[0.98]"
           >
@@ -341,6 +385,8 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
         {[
           { id: 'power' as CalculatorTabType, labelFr: 'Puissance & Courant Triphasé', labelEn: '3-Phase Power & Current', icon: Zap },
           { id: 'voltage-drop' as CalculatorTabType, labelFr: 'Chute de Tension Câble (ΔU)', labelEn: 'Cable Voltage Drop (ΔU)', icon: Activity },
+          { id: 'cable-short-circuit' as CalculatorTabType, labelFr: 'Icc Bout de Câble (CEI 60909 / NF C 15-105)', labelEn: 'Cable End Short-Circuit (IEC 60909)', icon: ShieldCheck },
+          { id: 'load-schedule' as CalculatorTabType, labelFr: 'Bilan de Puissance & Foisonnement (NF C 14-100)', labelEn: 'Load Schedule & Power Balance', icon: Sliders },
           { id: 'transformer' as CalculatorTabType, labelFr: 'Transformateur & Isc', labelEn: 'Transformer & Short-Circuit', icon: Cpu },
           { id: 'motor' as CalculatorTabType, labelFr: 'Moteur & Démarrage', labelEn: 'Motor & Inrush Current', icon: Sliders },
           { id: 'sil' as CalculatorTabType, labelFr: 'Ligne HTB & SIL (Ferranti)', labelEn: 'HV Line SIL & Ferranti', icon: Globe },
@@ -456,6 +502,32 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
             equipmentName: injectedContext.equipmentName,
             equipmentTag: injectedContext.equipmentTag,
           } : undefined}
+        />
+      )}
+
+      {/* 2B. CABLE END SHORT-CIRCUIT CALCULATOR (IEC 60909 / NF C 15-105) */}
+      {activeCalc === 'cable-short-circuit' && (
+        <CableEndShortCircuitCalculator
+          locale={locale}
+          initialParams={injectedContext?.params as any}
+          injectedContextInfo={injectedContext ? {
+            equipmentName: injectedContext.equipmentName,
+            equipmentTag: injectedContext.equipmentTag,
+          } : undefined}
+          onParamsChange={(p) => setCurrentCalcParams(p)}
+        />
+      )}
+
+      {/* 2C. LOAD SCHEDULE & POWER BALANCE (NF C 14-100 / NF C 15-100 / IEC 60364) */}
+      {activeCalc === 'load-schedule' && (
+        <LoadScheduleCalculator
+          locale={locale}
+          initialParams={injectedContext?.params as any}
+          injectedContextInfo={injectedContext ? {
+            equipmentName: injectedContext.equipmentName,
+            equipmentTag: injectedContext.equipmentTag,
+          } : undefined}
+          onParamsChange={(p) => setCurrentCalcParams(p)}
         />
       )}
 

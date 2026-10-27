@@ -1,9 +1,12 @@
 // src/services/routerService.ts
+// EPEDE - Authoritative Bilingual Router Engine (FR / EN with Legacy Redirects & 404)
+
 import type { DomainCode } from '../types/epede';
 import type { CalculatorTabType } from '../components/calculators/services/calculationReportService';
 import type { SimulationTabType } from '../components/simulation/SimulationLabView';
 import type { SldTopologyType } from '../components/diagrams/modules/SldHeaderToolbar';
 import type { StageId } from '../components/journey/types';
+import { favoritesAndHistoryService } from './favoritesAndHistoryService';
 
 export type AppViewType =
   | 'home'
@@ -35,18 +38,23 @@ export type AppViewType =
   | 'scenarios'
   | 'traceability'
   | 'thematic-journeys'
-  | 'asset-management';
+  | 'asset-management'
+  | 'glossary'
+  | 'laboratory'
+  | 'about'
+  | 'not-found';
 
 export interface InjectedCalculatorContext {
   equipmentId?: string;
   equipmentName?: string;
   equipmentTag?: string;
   substationOrFeeder?: string;
-  params?: Record<string, number | string>;
+  params?: Record<string, any>;
 }
 
 export interface RouteState {
   view: AppViewType;
+  lang?: 'fr' | 'en';
   domainCode?: DomainCode;
   equipmentId?: string;
   roleSlug?: string;
@@ -59,297 +67,382 @@ export interface RouteState {
   contextNodeId?: string;
   gridCategory?: 'map' | 'all' | 'ris' | 'rin' | 'plants' | 'substations' | 'lines' | 'demarcation';
   assetPillar?: string;
+  rawPath?: string;
 }
+
+export const CALCULATOR_SLUGS_FR_TO_TAB: Record<string, CalculatorTabType> = {
+  'chute-de-tension': 'voltage-drop',
+  'court-circuit-cable': 'cable-short-circuit',
+  'bilan-puissance': 'load-schedule',
+  'puissance-triphase': 'power',
+  'transformateur': 'transformer',
+  'court-circuit': 'transformer',
+  'moteur': 'motor',
+  'sil': 'sil',
+  'mise-a-la-terre': 'earthing',
+  'arc-flash': 'arc-flash',
+  'arc-electrique': 'arc-flash',
+  'transformateur-courant': 'ct-sizing',
+  'tc-mesure': 'ct-sizing',
+  'compensation-reactive': 'pfc',
+  'solaire': 'solar-sizing',
+  'stockage': 'bess-sizing',
+  'bess-batteries': 'bess-sizing',
+  'parafoudre': 'surge-arrester',
+  'jeu-de-barres': 'busbar-electrodynamic',
+  'courant-admissible-cable': 'cable-ampacity',
+  'ligne-transport': 'transmission-line',
+  'regime-neutre': 'neutral-grounding',
+  'coordination-relais': 'relay-tcc',
+};
+
+export const CALCULATOR_TAB_TO_SLUG_FR: Record<CalculatorTabType, string> = {
+  'voltage-drop': 'chute-de-tension',
+  'cable-short-circuit': 'court-circuit-cable',
+  'load-schedule': 'bilan-puissance',
+  'power': 'puissance-triphase',
+  'transformer': 'transformateur',
+  'motor': 'moteur',
+  'sil': 'sil',
+  'earthing': 'mise-a-la-terre',
+  'arc-flash': 'arc-electrique',
+  'ct-sizing': 'transformateur-courant',
+  'pfc': 'compensation-reactive',
+  'solar-sizing': 'solaire',
+  'bess-sizing': 'stockage',
+  'surge-arrester': 'parafoudre',
+  'busbar-electrodynamic': 'jeu-de-barres',
+  'cable-ampacity': 'courant-admissible-cable',
+  'transmission-line': 'ligne-transport',
+  'neutral-grounding': 'regime-neutre',
+  'relay-tcc': 'coordination-relais',
+};
 
 /**
  * Parses current window.location.hash into structured RouteState
+ * Supports:
+ * - French canonical URLs by default: #/calculateurs/chute-de-tension
+ * - English URLs under #/en/...: #/en/calculators/voltage-drop
+ * - Decodes shareable calculation query data (?data=...)
+ * - Legacy alias redirects (#/journey, #/simulation, #/standards...)
+ * - 404 fallback for invalid routes
  */
 export function parseRouteHash(hash: string): RouteState {
-  const cleanHash = hash.replace(/^#\/?/, '').trim();
-  if (!cleanHash || cleanHash === 'home') {
-    return { view: 'home' };
+  const cleanRaw = hash.replace(/^#\/?/, '').trim();
+  if (!cleanRaw || cleanRaw === 'home') {
+    return { view: 'home', lang: 'fr' };
   }
 
-  const parts = cleanHash.split('/').map((p) => decodeURIComponent(p));
-  const primary = parts[0];
+  // Extract query parameters if any (e.g. ?data=... or ?p=...)
+  const [routePart, queryPart] = cleanRaw.split('?');
+  let decodedParams: Record<string, any> | undefined;
+  if (queryPart) {
+    const qParams = new URLSearchParams(queryPart);
+    const dataEncoded = qParams.get('data') || qParams.get('p');
+    if (dataEncoded) {
+      decodedParams = favoritesAndHistoryService.decodeCalculationParams(dataEncoded) || undefined;
+    }
+  }
+
+  let parts = routePart.split('/').map((p) => decodeURIComponent(p));
+  let detectedLang: 'fr' | 'en' = 'fr';
+
+  // Check language prefix #/en/...
+  if (parts[0] === 'en') {
+    detectedLang = 'en';
+    parts.shift();
+  }
+
+  const primary = parts[0]?.toLowerCase() || '';
   const secondary = parts[1];
 
-  switch (primary) {
-    case 'domains':
-      return { view: 'domains' };
+  const calcContext: InjectedCalculatorContext | undefined = decodedParams
+    ? { params: decodedParams }
+    : undefined;
 
+  switch (primary) {
+    // 1. HOME
+    case '':
+    case 'home':
+    case 'accueil':
+      return { view: 'home', lang: detectedLang };
+
+    // 2. LEARN / POWER CHAIN (Apprendre / Chaîne de Puissance / Journey)
+    case 'apprendre':
+    case 'learn':
+    case 'chaine-puissance':
+    case 'power-chain':
+    case 'journey':
+      return {
+        view: 'journey',
+        lang: detectedLang,
+        journeyStage: (secondary as StageId) || undefined,
+      };
+
+    // 3. CALCULATORS
+    case 'calculateurs':
+    case 'calculators':
+    case 'calcul':
+      if (secondary) {
+        const secLower = secondary.toLowerCase();
+        const tab = CALCULATOR_SLUGS_FR_TO_TAB[secLower] || (secLower as CalculatorTabType);
+        return {
+          view: 'calculators',
+          lang: detectedLang,
+          calculatorTab: tab,
+          calculatorContext: calcContext,
+        };
+      }
+      return { view: 'calculators', lang: detectedLang, calculatorContext: calcContext };
+
+    // 4. EQUIPMENT (Matériel / Catalogue / Référence)
+    case 'materiel':
+    case 'equipment':
+    case 'equipement':
+    case 'equipements':
+    case 'reference':
+    case 'catalogue':
+      if (secondary) {
+        return {
+          view: 'equipment',
+          lang: detectedLang,
+          equipmentId: secondary,
+        };
+      }
+      return { view: 'equipment-list', lang: detectedLang };
+
+    case 'equipment-reference':
+      return {
+        view: 'equipment-reference',
+        lang: detectedLang,
+        equipmentId: secondary || undefined,
+      };
+
+    // 5. DOMAINS (16 Domaines Électriques)
+    case 'domaines':
+    case 'domains':
+    case 'domaine':
     case 'domain':
       if (secondary) {
         return {
           view: 'domain',
+          lang: detectedLang,
           domainCode: secondary.toUpperCase() as DomainCode,
         };
       }
-      return { view: 'domains' };
+      return { view: 'domains', lang: detectedLang };
 
-    case 'equipment':
-      if (secondary) {
-        return {
-          view: 'equipment',
-          equipmentId: secondary,
-        };
-      }
-      return { view: 'equipment-list' };
-
-    case 'equipment-list':
-      return { view: 'equipment-list' };
-
-    case 'equipment-reference':
-    case 'reference':
-    case 'materiel':
+    // 6. CAMEROON GRID OBSERVATORY
+    case 'reseau-cameroun':
+    case 'cameroon-grid':
+    case 'cameroun':
+    case 'demarcation':
+    case 'multidisciplinary':
       return {
-        view: 'equipment-reference',
-        equipmentId: secondary || undefined,
+        view: 'cameroon-grid',
+        lang: detectedLang,
+        gridCategory: (secondary as any) || (primary === 'demarcation' || primary === 'multidisciplinary' ? 'demarcation' : undefined),
       };
 
-    case 'roles':
+    // 7. LABORATOIRE (Consolidated Laboratory Portal)
+    case 'laboratoire':
+    case 'laboratory':
+    case 'lab':
       return {
-        view: 'roles',
-        roleSlug: secondary || 'protection-engineer',
-      };
-
-    case 'standards':
-      return {
-        view: 'standards',
-        standardRef: secondary || 'IEC 60255',
-      };
-
-    case 'diagrams':
-      return {
-        view: 'diagrams',
-        topology: (secondary as SldTopologyType) || undefined,
-      };
-
-    case 'simulation':
-      return {
-        view: 'simulation',
+        view: 'laboratory',
+        lang: detectedLang,
         simulationTab: (secondary as SimulationTabType) || undefined,
       };
 
-    case 'calculators':
+    // Legacy Simulation routes redirect to laboratory or simulation
+    case 'simulation':
       return {
-        view: 'calculators',
-        calculatorTab: (secondary as CalculatorTabType) || undefined,
+        view: 'simulation',
+        lang: detectedLang,
+        simulationTab: (secondary as SimulationTabType) || undefined,
       };
 
-    case 'journey':
+    case 'diagrams':
+    case 'sld':
+    case 'unifilaire':
       return {
-        view: 'journey',
-        journeyStage: (secondary as StageId) || undefined,
+        view: 'diagrams',
+        lang: detectedLang,
+        topology: (secondary as SldTopologyType) || undefined,
       };
+
+    // 8. STANDARDS
+    case 'normes':
+    case 'standards':
+    case 'norme':
+    case 'standard':
+      return {
+        view: 'standards',
+        lang: detectedLang,
+        standardRef: secondary || undefined,
+      };
+
+    // 9. GLOSSARY
+    case 'glossaire':
+    case 'glossary':
+    case 'termes':
+    case 'acronymes':
+      return {
+        view: 'glossary',
+        lang: detectedLang,
+      };
+
+    // 10. ABOUT
+    case 'a-propos':
+    case 'about':
+    case 'auteur':
+    case 'author':
+      return {
+        view: 'about',
+        lang: detectedLang,
+      };
+
+    // Other secondary views with backward compatibility
+    case 'roles':
+    case 'metiers':
+      return { view: 'roles', lang: detectedLang, roleSlug: secondary || 'protection-engineer' };
 
     case 'context-stack':
-      return {
-        view: 'context-stack',
-        contextNodeId: secondary || 'node-trafo-main-30',
-      };
-
-    case 'cameroon-grid':
-    case 'demarcation':
-    case 'multidisciplinary':
-      return { 
-        view: 'cameroon-grid',
-        gridCategory: (secondary as any) || (primary === 'demarcation' || primary === 'multidisciplinary' ? 'demarcation' : undefined)
-      };
+      return { view: 'context-stack', lang: detectedLang, contextNodeId: secondary || 'node-trafo-main-30' };
 
     case 'regulatory':
-      return { view: 'regulatory' };
+    case 'reglementation':
+      return { view: 'regulatory', lang: detectedLang };
 
     case 'lifecycle':
-      return { view: 'lifecycle' };
-
-    case 'phase2':
-      return { view: 'phase2' };
+    case 'cycle-de-vie':
+      return { view: 'lifecycle', lang: detectedLang };
 
     case 'hydropower':
-      return { view: 'hydropower' };
+    case 'hydro':
+      return { view: 'hydropower', lang: detectedLang };
 
     case 'industrial-projects':
-      return { view: 'industrial-projects' };
+    case 'projets':
+      return { view: 'industrial-projects', lang: detectedLang };
 
     case 'engineers-chain':
-    case 'ingenieurs-chaine':
-    case 'engineers':
-      return { view: 'engineers-chain' };
+    case 'ingenieurs':
+      return { view: 'engineers-chain', lang: detectedLang };
 
     case 'ecosystem':
-    case 'energy-ecosystem':
-    case '3d-ecosystem':
-      return { view: 'ecosystem' };
+    case 'ecosysteme':
+      return { view: 'ecosystem', lang: detectedLang };
 
     case 'architectures':
-    case 'substation-architectures':
-    case 'architecture-comparison':
-      return { view: 'architectures' };
+      return { view: 'architectures', lang: detectedLang };
 
     case 'protection':
-    case 'protection-workbench':
-      return { view: 'protection' };
+    case 'protections':
+      return { view: 'protection', lang: detectedLang };
 
     case 'commissioning':
-    case 'fat-sat':
-      return { view: 'commissioning' };
+    case 'essais':
+      return { view: 'commissioning', lang: detectedLang };
 
     case 'knowledge-graph':
-    case 'knowledge-graph-explorer':
-    case 'kg':
-      return {
-        view: 'knowledge-graph',
-        contextNodeId: secondary || undefined
-      };
+      return { view: 'knowledge-graph', lang: detectedLang, contextNodeId: secondary || undefined };
 
     case 'follow-the-energy':
-    case 'energy-flow':
-    case 'pipeline':
-      return {
-        view: 'follow-the-energy',
-        contextNodeId: secondary || undefined
-      };
+      return { view: 'follow-the-energy', lang: detectedLang };
 
     case 'scenarios':
-    case 'incident-replay':
-    case 'soe':
-      return {
-        view: 'scenarios',
-        contextNodeId: secondary || undefined
-      };
-
-    case 'traceability':
-    case 'provenance':
-    case 'audit':
-      return {
-        view: 'traceability',
-      };
+      return { view: 'scenarios', lang: detectedLang, contextNodeId: secondary || undefined };
 
     case 'thematic-journeys':
-    case 'parcours':
-    case 'learning-paths':
-    case 'cursus':
-      return {
-        view: 'thematic-journeys',
-        contextNodeId: secondary || undefined,
-      };
+      return { view: 'thematic-journeys', lang: detectedLang, contextNodeId: secondary || undefined };
 
     case 'asset-management':
-    case 'assets':
-    case 'dga':
-    case 'dga-diagnostics':
-    case 'duval':
-    case 'health-index':
-    case 'fleet-risk':
-      return {
-        view: 'asset-management',
-        assetPillar: secondary || (primary === 'dga' || primary === 'duval' || primary === 'dga-diagnostics' ? 'DUVAL_TRIANGLE_DGA' : primary === 'health-index' ? 'HEALTH_INDEX_ISO55000' : primary === 'fleet-risk' ? 'FLEET_RISK_MATRIX' : undefined),
-      };
+    case 'maintenance':
+      return { view: 'asset-management', lang: detectedLang, assetPillar: secondary || undefined };
 
-    case 'transmission':
-      return { view: 'domain', domainCode: 'D03' };
-    case 'substations':
-      return { view: 'domain', domainCode: 'D04' };
-    case 'distribution':
-      return { view: 'domain', domainCode: 'D05' };
-    case 'installations':
-      return { view: 'domain', domainCode: 'D06' };
-    case 'automation':
-      return { view: 'domain', domainCode: 'D07' };
-    case 'elv':
-      return { view: 'domain', domainCode: 'D08' };
-    case 'ai':
-      return { view: 'domain', domainCode: 'D09' };
-    case 'storage':
-    case 'bess':
-      return { view: 'domain', domainCode: 'D10' };
-    case 'scada':
-      return { view: 'domain', domainCode: 'D12' };
-    case 'telecom':
-      return { view: 'domain', domainCode: 'D13' };
-    case 'power-quality':
-    case 'cem':
-      return { view: 'domain', domainCode: 'D14' };
-    case 'metering':
-    case 'smart-grids':
-      return { view: 'domain', domainCode: 'D15' };
-    case 'safety':
-    case 'earthing':
-      return { view: 'domain', domainCode: 'D16' };
-
+    // 404 FALLBACK
     default:
-      return { view: 'home' };
+      return {
+        view: 'not-found',
+        lang: detectedLang,
+        rawPath: cleanRaw,
+      };
   }
 }
 
 /**
- * Builds hash string from a route state
+ * Builds hash string from a route state conforming to:
+ * - French by default: #/calculateurs/chute-de-tension
+ * - English if state.lang === 'en': #/en/calculators/voltage-drop
  */
-export function buildRouteHash(state: RouteState): string {
+export function buildRouteHash(state: RouteState, localeOverride?: 'fr' | 'en'): string {
+  const isEn = (localeOverride || state.lang) === 'en';
+  const prefix = isEn ? '#/en' : '#';
+
   switch (state.view) {
     case 'home':
-      return '#/';
-    case 'domains':
-      return '#/domains';
-    case 'domain':
-      return state.domainCode ? `#/domain/${state.domainCode}` : '#/domains';
+      return isEn ? '#/en/' : '#/';
+
+    case 'journey':
+      const journeyBase = isEn ? `${prefix}/power-chain` : `${prefix}/chaine-puissance`;
+      return state.journeyStage ? `${journeyBase}/${encodeURIComponent(state.journeyStage)}` : journeyBase;
+
+    case 'calculators':
+      const calcBase = isEn ? `${prefix}/calculators` : `${prefix}/calculateurs`;
+      if (state.calculatorTab) {
+        const slug = isEn ? state.calculatorTab : (CALCULATOR_TAB_TO_SLUG_FR[state.calculatorTab] || state.calculatorTab);
+        return `${calcBase}/${encodeURIComponent(slug)}`;
+      }
+      return calcBase;
+
     case 'equipment-list':
-      return '#/equipment';
-    case 'equipment-reference':
-      return state.equipmentId ? `#/equipment-reference/${encodeURIComponent(state.equipmentId)}` : '#/equipment-reference';
+      return isEn ? `${prefix}/equipment` : `${prefix}/materiel`;
+
     case 'equipment':
-      return state.equipmentId ? `#/equipment/${encodeURIComponent(state.equipmentId)}` : '#/equipment';
-    case 'roles':
-      return state.roleSlug ? `#/roles/${encodeURIComponent(state.roleSlug)}` : '#/roles';
+      const eqBase = isEn ? `${prefix}/equipment` : `${prefix}/materiel`;
+      return state.equipmentId ? `${eqBase}/${encodeURIComponent(state.equipmentId)}` : eqBase;
+
+    case 'equipment-reference':
+      const refBase = isEn ? `${prefix}/equipment-reference` : `${prefix}/materiel`;
+      return state.equipmentId ? `${refBase}/${encodeURIComponent(state.equipmentId)}` : refBase;
+
+    case 'domains':
+      return isEn ? `${prefix}/domains` : `${prefix}/domaines`;
+
+    case 'domain':
+      const domBase = isEn ? `${prefix}/domains` : `${prefix}/domaines`;
+      return state.domainCode ? `${domBase}/${state.domainCode}` : domBase;
+
+    case 'cameroon-grid':
+      const gridBase = isEn ? `${prefix}/cameroon-grid` : `${prefix}/reseau-cameroun`;
+      return state.gridCategory ? `${gridBase}/${encodeURIComponent(state.gridCategory)}` : gridBase;
+
+    case 'laboratory':
+      const labBase = isEn ? `${prefix}/laboratory` : `${prefix}/laboratoire`;
+      return state.simulationTab ? `${labBase}/${encodeURIComponent(state.simulationTab)}` : labBase;
+
     case 'standards':
-      return state.standardRef ? `#/standards/${encodeURIComponent(state.standardRef)}` : '#/standards';
-    case 'diagrams':
-      return state.topology ? `#/diagrams/${encodeURIComponent(state.topology)}` : '#/diagrams';
+      const stdBase = isEn ? `${prefix}/standards` : `${prefix}/normes`;
+      return state.standardRef ? `${stdBase}/${encodeURIComponent(state.standardRef)}` : stdBase;
+
+    case 'glossary':
+      return isEn ? `${prefix}/glossary` : `${prefix}/glossaire`;
+
+    case 'about':
+      return isEn ? `${prefix}/about` : `${prefix}/a-propos`;
+
     case 'simulation':
       return state.simulationTab ? `#/simulation/${encodeURIComponent(state.simulationTab)}` : '#/simulation';
-    case 'calculators':
-      return state.calculatorTab ? `#/calculators/${encodeURIComponent(state.calculatorTab)}` : '#/calculators';
-    case 'journey':
-      return state.journeyStage ? `#/journey/${encodeURIComponent(state.journeyStage)}` : '#/journey';
-    case 'context-stack':
-      return state.contextNodeId ? `#/context-stack/${encodeURIComponent(state.contextNodeId)}` : '#/context-stack';
-    case 'cameroon-grid':
-      return state.gridCategory ? `#/cameroon-grid/${encodeURIComponent(state.gridCategory)}` : '#/cameroon-grid';
-    case 'regulatory':
-      return '#/regulatory';
-    case 'lifecycle':
-      return '#/lifecycle';
-    case 'phase2':
-      return '#/phase2';
-    case 'hydropower':
-      return '#/hydropower';
-    case 'industrial-projects':
-      return '#/industrial-projects';
-    case 'engineers-chain':
-      return '#/engineers-chain';
-    case 'ecosystem':
-      return '#/ecosystem';
-    case 'architectures':
-      return '#/architectures';
-    case 'protection':
-      return '#/protection';
-    case 'commissioning':
-      return '#/commissioning';
-    case 'knowledge-graph':
-      return state.contextNodeId ? `#/knowledge-graph/${encodeURIComponent(state.contextNodeId)}` : '#/knowledge-graph';
-    case 'follow-the-energy':
-      return '#/follow-the-energy';
-    case 'scenarios':
-      return state.contextNodeId ? `#/scenarios/${encodeURIComponent(state.contextNodeId)}` : '#/scenarios';
-    case 'traceability':
-      return '#/traceability';
-    case 'thematic-journeys':
-      return state.contextNodeId ? `#/thematic-journeys/${encodeURIComponent(state.contextNodeId)}` : '#/thematic-journeys';
-    case 'asset-management':
-      return state.assetPillar ? `#/asset-management/${encodeURIComponent(state.assetPillar)}` : '#/asset-management';
+
+    case 'diagrams':
+      return state.topology ? `#/diagrams/${encodeURIComponent(state.topology)}` : '#/diagrams';
+
+    case 'not-found':
+      return '#/404';
+
     default:
-      return '#/';
+      return isEn ? '#/en/' : '#/';
   }
 }
 
@@ -358,113 +451,53 @@ export function buildRouteHash(state: RouteState): string {
  */
 export function getDocumentTitle(state: RouteState, locale: 'fr' | 'en'): string {
   const base = 'EPEDE — Electrical Power Engineering Digital Environment';
+  const isFr = locale === 'fr';
 
   switch (state.view) {
-    case 'asset-management':
-      return locale === 'fr' ? 'Station Expert Gestion d\'Actifs & Diagnostic DGA | EPEDE' : 'Asset Management & DGA Diagnostics | EPEDE';
-    case 'thematic-journeys':
-      return locale === 'fr'
-        ? 'Parcours Guidés Thématiques (7 Cursus d\'Ingénierie) | EPEDE'
-        : 'Thematic Guided Learning Journeys | EPEDE';
-    case 'traceability':
-      return locale === 'fr'
-        ? 'Couche de Données Fiables & Audit de Traçabilité | EPEDE'
-        : 'Trustworthy Data & Provenance Registry | EPEDE';
-    case 'scenarios':
-      return locale === 'fr'
-        ? 'Scénarios Pédagogiques & Incident Replay SCADA | EPEDE'
-        : 'Pedagogical Scenarios & SCADA Incident Replay | EPEDE';
-    case 'follow-the-energy':
-      return locale === 'fr'
-        ? 'Follow the Energy — Pipeline 8 Étapes & 4 Flux Cyber-Physiques | EPEDE'
-        : 'Follow the Energy — 8-Stage Pipeline & 4 Cyber-Physical Flows | EPEDE';
-    case 'knowledge-graph':
-      return locale === 'fr'
-        ? 'Knowledge Graph Explorer — Relations, Protections & Causalité | EPEDE'
-        : 'Knowledge Graph Explorer — Relations, Protections & Causality | EPEDE';
-    case 'ecosystem':
-      return locale === 'fr'
-        ? 'Écosystème Énergétique 3D — De la Source au Travail Utile | EPEDE'
-        : 'The Electrical Energy Ecosystem — From Energy Source to Useful Work | EPEDE';
-    case 'protection':
-      return locale === 'fr'
-        ? 'Atelier de Protection Électrique & Plan R-X / TCC (CEI 60255) | EPEDE'
-        : 'Protection Engineering Workbench & R-X / TCC (IEC 60255) | EPEDE';
-    case 'commissioning':
-      return locale === 'fr'
-        ? 'Atelier Essais & Réception FAT / SAT (CEI 61439 / CEI 60364) | EPEDE'
-        : 'FAT / SAT Commissioning & Testing Workbench | EPEDE';
     case 'home':
       return base;
-    case 'domains':
-      return locale === 'fr' 
-        ? 'Architecture des 16 Domaines Électriques | EPEDE' 
-        : '16 Electrical System Domains Architecture | EPEDE';
-    case 'domain':
-      return locale === 'fr' 
-        ? `Domaine ${state.domainCode || ''} · Station d'Ingénierie | EPEDE` 
-        : `Domain ${state.domainCode || ''} · Engineering Station | EPEDE`;
+    case 'journey':
+      return isFr
+        ? 'La Chaîne de Continuité Électrique — Du Barrage à la Prise | EPEDE'
+        : 'The Power Continuity Chain — From Generation to Load | EPEDE';
+    case 'calculators':
+      return isFr
+        ? `Calculateurs d'Ingénierie (${state.calculatorTab || 'Index'}) | EPEDE`
+        : `Engineering Precision Calculators (${state.calculatorTab || 'Index'}) | EPEDE`;
     case 'equipment-list':
     case 'equipment':
-      return locale === 'fr' 
-        ? `Appareillage & Catalogue Équipements (${state.equipmentId || ''}) | EPEDE` 
-        : `Switchgear & Equipment Catalog (${state.equipmentId || ''}) | EPEDE`;
     case 'equipment-reference':
-      return locale === 'fr'
-        ? `Référence Matériel Électrique Réel (${state.equipmentId || 'Index Chaîne'}) | EPEDE`
-        : `Real-World Electrical Equipment Reference (${state.equipmentId || 'Chain Index'}) | EPEDE`;
-    case 'diagrams':
-      return locale === 'fr' 
-        ? 'Schéma Unifilaire Interactif SLD 225/30 kV | EPEDE' 
-        : '225/30 kV Interactive Single-Line Diagram | EPEDE';
-    case 'calculators':
-      return locale === 'fr' 
-        ? `Calculateurs d'Ingénierie (${state.calculatorTab || 'Index'}) | EPEDE` 
-        : `Engineering Calculators (${state.calculatorTab || 'Index'}) | EPEDE`;
-    case 'simulation':
-      return locale === 'fr' 
-        ? `Laboratoire de Simulation Réseau (${state.simulationTab || ''}) | EPEDE` 
-        : `Power Grid Simulation Lab (${state.simulationTab || ''}) | EPEDE`;
-    case 'journey':
-      return locale === 'fr' 
-        ? 'Les 13 Scènes de la Continuité Électrique | EPEDE' 
-        : '13-Scene Continuous Power Journey | EPEDE';
-    case 'hydropower':
-      return locale === 'fr' 
-        ? 'Station d\'Ingénierie Hydroélectrique & PSH | EPEDE' 
-        : 'Hydropower Engineering & PSH Station | EPEDE';
+      return isFr
+        ? `Référentiel Matériels Électriques Réels (${state.equipmentId || 'Catalogue'}) | EPEDE`
+        : `Real-World Electrical Equipment Reference (${state.equipmentId || 'Catalog'}) | EPEDE`;
+    case 'domains':
+    case 'domain':
+      return isFr
+        ? `Architecture des 16 Domaines Électriques (${state.domainCode || 'Index'}) | EPEDE`
+        : `16 Electrical Engineering Domains (${state.domainCode || 'Index'}) | EPEDE`;
     case 'cameroon-grid':
-      return locale === 'fr' 
-        ? 'Modèle Réseau HTB Cameroun (RIS & RIN) | EPEDE' 
-        : 'Cameroon HV Grid Digital Model (RIS & RIN) | EPEDE';
+      return isFr
+        ? 'Observatoire du Réseau Électrique Camerounais (RIS & RIN 2050 MW) | EPEDE'
+        : 'Cameroon Power System Observatory (2,050 MW Grid Model) | EPEDE';
+    case 'laboratory':
+    case 'simulation':
+      return isFr
+        ? `Laboratoire Virtuel & Ateliers de Simulation (${state.simulationTab || 'Index'}) | EPEDE`
+        : `Virtual Power System Lab & Workbenches (${state.simulationTab || 'Index'}) | EPEDE`;
     case 'standards':
-      return locale === 'fr' 
-        ? `Référentiel Normatif International (${state.standardRef || ''}) | EPEDE` 
-        : `International Standards Repository (${state.standardRef || ''}) | EPEDE`;
-    case 'roles':
-      return locale === 'fr' 
-        ? `Métiers & Ingénieurs Spécialistes (${state.roleSlug || ''}) | EPEDE` 
-        : `Engineering Disciplines & Roles (${state.roleSlug || ''}) | EPEDE`;
-    case 'industrial-projects':
-      return locale === 'fr' 
-        ? 'Projets Industriels & Cas d\'Ingénierie Terrain | EPEDE' 
-        : 'Industrial Projects & Field Engineering Cases | EPEDE';
-    case 'engineers-chain':
-      return locale === 'fr'
-        ? 'Les Ingénieurs de la Chaîne Électrique (35+ Profils) | EPEDE'
-        : 'Engineers Across the Power Chain (35+ Roles) | EPEDE';
-    case 'context-stack':
-      return locale === 'fr' 
-        ? 'Graphe Canonique Système & Continuité d\'Énergie | EPEDE' 
-        : 'Canonical System Graph & Energy Continuity | EPEDE';
-    case 'regulatory':
-      return locale === 'fr' 
-        ? 'Cadre Réglementaire & Grid Code | EPEDE' 
-        : 'Regulatory Framework & Grid Code | EPEDE';
-    case 'lifecycle':
-      return locale === 'fr' 
-        ? 'Cycle de Vie d\'un Projet Électrique | EPEDE' 
-        : 'Electrical Project Lifecycle | EPEDE';
+      return isFr
+        ? `Référentiel Normatif International (${state.standardRef || 'CEI / IEEE'}) | EPEDE`
+        : `International Standards Repository (${state.standardRef || 'IEC / IEEE'}) | EPEDE`;
+    case 'glossary':
+      return isFr
+        ? 'Glossaire Technique Électrotechnique Bilingue (CEI 60050 / IEV) | EPEDE'
+        : 'Bilingual Electrotechnical Engineering Glossary (IEC 60050) | EPEDE';
+    case 'about':
+      return isFr
+        ? 'À Propos de l\'Auteur & Mission d\'Ingénierie | EPEDE'
+        : 'About the Author & Engineering Mission | EPEDE';
+    case 'not-found':
+      return isFr ? '404 · Circuit Introuvable | EPEDE' : '404 · Route Not Found | EPEDE';
     default:
       return base;
   }

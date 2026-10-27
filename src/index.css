@@ -45,6 +45,53 @@
     --ecosystem-control-surface: #151C1E;
   }
 
+  :root[data-theme="light"], .light {
+    --bg-primary: #F8FAFC;
+    --bg-surface-1: #FFFFFF;
+    --bg-surface-2: #F1F5F9;
+    --bg-surface-3: #E2E8F0;
+    --surface-card: rgba(255, 255, 255, 0.95);
+    --surface-card-hover: rgba(248, 250, 252, 0.98);
+    --surface-border: rgba(100, 116, 139, 0.2);
+    --surface-border-subtle: rgba(100, 116, 139, 0.12);
+
+    --text-primary: #0F172A;
+    --text-secondary: #334155;
+    --text-muted: #64748B;
+
+    --accent-amber: #D97706;
+    --accent-amber-glow: rgba(217, 119, 6, 0.2);
+    --accent-cyan: #0891B2;
+    --accent-cyan-dim: rgba(8, 145, 178, 0.12);
+  }
+
+  .light body {
+    background-color: #F8FAFC;
+    color: #0F172A;
+  }
+
+  .light h1, .light h2, .light h3, .light h4, .light h5, .light h6 {
+    color: #0F172A;
+  }
+
+  .light .cad-grid-pattern {
+    background-image: 
+      linear-gradient(to right, rgba(100, 116, 139, 0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(100, 116, 139, 0.08) 1px, transparent 1px);
+  }
+
+  .light .epede-card {
+    background: #FFFFFF;
+    border-color: rgba(203, 213, 225, 0.8);
+    box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.06);
+  }
+
+  .light .epede-card:hover {
+    border-color: #D97706;
+    background: #FFFFFF;
+    box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.1);
+  }
+
   body {
     font-family: 'Inter', 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: #030712;
@@ -411,4 +458,71 @@
 ::selection {
   background-color: rgba(245, 158, 11, 0.25);
   color: #FDE68A;
+}
+
+/* Print Media Styles: Formal Engineering Calculation Notes */
+@media print {
+  @page {
+    margin: 12mm 15mm 15mm 15mm;
+    size: A4 portrait;
+  }
+
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    font-size: 11pt !important;
+  }
+
+  header,
+  nav,
+  #mobile-core-dock,
+  .scada-telemetry-bar,
+  .disclaimer-bar,
+  .no-print,
+  button,
+  .fixed,
+  .sticky {
+    display: none !important;
+  }
+
+  main {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .epede-card,
+  .bg-slate-900,
+  .bg-slate-950 {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    border: 1px solid #CBD5E1 !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  h1, h2, h3, h4, h5, h6, span, p, td, th {
+    color: #000000 !important;
+  }
+
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  th, td {
+    border: 1px solid #CBD5E1 !important;
+    padding: 6px 8px !important;
+  }
+
+  .page-break-inside-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .page-break-before {
+    break-before: page;
+    page-break-before: always;
+  }
 }

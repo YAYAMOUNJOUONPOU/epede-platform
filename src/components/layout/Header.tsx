@@ -23,7 +23,11 @@ import {
   Activity,
   Calculator,
   Layers,
-  FileText
+  FileText,
+  Sun,
+  Moon,
+  FlaskConical,
+  BookOpen
 } from 'lucide-react';
 import { useAuth } from '../../services/AuthContext';
 import { CANONICAL_ROLES } from '../../types/engineeringRoles';
@@ -69,6 +73,11 @@ interface HeaderProps {
   isContextHUDOpen?: boolean;
   onOpenAudit?: () => void;
   onNavigate?: (view: string) => void;
+  theme?: 'dark' | 'light';
+  onToggleTheme?: () => void;
+  onNavigateLaboratory?: () => void;
+  onNavigateGlossary?: () => void;
+  onNavigateAbout?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -105,6 +114,11 @@ export const Header: React.FC<HeaderProps> = ({
   isContextHUDOpen = false,
   onOpenAudit,
   onNavigate,
+  theme = 'dark',
+  onToggleTheme,
+  onNavigateLaboratory,
+  onNavigateGlossary,
+  onNavigateAbout,
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [systemsDropdownOpen, setSystemsDropdownOpen] = useState(false);
@@ -206,6 +220,9 @@ export const Header: React.FC<HeaderProps> = ({
         case 'commissioning': onNavigate ? onNavigate('commissioning') : (window.location.hash = '#/commissioning'); break;
         case 'architectures': onNavigate ? onNavigate('architectures') : onNavigateArchitectures?.(); break;
         case 'asset-management': onNavigate ? onNavigate('asset-management') : (onNavigateAssetManagement ? onNavigateAssetManagement() : (window.location.hash = '#/asset-management')); break;
+        case 'laboratory': onNavigateLaboratory ? onNavigateLaboratory() : (onNavigate ? onNavigate('laboratory') : (window.location.hash = '#/laboratoire')); break;
+        case 'glossary': onNavigateGlossary ? onNavigateGlossary() : (onNavigate ? onNavigate('glossary') : (window.location.hash = '#/glossaire')); break;
+        case 'about': onNavigateAbout ? onNavigateAbout() : (onNavigate ? onNavigate('about') : (window.location.hash = '#/a-propos')); break;
         default: onNavigateHome?.(); break;
       }
     }
@@ -490,29 +507,73 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </div>
 
+          {/* LABORATOIRE */}
+          <a
+            href="#/laboratoire"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                navigateTo('laboratory');
+              }
+            }}
+            className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 select-none no-underline ${
+              currentView === 'laboratory' || currentView === 'simulation'
+                ? 'text-purple-300 bg-purple-950/80 border border-purple-500/60 font-bold shadow-sm shadow-purple-500/20'
+                : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800'
+            }`}
+          >
+            <FlaskConical className="w-3.5 h-3.5 text-purple-400" />
+            <span>{locale === 'fr' ? 'LABORATOIRE' : 'LABORATORY'}</span>
+          </a>
+
+          {/* GLOSSAIRE */}
+          <a
+            href="#/glossaire"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                navigateTo('glossary');
+              }
+            }}
+            className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 select-none no-underline ${
+              currentView === 'glossary'
+                ? 'text-amber-300 bg-amber-500/15 border border-amber-500/40 font-bold shadow-sm shadow-amber-500/20'
+                : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800'
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5 text-amber-400" />
+            <span>{locale === 'fr' ? 'GLOSSAIRE' : 'GLOSSARY'}</span>
+          </a>
+
           {/* SEARCH */}
           <button
             type="button"
             onClick={handleSearch}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-900/80 transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-900/80 transition-all border border-transparent hover:border-slate-800"
             title="Search (Ctrl+K)"
           >
-            <Search className="h-3.5 w-3.5 text-amber-400" />
+            <Search className="h-3.5 w-3.5 text-cyan-400" />
             <span>{locale === 'fr' ? 'RECHERCHE' : 'SEARCH'}</span>
+            <kbd className="hidden lg:inline-block px-1.5 py-0.5 text-[9px] font-mono bg-slate-800 text-slate-400 rounded border border-slate-700">⌘K</kbd>
           </button>
 
-          {/* ABOUT */}
-          <button
-            type="button"
-            onClick={() => navigateTo('standards')}
-            className={`px-3 py-1.5 rounded-lg transition-all ${
-              currentView === 'standards'
-                ? 'text-amber-400 bg-amber-500/10 border border-amber-500/30 font-bold'
-                : 'text-slate-300 hover:text-white hover:bg-slate-900/80'
+          {/* À PROPOS */}
+          <a
+            href="#/a-propos"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                navigateTo('about');
+              }
+            }}
+            className={`px-3 py-1.5 rounded-xl transition-all select-none no-underline ${
+              currentView === 'about'
+                ? 'text-cyan-300 bg-cyan-950/80 border border-cyan-500/60 font-bold shadow-sm shadow-cyan-500/20'
+                : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800'
             }`}
           >
-            {locale === 'fr' ? 'RÉFÉRENTIEL' : 'ABOUT'}
-          </button>
+            {locale === 'fr' ? 'À PROPOS' : 'ABOUT'}
+          </a>
         </nav>
 
         {/* Live Grid Frequency & Voltage Capsule */}
@@ -610,6 +671,22 @@ export const Header: React.FC<HeaderProps> = ({
           >
             {locale.toUpperCase()}
           </button>
+
+          {/* Dark / Light Theme Toggle */}
+          {onToggleTheme && (
+            <button
+              type="button"
+              onClick={() => {
+                soundEffects.playSwitchClick();
+                onToggleTheme();
+              }}
+              className="p-2 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 text-slate-200 hover:text-amber-400 transition-all shadow-xs active:scale-95 cursor-pointer"
+              title={theme === 'light' ? (locale === 'fr' ? 'Activer le mode sombre' : 'Switch to Dark Mode') : (locale === 'fr' ? 'Activer le mode clair' : 'Switch to Light Mode')}
+              aria-label="Theme Toggle"
+            >
+              {theme === 'light' ? <Moon className="h-4 w-4 text-amber-400" /> : <Sun className="h-4 w-4 text-amber-400" />}
+            </button>
+          )}
 
           {/* AI Field Equipment Vision Inspector trigger */}
           {onOpenVisionInspector && (

@@ -46,6 +46,10 @@ const PedagogicalScenariosWorkbench = lazy(() => import('./components/scenarios/
 const DataProvenanceRegistryView = lazy(() => import('./components/trust/DataProvenanceRegistryView').then(m => ({ default: m.DataProvenanceRegistryView })));
 const ThematicJourneysWorkbench = lazy(() => import('./components/journey/ThematicJourneysWorkbench').then(m => ({ default: m.ThematicJourneysWorkbench })));
 const AssetManagementDiagnosticsWorkbench = lazy(() => import('./components/assets/AssetManagementDiagnosticsWorkbench').then(m => ({ default: m.AssetManagementDiagnosticsWorkbench })));
+const GlossaryView = lazy(() => import('./components/glossary/GlossaryView').then(m => ({ default: m.GlossaryView })));
+const LaboratoryView = lazy(() => import('./components/laboratory/LaboratoryView').then(m => ({ default: m.LaboratoryView })));
+const AboutView = lazy(() => import('./components/about/AboutView').then(m => ({ default: m.AboutView })));
+const NotFoundView = lazy(() => import('./components/common/NotFoundView').then(m => ({ default: m.NotFoundView })));
 
 // Lazy Modals (on-demand loading)
 const SearchModal = lazy(() => import('./components/search/SearchModal').then(m => ({ default: m.SearchModal })));
@@ -79,6 +83,31 @@ export default function App() {
     }
     return 'fr';
   });
+
+  // Theme state: dark | light with local storage persistence
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('epede_theme');
+      if (saved === 'dark' || saved === 'light') return saved;
+    }
+    return 'dark';
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('epede_theme', theme);
+      document.documentElement.setAttribute('data-theme', theme);
+      if (theme === 'light') {
+        document.documentElement.classList.add('light');
+      } else {
+        document.documentElement.classList.remove('light');
+      }
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
 
   // Persist locale changes
   useEffect(() => {
@@ -544,6 +573,11 @@ export default function App() {
           onToggleContextHUD={toggleContextHUD}
           isContextHUDOpen={isContextHUDOpen}
           onOpenAudit={() => setIsAuditOpen(true)}
+          theme={theme}
+          onToggleTheme={toggleTheme}
+          onNavigateLaboratory={() => navigate({ view: 'laboratory' })}
+          onNavigateGlossary={() => navigate({ view: 'glossary' })}
+          onNavigateAbout={() => navigate({ view: 'about' })}
         />
       )}
 
@@ -699,6 +733,18 @@ export default function App() {
           }}
           onNavigateAssetManagement={() => {
             handleNavigateAssetManagement();
+            setIsSidebarOpen(false);
+          }}
+          onNavigateLaboratory={() => {
+            navigate({ view: 'laboratory' });
+            setIsSidebarOpen(false);
+          }}
+          onNavigateGlossary={() => {
+            navigate({ view: 'glossary' });
+            setIsSidebarOpen(false);
+          }}
+          onNavigateAbout={() => {
+            navigate({ view: 'about' });
             setIsSidebarOpen(false);
           }}
           currentView={currentView}
@@ -1105,6 +1151,53 @@ export default function App() {
                     }
                   }}
                   onSelectEquipment={handleNavigateEquipment}
+                />
+              )}
+
+              {currentView === 'laboratory' && (
+                <LaboratoryView
+                  locale={locale}
+                  onNavigate={(view, params) => {
+                    navigate({
+                      view: view as AppViewType,
+                      simulationTab: params?.simulationTab,
+                      calculatorTab: params?.calculatorTab,
+                      topology: params?.topology,
+                      assetPillar: params?.assetPillar,
+                    });
+                  }}
+                />
+              )}
+
+              {currentView === 'glossary' && (
+                <GlossaryView
+                  locale={locale}
+                  onNavigate={(view, params) => {
+                    if (view === 'domain' && params?.domainCode) {
+                      handleNavigateDomain(params.domainCode);
+                    } else if (view === 'equipment' && params?.equipmentId) {
+                      handleNavigateEquipment(params.equipmentId);
+                    } else if (view === 'calculators') {
+                      handleNavigateCalculator(params?.calculatorTab);
+                    } else {
+                      navigate({ view: view as AppViewType });
+                    }
+                  }}
+                />
+              )}
+
+              {currentView === 'about' && (
+                <AboutView
+                  locale={locale}
+                  onNavigate={(view) => navigate({ view })}
+                />
+              )}
+
+              {currentView === 'not-found' && (
+                <NotFoundView
+                  locale={locale}
+                  onNavigateHome={() => navigate({ view: 'home' })}
+                  onNavigateView={(v) => navigate({ view: v })}
                 />
               )}
             </Suspense>

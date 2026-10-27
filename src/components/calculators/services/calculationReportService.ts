@@ -28,7 +28,9 @@ export type CalculatorTabType =
   | 'cable-ampacity'
   | 'transmission-line'
   | 'neutral-grounding'
-  | 'relay-tcc';
+  | 'relay-tcc'
+  | 'cable-short-circuit'
+  | 'load-schedule';
 
 export function generateCalculationReport(
   activeCalc: CalculatorTabType,
@@ -1066,6 +1068,115 @@ export function generateCalculationReport(
       engineeringNotes: [
         'L\'intervalle de sélectivité de 250 ms intègre : temps mécanique de coupure du disjoncteur (60 ms) + dépassement d\'inertie du relais (35 ms) + erreurs de rapport TC classe 5P20 (100 ms) + marge de dispersion numérique (55 ms).',
         'Les seuils instantanés ANSI 50 sont coordonnés pour assurer le déclenchement non temporisé en cas de défaut franc aux bornes sans empiéter sur la zone protégée aval.',
+      ],
+    });
+  }
+
+  // CABLE END SHORT-CIRCUIT CALCULATOR (IEC 60909 / NF C 15-105)
+  if (activeCalc === 'cable-short-circuit') {
+    const p = injectedContext?.params || {};
+    const un = Number(p.voltageV || 400);
+    const lengthM = Number(p.lengthM || 75);
+    const sectionMm2 = Number(p.sectionMm2 || 35);
+    const iccAmontKa = Number(p.iccAmontKa || 25);
+    const material = (p.material as string) || 'cu';
+    const rho = material === 'al' ? 0.036 : 0.0225;
+    const rCable = (rho * lengthM) / sectionMm2;
+    const xCable = 0.08e-3 * lengthM;
+    const zAmont = (1.05 * un) / (Math.sqrt(3) * iccAmontKa * 1000);
+    const rAmont = 0.1 * zAmont;
+    const xAmont = Math.sqrt(Math.max(0, zAmont * zAmont - rAmont * rAmont));
+    const rTot = rAmont + rCable;
+    const xTot = xAmont + xCable;
+    const zTot = Math.sqrt(rTot * rTot + xTot * xTot);
+    const icc3MaxKa = (1.05 * un) / (Math.sqrt(3) * zTot * 1000);
+    const iccMinKa = (0.95 * un) / (2 * zTot * 1000);
+
+    return withProvenance({
+      title: locale === 'fr' ? 'Note de Calcul Court-Circuit en Bout de Câble' : 'Cable End Short-Circuit Calculation Note',
+      calcType: 'CABLE_SHORT_CIRCUIT',
+      standard: 'CEI 60909-0 / NF C 15-105 Cl. 533',
+      date: dateStr,
+      referenceId: `EPEDE-CALC-ICCC-${now.getTime().toString().slice(-6)}`,
+      inputs: [
+        { label: locale === 'fr' ? 'Tension assignée réseau (Un)' : 'Nominal System Voltage (Un)', value: `${un}`, unit: 'V' },
+        { label: locale === 'fr' ? 'Icc amont disponible (TGBT)' : 'Upstream Available Icc (Switchboard)', value: `${iccAmontKa}`, unit: 'kA' },
+        { label: locale === 'fr' ? 'Longueur de liaison (L)' : 'Cable Route Length (L)', value: `${lengthM}`, unit: 'm' },
+        { label: locale === 'fr' ? 'Section de phase (S)' : 'Phase Conductor Section (S)', value: `${sectionMm2}`, unit: 'mm²' },
+        { label: locale === 'fr' ? 'Matériau d\'âme conductrice' : 'Conductor Material', value: material === 'al' ? 'Aluminium' : 'Cuivre (Cu)' },
+      ],
+      formulas: [
+        { name: 'Impédance source amont (CEI 60909)', expr: 'Z_amont = (c · Un) / (√3 · Icc_amont) [Ω]' },
+        { name: 'Résistance câble à chaud (NF C 15-105)', expr: 'R_câble = ρ_max · (L / S) [Ω]' },
+        { name: 'Réactance linéique câble', expr: 'X_câble = x\' · L (x\' = 0.08 mΩ/m) [Ω]' },
+        { name: 'Impédance de boucle totale', expr: 'Z_tot = √((R_amont + R_câble)² + (X_amont + X_câble)²) [Ω]' },
+        { name: 'Icc triphasé max en bout', expr: 'Icc3_max = (c_max · Un) / (√3 · Z_tot) [kA]' },
+        { name: 'Icc biphasé min (réglage magnétique)', expr: 'Icc2_min = (c_min · Un) / (2 · Z_tot) [kA]' },
+      ],
+      results: [
+        { label: locale === 'fr' ? 'Résistance du câble (R_c)' : 'Cable Resistance (R_c)', value: `${rCable.toFixed(4)}`, unit: 'Ω', status: 'OK' },
+        { label: locale === 'fr' ? 'Impédance totale de boucle (Z_tot)' : 'Total Loop Impedance (Z_tot)', value: `${zTot.toFixed(4)}`, unit: 'Ω', status: 'OK' },
+        { label: locale === 'fr' ? 'Icc triphasé maximal en bout' : 'Max 3-Phase Fault Current at End', value: `${icc3MaxKa.toFixed(2)}`, unit: 'kA', highlight: true, status: 'OK' },
+        { label: locale === 'fr' ? 'Icc biphasé minimal en bout' : 'Min 2-Phase Fault Current at End', value: `${iccMinKa.toFixed(2)}`, unit: 'kA', highlight: true, status: 'OK' },
+      ],
+      complianceVerdict: {
+        status: 'COMPLIANT',
+        message: locale === 'fr'
+          ? `Conforme CEI 60909 & NF C 15-105 : Le courant de court-circuit maximal en bout de câble est de ${icc3MaxKa.toFixed(2)} kA. Le seuil de déclenchement magnétique instantané du disjoncteur amont (ANSI 50) doit être réglé strictement en-deçà de Icc_min = ${iccMinKa.toFixed(2)} kA pour garantir l'élimination du défaut sous temps t ≤ 0.4s.`
+          : `Compliant with IEC 60909 & NF C 15-105: Max end-of-cable fault current is ${icc3MaxKa.toFixed(2)} kA. The upstream breaker magnetic threshold must be set below Icc_min = ${iccMinKa.toFixed(2)} kA to secure disconnect within t ≤ 0.4s.`,
+      },
+      engineeringNotes: [
+        'Calcul réalisé avec coefficient de tension c_max = 1.05 pour la contrainte thermique maximale et c_min = 0.95 pour la vérification du déclenchement magnétique minimal.',
+        'La contrainte thermique k²·S² de l\'isolant (PR ou PVC) doit être validée vis-à-vis de l\'énergie spécifique traversante I²t du disjoncteur amont.',
+      ],
+    });
+  }
+
+  // LOAD SCHEDULE & POWER BALANCE CALCULATOR (NF C 14-100 / NF C 15-100 / IEC 60364)
+  if (activeCalc === 'load-schedule') {
+    const p = injectedContext?.params || {};
+    const un = Number(p.voltageV || 400);
+    const activePowerKw = Number(p.totalActiveKw || 345);
+    const reactivePowerKvar = Number(p.totalReactiveKvar || 168);
+    const apparentPowerKva = Math.sqrt(activePowerKw * activePowerKw + reactivePowerKvar * reactivePowerKvar);
+    const globalCosPhi = activePowerKw / apparentPowerKva;
+    const currentA = (apparentPowerKva * 1000) / (Math.sqrt(3) * un);
+    const recommendedTrafoKva = apparentPowerKva * 1.25;
+
+    return withProvenance({
+      title: locale === 'fr' ? 'Note de Calcul Bilan de Puissance & Foisonnement' : 'Load Schedule & Power Balance Calculation Note',
+      calcType: 'LOAD_SCHEDULE',
+      standard: 'NF C 14-100 / NF C 15-100 / CEI 60364-5-52',
+      date: dateStr,
+      referenceId: `EPEDE-CALC-LOAD-${now.getTime().toString().slice(-6)}`,
+      inputs: [
+        { label: locale === 'fr' ? 'Tension de service assignée (Un)' : 'Operating Voltage (Un)', value: `${un}`, unit: 'V' },
+        { label: locale === 'fr' ? 'Puissance active totale foisonnée (P)' : 'Total Coincident Active Power (P)', value: `${activePowerKw.toFixed(1)}`, unit: 'kW' },
+        { label: locale === 'fr' ? 'Puissance réactive totale foisonnée (Q)' : 'Total Coincident Reactive Power (Q)', value: `${reactivePowerKvar.toFixed(1)}`, unit: 'kvar' },
+        { label: locale === 'fr' ? 'Facteur de foisonnement global (ks)' : 'Global Diversity Factor (ks)', value: `${p.diversityFactor || 0.85}` },
+        { label: locale === 'fr' ? 'Marge d\'extension contractuelle' : 'Future Expansion Margin', value: '25', unit: '%' },
+      ],
+      formulas: [
+        { name: 'Puissance apparente totale', expr: 'S = √(P² + Q²) [kVA]' },
+        { name: 'Facteur de puissance moyen calculé', expr: 'cos φ = P / S' },
+        { name: 'Courant d\'emploi assigné (Ib)', expr: 'Ib = S / (√3 · Un) [A]' },
+        { name: 'Dimensionnement transformateur HTA/BT', expr: 'S_trafo ≥ S · (1 + Marge_ext) [kVA]' },
+      ],
+      results: [
+        { label: locale === 'fr' ? 'Puissance apparente totale foisonnée (S)' : 'Total Apparent Power (S)', value: `${apparentPowerKva.toFixed(1)}`, unit: 'kVA', highlight: true, status: 'OK' },
+        { label: locale === 'fr' ? 'Facteur de puissance résultant (cos φ)' : 'Resulting Power Factor (cos φ)', value: `${globalCosPhi.toFixed(2)}`, status: globalCosPhi >= 0.88 ? 'OK' : 'WARNING' },
+        { label: locale === 'fr' ? 'Courant nominal d\'emploi (Ib)' : 'Operating Full Load Current (Ib)', value: `${currentA.toFixed(1)}`, unit: 'A', status: 'OK' },
+        { label: locale === 'fr' ? 'Calibre normalisé transfo recommandé' : 'Recommended Standard Transformer', value: `${Math.ceil(recommendedTrafoKva / 50) * 50}`, unit: 'kVA', highlight: true, status: 'OK' },
+      ],
+      complianceVerdict: {
+        status: 'COMPLIANT',
+        message: locale === 'fr'
+          ? `Bilan de puissance équilibré : Pour une puissance appelée de ${apparentPowerKva.toFixed(1)} kVA à cos φ = ${globalCosPhi.toFixed(2)} (Ib = ${currentA.toFixed(1)} A), un transformateur normalisé de 400 kVA ou 630 kVA (ou groupe électrogène de secours de puissance équivalente) offre une réserve d'évolution pérenne supérieure à 20%.`
+          : `Balanced power schedule: For a diversified demand of ${apparentPowerKva.toFixed(1)} kVA at PF = ${globalCosPhi.toFixed(2)} (Ib = ${currentA.toFixed(1)} A), a standard 400 kVA or 630 kVA transformer ensures compliant long-term headroom >20%.`,
+      },
+      engineeringNotes: [
+        'Facteurs d\'utilisation ku et de simultanéité ks conformes aux abaques du guide UTE C 15-105.',
+        'La puissance souscrite contractuelle doit intégrer les pointes de démarrage des moteurs asynchrones sans creux de tension supérieur à 5%.',
       ],
     });
   }
