@@ -45,8 +45,10 @@ import { EvidenceTrustBadge } from '../trust/EvidenceTrustBadge';
 import { DomainPendingIssuesPanel } from './modules/DomainPendingIssuesPanel';
 import { PedagogicalPageOrientationHeader } from '../common/PedagogicalPageOrientationHeader';
 import { getDomainPedagogicalGuide } from './domainPedagogicalRegistry';
+import { DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY } from './domainPedagogicalContentRegistry';
 
 // Code-Split Dynamic Workbenches for Core Web Vitals Optimization
+const UniversalPedagogicalDomainView = lazy(() => import('./UniversalPedagogicalDomainView').then(m => ({ default: m.UniversalPedagogicalDomainView })));
 const EnergyProductionMainView = lazy(() => import('../production/EnergyProductionMainView').then(m => ({ default: m.EnergyProductionMainView })));
 const GridArchitectureVisualJourney = lazy(() => import('../grid-architecture/GridArchitectureVisualJourney').then(m => ({ default: m.GridArchitectureVisualJourney })));
 const TransmissionWorkbench = lazy(() => import('../transmission/TransmissionWorkbench').then(m => ({ default: m.TransmissionWorkbench })));
@@ -169,18 +171,18 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
     'workbench' | 'five_levels' | 'concept' | 'systems' | 'engineering' | 'formulas' | 'standards' | 'roles' | 'examples' | 'phase2_spec' | 'relationships' | 'documentation' | 'visuals'
   >(['D07', 'D08', 'D09', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'D16'].includes(domainCode) ? 'workbench' : 'five_levels');
 
-  // Specific state for D01 Energy Production, D02 Grid Architecture, D03 Transmission Networks, & D04 Substations: default to visual interactive journey
-  const [d01Mode, setD01Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
-  const [d02Mode, setD02Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
-  const [d03Mode, setD03Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
+  // Specific state for D01 to D10: default to standardized 6-part pedagogical architecture
+  const [d01Mode, setD01Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('pedagogical_pilot');
+  const [d02Mode, setD02Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('pedagogical_pilot');
+  const [d03Mode, setD03Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('pedagogical_pilot');
   const [d04Mode, setD04Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('pedagogical_pilot');
-  const [d05Mode, setD05Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
-  const [d06Mode, setD06Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
+  const [d05Mode, setD05Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('pedagogical_pilot');
+  const [d06Mode, setD06Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('pedagogical_pilot');
   const [showD06Metrics, setShowD06Metrics] = useState<boolean>(false);
-  const [d07Mode, setD07Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
-  const [d08Mode, setD08Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
-  const [d09Mode, setD09Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
-  const [d10Mode, setD10Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
+  const [d07Mode, setD07Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('pedagogical_pilot');
+  const [d08Mode, setD08Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('pedagogical_pilot');
+  const [d09Mode, setD09Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('pedagogical_pilot');
+  const [d10Mode, setD10Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('pedagogical_pilot');
   const [d11Mode, setD11Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
   const [d12Mode, setD12Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
   const [d13Mode, setD13Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
@@ -188,6 +190,35 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
   const [d15Mode, setD15Mode] = useState<'visual_journey' | 'asset_management' | 'spec_catalog'>('visual_journey');
   const [d16Mode, setD16Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
   const [d06InitialPillar, setD06InitialPillar] = useState<InstallationPillar>('INTERACTIVE_SLD');
+
+  const hasPedagogicalData = isD04 || Boolean(DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY[domainCode]);
+
+  const currentDomainMode: 'pedagogical_pilot' | 'visual_journey' | 'spec_catalog' | 'asset_management' = 
+    isD01 ? d01Mode :
+    isD02 ? d02Mode :
+    isD03 ? d03Mode :
+    isD04 ? d04Mode :
+    isD05 ? d05Mode :
+    isD06 ? d06Mode :
+    isD07 ? d07Mode :
+    isD08 ? d08Mode :
+    isD09 ? d09Mode :
+    isD10 ? d10Mode :
+    isD15 ? d15Mode :
+    'visual_journey';
+
+  const setModeForCurrentDomain = (mode: 'pedagogical_pilot' | 'visual_journey' | 'spec_catalog') => {
+    if (isD01) setD01Mode(mode);
+    else if (isD02) setD02Mode(mode);
+    else if (isD03) setD03Mode(mode);
+    else if (isD04) setD04Mode(mode);
+    else if (isD05) setD05Mode(mode);
+    else if (isD06) setD06Mode(mode);
+    else if (isD07) setD07Mode(mode);
+    else if (isD08) setD08Mode(mode);
+    else if (isD09) setD09Mode(mode);
+    else if (isD10) setD10Mode(mode);
+  };
 
   const isChainDomain = ['D01', 'D02', 'D03', 'D04', 'D05', 'D06'].includes(domainCode);
 
@@ -456,34 +487,47 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
         ]}
       />
 
-      {/* D06 DEDICATED MASTER MODE SWITCHER (Directly underneath header for immediate orientation) */}
-      {isD06 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-slate-900/90 border border-amber-800/50 shadow-lg">
+      {/* UNIVERSAL MASTER MODE SWITCHER FOR CORE PEDAGOGICAL DOMAINS */}
+      {hasPedagogicalData && (
+        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-sm">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
-            <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-              {locale === 'fr' ? 'Mode d\'Exploration Installations Électriques & Utilisation :' : 'Electrical Installations Exploration Mode:'}
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
+            <span className="text-xs font-mono font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
+              {locale === 'fr' 
+                ? `Mode d'Exploration ${domain.code} · ${domain.title} :` 
+                : `Exploration Mode ${domain.code} · ${domain.title}:`}
             </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
-              onClick={() => setD06Mode('visual_journey')}
+              onClick={() => setModeForCurrentDomain('pedagogical_pilot')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all cursor-pointer ${
-                d06Mode === 'visual_journey'
+                currentDomainMode === 'pedagogical_pilot'
                   ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700'
               }`}
             >
-              {locale === 'fr' ? '⚡ Parcours d\'Ingénierie Basse Tension (5 Grandes Étapes)' : '⚡ Low-Voltage Engineering Lifecycle (5 Master Stages)'}
+              {locale === 'fr' ? '⚡ Parcours Pédagogique (Sections A à F)' : '⚡ 6-Part Pedagogical Framework'}
             </button>
             <button
               type="button"
-              onClick={() => setD06Mode('spec_catalog')}
+              onClick={() => setModeForCurrentDomain('visual_journey')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all cursor-pointer ${
-                d06Mode === 'spec_catalog'
+                currentDomainMode === 'visual_journey'
                   ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700'
+              }`}
+            >
+              {locale === 'fr' ? '🛠️ Banc d\'Ingénierie Avancé' : '🛠️ Advanced Engineering Workbench'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setModeForCurrentDomain('spec_catalog')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all cursor-pointer ${
+                currentDomainMode === 'spec_catalog'
+                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700'
               }`}
             >
               {locale === 'fr' ? '📋 Fiches Sous-Domaines & Spécifications' : '📋 Subdomain Catalog & Specs'}
@@ -1124,18 +1168,66 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
         </div>
       )}
 
-      {/* D01 VISUAL JOURNEY ENVIRONMENT */}
+      {/* D01 TO D10 PEDAGOGICAL PILOT OR ADVANCED WORKBENCHES */}
       <Suspense fallback={<EngineeringLoadingSkeleton locale={locale} />}>
-      {isD01 && d01Mode === 'visual_journey' ? (
+      {isD01 && d01Mode === 'pedagogical_pilot' ? (
+        <UniversalPedagogicalDomainView
+          domainCode="D01"
+          locale={locale}
+          onSelectEquipment={onSelectEquipment}
+          onNavigateView={onNavigateView}
+          onNavigateCalculator={(tab, ctx) => {
+            if (onNavigateView) onNavigateView('calculators');
+            else window.location.hash = `#/calculateurs`;
+          }}
+          onNavigateSimulation={(tab) => {
+            if (onNavigateView) onNavigateView('simulation');
+            else window.location.hash = `#/simulation`;
+          }}
+          onSwitchToAdvancedWorkbench={() => setD01Mode('visual_journey')}
+        />
+      ) : isD01 && d01Mode === 'visual_journey' ? (
         <EnergyProductionMainView
           locale={locale}
           onSelectEquipment={onSelectEquipment}
           onNavigateToDomain={(dCode) => onNavigateView?.('domain', dCode)}
         />
+      ) : isD02 && d02Mode === 'pedagogical_pilot' ? (
+        <UniversalPedagogicalDomainView
+          domainCode="D02"
+          locale={locale}
+          onSelectEquipment={onSelectEquipment}
+          onNavigateView={onNavigateView}
+          onNavigateCalculator={(tab, ctx) => {
+            if (onNavigateView) onNavigateView('calculators');
+            else window.location.hash = `#/calculateurs`;
+          }}
+          onNavigateSimulation={(tab) => {
+            if (onNavigateView) onNavigateView('simulation');
+            else window.location.hash = `#/simulation`;
+          }}
+          onSwitchToAdvancedWorkbench={() => setD02Mode('visual_journey')}
+        />
       ) : isD02 && d02Mode === 'visual_journey' ? (
         <GridArchitectureVisualJourney
           locale={locale}
           onSelectEquipment={onSelectEquipment}
+        />
+      ) : isD03 && d03Mode === 'pedagogical_pilot' ? (
+        <UniversalPedagogicalDomainView
+          domainCode="D03"
+          locale={locale}
+          onSelectEquipment={onSelectEquipment}
+          onNavigateView={onNavigateView}
+          onNavigateCalculator={(tab, ctx) => {
+            if (onNavigateView) onNavigateView('calculators');
+            else window.location.hash = `#/calculateurs`;
+          }}
+          onNavigateSimulation={(tab) => {
+            if (onNavigateView) onNavigateView('simulation');
+            else window.location.hash = `#/simulation`;
+          }}
+          onSwitchToAdvancedWorkbench={() => setD03Mode('visual_journey')}
         />
       ) : isD03 && d03Mode === 'visual_journey' ? (
         <TransmissionWorkbench
@@ -1164,6 +1256,22 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           onSelectEquipment={onSelectEquipment}
           onNavigate={onNavigateView}
         />
+      ) : isD05 && d05Mode === 'pedagogical_pilot' ? (
+        <UniversalPedagogicalDomainView
+          domainCode="D05"
+          locale={locale}
+          onSelectEquipment={onSelectEquipment}
+          onNavigateView={onNavigateView}
+          onNavigateCalculator={(tab, ctx) => {
+            if (onNavigateView) onNavigateView('calculators');
+            else window.location.hash = `#/calculateurs`;
+          }}
+          onNavigateSimulation={(tab) => {
+            if (onNavigateView) onNavigateView('simulation');
+            else window.location.hash = `#/simulation`;
+          }}
+          onSwitchToAdvancedWorkbench={() => setD05Mode('visual_journey')}
+        />
       ) : isD05 && d05Mode === 'visual_journey' ? (
         <DistributionWorkbench
           locale={locale}
@@ -1171,10 +1279,42 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           activeSubdomainId={activeSubdomainCode}
           onSelectEquipment={onSelectEquipment}
         />
+      ) : isD06 && d06Mode === 'pedagogical_pilot' ? (
+        <UniversalPedagogicalDomainView
+          domainCode="D06"
+          locale={locale}
+          onSelectEquipment={onSelectEquipment}
+          onNavigateView={onNavigateView}
+          onNavigateCalculator={(tab, ctx) => {
+            if (onNavigateView) onNavigateView('calculators');
+            else window.location.hash = `#/calculateurs`;
+          }}
+          onNavigateSimulation={(tab) => {
+            if (onNavigateView) onNavigateView('simulation');
+            else window.location.hash = `#/simulation`;
+          }}
+          onSwitchToAdvancedWorkbench={() => setD06Mode('visual_journey')}
+        />
       ) : isD06 && d06Mode === 'visual_journey' ? (
         <InstallationsWorkbench
           locale={locale}
           initialPillar={d06InitialPillar}
+        />
+      ) : isD07 && d07Mode === 'pedagogical_pilot' ? (
+        <UniversalPedagogicalDomainView
+          domainCode="D07"
+          locale={locale}
+          onSelectEquipment={onSelectEquipment}
+          onNavigateView={onNavigateView}
+          onNavigateCalculator={(tab, ctx) => {
+            if (onNavigateView) onNavigateView('calculators');
+            else window.location.hash = `#/calculateurs`;
+          }}
+          onNavigateSimulation={(tab) => {
+            if (onNavigateView) onNavigateView('simulation');
+            else window.location.hash = `#/simulation`;
+          }}
+          onSwitchToAdvancedWorkbench={() => setD07Mode('visual_journey')}
         />
       ) : isD07 && d07Mode === 'visual_journey' ? (
         <AutomationControlWorkbench
@@ -1182,17 +1322,65 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           onNavigate={onNavigateView}
           onSelectEquipment={onSelectEquipment}
         />
+      ) : isD08 && d08Mode === 'pedagogical_pilot' ? (
+        <UniversalPedagogicalDomainView
+          domainCode="D08"
+          locale={locale}
+          onSelectEquipment={onSelectEquipment}
+          onNavigateView={onNavigateView}
+          onNavigateCalculator={(tab, ctx) => {
+            if (onNavigateView) onNavigateView('calculators');
+            else window.location.hash = `#/calculateurs`;
+          }}
+          onNavigateSimulation={(tab) => {
+            if (onNavigateView) onNavigateView('simulation');
+            else window.location.hash = `#/simulation`;
+          }}
+          onSwitchToAdvancedWorkbench={() => setD08Mode('visual_journey')}
+        />
       ) : isD08 && d08Mode === 'visual_journey' ? (
         <ExtraLowVoltageWorkbench
           locale={locale}
           onNavigate={onNavigateView}
           onSelectEquipment={onSelectEquipment}
         />
+      ) : isD09 && d09Mode === 'pedagogical_pilot' ? (
+        <UniversalPedagogicalDomainView
+          domainCode="D09"
+          locale={locale}
+          onSelectEquipment={onSelectEquipment}
+          onNavigateView={onNavigateView}
+          onNavigateCalculator={(tab, ctx) => {
+            if (onNavigateView) onNavigateView('calculators');
+            else window.location.hash = `#/calculateurs`;
+          }}
+          onNavigateSimulation={(tab) => {
+            if (onNavigateView) onNavigateView('simulation');
+            else window.location.hash = `#/simulation`;
+          }}
+          onSwitchToAdvancedWorkbench={() => setD09Mode('visual_journey')}
+        />
       ) : isD09 && d09Mode === 'visual_journey' ? (
         <AdvancedAiWorkbench
           locale={locale}
           onNavigate={onNavigateView}
           onSelectEquipment={onSelectEquipment}
+        />
+      ) : isD10 && d10Mode === 'pedagogical_pilot' ? (
+        <UniversalPedagogicalDomainView
+          domainCode="D10"
+          locale={locale}
+          onSelectEquipment={onSelectEquipment}
+          onNavigateView={onNavigateView}
+          onNavigateCalculator={(tab, ctx) => {
+            if (onNavigateView) onNavigateView('calculators');
+            else window.location.hash = `#/calculateurs`;
+          }}
+          onNavigateSimulation={(tab) => {
+            if (onNavigateView) onNavigateView('simulation');
+            else window.location.hash = `#/simulation`;
+          }}
+          onSwitchToAdvancedWorkbench={() => setD10Mode('visual_journey')}
         />
       ) : isD10 && d10Mode === 'visual_journey' ? (
         <EnergyStorageWorkbench
