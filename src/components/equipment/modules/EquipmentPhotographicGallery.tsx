@@ -147,9 +147,14 @@ export const EquipmentPhotographicGallery: React.FC<EquipmentPhotographicGallery
               </div>
             )}
           </div>
-          <div className="text-[10px] text-slate-400 bg-slate-900/80 px-2.5 py-1 rounded border border-slate-800 shrink-0">
-            <span className="text-slate-500 font-bold">{locale === 'fr' ? 'RÉF :' : 'REF:'}</span>{' '}
-            <span className="text-slate-300 font-mono">{currentPhoto.creditOrReference}</span>
+          <div className="flex items-center gap-2 shrink-0 flex-wrap">
+            <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-2 py-0.5 rounded">
+              {locale === 'fr' ? 'PHOTO REPRÉSENTATIVE · Exemple industriel' : 'REPRESENTATIVE PHOTO · Industrial asset'}
+            </span>
+            <div className="text-[10px] text-slate-400 bg-slate-900/80 px-2.5 py-1 rounded border border-slate-800">
+              <span className="text-slate-500 font-bold">{locale === 'fr' ? 'RÉF :' : 'REF:'}</span>{' '}
+              <span className="text-slate-300 font-mono">{currentPhoto.creditOrReference}</span>
+            </div>
           </div>
         </div>
       </div>

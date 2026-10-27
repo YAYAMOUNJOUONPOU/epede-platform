@@ -43,6 +43,8 @@ import {
 } from '../context';
 import { EvidenceTrustBadge } from '../trust/EvidenceTrustBadge';
 import { DomainPendingIssuesPanel } from './modules/DomainPendingIssuesPanel';
+import { PedagogicalPageOrientationHeader } from '../common/PedagogicalPageOrientationHeader';
+import { getDomainPedagogicalGuide } from './domainPedagogicalRegistry';
 
 // Code-Split Dynamic Workbenches for Core Web Vitals Optimization
 const EnergyProductionMainView = lazy(() => import('../production/EnergyProductionMainView').then(m => ({ default: m.EnergyProductionMainView })));
@@ -217,6 +219,7 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
     SUBDOMAIN_CONTENTS[`${domainCode}.01`] || 
     SUBDOMAIN_CONTENTS['D01.01'];
   const domainEquipments = EQUIPMENT_ITEMS.filter((eq) => eq.domain_code === domainCode);
+  const pedagogicalGuide = getDomainPedagogicalGuide(domainCode);
 
   // Collect domain-level formulas, standards, and roles
   const domainFormulas = FORMULAS.filter(
@@ -384,6 +387,73 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           </div>
         </div>
       </header>
+
+      {/* 3-PILLAR PEDAGOGICAL ORIENTATION HEADER (AUDIT REPORT §2.2 & §4) */}
+      <PedagogicalPageOrientationHeader
+        locale={locale}
+        whereAmI={{
+          domainName: `${domainCode} · ${locale === 'fr' ? domain.name_fr : domain.name_en}`,
+          roleInGrid: locale === 'fr' ? pedagogicalGuide.roleInGrid.fr : pedagogicalGuide.roleInGrid.en,
+          voltageLevel: pedagogicalGuide.voltageLevel,
+          stageNumber: domainCode,
+          categoryTag: domain.short_fr || domain.short_en,
+        }}
+        learningObjectives={locale === 'fr' ? pedagogicalGuide.learningObjectives.fr : pedagogicalGuide.learningObjectives.en}
+        nextActions={[
+          {
+            id: 'calculator',
+            label: pedagogicalGuide.keyCalculators[0]
+              ? (locale === 'fr' ? pedagogicalGuide.keyCalculators[0].labelFr : pedagogicalGuide.keyCalculators[0].labelEn)
+              : (locale === 'fr' ? "Calculateurs & Outils d'ingénierie" : 'Calculators & Engineering Tools'),
+            description: locale === 'fr' ? "Calculs d'ingénierie avec hypothèses explicites" : 'Engineering calculations with explicit bounds',
+            onClick: () => {
+              if (onNavigateView) {
+                onNavigateView('reference-hub');
+              } else {
+                window.location.hash = '#/centre-reference';
+              }
+            },
+            badge: 'Hub',
+          },
+          {
+            id: 'standard',
+            label: `${locale === 'fr' ? 'Norme de référence :' : 'Reference Standard:'} ${pedagogicalGuide.primaryStandard}`,
+            description: locale === 'fr' ? 'Consulter le cadre normatif dans la bibliothèque' : 'Inspect standard requirements in library',
+            onClick: () => {
+              if (onNavigateView) {
+                onNavigateView('standards');
+              } else {
+                window.location.hash = '#/standards';
+              }
+            },
+            badge: 'IEC / NF',
+          },
+          {
+            id: 'equipments',
+            label: locale === 'fr' ? 'Matériels & Équipements réels' : 'Real Equipment & Apparatus',
+            description: `${domainEquipments.length} ${locale === 'fr' ? 'appareils avec fiches techniques' : 'assets with datasheets'}`,
+            onClick: () => {
+              if (domainEquipments.length > 0) {
+                onSelectEquipment(domainEquipments[0].id);
+              }
+            },
+            badge: `${domainEquipments.length}`,
+          },
+          {
+            id: 'lab',
+            label: locale === 'fr' ? 'Laboratoire & Schéma unifilaire' : 'Laboratory & SLD Simulation',
+            description: locale === 'fr' ? 'Explorer les phénomènes électriques et régimes' : 'Explore electrical phenomena & regimes',
+            onClick: () => {
+              if (onNavigateView) {
+                onNavigateView('reference-hub');
+              } else {
+                window.location.hash = '#/centre-reference';
+              }
+            },
+            badge: 'Lab',
+          },
+        ]}
+      />
 
       {/* D06 DEDICATED MASTER MODE SWITCHER (Directly underneath header for immediate orientation) */}
       {isD06 && (
@@ -1497,6 +1567,107 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           titleFr={`Cadre de Validité & Hypothèses Électrotechniques · Domaine ${domainCode}`}
           titleEn={`Validity Framework & Electrotechnical Assumptions · Domain ${domainCode}`}
         />
+
+        {/* POUR ALLER PLUS LOIN · BRIDGES & COMPLEMENTARY DOMAINS (AUDIT REPORT §2.3) */}
+        <div className="rounded-2xl border border-sky-200 dark:border-sky-900/60 bg-gradient-to-br from-sky-50/60 via-white to-amber-50/40 dark:from-slate-900 dark:via-slate-900/90 dark:to-slate-950 p-6 shadow-sm">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-sky-100 dark:border-slate-800 pb-4">
+            <div>
+              <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-sky-700 dark:text-sky-400 bg-sky-100 dark:bg-sky-950/60 px-2.5 py-1 rounded border border-sky-300 dark:border-sky-800">
+                {locale === 'fr' ? 'POUR ALLER PLUS LOIN' : 'EXPLORE FURTHER'}
+              </span>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white mt-2">
+                {locale === 'fr' ? 'Interconnexions & Domaines Complémentaires' : 'Interconnections & Complementary Domains'}
+              </h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 max-w-2xl">
+                {locale === 'fr'
+                  ? 'Une installation électrique ne s\'analyse pas isolément : faites le lien avec les domaines amont/aval, les calculs normalisés et le cadre réglementaire.'
+                  : 'An electrical installation cannot be analyzed in isolation: link with upstream/downstream domains, standardized calculations, and regulatory frameworks.'}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                if (onNavigateView) {
+                  onNavigateView('reference-hub');
+                } else {
+                  window.location.hash = '#/centre-reference';
+                }
+              }}
+              className="px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-mono text-xs font-bold transition-all shadow-sm shrink-0 flex items-center gap-2 cursor-pointer"
+            >
+              <Zap className="w-3.5 h-3.5" />
+              <span>{locale === 'fr' ? 'Centre de Référence Technique →' : 'Technical Reference Hub →'}</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4">
+            <button
+              type="button"
+              onClick={() => {
+                if (onNavigateView) {
+                  onNavigateView('standards');
+                } else {
+                  window.location.hash = '#/standards';
+                }
+              }}
+              className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 hover:border-amber-400 dark:hover:border-amber-500 transition-all text-left group cursor-pointer"
+            >
+              <div className="font-mono text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase">
+                {locale === 'fr' ? 'RÉFÉRENTIELS' : 'STANDARDS'}
+              </div>
+              <div className="text-xs font-bold text-slate-900 dark:text-white mt-1 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                {locale === 'fr' ? 'Normes & Contextes Cameroun' : 'Standards & Cameroon Grid'}
+              </div>
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                {locale === 'fr' ? 'IEC, NF C, ARSEL & déclassements thermiques' : 'IEC, NF C, ARSEL & thermal derating'}
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (onNavigateView) {
+                  onNavigateView('calculators');
+                } else {
+                  window.location.hash = '#/calculators';
+                }
+              }}
+              className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 hover:border-sky-400 dark:hover:border-sky-500 transition-all text-left group cursor-pointer"
+            >
+              <div className="font-mono text-[10px] font-bold text-sky-600 dark:text-sky-400 uppercase">
+                {locale === 'fr' ? 'CALCUL' : 'CALCULATION'}
+              </div>
+              <div className="text-xs font-bold text-slate-900 dark:text-white mt-1 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
+                {locale === 'fr' ? 'Calculateurs & Dimensionnement' : 'Calculators & Sizing'}
+              </div>
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                {locale === 'fr' ? '19 calculateurs IEC avec hypothèses et limites' : '19 IEC calculators with validity ranges'}
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (onNavigateView) {
+                  onNavigateView('laboratory');
+                } else {
+                  window.location.hash = '#/laboratory';
+                }
+              }}
+              className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 hover:border-emerald-400 dark:hover:border-emerald-500 transition-all text-left group cursor-pointer"
+            >
+              <div className="font-mono text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase">
+                {locale === 'fr' ? 'EXPÉRIMENTATION' : 'EXPERIMENTATION'}
+              </div>
+              <div className="text-xs font-bold text-slate-900 dark:text-white mt-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                {locale === 'fr' ? 'Laboratoire Virtuel & SLD' : 'Virtual Lab & SLD Explorer'}
+              </div>
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                {locale === 'fr' ? 'Simulations de régimes et transitoires' : 'Regime and transient simulations'}
+              </div>
+            </button>
+          </div>
+        </div>
       </section>
 
     </div>

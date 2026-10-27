@@ -40,6 +40,7 @@ import {
   SystemBoundaryCard 
 } from '../context';
 import { EvidenceTrustBadge } from '../trust/EvidenceTrustBadge';
+import { PedagogicalPageOrientationHeader } from '../common/PedagogicalPageOrientationHeader';
 
 interface EquipmentDetailViewProps {
   equipmentId: string;
@@ -656,6 +657,90 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
           </div>
         </div>
       </header>
+
+      {/* 3-PILLAR PEDAGOGICAL ORIENTATION HEADER (AUDIT REPORT §2.2 & §4) */}
+      <PedagogicalPageOrientationHeader
+        locale={locale}
+        whereAmI={{
+          domainName: `${equipment.domain_code} · ${equipment.typical_location_fr || equipment.typical_location_en || formatEntityType(equipment.entity_type, locale)}`,
+          roleInGrid: locale === 'fr' ? equipment.function_fr || equipment.description_fr : equipment.function_en || equipment.description_en,
+          voltageLevel: equipment.voltage_level ? `Niveau assigné : ${equipment.voltage_level}` : undefined,
+          stageNumber: equipment.domain_code,
+          categoryTag: formatEntityType(equipment.entity_type, locale),
+        }}
+        learningObjectives={
+          locale === 'fr'
+            ? [
+                `Rôle fonctionnel, coupure/manœuvre et implantation physique de l'appareil dans l'infrastructure électrique.`,
+                `Compréhension des valeurs assignées de plaque signalétique (tension Ur, courant assigné Ir, pouvoir de coupure Isc).`,
+                `Coordination avec les protections amont/aval et comportement en régime de défaut (court-circuit, surtension, surcharge).`,
+              ]
+            : [
+                `Functional role, switching physics, and physical layout of the apparatus within the electrical infrastructure.`,
+                `Interpretation of nameplate ratings (rated voltage Ur, rated current Ir, breaking capacity Isc).`,
+                `Upstream/downstream protective coordination and behavior under electrical fault conditions (short-circuit, surge).`,
+              ]
+        }
+        nextActions={[
+          {
+            id: 'calc',
+            label: locale === 'fr' ? 'Calculateur Associé' : 'Linked Calculator',
+            description: locale === 'fr' ? 'Vérifier la contrainte thermique et le pouvoir de coupure' : 'Verify thermal stress & breaking capacity',
+            onClick: () => {
+              if (onNavigateCalculator) {
+                const eqName = locale === 'fr' ? equipment.name_fr : equipment.name_en;
+                const tag = equipment.aliases_fr?.[0] || apiEquipment?.tag || equipment.id;
+                onNavigateCalculator('cable-short-circuit', {
+                  equipmentId: equipment.id,
+                  equipmentName: eqName,
+                  equipmentTag: tag,
+                  substationOrFeeder: (apiEquipment as any)?.cameroonContext?.substationName || (apiEquipment as any)?.substationId || equipment.typical_location_fr || 'Poste 225 kV',
+                  params: {
+                    unVolts: 30000,
+                    nominalCurrentA: apiEquipment?.specifications?.ratedCurrentA || 630,
+                    breakingCapacityKa: apiEquipment?.specifications?.breakingCapacityKa || 31.5,
+                  },
+                });
+              } else {
+                setViewMode('engineering_calculation');
+              }
+            },
+            badge: 'IEC 60909',
+          },
+          {
+            id: 'standard',
+            label: `${locale === 'fr' ? 'Norme' : 'Standard'} : ${(apiEquipment as any)?.governingStandard || canonicalEquipment?.governingStandards?.[0] || 'IEC 62271-100'}`,
+            description: locale === 'fr' ? 'Consulter les prescriptions normatives internationales' : 'Inspect governing standard rules',
+            onClick: () => {
+              const stdRef = (apiEquipment as any)?.governingStandard || canonicalEquipment?.governingStandards?.[0] || 'IEC 62271-100';
+              if (onNavigateStandard) {
+                onNavigateStandard(stdRef);
+              } else {
+                window.location.hash = '#/standards';
+              }
+            },
+            badge: 'IEC',
+          },
+          {
+            id: 'fiche',
+            label: viewMode === 'universal_fiche' 
+              ? (locale === 'fr' ? 'Vue Générale' : 'General View') 
+              : (locale === 'fr' ? 'Fiche Universelle (12 sections)' : 'Universal Fiche (12 sections)'),
+            description: locale === 'fr' ? 'Dossier complet : maintenance, exploitation, schémas' : 'Complete dossier: maintenance, ops, schematics',
+            onClick: () => setViewMode(prev => prev === 'universal_fiche' ? 'overview' : 'universal_fiche'),
+            badge: '12/12',
+          },
+          {
+            id: 'hub',
+            label: locale === 'fr' ? 'Centre de Référence' : 'Reference Hub',
+            description: locale === 'fr' ? 'Glossaire de plaque, simulateurs et laboratoires' : 'Nameplate glossary, simulators and labs',
+            onClick: () => {
+              window.location.hash = '#/centre-reference';
+            },
+            badge: 'Hub',
+          },
+        ]}
+      />
 
       {/* 10-ACTION UNIVERSAL RELATIONSHIP & TRACE HUB */}
       <ObjectRelationshipActionBar
