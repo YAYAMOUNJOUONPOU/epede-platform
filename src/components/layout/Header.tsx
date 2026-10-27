@@ -507,8 +507,8 @@ export const Header: React.FC<HeaderProps> = ({
                   }}
                   className="w-full text-left px-3.5 py-2 text-slate-300 hover:text-emerald-400 hover:bg-slate-800/80 transition-colors flex items-center justify-between border-t border-slate-800/60 mt-1 pt-2"
                 >
-                  <span>{locale === 'fr' ? 'Audit & Maturité Plateforme' : 'Platform Audit & Maturity'}</span>
-                  <span className="text-[10px] text-emerald-400 font-bold">16/16 L5</span>
+                  <span>{locale === 'fr' ? 'Revue & Traçabilité des Contenus' : 'Pedagogical Review & Content Trace'}</span>
+                  <span className="text-[10px] text-emerald-400 font-mono font-bold">INFO</span>
                 </button>
               </div>
             )}

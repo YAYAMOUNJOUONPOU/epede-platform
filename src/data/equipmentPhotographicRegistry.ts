@@ -23,7 +23,7 @@ export const EQUIPMENT_PHOTOGRAPHIC_REGISTRY: Record<string, PhotographicAsset[]
       creditOrReference: 'Hydroelectric Powerhouse Field Commissioning (Songloulou 48 MVA / IEC 60034-1)',
       licenseStatus: 'UNSPLASH_COMMERCIAL',
       identificationConfidence: 'REPRESENTATIVE_TYPE',
-      technicalReviewStatus: 'APPROVED_BY_LEAD_ENGINEER',
+      technicalReviewStatus: 'VERIFIED_TECHNICAL_PHOTO',
       disclaimer: REPRESENTATIVE_DISCLAIMER,
       locationContext: {
         fr: 'Centrale Hydroélectrique (Configuration type Francis vertical 48 MVA)',
@@ -61,7 +61,7 @@ export const EQUIPMENT_PHOTOGRAPHIC_REGISTRY: Record<string, PhotographicAsset[]
       creditOrReference: 'Manufacturer Nameplate Specification (Alstom / GE Hydro)',
       licenseStatus: 'UNSPLASH_COMMERCIAL',
       identificationConfidence: 'REPRESENTATIVE_TYPE',
-      technicalReviewStatus: 'APPROVED_BY_LEAD_ENGINEER',
+      technicalReviewStatus: 'VERIFIED_TECHNICAL_PHOTO',
       disclaimer: REPRESENTATIVE_DISCLAIMER,
       locationContext: {
         fr: 'Châssis statorique niveau plancher machine (Exemple représentatif)',
@@ -91,7 +91,7 @@ export const EQUIPMENT_PHOTOGRAPHIC_REGISTRY: Record<string, PhotographicAsset[]
       creditOrReference: 'Substation EHV Yard (SONATREL / IEC 60076-1)',
       licenseStatus: 'UNSPLASH_COMMERCIAL',
       identificationConfidence: 'REPRESENTATIVE_TYPE',
-      technicalReviewStatus: 'APPROVED_BY_LEAD_ENGINEER',
+      technicalReviewStatus: 'VERIFIED_TECHNICAL_PHOTO',
       disclaimer: REPRESENTATIVE_DISCLAIMER,
       locationContext: {
         fr: 'Poste élévateur THT (Installation industrielle représentative classe 225 kV)',
@@ -129,7 +129,7 @@ export const EQUIPMENT_PHOTOGRAPHIC_REGISTRY: Record<string, PhotographicAsset[]
       creditOrReference: 'Factory Assembly & Active Part Drying (IEC 60076)',
       licenseStatus: 'UNSPLASH_COMMERCIAL',
       identificationConfidence: 'REPRESENTATIVE_TYPE',
-      technicalReviewStatus: 'APPROVED_BY_LEAD_ENGINEER',
+      technicalReviewStatus: 'VERIFIED_TECHNICAL_PHOTO',
       disclaimer: REPRESENTATIVE_DISCLAIMER,
       calloutAnnotations: [
         {
@@ -293,7 +293,7 @@ export const EQUIPMENT_PHOTOGRAPHIC_REGISTRY: Record<string, PhotographicAsset[]
       creditOrReference: 'Medium Voltage Distribution Substation (Eneo / IEC 62271-200)',
       licenseStatus: 'UNSPLASH_COMMERCIAL',
       identificationConfidence: 'REPRESENTATIVE_TYPE',
-      technicalReviewStatus: 'APPROVED_BY_LEAD_ENGINEER',
+      technicalReviewStatus: 'VERIFIED_TECHNICAL_PHOTO',
       disclaimer: REPRESENTATIVE_DISCLAIMER,
       locationContext: {
         fr: 'Poste Urbain HTA/BT Kiosque (Installation industrielle représentative)',
@@ -443,7 +443,7 @@ export const EQUIPMENT_PHOTOGRAPHIC_REGISTRY: Record<string, PhotographicAsset[]
       creditOrReference: 'High Voltage Surge Protection (IEC 60099-4 Class 4 Discharge)',
       licenseStatus: 'UNSPLASH_COMMERCIAL',
       identificationConfidence: 'REPRESENTATIVE_TYPE',
-      technicalReviewStatus: 'APPROVED_BY_LEAD_ENGINEER',
+      technicalReviewStatus: 'VERIFIED_TECHNICAL_PHOTO',
       disclaimer: REPRESENTATIVE_DISCLAIMER,
       locationContext: {
         fr: 'Poste d\'interconnexion THT 225 kV (Parafoudre ZnO d\'arrivée de ligne représentatif)',

@@ -192,7 +192,7 @@ export interface PhotographicAsset {
   photographerOrCopyright?: string;
   captureDate?: string;
   identificationConfidence?: 'DEFINITIVE_MATCH' | 'REPRESENTATIVE_TYPE' | 'CONCEPTUAL_EQUIVALENT';
-  technicalReviewStatus?: 'APPROVED_BY_LEAD_ENGINEER' | 'PROVISIONAL' | 'REQUIRES_FIELD_PHOTO';
+  technicalReviewStatus?: 'VERIFIED_TECHNICAL_PHOTO' | 'PROVISIONAL' | 'REQUIRES_FIELD_PHOTO';
   locationContext?: { fr: string; en: string };
   disclaimer?: { fr: string; en: string };
   calloutAnnotations?: {
