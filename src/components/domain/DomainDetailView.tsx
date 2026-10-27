@@ -51,6 +51,7 @@ const EnergyProductionMainView = lazy(() => import('../production/EnergyProducti
 const GridArchitectureVisualJourney = lazy(() => import('../grid-architecture/GridArchitectureVisualJourney').then(m => ({ default: m.GridArchitectureVisualJourney })));
 const TransmissionWorkbench = lazy(() => import('../transmission/TransmissionWorkbench').then(m => ({ default: m.TransmissionWorkbench })));
 const SubstationsWorkbench = lazy(() => import('../substations/SubstationsWorkbench').then(m => ({ default: m.SubstationsWorkbench })));
+const D04PedagogicalPilotView = lazy(() => import('../substations/D04PedagogicalPilotView').then(m => ({ default: m.D04PedagogicalPilotView })));
 const DistributionWorkbench = lazy(() => import('../distribution/DistributionWorkbench').then(m => ({ default: m.DistributionWorkbench })));
 const InstallationsWorkbench = lazy(() => import('../installations/InstallationsWorkbench').then(m => ({ default: m.InstallationsWorkbench })));
 const AutomationControlWorkbench = lazy(() => import('../automation/AutomationControlWorkbench').then(m => ({ default: m.AutomationControlWorkbench })));
@@ -172,7 +173,7 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
   const [d01Mode, setD01Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
   const [d02Mode, setD02Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
   const [d03Mode, setD03Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
-  const [d04Mode, setD04Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
+  const [d04Mode, setD04Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('pedagogical_pilot');
   const [d05Mode, setD05Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
   const [d06Mode, setD06Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
   const [showD06Metrics, setShowD06Metrics] = useState<boolean>(false);
@@ -679,7 +680,18 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
               {locale === 'fr' ? 'Mode d\'Exploration Postes Électriques :' : 'Substation Engineering Exploration Mode:'}
             </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setD04Mode('pedagogical_pilot')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
+                d04Mode === 'pedagogical_pilot'
+                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
+                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
+              }`}
+            >
+              {locale === 'fr' ? '🎓 Parcours Pédagogique (6 Volets A–F)' : '🎓 Pedagogical Journey (6 Pillars A–F)'}
+            </button>
             <button
               type="button"
               onClick={() => setD04Mode('visual_journey')}
@@ -689,7 +701,7 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
                   : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
               }`}
             >
-              {locale === 'fr' ? '⚡ Station d\'Ingénierie Postes HTB/HTA (11 Piliers)' : '⚡ Substation Engineering Workbench (11 Pillars)'}
+              {locale === 'fr' ? '⚡ Station Expert Postes (11 Piliers)' : '⚡ Substation Expert Workbench'}
             </button>
             <button
               type="button"
@@ -1130,6 +1142,21 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           locale={locale}
           onNavigate={onNavigateView}
           onSelectEquipment={onSelectEquipment}
+        />
+      ) : isD04 && d04Mode === 'pedagogical_pilot' ? (
+        <D04PedagogicalPilotView
+          locale={locale}
+          onSelectEquipment={onSelectEquipment}
+          onNavigateView={onNavigateView}
+          onNavigateCalculator={(tab, ctx) => {
+            if (onNavigateView) onNavigateView('calculators');
+            else window.location.hash = `#/calculateurs`;
+          }}
+          onNavigateSimulation={(tab) => {
+            if (onNavigateView) onNavigateView('simulation');
+            else window.location.hash = `#/simulation`;
+          }}
+          onSwitchToAdvancedWorkbench={() => setD04Mode('visual_journey')}
         />
       ) : isD04 && d04Mode === 'visual_journey' ? (
         <SubstationsWorkbench
