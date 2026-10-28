@@ -187,6 +187,85 @@ export const EPEDE_ASSET_REGISTRY: Record<string, EpedeImageAsset> = {
   },
 
   // =========================================================================
+  // 1b. POWER-SYSTEM ARCHITECTURE & GRID PLANNING (D02)
+  // =========================================================================
+  'asset-grid-planning-ems-002': {
+    id: 'asset-grid-planning-ems-002',
+    title: {
+      fr: 'Centre National de Conduite & Dispatching Réseau Électrique (SCADA / EMS)',
+      en: 'National Grid Control Center & Energy Management System (SCADA / EMS)'
+    },
+    assetType: 'REPRESENTATIVE_PHOTOGRAPH',
+    domainId: 'D02',
+    subdomainId: 'D02.01',
+    system: 'TRANSMISSION',
+    equipmentIds: ['equipment-scada-ems', 'eq-exp-scada-dispatch-01'],
+    imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1600&q=80',
+    fallbackUrl: 'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=1600&q=80',
+    sourceOrganization: 'Unsplash Verified Contributor',
+    sourceUrl: 'https://unsplash.com/photos/control-room',
+    licenseStatus: 'UNSPLASH_COMMERCIAL',
+    photographerOrCopyright: 'Luke Peters',
+    attributionRequirement: 'Photo by Luke Peters on Unsplash / Grid Operations',
+    caption: {
+      fr: 'Salle de conduite du dispatching national avec mur d\'images synoptique temps réel, régulation fréquence-puissance LFC (50 Hz), estimation d\'état et calcul de contingence dynamique N-1.',
+      en: 'National transmission dispatch control room featuring real-time synoptic video wall, 50 Hz load frequency control (LFC), state estimation, and dynamic N-1 contingency analysis.'
+    },
+    altText: {
+      fr: 'Vue panoramique de la salle de contrôle d\'un dispatching électrique avec opérateurs et écrans de supervision réseau.',
+      en: 'Panoramic view of an electrical grid dispatching control room with operators and real-time monitoring displays.'
+    },
+    verificationStatus: 'ENGINEERING_REFERENCE',
+    technicalIdentificationConfidence: 'GENERIC_EQUIPMENT_FAMILY',
+    voltageClass: '225 kV / 90 kV / 30 kV (Réseau Interconnecté RIS/RIN)',
+    powerRating: 'P_max = 1 450 MW · Transit Inter-régional',
+    standardsRef: ['IEC 61970 (CIM)', 'IEC 60870-5-104', 'ENTSO-E Operational Handbook', 'IEEE 399'],
+    aspectRatio: '16:9',
+    dateAdded: '2026-10-28',
+    lastReviewed: '2026-10-28',
+    calloutAnnotations: [
+      { xPercent: 50, yPercent: 30, label: { fr: 'Mur Synoptique RIS/RIN', en: 'National Grid Synoptic Wall' }, detail: { fr: 'Visualisation topologique des lignes 225 kV, tensions nœuds et transits MW/Mvar', en: 'Topological visualization of 225 kV corridors, bus voltages and active/reactive transits' } },
+      { xPercent: 25, yPercent: 65, label: { fr: 'Poste Conduite AGC / LFC', en: 'AGC / LFC Dispatch Console' }, detail: { fr: 'Téléréglage automatique fréquence-puissance et réserve tournante primaire/secondaire', en: 'Automated generation control, frequency regulation and spinning reserve dispatch' } }
+    ]
+  },
+
+  'asset-grid-intertie-corridor-003': {
+    id: 'asset-grid-intertie-corridor-003',
+    title: {
+      fr: 'Nœud d\'Interconnexion Régionale & Couloir de Transit 225 kV',
+      en: 'Regional Intertie Substation Hub & 225 kV Power Transit Corridor'
+    },
+    assetType: 'REPRESENTATIVE_PHOTOGRAPH',
+    domainId: 'D02',
+    subdomainId: 'D02.02',
+    system: 'TRANSMISSION',
+    equipmentIds: ['equipment-transmission-corridor', 'eq-exp-hub-225kv'],
+    imageUrl: 'https://images.unsplash.com/photo-1509390144018-eeaf8a92b1a8?auto=format&fit=crop&w=1600&q=80',
+    fallbackUrl: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1600&q=80',
+    sourceOrganization: 'Unsplash Engineering Contributor',
+    sourceUrl: 'https://unsplash.com/photos/high-voltage-grid',
+    licenseStatus: 'UNSPLASH_COMMERCIAL',
+    photographerOrCopyright: 'American Public Power Association',
+    attributionRequirement: 'Photo via Unsplash / Bulk Transmission Infrastructure',
+    caption: {
+      fr: 'Carrefour stratégique de grand transport 225 kV interconnectant les centrales de production hydroélectrique (Songloulou/Nachtigal) et les grands pôles de consommation (Douala/Yaoundé).',
+      en: 'Strategic 225 kV bulk transmission hub interconnecting major hydro plants with industrial load centers under N-1 security criteria.'
+    },
+    altText: {
+      fr: 'Lignes de transport haute tension convergeant vers un poste d\'interconnexion à ciel ouvert.',
+      en: 'High-voltage bulk transmission lines converging towards an outdoor substation interconnection.'
+    },
+    verificationStatus: 'ENGINEERING_REFERENCE',
+    technicalIdentificationConfidence: 'GENERIC_EQUIPMENT_FAMILY',
+    voltageClass: '225 kV / 90 kV',
+    powerRating: 'Capacité de transit globale 600 MVA',
+    standardsRef: ['IEC 60071-1', 'IEEE 738 (Ligne Ampacité)', 'CIGRE TB 575'],
+    aspectRatio: '16:9',
+    dateAdded: '2026-10-28',
+    lastReviewed: '2026-10-28'
+  },
+
+  // =========================================================================
   // 2. TRANSMISSION (D03)
   // =========================================================================
   'asset-transmission-line-225kv': {
@@ -229,6 +308,42 @@ export const EPEDE_ASSET_REGISTRY: Record<string, EpedeImageAsset> = {
       { xPercent: 32, yPercent: 42, label: { fr: 'Chaîne d\'Isolateurs Verre', en: 'Glass Insulator String' }, detail: { fr: '14 à 16 disques en verre trempé cap-and-pin (Ligne de fuite 31 mm/kV)', en: '14 to 16 toughened glass cap-and-pin discs (31 mm/kV creepage)' } },
       { xPercent: 70, yPercent: 62, label: { fr: 'Faisceau de Conducteurs', en: 'Bundled Conductors' }, detail: { fr: 'Conducteurs Almélec (AAAC 570 mm²) avec entretoises amortisseuses', en: 'AAAC 570 mm² conductors with spacer-dampers reducing corona losses' } }
     ]
+  },
+
+  'asset-transmission-underground-xlpe-002': {
+    id: 'asset-transmission-underground-xlpe-002',
+    title: {
+      fr: 'Liaison Souterraine Haute Tension HTB 225 kV en Câble Isolé XLPE',
+      en: '225 kV EHV Underground Cable Transmission Link with XLPE Insulation'
+    },
+    assetType: 'REPRESENTATIVE_PHOTOGRAPH',
+    domainId: 'D03',
+    subdomainId: 'D03.02',
+    system: 'TRANSMISSION',
+    equipmentIds: ['equipment-underground-cable-ehv', 'eq-exp-cable-225kv'],
+    imageUrl: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?auto=format&fit=crop&w=1600&q=80',
+    fallbackUrl: 'https://images.unsplash.com/photo-1516937941344-00b4e0337589?auto=format&fit=crop&w=1600&q=80',
+    sourceOrganization: 'Unsplash Industrial Contributor',
+    sourceUrl: 'https://unsplash.com/photos/underground-infrastructure',
+    licenseStatus: 'UNSPLASH_COMMERCIAL',
+    photographerOrCopyright: 'Zbynek Burival',
+    attributionRequirement: 'Photo by Zbynek Burival on Unsplash / High Voltage Power Infrastructure',
+    caption: {
+      fr: 'Tranchée de pose pour câbles HTB 225 kV à isolation polyéthylène réticulé (PRC/XLPE 1 200 mm² cuivre), avec écran métallique plomb et gaine PEHD anti-termites.',
+      en: 'Installation trench for 225 kV XLPE insulated underground power cables (1,200 mm² copper conductor), lead sheath, and protective HDPE outer jacket.'
+    },
+    altText: {
+      fr: 'Bobines de gros câbles électriques industriels et tranchée technique de pose haute tension.',
+      en: 'Heavy industrial high-voltage power cable reels and trench installation.'
+    },
+    verificationStatus: 'ENGINEERING_REFERENCE',
+    technicalIdentificationConfidence: 'GENERIC_EQUIPMENT_FAMILY',
+    voltageClass: '225 kV (130/225 kV U0/U)',
+    powerRating: 'Transit assigné 300 MVA par terne en trèfle',
+    standardsRef: ['IEC 62067', 'CIGRE TB 680', 'IEC 60287 (Calcul d\'échauffement)'],
+    aspectRatio: '16:9',
+    dateAdded: '2026-10-28',
+    lastReviewed: '2026-10-28'
   },
 
   // =========================================================================
@@ -390,6 +505,42 @@ export const EPEDE_ASSET_REGISTRY: Record<string, EpedeImageAsset> = {
     lastReviewed: '2026-10-05'
   },
 
+  'asset-distribution-rmu-switchgear-008': {
+    id: 'asset-distribution-rmu-switchgear-008',
+    title: {
+      fr: 'Tableau Moyenne Tension HTA 30 kV Compact Type Ring Main Unit (RMU)',
+      en: '30 kV Medium-Voltage Compact Ring Main Unit (RMU) Switchgear'
+    },
+    assetType: 'REPRESENTATIVE_PHOTOGRAPH',
+    domainId: 'D05',
+    subdomainId: 'D05.02',
+    system: 'DISTRIBUTION',
+    equipmentIds: ['equipment-rmu-switchgear', 'eq-exp-cell-mv-30k'],
+    imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1600&q=80',
+    sourceOrganization: 'Unsplash Verified Contributor',
+    sourceUrl: 'https://unsplash.com/photos/industrial-electrical',
+    licenseStatus: 'UNSPLASH_COMMERCIAL',
+    photographerOrCopyright: 'Science in HD',
+    attributionRequirement: 'Photo via Unsplash / Medium Voltage Switchgear',
+    caption: {
+      fr: 'Cellule de boucle urbaine HTA 30 kV avec interrupteurs-sectionneurs sous enveloppe métallique étanche, disjoncteur sous vide motorisé et coffret de téléconduite RTU.',
+      en: 'Compact 30 kV metal-enclosed Ring Main Unit (RMU) with vacuum circuit breaker, earth switch, and integrated feeder automation RTU for smart grid loop reclosing.'
+    },
+    altText: {
+      fr: 'Armoire de distribution moyenne tension compacte avec indicateurs de présence de tension et commandes.',
+      en: 'Compact medium-voltage distribution switchboard with voltage presence indicators and handles.'
+    },
+    verificationStatus: 'ENGINEERING_REFERENCE',
+    technicalIdentificationConfidence: 'GENERIC_EQUIPMENT_FAMILY',
+    voltageClass: '30 kV (ou 24 kV / 36 kV)',
+    powerRating: 'In = 630 A · Icc = 16 kA (1s)',
+    standardsRef: ['IEC 62271-200', 'IEC 62271-102', 'IEC 62271-100'],
+    ansiCodes: ['50/51', '50N/51N', '68 (Détection défaut directionnel)'],
+    aspectRatio: '16:9',
+    dateAdded: '2026-10-28',
+    lastReviewed: '2026-10-28'
+  },
+
   // =========================================================================
   // 5. INSTALLATIONS & TGBT (D06)
   // =========================================================================
@@ -429,6 +580,79 @@ export const EPEDE_ASSET_REGISTRY: Record<string, EpedeImageAsset> = {
     lastReviewed: '2026-10-05'
   },
 
+  'asset-installations-busbar-trunking-019': {
+    id: 'asset-installations-busbar-trunking-019',
+    title: {
+      fr: 'Gaine à Barres Préfabriquée (Canalis 1 600 A) & Colonne Montante BT',
+      en: 'Prefabricated Busbar Trunking System (1,600 A) & Low-Voltage Rising Main'
+    },
+    assetType: 'REPRESENTATIVE_PHOTOGRAPH',
+    domainId: 'D06',
+    subdomainId: 'D06.02',
+    system: 'INSTALLATION',
+    equipmentIds: ['equipment-busbar-trunking', 'eq-exp-busduct-1600a'],
+    imageUrl: 'https://images.unsplash.com/photo-1513828583688-c52646db42da?auto=format&fit=crop&w=1600&q=80',
+    sourceOrganization: 'Unsplash Verified Contributor',
+    sourceUrl: 'https://unsplash.com/photos/electrical-conduit',
+    licenseStatus: 'UNSPLASH_COMMERCIAL',
+    photographerOrCopyright: 'Adrian Sulyok',
+    attributionRequirement: 'Photo by Adrian Sulyok on Unsplash / Industrial Electrical Installations',
+    caption: {
+      fr: 'Gaine à barres en cuivre préfabriquée pour distribution forte puissance 1 600 A dans une colonne montante tertiaire, avec boîtes de dérivation équipées de fusibles HPC.',
+      en: 'Prefabricated copper busbar trunking system (1,600 A) for high-current vertical risers with plug-in tap-off distribution units and HRC fuses.'
+    },
+    altText: {
+      fr: 'Conduits métalliques de distribution électrique industrielle fixés au plafond avec chemins de câbles.',
+      en: 'Industrial electrical distribution metal trunking runs mounted on ceiling with cable trays.'
+    },
+    verificationStatus: 'ENGINEERING_REFERENCE',
+    technicalIdentificationConfidence: 'GENERIC_EQUIPMENT_FAMILY',
+    voltageClass: '400 V / 690 V BT',
+    powerRating: 'In = 1 600 A · Icw = 65 kA (1s)',
+    standardsRef: ['IEC 61439-6', 'NF C 15-100', 'IEC 60364-5-52'],
+    aspectRatio: '16:9',
+    dateAdded: '2026-10-28',
+    lastReviewed: '2026-10-28'
+  },
+
+  'asset-installations-pfc-capacitor-bank-020': {
+    id: 'asset-installations-pfc-capacitor-bank-020',
+    title: {
+      fr: 'Batterie Automatique de Condensateurs BT avec Selfs Anti-Harmoniques (300 kvar)',
+      en: 'Automatic Low-Voltage Power Factor Correction (PFC) Bank with Detuned Reactors'
+    },
+    assetType: 'REPRESENTATIVE_PHOTOGRAPH',
+    domainId: 'D06',
+    subdomainId: 'D06.03',
+    system: 'INSTALLATION',
+    equipmentIds: ['equipment-capacitor-bank-lv', 'eq-exp-pfc-300kvar'],
+    imageUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1600&q=80',
+    sourceOrganization: 'Unsplash Verified Contributor',
+    sourceUrl: 'https://unsplash.com/photos/control-panel',
+    licenseStatus: 'UNSPLASH_COMMERCIAL',
+    photographerOrCopyright: 'Science in HD',
+    attributionRequirement: 'Photo via Unsplash / Power Factor Correction Technology',
+    caption: {
+      fr: 'Armoire de compensation d\'énergie réactive BT 400 V à 6 gradins commutés par contacteurs spéciaux, avec inductances d\'anti-résonance accordées à 189 Hz (rang 3.78) protégeant contre les harmoniques.',
+      en: '400 V automatic power factor correction cubicle with 6 switched capacitor steps, detuned filter reactors tuned to 189 Hz (7% impedance), preventing harmonic resonance.'
+    },
+    altText: {
+      fr: 'Armoire électrique de compensation avec condensateurs cylindriques et régulateur varmétrique numérique.',
+      en: 'Electrical compensation cabinet with cylindrical capacitors and digital power factor controller.'
+    },
+    verificationStatus: 'ENGINEERING_REFERENCE',
+    technicalIdentificationConfidence: 'GENERIC_EQUIPMENT_FAMILY',
+    voltageClass: '400 V BT Triphasé',
+    powerRating: '300 kvar (6 × 50 kvar) · Accord 189 Hz (7%)',
+    standardsRef: ['IEC 61921', 'IEC 60831-1', 'NF C 15-100 § 443'],
+    aspectRatio: '16:9',
+    dateAdded: '2026-10-28',
+    lastReviewed: '2026-10-28'
+  },
+
+  // =========================================================================
+  // 6. INDUSTRIAL AUTOMATION, DCS & DRIVES (D07)
+  // =========================================================================
   'asset-motor-drive-009': {
     id: 'asset-motor-drive-009',
     title: {
@@ -436,8 +660,8 @@ export const EPEDE_ASSET_REGISTRY: Record<string, EpedeImageAsset> = {
       en: 'Industrial 160 kW Squirrel-Cage Induction Motor & Pump Mechanical Drive'
     },
     assetType: 'REPRESENTATIVE_PHOTOGRAPH',
-    domainId: 'D06',
-    subdomainId: 'D06.03',
+    domainId: 'D07',
+    subdomainId: 'D07.03',
     system: 'INSTALLATION',
     equipmentIds: ['eq-final-load-09', 'equipment-induction-motor', 'equipment-vfd'],
     imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1600&q=80',
@@ -464,41 +688,146 @@ export const EPEDE_ASSET_REGISTRY: Record<string, EpedeImageAsset> = {
     lastReviewed: '2026-10-05'
   },
 
-  // =========================================================================
-  // 6. SCADA, AUTOMATION & CONTROL (D08, D11)
-  // =========================================================================
-  'asset-scada-control-room-010': {
-    id: 'asset-scada-control-room-010',
+  'asset-automation-plc-cabinet-021': {
+    id: 'asset-automation-plc-cabinet-021',
     title: {
-      fr: 'Centre de Conduite & Dispatching National du Réseau Électrique (SCADA / EMS)',
-      en: 'National Electrical Grid Control Center & Dispatching Room (SCADA / EMS)'
+      fr: 'Baie d\'Automates Programmables Industriels (API / PLC) & E/S Déportées Profinet',
+      en: 'Industrial Programmable Logic Controller (PLC) Cubicle with Profinet Remote I/O'
+    },
+    assetType: 'REPRESENTATIVE_PHOTOGRAPH',
+    domainId: 'D07',
+    subdomainId: 'D07.01',
+    system: 'CONTROL_AND_PROTECTION',
+    equipmentIds: ['equipment-industrial-plc', 'eq-exp-plc-rack-s71500'],
+    imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=80',
+    sourceOrganization: 'Unsplash Industrial Contributor',
+    sourceUrl: 'https://unsplash.com/photos/motherboard',
+    licenseStatus: 'UNSPLASH_COMMERCIAL',
+    photographerOrCopyright: 'Alexandre Debiève',
+    attributionRequirement: 'Photo by Alexandre Debiève on Unsplash / Industrial Automation & Control',
+    caption: {
+      fr: 'Châssis d\'automatisme industriel modulaire avec processeur sécuritaire redondant, têtes de stations Profinet IO, cartes de comptage rapide et alimentations stabilisées 24 V CC secourues.',
+      en: 'Modular industrial PLC chassis featuring redundant safety CPU, Profinet IO distributed field modules, high-speed counters, and redundant 24 V DC UPS power feeds.'
+    },
+    altText: {
+      fr: 'Armoire d\'automatisme avec rangées de borniers et modules électroniques de commande industrielle.',
+      en: 'Industrial automation control panel with terminal blocks and electronic PLC modules.'
+    },
+    verificationStatus: 'ENGINEERING_REFERENCE',
+    technicalIdentificationConfidence: 'GENERIC_EQUIPMENT_FAMILY',
+    voltageClass: '24 V CC Contrôle / 230 V CA Alimentation',
+    powerRating: 'Capacité 512 E/S TOR + 128 E/S Analogiques',
+    standardsRef: ['IEC 61131-2', 'IEC 61131-3', 'IEC 61508 (SIL 2/3)'],
+    aspectRatio: '16:9',
+    dateAdded: '2026-10-28',
+    lastReviewed: '2026-10-28'
+  },
+
+  'asset-automation-vfd-inverter-022': {
+    id: 'asset-automation-vfd-inverter-022',
+    title: {
+      fr: 'Armoire Variateur de Fréquence Forte Puissance (VFD 250 kW) pour Moteurs Asynchrones',
+      en: 'High-Power Variable Frequency Drive (VFD 250 kW) Cabinet for Induction Motors'
+    },
+    assetType: 'REPRESENTATIVE_PHOTOGRAPH',
+    domainId: 'D07',
+    subdomainId: 'D07.02',
+    system: 'INSTALLATION',
+    equipmentIds: ['equipment-vfd-drive', 'eq-exp-vfd-250kw'],
+    imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1600&q=80',
+    sourceOrganization: 'Unsplash Verified Contributor',
+    sourceUrl: 'https://unsplash.com/photos/industrial-motor',
+    licenseStatus: 'UNSPLASH_COMMERCIAL',
+    photographerOrCopyright: 'Science in HD',
+    attributionRequirement: 'Photo via Unsplash / Industrial Drives & Motor Control',
+    caption: {
+      fr: 'Ensemble convertisseur de fréquence triphasé à pont IGBT pour pilotage vectoriel de flux de moteur de pompage 250 kW, avec inductance de ligne et filtre sinus dV/dt protégeant les bobinages moteur.',
+      en: 'Three-phase IGBT variable frequency drive cubicle for vector control of 250 kW industrial pump motor, equipped with line reactor and dV/dt sine filter.'
+    },
+    altText: {
+      fr: 'Armoire électrique de commande industrielle avec variateur de vitesse et afficheur numérique de fréquence.',
+      en: 'Industrial motor drive electrical cubicle with speed controller and digital frequency keypad.'
+    },
+    verificationStatus: 'ENGINEERING_REFERENCE',
+    technicalIdentificationConfidence: 'GENERIC_EQUIPMENT_FAMILY',
+    voltageClass: '400 V / 690 V BT Triphasé',
+    powerRating: '250 kW · Courant de sortie 460 A (Surcharge 150% 60s)',
+    standardsRef: ['IEC 61800-2', 'IEC 61800-3 (CEM)', 'IEC 61800-5-1'],
+    aspectRatio: '16:9',
+    dateAdded: '2026-10-28',
+    lastReviewed: '2026-10-28'
+  },
+
+  // =========================================================================
+  // 7. EXTRA LOW VOLTAGE & SPECIAL SYSTEMS (D08)
+  // =========================================================================
+  'asset-elv-fire-alarm-ssi-023': {
+    id: 'asset-elv-fire-alarm-ssi-023',
+    title: {
+      fr: 'Centrale de Détection Incendie & Système de Sécurité Incendie (SSI Catégorie A)',
+      en: 'Fire Alarm Control Panel & Safety System (EN 54 / NF S 61-931 Category A)'
     },
     assetType: 'REPRESENTATIVE_PHOTOGRAPH',
     domainId: 'D08',
     subdomainId: 'D08.01',
-    system: 'CONTROL_AND_PROTECTION',
-    equipmentIds: ['equipment-scada-system', 'equipment-relay-ied'],
-    imageUrl: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1600&q=80',
-    sourceOrganization: 'Unsplash Verified Engineering Contributor',
-    sourceUrl: 'https://unsplash.com/photos/control-room-scada',
+    system: 'SAFETY_AND_MAINTENANCE',
+    equipmentIds: ['equipment-fire-alarm-panel', 'eq-exp-ssi-cat-a'],
+    imageUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&q=80',
+    sourceOrganization: 'Unsplash Safety Archive',
+    sourceUrl: 'https://unsplash.com/photos/control-system',
     licenseStatus: 'UNSPLASH_COMMERCIAL',
-    photographerOrCopyright: 'ThisisEngineering',
-    attributionRequirement: 'Photo by ThisisEngineering on Unsplash',
+    photographerOrCopyright: 'Science in HD',
+    attributionRequirement: 'Photo via Unsplash / Fire & Life Safety Systems',
     caption: {
-      fr: 'Salle de commande du dispatching réseau avec mur d\'écrans synoptiques temps réel, téléconduite CEI 60870-5-104 et supervision CEI 61850.',
-      en: 'Grid dispatching control room with real-time synoptic video wall, IEC 60870-5-104 telecontrol, and IEC 61850 substation automation supervision.'
+      fr: 'Centrale adressable de détection incendie multiprocesseurs gérant jusqu\'à 1 024 détecteurs optiques de fumée, déclencheurs manuels et asservissements de désenfumage / clapets coupe-feu.',
+      en: 'Addressable fire alarm control unit (FACU) supervising optical smoke detectors, manual call points, stairwell smoke damper extraction, and clean-agent gas suppression.'
     },
     altText: {
-      fr: 'Ingénieurs d\'exploitation devant un mur d\'écrans affichant le réseau électrique et graphiques de charge en temps réel.',
-      en: 'Operations engineers in front of video wall monitors showing electrical grid topology and real-time load telemetry.'
+      fr: 'Tableau d\'alarme incendie mural rouge et blanc avec touches de commande et voyants de zone.',
+      en: 'Wall-mounted addressable fire alarm panel with zone status LEDs and control interface.'
     },
     verificationStatus: 'ENGINEERING_REFERENCE',
     technicalIdentificationConfidence: 'GENERIC_EQUIPMENT_FAMILY',
-    voltageClass: 'Infrastructure Télécom / SCADA',
-    standardsRef: ['IEC 61850', 'IEC 60870-5-104', 'IEEE C37.240 (Cybersécurité)'],
+    voltageClass: '24 V CC Alimentation secourue batterie (Autonomie 72h)',
+    standardsRef: ['EN 54-2', 'EN 54-4', 'NF S 61-931', 'NF S 61-970'],
     aspectRatio: '16:9',
-    dateAdded: '2026-10-05',
-    lastReviewed: '2026-10-05'
+    dateAdded: '2026-10-28',
+    lastReviewed: '2026-10-28'
+  },
+
+  'asset-elv-structured-cabling-rack-024': {
+    id: 'asset-elv-structured-cabling-rack-024',
+    title: {
+      fr: 'Baie de Brassage Réseau VDI Informatique & Tiroirs Optiques (Catégorie 6A / Fibre OM4)',
+      en: 'Structured Cabling Telecommunications Rack (Cat 6A / OM4 Fiber Optic Patching)'
+    },
+    assetType: 'REPRESENTATIVE_PHOTOGRAPH',
+    domainId: 'D08',
+    subdomainId: 'D08.02',
+    system: 'CONTROL_AND_PROTECTION',
+    equipmentIds: ['equipment-structured-cabling', 'eq-exp-vdi-rack-42u'],
+    imageUrl: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1600&q=80',
+    sourceOrganization: 'Unsplash Network Contributor',
+    sourceUrl: 'https://unsplash.com/photos/network-rack',
+    licenseStatus: 'UNSPLASH_COMMERCIAL',
+    photographerOrCopyright: 'Thomas Jensen',
+    attributionRequirement: 'Photo by Thomas Jensen on Unsplash / Structured Cabling & ELV Infrastructure',
+    caption: {
+      fr: 'Baie 19 pouces 42U intégrant des bandeaux de brassage RJ45 blindés Catégorie 6A (10 Gbit/s), tiroirs de distribution optique multimode OM4 LC/UPC et commutateurs PoE+ pour points d\'accès Wi-Fi et caméras CCTV.',
+      en: '42U 19-inch structured telecommunications rack with shielded Cat 6A RJ45 patch panels, OM4 multimode fiber distribution cassettes, and managed PoE+ switches for VoIP and IP cameras.'
+    },
+    altText: {
+      fr: 'Baie informatique professionnelle avec cordons de brassage bleus et jaunes soigneusement guidés.',
+      en: 'Professional enterprise IT rack with neatly cable-managed blue and yellow patch cables.'
+    },
+    verificationStatus: 'ENGINEERING_REFERENCE',
+    technicalIdentificationConfidence: 'GENERIC_EQUIPMENT_FAMILY',
+    voltageClass: 'PoE+ IEEE 802.3at (54 V CC / 30 W par port)',
+    powerRating: 'Bande passante 500 MHz (Cat 6A 10GBASE-T)',
+    standardsRef: ['ISO/IEC 11801', 'TIA-568-C', 'EN 50173'],
+    aspectRatio: '16:9',
+    dateAdded: '2026-10-28',
+    lastReviewed: '2026-10-28'
   },
 
   // =========================================================================

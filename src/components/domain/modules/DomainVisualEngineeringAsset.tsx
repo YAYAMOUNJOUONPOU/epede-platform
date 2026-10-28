@@ -343,77 +343,84 @@ export const DomainVisualEngineeringAsset: React.FC<DomainVisualEngineeringAsset
           </div>
         )}
 
-        {/* D08: Industrial Electrical & Process Systems */}
+        {/* D08: Extra Low Voltage & Special Systems (SSI, VDI, CCTV, Access Control) */}
         {domainCode === 'D08' && (
           <div className="w-full max-w-2xl space-y-3">
             <svg viewBox="0 0 600 200" className="w-full h-auto text-slate-200">
-              {/* Private 90 kV / 15 kV Substation Bay */}
-              <g transform="translate(20, 30)">
-                <line x1="0" y1="20" x2="60" y2="20" stroke="#f43f5e" strokeWidth="3" />
-                <text x="0" y="10" fill="#f43f5e" fontFamily="monospace" fontSize="9" fontWeight="bold">Arrivée 90 kV</text>
-                <circle cx="75" cy="20" r="14" fill="none" stroke="#8b5cf6" strokeWidth="2.5" />
-                <circle cx="95" cy="20" r="14" fill="none" stroke="#0ea5e9" strokeWidth="2.5" />
-                <text x="65" y="48" fill="#cbd5e1" fontFamily="monospace" fontSize="8">Transfo 25 MVA</text>
-              </g>
-
-              {/* MV Internal 15 kV Bus */}
-              <g transform="translate(140, 30)">
-                <line x1="0" y1="20" x2="110" y2="20" stroke="#0ea5e9" strokeWidth="3.5" />
-                <text x="15" y="12" fill="#38bdf8" fontFamily="monospace" fontSize="9" fontWeight="bold">Jeu de Barres HTA 15 kV</text>
+              {/* Central Fire Alarm Control Panel (SSI Catégorie A / ECS-CMSI) */}
+              <g transform="translate(15, 25)">
+                <rect x="0" y="20" width="110" height="130" fill="#1e1010" stroke="#ef4444" strokeWidth="2" rx="4" />
+                <rect x="10" y="32" width="90" height="25" fill="#450a0a" stroke="#ef4444" strokeWidth="1" rx="2" />
+                <text x="55" y="48" fill="#fca5a5" fontFamily="monospace" fontSize="9" fontWeight="bold" textAnchor="middle">Centrale SSI Cat. A</text>
+                <text x="55" y="70" fill="#f87171" fontFamily="monospace" fontSize="8" textAnchor="middle">NF S 61-931 / EN 54-2</text>
                 
-                {/* Feeder to Process Transformer */}
-                <line x1="55" y1="20" x2="55" y2="55" stroke="#0ea5e9" strokeWidth="2" />
-                <rect x="47" y="55" width="16" height="16" fill="#1e293b" stroke="#0ea5e9" strokeWidth="1.5" rx="2" />
-                <text x="68" y="67" fill="#94a3b8" fontFamily="monospace" fontSize="8">Disj. HTA</text>
+                {/* Loop 1: Optical Smoke Detectors */}
+                <path d="M 110 50 L 160 50 L 160 30 L 200 30" fill="none" stroke="#ef4444" strokeWidth="2" />
+                <circle cx="210" cy="30" r="10" fill="#1e293b" stroke="#ef4444" strokeWidth="2" />
+                <text x="210" y="33" fill="#fca5a5" fontFamily="monospace" fontSize="8" textAnchor="middle">DA</text>
+                <text x="210" y="48" fill="#94a3b8" fontFamily="monospace" fontSize="7" textAnchor="middle">Optique Fumée</text>
 
-                {/* Step-down to LV */}
-                <circle cx="55" cy="90" r="12" fill="none" stroke="#f59e0b" strokeWidth="2" />
-                <circle cx="55" cy="106" r="12" fill="none" stroke="#10b981" strokeWidth="2" />
-                <text x="75" y="105" fill="#a7f3d0" fontFamily="monospace" fontSize="8">Transfo 2500 kVA</text>
+                {/* Loop 2: Manual Call Points (DM) */}
+                <path d="M 110 90 L 160 90 L 160 70 L 200 70" fill="none" stroke="#ef4444" strokeWidth="2" />
+                <rect x="200" y="62" width="16" height="16" fill="#991b1b" stroke="#ef4444" strokeWidth="1.5" rx="2" />
+                <text x="208" y="73" fill="#ffffff" fontFamily="monospace" fontSize="8" textAnchor="middle">DM</text>
+                <text x="208" y="88" fill="#94a3b8" fontFamily="monospace" fontSize="7" textAnchor="middle">Déclencheur</text>
+
+                {/* CMSI Safety Actions: Smoke dampers & Sounders */}
+                <path d="M 55 150 L 55 175 L 180 175" fill="none" stroke="#f59e0b" strokeWidth="2" />
+                <text x="110" y="170" fill="#fbbf24" fontFamily="monospace" fontSize="8">Asservissement Désenfumage / BAAS</text>
               </g>
 
-              {/* LV Form 4b Withdrawable MCC */}
-              <g transform="translate(290, 25)">
-                {/* Main 400 V Busbar */}
-                <line x1="0" y1="50" x2="160" y2="50" stroke="#f59e0b" strokeWidth="4" />
-                <text x="10" y="40" fill="#fbbf24" fontFamily="monospace" fontSize="9" fontWeight="bold">Jeu de Barres TGBT / MCC 400 V (3200 A)</text>
+              {/* Central VDI 19" 42U Data & Telecom Rack */}
+              <g transform="translate(250, 20)">
+                <rect x="0" y="10" width="140" height="150" fill="#0b1320" stroke="#38bdf8" strokeWidth="2" rx="4" />
+                <text x="70" y="25" fill="#38bdf8" fontFamily="monospace" fontSize="9" fontWeight="bold" textAnchor="middle">Baie VDI 19" 42U</text>
 
-                {/* MCC Column & Withdrawable Drawers */}
-                <rect x="10" y="60" width="140" height="95" fill="#0f172a" stroke="#475569" strokeWidth="2" rx="4" />
-                <text x="20" y="74" fill="#94a3b8" fontFamily="monospace" fontSize="8" fontWeight="bold">MCC Colonne Tiroirs Forme 4b</text>
+                {/* Patch Panel 1: OM4 Optical Distribution Frame */}
+                <rect x="10" y="35" width="120" height="20" fill="#1e293b" stroke="#06b6d4" strokeWidth="1.5" rx="2" />
+                <text x="18" y="48" fill="#22d3ee" fontFamily="monospace" fontSize="8" fontWeight="bold">Tiroir Optique OM4 LC</text>
 
-                {/* Drawer 1: DOL Starter */}
-                <rect x="15" y="80" width="60" height="30" fill="#1e293b" stroke="#38bdf8" strokeWidth="1.5" rx="2" />
-                <text x="20" y="93" fill="#38bdf8" fontFamily="monospace" fontSize="7" fontWeight="bold">T1: DOL 45 kW</text>
-                <text x="20" y="104" fill="#64748b" fontFamily="monospace" fontSize="6">Relais ANSI 49</text>
+                {/* Patch Panel 2: Cat 6A RJ45 Shielded Patching */}
+                <rect x="10" y="60" width="120" height="22" fill="#1e293b" stroke="#3b82f6" strokeWidth="1.5" rx="2" />
+                <text x="18" y="74" fill="#93c5fd" fontFamily="monospace" fontSize="8" fontWeight="bold">Panneau Cat.6A 24P RJ45</text>
 
-                {/* Drawer 2: Soft Starter */}
-                <rect x="80" y="80" width="65" height="30" fill="#1e293b" stroke="#f59e0b" strokeWidth="1.5" rx="2" />
-                <text x="85" y="93" fill="#fbbf24" fontFamily="monospace" fontSize="7" fontWeight="bold">T2: Soft-Start 110 kW</text>
-                <text x="85" y="104" fill="#64748b" fontFamily="monospace" fontSize="6">Thyristors Bypass</text>
+                {/* Switch PoE+ Managed Gigabit */}
+                <rect x="10" y="87" width="120" height="24" fill="#1e1b4b" stroke="#818cf8" strokeWidth="1.5" rx="2" />
+                <text x="18" y="102" fill="#c7d2fe" fontFamily="monospace" fontSize="8" fontWeight="bold">Switch PoE+ 802.3at (370W)</text>
 
-                {/* Drawer 3: VFD Drive */}
-                <rect x="15" y="115" width="130" height="32" fill="#1e293b" stroke="#10b981" strokeWidth="1.5" rx="2" />
-                <text x="20" y="128" fill="#34d399" fontFamily="monospace" fontSize="7" fontWeight="bold">T3: Variateur VFD 250 kW (Profinet IED)</text>
-                <text x="20" y="140" fill="#6ee7b7" fontFamily="monospace" fontSize="6">Régulation Vitesse / Couple Boucle Fermée</text>
+                {/* UPS Onduleur 3 kVA On-line */}
+                <rect x="10" y="120" width="120" height="30" fill="#14532d" stroke="#22c55e" strokeWidth="1.5" rx="2" />
+                <text x="18" y="135" fill="#86efac" fontFamily="monospace" fontSize="8" fontWeight="bold">Onduleur On-Line 3 kVA</text>
+                <text x="18" y="145" fill="#4ade80" fontFamily="monospace" fontSize="7">Autonomie VDI : 60 min</text>
               </g>
 
-              {/* End Motor Loads & ATEX Zone */}
-              <g transform="translate(475, 45)">
-                {/* Standard Induction Motor */}
-                <circle cx="45" cy="40" r="22" fill="#0f172a" stroke="#38bdf8" strokeWidth="2" />
-                <text x="32" y="44" fill="#38bdf8" fontFamily="monospace" fontSize="9" fontWeight="bold">M 3~</text>
-                <text x="15" y="75" fill="#94a3b8" fontFamily="monospace" fontSize="8">Broyeur / Pompe</text>
+              {/* End IP Devices: CCTV, Access Control & Wi-Fi 6 AP */}
+              <g transform="translate(415, 25)">
+                {/* IP Camera (PoE+) */}
+                <line x1="-25" y1="40" x2="35" y2="40" stroke="#38bdf8" strokeWidth="1.5" />
+                <circle cx="50" cy="40" r="14" fill="#1e293b" stroke="#38bdf8" strokeWidth="1.5" />
+                <polygon points="40,35 60,35 50,48" fill="#38bdf8" />
+                <text x="70" y="43" fill="#7dd3fc" fontFamily="monospace" fontSize="9" fontWeight="bold">Caméra Dôme IP 4K</text>
+                <text x="70" y="54" fill="#94a3b8" fontFamily="monospace" fontSize="7">PoE+ · H.265+ · Analytique IA</text>
 
-                {/* ATEX Zone Motor */}
-                <rect x="10" y="90" width="70" height="40" fill="#450a0a" stroke="#ef4444" strokeWidth="1.5" rx="3" />
-                <text x="18" y="105" fill="#fca5a5" fontFamily="monospace" fontSize="8" fontWeight="bold">Moteur Ex d IIC</text>
-                <text x="15" y="122" fill="#f87171" fontFamily="monospace" fontSize="7">Zone 1 ATEX (T4)</text>
+                {/* Biometric Access Control Reader */}
+                <line x1="-25" y1="90" x2="35" y2="90" stroke="#38bdf8" strokeWidth="1.5" />
+                <rect x="35" y="75" width="28" height="35" fill="#0f172a" stroke="#a855f7" strokeWidth="1.5" rx="2" />
+                <text x="49" y="93" fill="#d8b4fe" fontFamily="monospace" fontSize="8" textAnchor="middle">RFID</text>
+                <text x="70" y="88" fill="#c084fc" fontFamily="monospace" fontSize="9" fontWeight="bold">Contrôle d'Accès</text>
+                <text x="70" y="99" fill="#94a3b8" fontFamily="monospace" fontSize="7">Badges Mifare DESFire + Gâche</text>
+
+                {/* Wi-Fi 6 Access Point */}
+                <line x1="-25" y1="135" x2="35" y2="135" stroke="#38bdf8" strokeWidth="1.5" />
+                <circle cx="48" cy="135" r="12" fill="#0f172a" stroke="#10b981" strokeWidth="1.5" />
+                <text x="48" y="138" fill="#34d399" fontFamily="monospace" fontSize="8" textAnchor="middle">AP</text>
+                <text x="70" y="133" fill="#6ee7b7" fontFamily="monospace" fontSize="9" fontWeight="bold">Borne Wi-Fi 6</text>
+                <text x="70" y="144" fill="#94a3b8" fontFamily="monospace" fontSize="7">OFDMA 2.4/5 GHz (WPA3-Enterprise)</text>
               </g>
             </svg>
             <div className="flex items-center justify-between text-[11px] font-mono text-slate-400">
-              <span>Architecture Usine : Poste 90/15 kV → Boucle HTA → MCC Débrochable 400V (Forme 4b) → Actionneurs & ATEX</span>
-              <span className="text-emerald-400 font-bold">Continuité Procédé : SIL 2 / Redondance N+1</span>
+              <span>Architecture Courants Faibles : SSI Catégorie A (NF S 61-931) · Câblage VDI Cat.6A / OM4 · Vidéosurveillance IP & Contrôle d'Accès</span>
+              <span className="text-emerald-400 font-bold">Alimentation Secourue Ondulée · Norme ISO/CEI 11801</span>
             </div>
           </div>
         )}
