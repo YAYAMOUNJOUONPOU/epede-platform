@@ -87,18 +87,18 @@ export const DomainPendingIssuesPanel: React.FC<DomainPendingIssuesPanelProps> =
   const inProgressCount = issues.filter(i => i.status === 'IN_PROGRESS').length;
 
   return (
-    <div className="rounded-2xl border border-[#2a1a1a] bg-[#0A0D10] overflow-hidden">
+    <div className="rounded-2xl border border-red-200 dark:border-[#2a1a1a] bg-white dark:bg-[#0A0D10] overflow-hidden shadow-sm dark:shadow-xl">
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-[#2a1a1a] bg-gradient-to-r from-[#140808] to-[#0A0D10]">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-red-200 dark:border-[#2a1a1a] bg-gradient-to-r from-red-50 to-white dark:from-[#140808] dark:to-[#0A0D10]">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-red-950/60 border border-red-900/40 rounded-xl">
-            <AlertTriangle className="h-5 w-5 text-red-400" />
+          <div className="p-2 bg-red-100 dark:bg-red-950/60 border border-red-200 dark:border-red-900/40 rounded-xl">
+            <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
           </div>
           <div>
-            <h3 className="font-mono text-sm font-bold text-white uppercase tracking-wider">
+            <h3 className="font-mono text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
               {isFr ? 'Registre NCR & Déficiences' : 'NCR & Deficiency Register'}
             </h3>
-            <p className="text-[10px] font-mono text-neutral-500">
+            <p className="text-[10px] font-mono text-slate-500 dark:text-neutral-500">
               {isFr ? `${issues.length} fiches · ${openCount} ouvertes · ${inProgressCount} en cours` : `${issues.length} items · ${openCount} open · ${inProgressCount} in progress`}
             </p>
           </div>
@@ -107,19 +107,19 @@ export const DomainPendingIssuesPanel: React.FC<DomainPendingIssuesPanelProps> =
         {/* Summary pills */}
         <div className="flex items-center gap-2">
           {critCount > 0 && (
-            <span className="flex items-center gap-1 text-[10px] font-mono font-bold px-2.5 py-1 rounded-full bg-red-500/15 text-red-400 border border-red-500/30 animate-pulse">
+            <span className="flex items-center gap-1 text-[10px] font-mono font-bold px-2.5 py-1 rounded-full bg-red-100 dark:bg-red-500/15 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-500/30 animate-pulse">
               <ShieldAlert className="h-3 w-3" />
               {critCount} {isFr ? 'CRITIQUE(S)' : 'CRITICAL'}
             </span>
           )}
-          <span className="text-[10px] font-mono text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full">
+          <span className="text-[10px] font-mono text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-500/10 border border-amber-300 dark:border-amber-500/20 px-2.5 py-1 rounded-full">
             {openCount} {isFr ? 'ouvertes' : 'open'}
           </span>
         </div>
       </div>
 
       {/* Severity filter */}
-      <div className="flex items-center gap-2 px-5 py-2.5 border-b border-[#1a1a2a] flex-wrap">
+      <div className="flex items-center gap-2 px-5 py-2.5 border-b border-slate-200 dark:border-[#1a1a2a] bg-slate-50/70 dark:bg-transparent flex-wrap">
         {(['ALL', 'CRITICAL', 'MAJOR', 'MINOR', 'OBSERVATION'] as const).map(sev => {
           const isActive = filterSeverity === sev;
           const cfg = sev !== 'ALL' ? SEVERITY_CONFIG[sev] : null;
@@ -130,7 +130,7 @@ export const DomainPendingIssuesPanel: React.FC<DomainPendingIssuesPanelProps> =
               className={`px-2.5 py-1 rounded-lg text-[9px] font-mono font-bold uppercase tracking-wider border transition-all ${
                 isActive
                   ? 'border-opacity-100'
-                  : 'border-[#1a2235] text-neutral-500 hover:text-white'
+                  : 'border-slate-200 dark:border-[#1a2235] bg-white dark:bg-transparent text-slate-600 dark:text-neutral-500 hover:text-slate-900 dark:hover:text-white'
               }`}
               style={isActive && cfg ? {
                 borderColor: cfg.color,
@@ -145,9 +145,9 @@ export const DomainPendingIssuesPanel: React.FC<DomainPendingIssuesPanelProps> =
       </div>
 
       {/* Issues list */}
-      <div className="divide-y divide-[#1a1a2a]">
+      <div className="divide-y divide-slate-200 dark:divide-[#1a1a2a]">
         {filtered.length === 0 ? (
-          <div className="text-center py-8 text-[11px] font-mono text-neutral-600">
+          <div className="text-center py-8 text-[11px] font-mono text-slate-500 dark:text-neutral-600">
             {isFr ? 'Aucune déficience dans cette catégorie.' : 'No deficiencies in this category.'}
           </div>
         ) : (
@@ -160,7 +160,7 @@ export const DomainPendingIssuesPanel: React.FC<DomainPendingIssuesPanelProps> =
             return (
               <div key={issue.id} className="transition-all">
                 <button
-                  className="w-full flex items-start gap-3 px-5 py-3.5 hover:bg-white/[0.02] text-left transition-all"
+                  className="w-full flex items-start gap-3 px-5 py-3.5 hover:bg-slate-50 dark:hover:bg-white/[0.02] text-left transition-all"
                   onClick={() => setExpanded(isOpen ? null : issue.id)}
                 >
                   {/* Severity icon */}
@@ -170,7 +170,7 @@ export const DomainPendingIssuesPanel: React.FC<DomainPendingIssuesPanelProps> =
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-[10px] font-mono font-bold text-neutral-500">{issue.ncr}</span>
+                      <span className="text-[10px] font-mono font-bold text-slate-500 dark:text-neutral-500">{issue.ncr}</span>
                       <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded" style={{ color: sevCfg.color, background: sevCfg.bg }}>
                         {issue.severity}
                       </span>
@@ -178,47 +178,47 @@ export const DomainPendingIssuesPanel: React.FC<DomainPendingIssuesPanelProps> =
                         {statusCfg.label[locale]}
                       </span>
                     </div>
-                    <p className="mt-1 text-[11px] font-mono font-bold text-white">{issue.title[locale]}</p>
+                    <p className="mt-1 text-[11px] font-mono font-bold text-slate-900 dark:text-white">{issue.title[locale]}</p>
                     <div className="mt-1 flex items-center gap-3">
-                      <span className="text-[10px] font-mono text-neutral-500 flex items-center gap-1">
+                      <span className="text-[10px] font-mono text-slate-500 dark:text-neutral-500 flex items-center gap-1">
                         <Clock className="h-3 w-3" />
                         {issue.dueDateLabel === 'URGENT'
-                          ? <span className="text-red-400 font-bold animate-pulse">⚠ URGENT</span>
+                          ? <span className="text-red-600 dark:text-red-400 font-bold animate-pulse">⚠ URGENT</span>
                           : issue.dueDateLabel}
                       </span>
                       {issue.standard && (
-                        <span className="text-[9px] font-mono text-cyan-500/70">{issue.standard}</span>
+                        <span className="text-[9px] font-mono text-cyan-700 dark:text-cyan-500/70">{issue.standard}</span>
                       )}
                     </div>
                   </div>
 
                   <div className="shrink-0">
-                    {isOpen ? <ChevronUp className="h-3.5 w-3.5 text-neutral-500" /> : <ChevronDown className="h-3.5 w-3.5 text-neutral-500" />}
+                    {isOpen ? <ChevronUp className="h-3.5 w-3.5 text-slate-400 dark:text-neutral-500" /> : <ChevronDown className="h-3.5 w-3.5 text-slate-400 dark:text-neutral-500" />}
                   </div>
                 </button>
 
                 {/* Expanded detail */}
                 {isOpen && (
-                  <div className="px-5 pb-4 border-t border-[#1a1a2a] bg-[#060810]">
+                  <div className="px-5 pb-4 border-t border-slate-200 dark:border-[#1a1a2a] bg-slate-50 dark:bg-[#060810]">
                     <div className="pt-3 space-y-2">
                       {issue.equipment && (
                         <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-mono text-neutral-500">{isFr ? 'Équipement:' : 'Equipment:'}</span>
-                          <span className="text-[10px] font-mono font-bold text-white">{issue.equipment}</span>
+                          <span className="text-[10px] font-mono text-slate-500 dark:text-neutral-500">{isFr ? 'Équipement:' : 'Equipment:'}</span>
+                          <span className="text-[10px] font-mono font-bold text-slate-900 dark:text-white">{issue.equipment}</span>
                         </div>
                       )}
                       {issue.standard && (
                         <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-mono text-neutral-500">{isFr ? 'Norme applicable:' : 'Applicable standard:'}</span>
-                          <span className="text-[10px] font-mono font-bold text-cyan-400">{issue.standard}</span>
+                          <span className="text-[10px] font-mono text-slate-500 dark:text-neutral-500">{isFr ? 'Norme applicable:' : 'Applicable standard:'}</span>
+                          <span className="text-[10px] font-mono font-bold text-cyan-700 dark:text-cyan-400">{issue.standard}</span>
                         </div>
                       )}
                       <div className="mt-2 flex items-center gap-2">
-                        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold bg-[#0D1520] border border-[#1a2235] text-neutral-400 hover:border-amber-400/50 hover:text-amber-300 transition-all">
+                        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold bg-white dark:bg-[#0D1520] border border-slate-300 dark:border-[#1a2235] text-slate-700 dark:text-neutral-400 hover:border-amber-400/50 hover:text-amber-700 dark:hover:text-amber-300 transition-all shadow-sm">
                           <CheckCircle2 className="h-3 w-3" />
                           {isFr ? 'Marquer En Cours' : 'Mark In Progress'}
                         </button>
-                        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 transition-all">
+                        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-300 dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-all shadow-sm">
                           <CheckCircle2 className="h-3 w-3" />
                           {isFr ? 'Fermer la NCR' : 'Close NCR'}
                         </button>

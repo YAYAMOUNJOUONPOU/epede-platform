@@ -37,16 +37,16 @@ export const DomainVisualEngineeringAsset: React.FC<DomainVisualEngineeringAsset
     'industry';
 
   return (
-    <div className="rounded-2xl border border-slate-700 bg-slate-900 text-white overflow-hidden shadow-xl">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white overflow-hidden shadow-lg dark:shadow-xl">
       {/* Header Tag & Visual View Switcher */}
-      <div className="px-4 py-2.5 bg-slate-950/95 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 font-mono text-xs">
+      <div className="px-4 py-2.5 bg-slate-50 dark:bg-slate-950/95 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 font-mono text-xs">
         <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-cyan-400" />
-          <span className="text-slate-300 font-bold uppercase tracking-wider">
+          <span className="h-2 w-2 rounded-full bg-cyan-600 dark:bg-cyan-400" />
+          <span className="text-slate-800 dark:text-slate-300 font-bold uppercase tracking-wider">
             {locale === 'fr' ? 'VISUALISATION TECHNIQUE AVANCÉE' : 'ADVANCED TECHNICAL VISUALIZATION'}
           </span>
-          <span className="text-slate-600 text-[10px] hidden md:inline">•</span>
-          <span className="text-slate-400 text-[11px] hidden md:inline">
+          <span className="text-slate-400 dark:text-slate-600 text-[10px] hidden md:inline">•</span>
+          <span className="text-slate-600 dark:text-slate-400 text-[11px] hidden md:inline">
             {domainCode} · {locale === 'fr' ? 'Normes CEI & IEEE' : 'IEC & IEEE Standards'}
           </span>
         </div>
@@ -58,8 +58,8 @@ export const DomainVisualEngineeringAsset: React.FC<DomainVisualEngineeringAsset
             onClick={() => setViewMode('schematic')}
             className={`px-3 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all ${
               viewMode === 'schematic'
-                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
-                : 'text-slate-400 hover:text-slate-200 border border-transparent'
+                ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-800 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-500/40'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 border border-transparent'
             }`}
           >
             <Eye className="h-3.5 w-3.5" />
@@ -71,8 +71,8 @@ export const DomainVisualEngineeringAsset: React.FC<DomainVisualEngineeringAsset
             onClick={() => setViewMode('field_photos')}
             className={`px-3 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all ${
               viewMode === 'field_photos'
-                ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40'
-                : 'text-slate-400 hover:text-slate-200 border border-transparent'
+                ? 'bg-purple-100 dark:bg-purple-500/20 text-purple-800 dark:text-purple-300 border border-purple-300 dark:border-purple-500/40'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 border border-transparent'
             }`}
           >
             <Camera className="h-3.5 w-3.5" />
@@ -84,8 +84,8 @@ export const DomainVisualEngineeringAsset: React.FC<DomainVisualEngineeringAsset
             onClick={() => setViewMode('sld')}
             className={`px-3 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all ${
               viewMode === 'sld'
-                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                : 'text-slate-400 hover:text-slate-200 border border-transparent'
+                ? 'bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-500/40'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 border border-transparent'
             }`}
           >
             <Network className="h-3.5 w-3.5" />
@@ -97,8 +97,8 @@ export const DomainVisualEngineeringAsset: React.FC<DomainVisualEngineeringAsset
             onClick={() => setViewMode('scada')}
             className={`px-3 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all ${
               viewMode === 'scada'
-                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                : 'text-slate-400 hover:text-slate-200 border border-transparent'
+                ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/40'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 border border-transparent'
             }`}
           >
             <Cpu className="h-3.5 w-3.5" />
@@ -110,8 +110,8 @@ export const DomainVisualEngineeringAsset: React.FC<DomainVisualEngineeringAsset
             onClick={() => setViewMode('cutaway')}
             className={`px-3 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all ${
               viewMode === 'cutaway'
-                ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
-                : 'text-slate-400 hover:text-slate-200 border border-transparent'
+                ? 'bg-rose-100 dark:bg-rose-500/20 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-500/40'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 border border-transparent'
             }`}
           >
             <Box className="h-3.5 w-3.5" />
@@ -122,24 +122,24 @@ export const DomainVisualEngineeringAsset: React.FC<DomainVisualEngineeringAsset
 
       {/* Render selected view */}
       {viewMode === 'field_photos' ? (
-        <div className="p-4 sm:p-5 bg-slate-950 space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-2">
+        <div className="p-4 sm:p-5 bg-slate-50 dark:bg-slate-950 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3 gap-2">
             <div>
-              <h4 className="text-sm font-bold text-white font-mono flex items-center gap-2">
-                <Camera className="h-4 w-4 text-purple-400" />
+              <h4 className="text-sm font-bold text-slate-900 dark:text-white font-mono flex items-center gap-2">
+                <Camera className="h-4 w-4 text-purple-600 dark:text-purple-400" />
                 <span>
                   {locale === 'fr' 
                     ? `Photothèque Industrielle Réelle · Domaine ${domainCode}` 
                     : `Real Industrial Photographic Archive · Domain ${domainCode}`}
                 </span>
               </h4>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
                 {locale === 'fr' 
                   ? 'Équipements réels, métadonnées techniques, conformité CEI/IEEE et traçabilité d\'attribution' 
                   : 'Authentic equipment, technical metadata, IEC/IEEE standards compliance, and provenance'}
               </p>
             </div>
-            <span className="text-[11px] font-mono px-2.5 py-1 rounded bg-purple-950/80 text-purple-300 border border-purple-700/50 self-start sm:self-auto font-bold">
+            <span className="text-[11px] font-mono px-2.5 py-1 rounded bg-purple-100 dark:bg-purple-950/80 text-purple-800 dark:text-purple-300 border border-purple-300 dark:border-purple-700/50 self-start sm:self-auto font-bold">
               {domainAssets.length} {locale === 'fr' ? 'Équipement(s) Référencé(s)' : 'Referenced Asset(s)'}
             </span>
           </div>

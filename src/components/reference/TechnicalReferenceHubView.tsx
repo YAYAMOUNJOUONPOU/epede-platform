@@ -206,16 +206,16 @@ export const TechnicalReferenceHubView: React.FC<TechnicalReferenceHubViewProps>
       </section>
 
       {/* ── 4 NAVIGATION TABS (Section 3.2 A/B/C/D) ────────────────────── */}
-      <div className="flex border-b border-slate-700 overflow-x-auto pb-1 gap-2 font-mono text-xs">
+      <div className="flex border-b border-slate-200 dark:border-slate-700 overflow-x-auto pb-1 gap-2 font-mono text-xs">
         <button
           onClick={() => setActiveTab('nameplate')}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-t-xl transition-colors font-bold whitespace-nowrap cursor-pointer ${
             activeTab === 'nameplate'
-              ? 'bg-slate-800 text-cyan-300 border-b-2 border-cyan-400 shadow-sm'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+              ? 'bg-white dark:bg-slate-800 text-cyan-600 dark:text-cyan-300 border-b-2 border-cyan-500 dark:border-cyan-400 shadow-xs'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900/60'
           }`}
         >
-          <FileText className="w-4 h-4 text-cyan-400" />
+          <FileText className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
           <span>{isFr ? '1. Plaques & Données Terrain' : '1. Nameplate & Field Data'}</span>
         </button>
 
@@ -223,11 +223,11 @@ export const TechnicalReferenceHubView: React.FC<TechnicalReferenceHubViewProps>
           onClick={() => setActiveTab('calculators')}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-t-xl transition-colors font-bold whitespace-nowrap cursor-pointer ${
             activeTab === 'calculators'
-              ? 'bg-slate-800 text-cyan-300 border-b-2 border-cyan-400 shadow-sm'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+              ? 'bg-white dark:bg-slate-800 text-cyan-600 dark:text-cyan-300 border-b-2 border-cyan-500 dark:border-cyan-400 shadow-xs'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900/60'
           }`}
         >
-          <Cpu className="w-4 h-4 text-cyan-400" />
+          <Cpu className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
           <span>{isFr ? '2. Solveurs & Hypothèses' : '2. Engineering Solvers'}</span>
         </button>
 
@@ -235,11 +235,11 @@ export const TechnicalReferenceHubView: React.FC<TechnicalReferenceHubViewProps>
           onClick={() => setActiveTab('laboratories')}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-t-xl transition-colors font-bold whitespace-nowrap cursor-pointer ${
             activeTab === 'laboratories'
-              ? 'bg-slate-800 text-cyan-300 border-b-2 border-cyan-400 shadow-sm'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+              ? 'bg-white dark:bg-slate-800 text-cyan-600 dark:text-cyan-300 border-b-2 border-cyan-500 dark:border-cyan-400 shadow-xs'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900/60'
           }`}
         >
-          <FlaskConical className="w-4 h-4 text-cyan-400" />
+          <FlaskConical className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
           <span>{isFr ? '3. Laboratoires Guidés' : '3. Guided Laboratories'}</span>
         </button>
 
@@ -247,11 +247,11 @@ export const TechnicalReferenceHubView: React.FC<TechnicalReferenceHubViewProps>
           onClick={() => setActiveTab('simulations')}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-t-xl transition-colors font-bold whitespace-nowrap cursor-pointer ${
             activeTab === 'simulations'
-              ? 'bg-slate-800 text-cyan-300 border-b-2 border-cyan-400 shadow-sm'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+              ? 'bg-white dark:bg-slate-800 text-cyan-600 dark:text-cyan-300 border-b-2 border-cyan-500 dark:border-cyan-400 shadow-xs'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900/60'
           }`}
         >
-          <Activity className="w-4 h-4 text-cyan-400" />
+          <Activity className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
           <span>{isFr ? '4. Simulations de Scénarios' : '4. Scenario Simulations'}</span>
         </button>
       </div>
@@ -261,10 +261,10 @@ export const TechnicalReferenceHubView: React.FC<TechnicalReferenceHubViewProps>
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-xl font-bold text-slate-100">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">
                 {isFr ? 'Interprétation des Grandeurs & Plaques Signalétiques' : 'Nameplate & Field Electrical Parameter Interpretation'}
               </h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-600 dark:text-slate-400">
                 {isFr
                   ? 'Signification physique, unités, conséquences concrètes sur l\'exploitation et normes de référence'
                   : 'Physical meaning, units, field operational impact, and governing standards'}
@@ -278,7 +278,7 @@ export const TechnicalReferenceHubView: React.FC<TechnicalReferenceHubViewProps>
                 placeholder={isFr ? 'Filtrer (ex: Un, Icu, IP, cos φ)...' : 'Filter parameters...'}
                 value={searchFilter}
                 onChange={(e) => setSearchFilter(e.target.value)}
-                className="w-full pl-9 pr-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-xs focus:outline-hidden focus:border-cyan-400 font-mono"
+                className="w-full pl-9 pr-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-200 placeholder:text-slate-400 text-xs focus:outline-hidden focus:border-cyan-500 font-mono shadow-xs"
               />
             </div>
           </div>
@@ -287,33 +287,33 @@ export const TechnicalReferenceHubView: React.FC<TechnicalReferenceHubViewProps>
             {filteredParams.map((param, idx) => (
               <div
                 key={idx}
-                className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-3 hover:border-slate-700 transition-all flex flex-col justify-between"
+                className="rounded-xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 p-5 space-y-3 hover:border-slate-300 dark:hover:border-slate-700 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
               >
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-lg font-black font-mono text-cyan-400">
+                    <span className="text-lg font-black font-mono text-cyan-600 dark:text-cyan-400">
                       {param.symbol}
                     </span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-bold">
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold border border-slate-200 dark:border-slate-700">
                       {param.unit}
                     </span>
                   </div>
 
-                  <h3 className="font-bold text-slate-100 text-sm">
+                  <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm">
                     {param.name[locale]}
                   </h3>
 
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                     {param.definition[locale]}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-slate-800/80 space-y-2 text-xs">
+                <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 space-y-2 text-xs">
                   <div>
-                    <span className="text-[10px] font-mono uppercase text-amber-400 font-bold block mb-0.5">
+                    <span className="text-[10px] font-mono uppercase text-amber-600 dark:text-amber-400 font-bold block mb-0.5">
                       {isFr ? 'Impact Terrain :' : 'Field Impact:'}
                     </span>
-                    <p className="text-slate-300 text-xs leading-relaxed">
+                    <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
                       {param.fieldImpact[locale]}
                     </p>
                   </div>
@@ -322,7 +322,7 @@ export const TechnicalReferenceHubView: React.FC<TechnicalReferenceHubViewProps>
                     {param.standards.map((std, sIdx) => (
                       <span
                         key={sIdx}
-                        className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700"
+                        className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700"
                       >
                         {std}
                       </span>
@@ -340,10 +340,10 @@ export const TechnicalReferenceHubView: React.FC<TechnicalReferenceHubViewProps>
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-bold text-slate-100">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">
                 {isFr ? 'Solveurs Électrotechniques (Hypothèses & Domaine de Validité)' : 'Electrotechnical Solvers (Assumptions & Validity Range)'}
               </h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-600 dark:text-slate-400">
                 {isFr
                   ? 'Chaque outil indique explicitement ses hypothèses simplificatrices et ses limites normatives.'
                   : 'Every tool explicitly declares its simplifying assumptions and normative boundaries.'}
@@ -351,7 +351,7 @@ export const TechnicalReferenceHubView: React.FC<TechnicalReferenceHubViewProps>
             </div>
             <button
               onClick={() => onNavigate('calculators')}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs transition-colors shadow-xs"
             >
               <span>{isFr ? 'Ouvrir Tous les Calculateurs' : 'Open All Solvers'}</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -359,108 +359,108 @@ export const TechnicalReferenceHubView: React.FC<TechnicalReferenceHubViewProps>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
+            <div className="p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3 shadow-xs hover:shadow-md transition-all">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-slate-100 text-sm">
+                <span className="font-bold text-slate-900 dark:text-slate-100 text-sm">
                   {isFr ? 'Chute de Tension en Ligne' : 'Voltage Drop Calculation'}
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-50 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800 font-bold">
                   NF C 15-105 / IEC 60364
                 </span>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                 {isFr
                   ? 'Calcul de la chute de tension relative ΔU (%) en régime permanent triphasé ou monophasé selon la résistivité des conducteurs à température de service.'
                   : 'Calculates relative voltage drop ΔU (%) in steady-state three-phase or single-phase based on conductor resistivity at operating temperature.'}
               </p>
-              <div className="p-2.5 rounded-lg bg-slate-950 text-slate-400 text-xs font-mono space-y-1">
+              <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800/80 text-xs font-mono space-y-1">
                 <div>{isFr ? '• Hypothèses : Câbles symétriques, cos φ récepteur fixe, régime sinusoïdal pur.' : '• Assumptions: Symmetrical cables, fixed load PF, pure sinusoidal wave.'}</div>
                 <div>{isFr ? '• Limites : Ne modélise pas la saturation d\'harmoniques de rang 3 ou 5.' : '• Limits: Does not account for severe 3rd/5th harmonic distortion.'}</div>
               </div>
               <button
                 onClick={() => handleCalcNav('voltage-drop')}
-                className="inline-flex items-center gap-1.5 text-xs text-cyan-400 font-bold hover:underline"
+                className="inline-flex items-center gap-1.5 text-xs text-cyan-600 dark:text-cyan-400 font-bold hover:underline"
               >
                 <span>{isFr ? 'Lancer le calcul' : 'Launch solver'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            <div className="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
+            <div className="p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3 shadow-xs hover:shadow-md transition-all">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-slate-100 text-sm">
+                <span className="font-bold text-slate-900 dark:text-slate-100 text-sm">
                   {isFr ? 'Court-Circuit en Bout de Câble' : 'Cable End Short-Circuit'}
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-50 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800 font-bold">
                   IEC 60909 / NF C 15-105
                 </span>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                 {isFr
                   ? 'Méthode des impédances pour déterminer Icc3 max amont, Icc2 min et Icc1 min au point terminal du câble avec vérification du seuil magnétique du disjoncteur.'
                   : 'Impedance method determining upstream Icc3 max, downstream Icc2 min, and Icc1 min with magnetic protection trip verification.'}
               </p>
-              <div className="p-2.5 rounded-lg bg-slate-950 text-slate-400 text-xs font-mono space-y-1">
+              <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800/80 text-xs font-mono space-y-1">
                 <div>{isFr ? '• Hypothèses : Défaut franc à résistance d\'arc nulle, impédance de source connue.' : '• Assumptions: Bolted zero-arc fault, known upstream network impedance.'}</div>
                 <div>{isFr ? '• Limites : Applicabilité BT / HTA jusqu\'à 36 kV.' : '• Limits: Valid for LV and MV systems up to 36 kV.'}</div>
               </div>
               <button
                 onClick={() => handleCalcNav('cable-short-circuit')}
-                className="inline-flex items-center gap-1.5 text-xs text-cyan-400 font-bold hover:underline"
+                className="inline-flex items-center gap-1.5 text-xs text-cyan-600 dark:text-cyan-400 font-bold hover:underline"
               >
                 <span>{isFr ? 'Lancer le calcul' : 'Launch solver'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            <div className="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
+            <div className="p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3 shadow-xs hover:shadow-md transition-all">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-slate-100 text-sm">
+                <span className="font-bold text-slate-900 dark:text-slate-100 text-sm">
                   {isFr ? 'Bilan de Puissance & Foisonnement' : 'Load Schedule & Diversity'}
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-50 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800 font-bold">
                   IEC 60364 / NF C 15-100
                 </span>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                 {isFr
                   ? 'Tableau interactif des départs avec facteurs d\'utilisation (ku) et de simultanéité (ks) pour le dimensionnement du transformateur amont.'
                   : 'Branch feeder schedule with individual utilization (ku) and coincidence (ks) factors for transformer sizing.'}
               </p>
-              <div className="p-2.5 rounded-lg bg-slate-950 text-slate-400 text-xs font-mono space-y-1">
+              <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800/80 text-xs font-mono space-y-1">
                 <div>{isFr ? '• Hypothèses : Profil de charge stable, pas de démarrages simultanés extrêmes.' : '• Assumptions: Stable load profile without simultaneous large motor starts.'}</div>
                 <div>{isFr ? '• Limites : Les facteurs ks recommandés sont normatifs et doivent être ajustés au profil réel.' : '• Limits: Normative ks factors require adjustment to real process duty cycles.'}</div>
               </div>
               <button
                 onClick={() => handleCalcNav('load-schedule')}
-                className="inline-flex items-center gap-1.5 text-xs text-cyan-400 font-bold hover:underline"
+                className="inline-flex items-center gap-1.5 text-xs text-cyan-600 dark:text-cyan-400 font-bold hover:underline"
               >
                 <span>{isFr ? 'Lancer le calcul' : 'Launch solver'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            <div className="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
+            <div className="p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3 shadow-xs hover:shadow-md transition-all">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-slate-100 text-sm">
+                <span className="font-bold text-slate-900 dark:text-slate-100 text-sm">
                   {isFr ? 'Compensation d\'Énergie Réactive' : 'Reactive Power Compensation'}
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-50 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800 font-bold">
                   IEC 60831 / IEEE 141
                 </span>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                 {isFr
                   ? 'Dimensionnement de la batterie de condensateurs Qc (kvar) pour relever le facteur de puissance au seuil cible (ex: 0.95).'
                   : 'Capacitor bank sizing Qc (kvar) to elevate plant power factor to target threshold.'}
               </p>
-              <div className="p-2.5 rounded-lg bg-slate-950 text-slate-400 text-xs font-mono space-y-1">
+              <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800/80 text-xs font-mono space-y-1">
                 <div>{isFr ? '• Hypothèses : Tension de bus constante, charge linéaire équilibrée.' : '• Assumptions: Constant bus voltage, balanced linear load.'}</div>
                 <div>{isFr ? '• Limites : Présence d\'harmoniques nécessite des réactances anti-résonance.' : '• Limits: Non-linear harmonic loads require detuned detuning reactors.'}</div>
               </div>
               <button
                 onClick={() => handleCalcNav('pfc')}
-                className="inline-flex items-center gap-1.5 text-xs text-cyan-400 font-bold hover:underline"
+                className="inline-flex items-center gap-1.5 text-xs text-cyan-600 dark:text-cyan-400 font-bold hover:underline"
               >
                 <span>{isFr ? 'Lancer le calcul' : 'Launch solver'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -474,10 +474,10 @@ export const TechnicalReferenceHubView: React.FC<TechnicalReferenceHubViewProps>
       {activeTab === 'laboratories' && (
         <div className="space-y-6">
           <div>
-            <h2 className="text-xl font-bold text-slate-100">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">
               {isFr ? 'Laboratoires d\'Expériences Guidées' : 'Guided Laboratory Workbenches'}
             </h2>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-600 dark:text-slate-400">
               {isFr
                 ? 'Expériences pas-à-pas avec variation interactive des paramètres physiques pour comprendre les mécanismes fondamentaux.'
                 : 'Step-by-step interactive experiments varying physical parameters to understand governing mechanisms.'}
@@ -485,63 +485,63 @@ export const TechnicalReferenceHubView: React.FC<TechnicalReferenceHubViewProps>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-              <div className="w-9 h-9 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
+            <div className="p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3 shadow-xs hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
                 <FlaskConical className="w-4 h-4" />
               </div>
-              <h3 className="font-bold text-slate-100 text-sm">
+              <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm">
                 {isFr ? 'Stabilité Transitoire d\'Alternateur' : 'Generator Transient Stability'}
               </h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                 {isFr
                   ? 'Équation d\'oscillation (Swing Equation), critère des aires égales et calcul du temps critique d\'élimination de défaut (CCT).'
                   : 'Swing equation, equal-area criterion, and critical fault clearing time (CCT) determination.'}
               </p>
               <button
                 onClick={() => handleSimNav('transient-stability')}
-                className="inline-flex items-center gap-1.5 text-xs text-purple-400 font-bold hover:underline pt-2"
+                className="inline-flex items-center gap-1.5 text-xs text-purple-600 dark:text-purple-400 font-bold hover:underline pt-2"
               >
                 <span>{isFr ? 'Entrer dans le lab' : 'Enter lab'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            <div className="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-              <div className="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+            <div className="p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3 shadow-xs hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
                 <Zap className="w-4 h-4" />
               </div>
-              <h3 className="font-bold text-slate-100 text-sm">
+              <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm">
                 {isFr ? 'Effet Ferranti sur Ligne Longue' : 'Ferranti Effect on Long Lines'}
               </h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                 {isFr
                   ? 'Élévation de tension à vide sur les lignes HTB (225 kV RIS) due à la puissance réactive capacitive des conducteurs.'
                   : 'No-load voltage rise on HV lines (225 kV RIS) caused by distributed line charging capacitance.'}
               </p>
               <button
                 onClick={() => handleSimNav('ferranti')}
-                className="inline-flex items-center gap-1.5 text-xs text-cyan-400 font-bold hover:underline pt-2"
+                className="inline-flex items-center gap-1.5 text-xs text-cyan-600 dark:text-cyan-400 font-bold hover:underline pt-2"
               >
                 <span>{isFr ? 'Entrer dans le lab' : 'Enter lab'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            <div className="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-              <div className="w-9 h-9 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+            <div className="p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3 shadow-xs hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-600 dark:text-amber-400">
                 <Activity className="w-4 h-4" />
               </div>
-              <h3 className="font-bold text-slate-100 text-sm">
+              <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm">
                 {isFr ? 'Saturation & Rémanence des TC' : 'CT Saturation & Remanence'}
               </h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                 {isFr
                   ? 'Impact de la composante apériodique CC sur la saturation du circuit magnétique des transformateurs de courant de protection.'
                   : 'DC offset component impact on magnetic core saturation of protective current transformers.'}
               </p>
               <button
                 onClick={() => handleSimNav('transformer')}
-                className="inline-flex items-center gap-1.5 text-xs text-amber-400 font-bold hover:underline pt-2"
+                className="inline-flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400 font-bold hover:underline pt-2"
               >
                 <span>{isFr ? 'Entrer dans le lab' : 'Enter lab'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -555,10 +555,10 @@ export const TechnicalReferenceHubView: React.FC<TechnicalReferenceHubViewProps>
       {activeTab === 'simulations' && (
         <div className="space-y-6">
           <div>
-            <h2 className="text-xl font-bold text-slate-100">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">
               {isFr ? 'Simulations de Scénarios & Réseaux' : 'Grid & System Scenario Simulations'}
             </h2>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-600 dark:text-slate-400">
               {isFr
                 ? 'Environnements d\'exploration de cas réels : architectures de postes, coordination sélective et conduite d\'aménagements hydroélectriques.'
                 : 'Exploration environments for field scenarios: substation topologies, protection selectivity, and hydro cascade operations.'}
@@ -566,63 +566,63 @@ export const TechnicalReferenceHubView: React.FC<TechnicalReferenceHubViewProps>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-              <div className="w-9 h-9 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400">
+            <div className="p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3 shadow-xs hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-600 dark:text-red-400">
                 <Activity className="w-4 h-4" />
               </div>
-              <h3 className="font-bold text-slate-100 text-sm">
+              <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm">
                 {isFr ? 'Coordination Sélective (TCC 50/51)' : 'Protection Coordination (TCC)'}
               </h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                 {isFr
                   ? 'Courbes temps-courant normalisées CEI 60255 (Standard Inverse, Very Inverse) avec vérification de l\'intervalle sélectif CTI (300 ms).'
                   : 'Time-current curves per IEC 60255 with coordinating time interval (CTI 300 ms) clearance verification.'}
               </p>
               <button
                 onClick={() => onNavigate('protection')}
-                className="inline-flex items-center gap-1.5 text-xs text-red-400 font-bold hover:underline pt-2"
+                className="inline-flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400 font-bold hover:underline pt-2"
               >
                 <span>{isFr ? 'Ouvrir l\'atelier' : 'Open studio'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            <div className="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-              <div className="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+            <div className="p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3 shadow-xs hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
                 <Layers className="w-4 h-4" />
               </div>
-              <h3 className="font-bold text-slate-100 text-sm">
+              <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm">
                 {isFr ? 'Schémas SLD Unifilaires CAO' : 'Interactive SLD CAD Studio'}
               </h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                 {isFr
                   ? 'Simulateur d\'architectures de postes : simple jeu de barres, double barre, disjoncteur et demi (1.5 CB) et manœuvres d\'exploitation.'
                   : 'Substation topologies: single bus, double bus, breaker-and-a-half (1.5 CB) and switching operations.'}
               </p>
               <button
                 onClick={() => onNavigate('diagrams')}
-                className="inline-flex items-center gap-1.5 text-xs text-cyan-400 font-bold hover:underline pt-2"
+                className="inline-flex items-center gap-1.5 text-xs text-cyan-600 dark:text-cyan-400 font-bold hover:underline pt-2"
               >
                 <span>{isFr ? 'Ouvrir l\'atelier' : 'Open studio'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            <div className="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-              <div className="w-9 h-9 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+            <div className="p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3 shadow-xs hover:shadow-md transition-all">
+              <div className="w-9 h-9 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-600 dark:text-amber-400">
                 <Zap className="w-4 h-4" />
               </div>
-              <h3 className="font-bold text-slate-100 text-sm">
+              <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm">
                 {isFr ? 'Cascade Hydroélectrique Sanaga' : 'Sanaga Hydropower Cascade'}
               </h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                 {isFr
                   ? 'Coordination hydraulique et électrique des centrales de Songloulou (384 MW), Édéa (276 MW) et Nachtigal (420 MW).'
                   : 'Hydraulic and grid coordination of Songloulou, Edea, and Nachtigal hydro plants on the Cameroon RIS.'}
               </p>
               <button
                 onClick={() => onNavigate('hydropower')}
-                className="inline-flex items-center gap-1.5 text-xs text-amber-400 font-bold hover:underline pt-2"
+                className="inline-flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400 font-bold hover:underline pt-2"
               >
                 <span>{isFr ? 'Ouvrir l\'atelier' : 'Open studio'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
