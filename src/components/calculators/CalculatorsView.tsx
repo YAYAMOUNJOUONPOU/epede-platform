@@ -16,12 +16,14 @@ import {
   Sun,
   Battery,
   FolderOpen,
-  History
+  History,
+  Download
 } from 'lucide-react';
 import { CalculationReportModal } from './CalculationReportModal';
 import { SavedStudiesDrawer } from './SavedStudiesDrawer';
 import { CalculationStudyHistoryDrawer } from './CalculationStudyHistoryDrawer';
 import { calculationStudyHistory } from './CalculationStudyHistoryService';
+import { EngineeringCalculationPdfExportService } from './services/EngineeringCalculationPdfExportService';
 import { useAuth } from '../../services/AuthContext';
 import { soundEffects } from '../../services/soundEffectsService';
 import { PowerCalculator } from './modules/PowerCalculator';
@@ -376,6 +378,19 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
           >
             <FileText className="h-4 w-4 text-slate-950" />
             <span className="font-bold">{locale === 'fr' ? 'Générer Note de Calcul' : 'Technical Calculation Note'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              const report = generateCalculationReport(activeCalc, locale, injectedContext);
+              EngineeringCalculationPdfExportService.exportCalculationPdf(report, locale);
+            }}
+            className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl font-tech text-xs font-bold bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white border border-cyan-400/40 transition-all shadow-[0_2px_14px_rgba(6,182,212,0.3)] cursor-pointer active:scale-[0.98]"
+            title={locale === 'fr' ? 'Télécharger la Note Technique PDF A4 Officielle (CEI / NF C / IEEE)' : 'Download Official A4 PDF Design Sheet (IEC / NF C / IEEE)'}
+          >
+            <Download className="h-4 w-4 text-white" />
+            <span className="font-bold">{locale === 'fr' ? 'PDF A4' : 'A4 PDF'}</span>
           </button>
         </div>
       </div>

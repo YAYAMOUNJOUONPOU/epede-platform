@@ -11,6 +11,7 @@ import { searchRouter } from './server/routes/v1/searchRouter';
 import { aiRouter } from './server/routes/v1/aiRouter';
 import { scenariosRouter } from './server/routes/v1/scenariosRouter';
 import { fieldEngineeringRouter } from './server/routes/v1/fieldEngineeringRouter';
+import { cameroonGridRouter } from './server/routes/v1/cameroonGridRouter';
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ const healthHandler = (_req: express.Request, res: express.Response) => {
       '/api/v1/search',
       '/api/v1/scenarios',
       '/api/v1/field-engineering',
+      '/api/v1/cameroon-grid',
       '/api/v1/ai',
     ],
     timestamp: new Date().toISOString(),
@@ -51,6 +53,7 @@ app.use('/api/v1/workbenches', workbenchesRouter);
 app.use('/api/v1/search', searchRouter);
 app.use('/api/v1/scenarios', scenariosRouter);
 app.use('/api/v1/field-engineering', fieldEngineeringRouter);
+app.use('/api/v1/cameroon-grid', cameroonGridRouter);
 app.use('/api/v1/ai', aiRouter);
 
 // EPEDE AI Power Systems Copilot API

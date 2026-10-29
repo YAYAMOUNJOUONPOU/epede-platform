@@ -119,42 +119,44 @@ export const EquipmentListView: React.FC<EquipmentListViewProps> = ({
   }, [selectedForComparison]);
 
   return (
-    <div className="space-y-6 pb-20">
+    <div className="space-y-6 pb-20 text-[#F4F1E8]">
       
       {/* Header */}
-      <header className="rounded-2xl border border-[#252E38] bg-[#0D1117] p-6 sm:p-8 shadow-xl cad-grid-dense">
+      <header className="rounded-2xl border border-[#567A87]/35 bg-[#151C1E] p-6 sm:p-8 shadow-xl cad-grid-dense">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 font-mono text-xs text-cyan-400 mb-1">
+            <div className="flex items-center gap-2 font-mono text-xs text-[#D7A64A] mb-1">
               <Layers className="h-4 w-4" />
-              <span className="uppercase tracking-wider font-bold">ASSET CATALOG · APPAREILLAGE INDUSTRIEL</span>
+              <span className="uppercase tracking-wider font-bold">
+                {locale === 'fr' ? 'CATALOGUE MATÉRIELS · APPAREILLAGE INDUSTRIEL' : 'EQUIPMENT CATALOG · REAL-WORLD POWER APPARATUS'}
+              </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white font-mono">
-              {locale === 'fr' ? 'Catalogue de l\'Appareillage & Équipements' : 'HV/MV Switchgear & Equipment Catalog'}
+            <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#F4F1E8] font-mono">
+              {locale === 'fr' ? 'Catalogue de l\'Appareillage & Équipements' : 'HV / MV / LV Switchgear & Equipment Catalog'}
             </h1>
-            <p className="mt-2 text-xs sm:text-sm text-neutral-400 max-w-3xl leading-relaxed font-medium">
+            <p className="mt-2 text-xs sm:text-sm text-[#A9ADA5] max-w-3xl leading-relaxed font-medium">
               {locale === 'fr'
                 ? 'Spécifications constructeur, niveaux de tension assignés, indices de danger arc flash et liaisons fonctionnelles pour les matériels de réseau HTB, HTA et BT.'
-                : 'Manufacturer ratings, nominal voltages, arc flash hazard classifications, and functional relationship graphs for transmission and distribution assets.'}
+                : 'Explore 39 industrial power system apparatus datasheets: manufacturer ratings, nominal voltages (EHV/HV/MV/LV), arc-flash hazard classifications, 3D cutaways, and upstream/downstream network connections.'}
             </p>
           </div>
 
           {/* Search Input */}
           <div className="w-full md:w-80 shrink-0">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A9ADA5]" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={locale === 'fr' ? 'Rechercher un matériel, tension, norme...' : 'Search equipment, rating, standard...'}
-                className="w-full pl-9 pr-8 py-2 rounded-xl bg-[#080B10] border border-[#252E38] text-xs font-mono text-white placeholder-neutral-500 focus:outline-none focus:border-cyan-400 transition-colors"
+                className="w-full pl-9 pr-8 py-2 rounded-xl bg-[#0B0F12] border border-[#567A87]/40 text-xs font-mono text-[#F4F1E8] placeholder-[#A9ADA5] focus:outline-none focus:border-[#D7A64A] transition-colors"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 rounded text-neutral-400 hover:text-white"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 rounded text-[#A9ADA5] hover:text-[#F4F1E8]"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -163,14 +165,48 @@ export const EquipmentListView: React.FC<EquipmentListViewProps> = ({
           </div>
         </div>
 
+        {/* What You Will Understand Here (Orientation Strip) */}
+        <div className="mt-5 p-3.5 rounded-xl bg-[#0B0F12]/90 border border-[#567A87]/30 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          <div>
+            <span className="font-mono text-[10px] uppercase tracking-wider text-[#D7A64A] font-bold block">
+              {locale === 'fr' ? '1. Rôle Physique & Coupure' : '1. Physical Role & Switching'}
+            </span>
+            <span className="text-[#A9ADA5]">
+              {locale === 'fr'
+                ? 'Comment chaque appareil (disjoncteur SF6, sectionneur, transfo, relais IED) s\'insère dans la travée.'
+                : 'How each apparatus (SF6 breaker, disconnector, power transformer, IED relay) operates inside a bay.'}
+            </span>
+          </div>
+          <div>
+            <span className="font-mono text-[10px] uppercase tracking-wider text-[#D7A64A] font-bold block">
+              {locale === 'fr' ? '2. Grandeurs de Plaque (Ur, Ir, Isc)' : '2. Nameplate Ratings (Ur, Ir, Isc)'}
+            </span>
+            <span className="text-[#A9ADA5]">
+              {locale === 'fr'
+                ? 'Lire les tensions assignées, courants continus et pouvoirs de coupure selon CEI 62271 / 60076.'
+                : 'Interpret rated voltage, continuous current, and short-circuit breaking capacity per IEC 62271 / 60076.'}
+            </span>
+          </div>
+          <div>
+            <span className="font-mono text-[10px] uppercase tracking-wider text-[#D7A64A] font-bold block">
+              {locale === 'fr' ? '3. Comparaison & Dimensionnement' : '3. Compare & Verify Sizing'}
+            </span>
+            <span className="text-[#A9ADA5]">
+              {locale === 'fr'
+                ? 'Sélectionnez jusqu\'à 3 appareils pour comparer leurs caractéristiques côte à côte.'
+                : 'Select up to 3 apparatus cards to compare specifications side-by-side or launch linked solvers.'}
+            </span>
+          </div>
+        </div>
+
         {/* Filters Bar */}
-        <div className="mt-6 pt-5 border-t border-[#252E38] flex flex-wrap items-center justify-between gap-4 font-mono">
+        <div className="mt-5 pt-5 border-t border-[#567A87]/30 flex flex-wrap items-center justify-between gap-4 font-mono">
           
           <div className="flex flex-wrap items-center gap-4">
             {/* Voltage Filters */}
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-xs font-bold text-neutral-400 flex items-center gap-1 mr-1 uppercase tracking-wider">
-                <Filter className="h-3.5 w-3.5 text-cyan-400" />
+              <span className="text-xs font-bold text-[#A9ADA5] flex items-center gap-1 mr-1 uppercase tracking-wider">
+                <Filter className="h-3.5 w-3.5 text-[#D7A64A]" />
                 <span>{locale === 'fr' ? 'Tension :' : 'Voltage:'}</span>
               </span>
               {['ALL', 'EHV', 'HV', 'MV', 'LV'].map((lvl) => (
@@ -180,8 +216,8 @@ export const EquipmentListView: React.FC<EquipmentListViewProps> = ({
                   onClick={() => setFilterVoltage(lvl)}
                   className={`px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider transition-all border ${
                     filterVoltage === lvl
-                      ? 'border-cyan-400 bg-cyan-400/15 text-cyan-300'
-                      : 'border-[#252E38] bg-[#080B10] text-neutral-400 hover:text-white'
+                      ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A]'
+                      : 'border-[#567A87]/35 bg-[#0B0F12] text-[#A9ADA5] hover:text-[#F4F1E8]'
                   }`}
                 >
                   {lvl}
@@ -190,8 +226,8 @@ export const EquipmentListView: React.FC<EquipmentListViewProps> = ({
             </div>
 
             {/* Domain Filters */}
-            <div className="flex flex-wrap items-center gap-1.5 border-l border-[#252E38] pl-4">
-              <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider">
+            <div className="flex flex-wrap items-center gap-1.5 border-l border-[#567A87]/30 pl-4">
+              <span className="text-xs font-bold text-[#A9ADA5] uppercase tracking-wider">
                 {locale === 'fr' ? 'Domaine :' : 'Domain:'}
               </span>
               {availableDomains.map((dom) => (
@@ -201,8 +237,8 @@ export const EquipmentListView: React.FC<EquipmentListViewProps> = ({
                   onClick={() => setFilterDomain(dom)}
                   className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider transition-all border ${
                     filterDomain === dom
-                      ? 'border-cyan-400 bg-cyan-500/20 text-cyan-300'
-                      : 'border-[#252E38] bg-[#080B10] text-neutral-500 hover:text-neutral-300'
+                      ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A]'
+                      : 'border-[#567A87]/35 bg-[#0B0F12] text-[#A9ADA5] hover:text-[#F4F1E8]'
                   }`}
                 >
                   {dom}
@@ -217,15 +253,15 @@ export const EquipmentListView: React.FC<EquipmentListViewProps> = ({
                 type="checkbox"
                 checked={filterSafetyOnly}
                 onChange={(e) => setFilterSafetyOnly(e.target.checked)}
-                className="rounded bg-[#080B10] border-red-800 text-red-500 focus:ring-0"
+                className="rounded bg-[#0B0F12] border-red-800 text-red-500 focus:ring-0"
               />
               <ShieldAlert className="h-3.5 w-3.5 text-red-400" />
               <span>{locale === 'fr' ? 'Critiques uniquement' : 'Safety-critical only'}</span>
             </label>
 
             {/* Results count */}
-            <div className="text-xs font-mono text-neutral-400 bg-[#080B10] px-3 py-1.5 rounded-lg border border-[#252E38]">
-              <span className="text-cyan-400 font-bold">{filteredEquipment.length}</span> {locale === 'fr' ? 'équipements' : 'assets'}
+            <div className="text-xs font-mono text-[#A9ADA5] bg-[#0B0F12] px-3 py-1.5 rounded-lg border border-[#567A87]/35">
+              <span className="text-[#D7A64A] font-bold">{filteredEquipment.length}</span> {locale === 'fr' ? 'équipements' : 'assets'}
             </div>
           </div>
 
@@ -249,10 +285,10 @@ export const EquipmentListView: React.FC<EquipmentListViewProps> = ({
                   onSelectEquipment(eq.id);
                 }
               }}
-              className={`rounded-xl border bg-[#0D1117] p-5 hover:border-cyan-400 transition-all cursor-pointer group shadow-md flex flex-col justify-between relative select-none no-underline block ${
+              className={`rounded-xl border bg-[#151C1E] p-5 hover:border-[#D7A64A] transition-all cursor-pointer group shadow-md flex flex-col justify-between relative select-none no-underline block ${
                 isSelected 
-                  ? 'border-cyan-500 bg-cyan-950/10 shadow-[0_0_15px_rgba(6,182,212,0.15)]' 
-                  : 'border-[#252E38]'
+                  ? 'border-[#D7A64A] bg-[#D7A64A]/10 shadow-[0_0_15px_rgba(215,166,74,0.15)]' 
+                  : 'border-[#567A87]/35'
               }`}
             >
               <div>
@@ -264,7 +300,7 @@ export const EquipmentListView: React.FC<EquipmentListViewProps> = ({
                       locale={locale}
                       size="sm"
                     />
-                    <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#141B26] text-neutral-400 border border-[#252E38] uppercase">
+                    <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#0B0F12] text-[#D7A64A] border border-[#567A87]/35 uppercase">
                       {eq.domain_code}
                     </span>
                   </div>
@@ -286,10 +322,10 @@ export const EquipmentListView: React.FC<EquipmentListViewProps> = ({
                       }
                       className={`p-1 rounded transition-colors ${
                         isSelected 
-                          ? 'text-cyan-400 bg-cyan-950/60 border border-cyan-500/50' 
+                          ? 'text-[#D7A64A] bg-[#0B0F12] border border-[#D7A64A]/50' 
                           : canSelect 
-                          ? 'text-neutral-500 hover:text-neutral-300 hover:bg-[#1A2332]' 
-                          : 'text-neutral-700 cursor-not-allowed'
+                          ? 'text-[#A9ADA5] hover:text-[#F4F1E8] hover:bg-[#0B0F12]' 
+                          : 'text-[#567A87]/40 cursor-not-allowed'
                       }`}
                     >
                       {isSelected ? (
@@ -301,11 +337,11 @@ export const EquipmentListView: React.FC<EquipmentListViewProps> = ({
                   </div>
                 </div>
 
-                <h3 className="text-base font-bold uppercase tracking-tight text-white group-hover:text-cyan-300 transition-colors mt-2 font-mono">
+                <h3 className="text-base font-bold uppercase tracking-tight text-[#F4F1E8] group-hover:text-[#D7A64A] transition-colors mt-2 font-mono">
                   {locale === 'fr' ? eq.name_fr : eq.name_en}
                 </h3>
                 
-                <p className="text-xs text-neutral-400 mt-1.5 line-clamp-2 font-medium leading-relaxed">
+                <p className="text-xs text-[#A9ADA5] mt-1.5 line-clamp-2 font-medium leading-relaxed">
                   {locale === 'fr' ? eq.description_fr : eq.description_en}
                 </p>
 
@@ -313,20 +349,20 @@ export const EquipmentListView: React.FC<EquipmentListViewProps> = ({
                 {eq.technical && (
                   <div className="mt-3 flex flex-wrap gap-1.5 font-mono text-[11px]">
                     {Object.entries(eq.technical).slice(0, 2).map(([k, v]) => (
-                      <span key={k} className="px-2 py-0.5 rounded bg-[#080B10] text-neutral-300 border border-[#252E38] truncate max-w-full">
-                        <span className="text-neutral-500">{k}:</span> <span className="font-bold text-cyan-400">{v}</span>
+                      <span key={k} className="px-2 py-0.5 rounded bg-[#0B0F12] text-[#F4F1E8] border border-[#567A87]/35 truncate max-w-full">
+                        <span className="text-[#A9ADA5]">{k}:</span> <span className="font-bold text-[#D7A64A]">{v}</span>
                       </span>
                     ))}
                   </div>
                 )}
               </div>
 
-              <div className="mt-4 pt-3 border-t border-[#252E38] flex items-center justify-between text-xs font-mono">
-                <span className="text-neutral-400 font-medium tracking-wide text-[11px] truncate max-w-[180px]">
+              <div className="mt-4 pt-3 border-t border-[#567A87]/25 flex items-center justify-between text-xs font-mono">
+                <span className="text-[#A9ADA5] font-medium tracking-wide text-[11px] truncate max-w-[180px]">
                   {formatEntityType(eq.entity_type, locale)}
                 </span>
-                <span className="text-cyan-400 font-bold uppercase tracking-wider group-hover:translate-x-1 transition-transform flex items-center gap-1 shrink-0">
-                  <span>{locale === 'fr' ? 'Fiche complète' : 'Details'}</span>
+                <span className="text-[#D7A64A] font-bold uppercase tracking-wider group-hover:translate-x-1 transition-transform flex items-center gap-1 shrink-0">
+                  <span>{locale === 'fr' ? 'Fiche complète' : 'Inspect Asset'}</span>
                   <ArrowRight className="h-3 w-3" />
                 </span>
               </div>
@@ -336,12 +372,12 @@ export const EquipmentListView: React.FC<EquipmentListViewProps> = ({
       </div>
 
       {filteredEquipment.length === 0 && (
-        <div className="rounded-2xl border border-[#252E38] bg-[#0D1117] p-12 text-center space-y-3">
-          <Filter className="h-8 w-8 text-neutral-500 mx-auto" />
-          <h3 className="text-base font-bold text-white font-mono uppercase">
+        <div className="rounded-2xl border border-[#567A87]/35 bg-[#151C1E] p-12 text-center space-y-3">
+          <Filter className="h-8 w-8 text-[#A9ADA5] mx-auto" />
+          <h3 className="text-base font-bold text-[#F4F1E8] font-mono uppercase">
             {locale === 'fr' ? 'Aucun équipement correspondant' : 'No matching equipment found'}
           </h3>
-          <p className="text-xs text-neutral-400 max-w-md mx-auto">
+          <p className="text-xs text-[#A9ADA5] max-w-md mx-auto">
             {locale === 'fr'
               ? 'Modifiez vos filtres de tension, de domaine ou votre terme de recherche.'
               : 'Adjust your voltage, domain, or search query filters.'}
@@ -354,7 +390,7 @@ export const EquipmentListView: React.FC<EquipmentListViewProps> = ({
               setFilterSafetyOnly(false);
               setSearchQuery('');
             }}
-            className="px-4 py-2 rounded-lg bg-[#141B26] hover:bg-[#1E293B] border border-[#252E38] text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider transition-colors"
+            className="px-4 py-2 rounded-lg bg-[#0B0F12] hover:bg-[#567A87]/20 border border-[#567A87]/40 text-xs font-mono font-bold text-[#D7A64A] uppercase tracking-wider transition-colors"
           >
             {locale === 'fr' ? 'Réinitialiser les filtres' : 'Reset all filters'}
           </button>
@@ -367,20 +403,20 @@ export const EquipmentListView: React.FC<EquipmentListViewProps> = ({
           aria-label={locale === 'fr' ? 'Barre de comparaison technique' : 'Technical comparison bar'}
           className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-full max-w-3xl px-4 animate-in fade-in slide-in-from-bottom-4 duration-200"
         >
-          <div className="rounded-2xl border border-cyan-500/50 bg-[#0D131F]/95 backdrop-blur-xl p-3 sm:p-4 shadow-[0_10px_35px_rgba(0,0,0,0.8)] flex flex-wrap items-center justify-between gap-3">
+          <div className="rounded-2xl border border-[#D7A64A]/60 bg-[#151C1E]/95 backdrop-blur-xl p-3 sm:p-4 shadow-[0_10px_35px_rgba(0,0,0,0.8)] flex flex-wrap items-center justify-between gap-3">
             
             <div className="flex items-center gap-3">
-              <div className="h-8 w-8 rounded-lg bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shrink-0">
+              <div className="h-8 w-8 rounded-lg bg-[#D7A64A]/15 border border-[#D7A64A]/40 flex items-center justify-center text-[#D7A64A] shrink-0">
                 <Scale className="h-4 w-4" />
               </div>
               <div>
-                <div className="text-xs font-mono font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                <div className="text-xs font-mono font-bold text-[#F4F1E8] uppercase tracking-wider flex items-center gap-1.5">
                   <span>{locale === 'fr' ? 'Comparateur' : 'Comparison'}</span>
-                  <span className="px-1.5 py-0.2 rounded bg-cyan-500 text-[#080B10] font-black text-[10px]">
+                  <span className="px-1.5 py-0.2 rounded bg-[#D7A64A] text-[#0B0F12] font-black text-[10px]">
                     {selectedForComparison.length}/3
                   </span>
                 </div>
-                <div className="text-[11px] font-mono text-neutral-400 truncate max-w-xs sm:max-w-md">
+                <div className="text-[11px] font-mono text-[#A9ADA5] truncate max-w-xs sm:max-w-md">
                   {selectedEquipmentObjects.map((o) => (locale === 'fr' ? o.name_fr : o.name_en)).join(', ')}
                 </div>
               </div>
@@ -390,7 +426,7 @@ export const EquipmentListView: React.FC<EquipmentListViewProps> = ({
               <button
                 type="button"
                 onClick={() => setSelectedForComparison([])}
-                className="px-2.5 py-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-[#161F2E] border border-transparent hover:border-[#252E38] text-xs font-mono font-bold transition-colors"
+                className="px-2.5 py-1.5 rounded-lg text-[#A9ADA5] hover:text-[#F4F1E8] hover:bg-[#0B0F12] border border-transparent hover:border-[#567A87]/40 text-xs font-mono font-bold transition-colors"
               >
                 {locale === 'fr' ? 'Effacer' : 'Clear'}
               </button>
@@ -398,7 +434,7 @@ export const EquipmentListView: React.FC<EquipmentListViewProps> = ({
               <button
                 type="button"
                 onClick={() => setIsComparisonModalOpen(true)}
-                className="px-4 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-[#080B10] text-xs font-mono font-bold uppercase tracking-wider transition-colors shadow-lg shadow-cyan-950 flex items-center gap-1.5"
+                className="px-4 py-1.5 rounded-lg bg-[#D7A64A] hover:bg-[#e3b55a] text-[#0B0F12] text-xs font-mono font-bold uppercase tracking-wider transition-colors shadow-lg flex items-center gap-1.5"
               >
                 <Scale className="h-3.5 w-3.5" />
                 <span>

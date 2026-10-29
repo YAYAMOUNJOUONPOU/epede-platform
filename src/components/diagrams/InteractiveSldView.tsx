@@ -187,41 +187,41 @@ export const InteractiveSldView: React.FC<InteractiveSldViewProps> = ({
       />
 
       {/* EPEDE Core Charter Mandatory Safety Notice */}
-      <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/25 text-amber-300 text-xs">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 px-4 py-3 rounded-xl bg-[#151C1E] border border-[#D7A64A]/40 text-[#F4F1E8] text-xs">
         <div className="flex items-center gap-2.5">
-          <AlertTriangle className="w-4 h-4 flex-shrink-0 text-amber-400" />
-          <span>
+          <AlertTriangle className="w-4 h-4 flex-shrink-0 text-[#D7A64A]" />
+          <span className="text-[#A9ADA5]">
             {locale === 'fr'
               ? 'Avertissement de Sécurité : Modèle de commutation et topologie à visée pédagogique et d’ingénierie explicative — ne constitue pas un système de télécommande opérationnelle SCADA réel ni un permis de manœuvre certifié.'
               : 'Safety Notice: Switching & topology model for pedagogical and explanatory engineering exploration — does not constitute an operational SCADA control system or certified switching permit.'}
           </span>
         </div>
-        <div className="flex items-center gap-2 ml-4 flex-shrink-0 flex-wrap">
+        <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
           <button
             type="button"
             onClick={() => setShowAtsModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1 bg-sky-500/20 hover:bg-sky-500/30 text-sky-200 rounded-lg text-xs font-semibold transition-colors border border-sky-500/40 shadow-xs cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1 bg-[#0B0F12] hover:border-[#D7A64A]/50 text-[#F4F1E8] rounded-lg text-xs font-mono font-semibold transition-colors border border-[#567A87]/40 shadow-xs cursor-pointer"
             title={locale === 'fr' ? 'Automatisme de Permutation Automatique de Sources (P.A.S. / ATS · ANSI 27/25/86)' : 'Automatic Bus Transfer System (ATS · ANSI 27/25/86)'}
           >
-            <Activity className="w-3.5 h-3.5 text-sky-400" />
+            <Activity className="w-3.5 h-3.5 text-[#D7A64A]" />
             <span>{locale === 'fr' ? 'Permutation P.A.S.' : 'ATS Transfer'}</span>
           </button>
           <button
             type="button"
             onClick={() => handleOpenOscillogram()}
-            className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 rounded-lg text-xs font-semibold transition-colors border border-emerald-500/40 shadow-xs"
+            className="flex items-center gap-1.5 px-3 py-1 bg-[#0B0F12] hover:border-[#D7A64A]/50 text-[#F4F1E8] rounded-lg text-xs font-mono font-semibold transition-colors border border-[#567A87]/40 shadow-xs"
             title={locale === 'fr' ? 'Rejouer les transitoires électromécaniques et oscillogrammes COMTRADE (CEI 60255)' : 'Replay transient fault oscillograms cycle-by-cycle'}
           >
-            <Activity className="w-3.5 h-3.5 text-emerald-400" />
+            <Activity className="w-3.5 h-3.5 text-[#D7A64A]" />
             <span>{locale === 'fr' ? 'Relecteur DFR' : 'Oscillograms'}</span>
           </button>
           <button
             type="button"
             onClick={() => setShowBatchComplianceModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-200 rounded-lg text-xs font-semibold transition-colors border border-cyan-500/40 shadow-xs"
+            className="flex items-center gap-1.5 px-3 py-1 bg-[#0B0F12] hover:border-[#D7A64A]/50 text-[#F4F1E8] rounded-lg text-xs font-mono font-semibold transition-colors border border-[#567A87]/40 shadow-xs"
             title={locale === 'fr' ? 'Ouvrir le dossier technique de conformité de tous les appareils interconnectés du poste' : 'Open batch compliance dossier covering all connected apparatuses'}
           >
-            <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
+            <ShieldCheck className="w-3.5 h-3.5 text-[#D7A64A]" />
             <span>{locale === 'fr' ? 'Dossier Multi-Appareils' : 'Batch Compliance'}</span>
           </button>
           <button
@@ -230,10 +230,10 @@ export const InteractiveSldView: React.FC<InteractiveSldViewProps> = ({
               setIec61850InitialTab('IED_SETTINGS');
               setShowIec61850Modal(true);
             }}
-            className="flex items-center gap-1.5 px-3 py-1 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-200 rounded-lg text-xs font-semibold transition-colors border border-indigo-500/40 shadow-xs cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1 bg-[#0B0F12] hover:border-[#D7A64A]/50 text-[#F4F1E8] rounded-lg text-xs font-mono font-semibold transition-colors border border-[#567A87]/40 shadow-xs cursor-pointer"
             title={locale === 'fr' ? 'Configurer et exporter les fichiers CEI 61850 (SCL / CID / SCD) & matrice GOOSE' : 'Configure and export IEC 61850 SCL / CID / SCD files & GOOSE matrix'}
           >
-            <Cpu className="w-3.5 h-3.5 text-indigo-400" />
+            <Cpu className="w-3.5 h-3.5 text-[#D7A64A]" />
             <span>{locale === 'fr' ? 'Config CEI 61850' : 'IEC 61850 SCL'}</span>
           </button>
           <button
@@ -242,10 +242,10 @@ export const InteractiveSldView: React.FC<InteractiveSldViewProps> = ({
               setIec61850InitialTab('SAMPLED_VALUES');
               setShowIec61850Modal(true);
             }}
-            className="flex items-center gap-1.5 px-3 py-1 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-200 rounded-lg text-xs font-semibold transition-colors border border-cyan-500/40 shadow-xs cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1 bg-[#0B0F12] hover:border-[#D7A64A]/50 text-[#F4F1E8] rounded-lg text-xs font-mono font-semibold transition-colors border border-[#567A87]/40 shadow-xs cursor-pointer"
             title={locale === 'fr' ? 'Banc d’essai d’injection virtuelle Sampled Values (CEI 61850-9-2LE / CEI 61869-9)' : 'Sampled Values virtual injection test bench (IEC 61850-9-2LE / IEC 61869-9)'}
           >
-            <Activity className="w-3.5 h-3.5 text-cyan-400" />
+            <Activity className="w-3.5 h-3.5 text-[#D7A64A]" />
             <span>{locale === 'fr' ? 'Banc SV 9-2LE' : 'SV 9-2LE Bench'}</span>
           </button>
           <button
@@ -254,16 +254,16 @@ export const InteractiveSldView: React.FC<InteractiveSldViewProps> = ({
               setIec61850InitialTab('CYBERSECURITY_62351');
               setShowIec61850Modal(true);
             }}
-            className="flex items-center gap-1.5 px-3 py-1 bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 rounded-lg text-xs font-semibold transition-colors border border-rose-500/40 shadow-xs cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1 bg-[#0B0F12] hover:border-[#D7A64A]/50 text-[#F4F1E8] rounded-lg text-xs font-mono font-semibold transition-colors border border-[#567A87]/40 shadow-xs cursor-pointer"
             title={locale === 'fr' ? 'Moniteur de cybersécurité OT & IDS réseau (CEI 62351-7 / CEI 62351-9)' : 'OT Cybersecurity monitor & network IDS (IEC 62351-7 / IEC 62351-9)'}
           >
-            <Shield className="w-3.5 h-3.5 text-rose-400" />
+            <Shield className="w-3.5 h-3.5 text-[#D7A64A]" />
             <span>{locale === 'fr' ? 'Cyber CEI 62351' : 'Cyber IEC 62351'}</span>
           </button>
           <button
             type="button"
             onClick={() => setShowContextStack(!showContextStack)}
-            className="flex items-center gap-1.5 px-3 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 rounded-lg text-xs font-semibold transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1 bg-[#D7A64A]/15 hover:bg-[#D7A64A]/25 text-[#D7A64A] border border-[#D7A64A]/40 rounded-lg text-xs font-mono font-semibold transition-colors"
           >
             <Layers className="w-3.5 h-3.5" />
             <span>{locale === 'fr' ? 'Pile Contextuelle' : 'Context Stack'}</span>
@@ -273,25 +273,25 @@ export const InteractiveSldView: React.FC<InteractiveSldViewProps> = ({
             <button
               type="button"
               onClick={() => onNavigateContextStack(getTopologyNodeId(sim.activeTopology))}
-              className="flex items-center gap-1.5 px-3 py-1 bg-sky-500/20 hover:bg-sky-500/30 text-sky-200 rounded-lg text-xs font-semibold transition-colors border border-sky-500/30"
+              className="flex items-center gap-1.5 px-3 py-1 bg-[#0B0F12] hover:border-[#D7A64A]/50 text-[#F4F1E8] rounded-lg text-xs font-mono font-semibold transition-colors border border-[#567A87]/40"
             >
-              <Zap className="w-3.5 h-3.5 text-sky-400" />
+              <Zap className="w-3.5 h-3.5 text-[#D7A64A]" />
               <span>{locale === 'fr' ? 'Vue Plein Écran & TCC' : 'Full Screen & TCC'}</span>
             </button>
           )}
           <button
             type="button"
             onClick={() => setAuditInspectorNodeId(getTopologyNodeId(sim.activeTopology))}
-            className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 rounded-lg text-xs font-semibold transition-colors border border-emerald-500/30"
+            className="flex items-center gap-1.5 px-3 py-1 bg-[#0B0F12] hover:border-[#D7A64A]/50 text-[#F4F1E8] rounded-lg text-xs font-mono font-semibold transition-colors border border-[#567A87]/40"
             title={locale === 'fr' ? 'Inspecter les calages et visas d’audit' : 'Inspect certified audit calibrations'}
           >
-            <Award className="w-3.5 h-3.5 text-emerald-400" />
+            <Award className="w-3.5 h-3.5 text-[#D7A64A]" />
             <span>{locale === 'fr' ? 'Calage Audit' : 'Audit Tuning'}</span>
           </button>
           <button
             type="button"
             onClick={() => setDossierNodeId(getTopologyNodeId(sim.activeTopology))}
-            className="flex items-center gap-1.5 px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold transition-colors shadow-xs"
+            className="flex items-center gap-1.5 px-3 py-1 bg-[#D7A64A] hover:bg-[#e3b55a] text-[#0B0F12] rounded-lg text-xs font-mono font-bold transition-colors shadow-xs"
             title={locale === 'fr' ? 'Éditer le dossier d’ingénierie CEI' : 'Open IEC Engineering Dossier'}
           >
             <FileText className="w-3.5 h-3.5" />
@@ -301,10 +301,10 @@ export const InteractiveSldView: React.FC<InteractiveSldViewProps> = ({
           <button
             type="button"
             onClick={() => setShowFaultInjector(!showFaultInjector)}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-colors border ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono font-semibold transition-colors border ${
               showFaultInjector
-                ? 'bg-red-500/20 border-red-500/60 text-red-200'
-                : 'bg-red-500/10 hover:bg-red-500/20 border-red-500/30 text-red-300'
+                ? 'bg-red-950/60 border-red-500/60 text-red-200'
+                : 'bg-red-950/30 hover:bg-red-950/50 border-red-800/50 text-red-300'
             }`}
             title={locale === 'fr' ? 'Injecter un défaut et animer la séquence de protection (CEI 60909)' : 'Inject a fault and animate protection trip sequence (IEC 60909)'}
           >
@@ -350,15 +350,15 @@ export const InteractiveSldView: React.FC<InteractiveSldViewProps> = ({
 
           {/* Interactive Equipment Inspector Ribbon for Active Topology */}
           {TOPOLOGY_EQUIPMENT_MAP[sim.activeTopology] && (
-            <div className="bg-[#0C121D] border border-cyan-900/40 rounded-xl p-3 shadow-lg">
-              <div className="flex items-center justify-between gap-2 pb-2 border-b border-slate-800/80 mb-2">
+            <div className="bg-[#151C1E] border border-[#567A87]/35 rounded-xl p-3.5 shadow-lg">
+              <div className="flex items-center justify-between gap-2 pb-2 border-b border-[#567A87]/25 mb-2.5">
                 <div className="flex items-center gap-2">
-                  <Box className="w-3.5 h-3.5 text-cyan-400" />
-                  <span className="text-[11px] font-mono font-bold text-slate-200 uppercase tracking-wider">
+                  <Box className="w-3.5 h-3.5 text-[#D7A64A]" />
+                  <span className="text-[11px] font-mono font-bold text-[#F4F1E8] uppercase tracking-wider">
                     {locale === 'fr' ? 'APPAREILS ÉLECTRIQUES DU SCHÉMA — INSPECTION MATÉRIEL (10 ONGLETS)' : 'SCHEMATIC ELECTRICAL APPARATUS — EQUIPMENT INSPECTION (10 TABS)'}
                   </span>
                 </div>
-                <span className="text-[10px] font-mono text-cyan-400/80 hidden sm:inline">
+                <span className="text-[10px] font-mono text-[#D7A64A] hidden sm:inline">
                   {locale === 'fr' ? 'Cliquer pour ouvrir le dossier technique complet' : 'Click to open full engineering dossier'}
                 </span>
               </div>
@@ -368,19 +368,19 @@ export const InteractiveSldView: React.FC<InteractiveSldViewProps> = ({
                     key={item.id}
                     type="button"
                     onClick={() => onNavigateEquipment?.(item.id)}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-[#141B28] hover:bg-cyan-950/60 border border-slate-700 hover:border-cyan-500/50 rounded-lg text-xs font-mono transition-all group cursor-pointer shadow-xs"
+                    className="flex items-center gap-2 px-3 py-1.5 bg-[#0B0F12] hover:bg-[#567A87]/15 border border-[#567A87]/35 hover:border-[#D7A64A]/60 rounded-lg text-xs font-mono transition-all group cursor-pointer shadow-xs"
                     title={locale === 'fr' ? `Inspecter ${item.nameFr} dans le Référentiel Matériel` : `Inspect ${item.nameEn} in Equipment Reference`}
                   >
-                    <span className="text-[10px] font-bold text-cyan-400 bg-cyan-950/80 px-1.5 py-0.5 rounded border border-cyan-800/60">
+                    <span className="text-[10px] font-bold text-[#D7A64A] bg-[#151C1E] px-1.5 py-0.5 rounded border border-[#D7A64A]/35">
                       {item.tag}
                     </span>
-                    <span className="text-slate-200 group-hover:text-cyan-200 font-medium">
+                    <span className="text-[#F4F1E8] group-hover:text-[#D7A64A] font-medium">
                       {locale === 'fr' ? item.nameFr : item.nameEn}
                     </span>
-                    <span className="text-[10px] text-slate-400 hidden md:inline">
+                    <span className="text-[10px] text-[#A9ADA5] hidden md:inline">
                       ({item.rating})
                     </span>
-                    <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-cyan-400 opacity-60 group-hover:opacity-100 transition-opacity ml-1" />
+                    <ExternalLink className="w-3 h-3 text-[#A9ADA5] group-hover:text-[#D7A64A] opacity-75 group-hover:opacity-100 transition-opacity ml-1" />
                   </button>
                 ))}
               </div>

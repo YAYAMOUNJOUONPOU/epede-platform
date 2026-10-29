@@ -46,6 +46,9 @@ import { DomainPendingIssuesPanel } from './modules/DomainPendingIssuesPanel';
 import { PedagogicalPageOrientationHeader } from '../common/PedagogicalPageOrientationHeader';
 import { getDomainPedagogicalGuide } from './domainPedagogicalRegistry';
 import { DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY } from './domainPedagogicalContentRegistry';
+import { useUsageLevel } from '../../services/UsageLevelContext';
+import type { CalculatorTabType, InjectedCalculatorContext } from '../calculators/services/calculationReportService';
+import type { SimulationTabType } from '../simulation/SimulationLabView';
 
 // Code-Split Dynamic Workbenches for Core Web Vitals Optimization
 const UniversalPedagogicalDomainView = lazy(() => import('./UniversalPedagogicalDomainView').then(m => ({ default: m.UniversalPedagogicalDomainView })));
@@ -95,6 +98,8 @@ interface DomainDetailViewProps {
   onSelectStandard: (ref: string) => void;
   onSelectRole: (slug: string) => void;
   onNavigateContextStack?: (nodeId?: string) => void;
+  onNavigateCalculator?: (tab?: CalculatorTabType, context?: InjectedCalculatorContext) => void;
+  onNavigateSimulation?: (tab?: SimulationTabType) => void;
   onNavigateView?: (view: string, domainCode?: string) => void;
 }
 
@@ -125,8 +130,11 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
   onSelectStandard,
   onSelectRole,
   onNavigateContextStack,
+  onNavigateCalculator,
+  onNavigateSimulation,
   onNavigateView,
 }) => {
+  const { usageLevel } = useUsageLevel();
   const domain = DOMAINS.find((d) => d.code === domainCode) || DOMAINS[0];
   const isD01 = domainCode === 'D01';
   const isD02 = domainCode === 'D02';
@@ -171,7 +179,7 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
     'workbench' | 'five_levels' | 'concept' | 'systems' | 'engineering' | 'formulas' | 'standards' | 'roles' | 'examples' | 'phase2_spec' | 'relationships' | 'documentation' | 'visuals'
   >(['D07', 'D08', 'D09', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'D16'].includes(domainCode) ? 'workbench' : 'five_levels');
 
-  // Specific state for D01 to D10: default to standardized 6-part pedagogical architecture
+  // Specific state for D01 to D16: default to standardized 6-part pedagogical architecture when available
   const [d01Mode, setD01Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('pedagogical_pilot');
   const [d02Mode, setD02Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('pedagogical_pilot');
   const [d03Mode, setD03Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('pedagogical_pilot');
@@ -180,14 +188,14 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
   const [d06Mode, setD06Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('pedagogical_pilot');
   const [showD06Metrics, setShowD06Metrics] = useState<boolean>(false);
   const [d07Mode, setD07Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('pedagogical_pilot');
-  const [d08Mode, setD08Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('pedagogical_pilot');
-  const [d09Mode, setD09Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('pedagogical_pilot');
+  const [d08Mode, setD08Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('visual_journey');
+  const [d09Mode, setD09Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('visual_journey');
   const [d10Mode, setD10Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('pedagogical_pilot');
-  const [d11Mode, setD11Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
-  const [d12Mode, setD12Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
+  const [d11Mode, setD11Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('pedagogical_pilot');
+  const [d12Mode, setD12Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'spec_catalog'>('pedagogical_pilot');
   const [d13Mode, setD13Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
   const [d14Mode, setD14Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
-  const [d15Mode, setD15Mode] = useState<'visual_journey' | 'asset_management' | 'spec_catalog'>('visual_journey');
+  const [d15Mode, setD15Mode] = useState<'pedagogical_pilot' | 'visual_journey' | 'asset_management' | 'spec_catalog'>('pedagogical_pilot');
   const [d16Mode, setD16Mode] = useState<'visual_journey' | 'spec_catalog'>('visual_journey');
   const [d06InitialPillar, setD06InitialPillar] = useState<InstallationPillar>('INTERACTIVE_SLD');
 
@@ -204,10 +212,19 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
     isD08 ? d08Mode :
     isD09 ? d09Mode :
     isD10 ? d10Mode :
+    isD11 ? d11Mode :
+    isD12 ? d12Mode :
+    isD13 ? d13Mode :
+    isD14 ? d14Mode :
     isD15 ? d15Mode :
+    isD16 ? d16Mode :
     'visual_journey';
 
-  const setModeForCurrentDomain = (mode: 'pedagogical_pilot' | 'visual_journey' | 'spec_catalog') => {
+  const setModeForCurrentDomain = (mode: 'pedagogical_pilot' | 'visual_journey' | 'spec_catalog' | 'asset_management') => {
+    if (mode === 'asset_management') {
+      if (isD15) setD15Mode('asset_management');
+      return;
+    }
     if (isD01) setD01Mode(mode);
     else if (isD02) setD02Mode(mode);
     else if (isD03) setD03Mode(mode);
@@ -218,7 +235,30 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
     else if (isD08) setD08Mode(mode);
     else if (isD09) setD09Mode(mode);
     else if (isD10) setD10Mode(mode);
+    else if (isD11) setD11Mode(mode);
+    else if (isD12) setD12Mode(mode);
+    else if (isD13 && mode !== 'pedagogical_pilot') setD13Mode(mode);
+    else if (isD14 && mode !== 'pedagogical_pilot') setD14Mode(mode);
+    else if (isD15) setD15Mode(mode);
+    else if (isD16 && mode !== 'pedagogical_pilot') setD16Mode(mode);
   };
+
+  // Sync global UsageLevel (DISCOVERY | TECHNICAL | ENGINEERING) with domain view mode & diagnostics tray
+  useEffect(() => {
+    if (usageLevel === 'DISCOVERY') {
+      setShowD06Metrics(false);
+      if (hasPedagogicalData) {
+        setModeForCurrentDomain('pedagogical_pilot');
+      } else {
+        setModeForCurrentDomain('visual_journey');
+      }
+    } else if (usageLevel === 'TECHNICAL') {
+      setShowD06Metrics(false);
+      setModeForCurrentDomain('visual_journey');
+    } else if (usageLevel === 'ENGINEERING') {
+      setShowD06Metrics(true);
+    }
+  }, [usageLevel, domainCode]);
 
   const isChainDomain = ['D01', 'D02', 'D03', 'D04', 'D05', 'D06'].includes(domainCode);
 
@@ -487,18 +527,18 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
         ]}
       />
 
-      {/* UNIVERSAL MASTER MODE SWITCHER FOR CORE PEDAGOGICAL DOMAINS */}
-      {hasPedagogicalData && (
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-sm">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
-            <span className="text-xs font-mono font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
-              {locale === 'fr' 
-                ? `Mode d'Exploration ${domain.code} · ${domain.title} :` 
-                : `Exploration Mode ${domain.code} · ${domain.title}:`}
-            </span>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
+      {/* UNIFIED EXPLORATION MODE SWITCHER (SINGLE SOURCE OF TRUTH FOR D01–D16) */}
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div className="flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
+          <span className="text-xs font-mono font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
+            {locale === 'fr'
+              ? `Mode d'Exploration ${domain.code} · ${domain.name_fr} :`
+              : `Exploration Mode ${domain.code} · ${domain.name_en}:`}
+          </span>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          {hasPedagogicalData && (
             <button
               type="button"
               onClick={() => setModeForCurrentDomain('pedagogical_pilot')}
@@ -508,667 +548,101 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700'
               }`}
             >
-              {locale === 'fr' ? '⚡ Parcours Pédagogique (Sections A à F)' : '⚡ 6-Part Pedagogical Framework'}
+              {locale === 'fr' ? '🎓 Parcours Pédagogique (Sections A à F)' : '🎓 6-Part Pedagogical Framework'}
             </button>
-            <button
-              type="button"
-              onClick={() => setModeForCurrentDomain('visual_journey')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all cursor-pointer ${
-                currentDomainMode === 'visual_journey'
-                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '🛠️ Banc d\'Ingénierie Avancé' : '🛠️ Advanced Engineering Workbench'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setModeForCurrentDomain('spec_catalog')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all cursor-pointer ${
-                currentDomainMode === 'spec_catalog'
-                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '📋 Fiches Sous-Domaines & Spécifications' : '📋 Subdomain Catalog & Specs'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* DOMAIN DIAGNOSTICS & METRICS TRAY */}
-      {isD06 ? (
-        <div className="rounded-xl border border-slate-800 bg-slate-900/50 overflow-hidden">
+          )}
           <button
             type="button"
-            onClick={() => setShowD06Metrics(!showD06Metrics)}
-            className="w-full flex items-center justify-between p-2.5 px-4 text-xs font-mono font-bold text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all cursor-pointer"
+            onClick={() => setModeForCurrentDomain('visual_journey')}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all cursor-pointer ${
+              currentDomainMode === 'visual_journey'
+                ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700'
+            }`}
           >
-            <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-amber-400" />
-              <span>
-                {locale === 'fr' 
-                  ? 'Traçabilité Système, Métriques KPI & Registre NCR (Conformité)' 
-                  : 'System Traceability, KPI Metrics & NCR Registry'}
-              </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
-                {domainEquipments.length} {locale === 'fr' ? 'équipements' : 'assets'}
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-slate-400 text-[11px]">
-              <span>{showD06Metrics ? (locale === 'fr' ? 'Masquer' : 'Hide') : (locale === 'fr' ? 'Afficher les métriques globales' : 'Show global metrics')}</span>
-              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${showD06Metrics ? 'rotate-180' : ''}`} />
-            </div>
+            {locale === 'fr' ? '🛠️ Banc d\'Ingénierie & Simulateur Métier' : '🛠️ Interactive Engineering Workbench'}
           </button>
-          {showD06Metrics && (
-            <div className="p-4 space-y-4 border-t border-slate-800 bg-slate-950/40">
-              <ObjectRelationshipActionBar
-                nodeId={DOMAIN_SPINE_MAPPING[domainCode] || 'node-trafo-main-30'}
-                locale={locale}
-                onNavigateContextStack={onNavigateContextStack}
-                onNavigateDomain={(dCode) => onNavigateView?.('domain', dCode)}
-              />
-              <DomainEngineeringKpiBanner
-                domainCode={domainCode}
-                locale={locale}
-                onSelectEquipment={onSelectEquipment}
-                onNavigateView={onNavigateView}
-              />
-              <DomainPendingIssuesPanel
-                locale={locale}
-                domainCode={domainCode}
-              />
-            </div>
-          )}
-        </div>
-      ) : (
-        <>
-          {/* 10-ACTION UNIVERSAL RELATIONSHIP & TRACE HUB */}
-          <ObjectRelationshipActionBar
-            nodeId={DOMAIN_SPINE_MAPPING[domainCode] || 'node-trafo-main-30'}
-            locale={locale}
-            onNavigateContextStack={onNavigateContextStack}
-            onNavigateDomain={(dCode) => onNavigateView?.('domain', dCode)}
-          />
-
-          {/* DOMAIN ENGINEERING KPI DASHBOARD & APPARATUS CENSUS RIBBON */}
-          <DomainEngineeringKpiBanner
-            domainCode={domainCode}
-            locale={locale}
-            onSelectEquipment={onSelectEquipment}
-            onNavigateView={onNavigateView}
-          />
-
-          {/* DOMAIN PENDING ISSUES & NCR DEFICIENCY TRACKER */}
-          <DomainPendingIssuesPanel
-            locale={locale}
-            domainCode={domainCode}
-          />
-        </>
-      )}
-
-      {/* SPECIAL TREATMENT FOR D01: MODE SWITCHER BETWEEN VISUAL JOURNEY & CATALOG */}
-      {isD01 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-slate-900/90 border border-sky-800/50 shadow-lg">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-sky-400 animate-pulse" />
-            <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-              {locale === 'fr' ? 'Mode d\'Exploration Production :' : 'Production Exploration Mode:'}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
+          {isD15 && (
             <button
               type="button"
-              onClick={() => setD01Mode('visual_journey')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d01Mode === 'visual_journey'
-                  ? 'bg-sky-500 text-white shadow-md shadow-sky-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '⚡ Environnement Visuel Dédié (6 Piliers)' : '⚡ Visual Journey (6 Pillars)'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setD01Mode('spec_catalog')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d01Mode === 'spec_catalog'
-                  ? 'bg-sky-500 text-white shadow-md shadow-sky-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '📋 Fiches Sous-Domaines & Spécifications' : '📋 Subdomain Catalog & Specs'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* SPECIAL TREATMENT FOR D02: MODE SWITCHER BETWEEN VISUAL ARCHITECTURE JOURNEY & CATALOG */}
-      {isD02 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-slate-900/90 border border-sky-800/50 shadow-lg">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-sky-400 animate-pulse" />
-            <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-              {locale === 'fr' ? 'Mode d\'Exploration Architecture & Planification :' : 'Grid Architecture Exploration Mode:'}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setD02Mode('visual_journey')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d02Mode === 'visual_journey'
-                  ? 'bg-sky-500 text-white shadow-md shadow-sky-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '⚡ Architecture Visuelle & Planification (5 Piliers)' : '⚡ Grid Architecture Journey (5 Pillars)'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setD02Mode('spec_catalog')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d02Mode === 'spec_catalog'
-                  ? 'bg-sky-500 text-white shadow-md shadow-sky-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '📋 Fiches Sous-Domaines & Spécifications' : '📋 Subdomain Catalog & Specs'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* SPECIAL TREATMENT FOR D03: MODE SWITCHER BETWEEN VISUAL TRANSMISSION WORKBENCH & CATALOG */}
-      {isD03 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-slate-900/90 border border-sky-800/50 shadow-lg">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-sky-400 animate-pulse" />
-            <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-              {locale === 'fr' ? 'Mode d\'Exploration Réseaux de Transport HT :' : 'Transmission Networks Exploration Mode:'}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setD03Mode('visual_journey')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d03Mode === 'visual_journey'
-                  ? 'bg-sky-500 text-white shadow-md shadow-sky-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '⚡ Station d\'Ingénierie Transport HT (12 Piliers Fondamentaux)' : '⚡ Transmission Engineering Workbench (12 Core Pillars)'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setD03Mode('spec_catalog')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d03Mode === 'spec_catalog'
-                  ? 'bg-sky-500 text-white shadow-md shadow-sky-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '📋 Fiches Sous-Domaines & Spécifications' : '📋 Subdomain Catalog & Specs'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* SPECIAL TREATMENT FOR D04: MODE SWITCHER BETWEEN VISUAL SUBSTATION WORKBENCH & CATALOG */}
-      {isD04 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-slate-900/90 border border-amber-800/50 shadow-lg">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
-            <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-              {locale === 'fr' ? 'Mode d\'Exploration Postes Électriques :' : 'Substation Engineering Exploration Mode:'}
-            </span>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setD04Mode('pedagogical_pilot')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d04Mode === 'pedagogical_pilot'
+              onClick={() => setModeForCurrentDomain('asset_management')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all cursor-pointer ${
+                currentDomainMode === 'asset_management'
                   ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '🎓 Parcours Pédagogique (6 Volets A–F)' : '🎓 Pedagogical Journey (6 Pillars A–F)'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setD04Mode('visual_journey')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d04Mode === 'visual_journey'
-                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '⚡ Station Expert Postes (11 Piliers)' : '⚡ Substation Expert Workbench'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setD04Mode('spec_catalog')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d04Mode === 'spec_catalog'
-                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '📋 Fiches Sous-Domaines & Spécifications' : '📋 Subdomain Catalog & Specs'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* SPECIAL TREATMENT FOR D05: MODE SWITCHER BETWEEN VISUAL DISTRIBUTION WORKBENCH & CATALOG */}
-      {isD05 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-slate-900/90 border border-amber-800/50 shadow-lg">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
-            <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-              {locale === 'fr' ? 'Mode d\'Exploration Distribution HTA/BT :' : 'Distribution Engineering Exploration Mode:'}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setD05Mode('visual_journey')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d05Mode === 'visual_journey'
-                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '⚡ Station d\'Ingénierie Distribution HTA/BT (10 Piliers)' : '⚡ Distribution Engineering Workbench (10 Pillars)'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setD05Mode('spec_catalog')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d05Mode === 'spec_catalog'
-                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '📋 Fiches Sous-Domaines & Spécifications' : '📋 Subdomain Catalog & Specs'}
-            </button>
-          </div>
-        </div>
-      )}
-
-
-
-      {/* SPECIAL TREATMENT FOR D07: MODE SWITCHER BETWEEN VISUAL AUTOMATION WORKBENCH & CATALOG */}
-      {isD07 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-slate-900/90 border border-cyan-800/50 shadow-lg">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
-            <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-              {locale === 'fr' ? 'Mode d\'Exploration Automatisation & Contrôle :' : 'Automation & Control Exploration Mode:'}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setD07Mode('visual_journey')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d07Mode === 'visual_journey'
-                  ? 'bg-cyan-500 text-slate-950 font-bold shadow-md shadow-cyan-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '⚡ Station Expert Automatisation & PLC (7 Piliers)' : '⚡ Automation & PLC Workbench (7 Pillars)'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setD07Mode('spec_catalog')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d07Mode === 'spec_catalog'
-                  ? 'bg-cyan-500 text-slate-950 font-bold shadow-md shadow-cyan-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '📋 Fiches Sous-Domaines & Spécifications' : '📋 Subdomain Catalog & Specs'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* SPECIAL TREATMENT FOR D08: MODE SWITCHER BETWEEN VISUAL ELV WORKBENCH & CATALOG */}
-      {isD08 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-slate-900/90 border border-amber-800/50 shadow-lg">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#e8a825] animate-pulse" />
-            <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-              {locale === 'fr' ? 'Mode d\'Exploration Courants Faibles & Systèmes Spéciaux :' : 'Extra Low Voltage Exploration Mode:'}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setD08Mode('visual_journey')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d08Mode === 'visual_journey'
-                  ? 'bg-[#e8a825] text-slate-950 font-bold shadow-md shadow-[#e8a825]/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '⭐ Station Expert Courants Faibles & SSI (8 Piliers)' : '⭐ ELV & Life Safety Workbench (8 Pillars)'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setD08Mode('spec_catalog')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d08Mode === 'spec_catalog'
-                  ? 'bg-[#e8a825] text-slate-950 font-bold shadow-md shadow-[#e8a825]/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '📋 Fiches Sous-Domaines & Spécifications' : '📋 Subdomain Catalog & Specs'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* SPECIAL TREATMENT FOR D09: MODE SWITCHER BETWEEN VISUAL AI WORKBENCH & CATALOG */}
-      {isD09 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-slate-900/90 border border-indigo-800/50 shadow-lg">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#6366f1] animate-pulse" />
-            <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-              {locale === 'fr' ? 'Mode d\'Exploration IA & Technologies Avancées :' : 'AI & Advanced Tech Exploration Mode:'}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setD09Mode('visual_journey')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d09Mode === 'visual_journey'
-                  ? 'bg-[#6366f1] text-white font-bold shadow-md shadow-[#6366f1]/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '🚀 Station Expert IA & Jumeau Numérique (6 Piliers)' : '🚀 AI & Digital Twin Workbench (6 Pillars)'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setD09Mode('spec_catalog')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d09Mode === 'spec_catalog'
-                  ? 'bg-[#6366f1] text-white font-bold shadow-md shadow-[#6366f1]/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '📋 Fiches Sous-Domaines & Spécifications' : '📋 Subdomain Catalog & Specs'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* SPECIAL TREATMENT FOR D10: MODE SWITCHER BETWEEN VISUAL BESS & CHARGING WORKBENCH & CATALOG */}
-      {isD10 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-slate-900/90 border border-emerald-800/50 shadow-lg">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-              {locale === 'fr' ? 'Mode d\'Exploration Stockage BESS & IRVE :' : 'BESS Storage & EV Charging Mode:'}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setD10Mode('visual_journey')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d10Mode === 'visual_journey'
-                  ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '⚡ Station Expert Stockage BESS & IRVE (7 Piliers)' : '⚡ BESS & EV Charging Workbench (7 Pillars)'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setD10Mode('spec_catalog')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d10Mode === 'spec_catalog'
-                  ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '📋 Fiches Sous-Domaines & Spécifications' : '📋 Subdomain Catalog & Specs'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {isD11 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-slate-900/90 border border-red-800/50 shadow-lg">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-red-400 animate-pulse" />
-            <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-              {locale === 'fr' ? 'Mode d\'Exploration Protections & Réseau :' : 'Protection & System Studies Mode:'}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setD11Mode('visual_journey')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d11Mode === 'visual_journey'
-                  ? 'bg-red-500 text-white font-bold shadow-md shadow-red-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '⚡ Station Expert Protections & Études (7 Piliers)' : '⚡ Protection & Studies Workbench (7 Pillars)'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setD11Mode('spec_catalog')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d11Mode === 'spec_catalog'
-                  ? 'bg-red-500 text-white font-bold shadow-md shadow-red-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '📋 Fiches Sous-Domaines & Tableau ANSI' : '📋 Subdomain Catalog & ANSI Table'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {isD12 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-slate-900/90 border border-teal-800/50 shadow-lg">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-teal-400 animate-pulse" />
-            <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-              {locale === 'fr' ? 'Mode d\'Exploration Téléconduite & SCADA :' : 'Automation & SCADA Exploration Mode:'}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setD12Mode('visual_journey')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d12Mode === 'visual_journey'
-                  ? 'bg-teal-500 text-slate-950 font-bold shadow-md shadow-teal-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '⚡ Station Expert Téléconduite & SCADA (7 Piliers)' : '⚡ SCADA & Automation Workbench (7 Pillars)'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setD12Mode('spec_catalog')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d12Mode === 'spec_catalog'
-                  ? 'bg-teal-500 text-slate-950 font-bold shadow-md shadow-teal-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '📋 Fiches Sous-Domaines & Spécifications' : '📋 Subdomain Catalog & Specs'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {isD13 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-slate-900/90 border border-teal-800/50 shadow-lg">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-teal-400 animate-pulse" />
-            <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-              {locale === 'fr' ? 'Mode d\'Exploration Télécommunications & CEI 61850 :' : 'Telecom & IEC 61850 Exploration Mode:'}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setD13Mode('visual_journey')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d13Mode === 'visual_journey'
-                  ? 'bg-teal-500 text-slate-950 font-bold shadow-md shadow-teal-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '⚡ Station Expert Télécommunications & CEI 61850 (7 Piliers)' : '⚡ Telecom & IEC 61850 Workbench (7 Pillars)'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setD13Mode('spec_catalog')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d13Mode === 'spec_catalog'
-                  ? 'bg-teal-500 text-slate-950 font-bold shadow-md shadow-teal-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '📋 Fiches Sous-Domaines & Spécifications' : '📋 Subdomain Catalog & Specs'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* D14 WORKBENCH MODE TOGGLE */}
-      {isD14 && (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-violet-400 animate-pulse" />
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300">
-              {locale === 'fr' ? 'Environnement D14 · Qualité de l\'Énergie, Harmoniques & CEM :' : 'D14 Environment · Power Quality, Harmonics & EMC :'}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setD14Mode('visual_journey')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d14Mode === 'visual_journey'
-                  ? 'bg-violet-500 text-slate-950 font-bold shadow-md shadow-violet-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '⚡ Workbench Expert Qualité d\'Onde & THD (7 Piliers)' : '⚡ Power Quality & THD Workbench (7 Pillars)'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setD14Mode('spec_catalog')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d14Mode === 'spec_catalog'
-                  ? 'bg-violet-500 text-slate-950 font-bold shadow-md shadow-violet-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '📋 Fiches Sous-Domaines & Spécifications' : '📋 Subdomain Catalog & Specs'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* D15 WORKBENCH MODE TOGGLE */}
-      {isD15 && (
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300">
-              {locale === 'fr' ? 'Environnement D15 · Comptage Intelligent & Gestion d\'Actifs :' : 'D15 Environment · Smart Metering & Asset Management :'}
-            </span>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setD15Mode('visual_journey')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d15Mode === 'visual_journey'
-                  ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '⚡ Comptage Communicant AMI & MDM' : '⚡ AMI Smart Metering & MDM'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setD15Mode('asset_management')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d15Mode === 'asset_management'
-                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700'
               }`}
             >
               {locale === 'fr' ? '🔬 Diagnostic DGA & Health Index' : '🔬 DGA Diagnostics & Health Index'}
             </button>
-            <button
-              type="button"
-              onClick={() => setD15Mode('spec_catalog')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d15Mode === 'spec_catalog'
-                  ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '📋 Fiches Sous-Domaines & Spécifications' : '📋 Subdomain Catalog & Specs'}
-            </button>
-          </div>
+          )}
+          <button
+            type="button"
+            onClick={() => setModeForCurrentDomain('spec_catalog')}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all cursor-pointer ${
+              currentDomainMode === 'spec_catalog'
+                ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700'
+            }`}
+          >
+            {locale === 'fr' ? '📋 Fiches Sous-Domaines & Spécifications' : '📋 Subdomain Catalog & Specs'}
+          </button>
         </div>
-      )}
+      </div>
 
-      {/* D16 WORKBENCH MODE TOGGLE */}
-      {isD16 && (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-sm">
+      {/* UNIFIED COLLAPSIBLE DIAGNOSTICS, TRACEABILITY & NCR TRAY (ALL DOMAINS D01–D16) */}
+      <div className="rounded-xl border border-slate-800 bg-slate-900/50 overflow-hidden">
+        <button
+          type="button"
+          onClick={() => setShowD06Metrics(!showD06Metrics)}
+          className="w-full flex items-center justify-between p-2.5 px-4 text-xs font-mono font-bold text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all cursor-pointer"
+        >
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300">
-              {locale === 'fr' ? 'Environnement D16 · Sécurité, Prises de Terre & Foudre :' : 'D16 Environment · Safety, Earthing & Lightning :'}
+            <Activity className="w-4 h-4 text-amber-400" />
+            <span>
+              {locale === 'fr'
+                ? 'Traçabilité Système, Métriques KPI & Registre NCR (Conformité)'
+                : 'System Traceability, KPI Metrics & NCR Registry'}
+            </span>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+              {domainEquipments.length} {locale === 'fr' ? 'équipements' : 'assets'}
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setD16Mode('visual_journey')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d16Mode === 'visual_journey'
-                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '🛡️ Workbench Expert Sécurité & IEEE 80 (7 Piliers)' : '🛡️ Safety & IEEE 80 Ground Grid Workbench (7 Pillars)'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setD16Mode('spec_catalog')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all ${
-                d16Mode === 'spec_catalog'
-                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                  : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700'
-              }`}
-            >
-              {locale === 'fr' ? '📋 Fiches Sous-Domaines & Spécifications' : '📋 Subdomain Catalog & Specs'}
-            </button>
+          <div className="flex items-center gap-2 text-slate-400 text-[11px]">
+            <span>
+              {showD06Metrics
+                ? locale === 'fr'
+                  ? 'Masquer'
+                  : 'Hide'
+                : locale === 'fr'
+                  ? 'Afficher les métriques globales'
+                  : 'Show global metrics'}
+            </span>
+            <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${showD06Metrics ? 'rotate-180' : ''}`} />
           </div>
-        </div>
-      )}
+        </button>
+        {showD06Metrics && (
+          <div className="p-4 space-y-4 border-t border-slate-800 bg-slate-950/40">
+            <ObjectRelationshipActionBar
+              nodeId={DOMAIN_SPINE_MAPPING[domainCode] || 'node-trafo-main-30'}
+              locale={locale}
+              onNavigateContextStack={onNavigateContextStack}
+              onNavigateDomain={(dCode) => onNavigateView?.('domain', dCode)}
+            />
+            <DomainEngineeringKpiBanner
+              domainCode={domainCode}
+              locale={locale}
+              onSelectEquipment={onSelectEquipment}
+              onNavigateView={onNavigateView}
+            />
+            <DomainPendingIssuesPanel
+              locale={locale}
+              domainCode={domainCode}
+            />
+          </div>
+        )}
+      </div>
 
-      {/* D01 TO D10 PEDAGOGICAL PILOT OR ADVANCED WORKBENCHES */}
+      {/* D01 TO D16 PEDAGOGICAL PILOT OR ADVANCED WORKBENCHES */}
       <Suspense fallback={<EngineeringLoadingSkeleton locale={locale} />}>
       {isD01 && d01Mode === 'pedagogical_pilot' ? (
         <UniversalPedagogicalDomainView
@@ -1177,12 +651,12 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           onSelectEquipment={onSelectEquipment}
           onNavigateView={onNavigateView}
           onNavigateCalculator={(tab, ctx) => {
-            if (onNavigateView) onNavigateView('calculators');
-            else window.location.hash = `#/calculateurs`;
+            if (onNavigateCalculator) onNavigateCalculator(tab as CalculatorTabType, ctx);
+            else if (onNavigateView) onNavigateView('calculators', tab);
           }}
           onNavigateSimulation={(tab) => {
-            if (onNavigateView) onNavigateView('simulation');
-            else window.location.hash = `#/simulation`;
+            if (onNavigateSimulation) onNavigateSimulation(tab as SimulationTabType);
+            else if (onNavigateView) onNavigateView('simulation', tab);
           }}
           onSwitchToAdvancedWorkbench={() => setD01Mode('visual_journey')}
         />
@@ -1199,12 +673,12 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           onSelectEquipment={onSelectEquipment}
           onNavigateView={onNavigateView}
           onNavigateCalculator={(tab, ctx) => {
-            if (onNavigateView) onNavigateView('calculators');
-            else window.location.hash = `#/calculateurs`;
+            if (onNavigateCalculator) onNavigateCalculator(tab as CalculatorTabType, ctx);
+            else if (onNavigateView) onNavigateView('calculators', tab);
           }}
           onNavigateSimulation={(tab) => {
-            if (onNavigateView) onNavigateView('simulation');
-            else window.location.hash = `#/simulation`;
+            if (onNavigateSimulation) onNavigateSimulation(tab as SimulationTabType);
+            else if (onNavigateView) onNavigateView('simulation', tab);
           }}
           onSwitchToAdvancedWorkbench={() => setD02Mode('visual_journey')}
         />
@@ -1220,12 +694,12 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           onSelectEquipment={onSelectEquipment}
           onNavigateView={onNavigateView}
           onNavigateCalculator={(tab, ctx) => {
-            if (onNavigateView) onNavigateView('calculators');
-            else window.location.hash = `#/calculateurs`;
+            if (onNavigateCalculator) onNavigateCalculator(tab as CalculatorTabType, ctx);
+            else if (onNavigateView) onNavigateView('calculators', tab);
           }}
           onNavigateSimulation={(tab) => {
-            if (onNavigateView) onNavigateView('simulation');
-            else window.location.hash = `#/simulation`;
+            if (onNavigateSimulation) onNavigateSimulation(tab as SimulationTabType);
+            else if (onNavigateView) onNavigateView('simulation', tab);
           }}
           onSwitchToAdvancedWorkbench={() => setD03Mode('visual_journey')}
         />
@@ -1241,12 +715,12 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           onSelectEquipment={onSelectEquipment}
           onNavigateView={onNavigateView}
           onNavigateCalculator={(tab, ctx) => {
-            if (onNavigateView) onNavigateView('calculators');
-            else window.location.hash = `#/calculateurs`;
+            if (onNavigateCalculator) onNavigateCalculator(tab as CalculatorTabType, ctx);
+            else if (onNavigateView) onNavigateView('calculators', tab);
           }}
           onNavigateSimulation={(tab) => {
-            if (onNavigateView) onNavigateView('simulation');
-            else window.location.hash = `#/simulation`;
+            if (onNavigateSimulation) onNavigateSimulation(tab as SimulationTabType);
+            else if (onNavigateView) onNavigateView('simulation', tab);
           }}
           onSwitchToAdvancedWorkbench={() => setD04Mode('visual_journey')}
         />
@@ -1263,12 +737,12 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           onSelectEquipment={onSelectEquipment}
           onNavigateView={onNavigateView}
           onNavigateCalculator={(tab, ctx) => {
-            if (onNavigateView) onNavigateView('calculators');
-            else window.location.hash = `#/calculateurs`;
+            if (onNavigateCalculator) onNavigateCalculator(tab as CalculatorTabType, ctx);
+            else if (onNavigateView) onNavigateView('calculators', tab);
           }}
           onNavigateSimulation={(tab) => {
-            if (onNavigateView) onNavigateView('simulation');
-            else window.location.hash = `#/simulation`;
+            if (onNavigateSimulation) onNavigateSimulation(tab as SimulationTabType);
+            else if (onNavigateView) onNavigateView('simulation', tab);
           }}
           onSwitchToAdvancedWorkbench={() => setD05Mode('visual_journey')}
         />
@@ -1286,12 +760,12 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           onSelectEquipment={onSelectEquipment}
           onNavigateView={onNavigateView}
           onNavigateCalculator={(tab, ctx) => {
-            if (onNavigateView) onNavigateView('calculators');
-            else window.location.hash = `#/calculateurs`;
+            if (onNavigateCalculator) onNavigateCalculator(tab as CalculatorTabType, ctx);
+            else if (onNavigateView) onNavigateView('calculators', tab);
           }}
           onNavigateSimulation={(tab) => {
-            if (onNavigateView) onNavigateView('simulation');
-            else window.location.hash = `#/simulation`;
+            if (onNavigateSimulation) onNavigateSimulation(tab as SimulationTabType);
+            else if (onNavigateView) onNavigateView('simulation', tab);
           }}
           onSwitchToAdvancedWorkbench={() => setD06Mode('visual_journey')}
         />
@@ -1307,12 +781,12 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           onSelectEquipment={onSelectEquipment}
           onNavigateView={onNavigateView}
           onNavigateCalculator={(tab, ctx) => {
-            if (onNavigateView) onNavigateView('calculators');
-            else window.location.hash = `#/calculateurs`;
+            if (onNavigateCalculator) onNavigateCalculator(tab as CalculatorTabType, ctx);
+            else if (onNavigateView) onNavigateView('calculators', tab);
           }}
           onNavigateSimulation={(tab) => {
-            if (onNavigateView) onNavigateView('simulation');
-            else window.location.hash = `#/simulation`;
+            if (onNavigateSimulation) onNavigateSimulation(tab as SimulationTabType);
+            else if (onNavigateView) onNavigateView('simulation', tab);
           }}
           onSwitchToAdvancedWorkbench={() => setD07Mode('visual_journey')}
         />
@@ -1329,12 +803,12 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           onSelectEquipment={onSelectEquipment}
           onNavigateView={onNavigateView}
           onNavigateCalculator={(tab, ctx) => {
-            if (onNavigateView) onNavigateView('calculators');
-            else window.location.hash = `#/calculateurs`;
+            if (onNavigateCalculator) onNavigateCalculator(tab as CalculatorTabType, ctx);
+            else if (onNavigateView) onNavigateView('calculators', tab);
           }}
           onNavigateSimulation={(tab) => {
-            if (onNavigateView) onNavigateView('simulation');
-            else window.location.hash = `#/simulation`;
+            if (onNavigateSimulation) onNavigateSimulation(tab as SimulationTabType);
+            else if (onNavigateView) onNavigateView('simulation', tab);
           }}
           onSwitchToAdvancedWorkbench={() => setD08Mode('visual_journey')}
         />
@@ -1351,12 +825,12 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           onSelectEquipment={onSelectEquipment}
           onNavigateView={onNavigateView}
           onNavigateCalculator={(tab, ctx) => {
-            if (onNavigateView) onNavigateView('calculators');
-            else window.location.hash = `#/calculateurs`;
+            if (onNavigateCalculator) onNavigateCalculator(tab as CalculatorTabType, ctx);
+            else if (onNavigateView) onNavigateView('calculators', tab);
           }}
           onNavigateSimulation={(tab) => {
-            if (onNavigateView) onNavigateView('simulation');
-            else window.location.hash = `#/simulation`;
+            if (onNavigateSimulation) onNavigateSimulation(tab as SimulationTabType);
+            else if (onNavigateView) onNavigateView('simulation', tab);
           }}
           onSwitchToAdvancedWorkbench={() => setD09Mode('visual_journey')}
         />
@@ -1373,12 +847,12 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           onSelectEquipment={onSelectEquipment}
           onNavigateView={onNavigateView}
           onNavigateCalculator={(tab, ctx) => {
-            if (onNavigateView) onNavigateView('calculators');
-            else window.location.hash = `#/calculateurs`;
+            if (onNavigateCalculator) onNavigateCalculator(tab as CalculatorTabType, ctx);
+            else if (onNavigateView) onNavigateView('calculators', tab);
           }}
           onNavigateSimulation={(tab) => {
-            if (onNavigateView) onNavigateView('simulation');
-            else window.location.hash = `#/simulation`;
+            if (onNavigateSimulation) onNavigateSimulation(tab as SimulationTabType);
+            else if (onNavigateView) onNavigateView('simulation', tab);
           }}
           onSwitchToAdvancedWorkbench={() => setD10Mode('visual_journey')}
         />
@@ -1388,11 +862,43 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           onNavigate={onNavigateView}
           onSelectEquipment={onSelectEquipment}
         />
+      ) : isD11 && d11Mode === 'pedagogical_pilot' ? (
+        <UniversalPedagogicalDomainView
+          domainCode="D11"
+          locale={locale}
+          onSelectEquipment={onSelectEquipment}
+          onNavigateView={onNavigateView}
+          onNavigateCalculator={(tab, ctx) => {
+            if (onNavigateCalculator) onNavigateCalculator(tab as CalculatorTabType, ctx);
+            else if (onNavigateView) onNavigateView('calculators', tab);
+          }}
+          onNavigateSimulation={(tab) => {
+            if (onNavigateSimulation) onNavigateSimulation(tab as SimulationTabType);
+            else if (onNavigateView) onNavigateView('simulation', tab);
+          }}
+          onSwitchToAdvancedWorkbench={() => setD11Mode('visual_journey')}
+        />
       ) : isD11 && d11Mode === 'visual_journey' ? (
         <ProtectionEngineeringWorkbench
           locale={locale}
           onNavigate={onNavigateView}
           onSelectEquipment={onSelectEquipment}
+        />
+      ) : isD12 && d12Mode === 'pedagogical_pilot' ? (
+        <UniversalPedagogicalDomainView
+          domainCode="D12"
+          locale={locale}
+          onSelectEquipment={onSelectEquipment}
+          onNavigateView={onNavigateView}
+          onNavigateCalculator={(tab, ctx) => {
+            if (onNavigateCalculator) onNavigateCalculator(tab as CalculatorTabType, ctx);
+            else if (onNavigateView) onNavigateView('calculators', tab);
+          }}
+          onNavigateSimulation={(tab) => {
+            if (onNavigateSimulation) onNavigateSimulation(tab as SimulationTabType);
+            else if (onNavigateView) onNavigateView('simulation', tab);
+          }}
+          onSwitchToAdvancedWorkbench={() => setD12Mode('visual_journey')}
         />
       ) : isD12 && d12Mode === 'visual_journey' ? (
         <ScadaAutomationWorkbench
@@ -1411,6 +917,22 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           locale={locale}
           onNavigate={onNavigateView}
           onSelectEquipment={onSelectEquipment}
+        />
+      ) : isD15 && d15Mode === 'pedagogical_pilot' ? (
+        <UniversalPedagogicalDomainView
+          domainCode="D15"
+          locale={locale}
+          onSelectEquipment={onSelectEquipment}
+          onNavigateView={onNavigateView}
+          onNavigateCalculator={(tab, ctx) => {
+            if (onNavigateCalculator) onNavigateCalculator(tab as CalculatorTabType, ctx);
+            else if (onNavigateView) onNavigateView('calculators', tab);
+          }}
+          onNavigateSimulation={(tab) => {
+            if (onNavigateSimulation) onNavigateSimulation(tab as SimulationTabType);
+            else if (onNavigateView) onNavigateView('simulation', tab);
+          }}
+          onSwitchToAdvancedWorkbench={() => setD15Mode('visual_journey')}
         />
       ) : isD15 && d15Mode === 'visual_journey' ? (
         <SmartMeteringGridDigitalizationWorkbench

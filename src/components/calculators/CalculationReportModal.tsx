@@ -18,6 +18,7 @@ import {
   CloudCheck
 } from 'lucide-react';
 import { useAuth } from '../../services/AuthContext';
+import { EngineeringCalculationPdfExportService } from './services/EngineeringCalculationPdfExportService';
 
 export interface ReportItem {
   label: string;
@@ -335,12 +336,22 @@ export const CalculationReportModal: React.FC<CalculationReportModalProps> = ({
 
             <button
               type="button"
+              onClick={() => EngineeringCalculationPdfExportService.exportCalculationPdf(data, locale)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-xs font-bold bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-md transition-all cursor-pointer border border-cyan-400/40"
+              title={locale === 'fr' ? 'Télécharger la Note Technique PDF A4 Officielle (CEI / NF C)' : 'Download Official A4 PDF Design Sheet (IEC / NF C)'}
+            >
+              <Download className="h-3.5 w-3.5 text-white" />
+              <span>{locale === 'fr' ? 'Note PDF A4' : 'PDF Sheet A4'}</span>
+            </button>
+
+            <button
+              type="button"
               onClick={handlePrint}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-xs font-bold bg-[#161C24] text-neutral-300 hover:text-white border border-[#252E38] hover:border-cyan-500/50 transition-colors cursor-pointer"
-              title={locale === 'fr' ? 'Imprimer / Exporter PDF' : 'Print / Export PDF'}
+              title={locale === 'fr' ? 'Imprimer / Aperçu' : 'Print / Preview'}
             >
               <Printer className="h-3.5 w-3.5 text-cyan-400" />
-              <span className="hidden sm:inline">{locale === 'fr' ? 'PDF / Impr.' : 'PDF / Print'}</span>
+              <span className="hidden sm:inline">{locale === 'fr' ? 'Imprimer' : 'Print'}</span>
             </button>
 
             <button
@@ -551,17 +562,28 @@ export const CalculationReportModal: React.FC<CalculationReportModalProps> = ({
         </div>
 
         {/* Footer Bar */}
-        <div className="px-6 py-3 border-t border-[#252E38] bg-[#11161D] flex justify-between items-center text-xs">
+        <div className="px-6 py-3 border-t border-[#252E38] bg-[#11161D] flex flex-wrap justify-between items-center gap-3 text-xs">
           <div className="text-neutral-500 font-mono text-[11px]">
-            {locale === 'fr' ? 'Format exportable : PDF, Markdown ASCII, JSON' : 'Exportable format: PDF, ASCII Markdown, JSON'}
+            {locale === 'fr' ? 'Format exportable : PDF A4 vectoriel certifié, Markdown ASCII, JSON' : 'Exportable format: Certified vector A4 PDF, ASCII Markdown, JSON'}
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-1.5 rounded-lg bg-[#161C24] hover:bg-[#202732] text-white border border-[#252E38] font-mono text-xs font-bold transition-colors cursor-pointer"
-          >
-            {locale === 'fr' ? 'Fermer' : 'Close'}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => EngineeringCalculationPdfExportService.exportCalculationPdf(data, locale)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-mono text-xs font-bold transition-all cursor-pointer shadow-sm border border-cyan-400/30"
+              title={locale === 'fr' ? 'Télécharger la Note Technique PDF A4 Officielle' : 'Download Official A4 PDF Design Note'}
+            >
+              <Download className="h-3.5 w-3.5 text-white" />
+              <span>{locale === 'fr' ? 'Exporter Note PDF A4' : 'Export A4 PDF Note'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-1.5 rounded-lg bg-[#161C24] hover:bg-[#202732] text-white border border-[#252E38] font-mono text-xs font-bold transition-colors cursor-pointer"
+            >
+              {locale === 'fr' ? 'Fermer' : 'Close'}
+            </button>
+          </div>
         </div>
       </div>
     </div>

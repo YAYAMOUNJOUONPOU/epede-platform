@@ -79,10 +79,10 @@ import { UsageLevelProvider } from './services/UsageLevelContext';
 export default function App() {
   const [locale, setLocale] = useState<'fr' | 'en'>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('epede-locale');
+      const saved = localStorage.getItem('epede-locale-v2');
       if (saved === 'fr' || saved === 'en') return saved;
     }
-    return 'fr';
+    return 'en';
   });
 
   // Theme state: dark | light with local storage persistence
@@ -115,7 +115,9 @@ export default function App() {
   // Persist locale changes
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      localStorage.setItem('epede-locale-v2', locale);
       localStorage.setItem('epede-locale', locale);
+      document.documentElement.lang = locale;
     }
   }, [locale]);
 
@@ -530,12 +532,14 @@ export default function App() {
 
   return (
     <UsageLevelProvider>
-      <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-amber-500/20 selection:text-amber-300 flex flex-col relative overflow-x-hidden">
+      <div className="min-h-screen bg-[#0B0F12] text-[#F4F1E8] font-sans selection:bg-[#D7A64A]/25 selection:text-[#F4F1E8] flex flex-col relative overflow-x-hidden">
       {/* Background canvas */}
-      {currentView !== 'ecosystem' && <EngineeringBackground interactive={true} />}
+      {currentView !== 'ecosystem' && <EngineeringBackground interactive={false} />}
 
-      {/* Top SCADA Telemetry Bar */}
-      {currentView !== 'ecosystem' && <ScadaTelemetryBar locale={locale} />}
+      {/* Top SCADA Telemetry Bar (Shown only in Simulation/SLD or when Engineering Context HUD is toggled) */}
+      {currentView !== 'ecosystem' && (isContextHUDOpen || currentView === 'simulation' || currentView === 'diagrams') && (
+        <ScadaTelemetryBar locale={locale} />
+      )}
 
       {/* Main App Navigation Header */}
       {currentView !== 'ecosystem' && (
@@ -859,6 +863,8 @@ export default function App() {
                   onSelectStandard={handleNavigateStandard}
                   onSelectRole={handleNavigateRole}
                   onNavigateContextStack={handleNavigateContextStack}
+                  onNavigateCalculator={handleNavigateCalculator}
+                  onNavigateSimulation={handleNavigateSimulation}
                   onNavigateView={(view, domainCode) => {
                     if (view === 'domain' && domainCode) {
                       handleNavigateDomain(domainCode as DomainCode);

@@ -2,107 +2,108 @@
 
 @layer base {
   :root {
-    /* EPEDE Premium Dark Engineering Palette */
-    --bg-primary: #020617;        /* Deep Obsidian Slate (slate-950) */
-    --bg-surface-1: #0B0F17;      /* Primary Surface */
-    --bg-surface-2: #0F172A;      /* Elevated Card Surface (slate-900) */
-    --bg-surface-3: #1E293B;      /* Interactive/Toolbar Surface (slate-800) */
-    --surface-card: rgba(15, 23, 42, 0.85);
-    --surface-card-hover: rgba(30, 41, 59, 0.9);
-    --surface-border: rgba(148, 163, 184, 0.12);
-    --surface-border-subtle: rgba(148, 163, 184, 0.08);
+    /* EPEDE Canonical Dark Engineering Palette (Section 5 Specification) */
+    --bg-primary: #0B0F12;        /* Primary Engineering Background */
+    --bg-surface-1: #151C1E;      /* Secondary Surfaces & Panels */
+    --bg-surface-2: #1A2326;      /* Elevated Card Surface */
+    --bg-surface-3: #222E33;      /* Interactive/Toolbar Surface */
+    --surface-card: rgba(21, 28, 30, 0.92);
+    --surface-card-hover: rgba(28, 38, 42, 0.96);
+    --surface-border: rgba(86, 122, 135, 0.24);
+    --surface-border-subtle: rgba(169, 173, 165, 0.12);
 
-    --text-primary: #F8FAFC;      /* Slate-50 luminous white */
-    --text-secondary: #94A3B8;    /* Slate-400 high-contrast body */
-    --text-muted: #64748B;        /* Slate-500 technical details */
+    --text-primary: #F4F1E8;      /* Warm Ivory Primary Text */
+    --text-secondary: #A9ADA5;    /* Technical Sage-Grey Secondary Text */
+    --text-muted: #7C847E;        /* Muted Technical Caption Text */
 
-    /* Core Energy & Signal Accents */
-    --accent-amber: #F59E0B;      /* Technical Electric Amber / Copper */
-    --accent-amber-glow: rgba(245, 158, 11, 0.25);
-    --accent-cyan: #06B6D4;       /* SCADA Digital Grid Cyan */
-    --accent-cyan-dim: rgba(6, 182, 212, 0.15);
-    --accent-sky: #38BDF8;        /* Technical Sky */
-    --accent-emerald: #10B981;    /* Nominal / Synchronized Green */
-    --accent-rose: #EF4444;       /* High-contrast Safety Red */
+    /* Core Engineering & Technical Accents */
+    --accent-amber: #D7A64A;      /* Canonical Engineering Brass/Gold Accent */
+    --accent-amber-glow: rgba(215, 166, 74, 0.22);
+    --accent-cyan: #567A87;       /* Canonical Technical Blue-Grey */
+    --accent-cyan-dim: rgba(86, 122, 135, 0.18);
+    --accent-sky: #6E98A6;        /* Highlight Technical Blue-Grey */
+    --accent-emerald: #10B981;    /* Nominal / Verified Green */
+    --accent-rose: #EF4444;       /* High-Contrast Safety Red */
     --accent-violet: #8B5CF6;     /* EHV 225 kV Purple */
 
     /* Voltage Levels System */
-    --v-ehv: #A855F7;             /* 225 kV THT */
-    --v-hv: #0284C7;              /* 90 kV HTB */
-    --v-mv: #0D9488;              /* 30 kV HTA */
-    --v-lv: #F59E0B;              /* 400V / 230V BT */
+    --v-ehv: #A855F7;             /* 225 kV EHV */
+    --v-hv: #567A87;              /* 90 kV HV */
+    --v-mv: #2A9D8F;              /* 30 kV MV */
+    --v-lv: #D7A64A;              /* 400V / 230V LV */
     --v-dc: #EAB308;              /* ±800 kV HVDC */
 
-    /* EPEDE Ecosystem Stage Canvas Tokens (Harmonized to Obsidian Dark Theme) */
-    --ecosystem-sky-background: #070D14;
-    --ecosystem-sky-background-light: #0B131D;
-    --ecosystem-sky-background-soft: #0E1825;
-    --ecosystem-sky-background-deep: #05090F;
-    --ecosystem-text-primary: #F8FAFC;
-    --ecosystem-text-secondary: #94A3B8;
-    --ecosystem-text-muted: #64748B;
-    --ecosystem-border: rgba(148, 163, 184, 0.18);
+    /* EPEDE Ecosystem Stage Canvas Tokens */
+    --ecosystem-sky-background: #0B0F12;
+    --ecosystem-sky-background-light: #11171A;
+    --ecosystem-sky-background-soft: #151C1E;
+    --ecosystem-sky-background-deep: #070A0C;
+    --ecosystem-text-primary: #F4F1E8;
+    --ecosystem-text-secondary: #A9ADA5;
+    --ecosystem-text-muted: #7C847E;
+    --ecosystem-border: rgba(86, 122, 135, 0.24);
     --ecosystem-control-surface: #151C1E;
   }
 
   :root[data-theme="light"], .light {
-    --bg-primary: #F8FAFC;
+    --bg-primary: #F4F1E8;
     --bg-surface-1: #FFFFFF;
-    --bg-surface-2: #F1F5F9;
-    --bg-surface-3: #E2E8F0;
-    --surface-card: rgba(255, 255, 255, 0.95);
-    --surface-card-hover: rgba(248, 250, 252, 0.98);
-    --surface-border: rgba(100, 116, 139, 0.2);
-    --surface-border-subtle: rgba(100, 116, 139, 0.12);
+    --bg-surface-2: #EAE6DA;
+    --bg-surface-3: #DDD8C8;
+    --surface-card: rgba(255, 255, 255, 0.96);
+    --surface-card-hover: rgba(250, 248, 242, 0.99);
+    --surface-border: rgba(86, 122, 135, 0.25);
+    --surface-border-subtle: rgba(86, 122, 135, 0.14);
 
-    --text-primary: #0F172A;
-    --text-secondary: #334155;
-    --text-muted: #64748B;
+    --text-primary: #0B0F12;
+    --text-secondary: #3B464B;
+    --text-muted: #567A87;
 
-    --accent-amber: #D97706;
-    --accent-amber-glow: rgba(217, 119, 6, 0.2);
-    --accent-cyan: #0891B2;
-    --accent-cyan-dim: rgba(8, 145, 178, 0.12);
+    --accent-amber: #B8862D;
+    --accent-amber-glow: rgba(184, 134, 45, 0.18);
+    --accent-cyan: #41616D;
+    --accent-cyan-dim: rgba(65, 97, 109, 0.14);
   }
 
   .light body {
-    background-color: #F8FAFC;
-    color: #0F172A;
+    background-color: #F4F1E8;
+    color: #0B0F12;
   }
 
   .light h1, .light h2, .light h3, .light h4, .light h5, .light h6 {
-    color: #0F172A;
+    color: #0B0F12;
   }
 
   .light .cad-grid-pattern {
     background-image: 
-      linear-gradient(to right, rgba(100, 116, 139, 0.08) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(100, 116, 139, 0.08) 1px, transparent 1px);
+      linear-gradient(to right, rgba(86, 122, 135, 0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(86, 122, 135, 0.08) 1px, transparent 1px);
   }
 
   .light .epede-card {
     background: #FFFFFF;
-    border-color: rgba(203, 213, 225, 0.8);
-    box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.06);
+    border-color: rgba(86, 122, 135, 0.25);
+    box-shadow: 0 4px 12px -2px rgba(11, 15, 18, 0.06);
   }
 
   .light .epede-card:hover {
-    border-color: #D97706;
+    border-color: #B8862D;
     background: #FFFFFF;
-    box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.1);
+    box-shadow: 0 10px 25px -4px rgba(11, 15, 18, 0.1);
   }
 
   body {
     font-family: 'Inter', 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: #030712;
-    color: #F8FAFC;
+    background-color: #0B0F12;
+    color: #F4F1E8;
     min-height: 100vh;
+    line-height: 1.6;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Outfit', 'Inter', sans-serif;
-    letter-spacing: -0.025em;
-    color: #F8FAFC;
+    letter-spacing: -0.02em;
+    color: #F4F1E8;
   }
 
   code, pre, .font-mono, [data-technical="true"] {
@@ -118,7 +119,7 @@
   }
 
   *:focus-visible {
-    outline: 2px solid #F59E0B;
+    outline: 2px solid #D7A64A;
     outline-offset: 2px;
   }
 }
@@ -127,40 +128,40 @@
 .cad-grid-pattern {
   background-size: 32px 32px;
   background-image: 
-    linear-gradient(to right, rgba(148, 163, 184, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+    linear-gradient(to right, rgba(86, 122, 135, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(86, 122, 135, 0.06) 1px, transparent 1px);
 }
 
 .cad-grid-dense {
   background-size: 16px 16px;
   background-image: 
-    linear-gradient(to right, rgba(148, 163, 184, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
+    linear-gradient(to right, rgba(86, 122, 135, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(86, 122, 135, 0.05) 1px, transparent 1px);
 }
 
-/* Glassmorphic Dark Engineering Card */
+/* Canonical Dark Engineering Surface Card (#151C1E) */
 .epede-card {
-  border: 1px solid rgba(148, 163, 184, 0.12);
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(8, 14, 26, 0.92) 100%);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
-  transition: border-color 200ms ease, transform 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms ease, background-color 200ms ease;
+  border: 1px solid rgba(86, 122, 135, 0.22);
+  background: linear-gradient(180deg, rgba(21, 28, 30, 0.94) 0%, rgba(15, 20, 22, 0.98) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45), inset 0 1px 0 0 rgba(244, 241, 232, 0.04);
+  transition: border-color 180ms ease, transform 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms ease, background-color 180ms ease;
 }
 .epede-card:hover {
-  border-color: rgba(245, 158, 11, 0.45);
-  background: linear-gradient(135deg, rgba(19, 30, 54, 0.92) 0%, rgba(10, 18, 34, 0.98) 100%);
+  border-color: rgba(215, 166, 74, 0.55);
+  background: linear-gradient(180deg, rgba(26, 35, 38, 0.96) 0%, rgba(18, 25, 28, 0.99) 100%);
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.7), 0 0 20px -2px rgba(245, 158, 11, 0.2), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 12px 28px -5px rgba(0, 0, 0, 0.65), 0 0 18px -4px rgba(215, 166, 74, 0.18);
 }
 
-/* Frosted Luxury Glassmorphic Panel */
+/* Frosted Engineering Panel */
 .epede-glass-panel {
-  background: linear-gradient(180deg, rgba(13, 20, 36, 0.75) 0%, rgba(6, 10, 19, 0.85) 100%);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+  background: linear-gradient(180deg, rgba(21, 28, 30, 0.85) 0%, rgba(11, 15, 18, 0.92) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(86, 122, 135, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(244, 241, 232, 0.05);
 }
 
 /* Subtle Specular Top Rim on Containers */
@@ -200,11 +201,11 @@
   transform: scale(0.97);
 }
 
-/* Navigation active states (Dark Obsidian) */
+/* Navigation active states (Canonical EPEDE Brass/Gold #D7A64A) */
 .nav-item.active {
-  border-left: 3px solid #F59E0B;
-  background: rgba(245, 158, 11, 0.12);
-  color: #FBBF24;
+  border-left: 3px solid #D7A64A;
+  background: rgba(215, 166, 74, 0.14);
+  color: #D7A64A;
   font-weight: 700;
 }
 
@@ -444,20 +445,20 @@
   height: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: #0B0F17;
+  background: #0B0F12;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1E293B;
+  background: #222E33;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #567A87;
 }
 
 /* Unified Selection Color */
 ::selection {
-  background-color: rgba(245, 158, 11, 0.25);
-  color: #FDE68A;
+  background-color: rgba(215, 166, 74, 0.28);
+  color: #F4F1E8;
 }
 
 /* Print Media Styles: Formal Engineering Calculation Notes */

@@ -436,51 +436,53 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-neutral-400 hover:text-cyan-400 transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-[#A9ADA5] hover:text-[#D7A64A] transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
-          <span>{locale === 'fr' ? 'RETOUR AU TABLEAU DE BORD' : 'BACK TO DASHBOARD'}</span>
+          <span>{locale === 'fr' ? 'RETOUR AU TABLEAU DE BORD' : 'BACK TO HOME'}</span>
         </button>
 
         <div className="flex items-center gap-2 font-mono text-xs">
-          <span className="text-slate-500 font-bold uppercase tracking-wider">COUCHE L01</span>
-          <span className="font-bold text-amber-400 bg-slate-900/90 px-2.5 py-1 rounded-md border border-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-            Standards & Compliance Registry
+          <span className="text-[#A9ADA5] font-bold uppercase tracking-wider">
+            {locale === 'fr' ? 'FONDATION L01' : 'FOUNDATION L01'}
+          </span>
+          <span className="font-bold text-[#D7A64A] bg-[#151C1E] px-2.5 py-1 rounded-md border border-[#567A87]/35 uppercase tracking-wider flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#D7A64A] animate-pulse" />
+            {locale === 'fr' ? 'Référentiel Normatif & Essais' : 'Standards & Compliance Registry'}
           </span>
         </div>
       </div>
 
       {/* Engineering Header */}
-      <header className="rounded-2xl border border-slate-800 bg-slate-900/90 p-6 sm:p-8 shadow-xl cad-grid-dense">
+      <header className="rounded-2xl border border-[#567A87]/35 bg-[#151C1E] p-6 sm:p-8 shadow-xl cad-grid-dense">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-start gap-4">
-            <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl text-amber-400 shrink-0 shadow-xs">
+            <div className="p-3 bg-[#0B0F12] border border-[#D7A64A]/40 rounded-xl text-[#D7A64A] shrink-0 shadow-xs">
               <ShieldCheck className="h-8 w-8" />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white font-mono flex items-center gap-3">
+              <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#F4F1E8] font-mono flex items-center gap-3">
                 <span>{locale === 'fr' ? 'Référentiel des Normes & Essais FAT / SAT' : 'Standards, FAT / SAT & Compliance Registry'}</span>
               </h1>
-              <p className="mt-1 text-xs sm:text-sm text-slate-400 max-w-3xl leading-relaxed font-medium">
+              <p className="mt-1 text-xs sm:text-sm text-[#A9ADA5] max-w-3xl leading-relaxed font-medium">
                 {locale === 'fr'
                   ? 'Exigences normatives internationales CEI / IEEE, réglementations sectorielles ARSEL / NF C et protocole interactif de vérification des essais en usine (FAT) et sur site (SAT).'
-                  : 'International IEC/IEEE standards, regional Cameroon ARSEL regulations and interactive factory (FAT) and site (SAT) compliance testing engine.'}
+                  : 'International IEC / IEEE standards, regional Cameroon ARSEL / NF C regulations, and interactive factory (FAT) and site (SAT) acceptance verification guide.'}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2 shrink-0 font-mono text-xs">
-            <span className="px-3 py-1.5 rounded-lg border border-slate-800 bg-slate-950 text-slate-300 font-bold shadow-xs">
+            <span className="px-3 py-1.5 rounded-lg border border-[#567A87]/40 bg-[#0B0F12] text-[#F4F1E8] font-bold shadow-xs">
               {STANDARDS.length} {locale === 'fr' ? 'NORMES RÉFÉRENCÉES' : 'STANDARDS LOGGED'}
             </span>
           </div>
         </div>
 
         {/* Search & Filter Toolbar */}
-        <div className="mt-6 pt-5 border-t border-slate-800 flex flex-wrap items-center justify-between gap-4">
+        <div className="mt-6 pt-5 border-t border-[#567A87]/25 flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-mono font-bold text-slate-400 flex items-center gap-1 mr-1 uppercase tracking-wider">
-              <Filter className="h-3.5 w-3.5 text-amber-400" />
+            <span className="text-xs font-mono font-bold text-[#A9ADA5] flex items-center gap-1 mr-1 uppercase tracking-wider">
+              <Filter className="h-3.5 w-3.5 text-[#D7A64A]" />
               <span>{locale === 'fr' ? 'ORGANISME :' : 'ISSUER:'}</span>
             </span>
             {issuers.map((iss) => (
@@ -490,8 +492,8 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
                 onClick={() => setSelectedIssuer(iss)}
                 className={`px-3 py-1 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all border ${
                   selectedIssuer === iss
-                    ? 'border-amber-400 bg-amber-500/15 text-amber-300 shadow-xs'
-                    : 'border-slate-800 bg-slate-950 text-slate-400 hover:text-white hover:bg-slate-800/80 shadow-xs'
+                    ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A] shadow-xs'
+                    : 'border-[#567A87]/30 bg-[#0B0F12] text-[#A9ADA5] hover:text-[#F4F1E8] hover:border-[#567A87] shadow-xs'
                 }`}
               >
                 {iss}
@@ -500,30 +502,30 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
           </div>
 
           <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#A9ADA5]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={locale === 'fr' ? 'Filtrer (ex: 60076, arc, terre, clause...)' : 'Search (e.g. 60076, arc, ground, clause...)'}
-              className="w-full bg-slate-950 border border-slate-800 focus:border-amber-400 rounded-lg pl-9 pr-3 py-1.5 text-xs text-white font-mono placeholder:text-slate-500 outline-none transition-colors"
+              className="w-full bg-[#0B0F12] border border-[#567A87]/35 focus:border-[#D7A64A] rounded-lg pl-9 pr-3 py-1.5 text-xs text-[#F4F1E8] font-mono placeholder:text-[#A9ADA5]/60 outline-none transition-colors"
             />
           </div>
         </div>
 
         {/* Domain Filter Toolbar */}
-        <div className="mt-3 pt-3 border-t border-slate-800/80 flex flex-wrap items-center gap-1.5">
-          <span className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider mr-1">
+        <div className="mt-3 pt-3 border-t border-[#567A87]/25 flex flex-wrap items-center gap-1.5">
+          <span className="text-[11px] font-mono font-bold text-[#A9ADA5] uppercase tracking-wider mr-1">
             {locale === 'fr' ? 'DOMAINE :' : 'DOMAIN:'}
           </span>
           {[
             { code: 'ALL', label: locale === 'fr' ? 'TOUS LES DOMAINES' : 'ALL DOMAINS' },
-            { code: 'D01', label: 'D01 PRODUCTION' },
-            { code: 'D02', label: 'D02 TRANSPORT' },
-            { code: 'D03', label: 'D03 POSTES' },
+            { code: 'D01', label: locale === 'fr' ? 'D01 PRODUCTION' : 'D01 GENERATION' },
+            { code: 'D02', label: locale === 'fr' ? 'D02 TRANSPORT' : 'D02 TRANSMISSION' },
+            { code: 'D03', label: locale === 'fr' ? 'D03 POSTES' : 'D03 SUBSTATIONS' },
             { code: 'D04', label: 'D04 DISTRIBUTION' },
-            { code: 'D05', label: 'D05 INDUSTRIE' },
-            { code: 'D06', label: 'D06 BÂTIMENTS' },
+            { code: 'D05', label: locale === 'fr' ? 'D05 INDUSTRIE' : 'D05 INDUSTRIAL' },
+            { code: 'D06', label: locale === 'fr' ? 'D06 BÂTIMENTS' : 'D06 BUILDINGS' },
             { code: 'D07', label: 'D07 PROTECTION' },
             { code: 'D08', label: 'D08 SCADA' },
             { code: 'D09', label: 'D09 SMART GRIDS' },
@@ -535,8 +537,8 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
               onClick={() => setSelectedDomain(d.code)}
               className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-all border ${
                 selectedDomain === d.code
-                  ? 'border-sky-400 bg-sky-500/15 text-sky-300 shadow-xs'
-                  : 'border-slate-800 bg-slate-950 text-slate-400 hover:text-white hover:bg-slate-800/80'
+                  ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A] shadow-xs'
+                  : 'border-[#567A87]/30 bg-[#0B0F12] text-[#A9ADA5] hover:text-[#F4F1E8] hover:border-[#567A87]'
               }`}
             >
               {d.label}
@@ -556,13 +558,13 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
                 onClick={() => setSelectedRef(s.reference)}
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider whitespace-nowrap transition-all border shrink-0 flex items-center gap-1.5 ${
                   isSelected
-                    ? 'border-amber-400 bg-amber-500/15 text-amber-300 shadow-xs ring-1 ring-amber-400/30'
-                    : 'border-slate-800 bg-slate-950 text-slate-400 hover:text-white hover:bg-slate-800/80 shadow-xs'
+                    ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A] shadow-xs ring-1 ring-[#D7A64A]/30'
+                    : 'border-[#567A87]/30 bg-[#0B0F12] text-[#A9ADA5] hover:text-[#F4F1E8] hover:border-[#567A87] shadow-xs'
                 }`}
               >
                 <span>{s.reference}</span>
                 {hasClauses && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400" title="Clauses FAT/SAT activées" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#D7A64A]" title={locale === 'fr' ? 'Clauses FAT/SAT activées' : 'FAT/SAT clauses available'} />
                 )}
               </button>
             );
@@ -571,67 +573,79 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
       </header>
 
       {/* Cameroon National Grid Context & Tropical Specifications */}
-      <div className="rounded-xl border border-emerald-900/60 bg-gradient-to-r from-emerald-950/40 via-slate-950 to-slate-900 p-4 sm:p-5 text-xs font-mono shadow-md">
+      <div className="rounded-xl border border-[#567A87]/35 bg-[#151C1E] p-4 sm:p-5 text-xs font-mono shadow-md">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
           <div className="flex items-center gap-2">
-            <span className="text-emerald-400 font-bold text-sm">🇨🇲</span>
-            <span className="font-bold text-emerald-300 uppercase tracking-wider">
-              {locale === 'fr' ? 'Contexte Réseau National Cameroun (ARSEL / SONATREL / ENEO)' : 'Cameroon National Grid & Tropical Operating Envelope'}
+            <span className="text-[#D7A64A] font-bold text-sm">🇨🇲</span>
+            <span className="font-bold text-[#F4F1E8] uppercase tracking-wider">
+              {locale === 'fr' ? 'Contexte Réseau National Cameroun (ARSEL / SONATREL / ENEO)' : 'Cameroon National Grid & Tropical Operating Envelope (ARSEL / SONATREL / ENEO)'}
             </span>
           </div>
-          <span className="bg-emerald-950 border border-emerald-800/60 text-emerald-300 px-2 py-0.5 rounded text-[10px] font-bold uppercase">
-            Code Réseau & Climat Tropical
+          <span className="bg-[#0B0F12] border border-[#D7A64A]/40 text-[#D7A64A] px-2 py-0.5 rounded text-[10px] font-bold uppercase">
+            {locale === 'fr' ? 'Code Réseau & Climat Tropical' : 'Grid Code & Tropical Climate'}
           </span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-slate-300 font-sans text-xs">
-          <div className="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800">
-            <span className="text-[10px] font-mono font-bold text-emerald-400 block uppercase mb-1">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-[#A9ADA5] font-sans text-xs">
+          <div className="p-2.5 rounded-lg bg-[#0B0F12] border border-[#567A87]/30">
+            <span className="text-[10px] font-mono font-bold text-[#D7A64A] block uppercase mb-1">
               {locale === 'fr' ? 'Fréquence & Tolérance' : 'Frequency & Tolerance'}
             </span>
             <p className="leading-snug">
-              <strong>50.00 Hz</strong> nom. (Plage normale : 49.80 – 50.20 Hz ; exceptionnelle : 49.50 – 50.50 Hz). Déclenchement délestage UFLS sous 49.00 Hz.
+              {locale === 'fr' ? (
+                <><strong>50.00 Hz</strong> nom. (Plage normale : 49.80 – 50.20 Hz ; exceptionnelle : 49.50 – 50.50 Hz). Déclenchement délestage UFLS sous 49.00 Hz.</>
+              ) : (
+                <><strong>50.00 Hz</strong> nominal (Normal band: 49.80 – 50.20 Hz; contingency: 49.50 – 50.50 Hz). Automatic UFLS load shedding below 49.00 Hz.</>
+              )}
             </p>
           </div>
-          <div className="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800">
-            <span className="text-[10px] font-mono font-bold text-amber-400 block uppercase mb-1">
+          <div className="p-2.5 rounded-lg bg-[#0B0F12] border border-[#567A87]/30">
+            <span className="text-[10px] font-mono font-bold text-[#D7A64A] block uppercase mb-1">
               {locale === 'fr' ? 'Déclassement Thermique Tropical' : 'Tropical Thermal Derating'}
             </span>
             <p className="leading-snug">
-              Température ambiante de calcul <strong>40 °C à 45 °C</strong> (versus 30 °C CEI 60076). Déclassement puissance continue k_θ ≈ 0.90–0.93.
+              {locale === 'fr' ? (
+                <>Température ambiante de calcul <strong>40 °C à 45 °C</strong> (versus 30 °C CEI 60076). Déclassement puissance continue k_θ ≈ 0.90–0.93.</>
+              ) : (
+                <>Design ambient temperature <strong>40 °C to 45 °C</strong> (vs. 30 °C IEC 60076 baseline). Continuous thermal derating factor k_θ ≈ 0.90–0.93.</>
+              )}
             </p>
           </div>
-          <div className="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800">
-            <span className="text-[10px] font-mono font-bold text-sky-400 block uppercase mb-1">
+          <div className="p-2.5 rounded-lg bg-[#0B0F12] border border-[#567A87]/30">
+            <span className="text-[10px] font-mono font-bold text-[#D7A64A] block uppercase mb-1">
               {locale === 'fr' ? 'Densité Kéraunique & Foudre' : 'Isokeraunic Level & Lightning'}
             </span>
             <p className="leading-snug">
-              Niveau kéraunique <strong>Nk &gt; 80 j/an</strong>. Parafoudres ZnO classe 1 &amp; 2 (CEI 60099-4) impératifs sur arrivées aériennes et transformateurs.
+              {locale === 'fr' ? (
+                <>Niveau kéraunique <strong>Nk &gt; 80 j/an</strong>. Parafoudres ZnO classe 1 &amp; 2 (CEI 60099-4) impératifs sur arrivées aériennes et transformateurs.</>
+              ) : (
+                <>Isokeraunic level <strong>Nk &gt; 80 thunderstorm days/yr</strong>. Class 1 &amp; 2 ZnO surge arresters (IEC 60099-4) mandatory on overhead line bays and transformers.</>
+              )}
             </p>
           </div>
         </div>
       </div>
 
       {/* Selected Standard Detail Card */}
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/90 overflow-hidden shadow-xl">
+      <div className="rounded-2xl border border-[#567A87]/35 bg-[#151C1E] overflow-hidden shadow-xl">
         
         {/* Card Technical Header */}
-        <div className="border-b border-slate-800 bg-slate-950/70 p-6 sm:p-7">
+        <div className="border-b border-[#567A87]/25 bg-[#0B0F12] p-6 sm:p-7">
           <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
             <div className="flex items-center gap-3">
-              <span className="font-mono text-xl sm:text-2xl font-black text-amber-400 tracking-wide select-all">
+              <span className="font-mono text-xl sm:text-2xl font-black text-[#D7A64A] tracking-wide select-all">
                 {selectedStandard.reference}
               </span>
-              <span className="font-mono text-[10px] text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-800/60 font-bold uppercase tracking-wider">
-                RÉFÉRENCE TECHNIQUE CEI / IEEE / NF C
+              <span className="font-mono text-[10px] text-[#F4F1E8] bg-[#151C1E] px-2 py-0.5 rounded border border-[#567A87]/40 font-bold uppercase tracking-wider">
+                {locale === 'fr' ? 'RÉFÉRENCE TECHNIQUE CEI / IEEE / NF C' : 'TECHNICAL STANDARD IEC / IEEE / NF C'}
               </span>
             </div>
 
             <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
-              <span className="text-slate-400 bg-slate-950 px-2.5 py-1 rounded border border-slate-800 font-bold uppercase tracking-wider text-[11px] shadow-xs">
-                ORGANISME: <span className="text-white">{selectedStandard.issuer || 'N/A'}</span>
+              <span className="text-[#A9ADA5] bg-[#151C1E] px-2.5 py-1 rounded border border-[#567A87]/35 font-bold uppercase tracking-wider text-[11px] shadow-xs">
+                {locale === 'fr' ? 'ORGANISME:' : 'ISSUER:'} <span className="text-[#F4F1E8]">{selectedStandard.issuer || 'N/A'}</span>
               </span>
-              <span className="text-slate-400 bg-slate-950 px-2.5 py-1 rounded border border-slate-800 font-bold uppercase tracking-wider text-[11px] shadow-xs">
-                ÉDITION: <span className="text-white">{selectedStandard.edition || 'N/A'}</span>
+              <span className="text-[#A9ADA5] bg-[#151C1E] px-2.5 py-1 rounded border border-[#567A87]/35 font-bold uppercase tracking-wider text-[11px] shadow-xs">
+                {locale === 'fr' ? 'ÉDITION:' : 'EDITION:'} <span className="text-[#F4F1E8]">{selectedStandard.edition || 'N/A'}</span>
               </span>
               <span className="text-emerald-400 bg-emerald-950/40 px-2.5 py-1 rounded border border-emerald-800/60 font-bold uppercase tracking-wider text-[11px] flex items-center gap-1">
                 <CheckCircle2 className="h-3 w-3" />
@@ -640,7 +654,7 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
             </div>
           </div>
 
-          <h2 className="text-lg sm:text-xl font-black uppercase tracking-tight text-white font-mono">
+          <h2 className="text-lg sm:text-xl font-black uppercase tracking-tight text-[#F4F1E8] font-mono">
             {locale === 'fr' ? selectedStandard.title_fr : selectedStandard.title_en}
           </h2>
         </div>
@@ -650,23 +664,23 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
           
           {/* PÉRIMÈTRE / SCOPE */}
           <div>
-            <h3 className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+            <h3 className="text-xs font-mono font-bold text-[#D7A64A] uppercase tracking-widest mb-2 flex items-center gap-1.5">
               <span>📋</span> {locale === 'fr' ? 'PÉRIMÈTRE TECHNIQUE & OBJET DE LA NORME' : 'TECHNICAL SCOPE & MANDATE'}
             </h3>
-            <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 font-medium text-sm text-slate-300 leading-relaxed">
+            <div className="bg-[#0B0F12] p-5 rounded-xl border border-[#567A87]/30 font-medium text-sm text-[#F4F1E8] leading-relaxed">
               {locale === 'fr' ? selectedStandard.scope_fr : selectedStandard.scope_en}
             </div>
           </div>
 
           {/* ASSOCIATED COMPUTATIONAL ENGINES & SIMULATION LABS */}
           {(linkedCalc || linkedSim) && (
-            <div className="rounded-xl border border-cyan-800/60 bg-gradient-to-r from-cyan-950/30 via-[#080B10] to-blue-950/30 p-5">
+            <div className="rounded-xl border border-[#D7A64A]/35 bg-[#0B0F12] p-5">
               <div className="flex items-center justify-between gap-2 mb-3">
-                <h4 className="font-mono text-xs font-bold text-cyan-300 uppercase tracking-wider flex items-center gap-2">
-                  <Zap className="h-4 w-4 text-cyan-400 animate-pulse" />
+                <h4 className="font-mono text-xs font-bold text-[#D7A64A] uppercase tracking-wider flex items-center gap-2">
+                  <Zap className="h-4 w-4 text-[#D7A64A]" />
                   <span>{locale === 'fr' ? 'Moteurs de Calcul & Simulateurs Directement Associés' : 'Directly Linked Calculators & Simulation Labs'}</span>
                 </h4>
-                <span className="text-[10px] font-mono text-cyan-400/80 bg-cyan-950/50 border border-cyan-800/60 px-2 py-0.5 rounded font-bold uppercase">
+                <span className="text-[10px] font-mono text-[#D7A64A] bg-[#151C1E] border border-[#D7A64A]/40 px-2 py-0.5 rounded font-bold uppercase">
                   EPEDE COMPUTATIONAL SUITE
                 </span>
               </div>
@@ -676,19 +690,19 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
                   <button
                     type="button"
                     onClick={() => onNavigateCalculator(linkedCalc.tab)}
-                    className="flex items-start gap-3 p-3.5 rounded-xl bg-[#0D1117] hover:bg-[#131923] border border-cyan-900/60 hover:border-cyan-400 text-left transition-all group"
+                    className="flex items-start gap-3 p-3.5 rounded-xl bg-[#151C1E] hover:bg-[#151C1E]/80 border border-[#567A87]/35 hover:border-[#D7A64A] text-left transition-all group"
                   >
-                    <div className="p-2 rounded-lg bg-cyan-950/60 border border-cyan-800/80 text-cyan-400 shrink-0 group-hover:scale-105 transition-transform">
+                    <div className="p-2 rounded-lg bg-[#0B0F12] border border-[#D7A64A]/40 text-[#D7A64A] shrink-0 group-hover:scale-105 transition-transform">
                       <Calculator className="h-5 w-5" />
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5">
-                        <span className="font-mono text-xs font-bold text-white group-hover:text-cyan-300 transition-colors">
+                        <span className="font-mono text-xs font-bold text-[#F4F1E8] group-hover:text-[#D7A64A] transition-colors">
                           {linkedCalc.title}
                         </span>
-                        <ExternalLink className="h-3 w-3 text-cyan-400 opacity-60 group-hover:opacity-100" />
+                        <ExternalLink className="h-3 w-3 text-[#D7A64A] opacity-60 group-hover:opacity-100" />
                       </div>
-                      <p className="text-[11px] text-neutral-400 font-sans mt-0.5 line-clamp-2">
+                      <p className="text-[11px] text-[#A9ADA5] font-sans mt-0.5 line-clamp-2">
                         {linkedCalc.desc}
                       </p>
                     </div>
@@ -699,19 +713,19 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
                   <button
                     type="button"
                     onClick={() => onNavigateSimulation(linkedSim.tab)}
-                    className="flex items-start gap-3 p-3.5 rounded-xl bg-[#0D1117] hover:bg-[#131923] border border-blue-900/60 hover:border-blue-400 text-left transition-all group"
+                    className="flex items-start gap-3 p-3.5 rounded-xl bg-[#151C1E] hover:bg-[#151C1E]/80 border border-[#567A87]/35 hover:border-[#D7A64A] text-left transition-all group"
                   >
-                    <div className="p-2 rounded-lg bg-blue-950/60 border border-blue-800/80 text-blue-400 shrink-0 group-hover:scale-105 transition-transform">
+                    <div className="p-2 rounded-lg bg-[#0B0F12] border border-[#567A87]/40 text-[#F4F1E8] shrink-0 group-hover:scale-105 transition-transform">
                       <Activity className="h-5 w-5" />
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5">
-                        <span className="font-mono text-xs font-bold text-white group-hover:text-blue-300 transition-colors">
+                        <span className="font-mono text-xs font-bold text-[#F4F1E8] group-hover:text-[#D7A64A] transition-colors">
                           {linkedSim.title}
                         </span>
-                        <ExternalLink className="h-3 w-3 text-blue-400 opacity-60 group-hover:opacity-100" />
+                        <ExternalLink className="h-3 w-3 text-[#D7A64A] opacity-60 group-hover:opacity-100" />
                       </div>
-                      <p className="text-[11px] text-neutral-400 font-sans mt-0.5 line-clamp-2">
+                      <p className="text-[11px] text-[#A9ADA5] font-sans mt-0.5 line-clamp-2">
                         {linkedSim.desc}
                       </p>
                     </div>
@@ -725,15 +739,15 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
             
             {/* APPLICABLE À L'APPAREILLAGE */}
-            <div className="bg-[#080B10] p-5 rounded-xl border border-[#252E38] space-y-3">
-              <h4 className="font-bold text-xs text-white uppercase tracking-wider flex items-center gap-1.5 border-b border-[#252E38] pb-2">
-                <span className="text-cyan-400">⚡</span>
+            <div className="bg-[#0B0F12] p-5 rounded-xl border border-[#567A87]/30 space-y-3">
+              <h4 className="font-bold text-xs text-[#F4F1E8] uppercase tracking-wider flex items-center gap-1.5 border-b border-[#567A87]/25 pb-2">
+                <span className="text-[#D7A64A]">⚡</span>
                 <span>{locale === 'fr' ? 'APPAREILLAGES ASSOCIÉS' : 'EQUIPMENT FOCUS'}</span>
               </h4>
-              <ul className="space-y-2 text-neutral-300 font-sans">
+              <ul className="space-y-2 text-[#A9ADA5] font-sans">
                 {selectedStandard.applicable_equipment.map((item) => (
                   <li key={item} className="flex items-start gap-2">
-                    <span className="text-cyan-400 font-mono font-bold">▪</span>
+                    <span className="text-[#D7A64A] font-mono font-bold">▪</span>
                     <span>{item}</span>
                   </li>
                 ))}
@@ -741,15 +755,15 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
             </div>
 
             {/* UTILISÉ PAR LES MÉTIERS */}
-            <div className="bg-[#080B10] p-5 rounded-xl border border-[#252E38] space-y-3">
-              <h4 className="font-bold text-xs text-white uppercase tracking-wider flex items-center gap-1.5 border-b border-[#252E38] pb-2">
-                <span className="text-sky-400">👷</span>
+            <div className="bg-[#0B0F12] p-5 rounded-xl border border-[#567A87]/30 space-y-3">
+              <h4 className="font-bold text-xs text-[#F4F1E8] uppercase tracking-wider flex items-center gap-1.5 border-b border-[#567A87]/25 pb-2">
+                <span className="text-[#D7A64A]">👷</span>
                 <span>{locale === 'fr' ? 'UTILISÉ PAR LES INGÉNIEURS' : 'USER DISCIPLINES'}</span>
               </h4>
-              <ul className="space-y-2 text-neutral-300 font-sans">
+              <ul className="space-y-2 text-[#A9ADA5] font-sans">
                 {selectedStandard.used_by_roles.map((role) => (
                   <li key={role} className="flex items-start gap-2">
-                    <span className="text-sky-400 font-mono font-bold">▪</span>
+                    <span className="text-[#D7A64A] font-mono font-bold">▪</span>
                     <span>{role}</span>
                   </li>
                 ))}
@@ -757,17 +771,17 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
             </div>
 
             {/* JURIDICTION & DOMAINES EPEDE */}
-            <div className="bg-[#080B10] p-5 rounded-xl border border-[#252E38] space-y-3">
-              <h4 className="font-bold text-xs text-white uppercase tracking-wider flex items-center gap-1.5 border-b border-[#252E38] pb-2">
-                <span className="text-amber-400">⚖️</span>
+            <div className="bg-[#0B0F12] p-5 rounded-xl border border-[#567A87]/30 space-y-3">
+              <h4 className="font-bold text-xs text-[#F4F1E8] uppercase tracking-wider flex items-center gap-1.5 border-b border-[#567A87]/25 pb-2">
+                <span className="text-[#D7A64A]">⚖️</span>
                 <span>{locale === 'fr' ? 'JURIDICTION & DOMAINES' : 'JURISDICTION & CODES'}</span>
               </h4>
-              <p className="text-neutral-300 font-sans leading-relaxed text-xs">
+              <p className="text-[#A9ADA5] font-sans leading-relaxed text-xs">
                 {selectedStandard.jurisdiction}
               </p>
               
               <div className="pt-2">
-                <span className="text-[11px] text-neutral-500 font-bold block mb-1.5 uppercase">
+                <span className="text-[11px] text-[#A9ADA5] font-bold block mb-1.5 uppercase">
                   {locale === 'fr' ? 'Domaines EPEDE couverts :' : 'Covered EPEDE Domains:'}
                 </span>
                 <div className="flex flex-wrap gap-1.5">
@@ -776,7 +790,7 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
                       key={code}
                       type="button"
                       onClick={() => onNavigateDomain(code)}
-                      className="font-mono text-xs font-bold bg-[#0D1117] text-cyan-300 hover:text-white hover:border-cyan-400 px-2.5 py-1 rounded-md border border-[#252E38] transition-colors"
+                      className="font-mono text-xs font-bold bg-[#151C1E] text-[#D7A64A] hover:text-[#F4F1E8] hover:border-[#D7A64A] px-2.5 py-1 rounded-md border border-[#567A87]/35 transition-colors"
                     >
                       {code}
                     </button>
@@ -788,21 +802,21 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
           </div>
 
           {/* INTERACTIVE FAT / SAT TESTING & AUDIT VERIFICATION PROTOCOL */}
-          <div className="rounded-xl border border-[#252E38] bg-[#080B10] overflow-hidden">
+          <div className="rounded-xl border border-[#567A87]/35 bg-[#0B0F12] overflow-hidden">
             
             {/* Audit Toolbar & Compliance Gauge */}
-            <div className="border-b border-[#252E38] p-5 bg-[#0D1117] flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="border-b border-[#567A87]/25 p-5 bg-[#151C1E] flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-mono font-black text-white uppercase tracking-wider flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-cyan-400" />
+                  <h3 className="text-sm font-mono font-black text-[#F4F1E8] uppercase tracking-wider flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-[#D7A64A]" />
                     <span>{locale === 'fr' ? 'Guide d\'Auto-Évaluation Normative (FAT / SAT & Conception)' : 'Normative Self-Evaluation Guide (FAT / SAT & Design)'}</span>
                   </h3>
-                  <span className="font-mono text-[11px] text-cyan-400 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800/80 font-bold">
+                  <span className="font-mono text-[11px] text-[#D7A64A] bg-[#0B0F12] px-2 py-0.5 rounded border border-[#D7A64A]/40 font-bold">
                     {totalClauses} {locale === 'fr' ? 'POINTS DE CONTRÔLE' : 'CHECKPOINTS'}
                   </span>
                 </div>
-                <p className="text-xs text-neutral-400 font-sans mt-1">
+                <p className="text-xs text-[#A9ADA5] font-sans mt-1">
                   {locale === 'fr'
                     ? 'Aide-mémoire interactif des clauses normatives avec critères d\'acceptabilité. Outil indicatif non opposable comme procès-verbal officiel ou certification réglementaire.'
                     : 'Interactive normative clause guide with tolerance criteria. Pedagogical reference not legally binding as official certification.'}
@@ -811,19 +825,19 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
 
               {/* Compliance Rating Meter */}
               <div className="flex flex-wrap items-center gap-3">
-                <div className="bg-[#080B10] border border-[#252E38] rounded-xl px-4 py-2 text-right">
-                  <div className="font-mono text-[10px] text-neutral-400 uppercase font-bold tracking-wider">
+                <div className="bg-[#0B0F12] border border-[#567A87]/35 rounded-xl px-4 py-2 text-right">
+                  <div className="font-mono text-[10px] text-[#A9ADA5] uppercase font-bold tracking-wider">
                     {locale === 'fr' ? 'SCORE D\'AUTO-ÉVALUATION' : 'SELF-EVALUATION SCORE'}
                   </div>
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className={`font-mono text-base font-black ${
                       compliancePercentage === 100 ? 'text-emerald-400' :
-                      compliancePercentage >= 75 ? 'text-cyan-400' :
+                      compliancePercentage >= 75 ? 'text-[#D7A64A]' :
                       compliancePercentage >= 50 ? 'text-amber-400' : 'text-rose-400'
                     }`}>
                       {compliancePercentage}%
                     </span>
-                    <span className="text-[11px] font-mono text-neutral-400">
+                    <span className="text-[11px] font-mono text-[#A9ADA5]">
                       ({passedClauses}/{applicableTotal} {locale === 'fr' ? 'validés' : 'pass'})
                     </span>
                   </div>
@@ -832,16 +846,16 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
                 <button
                   type="button"
                   onClick={handleExportAuditReport}
-                  className="px-3.5 py-2 rounded-xl text-xs font-mono font-bold uppercase tracking-wider bg-cyan-500 hover:bg-cyan-400 text-black flex items-center gap-2 shadow-md transition-all active:scale-95"
+                  className="px-3.5 py-2 rounded-xl text-xs font-mono font-bold uppercase tracking-wider bg-[#D7A64A] hover:bg-[#e3b55a] text-[#0B0F12] flex items-center gap-2 shadow-md transition-all active:scale-95"
                 >
                   {copiedReport ? (
                     <>
-                      <Check className="h-4 w-4 text-black" />
+                      <Check className="h-4 w-4 text-[#0B0F12]" />
                       <span>{locale === 'fr' ? 'FICHE COPIÉE !' : 'REPORT COPIED!'}</span>
                     </>
                   ) : (
                     <>
-                      <Download className="h-4 w-4 text-black" />
+                      <Download className="h-4 w-4 text-[#0B0F12]" />
                       <span>{locale === 'fr' ? 'EXPORTER LA FICHE' : 'EXPORT SUMMARY'}</span>
                     </>
                   )}
@@ -850,9 +864,9 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
             </div>
 
             {/* Quick Actions & Category Filter Chips */}
-            <div className="p-4 border-b border-[#252E38] bg-[#0A0E14] flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+            <div className="p-4 border-b border-[#567A87]/25 bg-[#0B0F12] flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-neutral-500 font-bold uppercase">{locale === 'fr' ? 'FILTRE TYPE :' : 'TEST TYPE:'}</span>
+                <span className="text-[#A9ADA5] font-bold uppercase">{locale === 'fr' ? 'FILTRE TYPE :' : 'TEST TYPE:'}</span>
                 {['ALL', 'routine_test', 'type_test', 'special_test', 'design_rule', 'safety_rule'].map(cat => {
                   const label = cat === 'ALL' ? (locale === 'fr' ? 'TOUTES LES CLAUSES' : 'ALL CLAUSES') :
                                 cat === 'routine_test' ? (locale === 'fr' ? 'ESSAIS DE SÉRIE' : 'ROUTINE TESTS') :
@@ -867,8 +881,8 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
                       onClick={() => setClauseCategoryFilter(cat)}
                       className={`px-2.5 py-1 rounded-md text-[11px] font-mono font-bold transition-colors border ${
                         clauseCategoryFilter === cat 
-                          ? 'border-cyan-400 bg-cyan-400/10 text-cyan-300'
-                          : 'border-[#252E38] bg-[#080B10] text-neutral-400 hover:text-white'
+                          ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A]'
+                          : 'border-[#567A87]/30 bg-[#151C1E] text-[#A9ADA5] hover:text-[#F4F1E8]'
                       }`}
                     >
                       {label}
@@ -888,7 +902,7 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
                 <button
                   type="button"
                   onClick={() => handleMarkAllClauses('pending')}
-                  className="text-[11px] text-neutral-400 hover:text-white font-bold px-2 py-1 rounded border border-[#252E38] bg-[#080B10] transition-colors flex items-center gap-1"
+                  className="text-[11px] text-[#A9ADA5] hover:text-[#F4F1E8] font-bold px-2 py-1 rounded border border-[#567A87]/35 bg-[#151C1E] transition-colors flex items-center gap-1"
                 >
                   <RotateCcw className="h-3 w-3" />
                   <span>{locale === 'fr' ? 'RÉINITIALISER' : 'RESET'}</span>

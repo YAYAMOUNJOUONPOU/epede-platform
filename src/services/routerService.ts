@@ -131,7 +131,7 @@ export const CALCULATOR_TAB_TO_SLUG_FR: Record<CalculatorTabType, string> = {
 export function parseRouteHash(hash: string): RouteState {
   const cleanRaw = hash.replace(/^#\/?/, '').trim();
   if (!cleanRaw || cleanRaw === 'home') {
-    return { view: 'home', lang: 'fr' };
+    return { view: 'home', lang: 'en' };
   }
 
   // Extract query parameters if any (e.g. ?data=... or ?p=...)
@@ -146,11 +146,14 @@ export function parseRouteHash(hash: string): RouteState {
   }
 
   let parts = routePart.split('/').map((p) => decodeURIComponent(p));
-  let detectedLang: 'fr' | 'en' = 'fr';
+  let detectedLang: 'fr' | 'en' = 'en';
 
-  // Check language prefix #/en/...
+  // Check language prefix #/en/... or #/fr/...
   if (parts[0] === 'en') {
     detectedLang = 'en';
+    parts.shift();
+  } else if (parts[0] === 'fr') {
+    detectedLang = 'fr';
     parts.shift();
   }
 
@@ -213,6 +216,7 @@ export function parseRouteHash(hash: string): RouteState {
       return { view: 'equipment-list', lang: detectedLang };
 
     case 'equipment-reference':
+    case 'referentiel-materiel':
       return {
         view: 'equipment-reference',
         lang: detectedLang,
@@ -415,7 +419,7 @@ export function buildRouteHash(state: RouteState, localeOverride?: 'fr' | 'en'):
       return state.equipmentId ? `${eqBase}/${encodeURIComponent(state.equipmentId)}` : eqBase;
 
     case 'equipment-reference':
-      const refBase = isEn ? `${prefix}/equipment-reference` : `${prefix}/materiel`;
+      const refBase = isEn ? `${prefix}/equipment-reference` : `${prefix}/referentiel-materiel`;
       return state.equipmentId ? `${refBase}/${encodeURIComponent(state.equipmentId)}` : refBase;
 
     case 'domains':

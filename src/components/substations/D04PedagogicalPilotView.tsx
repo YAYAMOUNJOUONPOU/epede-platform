@@ -92,7 +92,7 @@ export const D04PedagogicalPilotView: React.FC<D04PedagogicalPilotViewProps> = (
       voltage: 'Ur = 198 kV • Classe 4',
       roleFr: 'Protection du matériel contre les surtensions d\'origine atmosphérique (foudre) et de manœuvre.',
       roleEn: 'Equipment protection against lightning strikes and switching overvoltages.',
-      imgUrl: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=800&q=80',
+      imgUrl: 'https://images.unsplash.com/photo-1509390144018-eeaf65052242?auto=format&fit=crop&w=800&q=80',
       symbol: 'F1',
       standard: 'CEI 60099-4',
       calcTab: 'surge-arrester' as CalculatorTabType,
@@ -571,7 +571,7 @@ export const D04PedagogicalPilotView: React.FC<D04PedagogicalPilotViewProps> = (
                 </div>
                 <button
                   type="button"
-                  onClick={() => onNavigateSimulation?.('differential')}
+                  onClick={() => onNavigateSimulation?.('differential-protection')}
                   className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold flex items-center gap-1.5 transition-colors self-start"
                 >
                   <Activity className="w-3.5 h-3.5" />

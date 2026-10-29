@@ -240,8 +240,8 @@ export const Header: React.FC<HeaderProps> = ({
       id="epede-minimal-header"
       className={`sticky top-0 z-40 w-full transition-all duration-300 specular-border ${
         isScrolled
-          ? 'bg-[#030712]/95 backdrop-blur-xl border-b border-white/[0.08] shadow-[0_8px_30px_rgba(0,0,0,0.6)] py-2'
-          : 'bg-[#030712]/80 backdrop-blur-lg border-b border-white/[0.06] shadow-sm py-2.5 sm:py-3'
+          ? 'bg-[#0B0F12]/95 backdrop-blur-xl border-b border-[#567A87]/30 shadow-[0_8px_30px_rgba(0,0,0,0.6)] py-2'
+          : 'bg-[#0B0F12]/90 backdrop-blur-lg border-b border-[#567A87]/20 shadow-sm py-2.5 sm:py-3'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-4">
@@ -251,14 +251,14 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={handleToggle}
-            aria-label={locale === 'fr' ? 'Afficher/Masquer le volet' : 'Toggle panel'}
-            title={locale === 'fr' ? 'Afficher/Masquer le volet' : 'Toggle panel'}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900/90 border border-slate-800/80 hover:border-amber-500/40 transition-all cursor-pointer shadow-xs active:scale-95"
+            aria-label={locale === 'fr' ? 'Afficher/Masquer le volet' : 'Toggle navigation menu'}
+            title={locale === 'fr' ? 'Afficher/Masquer le volet' : 'Toggle navigation menu'}
+            className="p-2 rounded-xl text-[#A9ADA5] hover:text-[#F4F1E8] hover:bg-[#151C1E] border border-[#567A87]/30 hover:border-[#D7A64A]/60 transition-all cursor-pointer shadow-xs active:scale-95"
           >
             {isSidebarOpen ? (
-              <PanelLeftClose className="h-4 w-4 text-amber-400" />
+              <PanelLeftClose className="h-4 w-4 text-[#D7A64A]" />
             ) : (
-              <PanelLeftOpen className="h-4 w-4 text-slate-300" />
+              <PanelLeftOpen className="h-4 w-4 text-[#F4F1E8]" />
             )}
           </button>
 
@@ -272,34 +272,31 @@ export const Header: React.FC<HeaderProps> = ({
             }}
             className="flex items-center gap-3 text-left group focus:outline-none cursor-pointer select-none no-underline"
           >
-            <div className="relative flex items-center justify-center h-9 w-9 rounded-xl bg-gradient-to-br from-amber-500/25 via-slate-900 to-slate-950 border border-amber-500/50 group-hover:border-amber-400 group-hover:shadow-[0_0_18px_rgba(245,158,11,0.45)] transition-all shadow-md shrink-0">
-              <span className="font-mono font-black text-sm text-amber-400 group-hover:scale-110 transition-transform">
+            <div className="relative flex items-center justify-center h-9 w-9 rounded-xl bg-[#151C1E] border border-[#D7A64A]/60 group-hover:border-[#D7A64A] transition-all shadow-md shrink-0">
+              <span className="font-mono font-black text-sm text-[#D7A64A] group-hover:scale-105 transition-transform">
                 E⚡
               </span>
-              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 animate-ping opacity-75" />
-              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400" />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-base sm:text-lg font-black tracking-tight uppercase text-white font-display leading-none group-hover:text-amber-400 transition-colors">
+                <span className="text-base sm:text-lg font-black tracking-tight uppercase text-[#F4F1E8] font-display leading-none group-hover:text-[#D7A64A] transition-colors">
                   EPEDE
                 </span>
-                <span className="hidden sm:inline-flex items-center gap-1 font-mono text-[9px] uppercase font-bold text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/30 shadow-xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-                  DIGITAL GRID
+                <span className="hidden sm:inline-flex items-center gap-1 font-mono text-[9px] uppercase font-bold text-[#D7A64A] bg-[#D7A64A]/10 px-2 py-0.5 rounded-full border border-[#D7A64A]/30">
+                  POWER SYSTEMS
                 </span>
               </div>
-              <p className="text-[9px] text-slate-400 uppercase tracking-tight font-mono hidden md:block leading-tight mt-0.5 truncate max-w-[280px]">
+              <p className="text-[9px] text-[#A9ADA5] uppercase tracking-tight font-mono hidden md:block leading-tight mt-0.5 truncate max-w-[290px]">
                 Electrical Power Engineering Digital Environment
               </p>
             </div>
           </a>
         </div>
 
-        {/* Center: 5 Core Doors per Audit Report + Systems Dropdown + Search + About */}
-        <nav className="hidden md:flex items-center gap-1.5 lg:gap-2 font-mono text-xs font-semibold text-slate-300">
+        {/* Center: Primary Knowledge Navigation */}
+        <nav className="hidden md:flex items-center gap-1.5 lg:gap-2 font-mono text-xs font-semibold text-[#A9ADA5]">
           
-          {/* 1. DOMAINES */}
+          {/* 1. KNOWLEDGE LIBRARY (DOMAINS) */}
           <a
             href="#/domains"
             onClick={(e) => {
@@ -310,14 +307,14 @@ export const Header: React.FC<HeaderProps> = ({
             }}
             className={`px-3 py-1.5 rounded-xl transition-all select-none no-underline ${
               currentView === 'domains' || currentView === 'domain'
-                ? 'text-amber-300 bg-amber-500/15 border border-amber-500/40 font-bold shadow-sm shadow-amber-500/20'
-                : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800'
+                ? 'text-[#0B0F12] bg-[#D7A64A] font-bold shadow-sm'
+                : 'text-[#F4F1E8] hover:text-[#D7A64A] hover:bg-[#151C1E] border border-transparent hover:border-[#567A87]/40'
             }`}
           >
-            {locale === 'fr' ? 'DOMAINES' : 'DOMAINS'}
+            {locale === 'fr' ? 'DOMAINES' : 'KNOWLEDGE LIBRARY'}
           </a>
 
-          {/* 2. MATÉRIEL */}
+          {/* 2. EQUIPMENT ATLAS */}
           <a
             href="#/equipment"
             onClick={(e) => {
@@ -328,54 +325,14 @@ export const Header: React.FC<HeaderProps> = ({
             }}
             className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 select-none no-underline ${
               currentView === 'equipment-reference' || currentView === 'equipment' || currentView === 'equipment-list'
-                ? 'text-amber-300 bg-amber-500/15 border border-amber-500/40 font-bold shadow-sm shadow-amber-500/20'
-                : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800'
+                ? 'text-[#0B0F12] bg-[#D7A64A] font-bold shadow-sm'
+                : 'text-[#F4F1E8] hover:text-[#D7A64A] hover:bg-[#151C1E] border border-transparent hover:border-[#567A87]/40'
             }`}
           >
             <span>{locale === 'fr' ? 'MATÉRIEL' : 'EQUIPMENT'}</span>
-            <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 font-black border border-amber-500/40">
-              39
-            </span>
           </a>
 
-          {/* 3. CENTRE DE RÉFÉRENCE (Plaques, 19 Calculateurs, Labs) */}
-          <a
-            href="#/centre-reference"
-            onClick={(e) => {
-              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
-                e.preventDefault();
-                navigateTo('reference-hub');
-              }
-            }}
-            className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 select-none no-underline ${
-              currentView === 'reference-hub' || currentView === 'calculators'
-                ? 'text-cyan-300 bg-cyan-950/90 border border-cyan-500/70 font-bold shadow-md shadow-cyan-500/25 ring-1 ring-cyan-500/30'
-                : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800'
-            }`}
-          >
-            <span className="text-cyan-400">⚡</span>
-            <span>{locale === 'fr' ? 'RÉFÉRENCE & CALCULS' : 'REFERENCE & SOLVERS'}</span>
-          </a>
-
-          {/* 4. NORMES */}
-          <a
-            href="#/standards"
-            onClick={(e) => {
-              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
-                e.preventDefault();
-                navigateTo('standards');
-              }
-            }}
-            className={`px-3 py-1.5 rounded-xl transition-all select-none no-underline ${
-              currentView === 'standards'
-                ? 'text-amber-300 bg-amber-500/15 border border-amber-500/40 font-bold shadow-sm shadow-amber-500/20'
-                : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800'
-            }`}
-          >
-            {locale === 'fr' ? 'NORMES' : 'STANDARDS'}
-          </a>
-
-          {/* 5. RÉSEAU CAMEROUN */}
+          {/* 3. CAMEROON POWER NETWORK */}
           <a
             href="#/cameroon-grid"
             onClick={(e) => {
@@ -386,11 +343,47 @@ export const Header: React.FC<HeaderProps> = ({
             }}
             className={`px-3 py-1.5 rounded-xl transition-all select-none no-underline ${
               currentView === 'cameroon-grid'
-                ? 'text-emerald-300 bg-emerald-950/80 border border-emerald-500/60 font-bold shadow-sm shadow-emerald-500/20'
-                : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800'
+                ? 'text-[#0B0F12] bg-[#D7A64A] font-bold shadow-sm'
+                : 'text-[#F4F1E8] hover:text-[#D7A64A] hover:bg-[#151C1E] border border-transparent hover:border-[#567A87]/40'
             }`}
           >
             <span>{locale === 'fr' ? 'RÉSEAU CAMEROUN' : 'CAMEROON GRID'}</span>
+          </a>
+
+          {/* 4. STANDARDS */}
+          <a
+            href="#/standards"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                navigateTo('standards');
+              }
+            }}
+            className={`px-3 py-1.5 rounded-xl transition-all select-none no-underline ${
+              currentView === 'standards'
+                ? 'text-[#0B0F12] bg-[#D7A64A] font-bold shadow-sm'
+                : 'text-[#F4F1E8] hover:text-[#D7A64A] hover:bg-[#151C1E] border border-transparent hover:border-[#567A87]/40'
+            }`}
+          >
+            {locale === 'fr' ? 'NORMES' : 'STANDARDS'}
+          </a>
+
+          {/* 5. REFERENCE HUB */}
+          <a
+            href="#/centre-reference"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                navigateTo('reference-hub');
+              }
+            }}
+            className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 select-none no-underline ${
+              currentView === 'reference-hub' || currentView === 'calculators'
+                ? 'text-[#0B0F12] bg-[#D7A64A] font-bold shadow-sm'
+                : 'text-[#F4F1E8] hover:text-[#D7A64A] hover:bg-[#151C1E] border border-transparent hover:border-[#567A87]/40'
+            }`}
+          >
+            <span>{locale === 'fr' ? 'RÉFÉRENCE' : 'REFERENCE HUB'}</span>
           </a>
 
           {/* SYSTEMS Dropdown */}

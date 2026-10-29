@@ -239,7 +239,7 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
           'Nominal air/water cooling conditions.',
           'Minimum 10% steady-state stability margin.'
         ],
-        simTab: 'stability'
+        simTab: 'transient-stability'
       },
       {
         id: 'generator_fault',
@@ -372,7 +372,7 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         roleEn: 'High-current bulk power transport with minimized line resistive losses.',
         symbol: 'COND',
         standard: 'CEI 61089',
-        imgUrl: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=800&q=80',
+        imgUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
         calcTab: 'cable-ampacity'
       }
     ],
@@ -688,6 +688,11 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         desc: 'Parcs de production hydraulique/thermique, prévisions d\'évolution de la demande de pointe industrielle et urbaine.',
         voltage: 'Réseaux HTB 225 kV & 90 kV'
       },
+      inputsEn: {
+        title: 'Generation Fleet & Demand Forecasts',
+        desc: 'Hydro/thermal power plant dispatch capacities and long-term urban/industrial peak load forecasts.',
+        voltage: '225 kV & 90 kV HV Networks'
+      },
       processFr: {
         title: 'Résolution des Équations Nodales & Stabilité',
         desc: 'Calcul itératif de Newton-Raphson pour déterminer les modules et phases des tensions aux nœuds, transits sur lignes et marges de stabilité.',
@@ -808,7 +813,7 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         titleEn: 'Newton-Raphson Power Flow Formulation',
         descFr: 'Permet de calculer les puissances actives et réactives transitant par chaque ligne à partir de la matrice d\'admittance nodale.',
         descEn: 'Calculates active and reactive power flows through every branch using the nodal admittance matrix.',
-        formula: 'P_i = \\sum_{j=1}^{N} |V_i| |V_j| (G_{ij} \\cos \\theta_{ij} + B_{ij} \\sin \\theta_{ij})',
+        formula: 'P_i = Σ |V_i| · |V_j| · (G_ij · cos θ_ij + B_ij · sin θ_ij)',
         formulaDescFr: 'Avec Vi le module de tension au nœud i, Gij et Bij la conductance et susceptance de la branche, et θij la différence angulaire.',
         formulaDescEn: 'With Vi the voltage magnitude at bus i, Gij and Bij line conductance/susceptance, and θij voltage angle difference.',
         assumptionsFr: [
@@ -823,7 +828,7 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
           'Generator buses specified by active power P and voltage magnitude V (PV buses).',
           'Load buses defined by active power P and reactive power Q (PQ buses).'
         ],
-        simTab: 'transmission-grid'
+        simTab: 'ferranti'
       },
       {
         id: 'scc_bus_calc',
@@ -833,7 +838,7 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         titleEn: 'Grid Node Short-Circuit Capacity per IEC 60909',
         descFr: 'Caractérise la "raideur" du réseau au point de livraison et détermine le pouvoir de coupure requis des disjoncteurs.',
         descEn: 'Defines grid electrical stiffness at the connection point and sets minimum switchgear breaking capacity.',
-        formula: 'S_{cc} = \\sqrt{3} \\cdot U_n \\cdot I_{cc}\'\' = \\frac{c \\cdot U_n^2}{Z_{th}}',
+        formula: 'S_cc = √3 · U_n · I"k = (c · U_n²) / Z_th',
         formulaDescFr: 'Avec Un tension nominale entre phases, Icc" courant de court-circuit initial symétrique, et Zth impédance équivalente Thévenin.',
         formulaDescEn: 'With Un nominal line-to-line voltage, Icc" initial subtransient fault current, and Zth Thevenin equivalent grid impedance.',
         assumptionsFr: [
@@ -879,6 +884,11 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         title: 'Arrivée HTA/BT ou Groupe Secours',
         desc: 'Secondaire du transformateur HTA/BT (ex: 30 kV / 400 V Dyn11) et basculement automatique groupe électrogène / inverseur Normal-Secours.',
         voltage: '400 V Triphasé / 230 V Monophasé • 50 Hz'
+      },
+      inputsEn: {
+        title: 'MV/LV Transformer Secondary or Standby Genset',
+        desc: 'MV/LV distribution transformer secondary (e.g., 30 kV / 400 V Dyn11) with Automatic Transfer Switch (ATS) standby diesel generator.',
+        voltage: '400 V 3-Phase / 230 V 1-Phase • 50 Hz'
       },
       processFr: {
         title: 'TGBT & Maîtrise des Régimes de Neutre (SLT)',
@@ -963,7 +973,7 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         symbol: 'DDR',
         standard: 'CEI 61008-1',
         imgUrl: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?auto=format&fit=crop&w=800&q=80',
-        calcTab: 'rcd-sensitivity'
+        calcTab: 'earthing'
       },
       {
         id: 'eq-exp-cpi-monitor',
@@ -985,8 +995,8 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         roleEn: 'Total physical segregation between busbars, functional units, and external cable terminations.',
         symbol: 'TGBT',
         standard: 'CEI 61439-1/2',
-        imgUrl: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=800&q=80',
-        calcTab: 'busbar-sizing'
+        imgUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'busbar-electrodynamic'
       }
     ],
     sectionD: [
@@ -1035,7 +1045,7 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         titleEn: 'Touch Voltage Threshold & RCD Sensitivity in TT System',
         descFr: 'Garantit que lors d\'un défaut d\'isolement, la carcasse métallique ne peut être portée à un potentiel dangereux pour l\'homme.',
         descEn: 'Guarantees that on an insulation fault, equipment frames will not exceed conventional safety voltage limits.',
-        formula: 'R_A \\cdot I_{\\Delta n} \\le U_L',
+        formula: 'R_A · I_Δn ≤ U_L',
         formulaDescFr: 'Avec RA résistance de la prise de terre des masses réceptrices (Ω), IΔn sensibilité différentielle du DDR (A), et UL tension limite (50 V en local sec, 25 V en local mouillé).',
         formulaDescEn: 'With RA earth electrode resistance (Ω), IΔn RCD sensitivity (A), and UL limit (50 V dry premises, 25 V wet environments).',
         assumptionsFr: [
@@ -1048,7 +1058,7 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
           'Stricter touch limit UL = 25 V in damp/wet premises.',
           'For a 100 Ω ground rod, maximum allowable upstream RCD rating is 500 mA.'
         ],
-        calcTab: 'rcd-sensitivity'
+        calcTab: 'earthing'
       },
       {
         id: 'cable_voltage_drop_lv',
@@ -1058,7 +1068,7 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         titleEn: 'Three-Phase & Single-Phase Voltage Drop Calculation',
         descFr: 'Vérifie que la chute de tension relative entre l\'origine de l\'installation et l\'appareil terminal respecte les seuils normatifs.',
         descEn: 'Verifies that total relative voltage sag from installation source to load does not exceed statutory limits.',
-        formula: '\\Delta U = b \\cdot \\left( \\frac{\\rho \\cdot L}{S} \\cos \\varphi + \\lambda \\cdot L \\sin \\varphi \\right) \\cdot I_b',
+        formula: 'ΔU = b · ( (ρ · L / S) · cos φ + λ · L · sin φ ) · I_b',
         formulaDescFr: 'Avec b = 1 en triphasé équilibré (b = 2 en monophasé), ρ = 0.023 Ω·mm²/m pour le cuivre, L longueur en m, S section en mm², et λ = 0.08 mΩ/m.',
         formulaDescEn: 'With b = 1 for 3-phase (b = 2 for single-phase), ρ = 0.023 for copper, L length in meters, S section in mm², and λ = 0.08 mΩ/m.',
         assumptionsFr: [
@@ -1094,9 +1104,9 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
     ]
   },
 
-  // D07: Protections Numériques & Sécurité des Réseaux
-  D07: {
-    domainCode: 'D07',
+  // D11: Protections, Mesures & Études de Réseau
+  D11: {
+    domainCode: 'D11',
     sectionA: {
       roleFr: "Détection ultra-rapide des défauts (courts-circuits, surcharges, rupture d'isolement) et déclenchement sélectif pour isoler la zone défaillante en préservant le reste du réseau.",
       roleEn: 'Ultra-fast electrical fault detection and selective tripping to clear disturbances while maintaining systemwide grid stability.',
@@ -1104,6 +1114,11 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         title: 'Réducteurs de Mesure TC & TT',
         desc: 'Signaux analogiques secondaires 1 A / 5 A (Transformateurs de Courant) et 100 V / 110 V (Transformateurs de Tension).',
         voltage: 'Secondaires normalisés 1A/5A et 100V'
+      },
+      inputsEn: {
+        title: 'CT & VT Instrument Transformers',
+        desc: 'Standardized secondary analog signals 1 A / 5 A (Current Transformers) and 100 V / 110 V (Voltage Transformers).',
+        voltage: 'Standardized 1A/5A & 100V secondaries'
       },
       processFr: {
         title: 'Algorithmes Numériques ANSI (50/51/87/21)',
@@ -1137,7 +1152,7 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
           techEn: 'Direct vectorial comparison of incoming vs outgoing zone currents',
           descFr: 'Instantanée et strictement sélective : ne déclenche que pour les défauts situés à l\'intérieur de sa zone délimitée par les TC.',
           descEn: 'Instantaneous and strictly selective: operates solely on internal faults within current transformer boundaries.',
-          standard: 'CEI 60255-151',
+          standard: 'CEI 60255-187',
           metricFr: 'Temps d\'action : 15 à 25 ms',
           metricEn: 'Operating time: 15 to 25 ms'
         },
@@ -1165,7 +1180,7 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         symbol: 'F-87T',
         standard: 'CEI 60255-1',
         imgUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80',
-        calcTab: 'protection'
+        calcTab: 'relay-tcc'
       },
       {
         id: 'eq-exp-ct-5p20',
@@ -1226,7 +1241,7 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         titleEn: 'Universal Inverse Definite Minimum Time Equation per IEC 60255-151',
         descFr: 'Plus le courant de défaut est intense, plus le relais déclenche rapidement, assurant une sélectivité naturelle avec l\'amont.',
         descEn: 'Tripping delay shortens automatically as fault magnitude rises, creating natural discrimination.',
-        formula: 't = TMS \\cdot \\left[ \\frac{k}{\\left( \\frac{I}{I_s} \\right)^\\alpha - 1} \\right]',
+        formula: 't = TMS · [ k / ((I / I_s)^α - 1) ]',
         formulaDescFr: 'Pour courbe Normalement Inverse CEI : k = 0.14, α = 0.02. Avec TMS le facteur de réglage temporel et Is le seuil de courant.',
         formulaDescEn: 'For IEC Standard Inverse curve: k = 0.14, α = 0.02. With TMS time multiplier setting and Is pickup current.',
         assumptionsFr: [
@@ -1239,7 +1254,7 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
           'TMS factor calibrated between 0.05 and 1.20.',
           'Relay reset dynamics taken into account during auto-reclose cycles.'
         ],
-        calcTab: 'protection'
+        calcTab: 'relay-tcc'
       },
       {
         id: 'ct_kneepoint_formula',
@@ -1249,7 +1264,7 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         titleEn: 'Current Transformer Saturation Knee-Point Sizing',
         descFr: 'Garantit que le TC ne saturera pas lors du premier cycle de court-circuit asymétrique.',
         descEn: 'Guarantees that the CT core will not saturate during initial asymmetrical subtransient fault peaks.',
-        formula: 'V_k \\ge K_{td} \\cdot \\frac{I_{cc\\max}}{I_{1n}} \\cdot \\left( R_{ct} + R_w + R_b \\right)',
+        formula: 'V_k ≥ K_td · (I_cc_max / I_1n) · (R_ct + R_w + R_b)',
         formulaDescFr: 'Avec Ktd facteur de surdimensionnement transitoire, Rct résistance interne de l\'enroulement secondaire, Rw résistance de filerie, et Rb fardeau du relais.',
         formulaDescEn: 'With Ktd transient dimensioning factor, Rct secondary winding resistance, Rw lead resistance, and Rb connected relay burden.',
         assumptionsFr: [
@@ -1285,9 +1300,9 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
     ]
   },
 
-  // D08: SCADA, Téléconduite & CEI 61850
-  D08: {
-    domainCode: 'D08',
+  // D12: Téléconduite, SAS & Contrôle-Commande de Poste (et D13 CEI 61850)
+  D12: {
+    domainCode: 'D12',
     sectionA: {
       roleFr: "Supervision en temps réel des réseaux, télémesures analogiques, télécommandes d'appareillage et communication inter-équipements par protocole CEI 61850.",
       roleEn: 'Real-time grid supervision, analog telemetering, remote equipment control, and substation interoperability via IEC 61850 protocols.',
@@ -1295,6 +1310,11 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         title: 'Signaux d\'Organes & Télémesures',
         desc: 'Contacts de fin de course (position disjoncteur/sectionneur), grandeurs analogiques P, Q, U, I, f, et niveaux d\'huile/pression SF6.',
         voltage: 'Signaux numériques optiques & 48 Vcc'
+      },
+      inputsEn: {
+        title: 'Switchgear Status & Analog Telemetry',
+        desc: 'Breaker/disconnector auxiliary contacts, analog P, Q, U, I, f transducers, and transformer oil/SF6 gas alarms.',
+        voltage: 'Optical digital links & 48/110 Vdc'
       },
       processFr: {
         title: 'Réseau Ethernet Industriel & Trame GOOSE / MMS',
@@ -1366,7 +1386,7 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         roleEn: 'Sub-microsecond time reference distribution across the process bus for synchronous sampling.',
         symbol: 'CLK-PTP',
         standard: 'IEEE 1588 / CEI 61850-9-3',
-        imgUrl: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=800&q=80'
+        imgUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80'
       }
     ],
     sectionD: [
@@ -1415,7 +1435,7 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         titleEn: 'Fast Tripping Transmission Time Budget per IEC 61850-5',
         descFr: 'Spécifie le temps maximal admissible entre l\'instant où un IED décide un déclenchement et sa réception par l\'autre appareil.',
         descEn: 'Defines statutory maximum allowable latency between internal trip command and peer reception.',
-        formula: 'T_{\\text{transit}} = t_{\\text{encapsulation}} + t_{\\text{switch}} + t_{\\text{propagation}} \\le 3\\text{ ms}',
+        formula: 'T_transit = t_encapsulation + t_switch + t_propagation ≤ 3 ms',
         formulaDescFr: 'La norme classe IA impose un temps total inférieur à 3 millisecondes pour égaler ou surpasser les liaisons filaires cuivre.',
         formulaDescEn: 'IEC Class IA mandates total elapsed time below 3 ms to outperform direct copper hardwiring.',
         assumptionsFr: [
@@ -1450,41 +1470,46 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
     ]
   },
 
-  // D09: Automatisation & Smart Grids
-  D09: {
-    domainCode: 'D09',
+  // D10: Stockage d'Énergie BESS & Recharge IRVE
+  D10: {
+    domainCode: 'D10',
     sectionA: {
-      roleFr: "Intégration massive des énergies renouvelables intermittentes (solaire PV, éolien), régulation dynamique tension/fréquence et pilotage intelligent des micro-réseaux.",
-      roleEn: 'High-penetration renewable integration, dynamic Volt/Var grid support, and autonomous microgrid stability control.',
+      roleFr: "Stockage stationnaire d'énergie par batteries (BESS), intégration des énergies renouvelables intermittentes, soutien dynamique tension/fréquence et recharge haute puissance des véhicules électriques (IRVE).",
+      roleEn: 'Utility-scale battery energy storage (BESS), high-penetration renewable integration, dynamic Volt/Var grid support, and high-power EV charging infrastructure.',
       inputsFr: {
-        title: 'Production EnR Intermittente & BESS',
-        desc: 'Centrales solaires photovoltaïques, parcs éoliens, batteries de stockage d\'énergie (BESS) et générateurs d\'appoint.',
-        voltage: 'Onduleurs réversibles BT / Postes HTA'
+        title: 'Production EnR Intermittente & Réseau HTA',
+        desc: 'Centrales solaires photovoltaïques, parcs éoliens, excédents de production heures creuses et postes HTA.',
+        voltage: 'Onduleurs réversibles 400 V / 800 Vcc / 30 kV'
+      },
+      inputsEn: {
+        title: 'Intermittent Renewable Generation & MV Grid',
+        desc: 'Solar PV plants, wind farms, off-peak grid energy surplus, and MV distribution substations.',
+        voltage: 'Bidirectional PCS 400 V / 800 Vdc / 30 kV'
       },
       processFr: {
-        title: 'Algorithmes EMS & Régulation Statisme (Droop)',
-        desc: 'Régulation de fréquence (P-f) et de tension (Q-V) par onduleurs formateurs de réseau (Grid-Forming), équilibrage offre-demande.',
-        note: 'Stabilité insulaire : Réserve primaire instantanée fournie par batteries'
+        title: 'Conteneurs Batteries LiFePO4, BMS & Onduleurs Grid-Forming',
+        desc: 'Régulation de fréquence (P-f) et de tension (Q-V) par convertisseurs PCS formateurs de réseau (Grid-Forming) et surveillance thermique cellulaire BMS.',
+        note: 'Stabilité insulaire : Réserve primaire instantanée (< 20 ms) fournie par BESS'
       },
       processEn: {
-        title: 'Microgrid EMS & Grid-Forming Droop Control',
-        desc: 'Active power-frequency (P-f) and reactive power-voltage (Q-V) droop regulation via grid-forming inverters and fast storage.',
-        note: 'Islanded stability: Synthetic inertia and primary fast frequency response delivered by BESS'
+        title: 'LiFePO4 Battery Containers, BMS & Grid-Forming PCS',
+        desc: 'Active power-frequency (P-f) and reactive power-voltage (Q-V) droop regulation via grid-forming inverters and cell-level BMS protection.',
+        note: 'Islanded stability: Synthetic inertia and fast frequency response (< 20 ms) delivered by BESS'
       },
       outputsFr: {
-        title: 'Alimentation Sécurisée & Îlotage Sans Coupure',
-        desc: 'Alimentation continue des sites isolés ou communautés urbaines avec transition transparente entre mode raccordé et îloté.',
-        earthing: 'Gestion automatique du neutre lors du passage en îloté'
+        title: 'Écrêtement de Pointe, Îlotage & Superchargeurs IRVE',
+        desc: 'Restitution lors de la pointe du soir, alimentation continue en micro-réseau îloté et bornes de recharge rapide DC (150–350 kW).',
+        earthing: 'Surveillance permanente d\'isolement DC (CPI) et mise à la terre des conteneurs'
       },
       outputsEn: {
-        title: 'Resilient Microgrid Power & Seamless Islanding',
-        desc: 'Continuous clean power supply to off-grid communities with seamless reconnection and black-start capabilities.',
-        earthing: 'Automated grounding bond reconfiguration during island transitions'
+        title: 'Peak Shaving, Seamless Islanding & DC Fast Chargers',
+        desc: 'Evening peak power dispatch, seamless microgrid islanding, and ultra-fast DC EV charging stations (150–350 kW).',
+        earthing: 'Continuous DC insulation monitoring (IMD) and container equipotential bonding'
       }
     },
     sectionB: {
-      summaryFr: 'Architectures de micro-réseaux hybrides : réseaux raccordés avec soutien de tension vs micro-réseaux insulaires 100% autonomes.',
-      summaryEn: 'Hybrid microgrid layouts: grid-tied support architectures vs fully autonomous off-grid islanded networks.',
+      summaryFr: 'Architectures de stockage stationnaire BESS et micro-réseaux hybrides : soutien réseau vs îlotage autonome.',
+      summaryEn: 'Stationary BESS storage and hybrid microgrid layouts: grid-tied support vs autonomous islanded operation.',
       architectures: [
         {
           nameFr: 'Micro-Réseau Hybride Solaire + Stockage BESS + Diesel',
@@ -1498,8 +1523,8 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
           metricEn: 'Fuel savings: up to 60%'
         },
         {
-          nameFr: 'Réseau de Distribution Actif avec Onduleurs Grid-Forming',
-          nameEn: 'Active Distribution Grid with Grid-Forming Inverters',
+          nameFr: 'Système BESS avec Convertisseur Grid-Forming (PCS)',
+          nameEn: 'BESS with Grid-Forming Power Conversion System (PCS)',
           techFr: 'Onduleurs de batterie agissant comme sources de tension parfaites avec inertie synthétique',
           techEn: 'Battery energy storage inverters operating as true voltage sources delivering synthetic inertia',
           descFr: 'Maintient la fréquence et la tension du réseau sans nécessiter la présence d\'alternateurs synchrones thermiques.',
@@ -1582,7 +1607,7 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         titleEn: 'Proportional Droop Equation for Parallel Inverter Operation',
         descFr: 'Permet le partage autonome de la puissance active entre plusieurs sources sans communication filaire entre elles.',
         descEn: 'Enables autonomous active power sharing across distributed generators without inter-unit communications.',
-        formula: 'f - f_0 = -k_p \\cdot \\left( P - P_0 \\right)',
+        formula: 'f - f_0 = -k_p · (P - P_0)',
         formulaDescFr: 'Avec f la fréquence instantanée, f0 la fréquence nominale (50.0 Hz), kp le coefficient de statisme (typique 2% à 4%), et P la puissance active injectée.',
         formulaDescEn: 'With f instantaneous grid frequency, f0 nominal frequency (50 Hz), kp droop slope (typically 2-4%), and P generated active power.',
         assumptionsFr: [
@@ -1604,7 +1629,7 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         titleEn: 'Usable Battery Storage Capacity Sizing Formula',
         descFr: 'Détermine la capacité nominale en tenant compte de la profondeur de décharge (DoD) et du rendement aller-retour.',
         descEn: 'Computes required battery bank size considering Depth of Discharge (DoD) and round-trip efficiency.',
-        formula: 'E_{\\text{nom}} = \\frac{P_{\\text{charge}} \\cdot t_{\\text{autonomie}}}{\\text{DoD} \\cdot \\eta_{\\text{onduleur}} \\cdot \\eta_{\\text{batterie}}}',
+        formula: 'E_nom = (P_charge · t_autonomie) / (DoD · η_onduleur · η_batterie)',
         formulaDescFr: 'Avec Pcharge puissance moyenne à secourir (kW), t temps d\'autonomie requis (h), DoD profondeur de décharge maximale recommandée (0.80 pour LFP), et η rendements de conversion.',
         formulaDescEn: 'With Pload average backed-up load (kW), t target autonomy duration (h), DoD maximum depth of discharge (0.80 for LFP), and η conversion efficiencies.',
         assumptionsFr: [
@@ -1640,16 +1665,21 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
     ]
   },
 
-  // D10: Exploitation, DGA & Maintenance
-  D10: {
-    domainCode: 'D10',
+  // D15: Gestion d'Actifs, Diagnostic DGA & Comptage Intelligent
+  D15: {
+    domainCode: 'D15',
     sectionA: {
-      roleFr: "Suivi continu de l'état de santé des actifs haute tension, détection précoce des dégradations thermiques/diélectriques par analyse DGA et maintenance prédictive.",
-      roleEn: 'Continuous health monitoring of high-voltage assets, early thermal/dielectric fault diagnosis via DGA, and predictive asset management.',
+      roleFr: "Suivi continu de l'état de santé des actifs haute tension, détection précoce des dégradations thermiques/diélectriques par analyse DGA, comptage communicant AMI et maintenance prédictive.",
+      roleEn: 'Continuous health monitoring of high-voltage assets, early thermal/dielectric fault diagnosis via DGA, smart metering AMI, and predictive asset management.',
       inputsFr: {
         title: 'Prélèvements d\'Huile & Mesures Physiques',
         desc: 'Échantillons d\'huile diélectrique prélevés selon CEI 60475, thermographies infrarouges, mesures de décharges partielles UHF et résistance d\'isolement.',
         voltage: 'Surveillance transformateurs 225 kV & 30 kV'
+      },
+      inputsEn: {
+        title: 'Dielectric Oil Samples & Physical Sensors',
+        desc: 'Hermetic oil sampling per IEC 60475, infrared thermography, UHF partial discharge monitoring, and insulation testing.',
+        voltage: '225 kV & 30 kV Power Transformer Monitoring'
       },
       processFr: {
         title: 'Analyse des Gaz Dissous DGA & Ratios de Duval',
@@ -1772,7 +1802,7 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         titleEn: 'Relative Gas Percentage Calculation per IEC 60599',
         descFr: 'Normalise les concentrations en ppm de méthane, éthylène et acétylène pour obtenir des coordonnées sur 100%.',
         descEn: 'Normalizes methane, ethylene, and acetylene ppm concentrations onto a 100% scale.',
-        formula: '\\%\\text{C}_2\\text{H}_2 = \\frac{[\\text{C}_2\\text{H}_2]}{[\\text{CH}_4] + [\\text{C}_2\\text{H}_4] + [\\text{C}_2\\text{H}_2]} \\times 100',
+        formula: '%C₂H₂ = [C₂H₂] / ([CH₄] + [C₂H₄] + [C₂H₂]) × 100',
         formulaDescFr: 'Calcul identique pour %CH4 et %C2H4. La présence d\'acétylène C2H2 même en faible quantité (> 2 ppm) indique un arc électrique à haute énergie.',
         formulaDescEn: 'Identical normalization for %CH4 and %C2H4. Any trace of acetylene C2H2 (> 2 ppm) alerts to high-energy arcing.',
         assumptionsFr: [
@@ -1795,7 +1825,7 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         titleEn: 'Relative Thermal Aging Factor of Solid Insulation per IEC 60076-7',
         descFr: 'Quantifie l\'accélération de la dégradation des fibres de cellulose du papier en fonction de la température de point chaud.',
         descEn: 'Quantifies the accelerated degradation rate of paper cellulose fibers versus winding hot-spot temperature.',
-        formula: 'V = 2^{\\frac{\\theta_h - 98}{6}}',
+        formula: 'V = 2^((θ_h - 98) / 6)',
         formulaDescFr: 'Avec θh température de point chaud en °C. À 98°C, le vieillissement est normal (V = 1.0). Chaque élévation de 6°C double le taux de vieillissement !',
         formulaDescEn: 'With θh winding hot-spot temperature in °C. At 98°C, aging is baseline (V = 1.0). Every 6°C rise doubles degradation rate!',
         assumptionsFr: [
@@ -1827,6 +1857,202 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         titleEn: 'Power Transformers - Loading Guide for Mineral-Oil-Immersed Power Transformers',
         descFr: 'Règles de calcul de l\'échauffement, des points chauds et des surcharges admissibles en exploitation.',
         descEn: 'Formulas for winding hot-spot temperature modeling, loss of life, and permissible operational overloads.'
+      }
+    ]
+  },
+
+  // D07: Automatisme Industriel, DCS & Variateurs de Vitesse (VFD)
+  D07: {
+    domainCode: 'D07',
+    sectionA: {
+      roleFr: "Commande automatisée des procédés industriels par Automates Programmables (API/PLC), systèmes numériques de contrôle-commande (DCS) et pilotage à vitesse variable des moteurs (VFD).",
+      roleEn: 'Automated industrial process control via Programmable Logic Controllers (PLC), Distributed Control Systems (DCS), and Variable Frequency Drives (VFD).',
+      inputsFr: {
+        title: 'Capteurs Terrain & Réseau Force 400 V / 690 V',
+        desc: 'Entrées logiques TOR 24 Vcc, boucles analogiques 4–20 mA / PT100 et alimentation triphasée des variateurs.',
+        voltage: '24 Vcc Contrôle • 400 V / 690 V Force'
+      },
+      inputsEn: {
+        title: 'Field Sensors & 400 V / 690 V Power Supply',
+        desc: '24 Vdc discrete inputs, 4–20 mA / RTD analog loops, and 3-phase power feeders for motor drives.',
+        voltage: '24 Vdc Control • 400 V / 690 V Power'
+      },
+      processFr: {
+        title: 'Cycle Automate IEC 61131-3 & Modulation MLI (PWM)',
+        desc: 'Scrutation cyclique déterministe (Grafcet, Ladder, Blocs PID) et redressement/onduleur IGBT à rapport U/f ou contrôle vectoriel de flux.',
+        note: 'Économie d\'énergie sur pompes/ventilateurs : P varie avec le cube de la vitesse (N³)'
+      },
+      processEn: {
+        title: 'IEC 61131-3 PLC Scan & IGBT PWM Modulation',
+        desc: 'Deterministic PLC scan execution (SFC, Ladder, PID loops) and VFD IGBT pulse-width modulation with flux vector control.',
+        note: 'Centrifugal pump/fan energy savings: Power scales with the cube of speed (N³)'
+      },
+      outputsFr: {
+        title: 'Actionneurs, Vannes & Moteurs Asynchrones',
+        desc: 'Pilotage progressif sans à-coup de courant au démarrage, régulation de pression/débit et supervision SCADA/IHM.',
+        earthing: 'Câbles moteurs blindés CEM mis à la terre à 360° par presse-étoupe métallique'
+      },
+      outputsEn: {
+        title: 'Actuators, Control Valves & Induction Motors',
+        desc: 'Soft-start torque control without inrush current spikes, closed-loop process regulation, and HMI supervision.',
+        earthing: 'Shielded VFD motor cables grounded 360° via EMC metallic glands'
+      }
+    },
+    sectionB: {
+      summaryFr: 'Architectures d\'automatisme industriel : commande locale sur API modulaire vs architecture DCS redondée et variateurs régénératifs.',
+      summaryEn: 'Industrial automation topologies: modular PLC islands vs redundant plant-wide DCS and regenerative VFDs.',
+      architectures: [
+        {
+          nameFr: 'Variateur de Vitesse 6 Pulsations + Filtre d\'Harmoniques (AFE)',
+          nameEn: 'Active Front End (AFE) Low-Harmonic VFD Drive',
+          techFr: 'Redresseur actif à IGBT en entrée limitant la distorsion harmonique THDi < 5%',
+          techEn: 'IGBT active front-end rectifier maintaining grid current harmonic distortion THDi < 5%',
+          descFr: 'Permet le freinage régénératif (renvoi d\'énergie sur le réseau) et respecte les limites CEI 61000-3-12 sans polluer le TGBT.',
+          descEn: 'Enables 4-quadrant regenerative braking while complying with IEC 61000-3-12 harmonic limits.',
+          standard: 'CEI 61800-3',
+          metricFr: 'THDi : < 4.5% à pleine charge',
+          metricEn: 'THDi: < 4.5% at full load'
+        },
+        {
+          nameFr: 'Architecture Automate Redondée Hot-Standby & E/S Déportées',
+          nameEn: 'Hot-Standby Redundant PLC with Distributed Fieldbus I/O',
+          techFr: 'Double unité centrale synchronisée par fibre optique sur anneau Profinet / Modbus TCP',
+          techEn: 'Dual fiber-synced CPU racks polling distributed I/O islands over ring topology',
+          descFr: 'Garantit le maintien du procédé continu (eau, cimenterie, agro-industrie) sans arrêt en cas de défaillance d\'un processeur.',
+          descEn: 'Guarantees uninterrupted industrial process continuity upon single CPU or link failure.',
+          standard: 'CEI 61131-2',
+          metricFr: 'Basculement : 0 ms (sans à-coup)',
+          metricEn: 'Switchover: 0 ms bumpless'
+        }
+      ]
+    },
+    sectionC: [
+      {
+        id: 'eq-exp-vfd-altivar',
+        nameFr: 'Variateur de Vitesse Industriel (Altivar Process / SINAMICS G120)',
+        nameEn: 'Industrial Variable Frequency Drive (VFD 160 kW)',
+        voltage: '400 V • 160 kW • Modulation IGBT',
+        roleFr: 'Variation continue de fréquence (5 à 60 Hz), limitation du courant d\'appel et optimisation énergétique.',
+        roleEn: 'Continuous frequency regulation (5–60 Hz), soft starting, and pump/fan energy optimization.',
+        symbol: 'VFD-01',
+        standard: 'CEI 61800-5-1',
+        imgUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'motor'
+      },
+      {
+        id: 'eq-exp-plc-s7',
+        nameFr: 'Automate Programmable Industriel Modulaire (S7-1500 / Modicon M580)',
+        nameEn: 'Modular Industrial PLC Controller (S7-1500 / Modicon M580)',
+        voltage: 'Alimentation 24 Vcc • Temps de cycle < 5 ms',
+        roleFr: 'Exécution des séquences logiques, asservissements PID et sécurité fonctionnelle SIL2/SIL3.',
+        roleEn: 'Execution of sequential logic, closed-loop PID control, and SIL2/SIL3 safety interlocks.',
+        symbol: 'PLC-CPU',
+        standard: 'CEI 61131-3',
+        imgUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'motor'
+      }
+    ],
+    sectionD: [
+      {
+        phase: '01',
+        titleFr: 'Analyse Fonctionnelle & Liste d\'Entrées/Sorties',
+        titleEn: 'Functional Design Spec (FDS) & I/O Schedule',
+        descFr: 'Recensement des capteurs/actionneurs (TOR, 4–20 mA) et rédaction du Grafcet de conduite et de sécurité.',
+        descEn: 'Cataloging field sensors/actuators and authoring control and safety sequential function charts.'
+      },
+      {
+        phase: '02',
+        titleFr: 'Dimensionnement des Variateurs & Filtres CEM/dv/dt',
+        titleEn: 'VFD Sizing & EMC / dv/dt Filter Selection',
+        descFr: 'Choix du calibre en fonction du couple (constant ou quadratique) et protection contre les surtensions de câble long.',
+        descEn: 'Selecting drive rating for constant/quadratic torque and adding dv/dt filters for long motor leads.'
+      },
+      {
+        phase: '03',
+        titleFr: 'Câblage Armoire & Ségrégation Courants Forts / Faibles',
+        titleEn: 'Panel Wiring & Power/Control Segregation',
+        descFr: 'Séparation physique des goulottes 400 V PWM et 24 Vcc analogique, reprise des blindages à 360°.',
+        descEn: 'Physical duct separation between 400 V PWM power cables and 24 Vdc analog signals with 360° shield bonding.'
+      },
+      {
+        phase: '04',
+        titleFr: 'Tests d\'Acceptation Usine (FAT) sur Simulateur',
+        titleEn: 'Factory Acceptance Testing (FAT) & Loop Check',
+        descFr: 'Simulation de toutes les entrées/sorties, test des sécurités d\'arrêt d\'urgence (STO) et validation des écrans IHM.',
+        descEn: 'Full I/O point-to-point simulation, Safe Torque Off (STO) verification, and HMI screen validation.'
+      },
+      {
+        phase: '05',
+        titleFr: 'Mise en Service Site (SAT) & Réglage PID',
+        titleEn: 'Site Commissioning (SAT) & PID Auto-Tuning',
+        descFr: 'Identification automatique des paramètres moteur à l\'arrêt et réglage des gains proportionnel/intégral.',
+        descEn: 'Standstill motor parameter auto-identification and closed-loop PID step-response tuning.'
+      }
+    ],
+    sectionE: [
+      {
+        id: 'vfd_sync_speed',
+        tabLabelFr: 'Vitesse Synchrone & Glissement (VFD)',
+        tabLabelEn: 'Synchronous Speed & Slip Formula',
+        titleFr: 'Pilotage de la Vitesse de Rotation par la Fréquence Statorique',
+        titleEn: 'Motor Rotational Speed Control via Stator Frequency',
+        descFr: 'Le variateur ajuste la fréquence f délivrée au stator tout en maintenant le flux magnétique Φ = U / f constant.',
+        descEn: 'The VFD modulates stator frequency f while keeping the magnetic air-gap flux ratio V/f constant.',
+        formula: 'n_s = (60 · f) / p   et   n = n_s · (1 - g)',
+        formulaDescFr: 'Avec ns vitesse synchrone (tr/min), f fréquence de sortie du variateur (Hz), p nombre de paires de pôles, et g glissement nominal.',
+        formulaDescEn: 'With ns synchronous speed (rpm), f VFD output frequency (Hz), p pole pairs, and g rotor slip.',
+        assumptionsFr: [
+          'Loi U/f constante jusqu\'à la fréquence nominale (50 Hz) garantissant le couple nominal.',
+          'Au-delà de 50 Hz (survitesse), fonctionnement à puissance constante avec affaiblissement de flux.',
+          'Ventilation forcée requise si le moteur tourne longtemps à très basse fréquence (< 15 Hz).'
+        ],
+        assumptionsEn: [
+          'Constant V/f ratio up to base frequency (50 Hz) maintaining full rated torque.',
+          'Above 50 Hz, field-weakening region operates at constant power with reduced torque.',
+          'Forced external cooling fan required for continuous low-speed operation (< 15 Hz).'
+        ],
+        calcTab: 'motor'
+      },
+      {
+        id: 'affinity_laws_vfd',
+        tabLabelFr: 'Lois d\'Affinité (Pompes & Ventilateurs)',
+        tabLabelEn: 'Centrifugal Pump & Fan Affinity Laws',
+        titleFr: 'Gain Énergétique Cubique en Régulation par Variateur',
+        titleEn: 'Cubic Power Saving Law for Centrifugal Loads',
+        descFr: 'Sur une pompe ou un ventilateur centrifuge, réduire la vitesse de 20% diminue la puissance électrique appelée de près de 50% !',
+        descEn: 'For centrifugal pumps and fans, reducing speed by 20% cuts electrical power consumption by nearly 50%!',
+        formula: 'Q₂ / Q₁ = N₂ / N₁   ;   H₂ / H₁ = (N₂ / N₁)²   ;   P₂ / P₁ = (N₂ / N₁)³',
+        formulaDescFr: 'Avec Q le débit volumique, H la hauteur manométrique (pression), P la puissance mécanique sur l\'arbre, et N la vitesse de rotation.',
+        formulaDescEn: 'Where Q is flow rate, H is head pressure, P is shaft power, and N is rotational speed.',
+        assumptionsFr: [
+          'Réseau hydraulique ou aéraulique à dominante de pertes de charge quadratiques (peu de hauteur géométrique statique).',
+          'Rendement hydraulique de la pompe supposé quasi-constant au voisinage du point nominal.',
+          'Remplacement avantageux du laminage par vanne de réglage énergivore.'
+        ],
+        assumptionsEn: [
+          'System curve dominated by friction head losses rather than high static lift.',
+          'Pump efficiency assumed near-constant across moderate speed variations.',
+          'Replaces wasteful mechanical throttling valves.'
+        ],
+        calcTab: 'motor'
+      }
+    ],
+    sectionF: [
+      {
+        code: 'CEI 61800-3 / 5-1',
+        tag: 'VARIATEURS DE VITESSE',
+        titleFr: 'Entraînements Électriques de Puissance à Vitesse Variable - Exigences CEM & Sécurité',
+        titleEn: 'Adjustable Speed Electrical Power Drive Systems - EMC & Safety Requirements',
+        descFr: 'Définit les limites d\'émission électromagnétique, l\'immunité et la sécurité électrique/thermique des variateurs.',
+        descEn: 'Specifies electromagnetic emission limits, immunity levels, and functional safety for VFD drives.'
+      },
+      {
+        code: 'CEI 61131-3',
+        tag: 'AUTOMATES PROGRAMMABLES',
+        titleFr: 'Automates Programmables - Langages de Programmation Normalisés',
+        titleEn: 'Programmable Controllers - Programming Languages Standard',
+        descFr: 'Standardise les 5 langages d\'automatisme : Ladder (LD), Grafcet (SFC), Blocs Fonctionnels (FBD), Texte Structuré (ST).',
+        descEn: 'Standardizes PLC languages: Ladder Diagram (LD), Sequential Function Chart (SFC), Function Block (FBD), and Structured Text (ST).'
       }
     ]
   }
