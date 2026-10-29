@@ -22,10 +22,46 @@ export default defineConfig(() => {
       chunkSizeWarningLimit: 1200,
       rollupOptions: {
         output: {
-          manualChunks: {
-            'vendor-react': ['react', 'react-dom'],
-            'vendor-motion': ['framer-motion'],
-            'vendor-icons': ['lucide-react'],
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              if (id.includes('/react/') || id.includes('/react-dom/') || id.includes('/scheduler/')) {
+                return 'vendor-react';
+              }
+              if (id.includes('/three/') || id.includes('/@react-three/')) {
+                return 'vendor-three';
+              }
+              if (id.includes('/jspdf') || id.includes('/html2canvas') || id.includes('/canvg')) {
+                return 'vendor-pdf';
+              }
+              if (id.includes('/framer-motion/') || id.includes('/motion/')) {
+                return 'vendor-motion';
+              }
+              if (id.includes('/lucide-react/')) {
+                return 'vendor-icons';
+              }
+              if (id.includes('/firebase/') || id.includes('/@firebase/')) {
+                return 'vendor-firebase';
+              }
+            }
+            if (
+              id.includes('src/data/epedeData') ||
+              id.includes('src/data/standardsRegistry') ||
+              id.includes('src/data/electrotechnicalGlossaryData')
+            ) {
+              return 'data-epede-core';
+            }
+            if (
+              id.includes('src/components/domain/domainPedagogicalContentRegistry') ||
+              id.includes('src/components/domain/domainPedagogicalRegistry')
+            ) {
+              return 'data-domain-pedagogy';
+            }
+            if (id.includes('src/components/domain/modules/')) {
+              return 'domain-modules';
+            }
+            if (id.includes('src/data/equipment/')) {
+              return 'data-equipment-registry';
+            }
           },
         },
       },
