@@ -6,7 +6,7 @@ import { ProvenanceBadge } from './ProvenanceBadge';
 import { ApparatusComplianceBadge } from './ApparatusComplianceBadge';
 import { EdgeGraph } from './EdgeGraph';
 import { VoltageIndicator } from '../ui/VoltageIndicator';
-import { ArrowLeft, Scale, Zap, ShieldAlert, Cpu, Layers, FileText, Calculator, Bookmark, Check } from 'lucide-react';
+import { ArrowLeft, Scale, Zap, ShieldAlert, Cpu, Layers, FileText, Calculator, Bookmark, Check, GraduationCap } from 'lucide-react';
 import { useAuth } from '../../services/AuthContext';
 import type { DomainCode, Equipment, Edge } from '../../types/epede';
 import type { CalculatorTabType } from '../calculators/services/calculationReportService';
@@ -18,6 +18,7 @@ import { EquipmentEngineeringDossierTabs } from './modules/EquipmentEngineeringD
 import { EquipmentProfessionalIntelligenceLayer } from './modules/EquipmentProfessionalIntelligenceLayer';
 import { EquipmentDossierViewer } from './modules/EquipmentDossierViewer';
 import { UniversalEquipmentFiche } from './UniversalEquipmentFiche';
+import { VisualLearningEquipmentTemplate } from './VisualLearningEquipmentTemplate';
 import { EquipmentCutawaySchematicViewer } from './modules/EquipmentCutawaySchematicViewer';
 import { EquipmentTraceabilityTree } from './modules/EquipmentTraceabilityTree';
 import { EquipmentCalculationBridge } from './EquipmentCalculationBridge';
@@ -69,7 +70,7 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
   onNavigateStandard,
   onNavigateAssetManagement,
 }) => {
-  const [viewMode, setViewMode] = useState<'overview' | 'universal_fiche' | 'dossier_30_sections' | 'aas_v3_shell' | 'engineering_calculation' | 'documentation'>('overview');
+  const [viewMode, setViewMode] = useState<'visual_10_sections' | 'overview' | 'universal_fiche' | 'dossier_30_sections' | 'aas_v3_shell' | 'engineering_calculation' | 'documentation'>('visual_10_sections');
   const [apiEquipment, setApiEquipment] = useState<ApiEquipmentDto | null>(null);
   const [graphContext, setGraphContext] = useState<GraphContextDto | null>(null);
   const [isLoadingGraph, setIsLoadingGraph] = useState<boolean>(false);
@@ -331,6 +332,27 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
             <span>{locale === 'fr' ? 'RETOUR CATALOGUE' : 'BACK TO CATALOG'}</span>
           </button>
 
+          {/* EPEDE 2.0 10-Section Pedagogical Learning Template Button */}
+          <button
+            type="button"
+            onClick={() => setViewMode(prev => prev === 'visual_10_sections' ? 'overview' : 'visual_10_sections')}
+            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono font-black uppercase tracking-wider transition-all cursor-pointer border ${
+              viewMode === 'visual_10_sections'
+                ? 'bg-[#D7A64A] text-[#0B0F12] border-[#D7A64A] shadow-md'
+                : 'bg-[#D7A64A]/15 hover:bg-[#D7A64A]/25 text-[#D7A64A] border-[#D7A64A]/40'
+            }`}
+          >
+            <GraduationCap className="h-3.5 w-3.5" />
+            <span>
+              {viewMode === 'visual_10_sections'
+                ? (locale === 'fr' ? 'Vue CAO & Réseau' : 'CAD & Network View')
+                : (locale === 'fr' ? 'Apprentissage Visuel (10 Sec)' : 'Visual Learning (10 Sec)')}
+            </span>
+            <span className="px-1.5 py-0.2 rounded bg-[#0B0F12] text-[#D7A64A] text-[10px] font-mono border border-[#D7A64A]/30">
+              EPEDE 2.0
+            </span>
+          </button>
+
           {onCompareEquipment && (
             <button
               type="button"
@@ -559,6 +581,26 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
             </span>
           </div>
           <div className="flex items-center gap-1.5 flex-wrap">
+          {/* EPEDE 2.0 10-Section Pedagogical Learning Template Button */}
+          <button
+            type="button"
+            onClick={() => setViewMode(prev => prev === 'visual_10_sections' ? 'overview' : 'visual_10_sections')}
+            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono font-black uppercase tracking-wider transition-all cursor-pointer border ${
+              viewMode === 'visual_10_sections'
+                ? 'bg-[#D7A64A] text-[#0B0F12] border-[#D7A64A] shadow-md'
+                : 'bg-[#D7A64A]/15 hover:bg-[#D7A64A]/25 text-[#D7A64A] border-[#D7A64A]/40'
+            }`}
+          >
+            <GraduationCap className="h-3.5 w-3.5" />
+            <span>
+              {viewMode === 'visual_10_sections'
+                ? (locale === 'fr' ? 'Vue CAO & Réseau' : 'CAD & Network View')
+                : (locale === 'fr' ? 'Apprentissage Visuel (10 Sec)' : 'Visual Learning (10 Sec)')}
+            </span>
+            <span className="px-1.5 py-0.2 rounded bg-[#0B0F12] text-[#D7A64A] text-[10px] font-mono border border-[#D7A64A]/30">
+              EPEDE 2.0
+            </span>
+          </button>
             {substationApparatusList.map((item) => {
               const isCurrent = canonicalEquipment?.id === item.id || equipment.id === item.id;
               return (
@@ -850,6 +892,20 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
           locale={locale}
           onNavigateEquipment={onNavigateEquipment}
           onClose={() => setViewMode('overview')}
+        />
+      ) : viewMode === 'visual_10_sections' ? (
+        <VisualLearningEquipmentTemplate
+          equipment={equipment}
+          apiEquipment={apiEquipment}
+          locale={locale}
+          onNavigateEquipment={onNavigateEquipment}
+          onNavigateStandard={onNavigateStandard}
+          onNavigateCalculator={onNavigateCalculator}
+          onContinueLearning={() => {
+            if (onNavigateDomain) {
+              onNavigateDomain(equipment.domain_code);
+            }
+          }}
         />
       ) : (
         <>

@@ -293,273 +293,183 @@ export const Header: React.FC<HeaderProps> = ({
           </a>
         </div>
 
-        {/* Center: Primary Knowledge Navigation */}
-        <nav className="hidden md:flex items-center gap-1.5 lg:gap-2 font-mono text-xs font-semibold text-[#A9ADA5]">
+        {/* Center: EPEDE 2.0 7-Item Intuitive Main Navigation */}
+        <nav className="hidden md:flex items-center gap-1 lg:gap-1.5 font-sans text-xs font-semibold text-[#A9ADA5]">
           
-          {/* 1. KNOWLEDGE LIBRARY (DOMAINS) */}
+          {/* 1. HOME */}
           <a
-            href="#/domains"
+            href="#/"
             onClick={(e) => {
               if (!e.ctrlKey && !e.metaKey && e.button === 0) {
                 e.preventDefault();
-                navigateTo('domains');
+                navigateTo('home');
               }
             }}
             className={`px-3 py-1.5 rounded-xl transition-all select-none no-underline ${
-              currentView === 'domains' || currentView === 'domain'
+              currentView === 'home'
                 ? 'text-[#0B0F12] bg-[#D7A64A] font-bold shadow-sm'
                 : 'text-[#F4F1E8] hover:text-[#D7A64A] hover:bg-[#151C1E] border border-transparent hover:border-[#567A87]/40'
             }`}
           >
-            {locale === 'fr' ? 'DOMAINES' : 'KNOWLEDGE LIBRARY'}
+            {locale === 'fr' ? 'Accueil' : 'Home'}
           </a>
 
-          {/* 2. EQUIPMENT ATLAS */}
+          {/* 2. LEARN (8 Progressive Learning Pathways) */}
           <a
-            href="#/equipment"
+            href="#/en/learn"
             onClick={(e) => {
               if (!e.ctrlKey && !e.metaKey && e.button === 0) {
                 e.preventDefault();
-                navigateTo('equipment-reference');
+                navigateTo('thematic-journeys');
+              }
+            }}
+            className={`px-3 py-1.5 rounded-xl transition-all select-none no-underline ${
+              currentView === 'thematic-journeys' || currentView === 'scenarios'
+                ? 'text-[#0B0F12] bg-[#D7A64A] font-bold shadow-sm'
+                : 'text-[#F4F1E8] hover:text-[#D7A64A] hover:bg-[#151C1E] border border-transparent hover:border-[#567A87]/40'
+            }`}
+          >
+            {locale === 'fr' ? 'Apprendre' : 'Learn'}
+          </a>
+
+          {/* 3. ELECTRICAL SYSTEMS (9-Stage Visual Power System Explorer) */}
+          <a
+            href="#/en/electrical-systems"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                navigateTo('journey');
+              }
+            }}
+            className={`px-3 py-1.5 rounded-xl transition-all select-none no-underline ${
+              currentView === 'journey' || currentView === 'follow-the-energy'
+                ? 'text-[#0B0F12] bg-[#D7A64A] font-bold shadow-sm'
+                : 'text-[#F4F1E8] hover:text-[#D7A64A] hover:bg-[#151C1E] border border-transparent hover:border-[#567A87]/40'
+            }`}
+          >
+            {locale === 'fr' ? 'Systèmes Électriques' : 'Electrical Systems'}
+          </a>
+
+          {/* 4. EQUIPMENT (Visual Catalogue of Electrical Components) */}
+          <a
+            href="#/en/equipment"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                navigateTo('equipment-list');
               }
             }}
             className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 select-none no-underline ${
-              currentView === 'equipment-reference' || currentView === 'equipment' || currentView === 'equipment-list'
+              currentView === 'equipment-list' || currentView === 'equipment' || currentView === 'equipment-reference'
                 ? 'text-[#0B0F12] bg-[#D7A64A] font-bold shadow-sm'
                 : 'text-[#F4F1E8] hover:text-[#D7A64A] hover:bg-[#151C1E] border border-transparent hover:border-[#567A87]/40'
             }`}
           >
-            <span>{locale === 'fr' ? 'MATÉRIEL' : 'EQUIPMENT'}</span>
+            <span>{locale === 'fr' ? 'Équipements' : 'Equipment'}</span>
           </a>
 
-          {/* 3. CAMEROON POWER NETWORK */}
+          {/* 5. INDUSTRIAL ENGINEERING */}
           <a
-            href="#/cameroon-grid"
+            href="#/en/industrial-engineering"
             onClick={(e) => {
               if (!e.ctrlKey && !e.metaKey && e.button === 0) {
                 e.preventDefault();
-                navigateTo('cameroon-grid');
+                navigateTo('industrial-projects');
               }
             }}
             className={`px-3 py-1.5 rounded-xl transition-all select-none no-underline ${
-              currentView === 'cameroon-grid'
+              currentView === 'industrial-projects'
                 ? 'text-[#0B0F12] bg-[#D7A64A] font-bold shadow-sm'
                 : 'text-[#F4F1E8] hover:text-[#D7A64A] hover:bg-[#151C1E] border border-transparent hover:border-[#567A87]/40'
             }`}
           >
-            <span>{locale === 'fr' ? 'RÉSEAU CAMEROUN' : 'CAMEROON GRID'}</span>
+            {locale === 'fr' ? 'Génie Industriel' : 'Industrial Engineering'}
           </a>
 
-          {/* 4. STANDARDS */}
-          <a
-            href="#/standards"
-            onClick={(e) => {
-              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
-                e.preventDefault();
-                navigateTo('standards');
-              }
-            }}
-            className={`px-3 py-1.5 rounded-xl transition-all select-none no-underline ${
-              currentView === 'standards'
-                ? 'text-[#0B0F12] bg-[#D7A64A] font-bold shadow-sm'
-                : 'text-[#F4F1E8] hover:text-[#D7A64A] hover:bg-[#151C1E] border border-transparent hover:border-[#567A87]/40'
-            }`}
-          >
-            {locale === 'fr' ? 'NORMES' : 'STANDARDS'}
-          </a>
-
-          {/* 5. REFERENCE HUB */}
-          <a
-            href="#/centre-reference"
-            onClick={(e) => {
-              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
-                e.preventDefault();
-                navigateTo('reference-hub');
-              }
-            }}
-            className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 select-none no-underline ${
-              currentView === 'reference-hub' || currentView === 'calculators'
-                ? 'text-[#0B0F12] bg-[#D7A64A] font-bold shadow-sm'
-                : 'text-[#F4F1E8] hover:text-[#D7A64A] hover:bg-[#151C1E] border border-transparent hover:border-[#567A87]/40'
-            }`}
-          >
-            <span>{locale === 'fr' ? 'RÉFÉRENCE' : 'REFERENCE HUB'}</span>
-          </a>
-
-          {/* SYSTEMS Dropdown */}
+          {/* 6. ENGINEERING LIBRARY (Dropdown for 21 Domains, Cameroon Grid, Standards, Glossary, SLDs & Lab) */}
           <div ref={systemsMenuRef} className="relative">
             <button
               type="button"
               onClick={() => setSystemsDropdownOpen(!systemsDropdownOpen)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${
-                ['diagrams', 'substations', 'cameroon-grid', 'hydropower', 'installations'].includes(currentView)
-                  ? 'text-amber-300 bg-amber-500/15 border border-amber-500/40 font-bold shadow-sm shadow-amber-500/20'
-                  : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800'
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
+                ['domains', 'domain', 'cameroon-grid', 'standards', 'glossary', 'diagrams', 'laboratory', 'simulation', 'calculators', 'reference-hub'].includes(currentView)
+                  ? 'text-[#0B0F12] bg-[#D7A64A] font-bold shadow-sm'
+                  : 'text-[#F4F1E8] hover:text-[#D7A64A] hover:bg-[#151C1E] border border-transparent hover:border-[#567A87]/40'
               }`}
             >
-              <span>{locale === 'fr' ? 'SYSTÈMES' : 'SYSTEMS'}</span>
-              <ChevronDown className={`h-3 w-3 text-slate-400 transition-transform ${systemsDropdownOpen ? 'rotate-180 text-amber-400' : ''}`} />
+              <span>{locale === 'fr' ? 'Bibliothèque Technique' : 'Engineering Library'}</span>
+              <ChevronDown className={`h-3.5 w-3.5 transition-transform ${systemsDropdownOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {systemsDropdownOpen && (
-              <div className="absolute left-0 mt-2 w-64 rounded-xl bg-slate-900 border border-slate-800 shadow-2xl py-2 z-50 animate-in fade-in-50 duration-100 font-mono text-xs">
+              <div className="absolute left-0 mt-2 w-72 rounded-2xl bg-[#151C1E] border border-[#567A87]/40 shadow-2xl py-2 z-50 animate-in fade-in-50 duration-100 text-xs">
+                <div className="px-3.5 py-1.5 text-[10px] font-mono uppercase tracking-wider text-[#D7A64A] font-bold border-b border-[#567A87]/20">
+                  {locale === 'fr' ? 'Référentiels & Exploration' : 'Knowledge & Reference Library'}
+                </div>
                 <button
                   type="button"
-                  onClick={() => {
-                    setSystemsDropdownOpen(false);
-                    if (onNavigate) onNavigate('domains');
-                    else onNavigateDomains?.();
-                  }}
-                  className="w-full text-left px-3.5 py-2 text-slate-300 hover:text-sky-400 hover:bg-slate-800/80 transition-colors flex items-center justify-between"
+                  onClick={() => navigateTo('domains')}
+                  className="w-full text-left px-3.5 py-2.5 text-[#F4F1E8] hover:text-[#D7A64A] hover:bg-[#0B0F12]/60 transition-colors flex items-center justify-between cursor-pointer"
                 >
-                  <span>{locale === 'fr' ? 'Réseaux de Transport' : 'Transmission Networks'}</span>
-                  <span className="text-[10px] text-sky-400 font-bold">16 Piliers</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigateTo('diagrams')}
-                  className="w-full text-left px-3.5 py-2 text-slate-300 hover:text-amber-400 hover:bg-slate-800/80 transition-colors flex items-center justify-between"
-                >
-                  <span>{locale === 'fr' ? 'Schéma SLD Unifilaire' : 'Single-Line SLD Diagram'}</span>
-                  <span className="text-[10px] text-amber-500">CAD</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigateTo('architectures')}
-                  className="w-full text-left px-3.5 py-2 text-slate-300 hover:text-cyan-400 hover:bg-slate-800/80 transition-colors flex items-center justify-between"
-                >
-                  <span>{locale === 'fr' ? 'Architectures Postes & TCO' : 'Substation Architectures & TCO'}</span>
-                  <span className="text-[10px] text-cyan-400 font-bold">AIS/GIS</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigateTo('hydropower')}
-                  className="w-full text-left px-3.5 py-2 text-slate-300 hover:text-amber-400 hover:bg-slate-800/80 transition-colors"
-                >
-                  {locale === 'fr' ? 'Jumeau Numérique Hydro' : 'Hydro Digital Twin'}
+                  <span>{locale === 'fr' ? '21 Domaines de Connaissances' : '21 Knowledge Domains (D01–D16)'}</span>
+                  <span className="text-[10px] font-mono text-[#D7A64A] font-bold">D01–L05</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => navigateTo('cameroon-grid')}
-                  className="w-full text-left px-3.5 py-2 text-slate-300 hover:text-amber-400 hover:bg-slate-800/80 transition-colors"
+                  className="w-full text-left px-3.5 py-2.5 text-[#F4F1E8] hover:text-[#D7A64A] hover:bg-[#0B0F12]/60 transition-colors flex items-center justify-between cursor-pointer"
                 >
-                  {locale === 'fr' ? 'Réseau HTB Cameroun (SONATREL)' : 'Cameroon HV Grid'}
+                  <span>{locale === 'fr' ? 'Réseau Électrique du Cameroun' : 'Cameroon Power Network (RIS/RIN)'}</span>
+                  <span className="text-[10px] font-mono text-[#D7A64A] font-bold">🇨🇲 GRID</span>
                 </button>
                 <button
                   type="button"
-                  onClick={() => navigateTo('calculators')}
-                  className="w-full text-left px-3.5 py-2 text-slate-300 hover:text-amber-400 hover:bg-slate-800/80 transition-colors"
+                  onClick={() => navigateTo('diagrams')}
+                  className="w-full text-left px-3.5 py-2.5 text-[#F4F1E8] hover:text-[#D7A64A] hover:bg-[#0B0F12]/60 transition-colors flex items-center justify-between cursor-pointer"
                 >
-                  {locale === 'fr' ? 'Calculateurs CEI / IEEE' : 'IEC / IEEE Calculators'}
+                  <span>{locale === 'fr' ? 'Schémas Unifilaires Interactifs' : 'Interactive Single-Line Diagrams'}</span>
+                  <span className="text-[10px] font-mono text-[#A9ADA5] font-bold">SLD</span>
                 </button>
                 <button
                   type="button"
-                  onClick={() => navigateTo('protection')}
-                  className="w-full text-left px-3.5 py-2 text-slate-300 hover:text-red-400 hover:bg-slate-800/80 transition-colors flex items-center justify-between"
+                  onClick={() => navigateTo('standards')}
+                  className="w-full text-left px-3.5 py-2.5 text-[#F4F1E8] hover:text-[#D7A64A] hover:bg-[#0B0F12]/60 transition-colors flex items-center justify-between cursor-pointer"
                 >
-                  <span>{locale === 'fr' ? 'Studio Coordination Protections' : 'Protection Studio'}</span>
-                  <span className="text-[10px] text-red-400 font-bold">50/51/87</span>
+                  <span>{locale === 'fr' ? 'Normes CEI / IEEE / NF C' : 'IEC / IEEE / NF C Standards'}</span>
+                  <span className="text-[10px] font-mono text-[#A9ADA5] font-bold">80+</span>
                 </button>
                 <button
                   type="button"
-                  onClick={() => navigateTo('commissioning')}
-                  className="w-full text-left px-3.5 py-2 text-slate-300 hover:text-emerald-400 hover:bg-slate-800/80 transition-colors flex items-center justify-between"
+                  onClick={() => navigateTo('glossary')}
+                  className="w-full text-left px-3.5 py-2.5 text-[#F4F1E8] hover:text-[#D7A64A] hover:bg-[#0B0F12]/60 transition-colors flex items-center justify-between cursor-pointer"
                 >
-                  <span>{locale === 'fr' ? 'Atelier FAT / SAT & Réception' : 'FAT / SAT Studio'}</span>
-                  <span className="text-[10px] text-emerald-400 font-bold">CEI 61439</span>
+                  <span>{locale === 'fr' ? 'Glossaire Technique Bilingue' : 'Bilingual Technical Glossary'}</span>
+                  <span className="text-[10px] font-mono text-[#A9ADA5] font-bold">IEC 60050</span>
+                </button>
+                <div className="my-1 border-t border-[#567A87]/20" />
+                <button
+                  type="button"
+                  onClick={() => navigateTo('laboratory')}
+                  className="w-full text-left px-3.5 py-2.5 text-[#F4F1E8] hover:text-[#D7A64A] hover:bg-[#0B0F12]/60 transition-colors flex items-center justify-between cursor-pointer"
+                >
+                  <span>{locale === 'fr' ? 'Laboratoire Virtuel & Simulateurs' : 'Virtual Simulation Laboratory'}</span>
+                  <span className="text-[10px] font-mono text-[#D7A64A] font-bold">LAB</span>
                 </button>
                 <button
                   type="button"
-                  onClick={() => navigateTo('asset-management')}
-                  className="w-full text-left px-3.5 py-2 text-slate-300 hover:text-amber-400 hover:bg-slate-800/80 transition-colors flex items-center justify-between"
+                  onClick={() => navigateTo('reference-hub')}
+                  className="w-full text-left px-3.5 py-2.5 text-[#F4F1E8] hover:text-[#D7A64A] hover:bg-[#0B0F12]/60 transition-colors flex items-center justify-between cursor-pointer"
                 >
-                  <span>{locale === 'fr' ? "Gestion d'Actifs & DGA" : 'Asset Management & DGA'}</span>
-                  <span className="text-[10px] text-amber-400 font-bold">CEI 60599</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigateTo('industrial-projects')}
-                  className="w-full text-left px-3.5 py-2 text-slate-300 hover:text-amber-400 hover:bg-slate-800/80 transition-colors flex items-center justify-between border-t border-slate-800/60 mt-1 pt-2"
-                >
-                  <span>{locale === 'fr' ? 'Projets Industriels & Cas Réels' : 'Industrial Projects & Field Cases'}</span>
-                  <span className="text-[10px] text-sky-400 font-bold">FIELD</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigateTo('engineers-chain')}
-                  className="w-full text-left px-3.5 py-2 text-slate-300 hover:text-amber-400 hover:bg-slate-800/80 transition-colors flex items-center justify-between border-t border-slate-800/60 mt-1 pt-2"
-                >
-                  <span>{locale === 'fr' ? 'Ingénieurs de la Chaîne Électrique' : 'Engineers by Domain (Chain)'}</span>
-                  <span className="text-[10px] text-amber-400 font-bold">35+ RÔLES</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSystemsDropdownOpen(false);
-                    onOpenAudit?.();
-                  }}
-                  className="w-full text-left px-3.5 py-2 text-slate-300 hover:text-emerald-400 hover:bg-slate-800/80 transition-colors flex items-center justify-between border-t border-slate-800/60 mt-1 pt-2"
-                >
-                  <span>{locale === 'fr' ? 'Revue & Traçabilité des Contenus' : 'Pedagogical Review & Content Trace'}</span>
-                  <span className="text-[10px] text-emerald-400 font-mono font-bold">INFO</span>
+                  <span>{locale === 'fr' ? 'Abaques & Outils d’Étude' : 'Reference Tables & Study Tools'}</span>
+                  <span className="text-[10px] font-mono text-[#A9ADA5] font-bold">REF</span>
                 </button>
               </div>
             )}
           </div>
 
-          {/* LABORATOIRE */}
+          {/* 7. ABOUT EPEDE */}
           <a
-            href="#/laboratoire"
-            onClick={(e) => {
-              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
-                e.preventDefault();
-                navigateTo('laboratory');
-              }
-            }}
-            className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 select-none no-underline ${
-              currentView === 'laboratory' || currentView === 'simulation'
-                ? 'text-purple-300 bg-purple-950/80 border border-purple-500/60 font-bold shadow-sm shadow-purple-500/20'
-                : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800'
-            }`}
-          >
-            <FlaskConical className="w-3.5 h-3.5 text-purple-400" />
-            <span>{locale === 'fr' ? 'LABORATOIRE' : 'LABORATORY'}</span>
-          </a>
-
-          {/* GLOSSAIRE */}
-          <a
-            href="#/glossaire"
-            onClick={(e) => {
-              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
-                e.preventDefault();
-                navigateTo('glossary');
-              }
-            }}
-            className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 select-none no-underline ${
-              currentView === 'glossary'
-                ? 'text-amber-300 bg-amber-500/15 border border-amber-500/40 font-bold shadow-sm shadow-amber-500/20'
-                : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800'
-            }`}
-          >
-            <BookOpen className="w-3.5 h-3.5 text-amber-400" />
-            <span>{locale === 'fr' ? 'GLOSSAIRE' : 'GLOSSARY'}</span>
-          </a>
-
-          {/* SEARCH */}
-          <button
-            type="button"
-            onClick={handleSearch}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-900/80 transition-all border border-transparent hover:border-slate-800"
-            title="Search (Ctrl+K)"
-          >
-            <Search className="h-3.5 w-3.5 text-cyan-400" />
-            <span>{locale === 'fr' ? 'RECHERCHE' : 'SEARCH'}</span>
-            <kbd className="hidden lg:inline-block px-1.5 py-0.5 text-[9px] font-mono bg-slate-800 text-slate-400 rounded border border-slate-700">⌘K</kbd>
-          </button>
-
-          {/* À PROPOS */}
-          <a
-            href="#/a-propos"
+            href="#/en/about"
             onClick={(e) => {
               if (!e.ctrlKey && !e.metaKey && e.button === 0) {
                 e.preventDefault();
@@ -568,156 +478,72 @@ export const Header: React.FC<HeaderProps> = ({
             }}
             className={`px-3 py-1.5 rounded-xl transition-all select-none no-underline ${
               currentView === 'about'
-                ? 'text-cyan-300 bg-cyan-950/80 border border-cyan-500/60 font-bold shadow-sm shadow-cyan-500/20'
-                : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800'
+                ? 'text-[#0B0F12] bg-[#D7A64A] font-bold shadow-sm'
+                : 'text-[#F4F1E8] hover:text-[#D7A64A] hover:bg-[#151C1E] border border-transparent hover:border-[#567A87]/40'
             }`}
           >
-            {locale === 'fr' ? 'À PROPOS' : 'ABOUT'}
+            {locale === 'fr' ? 'À Propos' : 'About EPEDE'}
           </a>
         </nav>
 
-        {/* Live Grid Frequency & Voltage Capsule */}
-        <div className="hidden xl:flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/90 border border-slate-800 text-[10px] font-mono shadow-inner">
-          <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            50.00 Hz
-          </span>
-          <span className="text-slate-600">·</span>
-          <span className="text-sky-300 font-bold">225 kV</span>
-          <span className="text-slate-600">·</span>
-          <span className="text-amber-300 font-bold">1 483 MW</span>
-        </div>
-
-        {/* Right Actions: Audit Status + Lang Switcher + Guide IA + Primary CTA "ENTER EPEDE" */}
-        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-          
-          {/* Global Multi-Level Usage Depth Switcher (Priority #6) */}
-          <UsageLevelSwitcher locale={locale} />
-
-          {/* Engineering Context HUD Quick Toggle */}
-          {onToggleContextHUD && (
-            <button
-              type="button"
-              onClick={onToggleContextHUD}
-              className={`hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border font-mono text-xs font-bold transition-all cursor-pointer ${
-                isContextHUDOpen
-                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/50 shadow-xs'
-                  : 'bg-slate-900/80 text-slate-400 hover:text-white border-slate-800 hover:border-slate-700'
-              }`}
-              title={locale === 'fr' ? 'Afficher/Masquer le Ruban Contexte Amont/Aval (Ctrl+B)' : 'Toggle Upstream/Downstream Context HUD (Ctrl+B)'}
-            >
-              <Layers className="h-3.5 w-3.5 text-amber-400" />
-              <span className="hidden xl:inline">HUD</span>
-            </button>
-          )}
-
-          {/* PWA Network / Field Status */}
-          <div 
-            className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[10px] font-mono font-bold border transition-colors ${
-              isOnline 
-                ? 'bg-slate-900/80 text-slate-400 border-slate-800' 
-                : 'bg-amber-950/80 text-amber-300 border-amber-500/50 animate-pulse'
-            }`}
-            title={isOnline ? (locale === 'fr' ? 'Connecté au Réseau' : 'Online Mode') : (locale === 'fr' ? 'Mode Poste Isolé (Hors-ligne actif)' : 'Offline Substation Field Mode')}
+        {/* Right Actions: Search + Language Switch + AI Guide */}
+        <div className="flex items-center gap-2 shrink-0">
+          {/* Global Search */}
+          <button
+            type="button"
+            onClick={handleSearch}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#151C1E] border border-[#567A87]/35 hover:border-[#D7A64A] text-[#F4F1E8] hover:text-[#D7A64A] transition-all text-xs font-mono cursor-pointer"
+            title="Search (Ctrl+K)"
           >
-            {isOnline ? (
-              <Wifi className="h-3 w-3 text-emerald-400" />
-            ) : (
-              <WifiOff className="h-3 w-3 text-amber-400" />
-            )}
-            <span className="hidden lg:inline">{isOnline ? 'GRID SYNC' : 'OFFLINE'}</span>
-          </div>
+            <Search className="h-3.5 w-3.5 text-[#D7A64A]" />
+            <span className="hidden lg:inline">{locale === 'fr' ? 'Rechercher' : 'Search'}</span>
+            <kbd className="hidden xl:inline-block px-1.5 py-0.5 text-[9px] font-mono bg-[#0B0F12] text-[#A9ADA5] rounded border border-[#567A87]/30">⌘K</kbd>
+          </button>
 
           {/* Language Switch */}
           <button
             type="button"
             onClick={() => handleLocale(locale === 'fr' ? 'en' : 'fr')}
-            className="px-2.5 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 text-slate-200 hover:text-white text-xs font-mono font-bold transition-all shadow-xs active:scale-95 cursor-pointer"
+            className="px-2.5 py-1.5 rounded-xl bg-[#151C1E] border border-[#567A87]/35 hover:border-[#D7A64A] text-[#F4F1E8] hover:text-[#D7A64A] text-xs font-mono font-bold transition-all shadow-xs active:scale-95 cursor-pointer"
             title={locale === 'fr' ? 'Switch to English' : 'Passer en Français'}
           >
-            {locale.toUpperCase()}
+            {locale === 'en' ? 'EN · FR' : 'FR · EN'}
           </button>
 
-          {/* Dark / Light Theme Toggle */}
-          {onToggleTheme && (
-            <button
-              type="button"
-              onClick={() => {
-                soundEffects.playSwitchClick();
-                onToggleTheme();
-              }}
-              className="p-2 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 text-slate-200 hover:text-amber-400 transition-all shadow-xs active:scale-95 cursor-pointer"
-              title={theme === 'light' ? (locale === 'fr' ? 'Activer le mode sombre' : 'Switch to Dark Mode') : (locale === 'fr' ? 'Activer le mode clair' : 'Switch to Light Mode')}
-              aria-label="Theme Toggle"
-            >
-              {theme === 'light' ? <Moon className="h-4 w-4 text-amber-400" /> : <Sun className="h-4 w-4 text-amber-400" />}
-            </button>
-          )}
-
-          {/* AI Assistant trigger */}
+          {/* AI Learning Guide trigger */}
           <button
             type="button"
             onClick={handleAssistant}
-            className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500/15 to-amber-600/10 hover:from-amber-500/25 hover:to-amber-600/20 text-amber-300 border border-amber-500/30 hover:border-amber-400/60 transition-all hidden sm:flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-xs font-mono text-xs font-bold"
-            title={locale === 'fr' ? 'Assistant Ingénierie IA' : 'AI Engineering Assistant'}
-            aria-label="Assistant IA"
+            className="px-3 py-1.5 rounded-xl bg-[#D7A64A]/15 hover:bg-[#D7A64A]/25 text-[#D7A64A] border border-[#D7A64A]/40 hover:border-[#D7A64A] transition-all hidden sm:flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-xs font-mono text-xs font-bold"
+            title={locale === 'fr' ? 'Guide Pédagogique IA' : 'AI Learning Guide'}
+            aria-label="AI Learning Guide"
           >
-            <Bot className="h-4 w-4 text-amber-400" />
-            <span>AI</span>
+            <Bot className="h-4 w-4 text-[#D7A64A]" />
+            <span>{locale === 'fr' ? 'Guide IA' : 'AI Guide'}</span>
           </button>
 
-          {/* Engineering Role Badge & Auth Sync Hub */}
+          {/* User Profile / Role Menu */}
           <div ref={userMenuRef} className="relative flex items-center gap-1.5">
-            {/* Active Discipline Pill */}
             <button
               type="button"
               onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-mono font-bold border transition-all cursor-pointer shadow-xs active:scale-95 ${
-                activeRole.badge_color === 'amber'
-                  ? 'bg-amber-500/10 text-amber-300 border-amber-500/30 hover:border-amber-400/60'
-                  : activeRole.badge_color === 'blue'
-                  ? 'bg-blue-500/10 text-blue-300 border-blue-500/30 hover:border-blue-400/60'
-                  : activeRole.badge_color === 'purple'
-                  ? 'bg-purple-500/10 text-purple-300 border-purple-500/30 hover:border-purple-400/60'
-                  : activeRole.badge_color === 'emerald'
-                  ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30 hover:border-emerald-400/60'
-                  : 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30 hover:border-cyan-400/60'
-              }`}
-              title={locale === 'fr' ? `Discipline : ${activeRole.name_fr}` : `Role: ${activeRole.name_en}`}
-            >
-              <span className="w-1.5 h-1.5 rounded-full animate-pulse bg-current" />
-              <span className="text-[10px] font-mono px-1 py-0.2 rounded bg-black/40 text-slate-300">
-                {activeRole.domain_code}
-              </span>
-              <span className="hidden md:inline truncate max-w-[120px]">
-                {locale === 'fr' ? activeRole.short_fr : activeRole.short_en}
-              </span>
-            </button>
-
-            {/* User Profile / Guest Avatar Trigger */}
-            <button
-              type="button"
-              onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-              className="flex items-center gap-1.5 p-1 sm:px-2 sm:py-1 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-amber-500/50 text-slate-200 transition-all text-xs"
-              title={locale === 'fr' ? 'Dossier Ingénieur & Profil' : 'Engineer Dossier & Profile'}
+              className="flex items-center gap-1.5 p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-[#151C1E] border border-[#567A87]/35 hover:border-[#D7A64A] text-[#F4F1E8] transition-all text-xs cursor-pointer"
+              title={locale === 'fr' ? 'Profil & Niveau d’apprentissage' : 'Learning Profile & Settings'}
             >
               {user ? (
                 user.photoURL ? (
-                  <img src={user.photoURL} alt="User" className="w-5 h-5 rounded-full object-cover border border-amber-400/50" />
+                  <img src={user.photoURL} alt="User" className="w-5 h-5 rounded-full object-cover border border-[#D7A64A]/50" />
                 ) : (
-                  <div className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold text-[10px]">
+                  <div className="w-5 h-5 rounded-full bg-[#D7A64A]/20 text-[#D7A64A] flex items-center justify-center font-bold text-[10px]">
                     {user.email?.charAt(0).toUpperCase() || 'U'}
                   </div>
                 )
               ) : (
-                <div className="w-5 h-5 rounded-full bg-slate-800 text-amber-400 flex items-center justify-center font-bold text-[10px]">
+                <div className="w-5 h-5 rounded-full bg-[#0B0F12] text-[#D7A64A] flex items-center justify-center font-bold text-[10px]">
                   <UserIcon className="h-3 w-3" />
                 </div>
               )}
-              <span className="hidden lg:inline-block max-w-[85px] truncate text-[11px] font-mono font-bold">
-                {user ? (user.displayName || user.email?.split('@')[0]) : (locale === 'fr' ? 'Invité' : 'Guest')}
-              </span>
-              <ChevronDown className="h-3 w-3 text-slate-400" />
+              <ChevronDown className="h-3 w-3 text-[#A9ADA5]" />
             </button>
 
             {/* Engineer Profile & Sync Hub Dropdown Menu */}

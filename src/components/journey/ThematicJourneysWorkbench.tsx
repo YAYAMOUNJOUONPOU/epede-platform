@@ -1,7 +1,9 @@
 // src/components/journey/ThematicJourneysWorkbench.tsx
-// EPEDE Priority #10 - Parcours Guidés Thématiques (Thematic Guided Learning Journeys)
-// Interactive curriculum workbench guiding engineers and students across 7 structured paths
-// with progress tracking, interactive quizzes, direct tooling links, and Cameroon grid grounding.
+// EPEDE 2.0 - "Learn" Hub (Le Centre d'Apprentissage & Parcours Pédagogiques)
+// Features both:
+// 1. The 8 Core Progressive Pathways (01 to 08) from Zero to Advanced Systems
+// 2. The 7 Engineering Masterclass Case Studies (Hospital Power, Substation, Hydro, etc.)
+// Styled in canonical engineering palette (#0B0F12, #151C1E, #D7A64A, #567A87, #F4F1E8).
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,7 +12,6 @@ import {
   CheckCircle2,
   ChevronRight,
   ChevronLeft,
-  ArrowRight,
   BookOpen,
   Award,
   Zap,
@@ -19,15 +20,22 @@ import {
   Activity,
   Cpu,
   Globe,
-  ShieldAlert,
   Clock,
   Sparkles,
   HelpCircle,
-  RotateCcw,
   Check,
   X,
   ExternalLink,
+  GraduationCap,
+  Layers,
+  ArrowRight,
+  SlidersHorizontal,
 } from 'lucide-react';
+import {
+  PROGRESSIVE_LEARNING_PATHWAYS,
+  ProgressivePathway,
+  PathwayLessonSection,
+} from '../../data/learningPathwaysData';
 import {
   THEMATIC_JOURNEYS,
   ThematicJourney,
@@ -35,12 +43,15 @@ import {
 } from '../../data/thematicJourneysData';
 import { useUsageLevel, UsageLevel } from '../../services/UsageLevelContext';
 import type { AppViewType } from '../../services/routerService';
+import type { DomainCode } from '../../types/epede';
 
 interface ThematicJourneysWorkbenchProps {
   locale: 'fr' | 'en';
   onNavigate?: (view: AppViewType, context?: any) => void;
   initialJourneyId?: string;
 }
+
+type LearningTabMode = 'PATHWAYS' | 'MASTERCLASSES';
 
 export const ThematicJourneysWorkbench: React.FC<ThematicJourneysWorkbenchProps> = ({
   locale,
@@ -49,24 +60,46 @@ export const ThematicJourneysWorkbench: React.FC<ThematicJourneysWorkbenchProps>
 }) => {
   const { usageLevel } = useUsageLevel();
 
-  // Active journey state
+  // Tab mode: Core 8 Pathways vs Advanced Masterclass Case Studies
+  const [activeTab, setActiveTab] = useState<LearningTabMode>(() => {
+    if (initialJourneyId && initialJourneyId.startsWith('journey-')) {
+      return 'MASTERCLASSES';
+    }
+    return 'PATHWAYS';
+  });
+
+  // Level filter
+  const [levelFilter, setLevelFilter] = useState<'ALL' | 'beginner' | 'technician' | 'engineer'>('ALL');
+
+  // Progressive Pathway State (01 - 08)
+  const [selectedPathway, setSelectedPathway] = useState<ProgressivePathway>(() => {
+    if (initialJourneyId && initialJourneyId.startsWith('pathway-')) {
+      const found = PROGRESSIVE_LEARNING_PATHWAYS.find((p) => p.id === initialJourneyId);
+      if (found) return found;
+    }
+    return PROGRESSIVE_LEARNING_PATHWAYS[0];
+  });
+  const [activeLessonIndex, setActiveLessonIndex] = useState<number>(0);
+  const [pathwayAnswer, setPathwayAnswer] = useState<number | null>(null);
+  const [isPathwayAnswerSubmitted, setIsPathwayAnswerSubmitted] = useState<boolean>(false);
+
+  // Thematic Masterclass Journey State
   const [selectedJourney, setSelectedJourney] = useState<ThematicJourney>(() => {
-    if (initialJourneyId) {
+    if (initialJourneyId && initialJourneyId.startsWith('journey-')) {
       const found = THEMATIC_JOURNEYS.find((j) => j.id === initialJourneyId);
       if (found) return found;
     }
     return THEMATIC_JOURNEYS[0];
   });
+  const [activeMasterclassStepIndex, setActiveMasterclassStepIndex] = useState<number>(0);
+  const [masterclassAnswer, setMasterclassAnswer] = useState<number | null>(null);
+  const [isMasterclassAnswerSubmitted, setIsMasterclassAnswerSubmitted] = useState<boolean>(false);
 
-  const [activeStepIndex, setActiveStepIndex] = useState<number>(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-  const [isAnswerSubmitted, setIsAnswerSubmitted] = useState<boolean>(false);
-
-  // User completed steps tracking stored in localStorage
-  const [completedSteps, setCompletedSteps] = useState<Record<string, number[]>>(() => {
+  // Completed items tracking stored in localStorage
+  const [completedItems, setCompletedItems] = useState<Record<string, number[]>>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const saved = localStorage.getItem('epede-journey-completed-steps');
+        const saved = localStorage.getItem('epede-learning-completed-items');
         if (saved) return JSON.parse(saved);
       } catch (e) {
         // ignore
@@ -75,28 +108,13 @@ export const ThematicJourneysWorkbench: React.FC<ThematicJourneysWorkbenchProps>
     return {};
   });
 
-  // Profile filter for journeys
-  const [profileFilter, setProfileFilter] = useState<'ALL' | UsageLevel>('ALL');
-
-  // Filtered journeys
-  const filteredJourneys = useMemo(() => {
-    return THEMATIC_JOURNEYS.filter((j) => {
-      if (profileFilter !== 'ALL' && j.targetProfile !== profileFilter) return false;
-      return true;
-    });
-  }, [profileFilter]);
-
-  // Current active step
-  const activeStep: JourneyStep | undefined = selectedJourney.steps[activeStepIndex];
-
-  // Save progress
-  const markStepComplete = (journeyId: string, stepNum: number) => {
-    setCompletedSteps((prev) => {
-      const current = prev[journeyId] || [];
-      if (current.includes(stepNum)) return prev;
-      const updated = { ...prev, [journeyId]: [...current, stepNum] };
+  const markCompleted = (id: string, stepNumber: number) => {
+    setCompletedItems((prev) => {
+      const current = prev[id] || [];
+      if (current.includes(stepNumber)) return prev;
+      const updated = { ...prev, [id]: [...current, stepNumber] };
       try {
-        localStorage.setItem('epede-journey-completed-steps', JSON.stringify(updated));
+        localStorage.setItem('epede-learning-completed-items', JSON.stringify(updated));
       } catch (e) {
         // ignore
       }
@@ -104,61 +122,34 @@ export const ThematicJourneysWorkbench: React.FC<ThematicJourneysWorkbenchProps>
     });
   };
 
-  const isStepCompleted = (journeyId: string, stepNum: number) => {
-    return (completedSteps[journeyId] || []).includes(stepNum);
+  const isCompleted = (id: string, stepNumber: number) => {
+    return (completedItems[id] || []).includes(stepNumber);
   };
 
-  const getJourneyProgressPercent = (journey: ThematicJourney) => {
-    const done = (completedSteps[journey.id] || []).length;
-    return Math.round((done / journey.steps.length) * 100);
-  };
+  // Filtered pathways
+  const filteredPathways = useMemo(() => {
+    return PROGRESSIVE_LEARNING_PATHWAYS.filter((p) => {
+      if (levelFilter === 'ALL') return true;
+      return p.level === levelFilter;
+    });
+  }, [levelFilter]);
 
-  // Reset quiz state when switching steps
+  // Reset quiz state when switching lessons
   useEffect(() => {
-    setSelectedAnswer(null);
-    setIsAnswerSubmitted(false);
-  }, [activeStepIndex, selectedJourney.id]);
+    setPathwayAnswer(null);
+    setIsPathwayAnswerSubmitted(false);
+  }, [activeLessonIndex, selectedPathway.id]);
 
-  const handleSelectJourney = (journey: ThematicJourney) => {
-    setSelectedJourney(journey);
-    setActiveStepIndex(0);
-  };
+  useEffect(() => {
+    setMasterclassAnswer(null);
+    setIsMasterclassAnswerSubmitted(false);
+  }, [activeMasterclassStepIndex, selectedJourney.id]);
 
-  const handleNextStep = () => {
-    if (activeStepIndex < selectedJourney.steps.length - 1) {
-      setActiveStepIndex(activeStepIndex + 1);
-    }
-  };
+  const activeLesson: PathwayLessonSection | undefined = selectedPathway.lessons[activeLessonIndex];
+  const activeMasterclassStep: JourneyStep | undefined = selectedJourney.steps[activeMasterclassStepIndex];
 
-  const handlePrevStep = () => {
-    if (activeStepIndex > 0) {
-      setActiveStepIndex(activeStepIndex - 1);
-    }
-  };
-
-  const handleSubmitAnswer = () => {
-    if (selectedAnswer === null) return;
-    setIsAnswerSubmitted(true);
-    if (selectedAnswer === activeStep?.quiz.correctAnswerIndex) {
-      markStepComplete(selectedJourney.id, activeStep.stepNumber);
-    }
-  };
-
-  const getJourneyIcon = (iconName: string) => {
-    switch (iconName) {
-      case 'Globe': return <Globe className="w-5 h-5 text-emerald-400" />;
-      case 'Zap': return <Zap className="w-5 h-5 text-rose-400" />;
-      case 'ShieldCheck': return <ShieldCheck className="w-5 h-5 text-sky-400" />;
-      case 'Building2': return <Building2 className="w-5 h-5 text-amber-400" />;
-      case 'Cpu': return <Cpu className="w-5 h-5 text-indigo-400" />;
-      case 'Activity': return <Activity className="w-5 h-5 text-cyan-400" />;
-      case 'ShieldAlert': return <ShieldAlert className="w-5 h-5 text-purple-400" />;
-      default: return <Compass className="w-5 h-5 text-slate-400" />;
-    }
-  };
-
-  const handleLaunchTargetTool = (action: JourneyStep['targetAction']) => {
-    if (!onNavigate) return;
+  const handleLaunchTargetTool = (action?: { type: string; targetId: string }) => {
+    if (!onNavigate || !action) return;
     switch (action.type) {
       case 'EQUIPMENT':
         onNavigate('equipment', { equipmentId: action.targetId });
@@ -175,452 +166,921 @@ export const ThematicJourneysWorkbench: React.FC<ThematicJourneysWorkbenchProps>
       case 'SCENARIO':
         onNavigate('scenarios', { entityId: action.targetId });
         break;
-      case 'PROVENANCE':
-        onNavigate('traceability');
+      case 'STANDARDS':
+        onNavigate('standards');
         break;
       default:
         break;
     }
   };
 
+  const getIcon = (name: string, className = 'w-5 h-5') => {
+    switch (name) {
+      case 'Zap': return <Zap className={`${className} text-[#D7A64A]`} />;
+      case 'Cpu': return <Cpu className={`${className} text-[#567A87]`} />;
+      case 'Building2': return <Building2 className={`${className} text-sky-400`} />;
+      case 'Compass': return <Compass className={`${className} text-purple-400`} />;
+      case 'Activity': return <Activity className={`${className} text-amber-400`} />;
+      case 'ShieldCheck': return <ShieldCheck className={`${className} text-emerald-400`} />;
+      case 'Globe': return <Globe className={`${className} text-emerald-400`} />;
+      default: return <BookOpen className={`${className} text-[#D7A64A]`} />;
+    }
+  };
+
   return (
-    <div className="space-y-6 pb-16 font-sans">
+    <div className="space-y-8 pb-20 font-sans text-[#F4F1E8]">
       
-      {/* Top Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-slate-700/80 rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-xl text-slate-100">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-10 -left-10 w-72 h-72 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
+      {/* ── Top Header & Mode Switcher ────────────────────────── */}
+      <div className="bg-[#151C1E] border border-white/10 rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-2xl">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#D7A64A]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-10 -left-10 w-72 h-72 bg-[#567A87]/15 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-          <div className="space-y-2">
-            <div className="flex items-center gap-3">
-              <span className="font-mono text-xs font-black uppercase px-2.5 py-1 rounded bg-indigo-950/80 text-indigo-300 border border-indigo-500/50 flex items-center gap-1.5 shadow-xs">
-                <Compass className="h-3.5 w-3.5 text-indigo-400" />
-                <span>P10 · PARCOURS GUIDÉS THÉMATIQUES</span>
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="font-mono text-xs font-black uppercase px-3 py-1 rounded-full bg-[#D7A64A]/20 text-[#D7A64A] border border-[#D7A64A]/40 flex items-center gap-1.5 shadow-xs">
+                <GraduationCap className="h-4 w-4" />
+                <span>EPEDE 2.0 · LEARN HUB</span>
               </span>
-              <span className="font-mono text-xs text-slate-400">
-                {locale === 'fr' ? '7 Cursus d\'Ingénierie & Masterclass' : '7 Engineering Learning Curriculums'}
+              <span className="font-mono text-xs text-[#A9ADA5]">
+                {locale === 'fr'
+                  ? 'Du zéro absolu à l’ingénierie des réseaux électriques'
+                  : 'From zero knowledge to power systems engineering'}
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-mono font-black tracking-tight text-white uppercase">
-              {locale === 'fr' ? 'Parcours d\'Apprentissage & Montée en Compétences' : 'Thematic Guided Learning Masterclasses'}
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-mono font-black tracking-tight text-white uppercase">
+              {locale === 'fr' ? 'Parcours d’Apprentissage Électrique' : 'Electrical Learning Pathways'}
             </h1>
-            <p className="text-sm text-slate-300 max-w-3xl leading-relaxed">
+            <p className="text-sm text-[#A9ADA5] max-w-3xl leading-relaxed">
               {locale === 'fr'
-                ? 'Choisissez un parcours structuré selon vos objectifs : comprendre le réseau national du Cameroun, maîtriser les calculs de court-circuit CEI 60909, devenir ingénieur protection ou concevoir un poste source HTA/BT. Chaque étape inclut théorie, formulations, validation interactive et passerelles directes vers les outils.'
-                : 'Select a structured path tailored to your goal: understand Cameroon power grid, master IEC 60909 short-circuit calculations, become a protection engineer, or design an MV/LV substation. Each step includes practical insights, formulas, quiz checks, and instant tooling links.'}
+                ? 'Une progression visuelle et concrète : comprenez d’abord le phénomène physique avec des analogies du monde réel, observez l’intérieur des équipements réels, associez les symboles CEI normalisés et explorez les cas d’application au Cameroun et en Afrique.'
+                : 'A progressive visual curriculum: first grasp the physical principle through intuitive real-world analogies, inspect internal equipment cutaways, connect standardized IEC symbols, and explore African and Cameroon grid applications.'}
             </p>
           </div>
 
-          {/* Quick Level Filter */}
-          <div className="flex flex-wrap items-center gap-1.5 bg-slate-950/80 p-1.5 rounded-xl border border-slate-700 font-mono text-xs shrink-0">
+          {/* Mode Switcher: 8 Progressive Pathways vs Engineering Masterclasses */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-[#0B0F12] p-1.5 rounded-xl border border-white/10 shrink-0">
             <button
               type="button"
-              onClick={() => setProfileFilter('ALL')}
-              className={`px-3 py-1.5 rounded-lg transition-all font-bold ${
-                profileFilter === 'ALL'
-                  ? 'bg-slate-700 text-white shadow-xs'
-                  : 'text-slate-400 hover:text-white'
+              onClick={() => setActiveTab('PATHWAYS')}
+              className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-mono text-xs font-bold transition-all ${
+                activeTab === 'PATHWAYS'
+                  ? 'bg-[#D7A64A] text-[#0B0F12] shadow-md'
+                  : 'text-[#A9ADA5] hover:text-white hover:bg-white/5'
               }`}
             >
-              {locale === 'fr' ? 'Tous Profils' : 'All Profiles'}
+              <Layers className="w-4 h-4" />
+              <span>{locale === 'fr' ? '8 Parcours Progressifs (01 - 08)' : '8 Progressive Pathways (01 - 08)'}</span>
             </button>
             <button
               type="button"
-              onClick={() => setProfileFilter('DISCOVERY')}
-              className={`px-3 py-1.5 rounded-lg transition-all font-bold ${
-                profileFilter === 'DISCOVERY'
-                  ? 'bg-emerald-700 text-white shadow-xs'
-                  : 'text-emerald-400 hover:text-white'
+              onClick={() => setActiveTab('MASTERCLASSES')}
+              className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-mono text-xs font-bold transition-all ${
+                activeTab === 'MASTERCLASSES'
+                  ? 'bg-[#567A87] text-white shadow-md'
+                  : 'text-[#A9ADA5] hover:text-white hover:bg-white/5'
               }`}
             >
-              {locale === 'fr' ? 'Découverte' : 'Discovery'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setProfileFilter('TECHNICAL')}
-              className={`px-3 py-1.5 rounded-lg transition-all font-bold ${
-                profileFilter === 'TECHNICAL'
-                  ? 'bg-sky-700 text-white shadow-xs'
-                  : 'text-sky-400 hover:text-white'
-              }`}
-            >
-              {locale === 'fr' ? 'Technique' : 'Technical'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setProfileFilter('ENGINEERING')}
-              className={`px-3 py-1.5 rounded-lg transition-all font-bold ${
-                profileFilter === 'ENGINEERING'
-                  ? 'bg-purple-700 text-white shadow-xs'
-                  : 'text-purple-400 hover:text-white'
-              }`}
-            >
-              {locale === 'fr' ? 'Ingénierie' : 'Engineering'}
+              <Compass className="w-4 h-4" />
+              <span>{locale === 'fr' ? '7 Études de Cas & Masterclass' : '7 Applied Masterclasses'}</span>
             </button>
           </div>
         </div>
+
+        {/* Level Filters for Pathways */}
+        {activeTab === 'PATHWAYS' && (
+          <div className="relative z-10 mt-6 pt-5 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2 font-mono text-xs text-[#A9ADA5]">
+              <SlidersHorizontal className="w-3.5 h-3.5 text-[#D7A64A]" />
+              <span>{locale === 'fr' ? 'Niveau technique :' : 'Technical Level:'}</span>
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5 font-mono text-xs">
+              <button
+                type="button"
+                onClick={() => setLevelFilter('ALL')}
+                className={`px-3 py-1.5 rounded-lg font-bold transition-all ${
+                  levelFilter === 'ALL'
+                    ? 'bg-[#D7A64A]/20 text-[#D7A64A] border border-[#D7A64A]/40'
+                    : 'text-[#A9ADA5] hover:text-white bg-[#0B0F12] border border-white/5'
+                }`}
+              >
+                {locale === 'fr' ? 'Tous les niveaux (01 à 08)' : 'All Levels (01 to 08)'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setLevelFilter('beginner')}
+                className={`px-3 py-1.5 rounded-lg font-bold transition-all ${
+                  levelFilter === 'beginner'
+                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                    : 'text-[#A9ADA5] hover:text-white bg-[#0B0F12] border border-white/5'
+                }`}
+              >
+                {locale === 'fr' ? 'Débutant & Fondations (01, 02, 08)' : 'Beginner & Foundations'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setLevelFilter('technician')}
+                className={`px-3 py-1.5 rounded-lg font-bold transition-all ${
+                  levelFilter === 'technician'
+                    ? 'bg-sky-500/20 text-sky-400 border border-sky-500/40'
+                    : 'text-[#A9ADA5] hover:text-white bg-[#0B0F12] border border-white/5'
+                }`}
+              >
+                {locale === 'fr' ? 'Technicien Terrain (03, 06, 07)' : 'Field Technician'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setLevelFilter('engineer')}
+                className={`px-3 py-1.5 rounded-lg font-bold transition-all ${
+                  levelFilter === 'engineer'
+                    ? 'bg-purple-500/20 text-purple-400 border border-purple-500/40'
+                    : 'text-[#A9ADA5] hover:text-white bg-[#0B0F12] border border-white/5'
+                }`}
+              >
+                {locale === 'fr' ? 'Ingénieur Réseaux & Systèmes (04, 05)' : 'Power Systems Engineer'}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Main Grid: Journey Selector Sidebar (4 cols) & Step-by-Step Workbench (8 cols) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        
-        {/* Journey Card List (4 cols) */}
-        <div className="lg:col-span-4 space-y-3">
-          <div className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider px-1 flex items-center justify-between">
-            <span>{locale === 'fr' ? 'Les 7 Parcours Disponibles' : 'Available Curriculums'}</span>
-            <span className="text-indigo-400">{filteredJourneys.length}</span>
-          </div>
+      {/* ── MODE 1: CORE 8 PROGRESSIVE PATHWAYS ────────────────── */}
+      {activeTab === 'PATHWAYS' && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          
+          {/* Pathway Selector Sidebar (4 Cols) */}
+          <div className="lg:col-span-4 space-y-3">
+            <div className="text-xs font-mono font-bold text-[#A9ADA5] uppercase tracking-wider px-1 flex items-center justify-between">
+              <span>{locale === 'fr' ? 'Les 8 Parcours Pédagogiques' : 'The 8 Learning Pathways'}</span>
+              <span className="text-[#D7A64A]">{filteredPathways.length}</span>
+            </div>
 
-          <div className="space-y-2.5 max-h-[750px] overflow-y-auto pr-1">
-            {filteredJourneys.map((journey) => {
-              const isSelected = selectedJourney.id === journey.id;
-              const progress = getJourneyProgressPercent(journey);
+            <div className="space-y-2.5 max-h-[820px] overflow-y-auto pr-1">
+              {filteredPathways.map((pathway) => {
+                const isSelected = selectedPathway.id === pathway.id;
+                const completedCount = (completedItems[pathway.id] || []).length;
+                const totalLessons = pathway.lessons.length;
+                const progressPct = Math.round((completedCount / totalLessons) * 100);
 
-              return (
-                <motion.div
-                  key={journey.id}
-                  whileHover={{ x: 2 }}
-                  onClick={() => handleSelectJourney(journey)}
-                  className={`p-4 rounded-xl border transition-all cursor-pointer relative overflow-hidden ${
-                    isSelected
-                      ? 'bg-slate-800/90 border-indigo-500 shadow-md ring-1 ring-indigo-500/50'
-                      : 'bg-slate-900/80 border-slate-800 hover:border-slate-700 hover:bg-slate-800/50'
-                  }`}
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-2">
-                      <div className="p-2 rounded-lg bg-slate-950 border border-slate-700">
-                        {getJourneyIcon(journey.iconName)}
-                      </div>
-                      <div>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-950 text-slate-400 border border-slate-800">
-                          {journey.targetProfile}
+                return (
+                  <motion.div
+                    key={pathway.id}
+                    whileHover={{ x: 2 }}
+                    onClick={() => {
+                      setSelectedPathway(pathway);
+                      setActiveLessonIndex(0);
+                    }}
+                    className={`p-4 rounded-xl border transition-all cursor-pointer relative overflow-hidden ${
+                      isSelected
+                        ? 'bg-[#151C1E] border-[#D7A64A] shadow-lg ring-1 ring-[#D7A64A]/50'
+                        : 'bg-[#151C1E]/60 border-white/10 hover:border-white/20 hover:bg-[#151C1E]'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-center gap-2.5">
+                        <span className="font-mono text-xs font-black px-2 py-1 rounded bg-[#0B0F12] text-[#D7A64A] border border-[#D7A64A]/30">
+                          {pathway.orderNumber}
                         </span>
-                        <div className="text-xs font-mono text-slate-400 mt-1 flex items-center gap-1">
-                          <Clock className="w-3 h-3 text-slate-500" />
-                          <span>~{journey.estimatedMinutes} min</span>
+                        <div>
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#0B0F12] text-[#A9ADA5] border border-white/5">
+                            {pathway.levelBadge[locale]}
+                          </span>
+                          <div className="text-xs font-mono text-[#A9ADA5] mt-1 flex items-center gap-1">
+                            <Clock className="w-3 h-3 text-[#A9ADA5]/70" />
+                            <span>~{pathway.estimatedMinutes} min</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Progress */}
+                      <div className="text-right font-mono">
+                        <span className="text-xs font-bold text-emerald-400">{progressPct}%</span>
+                        <div className="w-12 bg-[#0B0F12] h-1.5 rounded-full overflow-hidden mt-1 border border-white/10">
+                          <div
+                            className="h-full bg-emerald-500"
+                            style={{ width: `${progressPct}%` }}
+                          />
                         </div>
                       </div>
                     </div>
 
-                    {/* Progress indicator */}
-                    <div className="text-right font-mono">
-                      <span className="text-xs font-bold text-emerald-400">{progress}%</span>
-                      <div className="w-12 bg-slate-950 h-1.5 rounded-full overflow-hidden mt-1 border border-slate-800">
-                        <div
-                          className="h-full bg-emerald-500"
-                          style={{ width: `${progress}%` }}
-                        />
-                      </div>
+                    <h3 className="text-sm font-bold font-mono text-white mt-3 leading-snug">
+                      {pathway.title[locale]}
+                    </h3>
+                    <p className="text-xs text-[#A9ADA5] mt-1 line-clamp-2 leading-relaxed">
+                      {pathway.tagline[locale]}
+                    </p>
+
+                    <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] font-mono text-[#A9ADA5]">
+                      <span>{pathway.lessons.length} {locale === 'fr' ? 'leçons visuelles' : 'visual lessons'}</span>
+                      <span className="text-[#D7A64A] font-semibold flex items-center gap-0.5">
+                        <span>{locale === 'fr' ? 'Étudier' : 'Learn'}</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </span>
                     </div>
-                  </div>
-
-                  <h3 className="text-sm font-bold font-mono text-white mt-3 group-hover:text-indigo-300">
-                    {journey.title[locale]}
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-1 line-clamp-2 leading-relaxed">
-                    {journey.description[locale]}
-                  </p>
-
-                  <div className="mt-3 pt-2.5 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-400">
-                    <span>{journey.steps.length} {locale === 'fr' ? 'étapes guidées' : 'guided steps'}</span>
-                    <span className="text-indigo-400 font-semibold flex items-center gap-0.5">
-                      <span>{locale === 'fr' ? 'Explorer' : 'Start'}</span>
-                      <ChevronRight className="w-3.5 h-3.5" />
-                    </span>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Step-by-Step Interactive Guide (8 cols) */}
-        <div className="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl text-slate-100 space-y-6">
-          
-          {/* Active Journey Header */}
-          <div className="border-b border-slate-800 pb-5 space-y-3">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <span className="p-2 rounded-lg bg-slate-950 border border-slate-700">
-                  {getJourneyIcon(selectedJourney.iconName)}
-                </span>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono font-bold uppercase text-indigo-400">
-                      PARCOURS #{selectedJourney.order}
-                    </span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-700">
-                      {selectedJourney.targetProfile}
-                    </span>
-                  </div>
-                  <h2 className="text-xl font-bold font-mono text-white mt-0.5">
-                    {selectedJourney.title[locale]}
-                  </h2>
-                </div>
-              </div>
-
-              {/* Step Navigation Pill Indicator */}
-              <div className="flex items-center gap-1.5 font-mono text-xs bg-slate-950 p-1.5 rounded-xl border border-slate-800">
-                <button
-                  type="button"
-                  onClick={handlePrevStep}
-                  disabled={activeStepIndex === 0}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <span className="px-2 font-bold text-slate-200">
-                  {activeStepIndex + 1} / {selectedJourney.steps.length}
-                </span>
-                <button
-                  type="button"
-                  onClick={handleNextStep}
-                  disabled={activeStepIndex === selectedJourney.steps.length - 1}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* Step Breadcrumbs Progress Bar */}
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 pt-2">
-              {selectedJourney.steps.map((st, idx) => {
-                const isActive = idx === activeStepIndex;
-                const isDone = isStepCompleted(selectedJourney.id, st.stepNumber);
-
-                return (
-                  <button
-                    key={st.stepNumber}
-                    type="button"
-                    onClick={() => setActiveStepIndex(idx)}
-                    className={`p-2 rounded-lg border text-left transition-all font-mono text-[11px] ${
-                      isActive
-                        ? 'bg-indigo-950/80 border-indigo-500 text-indigo-200 font-bold'
-                        : isDone
-                        ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
-                        : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span>Étape {st.stepNumber}</span>
-                      {isDone && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />}
-                    </div>
-                  </button>
+                  </motion.div>
                 );
               })}
             </div>
           </div>
 
-          {/* Active Step Content */}
-          {activeStep && (
-            <div className="space-y-6">
-              
-              {/* Step Title & Summary */}
-              <div className="space-y-2">
-                <span className="text-xs font-mono text-indigo-400 uppercase tracking-wider font-bold">
-                  {locale === 'fr' ? `Étape ${activeStep.stepNumber} : Concept Clé` : `Step ${activeStep.stepNumber}: Core Concept`}
-                </span>
-                <h3 className="text-xl font-bold font-mono text-white">
-                  {activeStep.title[locale]}
-                </h3>
-                <p className="text-sm text-slate-300 bg-slate-950/70 p-4 rounded-xl border border-slate-800 leading-relaxed font-sans">
-                  {activeStep.summary[locale]}
-                </p>
-              </div>
-
-              {/* Deep Engineering Theory */}
-              <div className="space-y-2">
-                <h4 className="text-xs font-mono font-bold text-slate-400 uppercase flex items-center gap-1.5">
-                  <BookOpen className="w-3.5 h-3.5 text-sky-400" />
-                  <span>{locale === 'fr' ? 'Approfondissement & Physique du Phénomène' : 'Physical Principles & Deep Engineering'}</span>
-                </h4>
-                <div className="text-xs text-slate-300 bg-slate-950/50 p-4 rounded-xl border border-slate-800 leading-relaxed font-sans space-y-2">
-                  <p>{activeStep.deepExplanation[locale]}</p>
-                </div>
-              </div>
-
-              {/* Key Mathematical Formulas if any */}
-              {activeStep.keyFormulas && activeStep.keyFormulas.length > 0 && (
-                <div className="space-y-2">
-                  <h4 className="text-xs font-mono font-bold text-slate-400 uppercase flex items-center gap-1.5">
-                    <Zap className="w-3.5 h-3.5 text-amber-400" />
-                    <span>{locale === 'fr' ? 'Formulations Mathématiques & Normatives' : 'Mathematical Formulations'}</span>
-                  </h4>
-                  <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5 font-mono text-xs text-amber-300">
-                    {activeStep.keyFormulas.map((f, i) => (
-                      <div key={i} className="flex items-center gap-2">
-                        <span className="text-slate-500 font-bold">({i + 1})</span>
-                        <code className="text-amber-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-                          {f}
-                        </code>
-                      </div>
-                    ))}
+          {/* Interactive Lesson Workbench (8 Cols) */}
+          <div className="lg:col-span-8 bg-[#151C1E] border border-white/10 rounded-2xl p-6 sm:p-7 shadow-2xl space-y-6">
+            
+            {/* Pathway Header */}
+            <div className="border-b border-white/10 pb-5 space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-[#0B0F12] border border-[#D7A64A]/30">
+                    {getIcon(selectedPathway.iconName, 'w-6 h-6')}
                   </div>
-                </div>
-              )}
-
-              {/* Cameroon Field Engineering Practical Tips */}
-              {activeStep.fieldEngineeringTips && (
-                <div className="p-4 rounded-xl bg-emerald-950/30 border border-emerald-800/40 space-y-1.5 text-xs font-sans">
-                  <div className="flex items-center gap-1.5 text-emerald-400 font-mono font-bold uppercase">
-                    <Globe className="w-3.5 h-3.5" />
-                    <span>{locale === 'fr' ? 'Retour d\'Expérience Terrain Cameroun (SONATREL / Eneo)' : 'Cameroon Grid Utility Field Tip'}</span>
-                  </div>
-                  <p className="text-emerald-200/90 leading-relaxed">
-                    {activeStep.fieldEngineeringTips[locale]}
-                  </p>
-                </div>
-              )}
-
-              {/* Direct Tool Launch Action Banner */}
-              <div className="p-4 rounded-xl bg-indigo-950/30 border border-indigo-700/50 flex flex-wrap items-center justify-between gap-4">
-                <div className="space-y-0.5">
-                  <span className="text-[10px] font-mono text-indigo-400 uppercase">
-                    {locale === 'fr' ? 'Mise en Pratique Immédiate :' : 'Hands-On Practice:'}
-                  </span>
-                  <div className="text-sm font-bold font-mono text-white">
-                    {activeStep.targetAction.label[locale]}
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono font-bold uppercase text-[#D7A64A]">
+                        {locale === 'fr' ? `PARCOURS ${selectedPathway.orderNumber}` : `PATHWAY ${selectedPathway.orderNumber}`}
+                      </span>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#0B0F12] text-[#A9ADA5] border border-white/10">
+                        {selectedPathway.levelBadge[locale]}
+                      </span>
+                    </div>
+                    <h2 className="text-xl sm:text-2xl font-bold font-mono text-white mt-1">
+                      {selectedPathway.title[locale]}
+                    </h2>
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => handleLaunchTargetTool(activeStep.targetAction)}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-mono text-xs font-bold transition-all shadow-md"
-                >
-                  <span>{locale === 'fr' ? 'Ouvrir l\'Outil' : 'Launch Tool'}</span>
-                  <ExternalLink className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Interactive Step Quiz Card */}
-              <div className="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs font-mono font-bold text-sky-400 uppercase">
-                    <HelpCircle className="w-4 h-4" />
-                    <span>{locale === 'fr' ? 'Point de Contrôle & Validation des Acquis' : 'Step Knowledge Check'}</span>
-                  </div>
-                  {isStepCompleted(selectedJourney.id, activeStep.stepNumber) && (
-                    <span className="flex items-center gap-1 text-[11px] font-mono text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-500/30 font-semibold">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>{locale === 'fr' ? 'Validé' : 'Completed'}</span>
-                    </span>
-                  )}
-                </div>
-
-                <p className="text-sm font-bold text-white font-mono">
-                  {activeStep.quiz.question[locale]}
-                </p>
-
-                {/* Multiple choice options */}
-                <div className="space-y-2">
-                  {activeStep.quiz.options.map((opt, optIdx) => {
-                    const isSelected = selectedAnswer === optIdx;
-                    const isCorrect = optIdx === activeStep.quiz.correctAnswerIndex;
-
-                    let btnClass = 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700';
-                    if (isAnswerSubmitted) {
-                      if (isCorrect) {
-                        btnClass = 'bg-emerald-950/80 border-emerald-500 text-emerald-300 font-bold';
-                      } else if (isSelected) {
-                        btnClass = 'bg-rose-950/80 border-rose-500 text-rose-300';
-                      }
-                    } else if (isSelected) {
-                      btnClass = 'bg-sky-950/80 border-sky-500 text-sky-200 font-bold';
-                    }
-
-                    return (
-                      <button
-                        key={optIdx}
-                        type="button"
-                        onClick={() => !isAnswerSubmitted && setSelectedAnswer(optIdx)}
-                        disabled={isAnswerSubmitted}
-                        className={`w-full text-left p-3 rounded-xl border font-mono text-xs transition-all flex items-center justify-between ${btnClass}`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold bg-slate-950 border border-slate-700">
-                            {String.fromCharCode(65 + optIdx)}
-                          </span>
-                          <span>{opt[locale]}</span>
-                        </div>
-                        {isAnswerSubmitted && isCorrect && <Check className="w-4 h-4 text-emerald-400" />}
-                        {isAnswerSubmitted && isSelected && !isCorrect && <X className="w-4 h-4 text-rose-400" />}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Submit button & feedback */}
-                {!isAnswerSubmitted ? (
+                {/* Lesson Navigation Arrows */}
+                <div className="flex items-center gap-1.5 font-mono text-xs bg-[#0B0F12] p-1.5 rounded-xl border border-white/10">
                   <button
                     type="button"
-                    onClick={handleSubmitAnswer}
-                    disabled={selectedAnswer === null}
-                    className="w-full py-2.5 rounded-lg bg-sky-600 hover:bg-sky-500 disabled:opacity-40 text-white font-mono text-xs font-bold transition-all shadow-xs"
+                    onClick={() => activeLessonIndex > 0 && setActiveLessonIndex(activeLessonIndex - 1)}
+                    disabled={activeLessonIndex === 0}
+                    className="p-1.5 rounded-lg text-[#A9ADA5] hover:text-white disabled:opacity-30"
                   >
-                    {locale === 'fr' ? 'Valider ma Réponse' : 'Submit Answer'}
+                    <ChevronLeft className="w-4 h-4" />
                   </button>
-                ) : (
-                  <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-sans space-y-2">
-                    <div className="font-mono font-bold text-white flex items-center gap-1.5">
-                      {selectedAnswer === activeStep.quiz.correctAnswerIndex ? (
-                        <span className="text-emerald-400 flex items-center gap-1">
-                          <CheckCircle2 className="w-4 h-4" />
-                          <span>{locale === 'fr' ? 'Excellente réponse !' : 'Excellent answer!'}</span>
+                  <span className="px-2 font-bold text-white">
+                    {activeLessonIndex + 1} / {selectedPathway.lessons.length}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => activeLessonIndex < selectedPathway.lessons.length - 1 && setActiveLessonIndex(activeLessonIndex + 1)}
+                    disabled={activeLessonIndex === selectedPathway.lessons.length - 1}
+                    className="p-1.5 rounded-lg text-[#A9ADA5] hover:text-white disabled:opacity-30"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Lesson Tabs Selector */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
+                {selectedPathway.lessons.map((ls, idx) => {
+                  const isActive = idx === activeLessonIndex;
+                  const isDone = isCompleted(selectedPathway.id, ls.number);
+
+                  return (
+                    <button
+                      key={ls.number}
+                      type="button"
+                      onClick={() => setActiveLessonIndex(idx)}
+                      className={`p-2.5 rounded-xl border text-left transition-all font-mono text-xs ${
+                        isActive
+                          ? 'bg-[#D7A64A]/20 border-[#D7A64A] text-white font-bold ring-1 ring-[#D7A64A]/40'
+                          : isDone
+                          ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
+                          : 'bg-[#0B0F12]/60 border-white/10 text-[#A9ADA5] hover:border-white/20'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span>{locale === 'fr' ? `Leçon ${ls.number}` : `Lesson ${ls.number}`}</span>
+                        {isDone && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Active Lesson Content */}
+            {activeLesson && (
+              <div className="space-y-6">
+                
+                {/* Lesson Title & Summary */}
+                <div className="space-y-2">
+                  <span className="text-xs font-mono text-[#D7A64A] uppercase tracking-wider font-bold">
+                    {locale === 'fr' ? `LEÇON 0${activeLesson.number} · COMPRÉHENSION CONCRÈTE` : `LESSON 0${activeLesson.number} · CORE PRINCIPLE`}
+                  </span>
+                  <h3 className="text-xl font-bold font-mono text-white">
+                    {activeLesson.title[locale]}
+                  </h3>
+                  <p className="text-sm text-[#F4F1E8] bg-[#0B0F12] p-4 rounded-xl border border-white/10 leading-relaxed">
+                    {activeLesson.summary[locale]}
+                  </p>
+                </div>
+
+                {/* 1. Real World Analogy (No Jargon First) */}
+                <div className="p-4 sm:p-5 rounded-xl bg-gradient-to-r from-[#D7A64A]/10 via-[#0B0F12] to-[#0B0F12] border border-[#D7A64A]/30 space-y-2">
+                  <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#D7A64A] uppercase">
+                    <Sparkles className="w-4 h-4 text-[#D7A64A]" />
+                    <span>{locale === 'fr' ? 'Analogie Réelle (Comprendre sans formule)' : 'Real-World Analogy (No Jargon First)'}</span>
+                  </div>
+                  <p className="text-sm text-[#F4F1E8] leading-relaxed">
+                    {activeLesson.realWorldAnalogy[locale]}
+                  </p>
+                </div>
+
+                {/* 2. Physical Principle & Internal Anatomy */}
+                <div className="space-y-2">
+                  <h4 className="text-xs font-mono font-bold text-[#A9ADA5] uppercase flex items-center gap-1.5">
+                    <BookOpen className="w-3.5 h-3.5 text-sky-400" />
+                    <span>{locale === 'fr' ? 'Principe Physique & Fonctionnement Interne' : 'Physical Principle & Internal Operation'}</span>
+                  </h4>
+                  <div className="text-sm text-[#A9ADA5] bg-[#0B0F12]/80 p-4 rounded-xl border border-white/10 leading-relaxed space-y-2">
+                    <p>{activeLesson.physicalPrinciple[locale]}</p>
+                  </div>
+                </div>
+
+                {/* Real Equipment Photo & IEC Symbol if present */}
+                {activeLesson.equipmentPhotoUrl && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="rounded-xl overflow-hidden border border-white/10 bg-[#0B0F12]">
+                      <div className="h-44 relative overflow-hidden">
+                        <img
+                          src={activeLesson.equipmentPhotoUrl}
+                          alt={activeLesson.title[locale]}
+                          className="w-full h-full object-cover"
+                        />
+                        <span className="absolute top-2 left-2 text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-[#0B0F12]/90 text-[#D7A64A] border border-[#D7A64A]/40">
+                          {locale === 'fr' ? 'Photo Réelle sur le Terrain' : 'Real Field Photograph'}
                         </span>
-                      ) : (
-                        <span className="text-rose-400 flex items-center gap-1">
-                          <X className="w-4 h-4" />
-                          <span>{locale === 'fr' ? 'Réponse incorrecte' : 'Incorrect answer'}</span>
-                        </span>
+                      </div>
+                      {activeLesson.equipmentPhotoCaption && (
+                        <div className="p-3 text-xs text-[#A9ADA5] font-sans">
+                          {activeLesson.equipmentPhotoCaption[locale]}
+                        </div>
                       )}
                     </div>
-                    <p className="text-slate-300 leading-relaxed">
-                      {activeStep.quiz.explanation[locale]}
+
+                    <div className="p-4 rounded-xl bg-[#0B0F12] border border-white/10 flex flex-col justify-between space-y-3">
+                      <div className="space-y-2">
+                        <span className="text-[10px] font-mono font-bold uppercase text-[#567A87] block">
+                          {locale === 'fr' ? 'Symbole CEI 60617 & Repérage Normalisé' : 'IEC 60617 Symbol & Terminal Markings'}
+                        </span>
+                        <p className="text-xs text-[#A9ADA5] leading-relaxed">
+                          {activeLesson.iecSymbolDescription
+                            ? activeLesson.iecSymbolDescription[locale]
+                            : locale === 'fr'
+                            ? 'Repérage normalisé des pôles de puissance et contacts auxiliaires selon la norme CEI 60617.'
+                            : 'Standardized IEC 60617 graphical symbol and terminal block designations.'}
+                        </p>
+                      </div>
+
+                      {/* Formulas if any */}
+                      {activeLesson.keyFormulas && activeLesson.keyFormulas.length > 0 && (
+                        <div className="pt-2 border-t border-white/10 space-y-1.5 font-mono text-xs text-[#D7A64A]">
+                          {activeLesson.keyFormulas.map((f, i) => (
+                            <div key={i} className="flex items-center gap-1.5">
+                              <code className="text-[#D7A64A] bg-[#151C1E] px-2 py-0.5 rounded border border-white/5">
+                                {f}
+                              </code>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* 3. Cameroon Field Experience Note */}
+                {activeLesson.cameroonFieldNote && (
+                  <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/30 space-y-1.5 text-xs">
+                    <div className="flex items-center gap-1.5 text-emerald-400 font-mono font-bold uppercase">
+                      <Globe className="w-3.5 h-3.5" />
+                      <span>{locale === 'fr' ? 'Pratique Terrain au Cameroun (SONATREL / Eneo / Ateliers)' : 'Field Practice in Cameroon (SONATREL / Eneo)'}</span>
+                    </div>
+                    <p className="text-emerald-200/90 leading-relaxed font-sans">
+                      {activeLesson.cameroonFieldNote[locale]}
                     </p>
                   </div>
                 )}
-              </div>
 
-              {/* Bottom Navigation controls */}
-              <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
-                <button
-                  type="button"
-                  onClick={handlePrevStep}
-                  disabled={activeStepIndex === 0}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 font-mono text-xs transition-colors"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                  <span>{locale === 'fr' ? 'Étape Précédente' : 'Previous Step'}</span>
-                </button>
+                {/* Direct Action Link */}
+                {activeLesson.targetAction && (
+                  <div className="p-4 rounded-xl bg-[#0B0F12] border border-[#567A87]/40 flex flex-wrap items-center justify-between gap-4">
+                    <div className="space-y-0.5">
+                      <span className="text-[10px] font-mono text-[#567A87] uppercase">
+                        {locale === 'fr' ? 'Passerelle Pratique Immédiate :' : 'Hands-On Tool:'}
+                      </span>
+                      <div className="text-sm font-bold font-mono text-white">
+                        {activeLesson.targetAction.label[locale]}
+                      </div>
+                    </div>
 
-                {activeStepIndex < selectedJourney.steps.length - 1 ? (
-                  <button
-                    type="button"
-                    onClick={handleNextStep}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-mono text-xs font-bold transition-colors"
-                  >
-                    <span>{locale === 'fr' ? 'Étape Suivante' : 'Next Step'}</span>
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                ) : (
-                  <div className="flex items-center gap-2 text-emerald-400 font-mono text-xs font-bold">
-                    <Award className="w-4 h-4" />
-                    <span>{locale === 'fr' ? 'Fin du Parcours !' : 'Curriculum Completed!'}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleLaunchTargetTool(activeLesson.targetAction)}
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#567A87] hover:bg-[#567A87]/80 text-white font-mono text-xs font-bold transition-all shadow-md"
+                    >
+                      <span>{locale === 'fr' ? 'Ouvrir l’Équipement / Outil' : 'Open Equipment / Tool'}</span>
+                      <ExternalLink className="w-4 h-4" />
+                    </button>
                   </div>
                 )}
-              </div>
 
-            </div>
-          )}
+                {/* 4. Interactive Knowledge Check Quiz */}
+                <div className="p-5 rounded-2xl bg-[#0B0F12] border border-white/10 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#D7A64A] uppercase">
+                      <HelpCircle className="w-4 h-4" />
+                      <span>{locale === 'fr' ? 'Validation des Acquis de la Leçon' : 'Lesson Knowledge Check'}</span>
+                    </div>
+                    {isCompleted(selectedPathway.id, activeLesson.number) && (
+                      <span className="flex items-center gap-1 text-[11px] font-mono text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-500/30 font-semibold">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>{locale === 'fr' ? 'Leçon Validée' : 'Completed'}</span>
+                      </span>
+                    )}
+                  </div>
+
+                  <p className="text-sm font-bold text-white font-mono">
+                    {activeLesson.quiz.question[locale]}
+                  </p>
+
+                  <div className="space-y-2">
+                    {activeLesson.quiz.options.map((opt, optIdx) => {
+                      const isSelected = pathwayAnswer === optIdx;
+                      const isCorrect = optIdx === activeLesson.quiz.correctAnswerIndex;
+
+                      let btnClass = 'bg-[#151C1E] border-white/10 text-[#A9ADA5] hover:border-white/20';
+                      if (isPathwayAnswerSubmitted) {
+                        if (isCorrect) {
+                          btnClass = 'bg-emerald-950/80 border-emerald-500 text-emerald-300 font-bold';
+                        } else if (isSelected) {
+                          btnClass = 'bg-rose-950/80 border-rose-500 text-rose-300';
+                        }
+                      } else if (isSelected) {
+                        btnClass = 'bg-[#D7A64A]/20 border-[#D7A64A] text-white font-bold';
+                      }
+
+                      return (
+                        <button
+                          key={optIdx}
+                          type="button"
+                          onClick={() => !isPathwayAnswerSubmitted && setPathwayAnswer(optIdx)}
+                          disabled={isPathwayAnswerSubmitted}
+                          className={`w-full text-left p-3.5 rounded-xl border font-mono text-xs transition-all flex items-center justify-between ${btnClass}`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold bg-[#0B0F12] border border-white/10">
+                              {String.fromCharCode(65 + optIdx)}
+                            </span>
+                            <span>{opt[locale]}</span>
+                          </div>
+                          {isPathwayAnswerSubmitted && isCorrect && <Check className="w-4 h-4 text-emerald-400" />}
+                          {isPathwayAnswerSubmitted && isSelected && !isCorrect && <X className="w-4 h-4 text-rose-400" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {!isPathwayAnswerSubmitted ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (pathwayAnswer === null) return;
+                        setIsPathwayAnswerSubmitted(true);
+                        if (pathwayAnswer === activeLesson.quiz.correctAnswerIndex) {
+                          markCompleted(selectedPathway.id, activeLesson.number);
+                        }
+                      }}
+                      disabled={pathwayAnswer === null}
+                      className="w-full py-2.5 rounded-lg bg-[#D7A64A] hover:bg-[#D7A64A]/90 disabled:opacity-30 text-[#0B0F12] font-mono text-xs font-black transition-all shadow-md"
+                    >
+                      {locale === 'fr' ? 'Valider ma Réponse' : 'Submit Answer'}
+                    </button>
+                  ) : (
+                    <div className="p-3.5 rounded-xl bg-[#151C1E] border border-white/10 text-xs font-sans space-y-2">
+                      <div className="font-mono font-bold text-white flex items-center gap-1.5">
+                        {pathwayAnswer === activeLesson.quiz.correctAnswerIndex ? (
+                          <span className="text-emerald-400 flex items-center gap-1">
+                            <CheckCircle2 className="w-4 h-4" />
+                            <span>{locale === 'fr' ? 'Excellente réponse !' : 'Excellent answer!'}</span>
+                          </span>
+                        ) : (
+                          <span className="text-rose-400 flex items-center gap-1">
+                            <X className="w-4 h-4" />
+                            <span>{locale === 'fr' ? 'Réponse incorrecte' : 'Incorrect answer'}</span>
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[#A9ADA5] leading-relaxed">
+                        {activeLesson.quiz.explanation[locale]}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Bottom Navigation controls */}
+                <div className="pt-4 border-t border-white/10 flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={() => activeLessonIndex > 0 && setActiveLessonIndex(activeLessonIndex - 1)}
+                    disabled={activeLessonIndex === 0}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#0B0F12] hover:bg-white/5 disabled:opacity-30 text-[#A9ADA5] font-mono text-xs transition-colors border border-white/10"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    <span>{locale === 'fr' ? 'Leçon Précédente' : 'Previous Lesson'}</span>
+                  </button>
+
+                  {activeLessonIndex < selectedPathway.lessons.length - 1 ? (
+                    <button
+                      type="button"
+                      onClick={() => setActiveLessonIndex(activeLessonIndex + 1)}
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#D7A64A] hover:bg-[#D7A64A]/90 text-[#0B0F12] font-mono text-xs font-black transition-colors"
+                    >
+                      <span>{locale === 'fr' ? 'Leçon Suivante' : 'Next Lesson'}</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  ) : (
+                    <div className="flex items-center gap-2 text-emerald-400 font-mono text-xs font-bold">
+                      <Award className="w-4 h-4" />
+                      <span>{locale === 'fr' ? 'Fin de ce Parcours !' : 'Pathway Completed!'}</span>
+                    </div>
+                  )}
+                </div>
+
+              </div>
+            )}
+
+          </div>
 
         </div>
+      )}
 
-      </div>
+      {/* ── MODE 2: THEMATIC MASTERCLASS CASE STUDIES ─────────── */}
+      {activeTab === 'MASTERCLASSES' && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          
+          {/* Masterclass Sidebar (4 Cols) */}
+          <div className="lg:col-span-4 space-y-3">
+            <div className="text-xs font-mono font-bold text-[#A9ADA5] uppercase tracking-wider px-1 flex items-center justify-between">
+              <span>{locale === 'fr' ? '7 Études de Cas d’Ingénierie' : '7 Engineering Masterclasses'}</span>
+              <span className="text-[#567A87]">{THEMATIC_JOURNEYS.length}</span>
+            </div>
+
+            <div className="space-y-2.5 max-h-[820px] overflow-y-auto pr-1">
+              {THEMATIC_JOURNEYS.map((journey) => {
+                const isSelected = selectedJourney.id === journey.id;
+                const completedCount = (completedItems[journey.id] || []).length;
+                const progressPct = Math.round((completedCount / journey.steps.length) * 100);
+
+                return (
+                  <motion.div
+                    key={journey.id}
+                    whileHover={{ x: 2 }}
+                    onClick={() => {
+                      setSelectedJourney(journey);
+                      setActiveMasterclassStepIndex(0);
+                    }}
+                    className={`p-4 rounded-xl border transition-all cursor-pointer relative overflow-hidden ${
+                      isSelected
+                        ? 'bg-[#151C1E] border-[#567A87] shadow-lg ring-1 ring-[#567A87]/50'
+                        : 'bg-[#151C1E]/60 border-white/10 hover:border-white/20 hover:bg-[#151C1E]'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-center gap-2">
+                        <div className="p-2 rounded-lg bg-[#0B0F12] border border-white/10">
+                          {getIcon(journey.iconName)}
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#0B0F12] text-[#A9ADA5] border border-white/5">
+                            {journey.targetProfile}
+                          </span>
+                          <div className="text-xs font-mono text-[#A9ADA5] mt-1 flex items-center gap-1">
+                            <Clock className="w-3 h-3 text-[#A9ADA5]/70" />
+                            <span>~{journey.estimatedMinutes} min</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="text-right font-mono">
+                        <span className="text-xs font-bold text-emerald-400">{progressPct}%</span>
+                        <div className="w-12 bg-[#0B0F12] h-1.5 rounded-full overflow-hidden mt-1 border border-white/10">
+                          <div
+                            className="h-full bg-emerald-500"
+                            style={{ width: `${progressPct}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <h3 className="text-sm font-bold font-mono text-white mt-3">
+                      {journey.title[locale]}
+                    </h3>
+                    <p className="text-xs text-[#A9ADA5] mt-1 line-clamp-2 leading-relaxed">
+                      {journey.description[locale]}
+                    </p>
+
+                    <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] font-mono text-[#A9ADA5]">
+                      <span>{journey.steps.length} {locale === 'fr' ? 'étapes guidées' : 'guided steps'}</span>
+                      <span className="text-[#567A87] font-semibold flex items-center gap-0.5">
+                        <span>{locale === 'fr' ? 'Explorer' : 'Start'}</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </span>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Masterclass Guide Workbench (8 Cols) */}
+          <div className="lg:col-span-8 bg-[#151C1E] border border-white/10 rounded-2xl p-6 sm:p-7 shadow-2xl space-y-6">
+            
+            {/* Header */}
+            <div className="border-b border-white/10 pb-5 space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-[#0B0F12] border border-[#567A87]/30">
+                    {getIcon(selectedJourney.iconName, 'w-6 h-6')}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono font-bold uppercase text-[#567A87]">
+                        MASTERCLASS #{selectedJourney.order}
+                      </span>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#0B0F12] text-[#A9ADA5] border border-white/10">
+                        {selectedJourney.targetProfile}
+                      </span>
+                    </div>
+                    <h2 className="text-xl sm:text-2xl font-bold font-mono text-white mt-1">
+                      {selectedJourney.title[locale]}
+                    </h2>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1.5 font-mono text-xs bg-[#0B0F12] p-1.5 rounded-xl border border-white/10">
+                  <button
+                    type="button"
+                    onClick={() => activeMasterclassStepIndex > 0 && setActiveMasterclassStepIndex(activeMasterclassStepIndex - 1)}
+                    disabled={activeMasterclassStepIndex === 0}
+                    className="p-1.5 rounded-lg text-[#A9ADA5] hover:text-white disabled:opacity-30"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <span className="px-2 font-bold text-white">
+                    {activeMasterclassStepIndex + 1} / {selectedJourney.steps.length}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => activeMasterclassStepIndex < selectedJourney.steps.length - 1 && setActiveMasterclassStepIndex(activeMasterclassStepIndex + 1)}
+                    disabled={activeMasterclassStepIndex === selectedJourney.steps.length - 1}
+                    className="p-1.5 rounded-lg text-[#A9ADA5] hover:text-white disabled:opacity-30"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Step Buttons */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
+                {selectedJourney.steps.map((st, idx) => {
+                  const isActive = idx === activeMasterclassStepIndex;
+                  const isDone = isCompleted(selectedJourney.id, st.stepNumber);
+
+                  return (
+                    <button
+                      key={st.stepNumber}
+                      type="button"
+                      onClick={() => setActiveMasterclassStepIndex(idx)}
+                      className={`p-2.5 rounded-xl border text-left transition-all font-mono text-xs ${
+                        isActive
+                          ? 'bg-[#567A87]/30 border-[#567A87] text-white font-bold ring-1 ring-[#567A87]/40'
+                          : isDone
+                          ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
+                          : 'bg-[#0B0F12]/60 border-white/10 text-[#A9ADA5] hover:border-white/20'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span>Étape {st.stepNumber}</span>
+                        {isDone && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Active Step */}
+            {activeMasterclassStep && (
+              <div className="space-y-6">
+                
+                <div className="space-y-2">
+                  <span className="text-xs font-mono text-[#567A87] uppercase tracking-wider font-bold">
+                    {locale === 'fr' ? `ÉTAPE ${activeMasterclassStep.stepNumber} : ÉTUDE APPLIQUÉE` : `STEP ${activeMasterclassStep.stepNumber}: APPLIED STUDY`}
+                  </span>
+                  <h3 className="text-xl font-bold font-mono text-white">
+                    {activeMasterclassStep.title[locale]}
+                  </h3>
+                  <p className="text-sm text-[#F4F1E8] bg-[#0B0F12] p-4 rounded-xl border border-white/10 leading-relaxed font-sans">
+                    {activeMasterclassStep.summary[locale]}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <h4 className="text-xs font-mono font-bold text-[#A9ADA5] uppercase flex items-center gap-1.5">
+                    <BookOpen className="w-3.5 h-3.5 text-sky-400" />
+                    <span>{locale === 'fr' ? 'Approfondissement & Physique du Système' : 'System Operation & Physical Principles'}</span>
+                  </h4>
+                  <div className="text-sm text-[#A9ADA5] bg-[#0B0F12]/80 p-4 rounded-xl border border-white/10 leading-relaxed space-y-2">
+                    <p>{activeMasterclassStep.deepExplanation[locale]}</p>
+                  </div>
+                </div>
+
+                {activeMasterclassStep.keyFormulas && activeMasterclassStep.keyFormulas.length > 0 && (
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-mono font-bold text-[#A9ADA5] uppercase flex items-center gap-1.5">
+                      <Zap className="w-3.5 h-3.5 text-[#D7A64A]" />
+                      <span>{locale === 'fr' ? 'Formulations Mathématiques' : 'Mathematical Formulations'}</span>
+                    </h4>
+                    <div className="p-3.5 rounded-xl bg-[#0B0F12] border border-white/10 space-y-1.5 font-mono text-xs text-[#D7A64A]">
+                      {activeMasterclassStep.keyFormulas.map((f, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <span className="text-[#A9ADA5] font-bold">({i + 1})</span>
+                          <code className="text-[#D7A64A] bg-[#151C1E] px-2 py-0.5 rounded border border-white/5">
+                            {f}
+                          </code>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {activeMasterclassStep.fieldEngineeringTips && (
+                  <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/30 space-y-1.5 text-xs">
+                    <div className="flex items-center gap-1.5 text-emerald-400 font-mono font-bold uppercase">
+                      <Globe className="w-3.5 h-3.5" />
+                      <span>{locale === 'fr' ? 'Retour Terrain Cameroun (SONATREL / Eneo)' : 'Cameroon Grid Utility Field Tip'}</span>
+                    </div>
+                    <p className="text-emerald-200/90 leading-relaxed font-sans">
+                      {activeMasterclassStep.fieldEngineeringTips[locale]}
+                    </p>
+                  </div>
+                )}
+
+                {/* Target Tool Action */}
+                <div className="p-4 rounded-xl bg-[#0B0F12] border border-[#567A87]/40 flex flex-wrap items-center justify-between gap-4">
+                  <div className="space-y-0.5">
+                    <span className="text-[10px] font-mono text-[#567A87] uppercase">
+                      {locale === 'fr' ? 'Mise en Pratique Immédiate :' : 'Hands-On Practice:'}
+                    </span>
+                    <div className="text-sm font-bold font-mono text-white">
+                      {activeMasterclassStep.targetAction.label[locale]}
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleLaunchTargetTool(activeMasterclassStep.targetAction)}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#567A87] hover:bg-[#567A87]/80 text-white font-mono text-xs font-bold transition-all shadow-md"
+                  >
+                    <span>{locale === 'fr' ? 'Ouvrir l’Outil' : 'Launch Tool'}</span>
+                    <ExternalLink className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Quiz */}
+                <div className="p-5 rounded-2xl bg-[#0B0F12] border border-white/10 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs font-mono font-bold text-sky-400 uppercase">
+                      <HelpCircle className="w-4 h-4" />
+                      <span>{locale === 'fr' ? 'Contrôle des Connaissances' : 'Step Knowledge Check'}</span>
+                    </div>
+                    {isCompleted(selectedJourney.id, activeMasterclassStep.stepNumber) && (
+                      <span className="flex items-center gap-1 text-[11px] font-mono text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-500/30 font-semibold">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>{locale === 'fr' ? 'Validé' : 'Completed'}</span>
+                      </span>
+                    )}
+                  </div>
+
+                  <p className="text-sm font-bold text-white font-mono">
+                    {activeMasterclassStep.quiz.question[locale]}
+                  </p>
+
+                  <div className="space-y-2">
+                    {activeMasterclassStep.quiz.options.map((opt, optIdx) => {
+                      const isSelected = masterclassAnswer === optIdx;
+                      const isCorrect = optIdx === activeMasterclassStep.quiz.correctAnswerIndex;
+
+                      let btnClass = 'bg-[#151C1E] border-white/10 text-[#A9ADA5] hover:border-white/20';
+                      if (isMasterclassAnswerSubmitted) {
+                        if (isCorrect) {
+                          btnClass = 'bg-emerald-950/80 border-emerald-500 text-emerald-300 font-bold';
+                        } else if (isSelected) {
+                          btnClass = 'bg-rose-950/80 border-rose-500 text-rose-300';
+                        }
+                      } else if (isSelected) {
+                        btnClass = 'bg-[#567A87]/30 border-[#567A87] text-white font-bold';
+                      }
+
+                      return (
+                        <button
+                          key={optIdx}
+                          type="button"
+                          onClick={() => !isMasterclassAnswerSubmitted && setMasterclassAnswer(optIdx)}
+                          disabled={isMasterclassAnswerSubmitted}
+                          className={`w-full text-left p-3.5 rounded-xl border font-mono text-xs transition-all flex items-center justify-between ${btnClass}`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold bg-[#0B0F12] border border-white/10">
+                              {String.fromCharCode(65 + optIdx)}
+                            </span>
+                            <span>{opt[locale]}</span>
+                          </div>
+                          {isMasterclassAnswerSubmitted && isCorrect && <Check className="w-4 h-4 text-emerald-400" />}
+                          {isMasterclassAnswerSubmitted && isSelected && !isCorrect && <X className="w-4 h-4 text-rose-400" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {!isMasterclassAnswerSubmitted ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (masterclassAnswer === null) return;
+                        setIsMasterclassAnswerSubmitted(true);
+                        if (masterclassAnswer === activeMasterclassStep.quiz.correctAnswerIndex) {
+                          markCompleted(selectedJourney.id, activeMasterclassStep.stepNumber);
+                        }
+                      }}
+                      disabled={masterclassAnswer === null}
+                      className="w-full py-2.5 rounded-lg bg-[#567A87] hover:bg-[#567A87]/90 disabled:opacity-40 text-white font-mono text-xs font-bold transition-all shadow-md"
+                    >
+                      {locale === 'fr' ? 'Valider ma Réponse' : 'Submit Answer'}
+                    </button>
+                  ) : (
+                    <div className="p-3.5 rounded-xl bg-[#151C1E] border border-white/10 text-xs font-sans space-y-2">
+                      <div className="font-mono font-bold text-white flex items-center gap-1.5">
+                        {masterclassAnswer === activeMasterclassStep.quiz.correctAnswerIndex ? (
+                          <span className="text-emerald-400 flex items-center gap-1">
+                            <CheckCircle2 className="w-4 h-4" />
+                            <span>{locale === 'fr' ? 'Excellente réponse !' : 'Excellent answer!'}</span>
+                          </span>
+                        ) : (
+                          <span className="text-rose-400 flex items-center gap-1">
+                            <X className="w-4 h-4" />
+                            <span>{locale === 'fr' ? 'Réponse incorrecte' : 'Incorrect answer'}</span>
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[#A9ADA5] leading-relaxed">
+                        {activeMasterclassStep.quiz.explanation[locale]}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Bottom Nav */}
+                <div className="pt-4 border-t border-white/10 flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={() => activeMasterclassStepIndex > 0 && setActiveMasterclassStepIndex(activeMasterclassStepIndex - 1)}
+                    disabled={activeMasterclassStepIndex === 0}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#0B0F12] hover:bg-white/5 disabled:opacity-30 text-[#A9ADA5] font-mono text-xs transition-colors border border-white/10"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    <span>{locale === 'fr' ? 'Étape Précédente' : 'Previous Step'}</span>
+                  </button>
+
+                  {activeMasterclassStepIndex < selectedJourney.steps.length - 1 ? (
+                    <button
+                      type="button"
+                      onClick={() => setActiveMasterclassStepIndex(activeMasterclassStepIndex + 1)}
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#567A87] hover:bg-[#567A87]/90 text-white font-mono text-xs font-bold transition-colors"
+                    >
+                      <span>{locale === 'fr' ? 'Étape Suivante' : 'Next Step'}</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  ) : (
+                    <div className="flex items-center gap-2 text-emerald-400 font-mono text-xs font-bold">
+                      <Award className="w-4 h-4" />
+                      <span>{locale === 'fr' ? 'Fin du Cursus !' : 'Curriculum Completed!'}</span>
+                    </div>
+                  )}
+                </div>
+
+              </div>
+            )}
+
+          </div>
+
+        </div>
+      )}
 
     </div>
   );

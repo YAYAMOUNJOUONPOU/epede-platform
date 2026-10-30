@@ -586,6 +586,7 @@ export default function App() {
           onNavigateLaboratory={() => navigate({ view: 'laboratory' })}
           onNavigateGlossary={() => navigate({ view: 'glossary' })}
           onNavigateAbout={() => navigate({ view: 'about' })}
+          onNavigate={(v) => navigate({ view: v as AppViewType })}
         />
       )}
 
@@ -603,8 +604,8 @@ export default function App() {
         />
       )}
 
-      {/* Persistent Engineering Context Stack Dock (Deep-Dive views only) */}
-      {currentView !== 'ecosystem' && currentView !== 'home' && (
+      {/* Persistent Engineering Context Stack Dock (Shown when HUD is active) */}
+      {currentView !== 'ecosystem' && currentView !== 'home' && isContextHUDOpen && (
         <PersistentEngineeringContextDock
           locale={locale}
           onNavigateToTarget={(target) => {

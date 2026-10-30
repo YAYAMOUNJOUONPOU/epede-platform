@@ -171,9 +171,21 @@ export function parseRouteHash(hash: string): RouteState {
     case 'accueil':
       return { view: 'home', lang: detectedLang };
 
-    // 2. LEARN / POWER CHAIN (Apprendre / Chaîne de Puissance / Journey)
+    // 2. LEARN (8 Progressive Learning Pathways)
     case 'apprendre':
     case 'learn':
+    case 'parcours':
+    case 'pathways':
+    case 'thematic-journeys':
+      return {
+        view: 'thematic-journeys',
+        lang: detectedLang,
+        contextNodeId: secondary || undefined,
+      };
+
+    // 2B. ELECTRICAL SYSTEMS (9-Stage Visual Power System Explorer)
+    case 'electrical-systems':
+    case 'systemes-electriques':
     case 'chaine-puissance':
     case 'power-chain':
     case 'journey':
@@ -338,6 +350,8 @@ export function parseRouteHash(hash: string): RouteState {
       return { view: 'hydropower', lang: detectedLang };
 
     case 'industrial-projects':
+    case 'industrial-engineering':
+    case 'genie-industriel':
     case 'projets':
       return { view: 'industrial-projects', lang: detectedLang };
 
@@ -369,9 +383,6 @@ export function parseRouteHash(hash: string): RouteState {
     case 'scenarios':
       return { view: 'scenarios', lang: detectedLang, contextNodeId: secondary || undefined };
 
-    case 'thematic-journeys':
-      return { view: 'thematic-journeys', lang: detectedLang, contextNodeId: secondary || undefined };
-
     case 'asset-management':
     case 'maintenance':
       return { view: 'asset-management', lang: detectedLang, assetPillar: secondary || undefined };
@@ -399,9 +410,16 @@ export function buildRouteHash(state: RouteState, localeOverride?: 'fr' | 'en'):
     case 'home':
       return isEn ? '#/en/' : '#/';
 
+    case 'thematic-journeys':
+      const learnBase = isEn ? `${prefix}/learn` : `${prefix}/apprendre`;
+      return state.contextNodeId ? `${learnBase}/${encodeURIComponent(state.contextNodeId)}` : learnBase;
+
     case 'journey':
-      const journeyBase = isEn ? `${prefix}/power-chain` : `${prefix}/chaine-puissance`;
+      const journeyBase = isEn ? `${prefix}/electrical-systems` : `${prefix}/systemes-electriques`;
       return state.journeyStage ? `${journeyBase}/${encodeURIComponent(state.journeyStage)}` : journeyBase;
+
+    case 'industrial-projects':
+      return isEn ? `${prefix}/industrial-engineering` : `${prefix}/genie-industriel`;
 
     case 'calculators':
       const calcBase = isEn ? `${prefix}/calculators` : `${prefix}/calculateurs`;

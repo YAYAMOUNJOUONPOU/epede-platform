@@ -26,6 +26,7 @@ import {
   EcosystemEquipment 
 } from './types';
 import { Epede13ScenesJourney } from '../epede/Epede13ScenesJourney';
+import { NineStagePowerGridExplorer } from './NineStagePowerGridExplorer';
 import type { CalculatorTabType } from '../calculators/services/calculationReportService';
 import type { InjectedCalculatorContext } from '../../services/routerService';
 import { 
@@ -70,8 +71,8 @@ export const JourneyView: React.FC<JourneyViewProps> = ({
   onNavigateView,
   onNavigateCalculator,
 }) => {
-  // Primary Experience Mode: '13scenes' (Cinematic continuous journey) or 'lab' (Schematic SLD multi-layer lab)
-  const [journeyMode, setJourneyMode] = useState<'13scenes' | 'lab'>('13scenes');
+  // Primary Experience Mode: '9stages' (Core EPEDE 2.0 9-stage explorer), '13scenes' (Cinematic continuous journey), or 'lab' (Schematic SLD multi-layer lab)
+  const [journeyMode, setJourneyMode] = useState<'9stages' | '13scenes' | 'lab'>('9stages');
 
   // Navigation & Layer state
   const [activeStage, setActiveStage] = useState<StageId>(initialStage || 'generation');
@@ -239,6 +240,22 @@ export const JourneyView: React.FC<JourneyViewProps> = ({
           <div className="flex items-center gap-1.5 p-1 bg-slate-900 border border-slate-800 rounded-xl font-mono text-xs">
             <button
               type="button"
+              onClick={() => setJourneyMode('9stages')}
+              className={`px-3.5 py-1.5 rounded-lg font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                journeyMode === '9stages'
+                  ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/20'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Zap className="h-3.5 w-3.5" />
+              <span>{locale === 'fr' ? '9 Étapes du Réseau' : '9-Stage Grid Explorer'}</span>
+              <span className="px-1.5 py-0.2 rounded bg-slate-950/20 text-[9px] uppercase font-mono font-black">
+                EPEDE 2.0
+              </span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => setJourneyMode('13scenes')}
               className={`px-3.5 py-1.5 rounded-lg font-bold transition-all flex items-center gap-2 cursor-pointer ${
                 journeyMode === '13scenes'
@@ -246,10 +263,10 @@ export const JourneyView: React.FC<JourneyViewProps> = ({
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              <Zap className="h-3.5 w-3.5" />
+              <Sparkles className="h-3.5 w-3.5" />
               <span>{locale === 'fr' ? '13 Scènes Immersives' : '13-Scene Journey'}</span>
               <span className="px-1.5 py-0.2 rounded bg-slate-950/20 text-[9px] uppercase font-mono">
-                {locale === 'fr' ? 'IMMERSION' : 'CINEMATIC'}
+                {locale === 'fr' ? 'CINÉMA' : 'CINEMATIC'}
               </span>
             </button>
 
@@ -269,7 +286,31 @@ export const JourneyView: React.FC<JourneyViewProps> = ({
         </div>
       </div>
 
-      {journeyMode === '13scenes' ? (
+      {journeyMode === '9stages' ? (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <NineStagePowerGridExplorer
+            locale={locale}
+            initialStageId={activeStage}
+            onSelectStage={(st) => {
+              setActiveStage(st.journeyStage);
+            }}
+            onSelectEquipment={(eqId) => {
+              if (onNavigateEquipment) {
+                onNavigateEquipment(eqId);
+              } else {
+                handleSelectEquipment(eqId);
+              }
+            }}
+            onNavigateView={(view) => {
+              if (onNavigateView) {
+                onNavigateView(view);
+              } else {
+                window.location.hash = '#' + view;
+              }
+            }}
+          />
+        </div>
+      ) : journeyMode === '13scenes' ? (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <Epede13ScenesJourney
             locale={locale}
