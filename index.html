@@ -6,6 +6,13 @@
     <title>EPEDE — Electrical Power Engineering Digital Environment</title>
     <meta name="author" content="Mounjouonpou Yaya, Electrical and Power Systems Engineer" />
     <meta name="description" content="EPEDE — Electrical Power Engineering Digital Environment: an interconnected, research-driven knowledge platform for understanding electrical power generation, transmission, substations, distribution, protection, SCADA, and the Cameroon national power grid (RIS & RIN)." />
+    <meta name="is-agentic-site-type" content="content" />
+    
+    <!-- AI Agent & LLM Machine-Readable Discovery -->
+    <link rel="describedby" href="/llms.txt" type="text/plain" />
+    <link rel="alternate" href="/llms-full.txt" type="text/plain" title="EPEDE Full Technical Specification for LLMs" />
+    
+    <!-- Open Graph & Social Cards -->
     <meta property="og:title" content="EPEDE — Electrical Power Engineering Digital Environment" />
     <meta property="og:description" content="Interconnected electrical power engineering knowledge environment covering 21 technical domains, real-world substation & power plant apparatus, international IEC/IEEE standards, and the Cameroon Power Network Explorer." />
     <meta property="og:type" content="website" />
@@ -46,7 +53,168 @@
     </script>
   </head>
   <body class="bg-[#0B0F12] text-[#F4F1E8] antialiased selection:bg-[#D7A64A]/25 selection:text-[#F4F1E8]">
-    <div id="root"></div>
+    <!-- Semantic Pre-Render Fallback: Enables LLMs (Claude, Gemini), Crawlers & Headless Clients to audit full platform content -->
+    <div id="root">
+      <div style="max-width: 1200px; margin: 0 auto; padding: 40px 20px; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #e2e8f0; line-height: 1.6;">
+        <header style="border-b: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 24px; margin-bottom: 32px;">
+          <h1 style="font-size: 2.2rem; font-weight: 800; color: #B8F000; margin: 0 0 8px 0; letter-spacing: -0.02em;">
+            EPEDE — Electrical Power Engineering Digital Environment
+          </h1>
+          <p style="font-size: 1.1rem; color: #94a3b8; margin: 0 0 12px 0;">
+            Authoritative, interconnected engineering knowledge system and interactive simulation suite.
+          </p>
+          <p style="font-size: 0.9rem; color: #64748b; margin: 0;">
+            Designed & Developed by <strong>Mounjouonpou Yaya</strong> (Electrical and Power Systems Engineer) | Standards: IEC, IEEE, CIGRE, NF C, Cameroon Grid Code.
+          </p>
+        </header>
+
+        <section style="background: rgba(184, 240, 0, 0.08); border: 1px solid rgba(184, 240, 0, 0.3); border-radius: 12px; padding: 20px; margin-bottom: 32px;">
+          <h2 style="font-size: 1.25rem; color: #B8F000; margin-top: 0;">AI Agent & Auditor Notice (Claude, Gemini, ChatGPT)</h2>
+          <p style="margin: 0 0 12px 0;">
+            This platform publishes machine-readable documentation and comprehensive technical audit specifications:
+          </p>
+          <ul style="margin: 0; padding-left: 20px;">
+            <li><strong>AI Index (llms.txt):</strong> <a href="/llms.txt" style="color: #38bdf8;">https://epede-platform.vercel.app/llms.txt</a></li>
+            <li><strong>Full Technical Specification:</strong> <a href="/llms-full.txt" style="color: #38bdf8;">https://epede-platform.vercel.app/llms-full.txt</a></li>
+            <li><strong>XML Sitemap:</strong> <a href="/sitemap.xml" style="color: #38bdf8;">https://epede-platform.vercel.app/sitemap.xml</a></li>
+          </ul>
+        </section>
+
+        <section style="margin-bottom: 36px;">
+          <h2 style="font-size: 1.6rem; color: #f8fafc; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 8px;">
+            1. Core Engineering Pillars (21 Technical Domains)
+          </h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 16px;">
+            <article style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px; border-radius: 8px;">
+              <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 1.05rem;">D01 — Power Generation</h3>
+              <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">Hydroelectric (Francis, Pelton, Kaplan turbines), thermal gas turbine cycles, solar PV parks, synchronous generator excitation and P-Q capability charts.</p>
+            </article>
+            <article style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px; border-radius: 8px;">
+              <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 1.05rem;">D02 — High Voltage Transmission</h3>
+              <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">225 kV & 90 kV lines, lattice towers, bundled ACSR conductors, corona effect, line surge impedance loading (SIL), insulator strings.</p>
+            </article>
+            <article style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px; border-radius: 8px;">
+              <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 1.05rem;">D03 — High Voltage AIS Substations</h3>
+              <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">Air-Insulated Substations (AIS), single/double busbar schemes, 1.5-breaker bays, disconnectors, SF6 circuit breakers, CT/VT instrument transformers.</p>
+            </article>
+            <article style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px; border-radius: 8px;">
+              <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 1.05rem;">D04 — GIS & Pedagogical Pilot</h3>
+              <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">Gas-Insulated Substations (GIS) in metal enclosures, Bay Control Unit (BCU) interlocking logic, earth switch interlocking, partial discharge diagnostics.</p>
+            </article>
+            <article style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px; border-radius: 8px;">
+              <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 1.05rem;">D05 — Medium & Low Voltage Distribution</h3>
+              <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">15 kV and 30 kV urban loop feeders, Ring Main Units (RMU), pole-mounted H61 transformers, 400 V three-phase / 230 V single-phase LV networks.</p>
+            </article>
+            <article style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px; border-radius: 8px;">
+              <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 1.05rem;">D06 — Power Transformers</h3>
+              <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">Grain-oriented magnetic cores, Dyn11/YNd11 vector groups, ONAN/ONAF cooling, Buchholz relays, On-Load Tap Changers (OLTC), dissolved gas analysis.</p>
+            </article>
+            <article style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px; border-radius: 8px;">
+              <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 1.05rem;">D07 — Switchgear & Arc Interruption</h3>
+              <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">SF6 and vacuum circuit breaker physics, arc elongation and de-ionization, transient recovery voltage (TRV), rated making and breaking capacities.</p>
+            </article>
+            <article style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px; border-radius: 8px;">
+              <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 1.05rem;">D08 — Protection Relaying & Automation</h3>
+              <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">ANSI 50/51 overcurrent, ANSI 21 distance mho/quad zones, ANSI 87T/87L differential, ANSI 67N directional earth fault, ANSI 50BF breaker failure.</p>
+            </article>
+            <article style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px; border-radius: 8px;">
+              <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 1.05rem;">D09 — SCADA & IEC 61850 Substation Bus</h3>
+              <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">MMS client/server, GOOSE peer-to-peer tripping, Sampled Values (SV - IEC 61850-9-2LE), IEEE 1588 PTP precision time synchronization.</p>
+            </article>
+            <article style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px; border-radius: 8px;">
+              <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 1.05rem;">D10 — Earthing & Lightning (IEEE 80 / IEC 62305)</h3>
+              <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">Substation copper mesh grounding grid design, touch & step voltage safety thresholds, rolling sphere lightning protection, ZnO surge arresters.</p>
+            </article>
+            <article style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px; border-radius: 8px;">
+              <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 1.05rem;">D11 — Power Quality & Harmonics</h3>
+              <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">THD_V & THD_I calculation, flicker (Pst/Plt), voltage sags/swells, unbalance factor, passive tuned LC filters, active harmonic filtering (AHF).</p>
+            </article>
+            <article style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px; border-radius: 8px;">
+              <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 1.05rem;">D12 — Power System Studies (IEC 60909)</h3>
+              <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">Symmetrical components (Fortescue method), short-circuit calculations (Ik'', ip, Ib, Ith), Newton-Raphson load flow simulations.</p>
+            </article>
+            <article style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px; border-radius: 8px;">
+              <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 1.05rem;">D13 — Industrial Electrical Installations</h3>
+              <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">Main low-voltage switchboards (TGBT Form 4b), motor control centers (MCC), variable speed drives (VFD), automatic transfer switches (ATS), diesel generators.</p>
+            </article>
+            <article style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px; border-radius: 8px;">
+              <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 1.05rem;">D14 — Renewables & Battery Storage (BESS)</h3>
+              <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">Utility-scale PV grid connection, fault ride-through (LVRT/FRT), lithium iron phosphate BESS, frequency response, microgrid islanding.</p>
+            </article>
+            <article style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px; border-radius: 8px;">
+              <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 1.05rem;">D15 — Substation Auxiliaries & DC Systems</h3>
+              <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">110 V / 220 V DC station battery banks, dual battery chargers, uninterruptible power supplies (UPS), FM200 clean-agent fire suppression.</p>
+            </article>
+            <article style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px; border-radius: 8px;">
+              <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 1.05rem;">D16 — Asset Testing & Commissioning</h3>
+              <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">Transformer oil DGA (Duval triangle), dielectric breakdown voltage, insulation resistance (Megger / PI / DAR), contact resistance, CT saturation curves.</p>
+            </article>
+            <article style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px; border-radius: 8px;">
+              <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 1.05rem;">D17 — HVDC & FACTS</h3>
+              <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">LCC-HVDC thyristor vs VSC-HVDC MMC converters, STATCOM, Static Var Compensators (SVC), long-distance asynchronous power transmission.</p>
+            </article>
+            <article style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px; border-radius: 8px;">
+              <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 1.05rem;">D18 — Smart Metering & Grid Digitalization</h3>
+              <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">Advanced Metering Infrastructure (AMI), DLMS/COSEM communication, PLC and cellular backhaul, anti-fraud algorithms, STS prepaid token systems.</p>
+            </article>
+            <article style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px; border-radius: 8px;">
+              <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 1.05rem;">D19 — Civil & Mechanical Interfaces</h3>
+              <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">Transformer oil catchment basins with flame-retardant gravel, fire blast barrier walls, cable trench layouts, control room HVAC pressurization.</p>
+            </article>
+            <article style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px; border-radius: 8px;">
+              <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 1.05rem;">D20 — Regulation & Cameroon Grid Codes</h3>
+              <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">Cameroon Electricity Law 2011/022, roles of ARSEL, SONATREL, ENEO, EDC, grid connection codes, voltage/frequency tolerances (49.5-50.5 Hz).</p>
+            </article>
+            <article style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px; border-radius: 8px;">
+              <h3 style="color: #38bdf8; margin: 0 0 8px 0; font-size: 1.05rem;">D21 — Decarbonization & Just Transition</h3>
+              <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">SF6-free eco-efficient switchgear (clean air, C4-FN), hydro-solar hybridization, transmission loss reduction, regional power pool integration (PEAC).</p>
+            </article>
+          </div>
+        </section>
+
+        <section style="margin-bottom: 36px;">
+          <h2 style="font-size: 1.6rem; color: #f8fafc; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 8px;">
+            2. Cameroon National Power Grid Observatory (RIS & RIN)
+          </h2>
+          <p style="color: #94a3b8;">
+            Complete geographical and electrical network model of Cameroon's interconnected power grids:
+          </p>
+          <ul style="color: #cbd5e1; padding-left: 20px;">
+            <li><strong>Song Loulou Hydro Plant (384 MW):</strong> 8 Francis turbines on the Sanaga river; central frequency-control station for the RIS.</li>
+            <li><strong>Nachtigal Hydro Plant (420 MW):</strong> 7 Francis units (60 MW each), Cameroon's newest baseload hydro generation asset.</li>
+            <li><strong>Edéa Hydro Plant (276 MW):</strong> Historic facility on the Sanaga river supplying industrial consumers (ALUCAM).</li>
+            <li><strong>Memve’ele Hydro Plant (211 MW):</strong> 4 Francis units on the Ntem river, evacuated via 225 kV line to Yaoundé.</li>
+            <li><strong>Lagdo Hydro Plant (72 MW):</strong> 4 units on the Benue river, supplying the Northern Interconnected Grid (RIN).</li>
+            <li><strong>Kribi Gas Power Plant (216 MW):</strong> Wärtsilä gas engines utilizing Sanaga South offshore natural gas.</li>
+            <li><strong>SONATREL Transmission Corridors:</strong> 225 kV backbone interconnecting Song Loulou, Mangombe, Bekoko (Douala), Oyomabang and Nyom II (Yaoundé).</li>
+          </ul>
+        </section>
+
+        <section style="margin-bottom: 36px;">
+          <h2 style="font-size: 1.6rem; color: #f8fafc; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 8px;">
+            3. Engineering Solvers & Interactive Workbenches
+          </h2>
+          <ul style="color: #cbd5e1; padding-left: 20px;">
+            <li><strong>Short-Circuit Calculation (IEC 60909):</strong> Symmetrical initial short-circuit current (Ik''), peak current (ip), breaking capacity (Ib), thermal equivalent current (Ith).</li>
+            <li><strong>Cable Sizing & Voltage Drop (IEC 60364-5-52):</strong> Conductor sizing by current-carrying capacity, installation methods, temperature/grouping derating factors, and max length for Delta_U &lt; 3% or 5%.</li>
+            <li><strong>Transformer Sizing & Losses:</strong> Nominal apparent power, active/reactive losses, impedance voltage (Usc%), and optimal efficiency load point.</li>
+            <li><strong>Power Factor Correction:</strong> Required reactive power Qc to improve power factor from cos(phi1) to cos(phi2), resonance risk estimation.</li>
+            <li><strong>Substation Single-Line Diagram (SLD):</strong> Interactive topology with live breaker status, busbar energization highlighting, and interlock violation prevention.</li>
+          </ul>
+        </section>
+
+        <footer style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 24px; color: #64748b; font-size: 0.85rem;">
+          <p>© EPEDE Platform — Built with React, TypeScript, Tailwind CSS & Vite. All rights reserved.</p>
+        </footer>
+      </div>
+    </div>
+
+    <noscript>
+      <div style="padding: 20px; background: #1e293b; color: #f8fafc; text-align: center;">
+        <strong>JavaScript Required for Interactive Simulator:</strong> The interactive web components, 3D switchyard views, and live formula solvers require JavaScript to be enabled in your browser. Complete textual documentation and technical specifications remain accessible above.
+      </div>
+    </noscript>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -4,6 +4,45 @@
   "outputDirectory": "dist",
   "headers": [
     {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "</llms.txt>; rel=\"describedby\", </llms-full.txt>; rel=\"alternate\"; type=\"text/plain\", </sitemap.xml>; rel=\"sitemap\""
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    },
+    {
+      "source": "/llms.txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
+    },
+    {
+      "source": "/llms-full.txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
+    },
+    {
       "source": "/index.html",
       "headers": [
         {
@@ -33,7 +72,7 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!assets/|api/|.*\\.[a-zA-Z0-9]+).*)",
+      "source": "/((?!assets/|images/|api/|.*\\.[a-zA-Z0-9]+).*)",
       "destination": "/index.html"
     }
   ]

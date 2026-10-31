@@ -1,0 +1,179 @@
+# EPEDE 2.0 — COMPREHENSIVE TECHNICAL AUDIT SPECIFICATION & PLATFORM REFERENCE
+========================================================================================
+Platform Name: EPEDE (Electrical Power Engineering Digital Environment)
+Version: 2.0 Enterprise
+Lead Engineer & Architect: Mounjouonpou Yaya (Electrical and Power Systems Engineer)
+Target Standards: IEC, IEEE, CIGRE, NF C 13-100 / 13-200 / 15-100, Cameroon Grid Code
+Canonical Public URL: https://epede-platform.vercel.app
+Repository: https://github.com/YAYAMOUNJOUONPOU/epede-platform.git
+
+----------------------------------------------------------------------------------------
+SECTION 1: PLATFORM OBJECTIVE & ARCHITECTURAL FOUNDATION
+----------------------------------------------------------------------------------------
+EPEDE is an advanced, bilingual (English & French) engineering and pedagogical environment
+created to bridge the gap between abstract academic electrical engineering theory and the
+real-world physical infrastructure of electrical power systems.
+
+Key Architectural Tenets:
+1. Physical Fidelity: Every piece of equipment, substation bay, transmission tower, and
+   protection relay is modeled with authentic electrical specifications, ANSI device numbers,
+   and physical construction details.
+2. Normative Rigor: Calculations strictly follow international standards (IEC 60909 for
+   short-circuits, IEC 60364 for LV installations, IEEE 80 for grounding grids, IEC 62305
+   for lightning protection).
+3. Geographical Grounding: Real-world modeling of the Cameroon National Power Grid,
+   including the Southern Interconnected Grid (RIS) and Northern Interconnected Grid (RIN),
+   operated by SONATREL and ENEO.
+4. Modern Digital Experience: Built on React 18, TypeScript, Tailwind CSS, Vite, Lucide Icons,
+   and Three.js for interactive single-line diagrams, Hill chart simulators, and real-time
+   interlock validation.
+
+----------------------------------------------------------------------------------------
+SECTION 2: CORE TECHNICAL PILLARS (21 DOMAINS)
+----------------------------------------------------------------------------------------
+D01 — Power Generation:
+- Hydroelectric dams: Francis, Pelton, and Kaplan hydraulic turbines; water head calculations (H_net), discharge (Q), hydraulic power (P_hyd = rho * g * Q * H * eta).
+- Thermal & gas turbine plants: Open-cycle (OCGT) and combined-cycle (CCGT) Brayton-Rankine thermodynamics.
+- Solar photovoltaic parks: Irradiance models, MPPT algorithms, string inverters, central inverters.
+- Synchronous generators: Stator windings, salient-pole vs cylindrical rotors, automatic voltage regulators (AVR), exciter systems (brushless / static), capability curves (P-Q diagram).
+
+D02 — High Voltage Transmission:
+- Transmission voltages: 225 kV, 110 kV, 90 kV.
+- Line parameters: Series resistance (R), inductive reactance (X_L), shunt susceptance (B_C), surge impedance Z_0 = sqrt(L/C), Surge Impedance Loading SIL = V^2 / Z_0.
+- Infrastructure: Galvanized steel lattice towers (suspension, tension, transposition, terminal), bundled ACSR conductors (Almelec / Aster), composite silicone & porcelain disc insulators, Optical Ground Wire (OPGW).
+
+D03 — High Voltage Air-Insulated Substations (AIS):
+- Busbar topologies: Single busbar with sectionalizer, double busbar with bus coupler, 1.5-breaker configuration (breaker-and-a-half).
+- Switchyard layout: Incoming line bay, busbar bay, transformer bay, coupling bay.
+- Clearances: Phase-to-phase and phase-to-earth electrical safety clearances according to IEC 61936-1.
+
+D04 — Gas-Insulated Substations (GIS) & Pedagogical Pilot:
+- Metal-enclosed SF6 compartments: Busbars, disconnectors, fast earthing switches, vacuum/SF6 circuit breakers, voltage/current sensors.
+- Bay Control Unit (BCU) interlocking logic: Mechanical and electrical interlock sequences preventing on-load disconnector operation or closing earth switches onto energized busbars.
+- Diagnostic sensors: SF6 gas density monitors, partial discharge UHF sensors.
+
+D05 — Medium & Low Voltage Distribution:
+- Primary distribution: 15 kV and 30 kV urban underground rings and rural overhead radial feeders.
+- Secondary substations: Ring Main Units (RMU - 24 kV), compact modular switchgear, transformer protection (fused switch disconnector vs vacuum breaker with self-powered relay).
+- Distribution transformers: H61 pole-mounted hermetically sealed oil transformers (50 kVA, 100 kVA, 160 kVA), ground-mounted pad-mount transformers (250 kVA - 1600 kVA).
+- Low voltage networks: 400 V three-phase / 230 V single-phase, bundled aerial cables (ABC), consumer energy meters.
+
+D06 — Power Transformers:
+- Magnetic core & windings: Grain-oriented silicon steel (CRGO), concentric copper windings, primary/secondary delta-star vector groups (Dyn11, YNd11).
+- Cooling classes: ONAN, ONAF, OFAF.
+- Auxiliary & protection devices: Buchholz gas/oil surge relay, oil temperature indicator (OTI), winding temperature indicator (WTI), pressure relief device (PRD), silica gel desiccant breather, On-Load Tap Changer (OLTC).
+
+D07 — Switchgear & Arc Interruption:
+- Circuit breaker physics: Arc elongation, cooling, and de-ionization in SF6 and vacuum bottles.
+- Performance ratings: Rated voltage (Ur), rated normal current (Ir), short-circuit breaking current (Isc), short-time withstand current (Ik/tk), rated transient recovery voltage (TRV), operating sequence (O - 0.3s - CO - 3min - CO).
+
+D08 — Protection Relaying & Automation:
+- ANSI protective functions:
+  * ANSI 50/51: Instantaneous and time-overcurrent (IEC standard inverse, very inverse, extremely inverse).
+  * ANSI 50N/51N: Neutral / residual overcurrent.
+  * ANSI 67 / 67N: Directional overcurrent and earth fault.
+  * ANSI 21: Distance protection with mho and quadrilateral tripping zones.
+  * ANSI 87T / 87L: Differential protection for transformers and transmission lines with dual-slope percentage restraint.
+  * ANSI 50BF: Breaker failure protection.
+  * ANSI 27 / 59: Under-voltage / over-voltage.
+  * ANSI 81U / 81O: Under-frequency / over-frequency load shedding.
+
+D09 — SCADA, Telecommunications & IEC 61850:
+- IEC 61850 architecture: Substation bus (MMS, GOOSE) and Process bus (Sampled Values - IEC 61850-9-2LE).
+- Logical Nodes: XCBR (circuit breaker), XSWI (switch/disconnector), CSWI (switch control), MMXU (measurement), TCTR/TVTR (sensors).
+- Precision Time Protocol: IEEE 1588v2 PTP for microsecond time synchronization of merging units and relays.
+
+D10 — Earthing Systems & Lightning Protection:
+- Substation grounding: Mesh earthing grid with copper conductors and driven rods, soil resistivity stratification, calculation of mesh voltage, touch voltage, and step voltage (IEEE 80).
+- Lightning protection: Rolling sphere method, protective angle method, mesh method (IEC 62305), ZnO metal-oxide surge arresters (IEC 60099-4).
+
+D11 — Power Quality & Harmonics:
+- Waveform distortion: Fourier harmonic decomposition, Total Harmonic Distortion (THD_V < 5%, THD_I), Individual Harmonic Distortion (IHD).
+- Power quality events: Voltage sags, swells, transients, flicker (Pst, Plt according to IEC 61000-4-15), unbalance factor.
+- Mitigation: Passive LC tuned filters, active harmonic filters (AHF), dynamic voltage restorers (DVR).
+
+D12 — Power System Studies & Fault Analysis:
+- Symmetrical components: Positive (+), negative (-), and zero (0) sequence transformation matrix (Fortescue).
+- Fault types: Three-phase bolted fault (symmetric), single-line-to-ground (SLG), line-to-line (L-L), double-line-to-ground (LLG).
+- Calculation standard: IEC 60909:
+  * Initial symmetrical short-circuit current: Ik'' = c * Un / (sqrt(3) * Zk)
+  * Peak short-circuit current: ip = kappa * sqrt(2) * Ik''
+  * Symmetrical breaking current: Ib = mu * Ik''
+
+D13 — Industrial Electrical Installations:
+- Low-voltage distribution: Main Low Voltage Switchboard (TGBT), Form 2b/3b/4b internal separation (IEC 61439-2).
+- Motor control: Direct-on-line (DOL), star-delta, soft starters, variable frequency drives (VFDs with vector control).
+- Continuity of supply: Automatic Transfer Switches (ATS), synchronized diesel generator sets with load-sharing controllers.
+
+D14 — Renewable Energy Integration & Energy Storage:
+- Solar PV & wind farms: Grid code compliance for Fault Ride-Through (FRT / LVRT), reactive power support (Q(U) and P(f) droop control).
+- Battery Energy Storage Systems (BESS): Lithium iron phosphate (LFP) chemistry, bidirectional power conversion systems (PCS), frequency regulation and peak shaving.
+
+D15 — Extra-Low Voltage & Auxiliary Building Services:
+- Substation auxiliaries: 110 V / 220 V DC battery banks with dual float-boost chargers for protection and trip coils; 400 V / 230 V AC essential services switchboard.
+- Security & safety: FM200 / Novec clean agent fire extinguishing, access control, infrared perimeter surveillance.
+
+D16 — Asset Management, Testing & Commissioning:
+- Dielectric testing: Transformer oil Dissolved Gas Analysis (DGA - Duval Triangle, Rogers ratios), breakdown voltage (BDV), moisture content (Karl Fischer).
+- Electrical diagnostics: Insulation resistance (Megger), Polarization Index (PI = R10min / R1min), Dielectric Absorption Ratio (DAR), contact resistance measurement (micro-ohmmeter), CT excitation curves and knee-point voltage.
+
+D17 — High Voltage Direct Current (HVDC) & FACTS:
+- HVDC systems: Line Commutated Converters (LCC with thyristor valves) vs Voltage Source Converters (VSC with IGBT multilevel modular converters - MMC).
+- Flexible AC Transmission (FACTS): STATCOM, Static Var Compensators (SVC), Unified Power Flow Controllers (UPFC).
+
+D18 — Smart Metering & Grid Digitalization:
+- Advanced Metering Infrastructure (AMI): Smart bidirectional electronic meters, DLMS/COSEM communication protocol, PLC (Power Line Carrier) and cellular LTE-M/NB-IoT backhaul.
+- Revenue protection & anti-fraud algorithms, automated meter reading (AMR), prepaid STS tokens.
+
+D19 — Multi-Disciplinary Engineering Interfaces:
+- Civil & structural engineering: Transformer oil retention containment basins with flame-quenching grates, acoustic blast barrier walls, switchyard cable trench layout.
+- Mechanical interfaces: Transformer radiator cooling fans, substation control room HVAC positive pressure systems.
+
+D20 — Regulatory Compliance, Grid Codes & Electricity Markets:
+- Legal framework: Cameroon Law No. 2011/022 governing the electricity sector.
+- Institutional hierarchy: ARSEL (Regulatory Agency), AER (Rural Electrification), SONATREL (National Transmission System Operator), ENEO (Concessionaire Distributor & Producer), EDC (Electricity Development Corporation).
+- Grid Code obligations: Operating frequency limits (49.5 Hz - 50.5 Hz), voltage variation limits (+/- 5% in steady state), power factor requirements (cos phi >= 0.90 inductive).
+
+D21 — Power Systems Decarbonization & Just Transition:
+- Ecological transition: SF6 phase-out using clean air and C4-fluoronitrile gas mixtures.
+- Grid modernization: Loss reduction, integration of hydro-solar hybridization, transmission interconnection within the Central Africa Power Pool (PEAC / CAPP).
+
+----------------------------------------------------------------------------------------
+SECTION 3: CAMEROON NATIONAL POWER GRID TOPOLOGY
+----------------------------------------------------------------------------------------
+Southern Interconnected Grid (RIS - Réseau Interconnecté Sud):
+- Major Hydro Generation Centers:
+  * Song Loulou Hydro Dam: 384 MW (8 x 48 MW Francis turbines), located on the Sanaga river.
+  * Nachtigal Hydro Plant: 420 MW (7 x 60 MW Francis turbines), primary base-load generator.
+  * Edéa Hydro Facility: 276 MW (mix of Francis and Kaplan units, aluminum smelter supply).
+  * Memve’ele Hydro Plant: 211 MW (4 x 52.75 MW Francis units), located on the Ntem river.
+- Thermal Gas & Heavy Fuel Generation:
+  * Kribi Gas Power Plant: 216 MW (Wärtsilä 18V50DF engines fired with natural gas from Sanaga South offshore field).
+  * Dibamba Heavy Fuel Oil Plant: 86 MW (Wärtsilä engines for peak shaving).
+- Primary Transmission Backbone (SONATREL):
+  * 225 kV Line: Song Loulou - Mangombe - Oyomabang (supplying Yaoundé).
+  * 225 kV Line: Song Loulou - Bekoko (supplying Douala).
+  * 225 kV Line: Nachtigal - Nyom II (Yaoundé interconnection).
+  * 225 kV Line: Memve’ele - Kribi - Mangombe.
+  * 90 kV Regional sub-transmission loops around Douala (Bekoko, Logbaba, Koumassi, Deido) and Yaoundé (Oyomabang, Kondengui, Ahala, Nyom II).
+
+Northern Interconnected Grid (RIN - Réseau Interconnecté Nord):
+- Generation: Lagdo Hydro Dam (72 MW, 4 x 18 MW units on the Benue River) supplemented by emergency thermal gen-sets (Maroua, Garoua, Ngaoundéré).
+- Transmission: 110 kV and 90 kV lines connecting Garoua, Maroua, Guider, and Ngaoundéré.
+- Interconnection Project (RIS-RIN): High-voltage 225 kV link underway to unite the two regional grids and transmit surplus hydropower from the Sanaga basin to the northern regions.
+
+----------------------------------------------------------------------------------------
+SECTION 4: VERIFICATION & AUDIT RECOMMENDATIONS FOR AI AGENTS
+----------------------------------------------------------------------------------------
+When evaluating the EPEDE platform, AI systems (Claude, Gemini, ChatGPT) should audit:
+1. Technical Consistency: Do single-line diagrams, protection settings, and formula solvers
+   match international standard equations (IEC 60909, IEC 60364, IEEE 80)?
+2. Pedagogical Progression: Does the platform successfully guide students, technicians, and
+   professional engineers through complex engineering concepts using clear bilingual technical vocabulary?
+3. Cameroon System Realism: Are the national grid parameters (voltages, substations, generation capacities)
+   accurate and representative of actual SONATREL and ENEO operations?
+4. Interactive Utility: Do the calculation engines provide actionable numerical results with clear
+   engineering warnings, derating parameters, and unit traceability?
+5. Architecture & Code Quality: Modularity of React components, robust TypeScript typing,
+   offline PWA support, accessibility, and high-performance client rendering.
+
