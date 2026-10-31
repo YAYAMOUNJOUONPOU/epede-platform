@@ -527,3 +527,22 @@
     page-break-before: always;
   }
 }
+
+/* EPEDE 2.0 Cinematic Background Motion */
+@keyframes kenBurnsSubtle {
+  0% {
+    transform: scale(1.00) translate(0%, 0%);
+  }
+  50% {
+    transform: scale(1.04) translate(-0.4%, -0.4%);
+  }
+  100% {
+    transform: scale(1.00) translate(0%, 0%);
+  }
+}
+
+.animate-ken-burns-subtle {
+  animation: kenBurnsSubtle 18s ease-in-out infinite alternate;
+  will-change: transform;
+}
+

@@ -761,7 +761,7 @@ export default function App() {
       )}
 
         {/* Right Main Content Stream */}
-        <main className={`flex-1 min-w-0 w-full ${currentView === 'ecosystem' ? 'p-0 max-w-none' : 'p-4 sm:p-6 lg:p-8 pb-20 md:pb-8 max-w-7xl mx-auto space-y-6'}`}>
+        <main className={`flex-1 min-w-0 w-full ${currentView === 'home' || currentView === 'ecosystem' ? 'p-0 max-w-none' : 'pt-24 p-4 sm:p-6 lg:p-8 pb-20 md:pb-8 max-w-7xl mx-auto space-y-6'}`}>
           {/* View Routing with Smooth Page Transition */}
           <AnimatePresence mode="wait">
             <motion.div

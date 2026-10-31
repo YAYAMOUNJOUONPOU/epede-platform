@@ -130,25 +130,25 @@ export const RealCameroonGeographicMap: React.FC<RealCameroonGeographicMapProps>
     <div className="space-y-6">
       
       {/* 1. Header Toolbar with Dynamic Telemetry Cockpit */}
-      <div className="bg-[#070D18] border border-slate-800 rounded-2xl p-5 shadow-2xl relative overflow-hidden">
+      <div className="bg-[#102A43]/50 border border-white/10 rounded-2xl p-5 shadow-2xl relative overflow-hidden backdrop-blur-xl">
         {/* Subtle decorative grid */}
-        <div className="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px] opacity-20 pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(#2878A5_1px,transparent_1px)] [background-size:24px_24px] opacity-15 pointer-events-none" />
         
         <div className="relative z-10 flex flex-col xl:flex-row xl:items-center justify-between gap-5">
           <div>
-            <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 font-bold mb-1">
-              <Globe className="w-4 h-4 text-emerald-400" />
+            <div className="flex items-center gap-2 text-xs font-mono text-[#B8F000] font-bold mb-1">
+              <Globe className="w-4 h-4 text-[#B8F000]" />
               <span className="uppercase tracking-wider">
                 {isFr ? 'RÉPUBLIQUE DU CAMEROUN · SYSTÈME ÉLECTRIQUE NATIONAL (RIS / RIN)' : 'REPUBLIC OF CAMEROON · NATIONAL POWER SYSTEM (RIS / RIN)'}
               </span>
             </div>
             <h1 className="text-xl sm:text-2xl font-black text-white font-mono tracking-tight flex items-center gap-3">
               <span>{isFr ? 'Carte Vectorielle du Réseau Électrique Camerounais' : 'Real Geographic Cameroon Power Grid Map'}</span>
-              <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+              <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-[#B8F000]/15 text-[#B8F000] border border-[#B8F000]/40">
                 WGS84 GEO-CALIBRATED
               </span>
             </h1>
-            <p className="text-xs text-slate-400 mt-1 max-w-3xl leading-relaxed">
+            <p className="text-xs text-slate-300 mt-1 max-w-3xl leading-relaxed">
               {isFr
                 ? 'Projection géographique authentique avec les 10 régions administratives, bassins hydrographiques majeurs (Sanaga, Bénoué, Ntem), centrales hydroélectriques (Songloulou, Nachtigal, Edéa, Memve\'ele, Lagdo), centrales thermiques/solaires et dorsales THT 225/110/90 kV SONATREL.'
                 : 'Authentic geographic vector projection with 10 administrative regions, major river basins (Sanaga, Bénoué, Ntem), flagship hydropower plants, thermal/solar farms, and SONATREL 225/110/90 kV corridors.'}
@@ -157,16 +157,16 @@ export const RealCameroonGeographicMap: React.FC<RealCameroonGeographicMapProps>
 
           {/* Quick HUD Metrics */}
           <div className="flex flex-wrap items-center gap-2.5">
-            <div className="px-3 py-2 rounded-xl bg-slate-900/90 border border-slate-800 text-right">
+            <div className="px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-right backdrop-blur-md">
               <span className="text-[10px] font-mono text-slate-400 block uppercase">
                 {isFr ? 'Puissance Installée' : 'Installed Capacity'}
               </span>
-              <span className="text-sm font-bold font-mono text-emerald-400">
+              <span className="text-sm font-bold font-mono text-[#B8F000]">
                 {nationalStats.totalMw.toLocaleString()} MW
               </span>
             </div>
 
-            <div className="px-3 py-2 rounded-xl bg-slate-900/90 border border-slate-800 text-right">
+            <div className="px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-right backdrop-blur-md">
               <span className="text-[10px] font-mono text-slate-400 block uppercase">
                 {isFr ? 'Mix Hydro' : 'Hydro Share'}
               </span>
@@ -175,7 +175,7 @@ export const RealCameroonGeographicMap: React.FC<RealCameroonGeographicMapProps>
               </span>
             </div>
 
-            <div className="px-3 py-2 rounded-xl bg-slate-900/90 border border-slate-800 text-right">
+            <div className="px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-right backdrop-blur-md">
               <span className="text-[10px] font-mono text-slate-400 block uppercase">
                 {isFr ? 'Fréquence Réseau' : 'Grid Frequency'}
               </span>
@@ -188,10 +188,10 @@ export const RealCameroonGeographicMap: React.FC<RealCameroonGeographicMapProps>
         </div>
 
         {/* Filter controls row */}
-        <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 pt-4 mt-4 border-t border-slate-800/80 text-xs font-mono">
+        <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 pt-4 mt-4 border-t border-white/10 text-xs font-mono">
           
           {/* System Selection: ALL / RIS / RIN / INTERCONNEXION */}
-          <div className="flex items-center gap-1 p-1 bg-slate-950/80 rounded-xl border border-slate-800">
+          <div className="flex items-center gap-1 p-1 bg-black/40 rounded-xl border border-white/10 backdrop-blur-md">
             <button
               type="button"
               onClick={() => setSelectedSystem('ALL')}
@@ -348,15 +348,15 @@ export const RealCameroonGeographicMap: React.FC<RealCameroonGeographicMapProps>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
         {/* Vector SVG Map Container (7 cols) */}
-        <div className="lg:col-span-7 bg-[#050914] border border-slate-800 rounded-2xl p-4 sm:p-6 relative overflow-hidden shadow-2xl flex flex-col justify-between min-h-[640px]">
+        <div className="lg:col-span-7 bg-[#07131F]/90 border border-white/10 rounded-2xl p-4 sm:p-6 relative overflow-hidden shadow-2xl flex flex-col justify-between min-h-[640px] backdrop-blur-md">
           
           {/* Subtle Radar & Geographic Watermark */}
-          <div className="absolute top-4 left-4 z-10 flex items-center gap-2 font-mono text-[11px] text-slate-400 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-800 backdrop-blur-md">
-            <Compass className="w-3.5 h-3.5 text-emerald-400 animate-spin-slow" />
+          <div className="absolute top-4 left-4 z-10 flex items-center gap-2 font-mono text-[11px] text-slate-300 bg-black/50 px-3 py-1.5 rounded-xl border border-white/10 backdrop-blur-md">
+            <Compass className="w-3.5 h-3.5 text-[#B8F000] animate-spin-slow" />
             <span>NORD 0° · GOLFE DE GUINÉE · RIS/RIN</span>
           </div>
 
-          <div className="absolute top-4 right-4 z-10 font-mono text-[11px] text-slate-400 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-800 backdrop-blur-md">
+          <div className="absolute top-4 right-4 z-10 font-mono text-[11px] text-slate-300 bg-black/50 px-3 py-1.5 rounded-xl border border-white/10 backdrop-blur-md">
             <span>{filteredNodes.length} Nœuds · {filteredCorridors.length} Corridors THT</span>
           </div>
 
@@ -708,15 +708,15 @@ export const RealCameroonGeographicMap: React.FC<RealCameroonGeographicMapProps>
           
           {/* Node / Substation Selected Card */}
           {selectedNode && (
-            <div className="bg-[#070D18] border border-slate-800 rounded-2xl p-5 shadow-xl relative overflow-hidden">
-              <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-800">
+            <div className="bg-[#102A43]/50 border border-white/10 rounded-2xl p-5 shadow-xl relative overflow-hidden backdrop-blur-xl">
+              <div className="flex items-start justify-between gap-3 pb-3 border-b border-white/10">
                 <div>
                   <div className="flex items-center gap-2">
                     <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${
                       selectedNode.type === 'hydro' 
                         ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
                         : selectedNode.type === 'dispatching_center'
-                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                          ? 'bg-[#B8F000]/20 text-[#B8F000] border border-[#B8F000]/40'
                           : selectedNode.type === 'thermal_gas' || selectedNode.type === 'thermal_hfo'
                             ? 'bg-orange-500/20 text-orange-300 border border-orange-500/40'
                             : selectedNode.type === 'solar_bess'
@@ -743,16 +743,16 @@ export const RealCameroonGeographicMap: React.FC<RealCameroonGeographicMapProps>
 
               {/* Technical Specifications Matrix */}
               <div className="grid grid-cols-2 gap-2.5 my-4 font-mono text-xs">
-                <div className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                <div className="p-2.5 rounded-xl bg-white/[0.04] border border-white/10">
                   <span className="text-[10px] text-slate-400 block uppercase">
                     {isFr ? 'Capacité / Puissance' : 'Installed Capacity'}
                   </span>
-                  <span className="text-xs font-bold text-emerald-400 mt-0.5 block">
+                  <span className="text-xs font-bold text-[#B8F000] mt-0.5 block">
                     {selectedNode.capacityOrMva}
                   </span>
                 </div>
 
-                <div className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                <div className="p-2.5 rounded-xl bg-white/[0.04] border border-white/10">
                   <span className="text-[10px] text-slate-400 block uppercase">
                     {isFr ? 'Opérateur & Exploitant' : 'Grid Operator'}
                   </span>
@@ -763,7 +763,7 @@ export const RealCameroonGeographicMap: React.FC<RealCameroonGeographicMapProps>
               </div>
 
               {/* Engineering Details */}
-              <div className="space-y-2 text-xs font-sans text-slate-300 bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/80">
+              <div className="space-y-2 text-xs font-sans text-slate-200 bg-black/40 p-3.5 rounded-xl border border-white/10">
                 <div className="flex items-start gap-2">
                   <Layers className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
                   <div>

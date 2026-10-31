@@ -18,7 +18,7 @@ export const engineeringAssets = {
   // 1. Generation
   generation: {
     hydroRunner: {
-      url: 'https://images.unsplash.com/photo-1574689231350-d5a085203362?auto=format&fit=crop&w=1600&q=80', // Industrial turbine runner / penstock
+      url: 'https://images.unsplash.com/photo-1560279966-2d681f3d4dfc?auto=format&fit=crop&w=1600&q=80', // Industrial turbine runner / penstock
       fallbackUrl: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=1600&q=80',
       altFr: 'Roue de turbine hydroélectrique Francis dans un aménagement de haute chute',
       altEn: 'Hydroelectric Francis turbine runner in high-head powerhouse',
@@ -40,8 +40,8 @@ export const engineeringAssets = {
       standardRef: 'IEC 60034',
     },
     solarPlant: {
-      url: 'https://images.unsplash.com/photo-1509391365360-2e959784a276?auto=format&fit=crop&w=1600&q=80',
-      fallbackUrl: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=1600&q=80',
+      url: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=1600&q=80',
+      fallbackUrl: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=1600&q=80',
       altFr: 'Centrale solaire photovoltaïque utility-scale avec onduleurs centraux',
       altEn: 'Utility-scale solar PV power plant with central inverters',
       captionFr: 'Parc photovoltaïque couplé au poste élévateur HTA/HTB',
@@ -74,7 +74,7 @@ export const engineeringAssets = {
     },
     biomassPlant: {
       url: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=1600&q=80',
-      fallbackUrl: 'https://images.unsplash.com/photo-1509391365360-2e959784a276?auto=format&fit=crop&w=1600&q=80',
+      fallbackUrl: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=1600&q=80',
       altFr: 'Centrale thermique biomasse et cogénération vapeur haute pression',
       altEn: 'Biomass thermal cogeneration plant and high-pressure steam boiler',
       captionFr: 'Valorisation des résidus forestiers et agricoles en énergie électrique de base',
@@ -89,7 +89,7 @@ export const engineeringAssets = {
   transformation: {
     powerTransformer: {
       url: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=1600&q=80', // Substation transformer
-      fallbackUrl: 'https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?auto=format&fit=crop&w=1600&q=80',
+      fallbackUrl: 'https://images.unsplash.com/photo-1509390144018-eeaf65052242?auto=format&fit=crop&w=1600&q=80',
       altFr: 'Transformateur de puissance élévateur THT 225 kV avec traversées RIP',
       altEn: 'EHV 225 kV step-up power transformer with RIP bushings',
       captionFr: 'Transformateur triphasé immergé dans l’huile minérale, refroidissement ONAF / OFAF',
@@ -99,7 +99,7 @@ export const engineeringAssets = {
       standardRef: 'IEC 60076 / IEEE C57.12',
     },
     buchholzRelay: {
-      url: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1600&q=80',
+      url: 'https://images.unsplash.com/photo-1509390144018-eeaf65052242?auto=format&fit=crop&w=1600&q=80',
       fallbackUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1600&q=80',
       altFr: 'Relais Buchholz (ANSI 63) et conservateur d’huile de transformateur',
       altEn: 'Buchholz gas and oil surge relay (ANSI 63) on transformer pipe',
@@ -114,7 +114,7 @@ export const engineeringAssets = {
   transmission: {
     corridor: {
       url: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1600&q=80', // Power lines against dramatic sky
-      fallbackUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=1600&q=80',
+      fallbackUrl: 'https://images.unsplash.com/photo-1548811579-017cf2a4268b?auto=format&fit=crop&w=1600&q=80',
       altFr: 'Ligne de transport très haute tension 225 kV / 400 kV en faisceaux',
       altEn: 'EHV 225 kV / 400 kV overhead transmission line bundle',
       captionFr: 'Pylônes treillis d’alignement et d’angle, conducteurs Almelec en faisceaux duplex',
@@ -124,7 +124,7 @@ export const engineeringAssets = {
       standardRef: 'IEC 60826 / IEEE 738',
     },
     insulators: {
-      url: 'https://images.unsplash.com/photo-1508873696983-2df5293cb32b?auto=format&fit=crop&w=1600&q=80',
+      url: 'https://images.unsplash.com/photo-1513828583688-c52646db42da?auto=format&fit=crop&w=1600&q=80',
       fallbackUrl: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1600&q=80',
       altFr: 'Chaînes d’isolateurs en verre trempé et anneaux pare-effluves corona',
       altEn: 'Toughened glass suspension insulator strings with corona grading rings',
@@ -135,8 +135,8 @@ export const engineeringAssets = {
       standardRef: 'IEC 60383 / IEC 60815',
     },
     undergroundCableTrench: {
-      url: 'https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?auto=format&fit=crop&w=1600&q=80',
-      fallbackUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1600&q=80',
+      url: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1600&q=80',
+      fallbackUrl: 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&w=1600&q=80',
       altFr: 'Pose de câbles HTB isolés XLPE en nappe et trèfle en tranchée technique',
       altEn: 'High-voltage XLPE insulated transmission cable installation in trefoil formation',
       captionFr: 'Pose en trèfle avec lit de sable thermique stabilisé per IEC 60287 / CIGRÉ TB 680',
@@ -162,7 +162,7 @@ export const engineeringAssets = {
     },
     gisIndoor: {
       url: 'https://images.unsplash.com/photo-1581092162384-8987c1d64718?auto=format&fit=crop&w=1600&q=80', // High tech electrical switchroom
-      fallbackUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1600&q=80',
+      fallbackUrl: 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&w=1600&q=80',
       altFr: 'Poste sous enveloppe métallique blindé (GIS) compact en milieu urbain',
       altEn: 'Gas-Insulated Switchgear (GIS) compact indoor substation for dense urban grids',
       captionFr: 'Chambres blindées étanches sous SF6 avec compartimentage de sécurité',
@@ -172,7 +172,7 @@ export const engineeringAssets = {
       standardRef: 'IEC 62271-203',
     },
     circuitBreaker: {
-      url: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=1600&q=80',
+      url: 'https://images.unsplash.com/photo-1509390144018-eeaf65052242?auto=format&fit=crop&w=1600&q=80',
       fallbackUrl: 'https://images.unsplash.com/photo-1513828583688-c52646db42da?auto=format&fit=crop&w=1600&q=80',
       altFr: 'Disjoncteur HTB à coupure dans le SF6 avec commande oléopneumatique',
       altEn: 'High voltage SF6 puffer circuit breaker with spring/hydraulic mechanism',
@@ -199,7 +199,7 @@ export const engineeringAssets = {
     },
     poleTransformer: {
       url: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1600&q=80',
-      fallbackUrl: 'https://images.unsplash.com/photo-1508873696983-2df5293cb32b?auto=format&fit=crop&w=1600&q=80',
+      fallbackUrl: 'https://images.unsplash.com/photo-1509390144018-eeaf65052242?auto=format&fit=crop&w=1600&q=80',
       altFr: 'Poste de distribution HTA/BT sur poteau (H61) 100 kVA / 160 kVA',
       altEn: 'Pole-mounted distribution transformer H61 30 kV / 400 V',
       captionFr: 'Alimentation rurale et périurbaine avec parafoudres à oxyde de zinc',
@@ -209,8 +209,8 @@ export const engineeringAssets = {
       standardRef: 'IEC 60076',
     },
     mvUndergroundCable: {
-      url: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=1600&q=80',
-      fallbackUrl: 'https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?auto=format&fit=crop&w=1600&q=80',
+      url: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1600&q=80',
+      fallbackUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1600&q=80',
       altFr: 'Câble unipolaire HTA isolé au polyéthylène réticulé (PRC/XLPE)',
       altEn: 'Medium-voltage XLPE insulated single-core underground distribution cable',
       captionFr: 'Âme aluminium/cuivre, triple extrusion semiconductrice et écran cuivre per NF C 33-226 / IEC 60502-2',
@@ -236,7 +236,7 @@ export const engineeringAssets = {
     },
     vfdDrive: {
       url: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1600&q=80',
-      fallbackUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1600&q=80',
+      fallbackUrl: 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&w=1600&q=80',
       altFr: 'Variateurs de vitesse industriels (VFD) et filtrage harmonique actif',
       altEn: 'Industrial Variable Frequency Drives (VFD) and active harmonic filters',
       captionFr: 'Pilotage de moteurs asynchrones de pompage et ventilation avec limitation du THD-I',
@@ -259,7 +259,7 @@ export const engineeringAssets = {
       standardRef: 'IEC 60870-5-104 / IEC 61970 CIM',
     },
     iedProtectionRelay: {
-      url: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1600&q=80',
+      url: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1600&q=80',
       fallbackUrl: 'https://images.unsplash.com/photo-1581092162384-8987c1d64718?auto=format&fit=crop&w=1600&q=80',
       altFr: 'Relais numérique de protection multifonction IED compatible CEI 61850',
       altEn: 'Multifunction digital protection IED with IEC 61850 GOOSE and SV communication',
@@ -274,7 +274,7 @@ export const engineeringAssets = {
   storageAndEv: {
     bessContainer: {
       url: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=1600&q=80',
-      fallbackUrl: 'https://images.unsplash.com/photo-1509391365360-2e959784a276?auto=format&fit=crop&w=1600&q=80',
+      fallbackUrl: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=1600&q=80',
       altFr: 'Système de stockage d’énergie par batteries conteneurisé (BESS) lithium-fer-phosphate',
       altEn: 'Containerized Battery Energy Storage System (BESS) LFP technology',
       captionFr: 'Services système de réglage rapide de fréquence (FCR) et arbitrage énergétique',
@@ -284,8 +284,8 @@ export const engineeringAssets = {
       standardRef: 'IEC 62933 / NFPA 855',
     },
     evFastHub: {
-      url: 'https://images.unsplash.com/photo-1558441719-813c9a6224ce?auto=format&fit=crop&w=1600&q=80',
-      fallbackUrl: 'https://images.unsplash.com/photo-1509391365360-2e959784a276?auto=format&fit=crop&w=1600&q=80',
+      url: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=1600&q=80',
+      fallbackUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1600&q=80',
       altFr: 'Station de recharge ultra-rapide pour véhicules électriques haute puissance HPC',
       altEn: 'High-power ultra-fast EV charging station connected to dedicated MV transformer',
       captionFr: 'Bornes de recharge 350 kW DC CCS Combo 2 avec raccordement direct au réseau HTA',

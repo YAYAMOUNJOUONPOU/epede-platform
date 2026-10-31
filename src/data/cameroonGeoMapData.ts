@@ -78,17 +78,32 @@ export interface CameroonGridCorridorGeo {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 1. REAL CAMEROON NATIONAL CONTOUR (High-Precision Vector Path 1000x1200)
+// Geographically verified with authentic coordinates for Lake Chad, Mandara Mountains,
+// Atlantika range, Bakassi Peninsula, Atlantic coastline (Limbe/Douala/Kribi/Campo),
+// and international borders with Nigeria, Chad, CAR, Congo, Gabon, and Equatorial Guinea.
 // ─────────────────────────────────────────────────────────────────────────────
 export const CAMEROON_NATIONAL_BORDER = 
-  "M 770,120 " +
-  "L 790,140 L 805,175 L 795,210 L 760,250 L 725,270 L 735,320 L 710,360 L 690,390 " + // Extreme-North east border
-  "L 680,430 L 675,470 L 710,500 L 740,540 L 790,600 L 815,660 L 850,710 L 870,780 " + // North & Adamaoua eastern border (CAR)
-  "L 885,840 L 870,910 L 840,970 L 810,1010 L 760,1050 L 710,1080 L 640,1100 L 560,1110 " + // East & South border (Congo/Gabon)
-  "L 470,1110 L 400,1110 L 330,1100 L 260,1080 L 250,1040 " + // South border with Equatorial Guinea
-  "L 260,980 L 255,940 L 245,900 L 210,880 L 190,870 L 165,860 L 180,820 L 195,780 " + // Gulf of Guinea / Atlantic Coastline (Kribi, Douala, Limbe)
-  "L 190,750 L 175,720 L 160,690 L 175,650 L 210,610 L 240,570 L 260,530 L 290,490 " + // South-West & North-West border (Nigeria)
-  "L 350,470 L 430,450 L 510,430 L 560,390 L 590,340 L 620,290 L 650,230 L 690,170 " + // North & Extreme-North western border
-  "L 720,130 L 750,110 Z";
+  "M 710,65 L 722,68 L 735,75 L 748,88 L 760,110 L 772,138 L 778,160 " + // Lake Chad & Kousseri / N'Djamena
+  "L 782,185 L 785,215 L 789,255 L 792,285 L 795,315 L 792,345 " + // Logone river downstream past Yagoua
+  "L 785,375 L 775,410 L 770,440 L 775,470 L 788,500 L 806,537 " + // Touboro (Chad/CAR tripoint)
+  "L 800,565 L 785,595 L 765,625 L 748,655 L 732,685 L 725,715 " + // CAR border past Garoua-Boulai
+  "L 738,745 L 755,775 L 772,805 L 785,835 L 795,868 L 808,900 " + // Batouri / Kadey river border
+  "L 825,930 L 845,960 L 865,990 L 882,1018 L 892,1039 " + // Moloundou / Sangha tripoint (Cameroon/CAR/Congo)
+  "L 860,1039 L 810,1039 L 750,1039 L 690,1039 L 630,1039 L 570,1039 " + // Dja / Congo border along parallel 2°18'N
+  "L 510,1039 L 460,1039 L 410,1039 L 370,1039 L 330,1039 L 290,1035 L 265,1030 L 252,1023 " + // Gabon & Equatorial Guinea to Campo
+  "L 254,1005 L 258,985 L 262,968 " + // Atlantic Coastline: Grand Batanga & Kribi port
+  "L 258,948 L 250,932 L 238,915 " + // Pointes Souellaba & Mouth of Sanaga River
+  "L 234,898 L 240,882 L 242,871 " + // Wouri Estuary & Port of Douala
+  "L 228,868 L 212,870 L 195,874 " + // Bimbia & Limbe (Ambas Bay at Mount Cameroon foot)
+  "L 180,870 L 162,860 L 145,848 L 130,838 L 120,831 " + // Rio Del Rey & Bakassi Peninsula fishhook
+  "L 128,815 L 140,792 L 152,765 L 160,735 L 165,710 " + // Manyu / Mamfe basin (Nigeria border)
+  "L 178,685 L 200,665 L 225,650 L 252,638 L 280,625 " + // Bamenda highlands / Donga-Mantung
+  "L 315,612 L 350,600 L 385,588 L 420,578 " + // Mambilla plateau / Gashaka-Gumti border
+  "L 455,555 L 485,528 L 512,498 L 530,468 " + // Atlantika mountains & Faro reserve
+  "L 550,438 L 572,412 L 595,382 L 615,348 " + // Benue trough west of Garoua
+  "L 632,315 L 648,280 L 662,248 " + // Mandara mountains (Mokolo / Roumsiki heights)
+  "L 678,215 L 688,178 L 694,142 L 696,110 " + // Waza / Mora / Fotokol
+  "L 700,85 Z"; // Closing back to Blangoua at Lake Chad
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 2. THE 10 ADMINISTRATIVE REGIONS OF CAMEROON

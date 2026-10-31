@@ -238,10 +238,10 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header
       id="epede-minimal-header"
-      className={`sticky top-0 z-40 w-full transition-all duration-300 specular-border ${
+      className={`fixed top-0 inset-x-0 z-40 w-full transition-all duration-300 ${
         isScrolled
-          ? 'bg-[#0B0F12]/95 backdrop-blur-xl border-b border-[#567A87]/30 shadow-[0_8px_30px_rgba(0,0,0,0.6)] py-2'
-          : 'bg-[#0B0F12]/90 backdrop-blur-lg border-b border-[#567A87]/20 shadow-sm py-2.5 sm:py-3'
+          ? 'bg-[#102A43]/90 backdrop-blur-xl border-b border-white/15 shadow-[0_8px_30px_rgba(0,0,0,0.6)] py-2'
+          : 'bg-transparent border-b border-white/10 py-3 sm:py-4'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-4">

@@ -25,7 +25,10 @@ import type { DomainCode } from '../../types/epede';
 import type { CalculatorTabType } from '../calculators/services/calculationReportService';
 import type { SimulationTabType } from '../simulation/SimulationLabView';
 import type { StageId } from '../journey/types';
-import { CinematicPowerJourneyHero } from './CinematicPowerJourneyHero';
+import { CinematicVernovaHero } from './CinematicVernovaHero';
+import { RealCameroonGeographicMap } from '../grid/RealCameroonGeographicMap';
+import { DynamicSectionBackground } from '../ui/DynamicSectionBackground';
+import { HOMEPAGE_IMAGE_LIBRARY } from '../../data/homepageImageLibrary';
 
 export interface HomeViewProps {
   locale: 'fr' | 'en';
@@ -228,7 +231,7 @@ const LEARNING_PATHWAYS: LearningPathwayCard[] = [
       'Systèmes d’excitation (AVR) et réglage 50 Hz',
       'Couplage et synchronisation au réseau (ANSI 25)',
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1574689231350-d5a085203362?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1560279966-2d681f3d4dfc?auto=format&fit=crop&w=900&q=80',
     targetDomain: 'D01',
   },
   {
@@ -290,7 +293,7 @@ const LEARNING_PATHWAYS: LearningPathwayCard[] = [
       'Tableaux BT, coffrets de coupure et comptage',
       'Branchements des abonnés',
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1509390144018-eeaf65052242?auto=format&fit=crop&w=900&q=80',
     targetDomain: 'D05',
   },
   {
@@ -321,7 +324,7 @@ const LEARNING_PATHWAYS: LearningPathwayCard[] = [
       'Capteurs industriels, instrumentation et actionneurs',
       'Supervision SCADA et maintenance industrielle',
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&w=900&q=80',
     targetDomain: 'D07',
   },
   {
@@ -367,7 +370,7 @@ const NINE_POWER_STAGES: NineStageItem[] = [
     titleEn: 'Power Generation',
     titleFr: 'Production d’Électricité',
     voltage: '10.3 kV – 15.5 kV',
-    imageUrl: 'https://images.unsplash.com/photo-1574689231350-d5a085203362?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1560279966-2d681f3d4dfc?auto=format&fit=crop&w=1200&q=80',
     explanationEn:
       'Generating stations convert primary energy (falling water, natural gas, solar radiation, or wind) into three-phase alternating current at 50 Hz.',
     explanationFr:
@@ -465,7 +468,7 @@ const NINE_POWER_STAGES: NineStageItem[] = [
     titleEn: 'Step-Down Transformation',
     titleFr: 'Transformation Abaisseuse HTB/HTA',
     voltage: '225/90 kV → 30/15 kV',
-    imageUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1509390144018-eeaf65052242?auto=format&fit=crop&w=1200&q=80',
     explanationEn:
       'Primary substation transformers step high transmission voltage (225 kV or 90 kV) down to medium distribution voltage (30 kV or 15 kV).',
     explanationFr:
@@ -513,7 +516,7 @@ const NINE_POWER_STAGES: NineStageItem[] = [
     titleEn: 'Distribution Transformer',
     titleFr: 'Transformateur de Distribution MT/BT',
     voltage: '15/30 kV → 400 V / 230 V',
-    imageUrl: 'https://images.unsplash.com/photo-1508873696983-2df5293cb32b?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1509390144018-eeaf65052242?auto=format&fit=crop&w=1200&q=80',
     explanationEn:
       'Located on neighborhood poles (H61) or inside masonry cabins, the distribution transformer performs the final voltage step-down to 400 V / 230 V.',
     explanationFr:
@@ -561,7 +564,7 @@ const NINE_POWER_STAGES: NineStageItem[] = [
     titleEn: 'Final Consumer & Industry',
     titleFr: 'Consommateur Final & Industrie',
     voltage: '230 V / 400 V / 690 V',
-    imageUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&w=1200&q=80',
     explanationEn:
       'Inside homes, hospitals, commercial buildings, and factories, electricity is finally converted into light, cooling, motion, and industrial production.',
     explanationFr:
@@ -591,7 +594,7 @@ const FEATURED_EQUIPMENT: FeaturedEquipmentItem[] = [
     roleFr: 'Coupe automatiquement le courant en cas de surcharge ou de court-circuit pour protéger les câbles et les personnes.',
     insideAnatomyEn: 'Thermal bimetal strip (overload), magnetic coil (short-circuit), main contacts, and arc-extinguishing chamber.',
     insideAnatomyFr: 'Bilame thermique (surcharge), bobine magnétique (court-circuit), contacts de puissance et chambre de coupure d’arc.',
-    imageUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1513828583688-c52646db42da?auto=format&fit=crop&w=900&q=80',
   },
   {
     id: 'eq-trafo-hta-01',
@@ -627,7 +630,7 @@ const FEATURED_EQUIPMENT: FeaturedEquipmentItem[] = [
     roleFr: 'Le cœur de l’industrie : convertit l’énergie électrique triphasée en couple mécanique pour entraîner pompes, ventilateurs et convoyeurs.',
     insideAnatomyEn: 'Three-phase stator windings (creating a rotating magnetic field), squirrel-cage rotor, bearings, cooling fan, and Star/Delta terminal box.',
     insideAnatomyFr: 'Stator triphasé (champ magnétique tournant), rotor à cage d’écureuil, roulements, ventilateur et plaque à bornes (U1-V1-W1 / W2-U2-V2).',
-    imageUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&w=900&q=80',
   },
   {
     id: 'eq-rmu-hta-01',
@@ -639,7 +642,7 @@ const FEATURED_EQUIPMENT: FeaturedEquipmentItem[] = [
     roleFr: 'Assure le bouclage des câbles souterrains HTA et la protection du transformateur MT/BT dans un tableau compact.',
     insideAnatomyEn: 'SF6 or vacuum switching chamber, three-position disconnector/earthing switch, busbars, voltage presence lamps (VPIS), and mechanical interlocks.',
     insideAnatomyFr: 'Enceinte de coupure SF6 ou vide, sectionneur 3 positions (Fermé / Ouvert / Terre), diviseurs capacitifs (VPIS) et verrouillages.',
-    imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1513828583688-c52646db42da?auto=format&fit=crop&w=900&q=80',
   },
   {
     id: 'eq-hydro-gen-01',
@@ -651,7 +654,7 @@ const FEATURED_EQUIPMENT: FeaturedEquipmentItem[] = [
     roleFr: 'Convertit l’énergie mécanique de rotation de la turbine en énergie électrique alternative triphasée à 50 Hz.',
     insideAnatomyEn: 'Salient-pole or cylindrical rotor fed with DC excitation current, Roebel-bar stator windings, air/water coolers, and neutral grounding transformer.',
     insideAnatomyFr: 'Rotor inducteur alimenté en courant continu (excitation), stator induit à barres Roebel, refroidisseurs air/eau et mise à la terre du neutre.',
-    imageUrl: 'https://images.unsplash.com/photo-1574689231350-d5a085203362?auto=format&fit=crop&w=900&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1560279966-2d681f3d4dfc?auto=format&fit=crop&w=900&q=80',
   },
 ];
 
@@ -739,107 +742,180 @@ export const HomeView: React.FC<HomeViewProps> = ({
   const activeStarterItem = MOTOR_STARTER_CHAIN[selectedStarterIdx] || MOTOR_STARTER_CHAIN[0];
 
   return (
-    <div className="space-y-16 pb-12">
+    <div className="relative min-h-screen bg-gradient-to-b from-[#07131F] via-[#0E2034] to-[#07131F] text-[#F7F8F5] space-y-16 pb-20">
+      {/* Ambient Subtle Technical Grid Pattern */}
+      <div className="absolute inset-0 bg-[radial-gradient(#2878A5_1px,transparent_1px)] [background-size:32px_32px] opacity-10 pointer-events-none" />
+
       {/* =====================================================================
-          SECTION 1: CINEMATIC 4-SCENE HERO EXPERIENCE
+          SECTION 1: CINEMATIC FULL-SCREEN HERO EXPERIENCE (GE VERNOVA COMPOSITION)
           ===================================================================== */}
-      <CinematicPowerJourneyHero
+      <CinematicVernovaHero
         locale={locale}
-        onNavigateLearn={() => onNavigateView('thematic-journeys')}
-        onNavigatePowerChain={() => onNavigateView('journey')}
-        onSelectDomain={onSelectDomain}
+        onNavigateView={(view) => {
+          if (view === 'power-chain') {
+            onNavigateView('journey');
+          } else if (view === 'learn') {
+            onNavigateView('thematic-journeys');
+          } else {
+            onNavigateView(view);
+          }
+        }}
       />
 
-      {/* =====================================================================
-          SECTION 2: WHAT IS EPEDE? (THE 4-STEP LEARNING PHILOSOPHY)
-          ===================================================================== */}
-      <section className="rounded-3xl border border-[#567A87]/35 bg-[#151C1E] p-6 sm:p-10 shadow-xl space-y-8">
-        <div className="max-w-3xl space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0B0F12] border border-[#D7A64A]/40 text-[#D7A64A] text-xs font-mono font-bold uppercase tracking-wider">
-            <BookOpen className="w-3.5 h-3.5" />
-            <span>{isFr ? 'QU’EST-CE QU’EPEDE ?' : 'WHAT IS EPEDE?'}</span>
-          </div>
+      {/* Container wrapper for structured below-the-fold content */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
 
-          <h2 className="text-2xl sm:text-3xl font-black text-[#F4F1E8] tracking-tight">
-            {isFr
-              ? 'Un environnement visuel pour comprendre réellement comment fonctionne l’électricité'
-              : 'A Visual Learning Environment Built to Bridge Theory and Real Electrical Systems'}
-          </h2>
+        {/* =====================================================================
+            SECTION 2: WHAT IS EPEDE? (THE 4-STEP LEARNING PHILOSOPHY)
+            ===================================================================== */}
+        <section className="relative rounded-3xl border border-white/10 overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.35)]">
+          <DynamicSectionBackground
+            photos={HOMEPAGE_IMAGE_LIBRARY.generation}
+            overlayOpacityClass="bg-[#102A43]/65"
+            locale={locale}
+            showCaptionBadge={true}
+            className="p-6 sm:p-10 space-y-8"
+          >
+            <div className="max-w-3xl space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.06] border border-[#B8F000]/40 text-[#B8F000] text-xs font-mono font-bold uppercase tracking-wider backdrop-blur-sm">
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>{isFr ? 'QU’EST-CE QU’EPEDE ?' : 'WHAT IS EPEDE?'}</span>
+              </div>
 
-          <p className="text-sm sm:text-base text-[#A9ADA5] leading-relaxed">
-            {isFr
-              ? 'Vous n’avez pas besoin d’être déjà ingénieur pour utiliser EPEDE. Que vous soyez étudiant, électricien de chantier, technicien de maintenance ou jeune ingénieur, la plateforme vous fait passer progressivement du principe physique à l’équipement réel, puis au schéma et à l’installation complète.'
-              : 'You do not need prior mastery of electrical engineering to use EPEDE. Whether you are a student, a field electrician, an industrial maintenance technician, or an early-career engineer, EPEDE guides you step by step from physical intuition to real hardware, schematics, and complete installations.'}
-          </p>
-        </div>
+              <h2 className="text-2xl sm:text-3xl font-black text-[#F4F1E8] tracking-tight">
+                {isFr
+                  ? 'Un environnement visuel pour comprendre réellement comment fonctionne l’électricité'
+                  : 'A Visual Learning Environment Built to Bridge Theory and Real Electrical Systems'}
+              </h2>
 
-        {/* 4-Step Core Philosophy Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[
-            {
-              step: '01',
-              titleEn: 'LEARN THE PRINCIPLE',
-              titleFr: 'COMPRENDRE LE PRINCIPE',
-              descEn:
-                'Grasp what voltage, current, power, magnetic induction, and three-phase systems physically do before memorizing equations.',
-              descFr:
-                'Comprendre physiquement ce que font la tension, le courant, l’induction magnétique et le triphasé avant de réciter des formules.',
-              icon: Zap,
-            },
-            {
-              step: '02',
-              titleEn: 'UNDERSTAND THE EQUIPMENT',
-              titleFr: 'OBSERVER L’ÉQUIPEMENT',
-              descEn:
-                'Inspect real photographs, internal cutaways, windings, contacts, arc chutes, and IEC symbols of every component.',
-              descFr:
-                'Observer de vraies photographies, l’architecture interne en coupe, les bornes et le symbole normalisé de chaque appareil.',
-              icon: Eye,
-            },
-            {
-              step: '03',
-              titleEn: 'VISUALIZE THE SYSTEM',
-              titleFr: 'VISUALISER LE SYSTÈME',
-              descEn:
-                'See how individual devices (breakers, contactors, relays, transformers, motors) connect and work together on schematics.',
-              descFr:
-                'Comprendre comment les appareils (disjoncteur, contacteur, relais thermique, transformateur, moteur) interagissent ensemble.',
-              icon: Layers,
-            },
-            {
-              step: '04',
-              titleEn: 'DISCOVER REAL APPLICATIONS',
-              titleFr: 'DÉCOUVRIR LE TERRAIN RÉEL',
-              descEn:
-                'Connect every concept to real installations in Cameroon and internationally: power plants, 225 kV substations, H61 poles, and factories.',
-              descFr:
-                'Relier chaque notion aux installations réelles au Cameroun et dans le monde : centrales, postes 225 kV, poteaux H61 et usines.',
-              icon: MapPin,
-            },
-          ].map((item) => {
-            const Icon = item.icon;
-            return (
-              <div
-                key={item.step}
-                className="rounded-2xl bg-[#0B0F12] border border-[#567A87]/30 p-5 space-y-3 hover:border-[#D7A64A]/60 transition-colors"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-black text-[#D7A64A] bg-[#151C1E] px-2.5 py-1 rounded-md border border-[#D7A64A]/30">
-                    STEP {item.step}
-                  </span>
-                  <Icon className="w-5 h-5 text-[#D7A64A]" />
+              <p className="text-sm sm:text-base text-[#A9ADA5] leading-relaxed">
+                {isFr
+                  ? 'Vous n’avez pas besoin d’être déjà ingénieur pour utiliser EPEDE. Que vous soyez étudiant, électricien de chantier, technicien de maintenance ou jeune ingénieur, la plateforme vous fait passer progressivement du principe physique à l’équipement réel, puis au schéma et à l’installation complète.'
+                  : 'You do not need prior mastery of electrical engineering to use EPEDE. Whether you are a student, a field electrician, an industrial maintenance technician, or an early-career engineer, EPEDE guides you step by step from physical intuition to real hardware, schematics, and complete installations.'}
+              </p>
+            </div>
+
+            {/* 4-Step Core Philosophy Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {[
+                {
+                  step: '01',
+                  titleEn: 'LEARN THE PRINCIPLE',
+                  titleFr: 'COMPRENDRE LE PRINCIPE',
+                  descEn:
+                    'Grasp what voltage, current, power, magnetic induction, and three-phase systems physically do before memorizing equations.',
+                  descFr:
+                    'Comprendre physiquement ce que font la tension, le courant, l’induction magnétique et le triphasé avant de réciter des formules.',
+                  icon: Zap,
+                },
+                {
+                  step: '02',
+                  titleEn: 'UNDERSTAND THE EQUIPMENT',
+                  titleFr: 'OBSERVER L’ÉQUIPEMENT',
+                  descEn:
+                    'Inspect real photographs, internal cutaways, windings, contacts, arc chutes, and IEC symbols of every component.',
+                  descFr:
+                    'Observer de vraies photographies, l’architecture interne en coupe, les bornes et le symbole normalisé de chaque appareil.',
+                  icon: Eye,
+                },
+                {
+                  step: '03',
+                  titleEn: 'VISUALIZE THE SYSTEM',
+                  titleFr: 'VISUALISER LE SYSTÈME',
+                  descEn:
+                    'See how individual devices (breakers, contactors, relays, transformers, motors) connect and work together on schematics.',
+                  descFr:
+                    'Comprendre comment les appareils (disjoncteur, contacteur, relais thermique, transformateur, moteur) interagissent ensemble.',
+                  icon: Layers,
+                },
+                {
+                  step: '04',
+                  titleEn: 'DISCOVER REAL APPLICATIONS',
+                  titleFr: 'DÉCOUVRIR LE TERRAIN RÉEL',
+                  descEn:
+                    'Connect every concept to real installations in Cameroon and internationally: power plants, 225 kV substations, H61 poles, and factories.',
+                  descFr:
+                    'Relier chaque notion aux installations réelles au Cameroun et dans le monde : centrales, postes 225 kV, poteaux H61 et usines.',
+                  icon: MapPin,
+                },
+              ].map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div
+                    key={item.step}
+                    className="rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-md p-5 space-y-3 hover:border-[#B8F000]/50 hover:bg-white/[0.07] transition-all"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-xs font-black text-[#B8F000] bg-white/[0.06] px-2.5 py-1 rounded-md border border-[#B8F000]/30">
+                        STEP {item.step}
+                      </span>
+                      <Icon className="w-5 h-5 text-[#B8F000]" />
+                    </div>
+                    <h3 className="text-sm font-black text-[#F4F1E8] tracking-wide uppercase">
+                      {isFr ? item.titleFr : item.titleEn}
+                    </h3>
+                    <p className="text-xs text-[#A9ADA5] leading-relaxed">
+                      {isFr ? item.descFr : item.descEn}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </DynamicSectionBackground>
+        </section>
+
+        {/* =====================================================================
+            SECTION 3: INTERACTIVE CAMEROON ELECTRICAL POWER NETWORK MAP
+            (Verified SONATREL & Eneo Generation & Transmission Infrastructure)
+            ===================================================================== */}
+        <section className="relative rounded-3xl border border-white/10 overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.35)]">
+          <DynamicSectionBackground
+            photos={HOMEPAGE_IMAGE_LIBRARY.transmission}
+            overlayOpacityClass="bg-[#07131F]/80"
+            locale={locale}
+            showCaptionBadge={true}
+            className="p-6 sm:p-10 space-y-6"
+          >
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-4 border-b border-white/10">
+              <div className="space-y-2">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.06] border border-[#2878A5]/40 text-[#2878A5] text-xs font-mono font-bold uppercase tracking-wider backdrop-blur-sm">
+                  <MapPin className="w-3.5 h-3.5 text-[#B8F000]" />
+                  <span>{isFr ? 'CARTOGRAPHIE GÉOGRAPHIQUE OFFICIELLE' : 'OFFICIAL GEOGRAPHIC INFRASTRUCTURE MAP'}</span>
                 </div>
-                <h3 className="text-sm font-black text-[#F4F1E8] tracking-wide uppercase">
-                  {isFr ? item.titleFr : item.titleEn}
-                </h3>
-                <p className="text-xs text-[#A9ADA5] leading-relaxed">
-                  {isFr ? item.descFr : item.descEn}
+
+                <h2 className="text-2xl sm:text-3xl font-black text-[#F4F1E8] tracking-tight">
+                  {isFr
+                    ? 'Réseau Électrique Interconnecté du Cameroun (RIS & RIN)'
+                    : 'Interconnected Power Grid of Cameroon (Southern RIS & Northern RIN)'}
+                </h2>
+
+                <p className="text-sm text-[#A9ADA5] max-w-3xl leading-relaxed">
+                  {isFr
+                    ? 'Explorez la géographie réelle des grands ouvrages hydroélectriques (Nachtigal 420 MW, Song Loulou 384 MW, Edéa 276 MW, Memve\'ele 211 MW), des centrales thermiques, des fermes solaires PV et des artères de transport THT 225 kV et 110 kV opérées par la SONATREL.'
+                    : 'Explore verified generation facilities (Nachtigal 420 MW, Song Loulou 384 MW, Edéa 276 MW, Memve\'ele 211 MW), gas thermal plants, solar farms, and 225 kV / 110 kV transmission corridors operated by SONATREL.'}
                 </p>
               </div>
-            );
-          })}
-        </div>
-      </section>
+
+              <button
+                type="button"
+                onClick={() => onNavigateView('cameroon-grid')}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 hover:bg-[#102A43] text-white border border-white/20 hover:border-[#B8F000] text-xs font-mono font-bold transition-all shrink-0 cursor-pointer backdrop-blur-md"
+              >
+                <span>{isFr ? 'Plein Écran & Données Réseau' : 'Full Screen Grid Explorer'}</span>
+                <ArrowRight className="w-4 h-4 text-[#B8F000]" />
+              </button>
+            </div>
+
+            {/* Embedded Real Cameroon Geographic Map */}
+            <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#07131F]/90 backdrop-blur-md shadow-2xl">
+              <RealCameroonGeographicMap
+                locale={locale}
+                onNavigateEquipment={onSelectEquipment}
+                onNavigateDiagram={(topo) => onNavigateDiagram && onNavigateDiagram()}
+              />
+            </div>
+          </DynamicSectionBackground>
+        </section>
 
       {/* =====================================================================
           SECTION 3: EXPLORE THE 8 PROGRESSIVE LEARNING PATHWAYS
@@ -847,8 +923,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
       <section className="space-y-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 font-mono text-xs font-bold text-[#D7A64A] uppercase tracking-wider">
-              <Compass className="w-4 h-4" />
+            <div className="inline-flex items-center gap-2 font-mono text-xs font-bold text-[#B8F000] uppercase tracking-wider">
+              <Compass className="w-4 h-4 text-[#B8F000]" />
               <span>{isFr ? 'PAR OÙ COMMENCER ?' : 'WHERE SHOULD I BEGIN?'}</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-[#F4F1E8] tracking-tight">
@@ -877,8 +953,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 onClick={() => setPathwayFilter(tab.id as any)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer border ${
                   pathwayFilter === tab.id
-                    ? 'bg-[#D7A64A] text-[#0B0F12] border-[#D7A64A]'
-                    : 'bg-[#151C1E] text-[#A9ADA5] hover:text-[#F4F1E8] border-[#567A87]/35'
+                    ? 'bg-[#B8F000] text-[#102A43] border-[#B8F000] font-black'
+                    : 'bg-white/[0.04] text-[#A9ADA5] hover:text-[#F4F1E8] border-white/10'
                 }`}
               >
                 {isFr ? tab.labelFr : tab.labelEn}
@@ -893,7 +969,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <div
               key={pathway.id}
               onClick={() => onNavigateView('thematic-journeys')}
-              className="group rounded-2xl bg-[#151C1E] border border-[#567A87]/35 hover:border-[#D7A64A] overflow-hidden flex flex-col justify-between transition-all cursor-pointer shadow-lg"
+              className="group rounded-2xl bg-[#102A43]/40 border border-white/10 hover:border-[#B8F000]/50 backdrop-blur-xl overflow-hidden flex flex-col justify-between transition-all duration-300 hover:shadow-[0_12px_30px_rgba(0,0,0,0.5)] cursor-pointer"
             >
               <div>
                 {/* Top Photo Header */}
@@ -904,12 +980,12 @@ export const HomeView: React.FC<HomeViewProps> = ({
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#151C1E] via-[#0B0F12]/40 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#102A43]/90 via-[#102A43]/30 to-transparent" />
                   <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                    <span className="px-2.5 py-1 rounded-lg bg-[#0B0F12]/90 border border-[#D7A64A]/50 font-mono text-xs font-black text-[#D7A64A]">
+                    <span className="px-2.5 py-1 rounded-lg bg-black/40 border border-[#D7A64A]/40 font-mono text-xs font-black text-[#D7A64A] backdrop-blur-sm">
                       {isFr ? `PARCOURS ${pathway.num}` : `PATHWAY ${pathway.num}`}
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-md bg-[#0B0F12]/85 border border-[#567A87]/40 font-mono text-[10px] font-bold text-[#F4F1E8]">
+                    <span className="px-2.5 py-0.5 rounded-md bg-black/40 border border-white/20 font-mono text-[10px] font-bold text-[#F4F1E8] backdrop-blur-sm">
                       {isFr ? pathway.levelBadgeFr : pathway.levelBadgeEn}
                     </span>
                   </div>
@@ -917,17 +993,17 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
                 {/* Card Body */}
                 <div className="p-5 space-y-3">
-                  <h3 className="text-base font-black text-[#F4F1E8] group-hover:text-[#D7A64A] transition-colors">
+                  <h3 className="text-base font-black text-[#F4F1E8] group-hover:text-[#B8F000] transition-colors">
                     {isFr ? pathway.titleFr : pathway.titleEn}
                   </h3>
                   <p className="text-xs text-[#A9ADA5] leading-relaxed">
                     {isFr ? pathway.summaryFr : pathway.summaryEn}
                   </p>
 
-                  <ul className="space-y-1.5 pt-2 border-t border-[#567A87]/20">
+                  <ul className="space-y-1.5 pt-2 border-t border-white/10">
                     {(isFr ? pathway.topicsFr : pathway.topicsEn).map((topic) => (
                       <li key={topic} className="flex items-start gap-2 text-xs text-[#F4F1E8]/90">
-                        <span className="text-[#D7A64A] font-bold">▪</span>
+                        <span className="text-[#B8F000] font-bold">▪</span>
                         <span>{topic}</span>
                       </li>
                     ))}
@@ -936,7 +1012,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </div>
 
               {/* Footer Action */}
-              <div className="px-5 py-3.5 bg-[#0B0F12]/60 border-t border-[#567A87]/25 flex items-center justify-between text-xs font-mono font-bold text-[#D7A64A]">
+              <div className="px-5 py-3.5 bg-white/[0.03] border-t border-white/10 flex items-center justify-between text-xs font-mono font-bold text-[#B8F000] group-hover:text-white transition-colors">
                 <span>{isFr ? 'Ouvrir ce parcours' : 'Start this pathway'}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -948,11 +1024,18 @@ export const HomeView: React.FC<HomeViewProps> = ({
       {/* =====================================================================
           SECTION 4: VISUAL EXPLORER OF THE ELECTRICAL POWER SYSTEM (9 STAGES)
           ===================================================================== */}
-      <section className="rounded-3xl border border-[#567A87]/35 bg-[#151C1E] p-6 sm:p-10 shadow-xl space-y-6">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <section className="relative rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
+        <DynamicSectionBackground
+          photos={HOMEPAGE_IMAGE_LIBRARY.substations}
+          overlayOpacityClass="bg-[#102A43]/70"
+          locale={locale}
+          showCaptionBadge={true}
+          className="p-6 sm:p-10 space-y-6"
+        >
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 font-mono text-xs font-bold text-[#D7A64A] uppercase tracking-wider">
-              <Activity className="w-4 h-4" />
+            <div className="inline-flex items-center gap-2 font-mono text-xs font-bold text-[#B8F000] uppercase tracking-wider">
+              <Activity className="w-4 h-4 text-[#B8F000]" />
               <span>{isFr ? 'EXPLORATEUR VISUEL DU SYSTÈME ÉLECTRIQUE' : 'VISUAL ELECTRICAL POWER SYSTEM EXPLORER'}</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-[#F4F1E8] tracking-tight">
@@ -970,10 +1053,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
           <button
             type="button"
             onClick={() => onNavigateView('journey')}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0B0F12] hover:border-[#D7A64A] text-[#D7A64A] font-mono text-xs font-bold border border-[#567A87]/40 transition-colors shrink-0 cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-[#102A43] text-white font-mono text-xs font-bold border border-white/20 hover:border-[#B8F000] transition-colors shrink-0 cursor-pointer backdrop-blur-md"
           >
             <span>{isFr ? 'Ouvrir l’Explorateur Plein Écran' : 'Open Full System Explorer'}</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 text-[#B8F000]" />
           </button>
         </div>
 
@@ -988,20 +1071,20 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 onClick={() => setSelectedStageIdx(idx)}
                 className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                   isSelected
-                    ? 'bg-[#D7A64A] text-[#0B0F12] border-[#D7A64A] shadow-lg'
-                    : 'bg-[#0B0F12] text-[#F4F1E8] border-[#567A87]/35 hover:border-[#D7A64A]/60'
+                    ? 'bg-[#B8F000] text-[#102A43] border-[#B8F000] shadow-[0_0_15px_rgba(184,240,0,0.35)] font-black'
+                    : 'bg-white/[0.04] text-[#F7F8F5] border-white/10 hover:border-white/25 hover:bg-white/[0.08]'
                 }`}
               >
                 <div className="flex items-center justify-between w-full mb-1.5">
                   <span
                     className={`font-mono text-[10px] font-black px-1.5 py-0.5 rounded ${
-                      isSelected ? 'bg-[#0B0F12] text-[#D7A64A]' : 'bg-[#151C1E] text-[#D7A64A]'
+                      isSelected ? 'bg-[#102A43] text-[#B8F000]' : 'bg-white/[0.06] text-[#B8F000]'
                     }`}
                   >
                     {stage.num}
                   </span>
                   {idx < NINE_POWER_STAGES.length - 1 && (
-                    <span className={`font-mono text-xs ${isSelected ? 'text-[#0B0F12]' : 'text-[#A9ADA5]'}`}>
+                    <span className={`font-mono text-xs ${isSelected ? 'text-[#102A43]' : 'text-[#A9ADA5]'}`}>
                       →
                     </span>
                   )}
@@ -1011,7 +1094,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 </div>
                 <div
                   className={`text-[10px] font-mono mt-1.5 truncate ${
-                    isSelected ? 'text-[#0B0F12]/80 font-bold' : 'text-[#A9ADA5]'
+                    isSelected ? 'text-[#102A43]/80 font-bold' : 'text-[#A9ADA5]'
                   }`}
                 >
                   {stage.voltage}
@@ -1022,7 +1105,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
 
         {/* Selected Stage Detailed Visual Inspection Panel */}
-        <div className="rounded-2xl bg-[#0B0F12] border border-[#567A87]/35 overflow-hidden grid grid-cols-1 lg:grid-cols-12">
+        <div className="rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xl overflow-hidden grid grid-cols-1 lg:grid-cols-12">
           {/* Left Real Photograph */}
           <div className="lg:col-span-5 relative min-h-[280px] sm:min-h-[340px]">
             <img
@@ -1030,9 +1113,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
               alt={isFr ? activeStage.titleFr : activeStage.titleEn}
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F12] via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#102A43]/90 via-transparent to-transparent" />
             <div className="absolute bottom-4 left-4 right-4 space-y-1">
-              <span className="inline-block px-2.5 py-1 rounded-md bg-[#151C1E]/95 border border-[#D7A64A]/50 font-mono text-xs font-bold text-[#D7A64A]">
+              <span className="inline-block px-2.5 py-1 rounded-md bg-black/50 border border-[#B8F000]/40 font-mono text-xs font-bold text-[#B8F000] backdrop-blur-sm">
                 {isFr ? `ÉTAPE ${activeStage.num} · ${activeStage.voltage}` : `STAGE ${activeStage.num} · ${activeStage.voltage}`}
               </span>
               <h3 className="text-xl font-black text-[#F4F1E8]">
@@ -1049,8 +1132,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl bg-[#151C1E] border border-[#567A87]/30 space-y-1.5">
-                  <div className="text-[11px] font-mono font-bold text-[#D7A64A] uppercase tracking-wider">
+                <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 space-y-1.5">
+                  <div className="text-[11px] font-mono font-bold text-[#B8F000] uppercase tracking-wider">
                     {isFr ? 'POURQUOI CETTE ÉTAPE EXISTE (RÔLE)' : 'PURPOSE IN THE POWER SYSTEM'}
                   </div>
                   <p className="text-xs text-[#A9ADA5] leading-relaxed">
@@ -1058,8 +1141,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   </p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-[#151C1E] border border-[#567A87]/30 space-y-1.5">
-                  <div className="text-[11px] font-mono font-bold text-[#D7A64A] uppercase tracking-wider">
+                <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 space-y-1.5">
+                  <div className="text-[11px] font-mono font-bold text-[#B8F000] uppercase tracking-wider">
                     {isFr ? 'PRINCIPE PHYSIQUE' : 'OPERATING PRINCIPLE'}
                   </div>
                   <p className="text-xs text-[#A9ADA5] leading-relaxed">
@@ -1077,7 +1160,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   {(isFr ? activeStage.equipmentFr : activeStage.equipmentEn).map((eq) => (
                     <span
                       key={eq}
-                      className="px-3 py-1 rounded-lg bg-[#151C1E] border border-[#567A87]/35 text-xs font-mono text-[#F4F1E8]"
+                      className="px-3 py-1 rounded-lg bg-white/[0.04] border border-white/10 text-xs font-mono text-[#F4F1E8]"
                     >
                       ⚡ {eq}
                     </span>
@@ -1086,10 +1169,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </div>
 
               {/* Cameroon Real-World Example */}
-              <div className="p-3.5 rounded-xl bg-[#151C1E] border border-[#D7A64A]/35 flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-[#D7A64A] shrink-0 mt-0.5" />
+              <div className="p-3.5 rounded-xl bg-[#102A43]/60 border border-[#B8F000]/30 flex items-start gap-3">
+                <MapPin className="w-4 h-4 text-[#B8F000] shrink-0 mt-0.5" />
                 <div className="text-xs text-[#F4F1E8] leading-relaxed">
-                  <strong className="text-[#D7A64A] font-mono uppercase mr-1.5">
+                  <strong className="text-[#B8F000] font-mono uppercase mr-1.5">
                     {isFr ? 'Exemple au Cameroun :' : 'Cameroon Application:'}
                   </strong>
                   {isFr ? activeStage.cameroonContextFr : activeStage.cameroonContextEn}
@@ -1097,18 +1180,18 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </div>
             </div>
 
-            <div className="pt-3 border-t border-[#567A87]/25 flex flex-wrap items-center justify-between gap-3">
+            <div className="pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
               <button
                 type="button"
                 onClick={() => onSelectDomain(activeStage.domainCode)}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#D7A64A] hover:bg-[#e3b55a] text-[#0B0F12] font-bold text-xs transition-colors cursor-pointer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#B8F000] hover:bg-[#c9f826] text-[#102A43] font-black text-xs uppercase tracking-wider transition-all shadow-[0_8px_20px_rgba(184,240,0,0.3)] cursor-pointer"
               >
                 <span>
                   {isFr
                     ? `Étudier le Domaine ${activeStage.domainCode} en détail`
                     : `Explore Domain ${activeStage.domainCode} Lesson`}
                 </span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 text-[#102A43]" />
               </button>
 
               <button
@@ -1117,7 +1200,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   if (onNavigateJourney) onNavigateJourney(activeStage.journeyStage);
                   else onNavigateView('journey');
                 }}
-                className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#D7A64A] hover:text-[#F4F1E8] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#B8F000] hover:text-white transition-colors cursor-pointer"
               >
                 <span>{isFr ? 'Voir sur le schéma interactif' : 'Inspect on Interactive SLD'}</span>
                 <ChevronRight className="w-4 h-4" />
@@ -1125,6 +1208,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </div>
           </div>
         </div>
+        </DynamicSectionBackground>
       </section>
 
       {/* =====================================================================
@@ -1152,10 +1236,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
           <button
             type="button"
             onClick={() => onNavigateView('equipment-list')}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#151C1E] hover:border-[#D7A64A] text-[#F4F1E8] font-mono text-xs font-bold border border-[#567A87]/40 transition-colors shrink-0 cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-[#102A43] text-white font-mono text-xs font-bold border border-white/20 hover:border-[#B8F000] transition-colors shrink-0 cursor-pointer backdrop-blur-md"
           >
             <span>{isFr ? 'Voir tout le Catalogue d’Équipements' : 'Browse Full Equipment Catalogue'}</span>
-            <ArrowRight className="w-4 h-4 text-[#D7A64A]" />
+            <ArrowRight className="w-4 h-4 text-[#B8F000]" />
           </button>
         </div>
 
@@ -1164,7 +1248,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <div
               key={eq.id}
               onClick={() => onSelectEquipment(eq.id)}
-              className="group rounded-2xl bg-[#151C1E] border border-[#567A87]/35 hover:border-[#D7A64A] overflow-hidden flex flex-col justify-between transition-all cursor-pointer shadow-lg"
+              className="group rounded-2xl bg-[#102A43]/40 border border-white/10 hover:border-[#B8F000]/50 backdrop-blur-xl overflow-hidden flex flex-col justify-between transition-all duration-300 hover:shadow-[0_12px_30px_rgba(0,0,0,0.5)] cursor-pointer"
             >
               <div>
                 <div className="relative h-44 overflow-hidden">
@@ -1174,19 +1258,19 @@ export const HomeView: React.FC<HomeViewProps> = ({
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#151C1E] via-[#0B0F12]/30 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#102A43]/90 via-[#102A43]/30 to-transparent" />
                   <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2">
-                    <span className="px-2.5 py-1 rounded-md bg-[#0B0F12]/90 border border-[#D7A64A]/40 font-mono text-[11px] font-bold text-[#D7A64A]">
+                    <span className="px-2.5 py-1 rounded-md bg-black/40 border border-[#D7A64A]/40 font-mono text-[11px] font-bold text-[#D7A64A] backdrop-blur-sm">
                       {eq.voltageBadge}
                     </span>
-                    <span className="px-2.5 py-1 rounded-md bg-[#0B0F12]/90 border border-[#567A87]/40 font-mono text-[10px] font-bold text-[#F4F1E8]">
+                    <span className="px-2.5 py-1 rounded-md bg-black/40 border border-white/20 font-mono text-[10px] font-bold text-[#F4F1E8] backdrop-blur-sm">
                       {eq.iecSymbolLabel}
                     </span>
                   </div>
                 </div>
 
                 <div className="p-5 space-y-3">
-                  <h3 className="text-base font-black text-[#F4F1E8] group-hover:text-[#D7A64A] transition-colors">
+                  <h3 className="text-base font-black text-[#F4F1E8] group-hover:text-[#B8F000] transition-colors">
                     {isFr ? eq.nameFr : eq.nameEn}
                   </h3>
 
@@ -1194,8 +1278,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
                     {isFr ? eq.roleFr : eq.roleEn}
                   </p>
 
-                  <div className="p-3 rounded-xl bg-[#0B0F12] border border-[#567A87]/25 space-y-1">
-                    <div className="text-[10px] font-mono font-bold text-[#D7A64A] uppercase tracking-wider">
+                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10 space-y-1">
+                    <div className="text-[10px] font-mono font-bold text-[#B8F000] uppercase tracking-wider">
                       {isFr ? 'CE QUE VOUS VERREZ À L’INTÉRIEUR :' : 'INTERNAL CONSTRUCTION & ANATOMY:'}
                     </div>
                     <p className="text-xs text-[#A9ADA5] leading-snug">
@@ -1205,7 +1289,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 </div>
               </div>
 
-              <div className="px-5 py-3 bg-[#0B0F12]/60 border-t border-[#567A87]/25 flex items-center justify-between text-xs font-mono font-bold text-[#D7A64A]">
+              <div className="px-5 py-3 bg-white/[0.03] border-t border-white/10 flex items-center justify-between text-xs font-mono font-bold text-[#B8F000] group-hover:text-white transition-colors">
                 <span>{isFr ? 'Ouvrir la leçon visuelle (10 sections)' : 'Open Visual Equipment Lesson'}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -1218,11 +1302,18 @@ export const HomeView: React.FC<HomeViewProps> = ({
           SECTION 6: ENGINEERING CONCEPTS & COMPLETE SYSTEMS IN PRACTICE
           ("HOW DIFFERENT COMPONENTS WORK TOGETHER: 3-PHASE MOTOR STARTER")
           ===================================================================== */}
-      <section className="rounded-3xl border border-[#567A87]/35 bg-[#151C1E] p-6 sm:p-10 shadow-xl space-y-6">
+      <section className="relative rounded-3xl border border-white/10 overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.35)]">
+        <DynamicSectionBackground
+          photos={HOMEPAGE_IMAGE_LIBRARY.installations}
+          overlayOpacityClass="bg-[#102A43]/65"
+          locale={locale}
+          showCaptionBadge={true}
+          className="p-6 sm:p-10 space-y-6"
+        >
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 font-mono text-xs font-bold text-[#D7A64A] uppercase tracking-wider">
-              <Cpu className="w-4 h-4" />
+            <div className="inline-flex items-center gap-2 font-mono text-xs font-bold text-[#B8F000] uppercase tracking-wider">
+              <Cpu className="w-4 h-4 text-[#B8F000]" />
               <span>{isFr ? 'COMPRENDRE LES SYSTÈMES COMPLETS' : 'FROM ISOLATED PARTS TO COMPLETE SYSTEMS'}</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-[#F4F1E8] tracking-tight">
@@ -1240,10 +1331,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
           <button
             type="button"
             onClick={() => onNavigateView('industrial-projects')}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0B0F12] hover:border-[#D7A64A] text-[#D7A64A] font-mono text-xs font-bold border border-[#567A87]/40 transition-colors shrink-0 cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-[#102A43] text-white font-mono text-xs font-bold border border-white/20 hover:border-[#B8F000] transition-colors shrink-0 cursor-pointer backdrop-blur-md"
           >
             <span>{isFr ? 'Explorer le Génie Industriel' : 'Explore Industrial Engineering'}</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 text-[#B8F000]" />
           </button>
         </div>
 
@@ -1258,20 +1349,20 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 onClick={() => setSelectedStarterIdx(idx)}
                 className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                   isSelected
-                    ? 'bg-[#D7A64A] text-[#0B0F12] border-[#D7A64A] shadow-lg'
-                    : 'bg-[#0B0F12] text-[#F4F1E8] border-[#567A87]/35 hover:border-[#D7A64A]/60'
+                    ? 'bg-[#B8F000] text-[#102A43] border-[#B8F000] shadow-[0_0_15px_rgba(184,240,0,0.35)] font-black'
+                    : 'bg-white/[0.04] text-[#F7F8F5] border-white/10 hover:border-white/25 hover:bg-white/[0.08]'
                 }`}
               >
                 <div className="flex items-center justify-between w-full mb-2">
                   <span
                     className={`font-mono text-xs font-black px-2 py-0.5 rounded ${
-                      isSelected ? 'bg-[#0B0F12] text-[#D7A64A]' : 'bg-[#151C1E] text-[#D7A64A]'
+                      isSelected ? 'bg-[#102A43] text-[#B8F000]' : 'bg-white/[0.06] text-[#B8F000]'
                     }`}
                   >
                     {item.code}
                   </span>
                   {idx < MOTOR_STARTER_CHAIN.length - 1 && (
-                    <span className={`font-mono text-xs font-bold ${isSelected ? 'text-[#0B0F12]' : 'text-[#D7A64A]'}`}>
+                    <span className={`font-mono text-xs font-bold ${isSelected ? 'text-[#102A43]' : 'text-[#B8F000]'}`}>
                       ──►
                     </span>
                   )}
@@ -1282,8 +1373,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 <div
                   className={`text-[10px] font-mono mt-2 pt-2 border-t ${
                     isSelected
-                      ? 'border-[#0B0F12]/20 text-[#0B0F12]/90 font-bold'
-                      : 'border-[#567A87]/20 text-[#A9ADA5]'
+                      ? 'border-[#102A43]/20 text-[#102A43]/90 font-bold'
+                      : 'border-white/10 text-[#A9ADA5]'
                   }`}
                 >
                   {item.terminals}
@@ -1294,13 +1385,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
 
         {/* Detailed Explanation of the Selected Element in the Motor Starter System */}
-        <div className="rounded-2xl bg-[#0B0F12] border border-[#567A87]/35 p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+        <div className="rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xl p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
           <div className="lg:col-span-7 space-y-3">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="px-2.5 py-1 rounded-md bg-[#151C1E] border border-[#D7A64A]/40 font-mono text-xs font-black text-[#D7A64A]">
+              <span className="px-2.5 py-1 rounded-md bg-white/[0.06] border border-[#B8F000]/40 font-mono text-xs font-black text-[#B8F000] backdrop-blur-sm">
                 {activeStarterItem.symbolText}
               </span>
-              <span className="px-2.5 py-1 rounded-md bg-[#151C1E] border border-[#567A87]/35 font-mono text-xs text-[#F4F1E8]">
+              <span className="px-2.5 py-1 rounded-md bg-white/[0.06] border border-white/15 font-mono text-xs text-[#F4F1E8]">
                 {isFr ? 'Bornes :' : 'Terminals:'} {activeStarterItem.terminals}
               </span>
             </div>
@@ -1313,8 +1404,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
               {isFr ? activeStarterItem.roleFr : activeStarterItem.roleEn}
             </p>
 
-            <div className="p-4 rounded-xl bg-[#151C1E] border border-[#567A87]/30 space-y-1">
-              <div className="text-[11px] font-mono font-bold text-[#D7A64A] uppercase tracking-wider">
+            <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 space-y-1">
+              <div className="text-[11px] font-mono font-bold text-[#B8F000] uppercase tracking-wider">
                 {isFr ? 'INTERACTION PUISSANCE / COMMANDE' : 'HOW IT INTERACTS WITH THE REST OF THE CIRCUIT'}
               </div>
               <p className="text-xs text-[#A9ADA5] leading-relaxed">
@@ -1324,16 +1415,16 @@ export const HomeView: React.FC<HomeViewProps> = ({
           </div>
 
           {/* Right Schematic Diagram Box */}
-          <div className="lg:col-span-5 rounded-xl bg-[#151C1E] border border-[#567A87]/35 p-5 space-y-3 font-mono text-xs">
-            <div className="text-[11px] font-bold text-[#D7A64A] uppercase tracking-wider border-b border-[#567A87]/25 pb-2">
+          <div className="lg:col-span-5 rounded-xl bg-white/[0.03] border border-white/10 backdrop-blur-md p-5 space-y-3 font-mono text-xs">
+            <div className="text-[11px] font-bold text-[#B8F000] uppercase tracking-wider border-b border-white/10 pb-2">
               {isFr ? 'ARCHITECTURE DU DÉPART MOTEUR (CEI 60947-4-1)' : 'MOTOR STARTER COORDINATION (IEC 60947-4-1)'}
             </div>
             <div className="space-y-2 text-[#F4F1E8]">
-              <div className="flex items-center justify-between p-2 rounded bg-[#0B0F12] border border-[#567A87]/25">
+              <div className="flex items-center justify-between p-2 rounded bg-black/30 border border-white/10">
                 <span className="text-[#A9ADA5]">{isFr ? '1. Circuit de Puissance :' : '1. Power Circuit:'}</span>
-                <span className="font-bold text-[#D7A64A]">L1/L2/L3 → Q1 → KM1 → F1 → M1</span>
+                <span className="font-bold text-[#B8F000]">L1/L2/L3 → Q1 → KM1 → F1 → M1</span>
               </div>
-              <div className="flex items-center justify-between p-2 rounded bg-[#0B0F12] border border-[#567A87]/25">
+              <div className="flex items-center justify-between p-2 rounded bg-black/30 border border-white/10">
                 <span className="text-[#A9ADA5]">{isFr ? '2. Circuit de Commande :' : '2. Control Circuit:'}</span>
                 <span className="font-bold text-[#F4F1E8]">F1(95-96) → Stop(S0) → Start(S1//13-14) → A1-A2</span>
               </div>
@@ -1342,7 +1433,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
               <button
                 type="button"
                 onClick={() => onSelectEquipment(activeStarterItem.equipmentId)}
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#D7A64A] hover:text-[#F4F1E8] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#B8F000] hover:text-white transition-colors cursor-pointer"
               >
                 <span>{isFr ? 'Voir la fiche de cet appareil' : 'Inspect this component'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -1350,14 +1441,15 @@ export const HomeView: React.FC<HomeViewProps> = ({
               <button
                 type="button"
                 onClick={() => onNavigateView('simulation')}
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#F4F1E8] hover:text-[#D7A64A] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-white hover:text-[#B8F000] transition-colors cursor-pointer"
               >
                 <span>{isFr ? 'Simuler le démarrage moteur' : 'Simulate Motor Start'}</span>
-                <Play className="w-3.5 h-3.5 text-[#D7A64A]" />
+                <Play className="w-3.5 h-3.5 text-[#B8F000]" />
               </button>
             </div>
           </div>
         </div>
+        </DynamicSectionBackground>
       </section>
 
       {/* =====================================================================
@@ -1366,8 +1458,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
       <section className="space-y-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 font-mono text-xs font-bold text-[#D7A64A] uppercase tracking-wider">
-              <Factory className="w-4 h-4" />
+            <div className="inline-flex items-center gap-2 font-mono text-xs font-bold text-[#B8F000] uppercase tracking-wider">
+              <Factory className="w-4 h-4 text-[#B8F000]" />
               <span>{isFr ? 'L’INGÉNIERIE EN PRATIQUE AU CAMEROUN' : 'REAL-WORLD ENGINEERING IN CAMEROON & AFRICA'}</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-[#F4F1E8] tracking-tight">
@@ -1385,10 +1477,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
           <button
             type="button"
             onClick={() => onNavigateView('cameroon-grid')}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#151C1E] hover:border-[#D7A64A] text-[#F4F1E8] font-mono text-xs font-bold border border-[#567A87]/40 transition-colors shrink-0 cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-[#102A43] text-white font-mono text-xs font-bold border border-white/20 hover:border-[#B8F000] transition-colors shrink-0 cursor-pointer backdrop-blur-md"
           >
             <span>{isFr ? 'Explorer le Réseau Cameroun (RIS / RIN)' : 'Explore Cameroon Power Network'}</span>
-            <ArrowRight className="w-4 h-4 text-[#D7A64A]" />
+            <ArrowRight className="w-4 h-4 text-[#B8F000]" />
           </button>
         </div>
 
@@ -1402,7 +1494,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 'Study how Song Loulou (384 MW), Nachtigal (420 MW), Edéa (276 MW), Memve’ele (211 MW), Lagdo (72 MW), and Kribi (216 MW) generate Cameroon’s electricity.',
               descFr:
                 'Comprendre comment Song Loulou (384 MW), Nachtigal (420 MW), Édéa (276 MW), Memve’ele (211 MW), Lagdo (72 MW) et Kribi (216 MW) alimentent le pays.',
-              imageUrl: 'https://images.unsplash.com/photo-1574689231350-d5a085203362?auto=format&fit=crop&w=900&q=80',
+              imageUrl: 'https://images.unsplash.com/photo-1560279966-2d681f3d4dfc?auto=format&fit=crop&w=900&q=80',
               action: () => onNavigateView('cameroon-grid'),
             },
             {
@@ -1424,7 +1516,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 'Understand how 15 kV and 30 kV feeders, Ring Main Units, and pole-mounted H61 transformers step power down to 400 V / 230 V in neighborhoods.',
               descFr:
                 'Découvrir le fonctionnement des boucles HTA 15 kV / 30 kV, des cellules RMU et des transformateurs sur poteau H61 jusque chez l’abonné.',
-              imageUrl: 'https://images.unsplash.com/photo-1508873696983-2df5293cb32b?auto=format&fit=crop&w=900&q=80',
+              imageUrl: 'https://images.unsplash.com/photo-1509390144018-eeaf65052242?auto=format&fit=crop&w=900&q=80',
               action: () => onSelectDomain('D05'),
             },
             {
@@ -1442,7 +1534,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <div
               key={card.tag}
               onClick={card.action}
-              className="group rounded-2xl bg-[#151C1E] border border-[#567A87]/35 hover:border-[#D7A64A] overflow-hidden flex flex-col justify-between transition-all cursor-pointer shadow-lg"
+              className="group rounded-2xl bg-[#102A43]/40 border border-white/10 hover:border-[#B8F000]/50 backdrop-blur-xl overflow-hidden flex flex-col justify-between transition-all duration-300 hover:shadow-[0_12px_30px_rgba(0,0,0,0.5)] cursor-pointer"
             >
               <div>
                 <div className="relative h-36 overflow-hidden">
@@ -1452,13 +1544,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#151C1E] via-transparent to-transparent" />
-                  <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-[#0B0F12]/90 border border-[#D7A64A]/40 font-mono text-[10px] font-bold text-[#D7A64A]">
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#102A43]/90 via-[#102A43]/30 to-transparent" />
+                  <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-black/50 border border-[#B8F000]/40 font-mono text-[10px] font-bold text-[#B8F000] backdrop-blur-sm">
                     {card.tag}
                   </span>
                 </div>
                 <div className="p-5 space-y-2">
-                  <h3 className="text-base font-black text-[#F4F1E8] group-hover:text-[#D7A64A] transition-colors">
+                  <h3 className="text-base font-black text-[#F4F1E8] group-hover:text-[#B8F000] transition-colors">
                     {isFr ? card.titleFr : card.titleEn}
                   </h3>
                   <p className="text-xs text-[#A9ADA5] leading-relaxed">
@@ -1466,7 +1558,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   </p>
                 </div>
               </div>
-              <div className="px-5 py-3 bg-[#0B0F12]/60 border-t border-[#567A87]/25 flex items-center justify-between text-xs font-mono font-bold text-[#D7A64A]">
+              <div className="px-5 py-3 bg-white/[0.03] border-t border-white/10 flex items-center justify-between text-xs font-mono font-bold text-[#B8F000] group-hover:text-white transition-colors">
                 <span>{isFr ? 'Explorer sur le terrain' : 'Explore Field Context'}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -1478,53 +1570,62 @@ export const HomeView: React.FC<HomeViewProps> = ({
       {/* =====================================================================
           SECTION 8: FINAL CALL TO ACTION — START EXPLORING
           ===================================================================== */}
-      <section className="rounded-3xl border border-[#D7A64A]/45 bg-[#151C1E] p-8 sm:p-10 shadow-2xl flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-        <div className="space-y-2 max-w-2xl">
-          <div className="text-xs font-mono font-bold text-[#D7A64A] uppercase tracking-widest">
-            {isFr ? 'PRÊT À COMMENCER ?' : 'READY TO BEGIN YOUR JOURNEY?'}
+      <section className="relative rounded-3xl border border-[#B8F000]/40 overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+        <DynamicSectionBackground
+          photos={HOMEPAGE_IMAGE_LIBRARY.automationScada}
+          overlayOpacityClass="bg-[#102A43]/70"
+          locale={locale}
+          showCaptionBadge={true}
+          className="p-8 sm:p-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6"
+        >
+          <div className="space-y-2 max-w-2xl">
+            <div className="text-xs font-mono font-bold text-[#B8F000] uppercase tracking-widest">
+              {isFr ? 'PRÊT À COMMENCER ?' : 'READY TO BEGIN YOUR JOURNEY?'}
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-[#F4F1E8] tracking-tight">
+              {isFr
+                ? 'Apprenez le principe. Observez l’équipement. Visualisez le système.'
+                : 'Learn the Principle. Understand the Equipment. Visualize the System.'}
+            </h2>
+            <p className="text-sm text-[#A9ADA5] leading-relaxed">
+              {isFr
+                ? 'Démarrez par le Parcours 01 (Fondamentaux de l’Électricité), explorez la chaîne électrique complète ou ouvrez le catalogue visuel des équipements.'
+                : 'Start with Pathway 01 (Electrical Fundamentals), trace the 9-Stage Electrical Power System, or inspect real hardware in the Equipment Catalogue.'}
+            </p>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-[#F4F1E8] tracking-tight">
-            {isFr
-              ? 'Apprenez le principe. Observez l’équipement. Visualisez le système.'
-              : 'Learn the Principle. Understand the Equipment. Visualize the System.'}
-          </h2>
-          <p className="text-sm text-[#A9ADA5] leading-relaxed">
-            {isFr
-              ? 'Démarrez par le Parcours 01 (Fondamentaux de l’Électricité), explorez la chaîne électrique complète ou ouvrez le catalogue visuel des équipements.'
-              : 'Start with Pathway 01 (Electrical Fundamentals), trace the 9-Stage Electrical Power System, or inspect real hardware in the Equipment Catalogue.'}
-          </p>
-        </div>
 
-        <div className="flex flex-wrap items-center gap-3 shrink-0">
-          <button
-            type="button"
-            onClick={() => onNavigateView('thematic-journeys')}
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#D7A64A] hover:bg-[#e3b55a] text-[#0B0F12] font-bold text-sm transition-all shadow-lg cursor-pointer"
-          >
-            <BookOpen className="w-4 h-4" />
-            <span>{isFr ? 'Commencer à Apprendre' : 'Start Learning Pathways'}</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <button
+              type="button"
+              onClick={() => onNavigateView('thematic-journeys')}
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[#B8F000] hover:bg-[#c9f826] text-[#102A43] font-black text-sm uppercase tracking-wider transition-all shadow-[0_10px_25px_rgba(184,240,0,0.35)] cursor-pointer"
+            >
+              <BookOpen className="w-4 h-4" />
+              <span>{isFr ? 'Commencer à Apprendre' : 'Start Learning Pathways'}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
 
-          <button
-            type="button"
-            onClick={() => onNavigateView('journey')}
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#0B0F12] hover:border-[#D7A64A] text-[#F4F1E8] font-bold text-sm border border-[#567A87]/45 transition-all cursor-pointer"
-          >
-            <Compass className="w-4 h-4 text-[#D7A64A]" />
-            <span>{isFr ? 'Explorer la Chaîne Électrique' : 'Explore Electrical Systems'}</span>
-          </button>
+            <button
+              type="button"
+              onClick={() => onNavigateView('journey')}
+              className="inline-flex items-center gap-2 px-5 py-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-[#F7F8F5] font-bold text-sm backdrop-blur-md transition-all cursor-pointer"
+            >
+              <Compass className="w-4 h-4 text-[#B8F000]" />
+              <span>{isFr ? 'Explorer la Chaîne Électrique' : 'Explore Electrical Systems'}</span>
+            </button>
 
-          <button
-            type="button"
-            onClick={() => onNavigateView('equipment-list')}
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#0B0F12] hover:border-[#D7A64A] text-[#F4F1E8] font-bold text-sm border border-[#567A87]/45 transition-all cursor-pointer"
-          >
-            <Wrench className="w-4 h-4 text-[#D7A64A]" />
-            <span>{isFr ? 'Catalogue Équipements' : 'Browse Equipment'}</span>
-          </button>
-        </div>
+            <button
+              type="button"
+              onClick={() => onNavigateView('equipment-list')}
+              className="inline-flex items-center gap-2 px-5 py-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-[#F7F8F5] font-bold text-sm backdrop-blur-md transition-all cursor-pointer"
+            >
+              <Wrench className="w-4 h-4 text-[#B8F000]" />
+              <span>{isFr ? 'Catalogue Équipements' : 'Browse Equipment'}</span>
+            </button>
+          </div>
+        </DynamicSectionBackground>
       </section>
+      </div>
     </div>
   );
 };
