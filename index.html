@@ -215,6 +215,24 @@
       </div>
     </noscript>
 
+    <!-- Fail-safe inline reload guard against stale deployment chunks (P0-1) -->
+    <script>
+      window.addEventListener("vite:preloadError", function () {
+        if (!sessionStorage.getItem("epede-reloaded")) {
+          sessionStorage.setItem("epede-reloaded", "1");
+          location.reload();
+        }
+      });
+      window.addEventListener("error", function (e) {
+        if (e && e.message && (e.message.indexOf("dynamically imported module") !== -1 || e.message.indexOf("module script failed") !== -1)) {
+          if (!sessionStorage.getItem("epede-reloaded")) {
+            sessionStorage.setItem("epede-reloaded", "1");
+            location.reload();
+          }
+        }
+      }, true);
+    </script>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

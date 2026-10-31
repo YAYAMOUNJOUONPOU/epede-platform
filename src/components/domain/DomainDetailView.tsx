@@ -373,16 +373,6 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
                 size="sm"
                 governingStandard={`IEC / CIGRE / NF · Domain ${domain.code}`}
               />
-              {EPEDE_MATURITY_REGISTRY[domainCode] && (
-                <span className="inline-flex items-center gap-1 font-mono text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-                  <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                  <span>
-                    {locale === 'fr'
-                      ? `NIVEAU 5 EXCELLENCE (${EPEDE_MATURITY_REGISTRY[domainCode].maturityScorePercent}%)`
-                      : `LEVEL 5 EXCELLENCE (${EPEDE_MATURITY_REGISTRY[domainCode].maturityScorePercent}%)`}
-                  </span>
-                </span>
-              )}
             </div>
             {isD11 && (
               <span className="font-mono text-xs text-red-200 bg-red-950/90 border border-red-800 px-3 py-1 rounded font-bold tracking-wider uppercase">

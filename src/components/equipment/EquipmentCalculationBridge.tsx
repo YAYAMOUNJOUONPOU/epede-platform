@@ -89,79 +89,64 @@ export const EquipmentCalculationBridge: React.FC<EquipmentCalculationBridgeProp
 
     try {
       if (isTransformer || isSwitchgear) {
-        // Run IEC 60909 short-circuit calculation
-        const res = await epedeApi.executeCalculation('short-circuit-iec60909', {
-          un_kv: unKv,
-          sk_upstream_mva: skUpstreamMva,
-          trafo_s_mva: trafoMva,
-          trafo_uk_pct: ukPercent,
+        // IEC 60909 Symmetrical short-circuit calculation (Client-Side Electrotechnical Engine)
+        const c = unKv > 1 ? 1.10 : 1.05;
+        const zGrid = (c * unKv * unKv) / skUpstreamMva;
+        const zTrafo = (ukPercent / 100) * ((unKv * unKv) / trafoMva);
+        const zTotal = zGrid + zTrafo;
+        const ik = (c * unKv) / (Math.sqrt(3) * zTotal);
+        const ip = 1.8 * Math.sqrt(2) * ik;
+        const sk = Math.sqrt(3) * unKv * ik;
+
+        setCalcResults({
+          workbenchId: 'short-circuit-iec60909',
+          results: {
+            ik_symmetrical_ka: Number(ik.toFixed(2)),
+            ip_peak_ka: Number(ip.toFixed(2)),
+            sk_shortcircuit_mva: Number(sk.toFixed(1)),
+            z_grid_ohms: Number(zGrid.toFixed(3)),
+            z_trafo_ohms: Number(zTrafo.toFixed(3)),
+            z_total_ohms: Number(zTotal.toFixed(3)),
+          },
+          engineeringInterpretation: {
+            fr: `Courant de court-circuit triphasé Ik" calculé à ${ik.toFixed(2)} kA (Ip crête = ${ip.toFixed(2)} kA). Conforme aux spécifications CEI 60909 pour jeux de barres et disjoncteurs.`,
+            en: `Calculated symmetrical short-circuit current Ik" is ${ik.toFixed(2)} kA (peak Ip = ${ip.toFixed(2)} kA). Compliant with IEC 60909 for switchgear breaking duty.`,
+          },
         });
-
-        if (res && res.results) {
-          setCalcResults(res);
-        } else {
-          // Client-side fallback calculation if API is offline
-          const c = unKv > 35 ? 1.1 : 1.05;
-          const zGrid = (c * unKv * unKv) / skUpstreamMva;
-          const zTrafo = (ukPercent / 100) * ((unKv * unKv) / trafoMva);
-          const zTotal = zGrid + zTrafo;
-          const ik = (c * unKv) / (Math.sqrt(3) * zTotal);
-          const ip = 1.8 * Math.sqrt(2) * ik;
-          const sk = Math.sqrt(3) * unKv * ik;
-
-          setCalcResults({
-            workbenchId: 'short-circuit-iec60909',
-            results: {
-              ik_symmetrical_ka: Number(ik.toFixed(2)),
-              ip_peak_ka: Number(ip.toFixed(2)),
-              sk_shortcircuit_mva: Number(sk.toFixed(1)),
-              z_grid_ohms: Number(zGrid.toFixed(3)),
-              z_trafo_ohms: Number(zTrafo.toFixed(3)),
-              z_total_ohms: Number(zTotal.toFixed(3)),
-            },
-            engineeringInterpretation: {
-              fr: `Courant de court-circuit triphasé Ik" calculé à ${ik.toFixed(2)} kA (Ip crête = ${ip.toFixed(2)} kA). Conforme aux spécifications CEI 60909 pour jeux de barres et disjoncteurs.`,
-              en: `Calculated symmetrical short-circuit current Ik" is ${ik.toFixed(2)} kA (peak Ip = ${ip.toFixed(2)} kA). Compliant with IEC 60909 for switchgear breaking duty.`,
-            },
-          });
-        }
       } else {
-        // Run Voltage drop calculation
-        const res = await epedeApi.executeCalculation('voltage-drop-workbench', {
-          voltage_v: unKv * 1000,
-          power_kw: loadPowerKw,
-          length_m: cableLengthM,
-          cos_phi: cosPhi,
-          cable_section_mm2: cableSectionMm2,
+        // Voltage drop calculation per IEC 60364-5-52
+        const U = unKv * 1000;
+        const sinPhi = Math.sqrt(Math.max(0, 1 - cosPhi * cosPhi));
+        const Ib = (loadPowerKw * 1000) / (Math.sqrt(3) * U * cosPhi);
+        const R = (0.0225 * cableLengthM) / cableSectionMm2;
+        const X = 0.0001 * cableLengthM;
+        const deltaU = Math.sqrt(3) * Ib * (R * cosPhi + X * sinPhi);
+        const deltaUPct = (deltaU / U) * 100;
+        const isCompliant = deltaUPct <= 5.0;
+
+        setCalcResults({
+          workbenchId: 'voltage-drop-workbench',
+          results: {
+            ib_load_current_a: Number(Ib.toFixed(1)),
+            delta_u_volts: Number(deltaU.toFixed(2)),
+            delta_u_percent: Number(deltaUPct.toFixed(2)),
+            r_cable_ohms: Number(R.toFixed(4)),
+            x_cable_ohms: Number(X.toFixed(4)),
+            is_compliant: isCompliant,
+          },
+          engineeringInterpretation: {
+            fr: `Chute de tension calculée : ${deltaUPct.toFixed(2)}% (${deltaU.toFixed(1)} V). ${
+              isCompliant
+                ? 'Conforme à la limite recommandée CEI 60364 (≤ 5% pour force motrice / éclairage tertiaire).'
+                : 'Dépassement du seuil normatif de 5%. Section de conducteur supérieure requise.'
+            }`,
+            en: `Calculated voltage drop: ${deltaUPct.toFixed(2)}% (${deltaU.toFixed(1)} V). ${
+              isCompliant
+                ? 'Compliant with IEC 60364 limits (≤ 5% for power distribution circuits).'
+                : 'Exceeds normative 5% threshold. Larger conductor cross-section recommended.'
+            }`,
+          },
         });
-
-        if (res && res.results) {
-          setCalcResults(res);
-        } else {
-          // Client-side fallback
-          const U = unKv * 1000;
-          const sinPhi = Math.sqrt(Math.max(0, 1 - cosPhi * cosPhi));
-          const Ib = (loadPowerKw * 1000) / (Math.sqrt(3) * U * cosPhi);
-          const R = (0.0225 * cableLengthM) / cableSectionMm2;
-          const X = 0.0001 * cableLengthM;
-          const deltaU = Math.sqrt(3) * Ib * (R * cosPhi + X * sinPhi);
-          const deltaUPct = (deltaU / U) * 100;
-
-          setCalcResults({
-            workbenchId: 'voltage-drop-workbench',
-            results: {
-              current_ib_a: Number(Ib.toFixed(2)),
-              delta_u_volts: Number(deltaU.toFixed(2)),
-              delta_u_percentage: Number(deltaUPct.toFixed(2)),
-              r_line_ohms: Number(R.toFixed(3)),
-              x_line_ohms: Number(X.toFixed(3)),
-            },
-            engineeringInterpretation: {
-              fr: `Chute de tension calculée à ${deltaUPct.toFixed(2)}% (${deltaU.toFixed(1)} V). ${deltaUPct <= 5.0 ? 'Conforme aux limites CEI (< 5%).' : 'Attention : dépasse le seuil normatif de 5%.'}`,
-              en: `Calculated voltage drop is ${deltaUPct.toFixed(2)}% (${deltaU.toFixed(1)} V). ${deltaUPct <= 5.0 ? 'Compliant with IEC limits (< 5%).' : 'Warning: exceeds normative 5% threshold.'}`,
-            },
-          });
-        }
       }
     } catch (err: any) {
       setCalcError(err?.message || 'Erreur d\'exécution du calcul');

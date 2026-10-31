@@ -64,7 +64,7 @@ const CALCULATOR_STANDARDS: Record<string, { standard: string; badgeType: Eviden
   motor: { standard: 'CEI 60034-12 / IEEE 399', badgeType: 'VERIFIED_STANDARD' },
   sil: { standard: 'CIGRE TB 575 / CEI 60826', badgeType: 'ENGINEERING_REFERENCE' },
   earthing: { standard: 'IEEE Std 80 / CEI 61936-1', badgeType: 'VERIFIED_STANDARD' },
-  'arc-flash': { standard: 'IEEE 1584-2018 / NFPA 70E', badgeType: 'VERIFIED_STANDARD' },
+  'arc-flash': { standard: 'NFPA 70E / Modèle Didactique', badgeType: 'CONCEPTUAL_MODEL' },
   'ct-sizing': { standard: 'CEI 61869-2 / IEEE C57.13', badgeType: 'VERIFIED_STANDARD' },
   'solar-sizing': { standard: 'CEI 62548 / IEEE 2800', badgeType: 'APPLICATION_DEPENDENT' },
   'bess-sizing': { standard: 'CEI 62933 / IEEE 2800', badgeType: 'APPLICATION_DEPENDENT' },

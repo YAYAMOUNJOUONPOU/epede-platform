@@ -22,15 +22,15 @@ export const EVIDENCE_REGISTRY: Record<EvidenceBadgeType, EvidenceVerificationMe
   VERIFIED_STANDARD: {
     type: 'VERIFIED_STANDARD',
     label: {
-      fr: 'NORME VÉRIFIÉE (CEI / IEEE)',
-      en: 'VERIFIED STANDARD (IEC / IEEE)',
+      fr: 'RÉFÉRENTIEL NORMATIF (CEI / IEEE)',
+      en: 'NORMATIVE STANDARD (IEC / IEEE)',
     },
-    shortLabel: { fr: 'CEI/IEEE VÉRIFIÉ', en: 'IEC/IEEE VERIFIED' },
+    shortLabel: { fr: 'RÉFÉRENTIEL NORMATIF', en: 'IEC / IEEE REFERENCE' },
     description: {
-      fr: 'Formulation, calage et critères de dimensionnement rigoureusement conformes aux normes internationales publiées.',
-      en: 'Formulation, sizing criteria and tolerances strictly conform to published international electrotechnical standards.',
+      fr: 'Concepts, tolérances et critères de calcul adossés aux référentiels normatifs internationaux publiés.',
+      en: 'Concepts, tolerances and criteria referenced to published international electrotechnical standards.',
     },
-    confidencePercent: 99,
+    confidencePercent: 0,
   },
   ENGINEERING_REFERENCE: {
     type: 'ENGINEERING_REFERENCE',
@@ -40,10 +40,10 @@ export const EVIDENCE_REGISTRY: Record<EvidenceBadgeType, EvidenceVerificationMe
     },
     shortLabel: { fr: 'RÉFÉRENCE TECHNIQUE', en: 'ENG. REFERENCE' },
     description: {
-      fr: 'Issu d\'ouvrages universitaires de référence (Kundur, Blackburn, Glover) et de guides d\'application CIGRE.',
+      fr: 'Issu d\'ouvrages techniques de référence (Kundur, Blackburn, Glover) et de guides d\'application CIGRE.',
       en: 'Derived from authoritative peer-reviewed literature (Kundur, Blackburn, Glover) and CIGRE technical brochures.',
     },
-    confidencePercent: 95,
+    confidencePercent: 0,
   },
   FIELD_PRACTICE: {
     type: 'FIELD_PRACTICE',
@@ -285,7 +285,6 @@ export const EvidenceTrustBadge: React.FC<EvidenceTrustBadgeProps> = ({
       >
         <IconComponent className={`${iconSizes} ${style.iconColor} shrink-0`} />
         <span>{size === 'sm' ? meta.shortLabel[locale] : meta.label[locale]}</span>
-        <span className="opacity-60 text-[9px] ml-0.5">{meta.confidencePercent}%</span>
       </button>
 
       {/* Trust & Evidence Tooltip Drawer */}
@@ -297,7 +296,7 @@ export const EvidenceTrustBadge: React.FC<EvidenceTrustBadgeProps> = ({
               <span className="text-[11px]">{meta.label[locale]}</span>
             </div>
             <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${style.bg} ${style.text}`}>
-              {meta.confidencePercent}% {locale === 'fr' ? 'Confiance' : 'Confidence'}
+              {locale === 'fr' ? 'Référentiel' : 'Framework'}
             </span>
           </div>
 

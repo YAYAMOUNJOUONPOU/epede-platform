@@ -411,8 +411,8 @@ export const Header: React.FC<HeaderProps> = ({
                   onClick={() => navigateTo('domains')}
                   className="w-full text-left px-3.5 py-2.5 text-[#F4F1E8] hover:text-[#D7A64A] hover:bg-[#0B0F12]/60 transition-colors flex items-center justify-between cursor-pointer"
                 >
-                  <span>{locale === 'fr' ? '21 Domaines de Connaissances' : '21 Knowledge Domains (D01–D16)'}</span>
-                  <span className="text-[10px] font-mono text-[#D7A64A] font-bold">D01–L05</span>
+                  <span>{locale === 'fr' ? '16 Domaines Électrotechniques (D01–D16)' : '16 Electrotechnical Domains (D01–D16)'}</span>
+                  <span className="text-[10px] font-mono text-[#D7A64A] font-bold">D01–D16</span>
                 </button>
                 <button
                   type="button"

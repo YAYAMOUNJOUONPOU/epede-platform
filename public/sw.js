@@ -1,6 +1,7 @@
 // public/sw.js
 // EPEDE - Service Worker for Remote Substation Offline Field Operation
-const CACHE_NAME = 'epede-field-cache-v2.3';
+// Revision v2.4 - Auto-invalidating chunk protection (P0-1)
+const CACHE_NAME = 'epede-field-cache-v2.4';
 
 const PRECACHE_URLS = [
   '/',
@@ -22,6 +23,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         keys.map((key) => {
           if (key !== CACHE_NAME) {
+            console.log('[EPEDE SW] Purging stale cache:', key);
             return caches.delete(key);
           }
         })
@@ -58,25 +60,26 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 2. Static Assets (JS, CSS, images): Cache-first with network fallback
+  // 2. Static Assets (JS, CSS, images): Stale-While-Revalidate with 404 cache purge
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-
-      return fetch(event.request).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-          return networkResponse;
+      const fetchPromise = fetch(event.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+        } else if (networkResponse && networkResponse.status === 404 && url.pathname.includes('/assets/')) {
+          // If a requested chunk is 404, purge the stale cache immediately
+          caches.delete(CACHE_NAME);
         }
-
-        const responseToCache = networkResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
-
         return networkResponse;
+      }).catch((err) => {
+        if (cachedResponse) return cachedResponse;
+        throw err;
       });
+
+      return cachedResponse || fetchPromise;
     })
   );
 });

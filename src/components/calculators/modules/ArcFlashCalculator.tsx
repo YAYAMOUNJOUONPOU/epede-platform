@@ -29,20 +29,20 @@ export const ArcFlashCalculator: React.FC<ArcFlashCalculatorProps> = ({ locale, 
   // Arc Flash Boundary (distance where E = 1.2 cal/cm² - threshold of second degree burn)
   const afbDistanceCm = Math.sqrt((4.184 * 1000 * 0.005 * arcPowerMw * arcDurationSec * kConf) / (Math.PI * 1.2 * 0.004184));
 
-  // PPE Category classification according to NFPA 70E
+  // PPE & Hazard Level classification (Illustrative Educational Guideline - NFPA 70E / OSHA)
   let ppeCategory: { cat: string; maxCal: number; color: string; desc_fr: string; desc_en: string; equipment: string[] };
   if (incidentEnergyCalCm2 <= 1.2) {
     ppeCategory = {
-      cat: 'CATÉGORIE 0 (Risque Minime)',
+      cat: 'ÉNERGIE < 1.2 cal/cm² (Seuil de Brûlure 2e Degré)',
       maxCal: 1.2,
       color: 'text-emerald-400 border-emerald-800 bg-emerald-950/40',
-      desc_fr: 'Vêtements de travail en coton ininflammable (non-melting)',
-      desc_en: 'Untreated natural fiber clothing · Safety glasses mandatory',
-      equipment: ['Lunettes de sécurité avec protections latérales', 'Gants de travail cuir', 'Protection auditive (bouchons)', 'Vêtements coton non-synthétique']
+      desc_fr: 'Énergie sous le seuil de brûlure au 2e degré · Port d\'EPI de base obligatoire',
+      desc_en: 'Energy below 2nd-degree burn threshold · Mandatory base PPE & safety glasses',
+      equipment: ['Lunettes de sécurité avec protections latérales', 'Gants de travail cuir', 'Protection auditive (bouchons)', 'Vêtements de travail en coton non inflammable (pas de synthétique)']
     };
   } else if (incidentEnergyCalCm2 <= 4.0) {
     ppeCategory = {
-      cat: 'CATÉGORIE 1',
+      cat: 'NIVEAU D\'ARC 1 (≤ 4 cal/cm²)',
       maxCal: 4.0,
       color: 'text-cyan-400 border-cyan-800 bg-cyan-950/40',
       desc_fr: 'EPI Arc Flash min 4 cal/cm² · Visière d\'électricien',
@@ -51,7 +51,7 @@ export const ArcFlashCalculator: React.FC<ArcFlashCalculatorProps> = ({ locale, 
     };
   } else if (incidentEnergyCalCm2 <= 8.0) {
     ppeCategory = {
-      cat: 'CATÉGORIE 2',
+      cat: 'NIVEAU D\'ARC 2 (≤ 8 cal/cm²)',
       maxCal: 8.0,
       color: 'text-amber-400 border-amber-800 bg-amber-950/40',
       desc_fr: 'Risque modéré · Visière teintée + Cagoule ignifugée 8 cal/cm²',
@@ -60,7 +60,7 @@ export const ArcFlashCalculator: React.FC<ArcFlashCalculatorProps> = ({ locale, 
     };
   } else if (incidentEnergyCalCm2 <= 25.0) {
     ppeCategory = {
-      cat: 'CATÉGORIE 3',
+      cat: 'NIVEAU D\'ARC 3 (≤ 25 cal/cm²)',
       maxCal: 25.0,
       color: 'text-orange-400 border-orange-800 bg-orange-950/40',
       desc_fr: 'Risque élevé · Scaphandre d\'arc complet requis',
@@ -69,7 +69,7 @@ export const ArcFlashCalculator: React.FC<ArcFlashCalculatorProps> = ({ locale, 
     };
   } else if (incidentEnergyCalCm2 <= 40.0) {
     ppeCategory = {
-      cat: 'CATÉGORIE 4',
+      cat: 'NIVEAU D\'ARC 4 (≤ 40 cal/cm²)',
       maxCal: 40.0,
       color: 'text-red-400 border-red-800 bg-red-950/40',
       desc_fr: 'Risque très sévère · Scaphandre lourd 40 cal/cm²',
@@ -90,12 +90,27 @@ export const ArcFlashCalculator: React.FC<ArcFlashCalculatorProps> = ({ locale, 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2 bg-[#0D1117] border border-[#252E38] rounded-2xl p-6 shadow-2xl space-y-6">
+        {/* Mandatory Safety Notice */}
+        <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+          <div className="text-xs text-amber-200/90 space-y-1">
+            <p className="font-bold uppercase tracking-wider text-amber-300">
+              {locale === 'fr' ? 'Avertissement de Sécurité Majeur — Modèle Didactique' : 'Major Safety Notice — Didactic Model'}
+            </p>
+            <p className="leading-relaxed">
+              {locale === 'fr'
+                ? 'Ce module est un simulateur pédagogique de sensibilité aux paramètres physiques. Il ne constitue pas une note de calcul certifiée IEEE 1584-2018 et ne doit en aucun cas servir à autoriser des travaux ou à sélectionner des EPI sur une installation réelle. Les études d’arc flash doivent impérativement être réalisées avec des progiciels certifiés (ETAP, EasyPower) par des ingénieurs habilités.'
+                : 'This module is an educational parameter sensitivity explorer. It does not represent a certified IEEE 1584-2018 calculation note and must never be used to authorize work or select PPE for real installations. Formal arc flash hazard analyses must be performed with certified software (ETAP, EasyPower) by licensed professional engineers.'}
+            </p>
+          </div>
+        </div>
+
         <div className="text-xs font-mono font-bold text-[#F3F4F6] uppercase border-b border-[#252E38] pb-3 flex items-center justify-between">
           <span className="flex items-center gap-2">
             <Flame className="h-4 w-4 text-orange-500" />
-            {locale === 'fr' ? 'CALCUL DE L\'ÉNERGIE INCIDENTE D\'ARC FLASH (IEEE 1584-2018 / NFPA 70E)' : 'ARC FLASH INCIDENT ENERGY (IEEE 1584-2018 / NFPA 70E)'}
+            {locale === 'fr' ? 'SIMULATEUR DIDACTIQUE D\'ÉNERGIE INCIDENTE D\'ARC' : 'EDUCATIONAL ARC FLASH INCIDENT ENERGY SIMULATOR'}
           </span>
-          <span className="text-orange-400">ÉNERGIE CALORIFIQUE</span>
+          <span className="text-orange-400 text-[10px] font-mono">SENSIBILITÉ THÉORIQUE</span>
         </div>
 
         {/* Big Alert KPI Cards */}

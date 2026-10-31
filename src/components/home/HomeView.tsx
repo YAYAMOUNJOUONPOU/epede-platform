@@ -728,6 +728,14 @@ export const HomeView: React.FC<HomeViewProps> = ({
   onSelectEquipment,
   onNavigateView,
   onNavigateJourney,
+  onNavigateDiagram,
+  onOpenSearch,
+  onOpenAssistant,
+  onLocaleChange,
+  onNavigateStandard,
+  onNavigateRole,
+  onNavigateCalculator,
+  onNavigateSimulation,
 }) => {
   const isFr = locale === 'fr';
   const [pathwayFilter, setPathwayFilter] = useState<'all' | 'beginner' | 'technician' | 'engineer'>('all');

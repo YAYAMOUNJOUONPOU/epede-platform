@@ -255,8 +255,8 @@ export const AboutView: React.FC<AboutViewProps> = ({ locale, onNavigate }) => {
             </h4>
             <p className="text-xs text-[#A9ADA5] leading-relaxed">
               {isFr
-                ? "Conçu en anglais par défaut avec bascule instantanée EN/FR, API backend structurée (/api/v1/...) et persistance locale hors-ligne."
-                : "English-first technical interface with instant EN/FR language switching, structured REST API endpoints (/api/v1/...), and offline-ready local persistence."}
+                ? "Conçu en anglais par défaut avec bascule instantanée EN/FR, architecture modulaire découplée et persistance locale hors-ligne."
+                : "English-first technical interface with instant EN/FR language switching, decoupled modular architecture, and offline-ready local persistence."}
             </p>
           </div>
         </div>

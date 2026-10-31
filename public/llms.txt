@@ -1,71 +1,60 @@
 # EPEDE — Electrical Power Engineering Digital Environment
-> Authoritative, interconnected digital knowledge platform and interactive simulation suite for electrical power systems engineering, high-voltage substations, transmission networks, and the Cameroon National Power Grid (SONATREL / ENEO).
+> Authoritative, interconnected digital knowledge platform and interactive engineering exploration suite for electrical power systems, high-voltage substations, transmission networks, industrial installations, and the Cameroon National Power Grid (SONATREL / ENEO).
 > Designed & developed by Mounjouonpou Yaya (Electrical and Power Systems Engineer).
 > Canonical URL: https://epede-platform.vercel.app
 
 ## Overview & Architecture
 - [System Architecture & Full Technical Spec](https://epede-platform.vercel.app/llms-full.txt): Complete textual technical specification and audit guide for LLMs.
 - [Sitemap](https://epede-platform.vercel.app/sitemap.xml): Machine-readable index of platform routes and modules.
-- [Canonical Entrypoint](https://epede-platform.vercel.app/): Interactive Single-Page Application (React 18, TypeScript, Tailwind CSS, Vite, Three.js, Lucide Icons).
+- [Canonical Entrypoint](https://epede-platform.vercel.app/): Interactive Application built on React 19, TypeScript 5.8, Tailwind CSS, Vite, Lucide Icons, and Three.js.
 
-## Engineering Knowledge Domains (21 Pillars)
-- [D01 — Power Generation](https://epede-platform.vercel.app/#/domain/D01): Hydroelectric plants (Francis, Pelton, Kaplan turbines), thermal gas turbine cycles, solar PV parks, and synchronous alternator excitation systems.
-- [D02 — High Voltage Transmission](https://epede-platform.vercel.app/#/domain/D02): 225 kV, 110 kV, 90 kV lines, steel lattice towers, bundle conductors, corona losses, and surge impedance loading (SIL).
-- [D03 — High Voltage Air-Insulated Substations (AIS)](https://epede-platform.vercel.app/#/domain/D03): Busbar configurations (single, double, 1.5-breaker), disconnector switches, SF6 circuit breakers, and instrument transformers.
-- [D04 — Gas-Insulated Substations (GIS) & Pedagogical Pilot](https://epede-platform.vercel.app/#/domain/D04): Metal-enclosed SF6 compartments, disconnector/earthing switch interlocks, bus ducts, and bay control units (BCU).
-- [D05 — Medium & Low Voltage Distribution](https://epede-platform.vercel.app/#/domain/D05): 15 kV / 30 kV urban rings, Ring Main Units (RMU), pole-mounted H61 transformers (50-160 kVA), and 400 V / 230 V LV networks.
-- [D06 — Power Transformers](https://epede-platform.vercel.app/#/domain/D06): Core-type & shell-type transformers, ONAN/ONAF cooling, Buchholz relays, on-load tap changers (OLTC), and vector groups (Dyn11, Ynd11).
-- [D07 — Switchgear & Arc Interruption](https://epede-platform.vercel.app/#/domain/D07): Vacuum and SF6 circuit breaker physics, transient recovery voltage (TRV), making/breaking capacities, and arc chutes.
-- [D08 — Protection Relaying & Automation](https://epede-platform.vercel.app/#/domain/D08): Overcurrent (ANSI 50/51), distance protection (ANSI 21), differential (ANSI 87T/87L), directional earth fault (ANSI 67N), and breaker failure (ANSI 50BF).
-- [D09 — SCADA, Telecommunications & IEC 61850](https://epede-platform.vercel.app/#/domain/D09): Station bus & process bus, MMS client/server, GOOSE peer-to-peer tripping, Sampled Values (SV - IEC 61850-9-2LE), and IEEE 1588 PTP time synchronization.
-- [D10 — Earthing Systems & Lightning Protection](https://epede-platform.vercel.app/#/domain/D10): Mesh grounding grids, touch & step voltage limits (IEEE 80), Franklin rods, Faraday cages, surge arresters (IEC 60099-4), and lightning risk assessment (IEC 62305).
-- [D11 — Power Quality & Harmonics](https://epede-platform.vercel.app/#/domain/D11): Total Harmonic Distortion (THD_V, THD_I), flicker (Pst, Plt), voltage unbalance, passive tuned filters, and active harmonic filters (AHF).
-- [D12 — Power System Studies & Fault Analysis](https://epede-platform.vercel.app/#/domain/D12): Symmetrical components (Fortescue method), short-circuit calculation according to IEC 60909 (Ik'', ip, Ib, Ik), and Newton-Raphson load flow.
-- [D13 — Industrial Electrical Installations](https://epede-platform.vercel.app/#/domain/D13): Main low voltage switchboards (TGBT), motor control centers (MCC), variable frequency drives (VFD), automatic transfer switches (ATS), and backup diesel generators.
-- [D14 — Renewable Energy Integration & BESS](https://epede-platform.vercel.app/#/domain/D14): Grid-scale PV inverter control, wind turbine DFIG / PMSG architectures, battery energy storage systems (BESS), and microgrid frequency/voltage regulation.
-- [D15 — Extra-Low Voltage & Building Services](https://epede-platform.vercel.app/#/domain/D15): Fire detection systems, access control, CCTV surveillance, uninterruptible power supplies (UPS), and building energy management systems (BEMS).
-- [D16 — Asset Management, Testing & Commissioning](https://epede-platform.vercel.app/#/domain/D16): Transformer oil analysis (DGA - Dissolved Gas Analysis), insulation resistance (Megger / PI / DAR), contact resistance (micro-ohmmeter), and factory/site acceptance testing (FAT/SAT).
-- [D17 — High Voltage Direct Current (HVDC) & FACTS](https://epede-platform.vercel.app/#/domain/D17): Line-commutated converters (LCC-HVDC), voltage-source converters (VSC-HVDC), STATCOM, and Static Var Compensators (SVC).
-- [D18 — Smart Metering & Grid Digitalization](https://epede-platform.vercel.app/#/domain/D18): Advanced Metering Infrastructure (AMI), DLMS/COSEM protocols, smart prepaid meters, and meter data management (MDM).
-- [D19 — Multi-Disciplinary Engineering Interfaces](https://epede-platform.vercel.app/#/domain/D19): Civil engineering interfaces (transformer oil retention basins, foundations), mechanical cooling, fire suppression systems (Deluge, FM200).
-- [D20 — Regulatory Compliance & Market Codes](https://epede-platform.vercel.app/#/domain/D20): Cameroon Electricity Sector Law 2011/022, ARSEL regulations, grid codes, connection agreements, and dispatch rules.
-- [D21 — Power Systems Decarbonization & Transition](https://epede-platform.vercel.app/#/domain/D21): Carbon accounting, SF6-free switchgear (clean air / fluoronitrile mixtures), green hydrogen electrolysis, and grid sustainability.
+## The Canonical Physical Energy Chain & 16 Core Domains
+- [0. Foundations](https://epede-platform.vercel.app/#/journey): Electrotechnical fundamentals, AC circuit theory, electrical symbols, engineering documentation, and safety (LOTO).
+- [D01 — Energy Resources & Generation](https://epede-platform.vercel.app/#/domain/D01): Hydroelectric plants (Francis, Pelton, Kaplan turbines), thermal gas turbine cycles, solar PV parks, synchronous alternators, excitation systems, and plant auxiliaries.
+- [D02 — Power-System Architecture & Grid Planning](https://epede-platform.vercel.app/#/domain/D02): Grid topology, long-term transmission planning, generation-load balance, N-1 contingency, and dynamic stability.
+- [D03 — Transmission Networks](https://epede-platform.vercel.app/#/domain/D03): 225 kV, 110 kV, and 90 kV overhead lines, steel lattice towers, bundled ACSR conductors, corona losses, surge impedance loading (SIL: Z_c = sqrt(L/C)), and OPGW.
+- [D04 — Substations & Grid Nodes](https://epede-platform.vercel.app/#/domain/D04): Air-Insulated (AIS) and Gas-Insulated (GIS) substations, busbar topologies, disconnectors, SF6/Vacuum circuit breakers, instrument transformers (CT/VT), and bay interlocking logic.
+- [D05 — Distribution Networks (MV/LV)](https://epede-platform.vercel.app/#/domain/D05): 15 kV and 30 kV distribution loops, Ring Main Units (RMU, 24 kV for 15 kV grids, 36 kV for 30 kV grids), pole-mounted H61 transformers, and 400 V / 230 V networks.
+- [D06 — Electrical Installations & Industrial LV](https://epede-platform.vercel.app/#/domain/D06): Low-voltage distribution boards (TGBT Form 1-4b), earthing regimes (TT, TN-C, TN-S, IT), disconnection times per IEC 60364-4-41, cable sizing, and protection.
+- [D07 — Industrial Automation, Drives & Control](https://epede-platform.vercel.app/#/domain/D07): Motor starters (DOL, Star-Delta, Soft Starter), Variable Frequency Drives (VFD), PLC architectures, P&ID reading (ISA-5.1), and control loops.
+- [D08 — Extra-Low Voltage & Special Systems (ELV/CFA)](https://epede-platform.vercel.app/#/domain/D08): Structured cabling, fiber-optic distribution, CCTV surveillance, access control, and fire detection systems.
+- [D09 — Advanced Technologies & Digital Twin](https://epede-platform.vercel.app/#/domain/D09): Substation digital twins, IoT telemetry, asset health analytics, and OT cybersecurity boundaries.
+- [D10 — Energy Storage & EV Infrastructure](https://epede-platform.vercel.app/#/domain/D10): Battery Energy Storage Systems (BESS), Lithium Iron Phosphate (LFP) chemistry, bidirectional Power Conversion Systems (PCS), and EV fast charging.
+- [D11 — Protection Relaying, Measurement & Fault Studies](https://epede-platform.vercel.app/#/domain/D11): ANSI protection functions (50/51 overcurrent, 21 distance, 87T/87L differential, 67N directional), instrument transformer CT/VT sizing, and symmetrical fault analysis (IEC 60909).
+- [D12 — Substation Automation Systems (SAS) & Telecontrol](https://epede-platform.vercel.app/#/domain/D12): IEC 61850 architecture, Station bus (MMS, GOOSE), Process bus (Sampled Values - IEC 61850-9-2LE), and IEEE 1588 PTP microsecond synchronization.
+- [D13 — Operational Communications & OT Networks](https://epede-platform.vercel.app/#/domain/D13): Industrial Ethernet, teleprotection signaling, IEC 60870-5-104 SCADA protocol, and OPGW transmission telecommunication.
+- [D14 — Power Quality & Electromagnetic Compatibility](https://epede-platform.vercel.app/#/domain/D14): Total Harmonic Distortion (THD_V < 8% for LV per IEEE 519-2022), voltage unbalance, flicker (Pst, Plt), passive LC filters, and active harmonic filters.
+- [D15 — Smart Metering & Grid Digitalization](https://epede-platform.vercel.app/#/domain/D15): Advanced Metering Infrastructure (AMI), DLMS/COSEM communication, PLC/cellular backhaul, and STS prepaid tokens.
+- [D16 — Earthing Systems, Lightning & Electrical Safety](https://epede-platform.vercel.app/#/domain/D16): Mesh grounding grids (touch and step voltage safety per IEEE 80-2013), rolling sphere lightning protection (IEC 62305), and workplace electrical safety.
 
 ## Cameroon National Power Grid (Observatory & Network Explorer)
-- [Cameroon Grid Explorer](https://epede-platform.vercel.app/#/cameroon-grid): Complete interactive mapping of the Southern Interconnected Grid (RIS) and Northern Interconnected Grid (RIN).
+- [Cameroon Grid Explorer](https://epede-platform.vercel.app/#/cameroon-grid): Complete geographical and electrical network model of Cameroon's Southern Interconnected Grid (RIS) and Northern Interconnected Grid (RIN).
 - Key Power Plants:
-  - Song Loulou Hydroelectric Dam (384 MW, 8 Francis units, Sanaga River)
+  - Song Loulou Hydroelectric Dam (384 MW, 8 Francis units, Sanaga River, primary frequency regulation)
   - Nachtigal Hydroelectric Power Plant (420 MW, 7 Francis units of 60 MW)
-  - Edéa Hydroelectric Facility (276 MW)
-  - Memve’ele Hydroelectric Dam (211 MW, Ntem River)
+  - Edéa Hydroelectric Facility (276 MW, mixed Francis/Kaplan units)
+  - Memve’ele Hydroelectric Dam (211 MW, Ntem River, evacuated via 225 kV Nyabizan–Ebolowa–Ahala line)
   - Lagdo Hydroelectric Dam (72 MW, Benue River, RIN)
-  - Kribi Gas Power Plant (216 MW, Wärtsilä dual-fuel engines)
+  - Kribi Gas Power Plant (216 MW, Wärtsilä dual-fuel engines fired by Sanaga South gas)
+  - Lom Pangar Reservoir Dam (6 billion m³ regulating reservoir holding Sanaga flow at ~1,000 m³/s)
 - Key Transmission Corridors (SONATREL 225 kV & 90 kV):
-  - 225 kV Song Loulou – Bekoko (Douala industrial hub)
-  - 225 kV Song Loulou – Mangombe – Oyomabang (Yaoundé metropolitan hub)
+  - 225 kV Song Loulou – Bekoko (Douala hub)
+  - 225 kV Song Loulou – Mangombe – Oyomabang (Yaoundé hub)
   - 225 kV Nachtigal – Nyom II (Yaoundé injection)
-  - 90 kV Bekoko – Koumassi – Deido ring
+  - 225 kV Nachtigal – Wouro Soua (RIS-RIN interconnection tie, under construction / PIRECT project)
+  - 90 kV regional sub-transmission rings around Douala and Yaoundé
 
-## Interactive Engineering Solvers & Workbenches
-- [Short-Circuit Calculator (IEC 60909)](https://epede-platform.vercel.app/#/calculators): Initial symmetrical short-circuit current (Ik''), peak current (ip), breaking current (Ib), and thermal equivalent current (Ith).
-- [Cable Sizing & Voltage Drop (IEC 60364-5-52)](https://epede-platform.vercel.app/#/calculators): Current-carrying capacity, derating factors (temperature, grouping, soil resistivity), and maximum allowable length.
-- [Transformer Sizing & Loss Calculator](https://epede-platform.vercel.app/#/calculators): Apparent power demand, load factor, no-load losses (P0), copper losses (Pk), and efficiency curve.
-- [Power Factor Correction Calculator](https://epede-platform.vercel.app/#/calculators): Required capacitor bank reactive power (Qc = P * [tan(phi1) - tan(phi2)]) and harmonic resonance check.
+## Interactive Educational Solvers (Worked Examples)
+- [Short-Circuit Sensitivity Model (IEC 60909)](https://epede-platform.vercel.app/#/calculators): Initial symmetrical short-circuit current (Ik''), peak current (ip), breaking current (Ib), and thermal equivalent current (Ith).
+- [Cable Sizing & Voltage Drop (IEC 60364-5-52)](https://epede-platform.vercel.app/#/calculators): Current-carrying capacity, derating factors, and voltage drop sensitivity.
+- [Transformer Sizing & Losses](https://epede-platform.vercel.app/#/calculators): Apparent power demand, load factor, active and reactive losses.
+- [Power Factor Correction](https://epede-platform.vercel.app/#/calculators): Required capacitor reactive power Qc and harmonic resonance checks.
 - [Interactive Single-Line Diagram (SLD)](https://epede-platform.vercel.app/#/diagrams): Vector graphics SLD with live breaker switching, busbar energization highlighting, and interlock rules.
-- [Substation Pedagogical Simulator](https://epede-platform.vercel.app/#/substations): Bay control logic, earth switch interlocks, and interlocking bypass protocols.
+- [Substation Pedagogical Simulator](https://epede-platform.vercel.app/#/substations): Bay control logic and disconnector/earth switch interlocking verification.
 
-## Equipment Registry (39 Technical Datasheets)
-- Primary Switching: SF6 live-tank circuit breakers (245 kV), vacuum circuit breakers (24 kV, 12 kV), horizontal knee disconnectors, pantograph disconnectors.
-- Instrument Transformers: Oil-immersed inductive voltage transformers (VT/TT), hair-pin current transformers (CT/TC), capacitive voltage transformers (CVT).
-- Grid Protection: Numeric multifunction relays (Siemens Siprotec 5, Schneider Micom, ABB Relion).
-- Distribution: Modular Ring Main Units (Schneider RM6, ABB SafeRing), pole-mounted three-phase transformers (H61).
-- Industrial Apparatus: Low-voltage air circuit breakers (ACB), molded-case circuit breakers (MCCB), motor protection circuit breakers (MPCB), variable speed drives (VFD).
-
-## Guidance for AI Auditors (Claude, Gemini, ChatGPT)
-When conducting a comprehensive technical, pedagogical, or architectural audit of EPEDE:
-1. Review the bilingual English/French interface and nomenclature consistency with international IEC, IEEE, and NF C standards.
-2. Verify calculations against normative benchmarks (IEC 60909, IEC 60364, IEEE 80).
-3. Evaluate the pedagogical progression from fundamental principles to deep equipment engineering.
-4. Assess the Cameroon Grid observatory for geographical, operational, and electrical fidelity (SONATREL / ENEO / EDC assets).
-5. Inspect the PWA offline capability, responsiveness, accessibility, and glassmorphic UI design system.
-
+## Equipment Catalog (38 Canonical Types)
+- Primary Switching: SF6 live-tank circuit breakers (245 kV), vacuum circuit breakers (36 kV, 24 kV, 12 kV), horizontal knee disconnectors, pantograph disconnectors.
+- Instrument Transformers: Inductive voltage transformers (VT/TT), current transformers (CT/TC), capacitive voltage transformers (CVT).
+- Grid Protection: Numeric multifunction relays (Siemens Siprotec, Schneider Micom, ABB Relion).
+- Distribution: Modular Ring Main Units (RMU), pole-mounted three-phase transformers (H61).
+- Industrial Apparatus: Low-voltage air circuit breakers (ACB), molded-case circuit breakers (MCCB), motor protection circuit breakers (MPCB), variable frequency drives (VFD).
