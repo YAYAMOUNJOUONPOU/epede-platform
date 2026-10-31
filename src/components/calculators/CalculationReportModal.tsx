@@ -552,10 +552,12 @@ export const CalculationReportModal: React.FC<CalculationReportModalProps> = ({
           {/* Official Sign-off Block */}
           <div className="pt-4 border-t border-[#252E38] flex flex-col sm:flex-row justify-between items-center text-[10px] text-neutral-500 gap-2">
             <div>
-              Émis par : <strong className="text-neutral-400">EPEDE Digital Substation Engine</strong> · Document certifié conforme
+              {locale === 'fr' 
+                ? 'Émis par EPEDE 2.0 · Exemple didactique résolu · Usage pédagogique et formatif (non certifié bureau d’études)'
+                : 'Issued by EPEDE 2.0 · Worked didactic example · Educational & training use (not for construction)'}
             </div>
             <div className="font-mono text-[9px] text-neutral-600">
-              HASH : {data.referenceId}-{Math.abs(data.title.split('').reduce((a,b)=>(((a<<5)-a)+b.charCodeAt(0))|0,0))}
+              REF : {data.referenceId}
             </div>
           </div>
 
@@ -564,7 +566,7 @@ export const CalculationReportModal: React.FC<CalculationReportModalProps> = ({
         {/* Footer Bar */}
         <div className="px-6 py-3 border-t border-[#252E38] bg-[#11161D] flex flex-wrap justify-between items-center gap-3 text-xs">
           <div className="text-neutral-500 font-mono text-[11px]">
-            {locale === 'fr' ? 'Format exportable : PDF A4 vectoriel certifié, Markdown ASCII, JSON' : 'Exportable format: Certified vector A4 PDF, ASCII Markdown, JSON'}
+            {locale === 'fr' ? 'Format exportable : Note Didactique PDF A4, Markdown ASCII, JSON' : 'Exportable format: Didactic A4 PDF Note, ASCII Markdown, JSON'}
           </div>
           <div className="flex items-center gap-2">
             <button

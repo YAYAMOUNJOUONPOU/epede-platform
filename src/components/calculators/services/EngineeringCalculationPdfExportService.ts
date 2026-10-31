@@ -113,8 +113,8 @@ export class EngineeringCalculationPdfExportService {
       doc.setFontSize(8);
       doc.text(
         isFr 
-          ? 'EPEDE - NOTE DE CALCUL TECHNIQUE NORMALISEE (CEI / IEEE / NF C)' 
-          : 'EPEDE - CERTIFIED ELECTRICAL ENGINEERING DESIGN NOTE (IEC / IEEE / NF C)',
+          ? 'EPEDE 2.0 - NOTE DIDACTIQUE DE CALCUL TECHNIQUE (CEI / IEEE / NF C)' 
+          : 'EPEDE 2.0 - DIDACTIC ENGINEERING CALCULATION NOTE (IEC / IEEE / NF C)',
         margin,
         7.2
       );
@@ -130,8 +130,8 @@ export class EngineeringCalculationPdfExportService {
       doc.setFontSize(7);
       doc.text(
         isFr 
-          ? `DOSSIER D'EXECUTION : ${sanitizePdfText(data.referenceId)} - SYSTEME NUMERIQUE EPEDE CAD ENGINE v2.4`
-          : `DESIGN DOSSIER: ${sanitizePdfText(data.referenceId)} - EPEDE CAD ENGINE v2.4 VERIFIED`,
+          ? `NOTE DIDACTIQUE : ${sanitizePdfText(data.referenceId)} - USAGE FORMATIF & EDUCATIF UNIQUEMENT - NON POUR CONSTRUCTION CHANTIER`
+          : `DIDACTIC NOTE: ${sanitizePdfText(data.referenceId)} - EDUCATIONAL USE ONLY - NOT FOR SITE CONSTRUCTION`,
         margin,
         pageHeight - 3.2
       );
@@ -469,20 +469,20 @@ export class EngineeringCalculationPdfExportService {
     doc.setTextColor(...PDF_COLORS.navyBlue);
     doc.text('Visa Electrique Reseau EPEDE', margin + boxW + 6, signBoxY + 16.5);
 
-    // Box 3: Certified Stamp
+    // Box 3: Didactic Use Stamp
     doc.setFillColor(...PDF_COLORS.slate100);
-    doc.setDrawColor(...PDF_COLORS.gold);
+    doc.setDrawColor(...PDF_COLORS.slate400);
     doc.roundedRect(margin + (boxW * 2) + 6, signBoxY, boxW, 20, 1.5, 1.5, 'FD');
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(6.5);
-    doc.setTextColor(...PDF_COLORS.gold);
-    doc.text('SCEAU NUMERIQUE CERTIFIE', margin + (boxW * 2) + 9, signBoxY + 4);
+    doc.setTextColor(...PDF_COLORS.slate800);
+    doc.text(isFr ? 'USAGE DIDACTIQUE & PEDAGOGIQUE' : 'DIDACTIC & EDUCATIONAL USE', margin + (boxW * 2) + 9, signBoxY + 4);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(...PDF_COLORS.slate600);
-    doc.text(`Hash: ${sanitizePdfText(data.referenceId)}`, margin + (boxW * 2) + 9, signBoxY + 8);
-    doc.text('CEI 60909 / CEI 60364 Suite', margin + (boxW * 2) + 9, signBoxY + 12);
-    doc.setTextColor(...PDF_COLORS.cyan);
-    doc.text('* EPEDE CERTIFIED CAD NOTE', margin + (boxW * 2) + 9, signBoxY + 16.5);
+    doc.text(isFr ? 'Exemple didactique resolu' : 'Worked didactic example', margin + (boxW * 2) + 9, signBoxY + 8);
+    doc.text(isFr ? 'Etude reelle : Bureau certifie' : 'Real project: Certified firm', margin + (boxW * 2) + 9, signBoxY + 12);
+    doc.setTextColor(...PDF_COLORS.navyBlue);
+    doc.text('* EPEDE DIDACTIC ENGINE', margin + (boxW * 2) + 9, signBoxY + 16.5);
 
     // Apply header & footer across all pages
     const totalPages = doc.getNumberOfPages();

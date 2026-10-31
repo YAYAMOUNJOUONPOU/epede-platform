@@ -254,7 +254,7 @@ export const EngineeringFormulaSolverCard: React.FC<EngineeringFormulaSolverCard
               className="text-[11px] font-mono font-bold text-cyan-300 hover:text-white flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <Download className="h-3 w-3 text-cyan-400" />
-              <span>{locale === 'fr' ? 'Éditer Note de Calcul (A4)' : 'Generate Design Note (A4)'}</span>
+              <span>{locale === 'fr' ? 'Éditer Note Didactique (A4)' : 'Export Didactic Note (A4)'}</span>
             </button>
           </div>
         </div>
