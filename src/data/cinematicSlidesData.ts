@@ -1,6 +1,6 @@
 // src/data/cinematicSlidesData.ts
 // EPEDE 2.0 — Verified Authentic Electrical Infrastructure Slide Data for Hero Section
-// Visually inspected and verified authentic electrical power engineering photographs.
+// Integrated with 100% authentic user-uploaded photographs.
 
 export interface HeroPhotoItem {
   id: string;
@@ -27,7 +27,7 @@ export interface CinematicSlide {
 }
 
 export const CINEMATIC_SLIDES: CinematicSlide[] = [
-  // SLIDE 01: POWER GENERATION (Hydro Dams, Spillways, Solar, Wind)
+  // SLIDE 01: POWER GENERATION (Hydro Dams, Turbines, Gas Engines, Solar/Wind)
   {
     id: 'slide-generation',
     orderNumber: '01',
@@ -56,54 +56,45 @@ export const CINEMATIC_SLIDES: CinematicSlide[] = [
     },
     photos: [
       {
-        id: 'gen-dam-spillway-active',
-        url: 'https://images.unsplash.com/photo-1761925556918-98d1d1adba03?auto=format&fit=crop&w=2000&q=85',
+        id: 'gen-hydro-dam-spillway',
+        url: '/images/homepage_uploads/batch_01_image_005.jpg',
         titleFr: 'Barrage Hydroélectrique & Évacuateur de Crues',
-        titleEn: 'Hydroelectric Dam & Active Spillway',
-        captionFr: 'Évacuateur de crues déversant la puissance hydraulique du fleuve vers la centrale.',
-        captionEn: 'Concrete spillway releasing high-velocity river head to drive hydraulic turbine generators.',
+        titleEn: 'High-Head Hydroelectric Dam & Active Spillway',
+        captionFr: 'Barrage réservoir et évacuateur de crues alimentant les turbines hydrauliques sous haute pression.',
+        captionEn: 'Concrete gravity dam and spillway discharging high-velocity head to hydraulic turbines.',
+        focalPosition: 'center 40%',
+      },
+      {
+        id: 'gen-hydro-turbines-machine-hall',
+        url: '/images/homepage_uploads/batch_06_image_030.jpg',
+        titleFr: 'Salle des Machines & Turbines Hydrauliques',
+        titleEn: 'Powerhouse Machine Hall & Hydraulic Turbines',
+        captionFr: 'Ligne de turbines hydrauliques avec volutes d’admission spiralées accouplées aux alternateurs.',
+        captionEn: 'Hydraulic turbines with spiral scroll cases coupled directly to synchronous generators.',
         focalPosition: 'center center',
       },
       {
-        id: 'gen-dam-aerial-reservoir',
-        url: 'https://images.unsplash.com/photo-1560279966-2d681f3d4dfc?auto=format&fit=crop&w=2000&q=85',
-        titleFr: 'Vue Aérienne du Barrage-Poids & Retenue',
-        titleEn: 'Gravity Dam & Water Reservoir Aerial',
-        captionFr: 'Retenue d’eau et usine hydroélectrique en pied de barrage assurant le réglage primaire de fréquence.',
-        captionEn: 'Aerial reservoir view and base powerhouse providing primary grid frequency regulation.',
+        id: 'gen-thermal-gas-engines',
+        url: '/images/homepage_uploads/batch_05_image_025.jpg',
+        titleFr: 'Centrale Thermique & Alternateurs AvK',
+        titleEn: 'Thermal Gas/Diesel Powerhouse & Alternators',
+        captionFr: 'Rangée de moteurs industriels en V entraînant des alternateurs de puissance pour production de base.',
+        captionEn: 'Lineup of multi-cylinder industrial engines coupled to AvK alternators for baseload power.',
         focalPosition: 'center center',
       },
       {
-        id: 'gen-dam-stepup-switchyard',
-        url: 'https://images.unsplash.com/photo-1774184972465-d0646b5af437?auto=format&fit=crop&w=2000&q=85',
-        titleFr: 'Aménagement Hydroélectrique & Poste Élévateur',
-        titleEn: 'Hydro Facility & Step-Up Switchyard',
-        captionFr: 'Centrale hydroélectrique de grande échelle avec poste élévateur HTA/HTB.',
-        captionEn: 'Large-scale hydro plant coupled to generation step-up transformers and outgoing lines.',
-        focalPosition: 'center center',
-      },
-      {
-        id: 'gen-solar-pv-utility',
-        url: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=2000&q=85',
-        titleFr: 'Centrale Solaire Photovoltaïque Utility-Scale',
-        titleEn: 'Utility-Scale Solar PV Array',
-        captionFr: 'Parc photovoltaïque 1500 V DC avec onduleurs centraux et poste élévateur HTA.',
-        captionEn: '1500 V DC solar PV array with central inverters feeding high-voltage collector lines.',
-        focalPosition: 'center bottom',
-      },
-      {
-        id: 'gen-wind-turbines-sunset',
-        url: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=2000&q=85',
-        titleFr: 'Parc Éolien Raccordé au Réseau',
-        titleEn: 'Grid-Connected Wind Turbine Farm',
-        captionFr: 'Aérogénérateurs avec génératrices asynchrones à double alimentation (DFIG) en 33 kV.',
-        captionEn: 'Utility wind turbine farm feeding synchronized power through 33 kV collector networks.',
+        id: 'gen-solar-wind-hybrid',
+        url: '/images/homepage_uploads/batch_01_image_001.jpg',
+        titleFr: 'Parc Solaire Photovoltaïque & Éolien',
+        titleEn: 'Utility-Scale Solar PV & Wind Generation',
+        captionFr: 'Champs photovoltaïques avec onduleurs et aérogénérateurs raccordés au réseau moyenne tension.',
+        captionEn: 'Solar photovoltaic arrays and wind turbines injecting power through collector networks.',
         focalPosition: 'center center',
       },
     ],
   },
 
-  // SLIDE 02: POWER TRANSMISSION (225 kV & 400 kV Steel Lattice Pylons)
+  // SLIDE 02: POWER TRANSMISSION (High Voltage Towers & Corridor)
   {
     id: 'slide-transmission',
     orderNumber: '02',
@@ -132,45 +123,36 @@ export const CINEMATIC_SLIDES: CinematicSlide[] = [
     },
     photos: [
       {
-        id: 'trans-lattice-tower-blue',
-        url: 'https://images.unsplash.com/photo-1779636870368-43cbc556ef14?auto=format&fit=crop&w=2000&q=85',
-        titleFr: 'Pylône Treillis 225/400 kV & Faisceaux',
-        titleEn: 'Double-Circuit EHV Lattice Transmission Tower',
-        captionFr: 'Pylône acier double terne avec faisceaux de 2 conducteurs par phase et chaînes d’isolateurs.',
-        captionEn: 'Double-circuit steel lattice tower with bundle conductors and suspension insulator strings.',
+        id: 'trans-lattice-tower-field',
+        url: '/images/homepage_uploads/batch_02_image_007.jpg',
+        titleFr: 'Pylône Treillis Acier Double Terne 225 kV',
+        titleEn: 'Double-Circuit EHV Steel Lattice Tower',
+        captionFr: 'Pylône métallique d’alignement avec chaînes d’isolateurs en suspension et câbles de garde.',
+        captionEn: 'Steel lattice transmission tower supporting multi-bundle conductors and suspension insulators.',
+        focalPosition: 'center 45%',
+      },
+      {
+        id: 'trans-corridor-sky',
+        url: '/images/homepage_uploads/batch_02_image_008.jpg',
+        titleFr: 'Corridor d’Interconnexion Haute Tension',
+        titleEn: 'High-Voltage Transmission Line Corridor',
+        captionFr: 'Artère d’évacuation de puissance interrégionale reliant les centrales aux métropoles.',
+        captionEn: 'Regional high-voltage transmission corridor routing bulk power across long distances.',
         focalPosition: 'center center',
       },
       {
-        id: 'trans-corridor-sunset',
-        url: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=2000&q=85',
-        titleFr: 'Corridor Haute Tension au Coucher du Soleil',
-        titleEn: 'Transmission Line Corridor at Sunset',
-        captionFr: 'Alignement de pylônes haute tension assurant le transit massif d’énergie entre régions.',
-        captionEn: 'High-voltage line corridor transmitting bulk power across regional interconnectors.',
-        focalPosition: 'center center',
-      },
-      {
-        id: 'trans-guyed-v-field',
-        url: 'https://images.unsplash.com/photo-1783786988313-488082b84000?auto=format&fit=crop&w=2000&q=85',
-        titleFr: 'Pylône Haubané & Conducteurs Aériens',
-        titleEn: 'Guyed-V High-Voltage Transmission Tower',
-        captionFr: 'Structure de pilonnage optimisée pour les grandes portées à travers plaines et savanes.',
-        captionEn: 'Guyed-V tower carrying high-voltage conductors over long spans across open terrain.',
-        focalPosition: 'center center',
-      },
-      {
-        id: 'trans-pylon-overlook',
-        url: 'https://images.unsplash.com/photo-1592152287815-1e3d73630734?auto=format&fit=crop&w=2000&q=85',
-        titleFr: 'Pylône Haute Tension en Surplomb de Vallée',
-        titleEn: 'High-Voltage Lattice Pylon Overlooking Valley',
-        captionFr: 'Ouvrage de transport haute tension franchissant des zones géographiques accidentées.',
-        captionEn: 'High-voltage pylon crossing rugged mountainous terrain with high clearance.',
+        id: 'trans-substation-night',
+        url: '/images/homepage_uploads/batch_06_image_028.jpg',
+        titleFr: 'Poste HTB & Portiques d’Arrivée de Nuit',
+        titleEn: 'High-Voltage Switchyard & Gantries at Night',
+        captionFr: 'Poste de transformation sous éclairage de sécurité avec transformateurs et jeux de barres.',
+        captionEn: 'Outdoor transmission switchyard illuminated by floodlights showing transformers and busbars.',
         focalPosition: 'center center',
       },
     ],
   },
 
-  // SLIDE 03: SUBSTATIONS & DISTRIBUTION (AIS Switchyard, SF6 Breakers, Transformers)
+  // SLIDE 03: SUBSTATIONS & DISTRIBUTION (Step-Down Transformers, AIS Switchyard)
   {
     id: 'slide-substations',
     orderNumber: '03',
@@ -199,36 +181,36 @@ export const CINEMATIC_SLIDES: CinematicSlide[] = [
     },
     photos: [
       {
-        id: 'sub-sf6-dead-tank-breakers',
-        url: 'https://images.unsplash.com/photo-1780396140802-52309c205050?auto=format&fit=crop&w=2000&q=85',
-        titleFr: 'Poste Ouvert AIS & Disjoncteurs SF6',
-        titleEn: 'Air-Insulated Substation & SF6 Circuit Breakers',
-        captionFr: 'Disjoncteurs haute tension SF6 dead-tank avec traversées et transformateurs de puissance.',
-        captionEn: 'High-voltage SF6 dead-tank circuit breakers with heavy porcelain bushings and transformers.',
-        focalPosition: 'center center',
-      },
-      {
-        id: 'sub-power-transformer-heavy',
-        url: 'https://images.unsplash.com/photo-1509390144018-eeaf65052242?auto=format&fit=crop&w=2000&q=85',
+        id: 'sub-stepdown-transformer',
+        url: '/images/homepage_uploads/batch_02_image_006.jpg',
         titleFr: 'Transformateur de Puissance & Radiateurs',
         titleEn: 'Step-Down Power Transformer Unit',
-        captionFr: 'Transformateur triphasé HTB/HTA avec conservateur d’huile, régleur en charge et parafoudres.',
-        captionEn: 'Three-phase step-down power transformer unit with radiator banks, oil conservator and surge arresters.',
+        captionFr: 'Transformateur triphasé HTB/HTA avec conservateur d’huile, régleur en charge et traversées.',
+        captionEn: 'Three-phase power transformer with cooling radiators, oil conservator, and HV bushings.',
         focalPosition: 'center center',
       },
       {
-        id: 'sub-distribution-gantry',
-        url: 'https://images.unsplash.com/photo-1693013112835-5f3128bb555f?auto=format&fit=crop&w=2000&q=85',
-        titleFr: 'Portique & Travées de Poste de Répartition',
-        titleEn: 'Substation Gantry & Distribution Bays',
-        captionFr: 'Portique d’arrivée haute tension, sectionneurs d’aiguillage et départs moyenne tension.',
-        captionEn: 'High-voltage arrival gantry, busbar disconnectors, and medium-voltage distribution feeders.',
+        id: 'sub-ais-panoramic',
+        url: '/images/homepage_uploads/batch_02_image_010.jpg',
+        titleFr: 'Poste Ouvert AIS & Portiques Haute Tension',
+        titleEn: 'Air-Insulated Substation (AIS) & Gantries',
+        captionFr: 'Vue aérienne de travées de poste, sectionneurs et arrivées de lignes haute tension.',
+        captionEn: 'Panoramic view of air-insulated substation bays, disconnectors, and gantry arrivals.',
+        focalPosition: 'center center',
+      },
+      {
+        id: 'sub-transformer-cubicles',
+        url: '/images/homepage_uploads/batch_04_image_016.jpg',
+        titleFr: 'Transformateur Immergé & Armoires de Contrôle',
+        titleEn: 'Oil-Immersed Transformer & Control Cubicles',
+        captionFr: 'Poste de transformation avec radiateurs ondulés et armoires d’automatisme de travée.',
+        captionEn: 'Substation transformer equipped with corrugated cooling fins and bay control cubicles.',
         focalPosition: 'center center',
       },
     ],
   },
 
-  // SLIDE 04: INDUSTRIAL ELECTRICAL ENGINEERING & DISTRIBUTION PANELS (TGBT, Breakers, Automation)
+  // SLIDE 04: INDUSTRIAL ELECTRICAL ENGINEERING & SCADA
   {
     id: 'slide-industrial',
     orderNumber: '04',
@@ -257,42 +239,32 @@ export const CINEMATIC_SLIDES: CinematicSlide[] = [
     },
     photos: [
       {
-        id: 'ind-panel-abb-breakers',
-        url: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?auto=format&fit=crop&w=2000&q=85',
-        titleFr: 'Tableau Basse Tension & Disjoncteurs Modulaires ABB',
-        titleEn: 'Industrial Low-Voltage Panel & ABB Breakers',
-        captionFr: 'Armoire électrique industrielle équipée de disjoncteurs magnétothermiques modulaires et borniers.',
-        captionEn: 'Industrial distribution panel with DIN-rail miniature circuit breakers and color-coded control wiring.',
+        id: 'ind-switchgear-lineup',
+        url: '/images/homepage_uploads/batch_05_image_024.jpg',
+        titleFr: 'Rame de Cellules TGBT & Chemins de Câbles',
+        titleEn: 'Industrial Switchgear Lineup & Cable Ladders',
+        captionFr: 'Cellules de distribution Forme 4b avec disjoncteurs débrochables et relais numériques.',
+        captionEn: 'Form-4b switchboard cubicles with withdrawable circuit breakers and digital relays.',
+        focalPosition: 'center 40%',
+      },
+      {
+        id: 'ind-scada-dispatch-wall',
+        url: '/images/homepage_uploads/batch_06_image_026.jpg',
+        titleFr: 'Mur d’Écrans SCADA & Téléconduite Réseau',
+        titleEn: 'SCADA Dispatch Video Wall & Network Telemetry',
+        captionFr: 'Supervision temps réel du réseau électrique avec synoptiques unifilaires et dispatching.',
+        captionEn: 'Real-time grid supervision center with single-line telemetry and automated dispatch.',
         focalPosition: 'center center',
       },
       {
-        id: 'ind-distribution-board-mcb',
-        url: 'https://images.unsplash.com/photo-1576446470246-499c738d1c8e?auto=format&fit=crop&w=2000&q=85',
-        titleFr: 'Coffret Électrique & Peignes de Raccordement',
-        titleEn: 'Modular Distribution Board with MCBs',
-        captionFr: 'Armoire de distribution terminale conforme CEI 61439 avec disjoncteurs divisionnaires.',
-        captionEn: 'Terminal distribution board compliant with IEC 61439 with miniature circuit breakers and neutral busbar.',
-        focalPosition: 'center center',
-      },
-      {
-        id: 'ind-automation-plc-rack',
-        url: 'https://images.unsplash.com/photo-1783419752280-46a2073ef7dc?auto=format&fit=crop&w=2000&q=85',
-        titleFr: 'Baie d’Automatisme PLC & Relais de Protection',
-        titleEn: 'Industrial Automation PLC & Relay Rack',
-        captionFr: 'Châssis d’automatisme industriel assurant le contrôle-commande, le verrouillage et la télégestion.',
-        captionEn: 'Industrial automation rack managing interlocking logic, protection signaling, and remote SCADA telemetry.',
-        focalPosition: 'center center',
-      },
-      {
-        id: 'ind-electrician-commissioning',
-        url: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=2000&q=85',
-        titleFr: 'Essais de Mise en Service & Qualification Électrique',
-        titleEn: 'Electrical Testing & Switchgear Commissioning',
-        captionFr: 'Ingénieur électrotechnicien en équipement de sécurité effectuant les essais de déclenchement.',
-        captionEn: 'Electrical technician in safety helmet and gloves verifying trip settings on switchgear equipment.',
+        id: 'ind-tgbt-panel-mccb',
+        url: '/images/homepage_uploads/batch_03_image_014.jpg',
+        titleFr: 'Tableau Général Basse Tension (TGBT) & Disjoncteurs',
+        titleEn: 'Main LV Switchboard (TGBT) & Breakers',
+        captionFr: 'Disjoncteur général boîtier moulé (DPX/MCCB), peignes et disjoncteurs modulaires divisionnaires.',
+        captionEn: 'Molded-case circuit breaker, busbar combs, and modular miniature circuit breakers.',
         focalPosition: 'center center',
       },
     ],
   },
 ];
-

@@ -138,7 +138,7 @@ const LEARNING_PATHWAYS: LearningPathwayCard[] = [
       'Monophasé (230 V) vs Triphasé (400 V)',
       'Facteur de puissance (cos φ)',
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=900&q=80',
+    imageUrl: '/images/homepage_uploads/batch_04_image_019.jpg',
     targetDomain: 'D01',
   },
   {
@@ -169,7 +169,7 @@ const LEARNING_PATHWAYS: LearningPathwayCard[] = [
       'Transformateurs de courant (TC) et tension (TT)',
       'Cellules HTA/BT et Câbles électriques',
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=900&q=80',
+    imageUrl: '/images/homepage_uploads/batch_02_image_009.jpg',
     targetDomain: 'D04',
   },
   {
@@ -200,7 +200,7 @@ const LEARNING_PATHWAYS: LearningPathwayCard[] = [
       'Dispositifs différentiels (DDR 30 mA) et disjoncteurs',
       'Cheminement et dimensionnement des câbles',
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&w=900&q=80',
+    imageUrl: '/images/homepage_uploads/batch_03_image_014.jpg',
     targetDomain: 'D06',
   },
   {
@@ -231,7 +231,7 @@ const LEARNING_PATHWAYS: LearningPathwayCard[] = [
       'Systèmes d’excitation (AVR) et réglage 50 Hz',
       'Couplage et synchronisation au réseau (ANSI 25)',
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1560279966-2d681f3d4dfc?auto=format&fit=crop&w=900&q=80',
+    imageUrl: '/images/homepage_uploads/batch_06_image_030.jpg',
     targetDomain: 'D01',
   },
   {
@@ -262,7 +262,7 @@ const LEARNING_PATHWAYS: LearningPathwayCard[] = [
       'Disjoncteurs SF6, sectionneurs et verrouillages',
       'Protections de distance (21) et différentielle (87)',
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=900&q=80',
+    imageUrl: '/images/homepage_uploads/batch_02_image_007.jpg',
     targetDomain: 'D03',
   },
   {
@@ -293,7 +293,7 @@ const LEARNING_PATHWAYS: LearningPathwayCard[] = [
       'Tableaux BT, coffrets de coupure et comptage',
       'Branchements des abonnés',
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1509390144018-eeaf65052242?auto=format&fit=crop&w=900&q=80',
+    imageUrl: '/images/homepage_uploads/batch_03_image_011.jpg',
     targetDomain: 'D05',
   },
   {
@@ -324,7 +324,7 @@ const LEARNING_PATHWAYS: LearningPathwayCard[] = [
       'Capteurs industriels, instrumentation et actionneurs',
       'Supervision SCADA et maintenance industrielle',
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&w=900&q=80',
+    imageUrl: '/images/homepage_uploads/batch_05_image_024.jpg',
     targetDomain: 'D07',
   },
   {
@@ -355,7 +355,7 @@ const LEARNING_PATHWAYS: LearningPathwayCard[] = [
       'Protection contre les contacts directs et indirects',
       'Consignation (LOTO), EPI et risque d’arc électrique',
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80',
+    imageUrl: '/images/homepage_uploads/batch_03_image_015.jpg',
     targetDomain: 'D08',
   },
 ];
@@ -370,7 +370,7 @@ const NINE_POWER_STAGES: NineStageItem[] = [
     titleEn: 'Power Generation',
     titleFr: 'Production d’Électricité',
     voltage: '10.3 kV – 15.5 kV',
-    imageUrl: 'https://images.unsplash.com/photo-1560279966-2d681f3d4dfc?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/images/homepage_uploads/batch_01_image_005.jpg',
     explanationEn:
       'Generating stations convert primary energy (falling water, natural gas, solar radiation, or wind) into three-phase alternating current at 50 Hz.',
     explanationFr:
@@ -394,7 +394,7 @@ const NINE_POWER_STAGES: NineStageItem[] = [
     titleEn: 'Step-Up Transformer',
     titleFr: 'Transformateur Élévateur',
     voltage: '10.5/15 kV → 225 kV',
-    imageUrl: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/images/homepage_uploads/batch_04_image_016.jpg',
     explanationEn:
       'Installed right outside the powerhouse, the Generator Step-Up (GSU) transformer raises voltage from generator level (10–15 kV) to transmission level (90–225 kV).',
     explanationFr:
@@ -420,7 +420,7 @@ const NINE_POWER_STAGES: NineStageItem[] = [
     titleEn: 'High-Voltage Transmission',
     titleFr: 'Transport Haute Tension (HTB)',
     voltage: '90 kV / 110 kV / 225 kV',
-    imageUrl: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/images/homepage_uploads/batch_02_image_008.jpg',
     explanationEn:
       'Overhead transmission corridors carry bulk power from remote hydro and thermal plants to major urban and industrial regions.',
     explanationFr:
@@ -444,7 +444,7 @@ const NINE_POWER_STAGES: NineStageItem[] = [
     titleEn: 'Transmission Substation',
     titleFr: 'Poste d’Interconnexion HTB',
     voltage: '225 kV / 90 kV',
-    imageUrl: 'https://images.unsplash.com/photo-1513828583688-c52646db42da?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/images/homepage_uploads/batch_02_image_010.jpg',
     explanationEn:
       'High-voltage substations are the nodes of the power grid where transmission lines meet, switch configurations, and isolate faults.',
     explanationFr:
@@ -468,7 +468,7 @@ const NINE_POWER_STAGES: NineStageItem[] = [
     titleEn: 'Step-Down Transformation',
     titleFr: 'Transformation Abaisseuse HTB/HTA',
     voltage: '225/90 kV → 30/15 kV',
-    imageUrl: 'https://images.unsplash.com/photo-1509390144018-eeaf65052242?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/images/homepage_uploads/batch_02_image_006.jpg',
     explanationEn:
       'Primary substation transformers step high transmission voltage (225 kV or 90 kV) down to medium distribution voltage (30 kV or 15 kV).',
     explanationFr:
@@ -492,7 +492,7 @@ const NINE_POWER_STAGES: NineStageItem[] = [
     titleEn: 'Medium-Voltage Distribution',
     titleFr: 'Distribution Moyenne Tension (HTA)',
     voltage: '15 kV / 20 kV / 30 kV',
-    imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/images/homepage_uploads/batch_01_image_004.jpg',
     explanationEn:
       'Medium-voltage feeders distribute power through city districts via underground XLPE cable rings and across rural areas via overhead lines.',
     explanationFr:
@@ -516,7 +516,7 @@ const NINE_POWER_STAGES: NineStageItem[] = [
     titleEn: 'Distribution Transformer',
     titleFr: 'Transformateur de Distribution MT/BT',
     voltage: '15/30 kV → 400 V / 230 V',
-    imageUrl: 'https://images.unsplash.com/photo-1509390144018-eeaf65052242?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/images/homepage_uploads/batch_04_image_016.jpg',
     explanationEn:
       'Located on neighborhood poles (H61) or inside masonry cabins, the distribution transformer performs the final voltage step-down to 400 V / 230 V.',
     explanationFr:
@@ -540,7 +540,7 @@ const NINE_POWER_STAGES: NineStageItem[] = [
     titleEn: 'Low-Voltage Network',
     titleFr: 'Réseau Basse Tension (BT)',
     voltage: '400 V 3Φ / 230 V 1Φ',
-    imageUrl: 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/images/homepage_uploads/batch_03_image_011.jpg',
     explanationEn:
       'Low-voltage lines run along streets to building service drops, utility meters, and main distribution boards.',
     explanationFr:
@@ -564,7 +564,7 @@ const NINE_POWER_STAGES: NineStageItem[] = [
     titleEn: 'Final Consumer & Industry',
     titleFr: 'Consommateur Final & Industrie',
     voltage: '230 V / 400 V / 690 V',
-    imageUrl: 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/images/homepage_uploads/batch_03_image_014.jpg',
     explanationEn:
       'Inside homes, hospitals, commercial buildings, and factories, electricity is finally converted into light, cooling, motion, and industrial production.',
     explanationFr:
@@ -594,7 +594,7 @@ const FEATURED_EQUIPMENT: FeaturedEquipmentItem[] = [
     roleFr: 'Coupe automatiquement le courant en cas de surcharge ou de court-circuit pour protéger les câbles et les personnes.',
     insideAnatomyEn: 'Thermal bimetal strip (overload), magnetic coil (short-circuit), main contacts, and arc-extinguishing chamber.',
     insideAnatomyFr: 'Bilame thermique (surcharge), bobine magnétique (court-circuit), contacts de puissance et chambre de coupure d’arc.',
-    imageUrl: 'https://images.unsplash.com/photo-1513828583688-c52646db42da?auto=format&fit=crop&w=900&q=80',
+    imageUrl: '/images/homepage_uploads/batch_06_image_029.jpg',
   },
   {
     id: 'eq-trafo-hta-01',
@@ -606,7 +606,7 @@ const FEATURED_EQUIPMENT: FeaturedEquipmentItem[] = [
     roleFr: 'Élève ou abaisse la tension par induction électromagnétique tout en conservant la fréquence de 50 Hz.',
     insideAnatomyEn: 'Laminated magnetic core, primary HV winding, secondary LV winding, insulating oil, bushings, and cooling fins.',
     insideAnatomyFr: 'Circuit magnétique feuilleté, enroulements primaire et secondaire, huile isolante, traversées et radiateurs.',
-    imageUrl: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=900&q=80',
+    imageUrl: '/images/homepage_uploads/batch_02_image_006.jpg',
   },
   {
     id: 'eq-lv-acb-01',
@@ -618,7 +618,7 @@ const FEATURED_EQUIPMENT: FeaturedEquipmentItem[] = [
     roleFr: 'Le contacteur commande à distance le moteur via sa bobine A1-A2 ; le relais thermique protège le moteur contre les surcharges.',
     insideAnatomyEn: 'Electromagnetic coil (A1–A2), movable iron core, 3 main power poles (1–2, 3–4, 5–6), auxiliary contact (13–14), and 3 bimetallic strips.',
     insideAnatomyFr: 'Bobine électromagnétique (A1–A2), circuit magnétique mobile, 3 pôles de puissance (1–2, 3–4, 5–6), contact auxiliaire (13–14) et bilames.',
-    imageUrl: 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&w=900&q=80',
+    imageUrl: '/images/homepage_uploads/batch_03_image_013.jpg',
   },
   {
     id: 'eq-ind-motor-01',
@@ -630,7 +630,7 @@ const FEATURED_EQUIPMENT: FeaturedEquipmentItem[] = [
     roleFr: 'Le cœur de l’industrie : convertit l’énergie électrique triphasée en couple mécanique pour entraîner pompes, ventilateurs et convoyeurs.',
     insideAnatomyEn: 'Three-phase stator windings (creating a rotating magnetic field), squirrel-cage rotor, bearings, cooling fan, and Star/Delta terminal box.',
     insideAnatomyFr: 'Stator triphasé (champ magnétique tournant), rotor à cage d’écureuil, roulements, ventilateur et plaque à bornes (U1-V1-W1 / W2-U2-V2).',
-    imageUrl: 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&w=900&q=80',
+    imageUrl: '/images/homepage_uploads/batch_05_image_025.jpg',
   },
   {
     id: 'eq-rmu-hta-01',
@@ -642,7 +642,7 @@ const FEATURED_EQUIPMENT: FeaturedEquipmentItem[] = [
     roleFr: 'Assure le bouclage des câbles souterrains HTA et la protection du transformateur MT/BT dans un tableau compact.',
     insideAnatomyEn: 'SF6 or vacuum switching chamber, three-position disconnector/earthing switch, busbars, voltage presence lamps (VPIS), and mechanical interlocks.',
     insideAnatomyFr: 'Enceinte de coupure SF6 ou vide, sectionneur 3 positions (Fermé / Ouvert / Terre), diviseurs capacitifs (VPIS) et verrouillages.',
-    imageUrl: 'https://images.unsplash.com/photo-1513828583688-c52646db42da?auto=format&fit=crop&w=900&q=80',
+    imageUrl: '/images/homepage_uploads/batch_02_image_009.jpg',
   },
   {
     id: 'eq-hydro-gen-01',
@@ -654,7 +654,7 @@ const FEATURED_EQUIPMENT: FeaturedEquipmentItem[] = [
     roleFr: 'Convertit l’énergie mécanique de rotation de la turbine en énergie électrique alternative triphasée à 50 Hz.',
     insideAnatomyEn: 'Salient-pole or cylindrical rotor fed with DC excitation current, Roebel-bar stator windings, air/water coolers, and neutral grounding transformer.',
     insideAnatomyFr: 'Rotor inducteur alimenté en courant continu (excitation), stator induit à barres Roebel, refroidisseurs air/eau et mise à la terre du neutre.',
-    imageUrl: 'https://images.unsplash.com/photo-1560279966-2d681f3d4dfc?auto=format&fit=crop&w=900&q=80',
+    imageUrl: '/images/homepage_uploads/batch_06_image_030.jpg',
   },
 ];
 
@@ -973,14 +973,23 @@ export const HomeView: React.FC<HomeViewProps> = ({
             >
               <div>
                 {/* Top Photo Header */}
-                <div className="relative h-36 overflow-hidden">
-                  <img
-                    src={pathway.imageUrl}
-                    alt={isFr ? pathway.titleFr : pathway.titleEn}
-                    loading="lazy"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#102A43]/90 via-[#102A43]/30 to-transparent" />
+                <div className="relative h-36 overflow-hidden bg-gradient-to-br from-[#102A43]/70 to-[#0B192C]/90 flex items-center justify-center">
+                  {pathway.imageUrl ? (
+                    <img
+                      src={pathway.imageUrl}
+                      alt={isFr ? pathway.titleFr : pathway.titleEn}
+                      loading="lazy"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center p-4 border-b border-white/10 select-none">
+                      <Zap className="w-6 h-6 text-[#B8F000]/40 mb-1.5" />
+                      <span className="text-[10px] font-mono text-white/35 tracking-widest uppercase">
+                        {isFr ? 'Photographie en attente' : 'Image pending'}
+                      </span>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#102A43]/90 via-transparent to-transparent pointer-events-none" />
                   <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
                     <span className="px-2.5 py-1 rounded-lg bg-black/40 border border-[#D7A64A]/40 font-mono text-xs font-black text-[#D7A64A] backdrop-blur-sm">
                       {isFr ? `PARCOURS ${pathway.num}` : `PATHWAY ${pathway.num}`}
@@ -1107,13 +1116,24 @@ export const HomeView: React.FC<HomeViewProps> = ({
         {/* Selected Stage Detailed Visual Inspection Panel */}
         <div className="rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xl overflow-hidden grid grid-cols-1 lg:grid-cols-12">
           {/* Left Real Photograph */}
-          <div className="lg:col-span-5 relative min-h-[280px] sm:min-h-[340px]">
-            <img
-              src={activeStage.imageUrl}
-              alt={isFr ? activeStage.titleFr : activeStage.titleEn}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#102A43]/90 via-transparent to-transparent" />
+          <div className="lg:col-span-5 relative min-h-[280px] sm:min-h-[340px] bg-gradient-to-br from-[#0B192C] to-[#102A43] flex items-center justify-center">
+            {activeStage.imageUrl ? (
+              <img
+                src={activeStage.imageUrl}
+                alt={isFr ? activeStage.titleFr : activeStage.titleEn}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full min-h-[280px] flex flex-col items-center justify-center p-8 text-center select-none">
+                <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-3">
+                  <Zap className="w-7 h-7 text-[#B8F000]/60" />
+                </div>
+                <span className="text-xs font-mono text-white/40 uppercase tracking-widest">
+                  {isFr ? 'Photographie Haute Définition en attente' : 'High-definition photo pending'}
+                </span>
+              </div>
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#102A43]/90 via-transparent to-transparent pointer-events-none" />
             <div className="absolute bottom-4 left-4 right-4 space-y-1">
               <span className="inline-block px-2.5 py-1 rounded-md bg-black/50 border border-[#B8F000]/40 font-mono text-xs font-bold text-[#B8F000] backdrop-blur-sm">
                 {isFr ? `ÉTAPE ${activeStage.num} · ${activeStage.voltage}` : `STAGE ${activeStage.num} · ${activeStage.voltage}`}
@@ -1251,14 +1271,23 @@ export const HomeView: React.FC<HomeViewProps> = ({
               className="group rounded-2xl bg-[#102A43]/40 border border-white/10 hover:border-[#B8F000]/50 backdrop-blur-xl overflow-hidden flex flex-col justify-between transition-all duration-300 hover:shadow-[0_12px_30px_rgba(0,0,0,0.5)] cursor-pointer"
             >
               <div>
-                <div className="relative h-44 overflow-hidden">
-                  <img
-                    src={eq.imageUrl}
-                    alt={isFr ? eq.nameFr : eq.nameEn}
-                    loading="lazy"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#102A43]/90 via-[#102A43]/30 to-transparent" />
+                <div className="relative h-44 overflow-hidden bg-gradient-to-br from-[#102A43]/70 to-[#0B192C]/90 flex items-center justify-center">
+                  {eq.imageUrl ? (
+                    <img
+                      src={eq.imageUrl}
+                      alt={isFr ? eq.nameFr : eq.nameEn}
+                      loading="lazy"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center p-4 border-b border-white/10 select-none">
+                      <Cpu className="w-8 h-8 text-[#B8F000]/40 mb-2" />
+                      <span className="text-[10px] font-mono text-white/35 tracking-widest uppercase">
+                        {isFr ? 'Photographie Équipement en attente' : 'Equipment photo pending'}
+                      </span>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#102A43]/90 via-transparent to-transparent pointer-events-none" />
                   <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2">
                     <span className="px-2.5 py-1 rounded-md bg-black/40 border border-[#D7A64A]/40 font-mono text-[11px] font-bold text-[#D7A64A] backdrop-blur-sm">
                       {eq.voltageBadge}
@@ -1494,7 +1523,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 'Study how Song Loulou (384 MW), Nachtigal (420 MW), Edéa (276 MW), Memve’ele (211 MW), Lagdo (72 MW), and Kribi (216 MW) generate Cameroon’s electricity.',
               descFr:
                 'Comprendre comment Song Loulou (384 MW), Nachtigal (420 MW), Édéa (276 MW), Memve’ele (211 MW), Lagdo (72 MW) et Kribi (216 MW) alimentent le pays.',
-              imageUrl: 'https://images.unsplash.com/photo-1560279966-2d681f3d4dfc?auto=format&fit=crop&w=900&q=80',
+              imageUrl: '/images/homepage_uploads/batch_06_image_030.jpg',
               action: () => onNavigateView('cameroon-grid'),
             },
             {
@@ -1505,7 +1534,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 'Inspect the 225 kV and 90 kV transmission corridors and substations supplying Yaoundé (Oyomabang, Nyom II, Ahala) and Douala (Bekoko, Logbaba, Koumassi).',
               descFr:
                 'Explorer les corridors 225 kV / 90 kV et les postes sources alimentant Yaoundé (Oyomabang, Nyom II, Ahala) et Douala (Bekoko, Logbaba, Koumassi).',
-              imageUrl: 'https://images.unsplash.com/photo-1513828583688-c52646db42da?auto=format&fit=crop&w=900&q=80',
+              imageUrl: '/images/homepage_uploads/batch_02_image_008.jpg',
               action: () => onNavigateView('cameroon-grid'),
             },
             {
@@ -1516,7 +1545,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 'Understand how 15 kV and 30 kV feeders, Ring Main Units, and pole-mounted H61 transformers step power down to 400 V / 230 V in neighborhoods.',
               descFr:
                 'Découvrir le fonctionnement des boucles HTA 15 kV / 30 kV, des cellules RMU et des transformateurs sur poteau H61 jusque chez l’abonné.',
-              imageUrl: 'https://images.unsplash.com/photo-1509390144018-eeaf65052242?auto=format&fit=crop&w=900&q=80',
+              imageUrl: '/images/homepage_uploads/batch_02_image_010.jpg',
               action: () => onSelectDomain('D05'),
             },
             {
@@ -1527,7 +1556,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 'Explore real industrial architectures: main LV switchboards (TGBT), motor control centers, automatic transfer switches (ATS), and synchronized diesel gensets.',
               descFr:
                 'Étudier les installations industrielles réelles : TGBT, armoires moteurs, inverseurs normal/secours (ATS) et centrales électrogènes de secours.',
-              imageUrl: 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&w=900&q=80',
+              imageUrl: '/images/homepage_uploads/batch_05_image_024.jpg',
               action: () => onNavigateView('industrial-projects'),
             },
           ].map((card) => (
@@ -1537,14 +1566,23 @@ export const HomeView: React.FC<HomeViewProps> = ({
               className="group rounded-2xl bg-[#102A43]/40 border border-white/10 hover:border-[#B8F000]/50 backdrop-blur-xl overflow-hidden flex flex-col justify-between transition-all duration-300 hover:shadow-[0_12px_30px_rgba(0,0,0,0.5)] cursor-pointer"
             >
               <div>
-                <div className="relative h-36 overflow-hidden">
-                  <img
-                    src={card.imageUrl}
-                    alt={isFr ? card.titleFr : card.titleEn}
-                    loading="lazy"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#102A43]/90 via-[#102A43]/30 to-transparent" />
+                <div className="relative h-36 overflow-hidden bg-gradient-to-br from-[#102A43]/70 to-[#0B192C]/90 flex items-center justify-center">
+                  {card.imageUrl ? (
+                    <img
+                      src={card.imageUrl}
+                      alt={isFr ? card.titleFr : card.titleEn}
+                      loading="lazy"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center p-4 border-b border-white/10 select-none">
+                      <Layers className="w-6 h-6 text-[#B8F000]/40 mb-1.5" />
+                      <span className="text-[10px] font-mono text-white/35 tracking-widest uppercase">
+                        {isFr ? 'Photographie Réseau en attente' : 'Grid photo pending'}
+                      </span>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#102A43]/90 via-transparent to-transparent pointer-events-none" />
                   <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-black/50 border border-[#B8F000]/40 font-mono text-[10px] font-bold text-[#B8F000] backdrop-blur-sm">
                     {card.tag}
                   </span>

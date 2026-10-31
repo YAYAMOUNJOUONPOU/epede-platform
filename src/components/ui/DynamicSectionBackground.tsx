@@ -61,7 +61,32 @@ export const DynamicSectionBackground: React.FC<DynamicSectionBackgroundProps> =
   }, [isVisible, autoRotateIntervalMs, photos.length]);
 
   if (!photos || photos.length === 0) {
-    return <div className={`relative ${className}`}>{children}</div>;
+    return (
+      <div ref={containerRef} className={`relative overflow-hidden ${className}`}>
+        {/* Neutral Engineering Canvas with Millimeter Grid and Vignette */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
+          <div className="absolute inset-0 bg-[#0B192C]" />
+          <div className={`absolute inset-0 z-20 backdrop-blur-[2px] ${overlayOpacityClass}`} />
+          {showTechnicalGrid && (
+            <div
+              className="absolute inset-0 z-20 pointer-events-none opacity-[0.035]"
+              style={{
+                backgroundImage: `linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)`,
+                backgroundSize: '36px 36px',
+              }}
+            />
+          )}
+          <div
+            className="absolute inset-0 z-20 pointer-events-none"
+            style={{
+              background:
+                'radial-gradient(ellipse at center, transparent 40%, rgba(10, 25, 47, 0.75) 100%)',
+            }}
+          />
+        </div>
+        <div className="relative z-10">{children}</div>
+      </div>
+    );
   }
 
   const activePhoto = photos[currentIndex] || photos[0];
