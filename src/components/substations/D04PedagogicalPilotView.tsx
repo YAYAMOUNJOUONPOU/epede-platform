@@ -24,6 +24,9 @@ import {
 } from 'lucide-react';
 import type { CalculatorTabType } from '../calculators/services/calculationReportService';
 import type { SimulationTabType } from '../simulation/SimulationLabView';
+import { PowerChain } from '../common/PowerChain';
+import { WORKED_EXAMPLES_REGISTRY } from '../../data/workedExamplesRegistry';
+import { WorkedExampleViewer } from '../common/WorkedExampleViewer';
 
 interface D04PedagogicalPilotViewProps {
   locale: 'fr' | 'en';
@@ -43,6 +46,9 @@ export const D04PedagogicalPilotView: React.FC<D04PedagogicalPilotViewProps> = (
   onSwitchToAdvancedWorkbench,
 }) => {
   const isFr = locale === 'fr';
+  const d04WorkedExample = WORKED_EXAMPLES_REGISTRY.find(
+    (we) => we.domainCode === 'D04'
+  );
 
   // Section E active solver state
   const [activeAnalysisTopic, setActiveAnalysisTopic] = useState<'short_circuit' | 'transformer' | 'protection' | 'earthing'>('short_circuit');
@@ -101,7 +107,21 @@ export const D04PedagogicalPilotView: React.FC<D04PedagogicalPilotViewProps> = (
 
   return (
     <div className="space-y-12">
-      
+      {/* ───────────────────────────────────────────────────────────────────────
+          UNIVERSAL CANONICAL POWER CHAIN CONTEXT & UPSTREAM/DOWNSTREAM NAVIGATION
+         ─────────────────────────────────────────────────────────────────────── */}
+      <PowerChain
+        locale={locale}
+        currentStageId="stage-04"
+        onSelectStage={(stage) => {
+          if (stage.domainCode !== 'D04' && onNavigateView) {
+            onNavigateView('domain-detail', stage.domainCode);
+          }
+        }}
+        showDetails={false}
+        showNavigationButtons={true}
+      />
+
       {/* ───────────────────────────────────────────────────────────────────────
           PANEL A : COMPRENDRE LE SYSTÈME (UNDERSTAND THE SYSTEM)
          ─────────────────────────────────────────────────────────────────────── */}
@@ -623,6 +643,17 @@ export const D04PedagogicalPilotView: React.FC<D04PedagogicalPilotViewProps> = (
             </div>
           )}
         </div>
+
+        {/* Interactive IEC 60909-0 Worked Example for D04 */}
+        {d04WorkedExample && (
+          <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
+            <WorkedExampleViewer
+              example={d04WorkedExample}
+              locale={locale}
+              onOpenCalculator={() => onNavigateCalculator?.('transformer')}
+            />
+          </div>
+        )}
       </section>
 
       {/* ───────────────────────────────────────────────────────────────────────

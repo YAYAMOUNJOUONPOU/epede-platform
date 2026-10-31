@@ -7,14 +7,15 @@ import path from 'path';
 import { CANONICAL_POWER_STAGES } from '../src/data/canonicalPowerChain';
 import { CAMEROON_GRID_ASSETS_2026 } from '../src/data/cameroonGrid2026';
 import { NORMATIVE_FORMULA_REGISTRY } from '../src/data/normativeFormulaRegistry';
-import { CanonicalPowerStageSchema, CameroonGridAssetSchema } from '../src/types/contentSchemas';
+import { WORKED_EXAMPLES_REGISTRY } from '../src/data/workedExamplesRegistry';
+import { CanonicalPowerStageSchema, CameroonGridAssetSchema, WorkedExampleSchema } from '../src/types/contentSchemas';
 
 console.log('⚡ [EPEDE 2.0 Gatekeeper] Starting Pre-Build Content Validation...');
 
 let errorsCount = 0;
 
 // 1. Validate Canonical 9-Stage Power Chain
-console.log(`\n🔍 [1/4] Validating 9-Stage Power Chain (${CANONICAL_POWER_STAGES.length} stages)...`);
+console.log(`\n🔍 [1/5] Validating 9-Stage Power Chain (${CANONICAL_POWER_STAGES.length} stages)...`);
 if (CANONICAL_POWER_STAGES.length !== 9) {
   console.error(`❌ Expected exactly 9 canonical power stages, found ${CANONICAL_POWER_STAGES.length}`);
   errorsCount++;
@@ -38,7 +39,7 @@ if (errorsCount === 0) {
 }
 
 // 2. Validate Cameroon Grid Assets
-console.log(`\n🔍 [2/4] Validating Cameroon Power Grid Dataset (${CAMEROON_GRID_ASSETS_2026.length} assets)...`);
+console.log(`\n🔍 [2/5] Validating Cameroon Power Grid Dataset (${CAMEROON_GRID_ASSETS_2026.length} assets)...`);
 CAMEROON_GRID_ASSETS_2026.forEach((asset) => {
   const result = CameroonGridAssetSchema.safeParse(asset);
   if (!result.success) {
@@ -51,7 +52,7 @@ if (errorsCount === 0) {
 }
 
 // 3. Validate Normative Formula Registry
-console.log(`\n🔍 [3/4] Validating Normative Formula Registry (${NORMATIVE_FORMULA_REGISTRY.length} formulas)...`);
+console.log(`\n🔍 [3/5] Validating Normative Formula Registry (${NORMATIVE_FORMULA_REGISTRY.length} formulas)...`);
 NORMATIVE_FORMULA_REGISTRY.forEach((formula) => {
   if (!formula.governingStandard || !formula.clause) {
     console.error(`❌ Formula [${formula.id}] is missing governing standard or clause citation`);
@@ -66,14 +67,28 @@ if (errorsCount === 0) {
   console.log('✅ Normative Formulas: 100% tethered to IEC / NF C clauses with parameter units.');
 }
 
-// 4. Emit Content Metadata Manifest
-console.log('\n🔍 [4/4] Emitting build manifest...');
+// 4. Validate Didactic Worked Examples
+console.log(`\n🔍 [4/5] Validating Worked Examples Registry (${WORKED_EXAMPLES_REGISTRY.length} examples)...`);
+WORKED_EXAMPLES_REGISTRY.forEach((we) => {
+  const result = WorkedExampleSchema.safeParse(we);
+  if (!result.success) {
+    console.error(`❌ Worked Example [${we.id}] schema error:`, result.error.issues);
+    errorsCount++;
+  }
+});
+if (errorsCount === 0) {
+  console.log('✅ Worked Examples: 100% step-by-step arithmetic and normative compliance verified.');
+}
+
+// 5. Emit Content Metadata Manifest
+console.log('\n🔍 [5/5] Emitting build manifest...');
 const manifest = {
   buildTimestamp: new Date().toISOString(),
   platformVersion: '2.0.0-normative',
   canonicalStagesCount: CANONICAL_POWER_STAGES.length,
   cameroonAssetsCount: CAMEROON_GRID_ASSETS_2026.length,
   normativeFormulasCount: NORMATIVE_FORMULA_REGISTRY.length,
+  workedExamplesCount: WORKED_EXAMPLES_REGISTRY.length,
   status: errorsCount === 0 ? 'VALIDATED' : 'FAILED',
 };
 

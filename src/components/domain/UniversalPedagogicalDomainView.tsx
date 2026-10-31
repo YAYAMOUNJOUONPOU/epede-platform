@@ -26,6 +26,10 @@ import type { DomainCode } from '../../types/epede';
 import type { CalculatorTabType } from '../calculators/services/calculationReportService';
 import type { SimulationTabType } from '../simulation/SimulationLabView';
 import { DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY } from './domainPedagogicalContentRegistry';
+import { CANONICAL_POWER_STAGES } from '../../data/canonicalPowerChain';
+import { PowerChain } from '../common/PowerChain';
+import { WORKED_EXAMPLES_REGISTRY } from '../../data/workedExamplesRegistry';
+import { WorkedExampleViewer } from '../common/WorkedExampleViewer';
 
 interface UniversalPedagogicalDomainViewProps {
   domainCode: DomainCode;
@@ -80,8 +84,31 @@ export const UniversalPedagogicalDomainView: React.FC<UniversalPedagogicalDomain
   const { sectionA, sectionB, sectionC, sectionD, sectionE, sectionF } = data;
   const activeTopic = sectionE[activeTopicIndex] || sectionE[0];
 
+  const matchingStage =
+    CANONICAL_POWER_STAGES.find((s) => s.domainCode === domainCode) ||
+    CANONICAL_POWER_STAGES[0];
+  const matchingStageId = matchingStage.id;
+  const matchingWorkedExample = WORKED_EXAMPLES_REGISTRY.find(
+    (we) => we.domainCode === domainCode
+  );
+
   return (
     <div className="space-y-12">
+      {/* ───────────────────────────────────────────────────────────────────────
+          UNIVERSAL CANONICAL POWER CHAIN CONTEXT & UPSTREAM/DOWNSTREAM NAVIGATION
+         ─────────────────────────────────────────────────────────────────────── */}
+      <PowerChain
+        locale={locale}
+        currentStageId={matchingStageId}
+        onSelectStage={(stage) => {
+          if (stage.domainCode !== domainCode && onNavigateView) {
+            onNavigateView('domain-detail', stage.domainCode);
+          }
+        }}
+        showDetails={false}
+        showNavigationButtons={true}
+      />
+
       {/* ───────────────────────────────────────────────────────────────────────
           ANCHOR JUMP BAR & WORKBENCH SHORTCUT
          ─────────────────────────────────────────────────────────────────────── */}
@@ -528,6 +555,21 @@ export const UniversalPedagogicalDomainView: React.FC<UniversalPedagogicalDomain
                   : 'Notice: Sizing assistance and educational training tool. Final sign-off requires approval by certified design engineer.'}
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Interactive Normative Worked Example */}
+        {matchingWorkedExample && (
+          <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
+            <WorkedExampleViewer
+              example={matchingWorkedExample}
+              locale={locale}
+              onOpenCalculator={
+                activeTopic?.calcTab
+                  ? () => onNavigateCalculator?.(activeTopic.calcTab!)
+                  : undefined
+              }
+            />
           </div>
         )}
       </section>
