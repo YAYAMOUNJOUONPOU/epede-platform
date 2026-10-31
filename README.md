@@ -1,105 +1,96 @@
 # EPEDE — Electrical Power Engineering Digital Environment
+**Authoritative Power Systems Knowledge & Cameroon Infrastructure Observatory**
 
-**EPEDE** is a professional, research-driven, interconnected electrical power engineering knowledge environment designed by **Mounjouonpou Yaya** (Electrical and Power Systems Engineer).
-
-It helps early-career electrical engineers, technicians, engineers transitioning into power systems, students preparing for practice, and seasoned professionals understand how electrical power systems work in real life—from generation plants and high-voltage transmission lines to substations, distribution networks, protection schemes, and industrial loads—with a dedicated focus on **African and Cameroonian electrical power infrastructure (RIS & RIN)**.
-
-> **Scope Statement:** EPEDE is an interactive technical knowledge and infrastructure exploration platform. It complements—and does not replace—certified power system study and CAD suites such as ETAP, DIgSILENT PowerFactory, PSS®E, or AutoCAD Electrical.
-
----
-
-## 1. Visual Identity & Design Tokens
-
-EPEDE implements a dark engineering interface engineered for long-form technical reading, schematic clarity, and controlled contrast:
-
-| Token | Hex Code | Role |
-| :--- | :--- | :--- |
-| `--epede-bg-primary` | `#0B0F12` | Primary obsidian canvas background |
-| `--epede-bg-secondary` | `#151C1E` | Secondary technical panel and card surface |
-| `--epede-text-primary` | `#F4F1E8` | Warm parchment primary text for high readability |
-| `--epede-text-secondary` | `#A9ADA5` | Muted technical ash for secondary metadata |
-| `--epede-accent-gold` | `#D7A64A` | Engineering gold accent (CTAs, active states, busbar highlights) |
-| `--epede-tech-blue` | `#567A87` | Technical blue-grey (borders, structural dividers, badges) |
+**Platform Lead & Architect:** Mounjouonpou Yaya (Electrical and Power Systems Engineer)  
+**Target Environment:** https://epede-platform.vercel.app  
+**Repository:** https://github.com/YAYAMOUNJOUONPOU/epede-platform.git  
+**Version:** 2.0 (Enterprise Knowledge Architecture)
 
 ---
 
-## 2. Knowledge Architecture (21 Interconnected Pillars)
+## 1. Product Boundary & Purpose (Owner Decision D-1)
 
-The platform organizes over 100 modules, 39 industrial equipment specifications, and 80+ international standards (`IEC`, `IEEE`, `CIGRE`, `NF C`, `SONATREL Grid Code`) into three coherent macro-groups:
+**EPEDE is an authoritative, bilingual (French & English) electrical power engineering knowledge and infrastructure exploration environment.**
 
-1. **Group I — The Physical Power System Chain (`D01`–`D06`)**
-   - `D01` Electrical Power Generation (Hydro, Thermal Gas, Solar PV)
-   - `D02` Electrical Machines & Power Transformers
-   - `D03` High-Voltage Transmission (`90 kV` / `110 kV` / `225 kV` / `400 kV`)
-   - `D04` HV/MV Electrical Substations (AIS / GIS topologies, primary & secondary engineering)
-   - `D05` Medium-Voltage Distribution (`15 kV` / `30 kV` RMU rings, urban & rural feeders)
-   - `D06` Low-Voltage Distribution & Industrial Installations (`400 V`, `TN-S` / `TN-C-S` / `TT` / `IT`)
-2. **Group II — Control, Protection, Storage & Operational Integrity (`D07`–`D16`)**
-   - `D07` Power Electronics, Drives & FACTS
-   - `D08` Energy Storage & Hybrid Microgrids (BESS)
-   - `D09` Power System Analysis & Stability
-   - `D10` Power Quality, Harmonics & EMC
-   - `D11` Protection Systems & Relay Coordination (`ANSI 21`, `87T`, `87B`, `50/51`, `67N`)
-   - `D12` Substation Automation, SCADA & `IEC 61850`
-   - `D13` Electrical Instrumentation & Metering (`CT` / `VT` accuracy & saturation)
-   - `D14` Earthing Systems & Lightning Protection (`IEEE 80`, `IEC 62305`)
-   - `D15` Testing, Commissioning (FAT/SAT) & Diagnostics (`DGA`, `SFRA`, `Tan Delta`)
-   - `D16` Electrical Safety, Arc Flash & Maintenance (`LOTO`, `NFPA 70E`)
-3. **Group III — Cross-Cutting Engineering Foundations (`L01`–`L05`)**
-   - `L01` Electrotechnical Fundamentals & Per-Unit Theory
-   - `L02` Materials, Dielectrics (`SF6`, mineral oil, XLPE) & Thermal Physics
-   - `L03` International Standards (`IEC`, `IEEE`, `CIGRE`, `NF C`) & IEV Terminology (`IEC 60050`)
-   - `L04` Engineering Documentation, Schematics & Project Lifecycle
-   - `L05` National Grid Context & Institutional Governance (Cameroon `SONATREL`, `Eneo`, `EDC`, `ARSEL`, `NHPC`)
+Its mission is to bridge the gap between abstract academic electrical engineering theory and the physical realities of generation facilities, high-voltage transmission grids, substations, medium/low voltage distribution networks, industrial plant switchboards, and motor control centers.
+
+### Operational Boundaries
+- **Educational Worked Examples:** All 19 calculation modules on the platform are **interactive worked examples** designed to illustrate normative formulas, parameter sensitivities, and calculation steps. 
+- **Non-Replacement of Certified CAD/EDA Tools:** EPEDE complements—and explicitly does **not** replace—specialized power systems simulation and design tools such as ETAP, DIgSILENT PowerFactory, PSS®E, or AutoCAD Electrical.
+- **No Commercial Sizing Liability:** EPEDE does not issue certified calculation notes, protection approval certificates, or legally binding installation sizing reports. All real installations must be verified by licensed professional engineers using certified software.
 
 ---
 
-## 3. Real-World Cameroon Power Network Explorer & Research Integrity
+## 2. Canonical Information Architecture: The Unified Electrical Chain
 
-The **Cameroon Power Network Explorer** (`#/en/cameroon-grid`) provides a structured engineering observatory of Cameroon's electrical power system:
-- **Southern Interconnected Grid (RIS):** `225 kV` and `90 kV` backbone linking Sanaga basin hydropower plants (**Nachtigal 420 MW**, **Songloulou 384 MW**, **Edéa 276 MW**), the Southern **Memve'ele 211 MW** hydro plant, and coastal thermal plants (**Kribi 216 MW**, **Limbe 85 MW**, **Logbaba**) to major load centers in **Yaoundé (Oyomabang, Ahala, Ngousso, Nsimalen)** and **Douala (Bekoko, Logbaba, Koumassi, Makepe, Deido)**.
-- **Northern Interconnected Grid (RIN):** **Lagdo 72 MW** hydropower plant and **Maroua / Guider** solar PV + BESS hybrid plants supplying **Garoua**, **Ngaoundéré**, and **Maroua** across `110 kV` and `90 kV` corridors.
-- **Eastern Regional System:** **Lom Pangar** regulating dam (`6 billion m³` reservoir) and `30 MW` toe-of-dam powerhouse.
-- **Data Provenance & Verification:** Every power plant, substation, and transmission corridor explicitly records its `verification_status` (`CONFIRMED_PUBLIC_SOURCE`, `UNDER_CONSTRUCTION_VERIFIED`, or `ENGINEERING_REFERENCE_MODEL`), `source_citation`, `source_date`, and engineering scope notes.
+EPEDE organizes all technical content around **One Continuous Physical Chain, 6 Cross-Cutting Disciplines, and 4 Shared Libraries**:
+
+```text
+0. FOUNDATIONS (Circuits & AC Theory, Symbols & Schematics, Electrical Safety & LOTO)
+   │
+   ├── 1. Generation (Hydro, Thermal Gas, Solar PV, Synchronous Alternators)
+   ├── 2. Transmission (90 kV / 110 kV / 225 kV Lines, Lattice Towers, SIL)
+   ├── 3. Substations (AIS & GIS Switchyards, Busbar Schemes, Interlocking)
+   ├── 4. MV/LV Distribution (30 kV / 15 kV Rings, RMUs, H61 Pole Transformers)
+   ├── 5. Installations (Main LV Switchboards / TGBT Form 1-4b, Earthing TT/TN/IT)
+   ├── 6. Motors & Drives (DOL, Star-Delta, Soft Starters, VFDs, Harmonics)
+   ├── 7. Automation & Instrumentation (PLCs, P&ID ISA-5.1, 4-20mA, Sensors)
+   └── 8. Final Electrical Loads (Industrial Motors, Lighting, HVAC, Power Quality)
+
+CROSS-CUTTING DISCIPLINES:
+- Protection & Control (ANSI 50/51, 21, 87T, 67N, Selectivity)
+- Earthing & Lightning (IEEE 80-2013 Mesh Potentials, IEC 62305)
+- Power Quality & EMC (IEEE 519-2022, IEC 61000-4-30, THD)
+- Renewables & Energy Storage (BESS, Inverters, Microgrids)
+- ELV, Telecom & Security (CFA, CCTV, Access Control, Fire Alarm)
+- Testing, Maintenance & Commissioning (FAT/SAT, IR, PI, DGA)
+
+SHARED LIBRARIES:
+- Equipment Catalog (38 Canonical Types with Technical Cutaways)
+- Standards Governance (IEC, IEEE, CIGRE, NF C clause-cited registry)
+- Bilingual Electrotechnical Glossary (IEC 60050 IEV terminology)
+- Cameroon National Power Grid (SONATREL / ENEO Observatory)
+```
 
 ---
 
-## 4. Technical Stack & Backend API
+## 3. Real-World Cameroon Power Network Explorer
 
-- **Frontend:** React 19, TypeScript 5.8, Tailwind CSS v4, Lucide React, Motion, Three.js / `@react-three/fiber` (3D equipment cutaways), D3 (knowledge graph & TCC curves), Leaflet (GIS network views), `pdf-lib` (vector PDF technical exports).
-- **Backend (`server.ts`):** Express + TypeScript REST API (`/api/v1/*`) with `helmet`, `cors`, `express-rate-limit`, and `zod` schema validation:
-  - `GET /api/v1/health` — API health check
-  - `GET /api/v1/domains` & `GET /api/v1/domains/:code` — 16 Electrical Domains & metadata
-  - `GET /api/v1/equipment` & `GET /api/v1/equipment/:id` — 39 real-world equipment datasheets
-  - `GET /api/v1/cameroon-grid` (`/plants`, `/substations`, `/corridors`) — Verified Cameroon grid dataset with source provenance
-  - `GET /api/v1/graph` — Interconnected knowledge graph nodes and edges
-  - `GET /api/v1/search?q=...` — Unified full-text search across domains, equipment, standards, and grid assets
-  - `GET /api/v1/workbenches`, `/api/v1/scenarios`, `/api/v1/field-engineering` — Simulation & commissioning endpoints
+The **Cameroon Power Network Explorer** provides a structured, evidence-based engineering observatory of Cameroon's interconnected power systems:
+- **Southern Interconnected Grid (RIS):** 225 kV and 90 kV backbone linking Sanaga basin hydropower facilities (**Nachtigal 420 MW**, **Song Loulou 384 MW**, **Edéa 276 MW**), the **Memve'ele 211 MW** hydro plant (evacuated via 225 kV line Nyabizan $\rightarrow$ Ebolowa $\rightarrow$ Ahala), and coastal thermal plants (**Kribi 216 MW**, **Dibamba 88 MW**) to major metropolitan centers in **Yaoundé** (Oyomabang, Nyom II, Ahala) and **Douala** (Bekoko, Logbaba, Koumassi).
+- **Sanaga River Regulation:** The **Lom Pangar** reservoir dam ($6\text{ billion m}^3$) regulates Sanaga river discharge at $\sim 1,000\text{ m}^3/\text{s}$ throughout the dry season, sustaining generation at Song Loulou, Edéa, and Nachtigal.
+- **Northern Interconnected Grid (RIN):** **Lagdo 72 MW** hydropower plant and emergency thermal plants supplying Garoua, Maroua, and Ngaoundéré across 110 kV and 90 kV lines.
+- **RIS–RIN Interconnection Project (PIRECT):** 225 kV transmission link ($\sim 530\text{ km}$ from Nachtigal to Wouro Soua with new substations at Ntui, Yoko, Tibati, and Wouro Soua) currently **under construction** to integrate the northern and southern systems.
 
 ---
 
-## 5. Local Development & Production Build
+## 4. Technology Stack & Architecture
+
+- **Frontend Core:** React 19, TypeScript 5.8, Tailwind CSS v4, Vite 6, Lucide Icons.
+- **Engineering Graphics:** Three.js / `@react-three/fiber` (3D switchyard cutaways), SVG Vector Single-Line Diagrams, Canvas Particle Flow engines.
+- **Offline & Cache Protection:** Service Worker v2.4 with auto-purging chunk protection and inline `vite:preloadError` dynamic recovery in `index.html`.
+- **Pre-Rendered Semantic SEO:** Native semantic HTML fallback inside `<div id="root">` enabling instant AI indexing (Claude, Gemini, search crawlers) and machine-readable discovery via `/llms.txt` and `/llms-full.txt`.
+
+---
+
+## 5. Local Development & Verification
 
 ### Prerequisites
 - Node.js `>= 20.x`
 - npm `>= 10.x`
 
-### Setup & Commands
+### Commands
 
 ```bash
 # 1. Install dependencies
 npm install
 
-# 2. Start the full-stack development server (Express API + Vite HMR on port 3000)
+# 2. Start Vite development server
 npm run dev
 
-# 3. Run TypeScript static type checking
+# 3. Static TypeScript typecheck (blocking CI gate)
 npm run lint
 
-# 4. Build for production (Vite frontend bundle in dist/ + esbuild server bundle in dist-server/)
+# 4. Production build (typecheck + vite bundle)
 npm run build
-
-# 5. Start the production server
-npm run start
 ```
-

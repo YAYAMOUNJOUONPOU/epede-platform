@@ -29,6 +29,8 @@ import { CinematicVernovaHero } from './CinematicVernovaHero';
 import { RealCameroonGeographicMap } from '../grid/RealCameroonGeographicMap';
 import { DynamicSectionBackground } from '../ui/DynamicSectionBackground';
 import { HOMEPAGE_IMAGE_LIBRARY } from '../../data/homepageImageLibrary';
+import { CANONICAL_POWER_STAGES, CanonicalPowerStage } from '../../data/canonicalPowerChain';
+import { PowerChain } from '../common/PowerChain';
 
 export interface HomeViewProps {
   locale: 'fr' | 'en';
@@ -59,28 +61,8 @@ interface LearningPathwayCard {
   topicsEn: string[];
   topicsFr: string[];
   imageUrl: string;
-  targetDomain: DomainCode;
-}
-
-interface NineStageItem {
-  num: string;
-  id: string;
-  journeyStage: StageId;
-  domainCode: DomainCode;
-  titleEn: string;
-  titleFr: string;
-  voltage: string;
-  imageUrl: string;
-  explanationEn: string;
-  explanationFr: string;
-  purposeEn: string;
-  purposeFr: string;
-  principleEn: string;
-  principleFr: string;
-  equipmentEn: string[];
-  equipmentFr: string[];
-  cameroonContextEn: string;
-  cameroonContextFr: string;
+  targetDomain?: DomainCode;
+  targetView?: string;
 }
 
 interface FeaturedEquipmentItem {
@@ -139,7 +121,8 @@ const LEARNING_PATHWAYS: LearningPathwayCard[] = [
       'Facteur de puissance (cos φ)',
     ],
     imageUrl: '/images/homepage_uploads/batch_04_image_019.jpg',
-    targetDomain: 'D01',
+    targetDomain: 'D16',
+    targetView: 'journey',
   },
   {
     id: 'pathway-02-components',
@@ -170,7 +153,7 @@ const LEARNING_PATHWAYS: LearningPathwayCard[] = [
       'Cellules HTA/BT et Câbles électriques',
     ],
     imageUrl: '/images/homepage_uploads/batch_02_image_009.jpg',
-    targetDomain: 'D04',
+    targetView: 'equipment',
   },
   {
     id: 'pathway-03-installations',
@@ -356,231 +339,11 @@ const LEARNING_PATHWAYS: LearningPathwayCard[] = [
       'Consignation (LOTO), EPI et risque d’arc électrique',
     ],
     imageUrl: '/images/homepage_uploads/batch_03_image_015.jpg',
-    targetDomain: 'D08',
+    targetDomain: 'D16',
   },
 ];
 
-// 9-Stage Visual Power System Explorer Data (Section 10 of EPEDE 2.0 Brief)
-const NINE_POWER_STAGES: NineStageItem[] = [
-  {
-    num: '01',
-    id: 'stage-generation',
-    journeyStage: 'generation',
-    domainCode: 'D01',
-    titleEn: 'Power Generation',
-    titleFr: 'Production d’Électricité',
-    voltage: '10.3 kV – 15.5 kV',
-    imageUrl: '/images/homepage_uploads/batch_01_image_005.jpg',
-    explanationEn:
-      'Generating stations convert primary energy (falling water, natural gas, solar radiation, or wind) into three-phase alternating current at 50 Hz.',
-    explanationFr:
-      'Les centrales convertissent une énergie primaire (chute d’eau, gaz naturel, rayonnement solaire ou vent) en courant alternatif triphasé à 50 Hz.',
-    purposeEn: 'Supply the electrical power required by the entire interconnected grid in real time.',
-    purposeFr: 'Fournir en temps réel la puissance active (MW) et réactive (MVAR) appelée par le réseau.',
-    principleEn:
-      'Faraday’s Law of Electromagnetic Induction: a rotating magnetic field (rotor) induces a sinusoidal three-phase voltage in the stationary copper windings (stator).',
-    principleFr:
-      'Loi de Faraday : la roue polaire en rotation (rotor) crée un champ magnétique tournant qui induit une tension triphasée à 50 Hz dans les enroulements du stator.',
-    equipmentEn: ['Hydraulic / Gas Turbine', 'Synchronous Alternator', 'Excitation System (AVR)', 'Speed Governor'],
-    equipmentFr: ['Turbine hydraulique / gaz', 'Alternateur synchrone', 'Régulateur de tension (AVR)', 'Régulateur de vitesse'],
-    cameroonContextEn: 'Song Loulou (384 MW), Nachtigal (420 MW), Edéa (276 MW), Memve’ele (211 MW), Kribi Gas (216 MW), Lagdo (72 MW).',
-    cameroonContextFr: 'Song Loulou (384 MW), Nachtigal (420 MW), Édéa (276 MW), Memve’ele (211 MW), Kribi Gaz (216 MW), Lagdo (72 MW).',
-  },
-  {
-    num: '02',
-    id: 'stage-step-up',
-    journeyStage: 'switchyard',
-    domainCode: 'D04',
-    titleEn: 'Step-Up Transformer',
-    titleFr: 'Transformateur Élévateur',
-    voltage: '10.5/15 kV → 225 kV',
-    imageUrl: '/images/homepage_uploads/batch_04_image_016.jpg',
-    explanationEn:
-      'Installed right outside the powerhouse, the Generator Step-Up (GSU) transformer raises voltage from generator level (10–15 kV) to transmission level (90–225 kV).',
-    explanationFr:
-      'Installé à la sortie de la centrale, le transformateur élévateur (GSU) porte la tension de l’alternateur (10–15 kV) à la haute tension de transport (90–225 kV).',
-    purposeEn:
-      'By multiplying voltage by ~15×, the current is divided by ~15× for the same power, reducing line heating losses (R·I²) by more than 200 times.',
-    purposeFr:
-      'En multipliant la tension par ~15, le courant est divisé par ~15 à puissance égale, ce qui divise par plus de 200 les pertes thermiques (R·I²) sur les lignes.',
-    principleEn:
-      'Magnetic flux coupling inside a laminated silicon-steel core transfers power from the low-voltage primary winding to the high-voltage secondary winding.',
-    principleFr:
-      'Le flux magnétique canalisé par le noyau en tôles d’acier au silicium transfère la puissance de l’enroulement basse tension vers l’enroulement haute tension.',
-    equipmentEn: ['GSU Power Transformer', '225 kV RIP Bushings', 'ONAF Cooling Radiators', 'Buchholz Relay & Surge Arresters'],
-    equipmentFr: ['Transformateur élévateur GSU', 'Traversées isolantes 225 kV', 'Aéroréfrigérants ONAF', 'Relais Buchholz et Parafoudres'],
-    cameroonContextEn: '10.3/225 kV and 15/225 kV step-up transformer bays at Song Loulou, Nachtigal, and Memve’ele switchyards.',
-    cameroonContextFr: 'Travées transformateurs élévateurs 10,3/225 kV et 15/225 kV des postes de Song Loulou, Nachtigal et Memve’ele.',
-  },
-  {
-    num: '03',
-    id: 'stage-hv-transmission',
-    journeyStage: 'transmission',
-    domainCode: 'D03',
-    titleEn: 'High-Voltage Transmission',
-    titleFr: 'Transport Haute Tension (HTB)',
-    voltage: '90 kV / 110 kV / 225 kV',
-    imageUrl: '/images/homepage_uploads/batch_02_image_008.jpg',
-    explanationEn:
-      'Overhead transmission corridors carry bulk power from remote hydro and thermal plants to major urban and industrial regions.',
-    explanationFr:
-      'Les lignes aériennes haute tension transportent de grandes quantités d’énergie depuis les centrales éloignées vers les métropoles et zones industrielles.',
-    purposeEn: 'Interconnect power stations and load centers over 50 km to 400+ km with high reliability.',
-    purposeFr: 'Relier les centres de production aux centres de consommation sur des centaines de kilomètres.',
-    principleEn:
-      'Bare aluminum-alloy conductors (ACSR / Almelec) are suspended from steel lattice towers by glass or composite insulator strings, shielded at the top by an optical ground wire (OPGW).',
-    principleFr:
-      'Des conducteurs nus en alliage d’aluminium (Almelec / ACSR) sont suspendus aux pylônes par des chaînes d’isolateurs, sous la protection d’un câble de garde (OPGW) contre la foudre.',
-    equipmentEn: ['Steel Lattice Towers', 'ACSR / Almelec Conductors', 'Glass Insulator Strings', 'OPGW Earth Wire'],
-    equipmentFr: ['Pylônes treillis acier', 'Conducteurs Almelec / ACSR', 'Chaînes d’isolateurs en verre', 'Câble de garde fibre optique OPGW'],
-    cameroonContextEn: 'SONATREL 225 kV & 90 kV corridors (RIS in the South, 110/90 kV RIN in the North).',
-    cameroonContextFr: 'Lignes 225 kV et 90 kV gérées par la SONATREL (Réseau Interconnecté Sud RIS et Nord RIN).',
-  },
-  {
-    num: '04',
-    id: 'stage-transmission-substation',
-    journeyStage: 'substation',
-    domainCode: 'D04',
-    titleEn: 'Transmission Substation',
-    titleFr: 'Poste d’Interconnexion HTB',
-    voltage: '225 kV / 90 kV',
-    imageUrl: '/images/homepage_uploads/batch_02_image_010.jpg',
-    explanationEn:
-      'High-voltage substations are the nodes of the power grid where transmission lines meet, switch configurations, and isolate faults.',
-    explanationFr:
-      'Les postes HTB constituent les nœuds d’aiguillage et de protection où convergent les lignes de transport haute tension.',
-    purposeEn: 'Route power flows, isolate short-circuits in less than 100 milliseconds, and ensure safe maintenance isolation.',
-    purposeFr: 'Aiguiller les flux d’énergie, éliminer les courts-circuits en moins de 100 ms et consigner les ouvrages en sécurité.',
-    principleEn:
-      'Protective relays (IEDs) monitor current and voltage via CTs and VTs; if a fault occurs, they trip SF6 circuit breakers while disconnectors provide visible isolation.',
-    principleFr:
-      'Les relais numériques (IED) surveillent courants et tensions via les TC et TT ; en cas de défaut, ils commandent l’ouverture du disjoncteur SF6.',
-    equipmentEn: ['225 kV / 90 kV Busbars', 'SF6 Circuit Breakers', 'Motorized Disconnectors', 'CTs, VTs & Protection Relays'],
-    equipmentFr: ['Jeux de barres 225/90 kV', 'Disjoncteurs SF6', 'Sectionneurs motorisés', 'TC, TT et Relais de protection'],
-    cameroonContextEn: 'Major SONATREL substations: Oyomabang, Nyom II, Ahala, Mangombé, Bekoko, Logbaba, Koumassi.',
-    cameroonContextFr: 'Grands postes SONATREL : Oyomabang, Nyom II, Ahala, Mangombé, Bekoko, Logbaba, Koumassi.',
-  },
-  {
-    num: '05',
-    id: 'stage-step-down',
-    journeyStage: 'substation',
-    domainCode: 'D04',
-    titleEn: 'Step-Down Transformation',
-    titleFr: 'Transformation Abaisseuse HTB/HTA',
-    voltage: '225/90 kV → 30/15 kV',
-    imageUrl: '/images/homepage_uploads/batch_02_image_006.jpg',
-    explanationEn:
-      'Primary substation transformers step high transmission voltage (225 kV or 90 kV) down to medium distribution voltage (30 kV or 15 kV).',
-    explanationFr:
-      'Dans les postes sources HTB/HTA, les transformateurs abaissent la haute tension (90 kV ou 225 kV) vers la moyenne tension (15 kV ou 30 kV).',
-    purposeEn: 'Reduce voltage to a level suitable for routing across urban underground cables and regional overhead feeders.',
-    purposeFr: 'Adapter la tension pour alimenter les départs moyenne tension urbains et ruraux en toute sécurité.',
-    principleEn:
-      'Equipped with an On-Load Tap Changer (OLTC), the step-down transformer keeps the 15 kV / 30 kV busbar voltage stable even when city load fluctuates.',
-    principleFr:
-      'Doté d’un régleur en charge (REG / OLTC), le transformateur maintient constante la tension 15 kV / 30 kV malgré les variations de consommation.',
-    equipmentEn: ['90/30 kV or 90/15 kV Transformer', 'On-Load Tap Changer (OLTC)', 'Neutral Earthing Resistor', 'Primary MV Switchboard'],
-    equipmentFr: ['Transformateur 90/30 kV ou 90/15 kV', 'Régleur en charge (OLTC)', 'Résistance de mise à la terre du neutre', 'Rame HTA primaire'],
-    cameroonContextEn: 'SONATREL / Eneo interface bays at Ngousso, Kondengui, Bassa, Bonabéri, andBafoussam.',
-    cameroonContextFr: 'Travées de transformation HTB/HTA aux postes de Ngousso, Kondengui, Bassa, Bonabéri et Bafoussam.',
-  },
-  {
-    num: '06',
-    id: 'stage-mv-distribution',
-    journeyStage: 'distribution',
-    domainCode: 'D05',
-    titleEn: 'Medium-Voltage Distribution',
-    titleFr: 'Distribution Moyenne Tension (HTA)',
-    voltage: '15 kV / 20 kV / 30 kV',
-    imageUrl: '/images/homepage_uploads/batch_01_image_004.jpg',
-    explanationEn:
-      'Medium-voltage feeders distribute power through city districts via underground XLPE cable rings and across rural areas via overhead lines.',
-    explanationFr:
-      'Les réseaux HTA (15 kV ou 30 kV) maillent les quartiers urbains en câbles souterrains et desservent les zones périurbaines et industrielles.',
-    purposeEn: 'Deliver power to neighborhood distribution substations and medium-voltage industrial customers.',
-    purposeFr: 'Alimenter les postes de quartier MT/BT ainsi que les clients industriels raccordés directement en moyenne tension.',
-    principleEn:
-      'Urban MV networks are built as open rings using Ring Main Units (RMUs): if one cable section fails, technicians isolate it and restore power from the other side.',
-    principleFr:
-      'En ville, le réseau HTA est exploité en boucle ouverte grâce aux cellules RMU : en cas de défaut sur un câble, on isole le tronçon et on réalimente par l’autre côté.',
-    equipmentEn: ['Ring Main Units (RMU)', 'MV XLPE Underground Cables', 'Pole-Mounted Auto-Reclosers', 'MV Load-Break Switches'],
-    equipmentFr: ['Cellules HTA RMU', 'Câbles souterrains HTA PRC/XLPE', 'Disjoncteurs réenclencheurs en tête de ligne', 'Interrupteurs aériens (IACM)'],
-    cameroonContextEn: 'Eneo 15 kV urban networks (Douala & Yaoundé) and 30 kV regional distribution lines.',
-    cameroonContextFr: 'Réseaux Eneo 15 kV (Douala et Yaoundé) et lignes régionales 30 kV.',
-  },
-  {
-    num: '07',
-    id: 'stage-dist-transformer',
-    journeyStage: 'distribution',
-    domainCode: 'D05',
-    titleEn: 'Distribution Transformer',
-    titleFr: 'Transformateur de Distribution MT/BT',
-    voltage: '15/30 kV → 400 V / 230 V',
-    imageUrl: '/images/homepage_uploads/batch_04_image_016.jpg',
-    explanationEn:
-      'Located on neighborhood poles (H61) or inside masonry cabins, the distribution transformer performs the final voltage step-down to 400 V / 230 V.',
-    explanationFr:
-      'Installé en haut de poteau (H61) ou en cabine maçonnée de quartier, il abaisse la moyenne tension (15/30 kV) en basse tension (400 V / 230 V).',
-    purposeEn: 'Provide safe, usable low-voltage three-phase (400 V) and single-phase (230 V) electricity to consumers.',
-    purposeFr: 'Délivrer la basse tension utilisable (400 V entre phases, 230 V entre phase et neutre) avec création du conducteur Neutre.',
-    principleEn:
-      'Delta-Star (Dyn11) winding connection: the secondary star point is grounded to create the Neutral conductor (N) alongside phases L1, L2, L3.',
-    principleFr:
-      'Couplage Triangle-Étoile (Dyn11) : le point neutre du secondaire étoile est relié à la terre pour distribuer les 3 phases (L1, L2, L3) et le Neutre (N).',
-    equipmentEn: ['Dyn11 Distribution Transformer (50–630 kVA)', 'MV ZnO Surge Arresters', 'MV HRC Protection Fuses', 'LV Feeder Pillar / Disjoncteur Haut de Poteau'],
-    equipmentFr: ['Transformateur Dyn11 (50–630 kVA)', 'Parafoudres HTA ZnO', 'Fusibles HTA HPC', 'Coffret disjoncteur BT / Tableau TUR'],
-    cameroonContextEn: 'Ubiquitous Eneo H61 pole-mounted transformers (50, 100, 160 kVA) and cabin substations (250, 400, 630 kVA).',
-    cameroonContextFr: 'Postes sur poteau H61 Eneo (50, 100, 160 kVA) et postes cabines de quartier (250, 400, 630 kVA).',
-  },
-  {
-    num: '08',
-    id: 'stage-lv-network',
-    journeyStage: 'consumption',
-    domainCode: 'D06',
-    titleEn: 'Low-Voltage Network',
-    titleFr: 'Réseau Basse Tension (BT)',
-    voltage: '400 V 3Φ / 230 V 1Φ',
-    imageUrl: '/images/homepage_uploads/batch_03_image_011.jpg',
-    explanationEn:
-      'Low-voltage lines run along streets to building service drops, utility meters, and main distribution boards.',
-    explanationFr:
-      'Les lignes basse tension parcourent les rues jusqu’aux branchements, compteurs et tableaux électriques des abonnés.',
-    purposeEn: 'Distribute 230 V single-phase power to homes and 400 V three-phase power to workshops, offices, and buildings.',
-    purposeFr: 'Alimenter les habitations en monophasé 230 V (Phase + Neutre) et les ateliers ou immeubles en triphasé 400 V.',
-    principleEn:
-      'Insulated twisted aerial bundled conductors (ABC) or underground cables carry L1, L2, L3, and Neutral, protected against overload and short-circuit.',
-    principleFr:
-      'Des faisceaux aériens torsadés isolés ou des câbles souterrains distribuent L1, L2, L3 et Neutre jusqu’au disjoncteur de branchement.',
-    equipmentEn: ['Twisted ABC Aerial Cables', 'Energy Meters (Prepaid / Smart)', 'Main Breaker & RCD', 'Earthing Electrode (TT / TN)'],
-    equipmentFr: ['Câbles aériens torsadés BT', 'Compteurs d’énergie', 'Disjoncteur de branchement différentiel', 'Prise de terre locale (TT / TN)'],
-    cameroonContextEn: 'Public LV distribution at 230/400 V 50 Hz (TT earthing scheme per NF C 15-100 / IEC 60364).',
-    cameroonContextFr: 'Distribution publique BT 230/400 V 50 Hz en schéma TT selon NF C 15-100 / CEI 60364.',
-  },
-  {
-    num: '09',
-    id: 'stage-final-consumer',
-    journeyStage: 'consumption',
-    domainCode: 'D07',
-    titleEn: 'Final Consumer & Industry',
-    titleFr: 'Consommateur Final & Industrie',
-    voltage: '230 V / 400 V / 690 V',
-    imageUrl: '/images/homepage_uploads/batch_03_image_014.jpg',
-    explanationEn:
-      'Inside homes, hospitals, commercial buildings, and factories, electricity is finally converted into light, cooling, motion, and industrial production.',
-    explanationFr:
-      'Dans les maisons, hôpitaux, immeubles et usines, l’électricité est convertie en éclairage, froid, mouvement mécanique et pilotage.',
-    purposeEn: 'Safely power lighting, socket circuits, three-phase industrial motors, pumps, compressors, and automation.',
-    purposeFr: 'Alimenter en toute sécurité les circuits terminaux, les moteurs triphasés, les pompes et les lignes automatisées.',
-    principleEn:
-      'Each final circuit is protected by a dedicated circuit breaker and RCD, while industrial motors use coordinated starter assemblies (Breaker + Contactor + Thermal Relay or VFD).',
-    principleFr:
-      'Chaque circuit est protégé par un disjoncteur divisionnaire et un différentiel, tandis que les moteurs sont pilotés par des départs moteurs coordonnés.',
-    equipmentEn: ['Final Distribution Boards', '3Φ Induction Motors & Starters', 'Variable Frequency Drives (VFD)', 'PLC & Standby Generator / UPS'],
-    equipmentFr: ['Tableaux divisionnaires et TGBT', 'Moteurs asynchrones triphasés', 'Variateurs de vitesse (VFD)', 'Automates PLC et Groupes de secours'],
-    cameroonContextEn: 'Residential, commercial, and industrial installations across Douala, Yaoundé, Kribi, Bafoussam, and Garoua.',
-    cameroonContextFr: 'Installations domestiques, tertiaires et industrielles à Douala, Yaoundé, Kribi, Bafoussam et Garoua.',
-  },
-];
+// Note: 9-Stage Power Chain data is imported canonically from src/data/canonicalPowerChain.ts (CANONICAL_POWER_STAGES)
 
 // 6 Featured Equipment Cards (Section 5 of EPEDE 2.0 Homepage)
 const FEATURED_EQUIPMENT: FeaturedEquipmentItem[] = [
@@ -739,14 +502,16 @@ export const HomeView: React.FC<HomeViewProps> = ({
 }) => {
   const isFr = locale === 'fr';
   const [pathwayFilter, setPathwayFilter] = useState<'all' | 'beginner' | 'technician' | 'engineer'>('all');
-  const [selectedStageIdx, setSelectedStageIdx] = useState<number>(0);
+  const [selectedStageId, setSelectedStageId] = useState<string>('stage-01');
   const [selectedStarterIdx, setSelectedStarterIdx] = useState<number>(2); // Default highlight: KM1 Contactor
 
   const filteredPathways = LEARNING_PATHWAYS.filter(
     (p) => pathwayFilter === 'all' || p.level === pathwayFilter
   );
 
-  const activeStage = NINE_POWER_STAGES[selectedStageIdx] || NINE_POWER_STAGES[0];
+  const activeStage =
+    CANONICAL_POWER_STAGES.find((s) => s.id === selectedStageId) ||
+    CANONICAL_POWER_STAGES[0];
   const activeStarterItem = MOTOR_STARTER_CHAIN[selectedStarterIdx] || MOTOR_STARTER_CHAIN[0];
 
   return (
@@ -976,7 +741,15 @@ export const HomeView: React.FC<HomeViewProps> = ({
           {filteredPathways.map((pathway) => (
             <div
               key={pathway.id}
-              onClick={() => onNavigateView('thematic-journeys')}
+              onClick={() => {
+                if (pathway.targetView) {
+                  onNavigateView(pathway.targetView);
+                } else if (pathway.targetDomain) {
+                  onSelectDomain(pathway.targetDomain);
+                } else {
+                  onNavigateView('thematic-journeys');
+                }
+              }}
               className="group rounded-2xl bg-[#102A43]/40 border border-white/10 hover:border-[#B8F000]/50 backdrop-blur-xl overflow-hidden flex flex-col justify-between transition-all duration-300 hover:shadow-[0_12px_30px_rgba(0,0,0,0.5)] cursor-pointer"
             >
               <div>
@@ -1077,49 +850,14 @@ export const HomeView: React.FC<HomeViewProps> = ({
           </button>
         </div>
 
-        {/* Connected 9-Stage Horizontal Flowchart */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-9 gap-2">
-          {NINE_POWER_STAGES.map((stage, idx) => {
-            const isSelected = idx === selectedStageIdx;
-            return (
-              <button
-                key={stage.id}
-                type="button"
-                onClick={() => setSelectedStageIdx(idx)}
-                className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
-                  isSelected
-                    ? 'bg-[#B8F000] text-[#102A43] border-[#B8F000] shadow-[0_0_15px_rgba(184,240,0,0.35)] font-black'
-                    : 'bg-white/[0.04] text-[#F7F8F5] border-white/10 hover:border-white/25 hover:bg-white/[0.08]'
-                }`}
-              >
-                <div className="flex items-center justify-between w-full mb-1.5">
-                  <span
-                    className={`font-mono text-[10px] font-black px-1.5 py-0.5 rounded ${
-                      isSelected ? 'bg-[#102A43] text-[#B8F000]' : 'bg-white/[0.06] text-[#B8F000]'
-                    }`}
-                  >
-                    {stage.num}
-                  </span>
-                  {idx < NINE_POWER_STAGES.length - 1 && (
-                    <span className={`font-mono text-xs ${isSelected ? 'text-[#102A43]' : 'text-[#A9ADA5]'}`}>
-                      →
-                    </span>
-                  )}
-                </div>
-                <div className="text-xs font-bold leading-snug line-clamp-2">
-                  {isFr ? stage.titleFr : stage.titleEn}
-                </div>
-                <div
-                  className={`text-[10px] font-mono mt-1.5 truncate ${
-                    isSelected ? 'text-[#102A43]/80 font-bold' : 'text-[#A9ADA5]'
-                  }`}
-                >
-                  {stage.voltage}
-                </div>
-              </button>
-            );
-          })}
-        </div>
+        {/* Connected 9-Stage Canonical Power Chain */}
+        <PowerChain
+          locale={locale}
+          currentStageId={selectedStageId}
+          onSelectStage={(stage) => setSelectedStageId(stage.id)}
+          showDetails={false}
+          showNavigationButtons={false}
+        />
 
         {/* Selected Stage Detailed Visual Inspection Panel */}
         <div className="rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xl overflow-hidden grid grid-cols-1 lg:grid-cols-12">
@@ -1128,7 +866,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             {activeStage.imageUrl ? (
               <img
                 src={activeStage.imageUrl}
-                alt={isFr ? activeStage.titleFr : activeStage.titleEn}
+                alt={isFr ? activeStage.title.fr : activeStage.title.en}
                 className="w-full h-full object-cover"
               />
             ) : (
@@ -1144,10 +882,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <div className="absolute inset-0 bg-gradient-to-t from-[#102A43]/90 via-transparent to-transparent pointer-events-none" />
             <div className="absolute bottom-4 left-4 right-4 space-y-1">
               <span className="inline-block px-2.5 py-1 rounded-md bg-black/50 border border-[#B8F000]/40 font-mono text-xs font-bold text-[#B8F000] backdrop-blur-sm">
-                {isFr ? `ÉTAPE ${activeStage.num} · ${activeStage.voltage}` : `STAGE ${activeStage.num} · ${activeStage.voltage}`}
+                {isFr ? `ÉTAPE ${activeStage.stageNumber} · ${activeStage.voltage}` : `STAGE ${activeStage.stageNumber} · ${activeStage.voltage}`}
               </span>
               <h3 className="text-xl font-black text-[#F4F1E8]">
-                {isFr ? activeStage.titleFr : activeStage.titleEn}
+                {isFr ? activeStage.title.fr : activeStage.title.en}
               </h3>
             </div>
           </div>
@@ -1155,17 +893,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
           {/* Right Explanation, Purpose, Equipment & Cameroon Context */}
           <div className="lg:col-span-7 p-6 sm:p-7 space-y-5 flex flex-col justify-between">
             <div className="space-y-4">
-              <p className="text-sm sm:text-base text-[#F4F1E8] leading-relaxed font-medium">
-                {isFr ? activeStage.explanationFr : activeStage.explanationEn}
-              </p>
-
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 space-y-1.5">
                   <div className="text-[11px] font-mono font-bold text-[#B8F000] uppercase tracking-wider">
                     {isFr ? 'POURQUOI CETTE ÉTAPE EXISTE (RÔLE)' : 'PURPOSE IN THE POWER SYSTEM'}
                   </div>
                   <p className="text-xs text-[#A9ADA5] leading-relaxed">
-                    {isFr ? activeStage.purposeFr : activeStage.purposeEn}
+                    {isFr ? activeStage.purpose.fr : activeStage.purpose.en}
                   </p>
                 </div>
 
@@ -1174,7 +908,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                     {isFr ? 'PRINCIPE PHYSIQUE' : 'OPERATING PRINCIPLE'}
                   </div>
                   <p className="text-xs text-[#A9ADA5] leading-relaxed">
-                    {isFr ? activeStage.principleFr : activeStage.principleEn}
+                    {isFr ? activeStage.physicalPrinciple.fr : activeStage.physicalPrinciple.en}
                   </p>
                 </div>
               </div>
@@ -1185,7 +919,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   {isFr ? 'ÉQUIPEMENTS PRINCIPAUX DE CETTE ÉTAPE :' : 'MAIN EQUIPMENT AT THIS STAGE:'}
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {(isFr ? activeStage.equipmentFr : activeStage.equipmentEn).map((eq) => (
+                  {activeStage.keyEquipment.map((eq) => (
                     <span
                       key={eq}
                       className="px-3 py-1 rounded-lg bg-white/[0.04] border border-white/10 text-xs font-mono text-[#F4F1E8]"
@@ -1203,7 +937,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   <strong className="text-[#B8F000] font-mono uppercase mr-1.5">
                     {isFr ? 'Exemple au Cameroun :' : 'Cameroon Application:'}
                   </strong>
-                  {isFr ? activeStage.cameroonContextFr : activeStage.cameroonContextEn}
+                  {isFr ? activeStage.cameroonContext.fr : activeStage.cameroonContext.en}
                 </div>
               </div>
             </div>
@@ -1211,7 +945,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <div className="pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
               <button
                 type="button"
-                onClick={() => onSelectDomain(activeStage.domainCode)}
+                onClick={() => onSelectDomain(activeStage.domainCode as DomainCode)}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#B8F000] hover:bg-[#c9f826] text-[#102A43] font-black text-xs uppercase tracking-wider transition-all shadow-[0_8px_20px_rgba(184,240,0,0.3)] cursor-pointer"
               >
                 <span>
@@ -1225,7 +959,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
               <button
                 type="button"
                 onClick={() => {
-                  if (onNavigateJourney) onNavigateJourney(activeStage.journeyStage);
+                  if (onNavigateJourney) onNavigateJourney(activeStage.journeyStageId);
                   else onNavigateView('journey');
                 }}
                 className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#B8F000] hover:text-white transition-colors cursor-pointer"
