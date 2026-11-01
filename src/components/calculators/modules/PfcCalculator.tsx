@@ -39,10 +39,17 @@ export const PfcCalculator: React.FC<PfcCalculatorProps> = ({ locale, onOpenRepo
   const qCommercialKvar = Math.ceil(qkvarRequired / 25) * 25;
   const stepSizeKvar = qCommercialKvar / pfcStepsCount;
 
+  // Upstream Transformer Short-Circuit Capacity (Standard 1000 kVA, Uk = 6% -> Ssc = 16.67 MVA = 16667 kVA)
+  const sscKvaEstimate = 16667;
+  // Natural Parallel Resonance Frequency fr = f_grid * sqrt(Ssc / Qc) [Hz]
+  const naturalParallelResonanceHz = Math.round(50 * Math.sqrt(sscKvaEstimate / Math.max(1, qCommercialKvar)));
+  const isHarmonic5ResonanceRisk = pfcDetunedOption === 'none' && naturalParallelResonanceHz >= 225 && naturalParallelResonanceHz <= 275;
+  const isHarmonic7ResonanceRisk = pfcDetunedOption === 'none' && naturalParallelResonanceHz >= 325 && naturalParallelResonanceHz <= 375;
+
   // Detuning reactor tuning frequency fr = f_grid / sqrt(p)
   // 7% detuning -> fr = 50 / sqrt(0.07) = 189 Hz (blocks 5th harmonic 250 Hz anti-resonance)
   // 14% detuning -> fr = 50 / sqrt(0.14) = 134 Hz (blocks 3rd harmonic 150 Hz)
-  const detunedFreqHz = pfcDetunedOption === '7%' ? 189 : pfcDetunedOption === '14%' ? 134 : 0;
+  const detunedFreqHz = pfcDetunedOption === '7%' ? 189 : pfcDetunedOption === '14%' ? 134 : naturalParallelResonanceHz;
   const capacitorRatedVoltage = pfcDetunedOption === '7%' ? 440 : pfcDetunedOption === '14%' ? 480 : 400;
 
   // Monthly active penalty savings estimation (approx. $0.06/kvarh over 250h monthly operation)
@@ -121,11 +128,29 @@ export const PfcCalculator: React.FC<PfcCalculatorProps> = ({ locale, onOpenRepo
         </div>
 
         {/* Detuned Reactor Harmonics Anti-Resonance Guide */}
-        <div className="p-4 rounded-xl bg-[#080B10] border border-[#252E38] space-y-2 font-mono text-xs">
-          <div className="text-neutral-300 font-bold uppercase text-[11px] flex justify-between">
-            <span>{locale === 'fr' ? 'PROTECTION CONTRE LA RÉSONANCE HARMONIQUE (CEI 61642)' : 'HARMONIC RESONANCE PROTECTION (IEC 61642)'}</span>
-            <span className="text-cyan-400 font-bold">Taux d'accord p = {pfcDetunedOption}</span>
+        <div className={`p-4 rounded-xl border space-y-2 font-mono text-xs ${
+          isHarmonic5ResonanceRisk || isHarmonic7ResonanceRisk
+            ? 'bg-red-950/40 border-red-500/60'
+            : 'bg-[#080B10] border-[#252E38]'
+        }`}>
+          <div className="text-neutral-300 font-bold uppercase text-[11px] flex justify-between items-center">
+            <span className="flex items-center gap-1.5">
+              {(isHarmonic5ResonanceRisk || isHarmonic7ResonanceRisk) && <AlertTriangle className="w-4 h-4 text-red-400" />}
+              <span>{locale === 'fr' ? 'PROTECTION CONTRE LA RÉSONANCE HARMONIQUE (CEI 61642)' : 'HARMONIC RESONANCE PROTECTION (IEC 61642)'}</span>
+            </span>
+            <span className={pfcDetunedOption === 'none' ? 'text-amber-400 font-bold' : 'text-cyan-400 font-bold'}>
+              {pfcDetunedOption === 'none' ? `fr propre = ${naturalParallelResonanceHz} Hz` : `Taux d'accord p = ${pfcDetunedOption}`}
+            </span>
           </div>
+
+          {(isHarmonic5ResonanceRisk || isHarmonic7ResonanceRisk) && (
+            <div className="p-2.5 rounded-lg bg-red-900/30 border border-red-500/40 text-red-300 text-[11px] font-sans">
+              <strong>{locale === 'fr' ? 'ALERTE DE RÉSONANCE PARALLÈLE CRITIQUE :' : 'CRITICAL PARALLEL RESONANCE ALERT:'}</strong>{' '}
+              {locale === 'fr'
+                ? `La fréquence propre LC calculée (fr = ${naturalParallelResonanceHz} Hz) est dans la fenêtre d'amplification de l'harmonique ${isHarmonic5ResonanceRisk ? '5 (250 Hz)' : '7 (350 Hz)'}. L'installation de condensateurs standards sans selfs présente un risque de claquage diélectrique et d'échauffement destructeur. Prescription impérative : Choisir une self de désaccordage 7% (accord 189 Hz).`
+                : `Calculated LC resonance frequency (fr = ${naturalParallelResonanceHz} Hz) aligns dangerously with harmonic ${isHarmonic5ResonanceRisk ? '5 (250 Hz)' : '7 (350 Hz)'}. Standard capacitors risk dielectric breakdown. Mandatory mitigation: Select 7% detuning reactor (189 Hz).`}
+            </div>
+          )}
           <p className="text-neutral-300 leading-relaxed font-sans text-xs">
             {pfcDetunedOption === '7%'
               ? (locale === 'fr'

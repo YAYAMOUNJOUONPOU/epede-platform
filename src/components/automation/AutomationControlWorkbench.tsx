@@ -210,7 +210,8 @@ export const AutomationControlWorkbench: React.FC<AutomationControlWorkbenchProp
   ]);
 
   // =========================================================================
-  // PILLAR 2: CLOSED-LOOP PID TUNING SIMULATOR
+  // PILLAR 2: AUTHENTIC CLOSED-LOOP PID TUNING SIMULATOR (IEC 61131-3 PID)
+  // Dynamic 1st-order plant ODE with P, I (integrated), D (filtered derivative) & Anti-Windup
   // =========================================================================
   const [setPoint, setSetPoint] = useState<number>(75);
   const [processVar, setProcessVar] = useState<number>(50);
@@ -221,21 +222,43 @@ export const AutomationControlWorkbench: React.FC<AutomationControlWorkbenchProp
   const [pidOutputPercent, setPidOutputPercent] = useState<number>(0);
   const [pidHistory, setPidHistory] = useState<{ t: number; sp: number; pv: number; out: number }[]>([]);
 
-  // Simulation tick for PID
+  // Discrete state references for authentic differential calculation
+  const integralAccumRef = useRef<number>(0);
+  const prevErrorRef = useRef<number>(25);
+  const prevTimeRef = useRef<number>(Date.now());
+
+  // Simulation tick for PID (discrete Euler solver: delta_t = 0.25 s)
   useEffect(() => {
+    const dt = 0.25; // 250 ms calculation step
     const pidInterval = setInterval(() => {
       setProcessVar((prevPv) => {
         const error = setPoint - prevPv;
         
-        // P component
+        // 1. Proportional term
         const pTerm = kp * error;
-        
-        // Dynamic process reaction (first-order lag system + actuator influence)
-        const rawOut = Math.max(0, Math.min(100, pTerm + (error * (10 / Math.max(0.1, ti)))));
+
+        // 2. Filtered Derivative term: d(error)/dt with low-pass derivative filter N = 8
+        const dError = (error - prevErrorRef.current) / dt;
+        const dTerm = kp * (td / (td + 0.125)) * dError;
+        prevErrorRef.current = error;
+
+        // 3. Integral term with Anti-Windup clamping
+        const deltaIntegral = (kp * dt / Math.max(0.2, ti)) * error;
+        const projectedOut = pTerm + integralAccumRef.current + deltaIntegral + dTerm;
+        const isSaturated = projectedOut > 100 || projectedOut < 0;
+
+        if (!antiWindupEnabled || !isSaturated) {
+          integralAccumRef.current += deltaIntegral;
+        }
+
+        // 4. Actuator Output [0, 100%]
+        const rawOut = Math.max(0, Math.min(100, pTerm + integralAccumRef.current + dTerm));
         setPidOutputPercent(parseFloat(rawOut.toFixed(1)));
         
-        // Process inertia toward output
-        const nextPv = prevPv + (rawOut - prevPv) * 0.12;
+        // 5. Dynamic Process PT1 Lag System: tau * d(PV)/dt + PV = K * Out
+        // With tau = 3.5 seconds and process gain K = 1.0
+        const tau = 3.5;
+        const nextPv = prevPv + (dt / tau) * (rawOut - prevPv);
         return parseFloat(nextPv.toFixed(1));
       });
 
@@ -247,10 +270,11 @@ export const AutomationControlWorkbench: React.FC<AutomationControlWorkbenchProp
     }, 250);
 
     return () => clearInterval(pidInterval);
-  }, [setPoint, kp, ti, td, processVar, pidOutputPercent]);
+  }, [setPoint, kp, ti, td, antiWindupEnabled, processVar, pidOutputPercent]);
 
   // =========================================================================
-  // PILLAR 3: VFD & FIELD-ORIENTED VECTOR CONTROL (FOC)
+  // PILLAR 3: VFD & FIELD-ORIENTED VECTOR CONTROL (FOC) - IEC 61800
+  // Constant flux below base speed (1450 rpm) and flux-weakening (défluxage) above
   // =========================================================================
   const [vfdTargetSpeedRpm, setVfdTargetSpeedRpm] = useState<number>(1450);
   const [vfdCarrierFreqKhz, setVfdCarrierFreqKhz] = useState<number>(4.0); // 2 to 16 kHz
@@ -258,44 +282,63 @@ export const AutomationControlWorkbench: React.FC<AutomationControlWorkbenchProp
   const [motorLoadPercent, setMotorLoadPercent] = useState<number>(85);
   const [motorKwRating, setMotorKwRating] = useState<number>(75); // 75 kW motor
 
-  // Vector FOC calculations
-  const idFluxAmps = parseFloat(((motorKwRating * 0.35) * (1450 / Math.max(1, vfdTargetSpeedRpm))).toFixed(1));
+  // Vector FOC calculations with authentic flux-weakening boundary:
+  // Base rated speed = 1450 rpm. Below 1450 rpm, flux current id is strictly constant at rated magnetizing current.
+  // Above 1450 rpm, id weakens inversely with speed ratio (n_rated / n).
+  const baseSpeedRpm = 1450;
+  const idNominalAmps = motorKwRating * 0.42; // ~42% of In is magnetizing current
+  const idFluxAmps = parseFloat((
+    vfdTargetSpeedRpm <= baseSpeedRpm
+      ? idNominalAmps
+      : idNominalAmps * (baseSpeedRpm / vfdTargetSpeedRpm)
+  ).toFixed(1));
+
   const iqTorqueAmps = parseFloat(((motorKwRating * 1.45) * (motorLoadPercent / 100)).toFixed(1));
+  const isStatorAmps = parseFloat(Math.sqrt(idFluxAmps ** 2 + iqTorqueAmps ** 2).toFixed(1));
   const vfdDcBusVoltage = 565; // ~ 400V AC * sqrt(2)
   const switchingLossWatts = parseFloat((motorKwRating * (vfdCarrierFreqKhz * 0.22) * 10).toFixed(0));
   const brakingChopperDutyCycle = vfdBrakingActive ? 65 : 0;
 
   // =========================================================================
-  // PILLAR 4: SAFETY INSTRUMENTED SYSTEMS (SIS / SIL 2 & 3)
+  // PILLAR 4: SAFETY INSTRUMENTED SYSTEMS (SIS / SIL 2 & 3 - IEC 61508 / 61511)
+  // Incorporates Beta-factor (common cause failure fraction) in PFDavg calculations
   // =========================================================================
   const [votingArchitecture, setVotingArchitecture] = useState<'1oo1' | '1oo2' | '2oo3' | '2oo4'>('2oo3');
   const [proofTestIntervalYears, setProofTestIntervalYears] = useState<number>(1);
   const [sensorFailureRatePerHour, setSensorFailureRatePerHour] = useState<number>(1.2e-6); // 1.2 FIT/hr
   const [safeFailureFractionPercent, setSafeFailureFractionPercent] = useState<number>(94);
+  const [commonCauseBetaPercent, setCommonCauseBetaPercent] = useState<number>(2.0); // 2% beta factor
 
   const silCalculations = useMemo(() => {
     const TI = proofTestIntervalYears * 8760; // hours
+    const lambdaDU = sensorFailureRatePerHour;
+    const beta = commonCauseBetaPercent / 100; // Common cause failure fraction
     let pfd = 0;
     let hft = 0;
 
+    // Formulas per IEC 61508-6 Annex B:
     if (votingArchitecture === '1oo1') {
-      pfd = (sensorFailureRatePerHour * TI) / 2;
+      pfd = (lambdaDU * TI) / 2;
       hft = 0;
     } else if (votingArchitecture === '1oo2') {
-      pfd = Math.pow(sensorFailureRatePerHour * TI, 2) / 3;
+      // PFDavg = ((1 - beta)^2 * (lambdaDU * TI)^2) / 3 + beta * lambdaDU * TI / 2
+      pfd = (Math.pow((1 - beta) * lambdaDU * TI, 2) / 3) + (beta * lambdaDU * TI / 2);
       hft = 1;
     } else if (votingArchitecture === '2oo3') {
-      pfd = Math.pow(sensorFailureRatePerHour * TI, 2);
+      // PFDavg = (1 - beta)^2 * (lambdaDU * TI)^2 + beta * lambdaDU * TI / 2
+      pfd = Math.pow((1 - beta) * lambdaDU * TI, 2) + (beta * lambdaDU * TI / 2);
       hft = 1;
     } else {
-      pfd = Math.pow(sensorFailureRatePerHour * TI, 3) / 4;
+      // 2oo4 TMR with quad redundancy
+      pfd = Math.pow((1 - beta) * lambdaDU * TI, 3) / 4 + (beta * lambdaDU * TI / 2);
       hft = 2;
     }
 
     let achievedSil = 'SIL 1';
-    if (pfd < 1e-2) achievedSil = 'SIL 2';
-    if (pfd < 1e-3) achievedSil = 'SIL 3';
-    if (pfd < 1e-4) achievedSil = 'SIL 4';
+    if (pfd < 1e-1 && pfd >= 1e-2) achievedSil = 'SIL 1';
+    else if (pfd < 1e-2 && pfd >= 1e-3) achievedSil = 'SIL 2';
+    else if (pfd < 1e-3 && pfd >= 1e-4) achievedSil = 'SIL 3';
+    else if (pfd < 1e-4) achievedSil = 'SIL 4';
 
     const mtbfYears = parseFloat((1 / (sensorFailureRatePerHour * 8760)).toFixed(1));
 
@@ -305,7 +348,7 @@ export const AutomationControlWorkbench: React.FC<AutomationControlWorkbenchProp
       achievedSil,
       mtbfYears
     };
-  }, [votingArchitecture, proofTestIntervalYears, sensorFailureRatePerHour]);
+  }, [votingArchitecture, proofTestIntervalYears, sensorFailureRatePerHour, commonCauseBetaPercent]);
 
   // =========================================================================
   // PILLAR 5: FIELDBUS & 4-20 mA ANALOG LOOPS (VOLTAGE DROP BUDGET)

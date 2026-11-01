@@ -35,8 +35,18 @@ export const SilCalculator: React.FC<SilCalculatorProps> = ({ locale }) => {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2 bg-[#0D1117] border border-[#252E38] rounded-2xl p-6 shadow-2xl space-y-6">
         <div className="text-xs font-mono font-bold text-[#F3F4F6] uppercase border-b border-[#252E38] pb-3 flex items-center justify-between">
-          <span>{locale === 'fr' ? 'CALCUL DE CHARGE D\'ONDE (SIL) & EFFET FERRANTI HTB' : 'SURGE IMPEDANCE LOADING (SIL) & FERRANTI'}</span>
+          <span>{locale === 'fr' ? 'CALCUL DE CHARGE D\'ONDE HTB (SURGE IMPEDANCE LOADING - P_SIL) & EFFET FERRANTI' : 'TRANSMISSION LINE SURGE IMPEDANCE LOADING (P_SIL) & FERRANTI EFFECT'}</span>
           <span className="text-cyan-400">P_SIL = Un² / Zc</span>
+        </div>
+
+        {/* Didactic Terminology Notice */}
+        <div className="bg-sky-950/40 border border-sky-500/30 rounded-xl p-3 text-[11px] font-sans text-sky-200 flex items-start gap-2.5">
+          <AlertTriangle className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
+          <span>
+            {locale === 'fr'
+              ? 'Distinction normative : En ingénierie des réseaux HTB, l\'acronyme SIL désigne la puissance naturelle d\'une ligne (Surge Impedance Loading, transit sans puissance réactive). À ne pas confondre avec le niveau d\'intégrité de sécurité SIL (Safety Integrity Level) des automatismes de sécurité (CEI 61508 / 61511).'
+              : 'Normative distinction: In transmission engineering, SIL designates Surge Impedance Loading (natural power transit without reactive net flow). Not to be confused with Safety Integrity Level (SIL 1-4) in industrial automation systems (IEC 61508 / 61511).'}
+          </span>
         </div>
 
         {/* Results Grid */}

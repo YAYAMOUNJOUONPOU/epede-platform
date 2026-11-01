@@ -181,44 +181,63 @@ export class CanonicalNetworkSolver {
     const subOyomabangTotalP = otherFeedersP + totalFeeder4P;
     const subOyomabangTotalQ = otherFeedersQ + totalFeeder4Q;
 
-    // Voltage Drop calculations along the radial spine
+    // Voltage Drop calculations along the radial spine using authentic AC vector formulation:
+    // Delta_V_pu = (R_pu * P_pu + X_pu * Q_pu) / V_pu  (IEC 60909 / Kundur Power System Stability)
+    const sBaseMva = 100.0; // 100 MVA system per-unit base
+
     // Bus 1: Songloulou 10.5 kV (Slack Generator Bus)
     const v1_pu = isLineOpen && scenario.generatorOutputMw === 0 ? 0.0 : 1.05;
     const v1_kv = v1_pu * 10.5;
     const angle1_deg = 0.0;
 
-    // Bus 2: Step-up GSU 225 kV Bus
-    // Drop across T1 (X_T1 = 0.125 pu on 50 MVA base)
-    const dropT1 = (subOyomabangTotalP / 48.0) * 0.028;
+    // Bus 2: Step-up GSU 225 kV Bus (T1: 50 MVA, Uk = 12.5%, R=0.008 pu, X=0.124 pu on 50 MVA base)
+    const pT1_pu = subOyomabangTotalP / sBaseMva;
+    const qT1_pu = subOyomabangTotalQ / sBaseMva;
+    const rT1_pu = 0.008 * (sBaseMva / 50.0); // Converted to 100 MVA base = 0.016 pu
+    const xT1_pu = 0.124 * (sBaseMva / 50.0); // Converted to 100 MVA base = 0.248 pu
+    const dropT1 = isLineOpen ? 0.0 : (rT1_pu * pT1_pu + xT1_pu * qT1_pu) / Math.max(0.5, v1_pu);
     const v2_pu = isLineOpen ? 0.0 : Math.max(0.85, v1_pu - dropT1);
     const v2_kv = v2_pu * 225.0;
-    const angle2_deg = isLineOpen ? 0.0 : -1.8;
+    const angle2_deg = isLineOpen ? 0.0 : Number((-Math.asin(Math.min(0.5, (pT1_pu * xT1_pu) / (v1_pu * Math.max(0.1, v2_pu)))) * (180 / Math.PI)).toFixed(1));
 
-    // Bus 3: Oyomabang 225 kV Bus (after 120 km line)
-    // Line Aster 570: R = 0.06 Ohm/km, X = 0.32 Ohm/km, total Z = 7.2 + j38.4 Ohm
-    const lineCurrentA = isLineOpen ? 0 : (subOyomabangTotalP * 1e6) / (Math.sqrt(3) * v2_kv * 1e3 * 0.9);
-    const dropLine = isLineOpen ? 0.0 : (subOyomabangTotalP / 40.0) * 0.035;
+    // Bus 3: Oyomabang 225 kV Bus (after 120 km line Aster 570: R=7.2 Ohm, X=38.4 Ohm)
+    // Z_base_225 = (225^2) / 100 MVA = 506.25 Ohm -> R_pu = 0.0142, X_pu = 0.0759
+    const lineCurrentA = isLineOpen ? 0 : (subOyomabangTotalP * 1e6) / (Math.sqrt(3) * Math.max(1, v2_kv) * 1e3 * 0.9);
+    const rLine_pu = 7.2 / 506.25;
+    const xLine_pu = 38.4 / 506.25;
+    const dropLine = isLineOpen ? 0.0 : (rLine_pu * pT1_pu + xLine_pu * qT1_pu) / Math.max(0.5, v2_pu);
     const v3_pu = isLineOpen ? 0.0 : Math.max(0.80, v2_pu - dropLine);
     const v3_kv = v3_pu * 225.0;
-    const angle3_deg = isLineOpen ? 0.0 : -5.4;
+    const angle3_deg = isLineOpen ? 0.0 : Number((angle2_deg - Math.asin(Math.min(0.5, (pT1_pu * xLine_pu) / (v2_pu * Math.max(0.1, v3_pu)))) * (180 / Math.PI)).toFixed(1));
 
-    // Bus 4: Oyomabang 30 kV Substation MV Bus (after 225/30 kV T2 with OLTC)
-    const dropT2 = isLineOpen ? 0.0 : (subOyomabangTotalP / 63.0) * 0.032;
+    // Bus 4: Oyomabang 30 kV Substation MV Bus (after 225/30 kV T2: 63 MVA, Uk = 11.5%, with OLTC)
+    const rT2_pu = 0.007 * (sBaseMva / 63.0);
+    const xT2_pu = 0.114 * (sBaseMva / 63.0);
+    const dropT2 = isLineOpen ? 0.0 : (rT2_pu * pT1_pu + xT2_pu * qT1_pu) / Math.max(0.5, v3_pu);
     const v4_pu = isLineOpen ? 0.0 : Math.max(0.75, (v3_pu - dropT2) * tapMultiplier);
     const v4_kv = v4_pu * 30.0;
-    const angle4_deg = isLineOpen ? 0.0 : -8.1;
+    const angle4_deg = isLineOpen ? 0.0 : Number((angle3_deg - Math.asin(Math.min(0.5, (pT1_pu * xT2_pu) / (v3_pu * Math.max(0.1, v4_pu)))) * (180 / Math.PI)).toFixed(1));
 
-    // Bus 5: Feeder 4 Industrial Substation End (12 km cable 240 mm2 Al)
-    const cableDrop = isFeederOpen ? 0.0 : (totalFeeder4P / 5.0) * 0.022;
+    // Bus 5: Feeder 4 Industrial Substation End (12 km cable 240 mm2 Al: R=1.85 Ohm, X=1.20 Ohm)
+    // Z_base_30 = (30^2) / 100 MVA = 9.0 Ohm -> R_pu = 1.85/9.0 = 0.205, X_pu = 1.20/9.0 = 0.133
+    const pFeeder_pu = totalFeeder4P / sBaseMva;
+    const qFeeder_pu = totalFeeder4Q / sBaseMva;
+    const rCable_pu = 1.85 / 9.0;
+    const xCable_pu = 1.20 / 9.0;
+    const cableDrop = isFeederOpen ? 0.0 : (rCable_pu * pFeeder_pu + xCable_pu * qFeeder_pu) / Math.max(0.5, v4_pu);
     const v5_pu = isFeederOpen ? 0.0 : Math.max(0.70, v4_pu - cableDrop);
     const v5_kv = v5_pu * 30.0;
-    const angle5_deg = isFeederOpen ? 0.0 : -9.6;
+    const angle5_deg = isFeederOpen ? 0.0 : Number((angle4_deg - Math.asin(Math.min(0.5, (pFeeder_pu * xCable_pu) / (v4_pu * Math.max(0.1, v5_pu)))) * (180 / Math.PI)).toFixed(1));
 
-    // Bus 6: Customer 1600 kVA Transformer Secondary (400 V)
-    const trafo1600Drop = isFeederOpen ? 0.0 : ((motorP_Mw + 0.9) / 1.6) * 0.025;
+    // Bus 6: Customer 1600 kVA Transformer Secondary (400 V, Uk = 6.0%, R=0.012 pu, X=0.059 pu on 1.6 MVA)
+    const pClient_pu = (motorP_Mw + 0.9) / sBaseMva;
+    const qClient_pu = (motorQ_Mvar + 0.45) / sBaseMva;
+    const rTrafo1600_pu = 0.012 * (sBaseMva / 1.6);
+    const xTrafo1600_pu = 0.059 * (sBaseMva / 1.6);
+    const trafo1600Drop = isFeederOpen ? 0.0 : (rTrafo1600_pu * pClient_pu + xTrafo1600_pu * qClient_pu) / Math.max(0.5, v5_pu);
     const v6_pu = isFeederOpen ? 0.0 : Math.max(0.65, v5_pu - trafo1600Drop);
     const v6_kv = v6_pu * 0.400;
-    const angle6_deg = isFeederOpen ? 0.0 : -11.2;
+    const angle6_deg = isFeederOpen ? 0.0 : Number((angle5_deg - 1.6).toFixed(1));
 
     // Bus 7: TGBT Main LV Switchboard (400 V)
     // Starting inrush causes sharp local dip on Bus 7 and Bus 8

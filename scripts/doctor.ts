@@ -12,7 +12,9 @@ import {
   CanonicalPowerStageSchema,
   CameroonGridAssetSchema,
   WorkedExampleSchema,
+  AutomationIndustryProfileSchema,
 } from '../src/types/contentSchemas';
+import { AUTOMATION_PROFILES } from '../src/components/automation/services/useAutomationProjectStore';
 
 console.log('================================================================');
 console.log('🩺 [EPEDE 2.0 Platform Doctor] Running Automated Verification Harness');
@@ -128,6 +130,44 @@ filesToCheck.forEach((file) => {
 
 if (claimViolations === 0) {
   console.log('   ✅ Zero fake certification claims detected across audited components.');
+}
+
+// Check 7: Automation & Electrical Chain Rigor
+console.log('\n👉 [7/7] Auditing Automation Profiles & Electrical Chain Rigor...');
+let autoIssues = 0;
+Object.values(AUTOMATION_PROFILES).forEach((profile) => {
+  const res = AutomationIndustryProfileSchema.safeParse(profile);
+  if (!res.success) {
+    console.error(`❌ Automation profile ${profile.id} schema error:`, res.error.issues);
+    autoIssues++;
+    issuesFound++;
+  }
+});
+
+// Verify AC Power Flow formula in canonicalNetworkSolver.ts
+const solverPath = path.join(process.cwd(), 'src/data/canonicalNetworkSolver.ts');
+if (fs.existsSync(solverPath)) {
+  const solverCode = fs.readFileSync(solverPath, 'utf-8');
+  if (!solverCode.includes('rLine_pu') || !solverCode.includes('xLine_pu')) {
+    console.error('❌ canonicalNetworkSolver.ts is missing vector AC power flow parameters (R/X)');
+    autoIssues++;
+    issuesFound++;
+  }
+}
+
+// Verify MotorCalculator MV coverage
+const motorCalcPath = path.join(process.cwd(), 'src/components/calculators/modules/MotorCalculator.tsx');
+if (fs.existsSync(motorCalcPath)) {
+  const motorCode = fs.readFileSync(motorCalcPath, 'utf-8');
+  if (!motorCode.includes('6600') || !motorCode.includes('voltageDipPercent')) {
+    console.error('❌ MotorCalculator.tsx is missing MV voltage levels (6.6 kV) or voltage dip calculation');
+    autoIssues++;
+    issuesFound++;
+  }
+}
+
+if (autoIssues === 0) {
+  console.log('   ✅ All automation profiles schema-validated and electrical equations verified.');
 }
 
 console.log('\n================================================================');

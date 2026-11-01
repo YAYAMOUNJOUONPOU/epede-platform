@@ -43,7 +43,10 @@ export const ProcessBusMergingUnitNcitSimulator: React.FC<ProcessBusMergingUnitN
   const [sensorTech, setSensorTech] = useState<SensorTechnology>('ROGOWSKI_OPTICAL_NCIT');
 
   // 2. Merging Unit (IEC 61869-9 / 9-2LE) Sampling Configuration
-  const [samplingRateSps, setSamplingRateSps] = useState<4800 | 14400>(4800); // 4800 Hz (9-2LE standard) vs 14.4 kHz (high-speed quality)
+  // 4000 Hz: IEC 61850-9-2LE standard at 50 Hz (80 samples/cycle, Cameroon/Europe grid)
+  // 4800 Hz: IEC 61869-9 universal rate (96 samples/cycle at 50 Hz or 80 samples/cycle at 60 Hz)
+  // 14400 Hz: IEC 61869-9 high-rate (288 samples/cycle at 50 Hz for traveling wave and harmonics)
+  const [samplingRateSps, setSamplingRateSps] = useState<4000 | 4800 | 14400>(4000);
   const [muVlanPriority, setMuVlanPriority] = useState<number>(4); // Default VLAN priority 4 for SV
 
   // 3. IEEE 1588 PTP Synchronization & Time Skew
@@ -96,10 +99,10 @@ export const ProcessBusMergingUnitNcitSimulator: React.FC<ProcessBusMergingUnitN
   // ANSI 87B False Trip Condition: If false differential current exceeds 0.2 * Inom or 250A
   const isDifferentialProtectionFalseTripping = differentialCurrentFalseAmps > 350;
 
-  // Generate Real-time Waveform Sampling Points (Simulating 1 full 20ms period = 96 points at 4800Hz)
+  // Generate Real-time Waveform Sampling Points (Dynamically scaled to selected SV sampling rate)
   const waveformPoints = useMemo(() => {
     const points: { x: number; yTrue: number; ySampled: number; isSaturated: boolean }[] = [];
-    const numPoints = 96; // 96 samples per 50Hz cycle at 4800Hz
+    const numPoints = samplingRateSps === 4000 ? 80 : samplingRateSps === 4800 ? 96 : 144;
     const sampleDt = (1 / 50.0) / numPoints;
 
     for (let i = 0; i < numPoints; i++) {
@@ -151,10 +154,9 @@ export const ProcessBusMergingUnitNcitSimulator: React.FC<ProcessBusMergingUnitN
     return points;
   }, [gridFrequencyHz, faultCurrentMultiplier, dcOffsetPercent, sensorTech, phaseErrorDeg, timeTick]);
 
-  // IEC 61850-9-2LE Ethernet Frame Preview Builder
+  // IEC 61850-9-2LE / IEC 61869-9 Ethernet Frame Preview Builder
   const simulatedSvPacket = useMemo(() => {
-    const now = new Date();
-    const smpCnt = Math.floor((Date.now() % 1000) * 4.8); // 0 to 4799
+    const smpCnt = Math.floor((Date.now() % 1000) * (samplingRateSps / 1000));
     return {
       destMac: '01-0C-CD-04-00-01', // Standard SV Multicast MAC
       srcMac: '00-1E-2B-3C-8A-02', // MU MAC address
@@ -165,7 +167,7 @@ export const ProcessBusMergingUnitNcitSimulator: React.FC<ProcessBusMergingUnitN
       appId: '0x4000', // IEC 61850-9-2LE standard AppID for Bay 1
       length: 128,
       svId: 'MU_L1_BAY01', // Merging Unit ID
-      smpCnt: smpCnt, // Sample Counter (0..4799)
+      smpCnt: smpCnt, // Sample Counter (0..samplingRateSps - 1)
       confRev: 1,
       smpSynch: ptpSyncState === 'LOCKED_T1_SUB_100NS' ? '2 (Global PTP Clock Synchronized)' : ptpSyncState === 'DRIFTING_HOLDOVER' ? '1 (Local Clock Holdover)' : '0 (Not Synchronized)',
       iaInst: Math.round(effectivePeakCurrent * 0.95),
@@ -176,7 +178,7 @@ export const ProcessBusMergingUnitNcitSimulator: React.FC<ProcessBusMergingUnitN
       vbInst: Math.round((225000 / Math.sqrt(3)) * Math.SQRT2 * -0.49),
       vcInst: Math.round((225000 / Math.sqrt(3)) * Math.SQRT2 * -0.49)
     };
-  }, [effectivePeakCurrent, muVlanPriority, ptpSyncState]);
+  }, [effectivePeakCurrent, muVlanPriority, ptpSyncState, samplingRateSps]);
 
   return (
     <div className="space-y-4 font-mono text-xs">
@@ -247,10 +249,34 @@ export const ProcessBusMergingUnitNcitSimulator: React.FC<ProcessBusMergingUnitN
                     : "Real-Time Scope: Primary Current vs Digitized Sampled Value (SV)"}
                 </span>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-800 font-bold">
-                  {samplingRateSps} Hz (9-2LE)
-                </span>
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[10px]">
+                  <span className="text-slate-500 font-bold px-1 hidden sm:inline">Taux SV :</span>
+                  <button
+                    type="button"
+                    onClick={() => setSamplingRateSps(4000)}
+                    className={`px-2 py-0.5 rounded transition-colors ${samplingRateSps === 4000 ? 'bg-emerald-500 text-slate-950 font-black' : 'text-slate-400 hover:text-white'}`}
+                    title="80 éch/période à 50 Hz (Standard Cameroun / CEI 61850-9-2LE)"
+                  >
+                    4000 Hz (50Hz 9-2LE)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSamplingRateSps(4800)}
+                    className={`px-2 py-0.5 rounded transition-colors ${samplingRateSps === 4800 ? 'bg-emerald-500 text-slate-950 font-black' : 'text-slate-400 hover:text-white'}`}
+                    title="96 éch/période à 50 Hz ou 80 éch à 60 Hz (CEI 61869-9)"
+                  >
+                    4800 Hz (61869-9)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSamplingRateSps(14400)}
+                    className={`px-2 py-0.5 rounded transition-colors ${samplingRateSps === 14400 ? 'bg-emerald-500 text-slate-950 font-black' : 'text-slate-400 hover:text-white'}`}
+                    title="288 éch/période (Qualité d'énergie & transitoires)"
+                  >
+                    14.4 kHz
+                  </button>
+                </div>
                 {isCtSaturated && (
                   <span className="text-[10px] px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800 font-bold animate-pulse">
                     ⚠️ SATURATION FER (COUDE)

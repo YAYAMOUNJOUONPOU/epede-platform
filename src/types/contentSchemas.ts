@@ -113,3 +113,25 @@ export const CameroonGridAssetSchema = z.object({
 });
 export type CameroonGridAsset = z.infer<typeof CameroonGridAssetSchema>;
 
+export const AutomationIndustryProfileSchema = z.object({
+  id: z.enum([
+    'HYDRO_PLANT_420MW',
+    'CEMENT_PLANT_FIGUIL',
+    'BREWERY_LINE_SABC',
+    'PETROCHEM_TERMINAL_SCDP',
+  ]),
+  nameFr: z.string().min(1),
+  nameEn: z.string().min(1),
+  cameroonReference: z.string().min(1),
+  nominalPowerKw: z.number().positive(),
+  digitalInputsCount: z.number().int().nonnegative(),
+  digitalOutputsCount: z.number().int().nonnegative(),
+  analogInputsCount: z.number().int().nonnegative(),
+  analogOutputsCount: z.number().int().nonnegative(),
+  targetSilLevel: z.enum(['SIL_1', 'SIL_2', 'SIL_3']),
+  defaultVfdCount: z.number().int().nonnegative(),
+  defaultVfdTotalPowerKw: z.number().nonnegative(),
+  networkTopology: z.string().min(1),
+});
+export type ValidatedAutomationIndustryProfile = z.infer<typeof AutomationIndustryProfileSchema>;
+

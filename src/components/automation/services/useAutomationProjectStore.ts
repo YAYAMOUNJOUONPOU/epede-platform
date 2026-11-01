@@ -3,6 +3,7 @@
 // Calibrated to IEC 61131-3, IEC 61508, IEC 61511, IEC 62443 & Cameroon Industrial Projects
 
 import { useState, useMemo } from 'react';
+import { AutomationIndustryProfileSchema } from '../../../types/contentSchemas';
 
 export type AutomationIndustryKey =
   | 'HYDRO_PLANT_420MW'
@@ -88,6 +89,11 @@ export const AUTOMATION_PROFILES: Record<AutomationIndustryKey, AutomationIndust
     networkTopology: 'Architecture TMR 2oo3 avec barrières à sécurité intrinsèque Ex-i'
   }
 };
+
+// Validate all profiles against schema at runtime
+Object.values(AUTOMATION_PROFILES).forEach(profile => {
+  AutomationIndustryProfileSchema.parse(profile);
+});
 
 export interface AutomationCalculations {
   totalIoPoints: number;
@@ -200,18 +206,20 @@ export function useAutomationProjectStore(initialIndustry: AutomationIndustryKey
     const heatDissipationWatts = Math.round(power24VWatts * 0.88 + 180);
     const heatDissipationBtuHr = Math.round(heatDissipationWatts * 3.412142);
 
-    // 5. SIL Safety Calculations per IEC 61508:
+    // 5. SIL Safety Calculations per IEC 61508-6 Annex B:
     // Dangerous failure rate lambda_D = 1.2e-6 / hr, Proof Test Interval TI = 8760 hrs (1 year)
+    // Beta = 2% common cause failure fraction
     const lambdaD = 1.2e-6;
     const proofTestHours = 8760;
+    const beta = 0.02; // 2% common cause failure factor
     let pfdAvg = 0;
     if (safetyVotingArch === '1oo1') {
       pfdAvg = (lambdaD * proofTestHours) / 2; // ~ 5.25e-3 (SIL 2)
     } else if (safetyVotingArch === '1oo2') {
-      pfdAvg = Math.pow(lambdaD * proofTestHours, 2) / 3; // ~ 3.68e-5 (SIL 3)
+      pfdAvg = (Math.pow((1 - beta) * lambdaD * proofTestHours, 2) / 3) + (beta * lambdaD * proofTestHours / 2);
     } else {
       // 2oo3 Triple Modular Redundancy (TMR)
-      pfdAvg = Math.pow(lambdaD * proofTestHours, 2); // ~ 1.10e-4 (High SIL 3)
+      pfdAvg = Math.pow((1 - beta) * lambdaD * proofTestHours, 2) + (beta * lambdaD * proofTestHours / 2);
     }
     const pfdAvgCalculated = Number(pfdAvg.toExponential(2));
 
