@@ -3,7 +3,8 @@
 // Calibrated to IEC 60034-1, IEC 60034-12, IEEE Std 399 (Brown Book) & IEEE Std 620
 
 import React, { useState, useMemo } from 'react';
-import { Zap, AlertTriangle, CheckCircle2, Sliders, Activity, Info } from 'lucide-react';
+import { Zap, AlertTriangle, CheckCircle2, Sliders, Activity, Info, Play } from 'lucide-react';
+import { IndustrialMotorDynamicSimulator } from '../../simulation/modules/IndustrialMotorDynamicSimulator';
 
 interface MotorCalculatorProps {
   locale: 'fr' | 'en';
@@ -14,6 +15,7 @@ export type MotorStartMethod = 'dol' | 'star-delta' | 'soft-starter' | 'vfd';
 
 export const MotorCalculator: React.FC<MotorCalculatorProps> = ({ locale }) => {
   // 1. Motor Electrical Specifications
+  const [showDynamicSimulator, setShowDynamicSimulator] = useState<boolean>(true);
   const [voltageV, setVoltageV] = useState<MotorVoltageLevel>(400);
   const [motorKw, setMotorKw] = useState<number>(250); // Default 250 kW
   const [motorEta, setMotorEta] = useState<number>(0.94);
@@ -163,6 +165,24 @@ export const MotorCalculator: React.FC<MotorCalculatorProps> = ({ locale }) => {
               </>
             )}
           </p>
+
+          <div className="pt-2 border-t border-[#252E38] flex items-center justify-between">
+            <span className="text-[10px] text-neutral-400">
+              {locale === 'fr' ? 'Simulation transitoire ODE (J·dω/dt = Mm - Mr) :' : 'Transient ODE dynamic simulation:'}
+            </span>
+            <button
+              type="button"
+              onClick={() => setShowDynamicSimulator(!showDynamicSimulator)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-700/60 text-cyan-300 font-bold text-xs cursor-pointer transition-colors"
+            >
+              <Play className="w-3.5 h-3.5" />
+              <span>
+                {showDynamicSimulator
+                  ? locale === 'fr' ? 'Masquer Simulateur Dynamique' : 'Hide Dynamic Simulator'
+                  : locale === 'fr' ? 'Afficher Simulateur Dynamique' : 'Show Dynamic Simulator'}
+              </span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -282,6 +302,13 @@ export const MotorCalculator: React.FC<MotorCalculatorProps> = ({ locale }) => {
           </div>
         </div>
       </div>
+
+      {/* Dynamic Transient Simulator Section */}
+      {showDynamicSimulator && (
+        <div className="lg:col-span-3">
+          <IndustrialMotorDynamicSimulator locale={locale} initialPresetId="nachtigal-raw-water" />
+        </div>
+      )}
     </div>
   );
 };

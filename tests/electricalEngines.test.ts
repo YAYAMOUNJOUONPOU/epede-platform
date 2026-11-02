@@ -4,6 +4,7 @@
 
 import { describe, it, expect } from './testUtils';
 import { CanonicalNetworkSolver } from '../src/data/canonicalNetworkSolver';
+import { IndustrialMotorDynamicsEngine, CAMEROON_MOTOR_PRESETS } from '../src/data/industrialMotorDynamicsEngine';
 
 describe('⚡ Electrotechnical Physics Engine Tests', () => {
   it('1. Vector AC Voltage Drop Formula (RP + XQ) / V must account for reactive power', () => {
@@ -141,5 +142,60 @@ describe('⚡ Electrotechnical Physics Engine Tests', () => {
     const fDetunedHz = f1Hz / Math.sqrt(0.07);
     expect(fDetunedHz).toBeCloseTo(189.0, 0.5);
     expect(fDetunedHz).toBeLessThan(5 * f1Hz); // Below 250 Hz (5th harmonic)
+  });
+
+  it('8. IndustrialMotorDynamicsEngine accurately models Kloss torque, inrush decay, and bus voltage dip across LV & MV', () => {
+    // 1. Test Nachtigal 160 kW Pump (400 V) with Soft-Starter
+    const nachtigalPreset = CAMEROON_MOTOR_PRESETS.find(p => p.id === 'nachtigal-raw-water')!;
+    const nachtigalResult = IndustrialMotorDynamicsEngine.solve({
+      voltageV: nachtigalPreset.voltageV,
+      powerKw: nachtigalPreset.powerKw,
+      poleCount: nachtigalPreset.poles,
+      startMethod: 'soft-starter',
+      loadType: nachtigalPreset.loadType,
+      supplyTrafoKva: nachtigalPreset.supplyTrafoKva,
+      supplyTrafoUkPercent: nachtigalPreset.supplyTrafoUk,
+      upstreamGridSscMva: nachtigalPreset.upstreamGridSscMva,
+    });
+
+    expect(nachtigalResult.nominalCurrentA).toBeGreaterThan(250);
+    expect(nachtigalResult.nominalCurrentA).toBeLessThan(320); // ~290 A
+    expect(nachtigalResult.startingCurrentA).toBeCloseTo(nachtigalResult.nominalCurrentA * 3.2, 10);
+    expect(nachtigalResult.busVoltageSagPercent).toBeLessThan(12.0); // Soft starter keeps sag below 12%
+    expect(nachtigalResult.isMotorStall).toBe(false);
+    expect(nachtigalResult.torqueSpeedPoints.length).toBeGreaterThan(50);
+    expect(nachtigalResult.transientTimePoints.length).toBeGreaterThan(40);
+
+    // 2. Test CIMENCAM 1850 kW Clinker Mill (6.6 kV MV) comparing DOL vs VFD
+    const cimencamPreset = CAMEROON_MOTOR_PRESETS.find(p => p.id === 'cimencam-clinker-mill')!;
+    const dolResult = IndustrialMotorDynamicsEngine.solve({
+      voltageV: cimencamPreset.voltageV,
+      powerKw: cimencamPreset.powerKw,
+      poleCount: cimencamPreset.poles,
+      startMethod: 'dol',
+      loadType: cimencamPreset.loadType,
+      supplyTrafoKva: cimencamPreset.supplyTrafoKva,
+      supplyTrafoUkPercent: cimencamPreset.supplyTrafoUk,
+      upstreamGridSscMva: cimencamPreset.upstreamGridSscMva,
+    });
+
+    // DOL on 1850 kW with constant load produces heavy voltage dip (> 20%)
+    expect(dolResult.busVoltageSagPercent).toBeGreaterThan(20.0);
+
+    const vfdResult = IndustrialMotorDynamicsEngine.solve({
+      voltageV: cimencamPreset.voltageV,
+      powerKw: cimencamPreset.powerKw,
+      poleCount: cimencamPreset.poles,
+      startMethod: 'vfd',
+      loadType: cimencamPreset.loadType,
+      supplyTrafoKva: cimencamPreset.supplyTrafoKva,
+      supplyTrafoUkPercent: cimencamPreset.supplyTrafoUk,
+      upstreamGridSscMva: cimencamPreset.upstreamGridSscMva,
+    });
+
+    // VFD limits starting current to ~1.15 In and keeps bus voltage sag under 2%
+    expect(vfdResult.startingCurrentA).toBeLessThan(vfdResult.nominalCurrentA * 1.3);
+    expect(vfdResult.busVoltageSagPercent).toBeLessThan(2.0);
+    expect(vfdResult.isMotorStall).toBe(false);
   });
 });
