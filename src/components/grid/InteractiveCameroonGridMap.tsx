@@ -45,6 +45,7 @@ interface InteractiveCameroonGridMapProps {
   onNavigateDiagram?: (topology?: string) => void;
   onNavigateCalculator?: (tab: any) => void;
   onNavigateSimulation?: (tab: any) => void;
+  onSelectCategory?: (category: string, scenarioId?: string) => void;
 }
 
 export const InteractiveCameroonGridMap: React.FC<InteractiveCameroonGridMapProps> = ({
@@ -52,6 +53,7 @@ export const InteractiveCameroonGridMap: React.FC<InteractiveCameroonGridMapProp
   onNavigateDiagram,
   onNavigateCalculator,
   onNavigateSimulation,
+  onSelectCategory,
 }) => {
   const [viewMode, setViewMode] = useState<'gis' | 'sld'>('gis');
   const [activeSystemFilter, setActiveSystemFilter] = useState<'ALL' | 'RIS' | 'RIN'>('ALL');
@@ -678,23 +680,43 @@ export const InteractiveCameroonGridMap: React.FC<InteractiveCameroonGridMapProp
               )}
 
               {/* Provenance Audit Link */}
-              <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
+              <div className="pt-3 border-t border-slate-800 flex items-center justify-between flex-wrap gap-2">
                 <AuditedValueBadge
                   paramId="param-transfo-ucc-12"
                   locale={locale}
                   variant="full-pill"
                 />
 
-                {onNavigateDiagram && (
-                  <button
-                    type="button"
-                    onClick={() => onNavigateDiagram(selectedNode.sldTopology)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-mono text-xs font-bold transition-all shadow-xs"
-                  >
-                    <span>{locale === 'fr' ? 'Ouvrir SLD Complet' : 'Open Full SLD'}</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </button>
-                )}
+                <div className="flex items-center gap-2">
+                  {onSelectCategory && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const targetScenario = selectedNode.id.includes('nachtigal')
+                          ? 'scen-nachtigal-trip'
+                          : selectedNode.id.includes('lagdo') || selectedNode.id.includes('maroua')
+                          ? 'scen-rin-islanding'
+                          : 'scen-songloulou-line';
+                        onSelectCategory('contingency_n1', targetScenario);
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600/90 hover:bg-rose-600 text-white font-mono text-xs font-bold transition-all shadow-xs cursor-pointer"
+                    >
+                      <AlertTriangle className="w-3.5 h-3.5" />
+                      <span>{locale === 'fr' ? 'Contingence N-1' : 'Simulate N-1'}</span>
+                    </button>
+                  )}
+
+                  {onNavigateDiagram && (
+                    <button
+                      type="button"
+                      onClick={() => onNavigateDiagram(selectedNode.sldTopology)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-mono text-xs font-bold transition-all shadow-xs cursor-pointer"
+                    >
+                      <span>{locale === 'fr' ? 'Ouvrir SLD' : 'Open SLD'}</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
               </div>
             </motion.div>
           )}
@@ -797,23 +819,43 @@ export const InteractiveCameroonGridMap: React.FC<InteractiveCameroonGridMapProp
               </div>
 
               {/* Audit / Provenance Badge */}
-              <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
+              <div className="pt-3 border-t border-slate-800 flex items-center justify-between flex-wrap gap-2">
                 <AuditedValueBadge
                   paramId="param-ligne-225-r-x"
                   locale={locale}
                   variant="full-pill"
                 />
 
-                {onNavigateSimulation && (
-                  <button
-                    type="button"
-                    onClick={() => onNavigateSimulation('load-flow')}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-mono text-xs font-bold transition-all shadow-xs"
-                  >
-                    <span>{locale === 'fr' ? 'Calculer Transit' : 'Solve Load Flow'}</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                )}
+                <div className="flex items-center gap-2">
+                  {onSelectCategory && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const targetScenario = selectedLine.id.includes('song')
+                          ? 'scen-songloulou-line'
+                          : selectedLine.id.includes('memv')
+                          ? 'scen-memveele-trip'
+                          : 'scen-songloulou-line';
+                        onSelectCategory('contingency_n1', targetScenario);
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600/90 hover:bg-rose-600 text-white font-mono text-xs font-bold transition-all shadow-xs cursor-pointer"
+                    >
+                      <AlertTriangle className="w-3.5 h-3.5" />
+                      <span>{locale === 'fr' ? 'Déclenchement N-1' : 'Simulate N-1'}</span>
+                    </button>
+                  )}
+
+                  {onNavigateSimulation && (
+                    <button
+                      type="button"
+                      onClick={() => onNavigateSimulation('load-flow')}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-mono text-xs font-bold transition-all shadow-xs cursor-pointer"
+                    >
+                      <span>{locale === 'fr' ? 'Calculer Transit' : 'Solve Load Flow'}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
               </div>
             </motion.div>
           )}

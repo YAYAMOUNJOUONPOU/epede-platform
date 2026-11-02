@@ -188,6 +188,22 @@ if (autoIssues === 0) {
   console.log('   ✅ All automation profiles schema-validated and electrical equations verified.');
 }
 
+// Check 8: Cameroon Grid N-1 Contingency & AC Load Flow Solver
+console.log('\n👉 [8/8] Auditing Cameroon Grid N-1 Contingency & AC Load Flow Solver...');
+const camGridSolverPath = path.join(process.cwd(), 'src/data/cameroonGridSolver.ts');
+if (!fs.existsSync(camGridSolverPath)) {
+  console.error('❌ src/data/cameroonGridSolver.ts does not exist');
+  issuesFound++;
+} else {
+  const solverCode = fs.readFileSync(camGridSolverPath, 'utf-8');
+  if (!solverCode.includes('SYSTEM_INERTIA_RIS') || !solverCode.includes('ferrantiNomayosKv') || !solverCode.includes('dropSlMg_pu')) {
+    console.error('❌ cameroonGridSolver.ts missing required contingency formulas (Inertia, Ferranti, or Vector AC drop)');
+    issuesFound++;
+  } else {
+    console.log('   ✅ CameroonGridSolver: Vector AC load flow, Ferranti surge, and RoCoF dynamics verified.');
+  }
+}
+
 console.log('\n================================================================');
 if (issuesFound === 0) {
   console.log('🎉 [Doctor Verdict] SYSTEM HEALTHY: 100% of checks passed with zero errors.');

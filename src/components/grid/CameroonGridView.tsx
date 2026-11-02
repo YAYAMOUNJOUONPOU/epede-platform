@@ -120,6 +120,7 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
   const [selectedSubstation, setSelectedSubstation] = useState<SubstationNode | null>(CAMEROON_SUBSTATIONS[0]);
   const [demarcationSubTab, setDemarcationSubTab] = useState<'disciplines_matrix' | 'contractual_gate3'>('disciplines_matrix');
   const [mapDisplayMode, setMapDisplayMode] = useState<'real_geo' | 'topological_sld'>('real_geo');
+  const [selectedContingencyScenarioId, setSelectedContingencyScenarioId] = useState<string | undefined>(undefined);
 
   // Filtered Plants
   const filteredPlants = useMemo(() => {
@@ -592,6 +593,14 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
               onNavigateDiagram={onNavigateDiagram}
               onNavigateCalculator={onNavigateCalculator}
               onNavigateSimulation={onNavigateSimulation}
+              onSelectCategory={(category, scenarioId) => {
+                if (category === 'contingency_n1') {
+                  if (scenarioId) setSelectedContingencyScenarioId(scenarioId);
+                  setActiveCategory('contingency_n1');
+                } else {
+                  setActiveCategory(category as FilterCategory);
+                }
+              }}
             />
           )}
         </div>
@@ -669,7 +678,12 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
       {/* SECTION: Cameroon Grid Contingency Simulator (Step 3) */}
       {activeCategory === 'contingency_n1' && (
         <div className="space-y-4">
-          <CameroonGridContingencySimulator locale={locale} />
+          <CameroonGridContingencySimulator
+            locale={locale}
+            initialScenarioId={selectedContingencyScenarioId}
+            onNavigateSimulation={onNavigateSimulation}
+            onNavigateCalculator={onNavigateCalculator}
+          />
         </div>
       )}
 
