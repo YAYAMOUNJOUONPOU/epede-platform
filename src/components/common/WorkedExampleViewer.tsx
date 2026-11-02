@@ -12,8 +12,10 @@ import {
   ChevronUp,
   ShieldCheck,
   Zap,
+  Download,
 } from 'lucide-react';
 import type { WorkedExample } from '../../types/contentSchemas';
+import { EngineeringCalculationPdfExportService } from '../calculators/services/EngineeringCalculationPdfExportService';
 
 export interface WorkedExampleViewerProps {
   example: WorkedExample;
@@ -55,15 +57,27 @@ export const WorkedExampleViewer: React.FC<WorkedExampleViewerProps> = ({
           </h3>
         </div>
 
-        {/* Normative Standard Chip */}
-        <div className="shrink-0 p-3 rounded-xl bg-white/[0.04] border border-white/10 flex items-start gap-2.5 max-w-sm">
-          <BookOpen className="w-4 h-4 text-[#38BDF8] shrink-0 mt-0.5" />
-          <div className="text-xs space-y-0.5">
-            <div className="font-mono font-bold text-[#38BDF8]">
-              {example.primaryStandard.standard}
-            </div>
-            <div className="text-white/60 text-[11px]">
-              {example.primaryStandard.clause}
+        {/* Normative Standard Chip & Actions */}
+        <div className="shrink-0 flex flex-wrap sm:flex-nowrap items-center gap-2.5">
+          <button
+            type="button"
+            onClick={() => EngineeringCalculationPdfExportService.exportWorkedExamplePdf(example, locale)}
+            className="p-3 rounded-xl bg-[#B8F000]/15 hover:bg-[#B8F000]/25 text-[#B8F000] border border-[#B8F000]/30 flex items-center gap-2 font-mono text-xs font-bold transition-all shadow-sm hover:scale-[1.02] cursor-pointer"
+            title={isFr ? 'Télécharger la note technique de calcul au format PDF A4' : 'Download technical calculation sheet as A4 PDF'}
+          >
+            <Download className="w-4 h-4 text-[#B8F000]" />
+            <span className="hidden sm:inline">{isFr ? 'Note PDF A4' : 'A4 PDF Sheet'}</span>
+          </button>
+
+          <div className="shrink-0 p-3 rounded-xl bg-white/[0.04] border border-white/10 flex items-start gap-2.5 max-w-sm">
+            <BookOpen className="w-4 h-4 text-[#38BDF8] shrink-0 mt-0.5" />
+            <div className="text-xs space-y-0.5">
+              <div className="font-mono font-bold text-[#38BDF8]">
+                {example.primaryStandard.standard}
+              </div>
+              <div className="text-white/60 text-[11px]">
+                {example.primaryStandard.clause}
+              </div>
             </div>
           </div>
         </div>
@@ -185,21 +199,31 @@ export const WorkedExampleViewer: React.FC<WorkedExampleViewerProps> = ({
       </div>
 
       {/* 6. Non-Dismissible Didactic Notice */}
-      <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-between gap-3 text-[11px]">
+      <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-[11px]">
         <div className="flex items-center gap-2 text-amber-300">
           <AlertTriangle className="w-4 h-4 shrink-0 text-amber-400" />
           <span>{example.didacticNotice}</span>
         </div>
-        {onOpenCalculator && (
+        <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
-            onClick={onOpenCalculator}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] font-bold border border-white/20 transition-colors cursor-pointer shrink-0"
+            onClick={() => EngineeringCalculationPdfExportService.exportWorkedExamplePdf(example, locale)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#B8F000]/10 hover:bg-[#B8F000]/20 text-[#B8F000] font-mono text-[10px] font-bold border border-[#B8F000]/30 transition-colors cursor-pointer"
           >
-            <Calculator className="w-3.5 h-3.5 text-[#B8F000]" />
-            <span>{isFr ? 'Calculateur Associé' : 'Related Calculator'}</span>
+            <Download className="w-3.5 h-3.5 text-[#B8F000]" />
+            <span>{isFr ? 'Exporter PDF' : 'Export PDF'}</span>
           </button>
-        )}
+          {onOpenCalculator && (
+            <button
+              type="button"
+              onClick={onOpenCalculator}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] font-bold border border-white/20 transition-colors cursor-pointer shrink-0"
+            >
+              <Calculator className="w-3.5 h-3.5 text-[#B8F000]" />
+              <span>{isFr ? 'Calculateur Associé' : 'Related Calculator'}</span>
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

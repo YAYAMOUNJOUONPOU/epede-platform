@@ -3,17 +3,18 @@
 // Calibrated to IEC 60034-1, IEC 60034-12, IEEE Std 399 (Brown Book) & IEEE Std 620
 
 import React, { useState, useMemo } from 'react';
-import { Zap, AlertTriangle, CheckCircle2, Sliders, Activity, Info, Play } from 'lucide-react';
+import { Zap, AlertTriangle, CheckCircle2, Sliders, Activity, Info, Play, FileText } from 'lucide-react';
 import { IndustrialMotorDynamicSimulator } from '../../simulation/modules/IndustrialMotorDynamicSimulator';
 
 interface MotorCalculatorProps {
   locale: 'fr' | 'en';
+  onOpenReport?: () => void;
 }
 
 export type MotorVoltageLevel = 400 | 690 | 3300 | 5500 | 6600 | 11000;
 export type MotorStartMethod = 'dol' | 'star-delta' | 'soft-starter' | 'vfd';
 
-export const MotorCalculator: React.FC<MotorCalculatorProps> = ({ locale }) => {
+export const MotorCalculator: React.FC<MotorCalculatorProps> = ({ locale, onOpenReport }) => {
   // 1. Motor Electrical Specifications
   const [showDynamicSimulator, setShowDynamicSimulator] = useState<boolean>(true);
   const [voltageV, setVoltageV] = useState<MotorVoltageLevel>(400);
@@ -301,6 +302,19 @@ export const MotorCalculator: React.FC<MotorCalculatorProps> = ({ locale }) => {
             </div>
           </div>
         </div>
+
+        {onOpenReport && (
+          <div className="pt-2 border-t border-[#252E38]">
+            <button
+              type="button"
+              onClick={onOpenReport}
+              className="w-full py-2.5 rounded-xl font-mono text-xs font-bold bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 flex items-center justify-center gap-2 transition-colors cursor-pointer"
+            >
+              <FileText className="h-4 w-4" />
+              <span>{locale === 'fr' ? 'Éditer Dossier de Calcul Moteur' : 'Generate Motor Calculation Dossier'}</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Dynamic Transient Simulator Section */}

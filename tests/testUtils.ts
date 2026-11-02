@@ -117,6 +117,11 @@ export function expect<T>(actual: T) {
         throw new Error(`Expected ${actual} to be less than or equal to ${expected}`);
       }
     },
+    toBeDefined() {
+      if (actual === undefined) {
+        throw new Error(`Expected value to be defined, but received undefined`);
+      }
+    },
     toBeTruthy() {
       if (!actual) {
         throw new Error(`Expected truthy value, but received ${actual}`);

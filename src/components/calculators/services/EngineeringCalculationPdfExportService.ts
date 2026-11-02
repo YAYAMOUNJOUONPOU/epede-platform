@@ -3,9 +3,10 @@
 // Standardized executive calculation note generator for IEC 60909, IEC 60364-5-52, NF C 15-100, IEEE 80
 // Built with jsPDF + jspdf-autotable
 
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import type { CalculationReportData } from '../CalculationReportModal';
+import type { CalculationReportData, ReportItem } from '../CalculationReportModal';
+import type { WorkedExample } from '../../../types/contentSchemas';
 
 const PDF_COLORS = {
   obsidian:    [15, 23, 42]     as [number, number, number], // #0f172a
@@ -87,9 +88,9 @@ function sanitizePdfText(input: string | number | undefined | null): string {
 
 export class EngineeringCalculationPdfExportService {
   /**
-   * Generates and downloads a standardized, certified A4 engineering design calculation note
+   * Generates a standardized, certified A4 engineering design calculation note jsPDF document instance
    */
-  public static exportCalculationPdf(data: CalculationReportData, locale: 'fr' | 'en' = 'fr'): void {
+  public static generateCalculationPdfDoc(data: CalculationReportData, locale: 'fr' | 'en' = 'fr'): jsPDF {
     const isFr = locale === 'fr';
     const doc = new jsPDF({
       orientation: 'portrait',
@@ -491,8 +492,89 @@ export class EngineeringCalculationPdfExportService {
       addHeaderFooter(p, totalPages);
     }
 
-    // Save and download PDF file
-    const safeRef = data.referenceId.replace(/[^a-zA-Z0-9_-]/g, '_');
-    doc.save(`Note-Calcul-${data.calcType}-${safeRef}.pdf`);
+    return doc;
+  }
+
+  /**
+   * Generates and downloads a standardized, certified A4 engineering design calculation note
+   */
+  public static exportCalculationPdf(data: CalculationReportData, locale: 'fr' | 'en' = 'fr'): void {
+    const doc = this.generateCalculationPdfDoc(data, locale);
+    if (typeof window !== 'undefined' && (doc as any).save) {
+      const safeRef = data.referenceId.replace(/[^a-zA-Z0-9_-]/g, '_');
+      doc.save(`Note-Calcul-${data.calcType}-${safeRef}.pdf`);
+    }
+  }
+
+  /**
+   * Converts a canonical 16-Domain WorkedExample into a standard CalculationReportData structure
+   */
+  public static convertWorkedExampleToReportData(
+    example: WorkedExample,
+    locale: 'fr' | 'en' = 'fr'
+  ): CalculationReportData {
+    const isFr = locale === 'fr';
+    const now = new Date();
+    const dateStr = now.toLocaleDateString(isFr ? 'fr-FR' : 'en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+
+    const inputs: ReportItem[] = example.inputs.map((inp) => ({
+      label: `${isFr ? inp.description.fr : inp.description.en} (${inp.symbol})`,
+      value: String(inp.value),
+      unit: inp.unit,
+      status: 'INFO',
+    }));
+
+    const formulas = example.steps.map((st) => ({
+      name: `Étape ${st.stepNumber} : ${isFr ? st.title.fr : st.title.en}`,
+      expr: st.governingFormula,
+    }));
+
+    const results: ReportItem[] = example.steps.map((st) => ({
+      label: isFr ? st.title.fr : st.title.en,
+      value: st.resultWithUnit,
+      highlight: st.stepNumber === example.steps.length,
+      status: 'OK',
+    }));
+
+    const notes: string[] = [
+      ...example.steps.map(
+        (st) =>
+          `Étape ${st.stepNumber} [${st.governingFormula}] : ${
+            isFr ? st.explanation.fr : st.explanation.en
+          } -> ${st.substitutionAndCalculation}`
+      ),
+      example.didacticNotice,
+    ];
+
+    return {
+      title: isFr ? example.title.fr : example.title.en,
+      calcType: `WORKED-EXAMPLE-${example.domainCode}`,
+      standard: `${example.primaryStandard.standard} (${example.primaryStandard.clause})`,
+      date: dateStr,
+      referenceId: `EPEDE-WE-${example.domainCode}-${example.id.slice(-6).toUpperCase()}`,
+      inputs,
+      formulas,
+      results,
+      complianceVerdict: {
+        status: 'COMPLIANT',
+        message: isFr ? example.finalVerification.fr : example.finalVerification.en,
+      },
+      engineeringNotes: notes,
+    };
+  }
+
+  /**
+   * Generates and downloads an authoritative engineering submission PDF for any canonical worked example
+   */
+  public static exportWorkedExamplePdf(
+    example: WorkedExample,
+    locale: 'fr' | 'en' = 'fr'
+  ): void {
+    const reportData = this.convertWorkedExampleToReportData(example, locale);
+    this.exportCalculationPdf(reportData, locale);
   }
 }

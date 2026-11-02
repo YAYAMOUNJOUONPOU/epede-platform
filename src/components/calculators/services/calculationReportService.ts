@@ -1,5 +1,11 @@
 // src/components/calculators/services/calculationReportService.ts
 import type { CalculationReportData, ApparatusProvenance } from '../CalculationReportModal';
+import {
+  IndustrialMotorDynamicsEngine,
+  type MotorVoltageTier,
+  type MotorStartMethod,
+  type MechanicalLoadType,
+} from '../../../data/industrialMotorDynamicsEngine';
 
 export interface InjectedCalculatorContext {
   equipmentId?: string;
@@ -227,52 +233,147 @@ export function generateCalculationReport(
   }
 
   if (activeCalc === 'motor') {
-    const motorKw = 75;
-    const motorEta = 0.93;
-    const motorPf = 0.86;
-    const motorPoleCount = 4;
-    const startMethod = 'dol';
-    const inMotorAmps = (motorKw * 1000) / (Math.sqrt(3) * 400 * motorEta * motorPf);
-    const startRatio = 6.5;
-    const iStartAmps = inMotorAmps * startRatio;
-    const synchRpm = (120 * 50) / motorPoleCount;
-    const ratedRpm = synchRpm * 0.965;
+    const motorKw = injectedContext?.params?.motorKw
+      ? Number(injectedContext.params.motorKw)
+      : injectedContext?.params?.powerKw
+      ? Number(injectedContext.params.powerKw)
+      : 75;
+    const voltageV = (
+      injectedContext?.params?.voltageV
+        ? Number(injectedContext.params.voltageV)
+        : 400
+    ) as MotorVoltageTier;
+    const motorEta = injectedContext?.params?.motorEta
+      ? Number(injectedContext.params.motorEta)
+      : 0.93;
+    const motorPf = injectedContext?.params?.motorPf
+      ? Number(injectedContext.params.motorPf)
+      : injectedContext?.params?.motorCosPhi
+      ? Number(injectedContext.params.motorCosPhi)
+      : 0.86;
+    const poleCount = injectedContext?.params?.poleCount
+      ? Number(injectedContext.params.poleCount)
+      : injectedContext?.params?.poles
+      ? Number(injectedContext.params.poles)
+      : 4;
+    const startMethod = (injectedContext?.params?.startMethod || 'dol') as MotorStartMethod;
+    const loadType = (injectedContext?.params?.loadType || 'quadratic') as MechanicalLoadType;
+    const supplyTrafoKva = injectedContext?.params?.supplyTrafoKva
+      ? Number(injectedContext.params.supplyTrafoKva)
+      : motorKw <= 100
+      ? 630
+      : 1600;
+    const supplyTrafoUkPercent = injectedContext?.params?.supplyTrafoUkPercent
+      ? Number(injectedContext.params.supplyTrafoUkPercent)
+      : 4.0;
+    const upstreamGridSscMva = injectedContext?.params?.upstreamGridSscMva
+      ? Number(injectedContext.params.upstreamGridSscMva)
+      : 250;
 
-    return {
-      title: locale === 'fr' ? 'Courant Nominal & Appel de Démarrage Moteur Asynchrone' : 'Induction Motor Rated & Inrush Current',
+    const dynamicSim = IndustrialMotorDynamicsEngine.solve({
+      voltageV,
+      powerKw: motorKw,
+      poleCount,
+      startMethod,
+      loadType,
+      motorEta,
+      motorCosPhi: motorPf,
+      supplyTrafoKva,
+      supplyTrafoUkPercent,
+      upstreamGridSscMva,
+    });
+
+    const startMethodLabel =
+      {
+        dol: 'Direct-on-line (DOL)',
+        'star-delta': locale === 'fr' ? 'Étoile-Triangle (Y-Δ)' : 'Star-Delta (Y-Δ)',
+        'soft-starter': locale === 'fr' ? 'Démarreur Progressif (Soft-Starter)' : 'Soft-Starter',
+        vfd: locale === 'fr' ? 'Variateur de Fréquence (VFD)' : 'Variable Frequency Drive (VFD)',
+      }[startMethod] || startMethod;
+
+    const isSagCompliant = dynamicSim.busVoltageSagPercent <= 15.0;
+
+    return withProvenance({
+      title:
+        locale === 'fr'
+          ? 'Courant Nominal, Appel de Démarrage & Transitoire Moteur'
+          : 'Induction Motor Rated Inrush & Transient Dynamics',
       calcType: 'MOTOR-INRUSH-STARTING',
-      standard: 'CEI 60034-1 / CEI 60034-12',
+      standard: 'CEI 60034-1 / CEI 60034-12 / IEEE Std 399',
       date: dateStr,
       referenceId: `EPEDE-CALC-MOT-${now.getTime().toString().slice(-6)}`,
       inputs: [
-        { label: locale === 'fr' ? 'Puissance utile à l\'arbre (P)' : 'Shaft Output Power (P)', value: `${motorKw}`, unit: 'kW' },
+        { label: locale === 'fr' ? "Puissance utile à l'arbre (P)" : 'Shaft Output Power (P)', value: `${motorKw}`, unit: 'kW' },
+        { label: locale === 'fr' ? 'Tension assignée (U)' : 'Nominal Voltage (U)', value: `${voltageV}`, unit: 'V' },
         { label: locale === 'fr' ? 'Rendement (η)' : 'Efficiency (η)', value: `${(motorEta * 100).toFixed(1)}`, unit: '%' },
         { label: locale === 'fr' ? 'Facteur de puissance nominal' : 'Rated Power Factor', value: `${motorPf}` },
-        { label: locale === 'fr' ? 'Nombre de pôles stator' : 'Stator Pole Count', value: `${motorPoleCount}` },
-        { label: locale === 'fr' ? 'Mode de démarrage' : 'Starting Method', value: 'Direct (DOL)' },
+        { label: locale === 'fr' ? 'Nombre de pôles stator' : 'Stator Pole Count', value: `${poleCount}` },
+        { label: locale === 'fr' ? 'Mode de démarrage' : 'Starting Method', value: startMethodLabel },
+        { label: locale === 'fr' ? "Transfo d'alimentation" : 'Supply Transformer', value: `${supplyTrafoKva}`, unit: 'kVA' },
       ],
       formulas: [
-        { name: 'Courant nominal In', expr: '(P · 1000) / (√3 · 400 · η · cos φ) [A]' },
-        { name: 'Courant de démarrage Idém', expr: 'In · k_démarrage (k_dol=6.5, k_yd=2.2, k_vfd=1.3) [A]' },
-        { name: 'Vitesse synchrone Ns', expr: '(120 · f) / 2p [tr/min]' },
+        { name: 'Courant nominal In', expr: '(P · 1000) / (√3 · U · η · cos φ) [A]' },
+        { name: 'Courant de démarrage Idém', expr: 'In · k_démarrage (k_dol=6.5, k_yd=2.2, k_soft=3.2, k_vfd=1.15) [A]' },
+        { name: 'Chute de tension transitoire ΔU', expr: '100 · (S_dém / (S_cc_amont + S_dém)) [%]' },
+        { name: 'Temps d\'accélération ta', expr: 'J_tot · ω_n / C_acc_moyen [s]' },
       ],
       results: [
-        { label: locale === 'fr' ? 'Courant d\'appel au démarrage (Id)' : 'Starting Inrush Current (Id)', value: iStartAmps.toFixed(1), unit: 'A', highlight: true, status: 'WARN' },
-        { label: locale === 'fr' ? 'Courant nominal permanent (In)' : 'Rated Full Load Current (In)', value: inMotorAmps.toFixed(1), unit: 'A' },
-        { label: locale === 'fr' ? 'Vitesse de synchronisme' : 'Synchronous Speed', value: `${synchRpm}`, unit: 'tr/min' },
-        { label: locale === 'fr' ? 'Vitesse nominale estimée' : 'Estimated Rated Speed', value: `${ratedRpm.toFixed(0)}`, unit: 'tr/min' },
+        {
+          label: locale === 'fr' ? "Courant d'appel au démarrage (Id)" : 'Starting Inrush Current (Id)',
+          value: dynamicSim.startingCurrentA.toFixed(0),
+          unit: 'A',
+          highlight: true,
+          status: dynamicSim.startingCurrentA > dynamicSim.nominalCurrentA * 4 ? 'WARN' : 'OK',
+        },
+        {
+          label: locale === 'fr' ? 'Courant nominal permanent (In)' : 'Rated Full Load Current (In)',
+          value: dynamicSim.nominalCurrentA.toFixed(1),
+          unit: 'A',
+        },
+        {
+          label: locale === 'fr' ? 'Chute de tension jeu de barres' : 'Busbar Voltage Sag',
+          value: dynamicSim.busVoltageSagPercent.toFixed(1),
+          unit: '%',
+          highlight: true,
+          status: isSagCompliant ? 'OK' : 'DANGER',
+        },
+        {
+          label: locale === 'fr' ? "Temps d'accélération estimé" : 'Estimated Accel Time',
+          value: dynamicSim.accelerationTimeSec.toFixed(2),
+          unit: 's',
+        },
+        {
+          label: locale === 'fr' ? 'Couple de décollage (Cd)' : 'Breakaway Starting Torque',
+          value: `${dynamicSim.startingTorqueNm}`,
+          unit: 'N·m',
+        },
+        {
+          label: locale === 'fr' ? 'Vitesse nominale' : 'Nominal Speed',
+          value: `${dynamicSim.nominalSpeedRpm}`,
+          unit: 'tr/min',
+        },
       ],
       complianceVerdict: {
-        status: 'INFORMATIONAL',
-        message: locale === 'fr' 
-          ? `Démarrage direct DOL : pic d'intensité de ${iStartAmps.toFixed(0)} A (6.5 x In). Vérifier que la chute de tension sur le transformateur amont ne dépasse pas 10% lors du transitoire.` 
-          : `DOL start generates ${iStartAmps.toFixed(0)} A inrush. Verify transient transformer voltage dip < 10%.`,
+        status: isSagCompliant ? 'COMPLIANT' : 'NON_COMPLIANT',
+        message:
+          locale === 'fr'
+            ? `${startMethodLabel} : Courant de pointe Id = ${dynamicSim.startingCurrentA} A (${dynamicSim.inrushRatio} × In). Chute de tension transitoire de ${dynamicSim.busVoltageSagPercent.toFixed(1)}% ${
+                isSagCompliant
+                  ? '≤ 15% (conforme IEEE 399).'
+                  : '> 15% (NON CONFORME : risque de décrochage contacteurs et perturbations réseau. Utiliser un Soft-Starter ou VFD).'
+              }`
+            : `${startMethodLabel}: Peak inrush Id = ${dynamicSim.startingCurrentA} A (${dynamicSim.inrushRatio} × In). Transient voltage sag of ${dynamicSim.busVoltageSagPercent.toFixed(1)}% ${
+                isSagCompliant
+                  ? '≤ 15% (IEEE 399 compliant).'
+                  : '> 15% (NON-COMPLIANT: risk of contactor dropout. Upgrade to Soft-Starter or VFD).'
+              }`,
       },
       engineeringNotes: [
-        'Le réglage de la protection thermique (ANSI 49) doit être calibré exactement sur In = ' + inMotorAmps.toFixed(1) + ' A.',
-        'Le déclencheur magnétique (ANSI 50) doit être ajusté au-dessus du courant de démarrage Id pour éviter tout déclenchement intempestif.',
+        `Protection thermique moteur (ANSI 49) : seuil assigné à In = ${dynamicSim.nominalCurrentA.toFixed(1)} A.`,
+        `Contrainte thermique transitoire rotor I²t = ${(dynamicSim.thermalEnergyI2t / 1000).toFixed(1)} kA²·s (classe thermique CEI 60947-4-1).`,
+        `Tension minimale transitoire au jeu de barres : ${dynamicSim.busVoltageDuringStartV} V (${(100 - dynamicSim.busVoltageSagPercent).toFixed(1)}% Un).`,
       ],
-    };
+    });
   }
 
   if (activeCalc === 'sil') {

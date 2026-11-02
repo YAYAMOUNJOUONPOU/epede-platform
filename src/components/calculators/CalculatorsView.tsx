@@ -559,16 +559,16 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
       )}
 
       {/* 4. MOTOR STARTING & INRUSH CURRENT */}
-      {activeCalc === 'motor' && <MotorCalculator locale={locale} />}
+      {activeCalc === 'motor' && <MotorCalculator locale={locale} onOpenReport={() => setIsReportOpen(true)} />}
 
       {/* 5. PHASE 2: SURGE IMPEDANCE LOADING & FERRANTI (D03 / D02) */}
       {activeCalc === 'sil' && <SilCalculator locale={locale} />}
 
       {/* 6. PHASE 2: IEEE STD 80 SUBSTATION EARTHING GRID (D16) */}
-      {activeCalc === 'earthing' && <EarthingCalculator locale={locale} />}
+      {activeCalc === 'earthing' && <EarthingCalculator locale={locale} onOpenReport={() => setIsReportOpen(true)} />}
 
       {/* 7. ARC FLASH HAZARD ANALYSIS (IEEE 1584-2018 / NFPA 70E) */}
-      {activeCalc === 'arc-flash' && <ArcFlashCalculator locale={locale} />}
+      {activeCalc === 'arc-flash' && <ArcFlashCalculator locale={locale} onOpenReport={() => setIsReportOpen(true)} />}
 
       {/* 8. CURRENT TRANSFORMER (CT) BURDEN & SATURATION (IEC 61869-2) */}
       {activeCalc === 'ct-sizing' && <CtSizingCalculator locale={locale} onOpenReport={() => setIsReportOpen(true)} />}

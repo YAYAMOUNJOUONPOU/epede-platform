@@ -5,6 +5,9 @@
 import { describe, it, expect } from './testUtils';
 import { CanonicalNetworkSolver } from '../src/data/canonicalNetworkSolver';
 import { IndustrialMotorDynamicsEngine, CAMEROON_MOTOR_PRESETS } from '../src/data/industrialMotorDynamicsEngine';
+import { EngineeringCalculationPdfExportService } from '../src/components/calculators/services/EngineeringCalculationPdfExportService';
+import { generateCalculationReport } from '../src/components/calculators/services/calculationReportService';
+import { WORKED_EXAMPLES_REGISTRY } from '../src/data/workedExamplesRegistry';
 
 describe('⚡ Electrotechnical Physics Engine Tests', () => {
   it('1. Vector AC Voltage Drop Formula (RP + XQ) / V must account for reactive power', () => {
@@ -197,5 +200,43 @@ describe('⚡ Electrotechnical Physics Engine Tests', () => {
     expect(vfdResult.startingCurrentA).toBeLessThan(vfdResult.nominalCurrentA * 1.3);
     expect(vfdResult.busVoltageSagPercent).toBeLessThan(2.0);
     expect(vfdResult.isMotorStall).toBe(false);
+  });
+
+  it('9. Engineering Calculation Dossier PDF generator & worked example converter produce valid documents', () => {
+    // A. Generate dynamic motor calculation report
+    const motorReport = generateCalculationReport('motor', 'fr', {
+      params: {
+        motorKw: 250,
+        voltageV: 400,
+        startMethod: 'soft-starter',
+        supplyTrafoKva: 1600,
+      },
+    });
+
+    expect(motorReport.calcType).toBe('MOTOR-INRUSH-STARTING');
+    expect(motorReport.inputs.length).toBeGreaterThan(4);
+    expect(motorReport.results.length).toBeGreaterThan(4);
+    expect(motorReport.complianceVerdict.status).toBe('COMPLIANT');
+
+    // B. Generate PDF doc instance from calculator report
+    const pdfDoc = EngineeringCalculationPdfExportService.generateCalculationPdfDoc(motorReport, 'fr');
+    expect(pdfDoc).toBeDefined();
+    const pdfBuffer = pdfDoc.output('arraybuffer');
+    expect(pdfBuffer.byteLength).toBeGreaterThan(5000);
+
+    // C. Convert worked example (D01 Nachtigal Generator Rating) into report
+    const d01Example = WORKED_EXAMPLES_REGISTRY.find(e => e.id === 'we-d01-generator-rating')!;
+    expect(d01Example).toBeDefined();
+
+    const weReport = EngineeringCalculationPdfExportService.convertWorkedExampleToReportData(d01Example, 'en');
+    expect(weReport.calcType).toBe('WORKED-EXAMPLE-D01');
+    expect(weReport.inputs.length).toBe(d01Example.inputs.length);
+    expect(weReport.formulas.length).toBe(d01Example.steps.length);
+    expect(weReport.results.length).toBe(d01Example.steps.length);
+
+    // D. Generate PDF doc instance from worked example
+    const wePdfDoc = EngineeringCalculationPdfExportService.generateCalculationPdfDoc(weReport, 'en');
+    const wePdfBuffer = wePdfDoc.output('arraybuffer');
+    expect(wePdfBuffer.byteLength).toBeGreaterThan(5000);
   });
 });
