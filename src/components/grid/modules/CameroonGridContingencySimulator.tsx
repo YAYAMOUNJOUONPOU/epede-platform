@@ -33,6 +33,7 @@ import {
   CameroonContingencyInput,
   CameroonContingencyOutput,
 } from '../../../data/cameroonGridSolver';
+import { CameroonGridSldSynoptic } from './CameroonGridSldSynoptic';
 
 interface Props {
   locale: 'fr' | 'en';
@@ -766,129 +767,15 @@ export const CameroonGridContingencySimulator: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* 5. Live Single-Line Network Synoptic (SVG Vector with Animated Power Flows) */}
-      <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3 font-mono text-xs">
-        <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-          <span className="font-bold text-white uppercase flex items-center gap-2">
-            <Layers className="w-4 h-4 text-cyan-400" />
-            <span>{isFr ? 'SYNOPTIQUE D\'EXPLOITATION N-1 DES CORRIDORS 225 kV' : 'N-1 SINGLE-LINE POWER FLOW SYNOPTIC'}</span>
-          </span>
-          <span className="text-[10px] text-slate-400">
-            {isFr ? 'Cliquez sur un disjoncteur pour déclencher / réenclencher' : 'Click breaker to trip / reclose'}
-          </span>
-        </div>
-
-        {/* SVG Canvas */}
-        <div className="w-full overflow-x-auto bg-[#050912] rounded-xl border border-slate-900 p-4">
-          <svg viewBox="0 0 850 220" className="w-full min-w-[700px] h-48 select-none font-mono">
-            <defs>
-              <linearGradient id="corridorGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#0284c7" />
-                <stop offset="100%" stopColor="#38bdf8" />
-              </linearGradient>
-              <linearGradient id="overloadGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#e11d48" />
-                <stop offset="100%" stopColor="#fb7185" />
-              </linearGradient>
-            </defs>
-
-            {/* BUS 1: Song Loulou */}
-            <g transform="translate(60, 40)">
-              <rect x="0" y="0" width="130" height="40" rx="8" fill="#0C1525" stroke="#0284c7" strokeWidth="2" />
-              <text x="65" y="16" fill="#38bdf8" fontSize="11" fontWeight="bold" textAnchor="middle">SONGLOULOU</text>
-              <text x="65" y="30" fill="#94a3b8" fontSize="10" textAnchor="middle">225 kV · {solverOutput.buses.find(b => b.id === 'node-songloulou')?.voltagePu} pu</text>
-            </g>
-
-            {/* BUS 2: Mangombé (Edéa Hub) */}
-            <g transform="translate(350, 40)">
-              <rect x="0" y="0" width="140" height="40" rx="8" fill="#0C1525" stroke={solverOutput.buses.find(b => b.id === 'node-mangombe')?.status === 'warning' ? '#f59e0b' : '#0284c7'} strokeWidth="2" />
-              <text x="70" y="16" fill="#f8fafc" fontSize="11" fontWeight="bold" textAnchor="middle">MANGOMBÉ (EDÉA)</text>
-              <text x="70" y="30" fill="#94a3b8" fontSize="10" textAnchor="middle">225 kV · {solverOutput.buses.find(b => b.id === 'node-mangombe')?.voltagePu} pu</text>
-            </g>
-
-            {/* BUS 3: Bekoko (Douala) */}
-            <g transform="translate(650, 40)">
-              <rect x="0" y="0" width="140" height="40" rx="8" fill="#0C1525" stroke={solverOutput.buses.find(b => b.id === 'node-bekoko')?.status === 'critical' ? '#e11d48' : '#0284c7'} strokeWidth="2" />
-              <text x="70" y="16" fill="#f8fafc" fontSize="11" fontWeight="bold" textAnchor="middle">BEKOKO (DOUALA)</text>
-              <text x="70" y="30" fill="#94a3b8" fontSize="10" textAnchor="middle">225 kV · {solverOutput.buses.find(b => b.id === 'node-bekoko')?.voltagePu} pu</text>
-            </g>
-
-            {/* BUS 4: Oyomabang (Yaoundé) */}
-            <g transform="translate(480, 150)">
-              <rect x="0" y="0" width="160" height="40" rx="8" fill="#0C1525" stroke={solverOutput.buses.find(b => b.id === 'node-oyomabang')?.status === 'critical' ? '#e11d48' : '#10b981'} strokeWidth="2" />
-              <text x="80" y="16" fill="#f8fafc" fontSize="11" fontWeight="bold" textAnchor="middle">OYOMABANG (YAOUNDÉ)</text>
-              <text x="80" y="30" fill="#94a3b8" fontSize="10" textAnchor="middle">225 kV · {solverOutput.buses.find(b => b.id === 'node-oyomabang')?.voltagePu} pu</text>
-            </g>
-
-            {/* CORRIDOR 1: Song Loulou -> Mangombé Terne 1 (Tripped during Scenario 1) */}
-            {(() => {
-              const c1 = solverOutput.corridors.find(c => c.id === 'line-sl-mg-c1');
-              const isTripped = c1?.status === 'tripped';
-              return (
-                <g>
-                  <path
-                    d="M 190 50 L 350 50"
-                    stroke={isTripped ? '#e11d48' : '#38bdf8'}
-                    strokeWidth={isTripped ? 1.5 : 3}
-                    strokeDasharray={isTripped ? '4 4' : 'none'}
-                  />
-                  {/* Breaker Icon Q0_SL1 */}
-                  <g
-                    transform="translate(255, 42)"
-                    className="cursor-pointer"
-                    onClick={() => setManualBreakerOpen(!manualBreakerOpen)}
-                  >
-                    <rect x="0" y="0" width="28" height="16" rx="3" fill={isTripped ? '#e11d48' : '#10b981'} />
-                    <text x="14" y="12" fill="#ffffff" fontSize="9" fontWeight="bold" textAnchor="middle">
-                      {isTripped ? 'OUV' : 'FER'}
-                    </text>
-                  </g>
-                  <text x="270" y="32" fill="#94a3b8" fontSize="9" textAnchor="middle">
-                    L1 (58 km) · {isTripped ? 'DÉCLENCHÉ' : `${c1?.activePowerFromMw} MW`}
-                  </text>
-                </g>
-              );
-            })()}
-
-            {/* CORRIDOR 2: Song Loulou -> Mangombé Terne 2 (Carries surge) */}
-            {(() => {
-              const c2 = solverOutput.corridors.find(c => c.id === 'line-sl-mg-c2');
-              const isOverload = (c2?.loadingPercent || 0) > 85;
-              return (
-                <g>
-                  <path
-                    d="M 190 70 L 350 70"
-                    stroke={isOverload ? '#e11d48' : '#38bdf8'}
-                    strokeWidth={isOverload ? 4 : 3}
-                  />
-                  <text x="270" y="90" fill={isOverload ? '#fb7185' : '#94a3b8'} fontSize="9" fontWeight="bold" textAnchor="middle">
-                    L2 (58 km) · {c2?.activePowerFromMw} MW ({c2?.loadingPercent}%)
-                  </text>
-                </g>
-              );
-            })()}
-
-            {/* CORRIDOR 3: Mangombé -> Bekoko (Douala feed) */}
-            {(() => {
-              const c3 = solverOutput.corridors.find(c => c.id === 'line-mg-bkk');
-              return (
-                <g>
-                  <path d="M 490 60 L 650 60" stroke="#38bdf8" strokeWidth="3" />
-                  <text x="570" y="50" fill="#94a3b8" fontSize="9" textAnchor="middle">
-                    76 km · {c3?.activePowerFromMw} MW ({c3?.loadingPercent}%)
-                  </text>
-                </g>
-              );
-            })()}
-
-            {/* CORRIDOR 4: Mangombé -> Oyomabang (Yaoundé tie) */}
-            <g>
-              <path d="M 420 80 L 420 170 L 480 170" stroke="#0ea5e9" strokeWidth="2.5" fill="none" />
-              <text x="445" y="130" fill="#94a3b8" fontSize="9">165 km</text>
-            </g>
-          </svg>
-        </div>
-      </div>
+      {/* 5. Live Single-Line Network Synoptic (SVG Vector with Animated Power Flows & Overlays) */}
+      <CameroonGridSldSynoptic
+        locale={locale}
+        solverOutput={solverOutput}
+        scenarioId={activeScenarioId}
+        isFaultActive={isFaultActive}
+        manualBreakerOpen={manualBreakerOpen}
+        onToggleBreaker={() => setManualBreakerOpen(!manualBreakerOpen)}
+      />
 
       {/* 6. Corridors Loading & Busbars Voltage Tables */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 font-mono text-xs">
