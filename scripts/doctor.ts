@@ -84,6 +84,24 @@ console.log(`   ✅ All ${NORMATIVE_FORMULA_REGISTRY.length} equations tethered 
 
 // Check 5: Didactic Worked Examples
 console.log('\n👉 [5/6] Auditing Didactic Worked Examples...');
+const requiredDomains = [
+  'D01', 'D02', 'D03', 'D04', 'D05', 'D06', 'D07', 'D08',
+  'D09', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'D16'
+];
+
+if (WORKED_EXAMPLES_REGISTRY.length < 16) {
+  console.error(`❌ Expected at least 16 worked examples, but found ${WORKED_EXAMPLES_REGISTRY.length}`);
+  issuesFound++;
+}
+
+requiredDomains.forEach((dCode) => {
+  const hasDomain = WORKED_EXAMPLES_REGISTRY.some(we => we.domainCode === dCode);
+  if (!hasDomain) {
+    console.error(`❌ Missing worked example for domain ${dCode}`);
+    issuesFound++;
+  }
+});
+
 WORKED_EXAMPLES_REGISTRY.forEach((we) => {
   const res = WorkedExampleSchema.safeParse(we);
   if (!res.success) {
@@ -95,7 +113,7 @@ WORKED_EXAMPLES_REGISTRY.forEach((we) => {
     issuesFound++;
   }
 });
-console.log(`   ✅ All ${WORKED_EXAMPLES_REGISTRY.length} worked examples verified with step-by-step arithmetic.`);
+console.log(`   ✅ All ${WORKED_EXAMPLES_REGISTRY.length} worked examples (covering all 16 domains D01-D16) verified with step-by-step arithmetic.`);
 
 // Check 6: Safety Boundaries & No Fake Certification Claims
 console.log('\n👉 [6/6] Auditing Source Code for Fake Certification Claims...');

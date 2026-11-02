@@ -763,6 +763,11 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
         <InstallationsWorkbench
           locale={locale}
           initialPillar={d06InitialPillar}
+          onNavigate={(tab, domainId) => {
+            if (onNavigateView) {
+              onNavigateView(tab, domainId);
+            }
+          }}
         />
       ) : isD07 && d07Mode === 'pedagogical_pilot' ? (
         <UniversalPedagogicalDomainView

@@ -43,6 +43,9 @@ import { OverheadLineExplorerTree } from './OverheadLineExplorerTree';
 import { UndergroundCableExplorerTree } from './UndergroundCableExplorerTree';
 import { VoltageLevelExplorer } from './VoltageLevelExplorer';
 import { OverheadUndergroundComparison } from './OverheadUndergroundComparison';
+import { PowerChain } from '../common/PowerChain';
+import { WorkedExampleViewer } from '../common/WorkedExampleViewer';
+import { getWorkedExampleById } from '../../data/workedExamplesRegistry';
 import { EquipmentObjectSchemaInspector } from './EquipmentObjectSchemaInspector';
 import { PhysicalElectricalFunctionalViews } from './PhysicalElectricalFunctionalViews';
 import { RelationshipAndStateModel } from './RelationshipAndStateModel';
@@ -133,6 +136,23 @@ export const TransmissionWorkbench: React.FC<TransmissionWorkbenchProps> = ({
           (locale === 'fr' ? 'Étape 5 : Protections & Dossier SAT' : 'Stage 5: Protection & SAT Dossier')
         }
         totalPillarsCount={5}
+      />
+
+      {/* CANONICAL 9-STAGE POWER CHAIN (STAGE T1: HV TRANSMISSION) */}
+      <PowerChain
+        currentStageId="T1"
+        locale={locale}
+        onSelectStage={(stage) => {
+          if (stage.id === 'G1') onNavigate?.('domain', 'D01');
+          else if (stage.id === 'T1') onNavigate?.('domain', 'D03');
+          else if (stage.id === 'S1') onNavigate?.('domain', 'D04');
+          else if (stage.id === 'D1') onNavigate?.('domain', 'D05');
+          else if (stage.id === 'I1') onNavigate?.('domain', 'D06');
+          else if (stage.id === 'M1') onNavigate?.('domain', 'D06');
+          else if (stage.id === 'A1') onNavigate?.('domain', 'D07');
+          else if (stage.id === 'F1') onNavigate?.('domain', 'D14');
+          else if (stage.id === 'S2') onNavigate?.('domain', 'D16');
+        }}
       />
 
       {/* Main Workspace Layout */}
@@ -475,7 +495,15 @@ export const TransmissionWorkbench: React.FC<TransmissionWorkbenchProps> = ({
                 </div>
 
                 {stage3Tab === 'SIL_FERRANTI' && (
-                  <SurgeImpedanceAndFerrantiLab locale={locale} />
+                  <div className="space-y-6">
+                    <SurgeImpedanceAndFerrantiLab locale={locale} />
+                    {getWorkedExampleById('we-d03-transmission-sil-ferranti') && (
+                      <WorkedExampleViewer
+                        example={getWorkedExampleById('we-d03-transmission-sil-ferranti')!}
+                        locale={locale}
+                      />
+                    )}
+                  </div>
                 )}
 
                 {stage3Tab === 'SCENARIOS' && (

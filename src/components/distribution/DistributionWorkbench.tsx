@@ -45,6 +45,9 @@ import { EngineeringInfographicCard } from '../common/EngineeringInfographicCard
 import { EngineeringInfographicsModal } from '../common/EngineeringInfographicsModal';
 import { OperatorFabricStream } from '../digitaltwin/OperatorFabricStream';
 import { AasDrawer } from '../digitaltwin/AasDrawer';
+import { PowerChain } from '../common/PowerChain';
+import { WorkedExampleViewer } from '../common/WorkedExampleViewer';
+import { getWorkedExampleById } from '../../data/workedExamplesRegistry';
 import { EQUIPMENT_ITEMS } from '../../data/epedeData';
 import { resolveCanonicalEquipment } from '../../data/equipment/canonicalEquipmentRegistry';
 import type { Equipment, DomainCode } from '../../types/epede';
@@ -175,6 +178,23 @@ export const DistributionWorkbench: React.FC<DistributionWorkbenchProps> = ({
         onToggleSidePanel={() => setIsSidePanelOpen(!isSidePanelOpen)}
         activePillarLabel={activePillarConfig ? (locale === 'fr' ? activePillarConfig.label_fr : activePillarConfig.label_en) : undefined}
         totalPillarsCount={11}
+      />
+
+      {/* CANONICAL 9-STAGE POWER CHAIN (STAGE D1: MV/LV DISTRIBUTION) */}
+      <PowerChain
+        currentStageId="D1"
+        locale={locale}
+        onSelectStage={(stage) => {
+          if (stage.id === 'G1') onNavigate?.('domain', 'D01');
+          else if (stage.id === 'T1') onNavigate?.('domain', 'D03');
+          else if (stage.id === 'S1') onNavigate?.('domain', 'D04');
+          else if (stage.id === 'D1') onNavigate?.('domain', 'D05');
+          else if (stage.id === 'I1') onNavigate?.('domain', 'D06');
+          else if (stage.id === 'M1') onNavigate?.('domain', 'D06');
+          else if (stage.id === 'A1') onNavigate?.('domain', 'D07');
+          else if (stage.id === 'F1') onNavigate?.('domain', 'D14');
+          else if (stage.id === 'S2') onNavigate?.('domain', 'D16');
+        }}
       />
 
       {/* Reorganized Workspace: Side Navigator + Main Workspace */}

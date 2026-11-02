@@ -48,6 +48,9 @@ import { AutomationOrientationBanner } from './AutomationOrientationBanner';
 import { AutomationCommandHeader } from './AutomationCommandHeader';
 import { AutomationIoPowerCalculator } from './modules/AutomationIoPowerCalculator';
 import { AutomationDeliverablesExportEngine } from './modules/AutomationDeliverablesExportEngine';
+import { PowerChain } from '../common/PowerChain';
+import { WorkedExampleViewer } from '../common/WorkedExampleViewer';
+import { getWorkedExampleById } from '../../data/workedExamplesRegistry';
 
 interface AutomationControlWorkbenchProps {
   locale: 'fr' | 'en';
@@ -495,6 +498,23 @@ export const AutomationControlWorkbench: React.FC<AutomationControlWorkbenchProp
         totalPillarsCount={5}
       />
 
+      {/* CANONICAL 9-STAGE POWER CHAIN (STAGE A1: AUTOMATION & CONTROL) */}
+      <PowerChain
+        currentStageId="A1"
+        locale={locale}
+        onSelectStage={(stage) => {
+          if (stage.id === 'G1') onNavigate?.('domain', 'D01');
+          else if (stage.id === 'T1') onNavigate?.('domain', 'D03');
+          else if (stage.id === 'S1') onNavigate?.('domain', 'D04');
+          else if (stage.id === 'D1') onNavigate?.('domain', 'D05');
+          else if (stage.id === 'I1') onNavigate?.('domain', 'D06');
+          else if (stage.id === 'M1') onNavigate?.('domain', 'D06');
+          else if (stage.id === 'A1') onNavigate?.('domain', 'D07');
+          else if (stage.id === 'F1') onNavigate?.('domain', 'D14');
+          else if (stage.id === 'S2') onNavigate?.('domain', 'D16');
+        }}
+      />
+
       {/* 1. EXECUTIVE FIRST-VIEW ORIENTATION BANNER (THE 7 FUNDAMENTAL QUESTIONS) */}
       <AutomationOrientationBanner
         locale={locale}
@@ -692,6 +712,16 @@ export const AutomationControlWorkbench: React.FC<AutomationControlWorkbenchProp
                   <div className="text-[10px] text-slate-500 font-mono mt-1">Avant sous-alimentation du transmetteur</div>
                 </div>
               </div>
+
+              {/* Normative Worked Example for D07 */}
+              {getWorkedExampleById('we-d07-automation-pid-420ma') && (
+                <div className="pt-4 border-t border-slate-800/80">
+                  <WorkedExampleViewer
+                    example={getWorkedExampleById('we-d07-automation-pid-420ma')!}
+                    locale={locale}
+                  />
+                </div>
+              )}
             </div>
           )}
 

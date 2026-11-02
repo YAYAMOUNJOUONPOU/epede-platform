@@ -67,6 +67,9 @@ import { TgbtThermalDissipationCalculator } from './TgbtThermalDissipationCalcul
 import { PanelCadAndDeliverablesExportEngine } from './PanelCadAndDeliverablesExportEngine';
 import { CameroonInstallationGridRealityEngine } from './CameroonInstallationGridRealityEngine';
 import { useInstallationProjectStore } from './services/useInstallationProjectStore';
+import { PowerChain } from '../common/PowerChain';
+import { WorkedExampleViewer } from '../common/WorkedExampleViewer';
+import { getWorkedExampleById } from '../../data/workedExamplesRegistry';
 
 import {
   INSTALLATION_EQUIPMENT,
@@ -81,6 +84,7 @@ import {
 interface InstallationsWorkbenchProps {
   locale: 'fr' | 'en';
   initialPillar?: InstallationPillar;
+  onNavigate?: (tab: string, domainId?: string) => void;
 }
 
 export type MasterInstallationStage = 
@@ -119,7 +123,8 @@ export type InstallationPillar =
 
 export const InstallationsWorkbench: React.FC<InstallationsWorkbenchProps> = ({
   locale,
-  initialPillar
+  initialPillar,
+  onNavigate
 }) => {
   const isFr = locale === 'fr';
 
@@ -289,6 +294,23 @@ export const InstallationsWorkbench: React.FC<InstallationsWorkbenchProps> = ({
         selectedRegime={project.regime}
         onSelectRegime={project.setRegime}
         onOpenEngineeringDrawer={() => setIsEngineeringDrawerOpen(true)}
+      />
+
+      {/* CANONICAL 9-STAGE POWER CHAIN (STAGE I1: INDUSTRIAL / BUILDING LV INSTALLATIONS) */}
+      <PowerChain
+        currentStageId="I1"
+        locale={locale}
+        onSelectStage={(stage) => {
+          if (stage.id === 'G1') onNavigate?.('domain', 'D01');
+          else if (stage.id === 'T1') onNavigate?.('domain', 'D03');
+          else if (stage.id === 'S1') onNavigate?.('domain', 'D04');
+          else if (stage.id === 'D1') onNavigate?.('domain', 'D05');
+          else if (stage.id === 'I1') onNavigate?.('domain', 'D06');
+          else if (stage.id === 'M1') onNavigate?.('domain', 'D06');
+          else if (stage.id === 'A1') onNavigate?.('domain', 'D07');
+          else if (stage.id === 'F1') onNavigate?.('domain', 'D14');
+          else if (stage.id === 'S2') onNavigate?.('domain', 'D16');
+        }}
       />
 
       {/* 2. Primary 5-Stage Lifecycle Navigation Ribbon */}
@@ -550,7 +572,15 @@ export const InstallationsWorkbench: React.FC<InstallationsWorkbenchProps> = ({
             )}
 
             {activeSubTool === 'CABLE_SIZING_K' && (
-              <CableSizingDeratingMatrix locale={locale} />
+              <div className="space-y-6">
+                <CableSizingDeratingMatrix locale={locale} />
+                {getWorkedExampleById('we-d06-cable-voltage-drop') && (
+                  <WorkedExampleViewer
+                    example={getWorkedExampleById('we-d06-cable-voltage-drop')!}
+                    locale={locale}
+                  />
+                )}
+              </div>
             )}
 
             {activeSubTool === 'THERMAL_TGBT' && (

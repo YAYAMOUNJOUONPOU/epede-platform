@@ -1,9 +1,9 @@
 {
-  "buildTimestamp": "2026-11-01T23:24:12.024Z",
+  "buildTimestamp": "2026-11-02T00:22:35.619Z",
   "platformVersion": "2.0.0-normative",
   "canonicalStagesCount": 9,
   "cameroonAssetsCount": 15,
   "normativeFormulasCount": 7,
-  "workedExamplesCount": 4,
+  "workedExamplesCount": 16,
   "status": "VALIDATED"
 }
