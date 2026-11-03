@@ -15,6 +15,7 @@ import {
 import { Iec60287CableAmpacityEngine } from '../../../data/iec60287CableAmpacityEngine';
 import { Iec61936AisClearanceEngine } from '../../../data/iec61936AisClearanceEngine';
 import { Iec60255RelayEngine, CAMEROON_RELAY_PRESETS } from '../../../data/iec60255RelayEngine';
+import { VectorVoltageDropEngine } from '../../../data/vectorVoltageDropEngine';
 
 export interface InjectedCalculatorContext {
   equipmentId?: string;
@@ -133,55 +134,69 @@ export function generateCalculationReport(
     const vDropSectionMm2 = injectedContext?.params?.vDropSectionMm2 
       ? Number(injectedContext.params.vDropSectionMm2) 
       : (injectedContext?.params?.sectionMm2 ? Number(injectedContext.params.sectionMm2) : (injectedContext?.params?.selectedSectionMm2 ? Number(injectedContext.params.selectedSectionMm2) : 70));
-    const conductorMaterial = injectedContext?.params?.conductorMaterial === 'aluminium' || injectedContext?.params?.material === 'al' ? 'al' : 'cu';
+    const conductorMaterial = injectedContext?.params?.conductorMaterial === 'aluminium' || injectedContext?.params?.material === 'al' ? 'aluminium' : 'copper';
     const vDropPf = injectedContext?.params?.vDropCosPhi 
       ? Number(injectedContext.params.vDropCosPhi) 
       : (injectedContext?.params?.cosPhi ? Number(injectedContext.params.cosPhi) : 0.85);
-    const rho = conductorMaterial === 'cu' ? 0.0225 : 0.036;
-    const rOhmPerKm = (rho * 1000) / vDropSectionMm2;
-    const xOhmPerKm = 0.08;
-    const rTotal = (rOhmPerKm * vDropLengthM) / 1000;
-    const xTotal = (xOhmPerKm * vDropLengthM) / 1000;
-    const sinPhi = Math.sin(Math.acos(vDropPf));
-    const deltaUVolts = Math.sqrt(3) * vDropCurrentA * (rTotal * vDropPf + xTotal * sinPhi);
-    const deltaUPercent = (deltaUVolts / vDropU) * 100;
-    const isDropCompliant = deltaUPercent <= 5.0;
+
+    const result = VectorVoltageDropEngine.solveSingleBranch(
+      vDropU,
+      vDropCurrentA,
+      vDropPf,
+      {
+        crossSectionMm2: vDropSectionMm2,
+        conductorMetal: conductorMaterial,
+        installationType: 'cable_underground',
+        operatingTempC: 75,
+        lengthM: vDropLengthM
+      },
+      'three_phase_ac',
+      5.0
+    );
 
     return withProvenance({
-      title: locale === 'fr' ? 'Vérification de la Chute de Tension en Ligne (ΔU)' : 'Cable Voltage Drop Verification (ΔU)',
+      title: locale === 'fr' ? 'Note de Calcul Chute de Tension Vectorielle Exacte (ΔU)' : 'Exact Vector AC Voltage Drop Calculation Note (ΔU)',
       calcType: 'VOLTAGE-DROP-CABLE',
-      standard: 'NF C 15-100 §525 / CEI 60364-5-52',
+      standard: 'CEI 60364-5-52 / NF C 15-105 §525 / IEEE Std 141 (Red Book)',
       date: dateStr,
       referenceId: `EPEDE-CALC-VDROP-${now.getTime().toString().slice(-6)}`,
       inputs: [
-        { label: locale === 'fr' ? 'Tension de service (U)' : 'Operating Voltage (U)', value: `${vDropU}`, unit: 'V' },
+        { label: locale === 'fr' ? 'Tension assignée (U)' : 'Rated Voltage (U)', value: `${vDropU}`, unit: 'V' },
         { label: locale === 'fr' ? 'Longueur de liaison (L)' : 'Circuit Length (L)', value: `${vDropLengthM}`, unit: 'm' },
         { label: locale === 'fr' ? 'Courant d\'emploi (Ib)' : 'Design Current (Ib)', value: `${vDropCurrentA}`, unit: 'A' },
         { label: locale === 'fr' ? 'Section du conducteur' : 'Conductor Cross-Section', value: `${vDropSectionMm2}`, unit: 'mm²' },
-        { label: locale === 'fr' ? 'Métal conducteur' : 'Conductor Material', value: conductorMaterial === 'cu' ? 'Cuivre (Cu)' : 'Aluminium (Al)' },
+        { label: locale === 'fr' ? 'Métal conducteur' : 'Conductor Material', value: conductorMaterial === 'copper' ? 'Cuivre (Cu)' : 'Aluminium (Al)' },
         { label: locale === 'fr' ? 'Facteur de puissance cos(φ)' : 'Power Factor cos(φ)', value: `${vDropPf}` },
+        { label: locale === 'fr' ? 'Puissance active véhiculée' : 'Transmitted Active Power', value: `${result.activePowerKw}`, unit: 'kW' },
+        { label: locale === 'fr' ? 'Puissance réactive véhiculée' : 'Transmitted Reactive Power', value: `${result.reactivePowerKvar}`, unit: 'kvar' },
       ],
       formulas: [
-        { name: 'Résistance R_tot', expr: '(ρ · L) / S [Ω] (ρ_Cu = 0.0225, ρ_Al = 0.036 à 70°C)' },
-        { name: 'Réactance X_tot', expr: '0.08 Ω/km · L [Ω]' },
-        { name: 'Chute de tension ΔU', expr: '√3 · I · (R · cos φ + X · sin φ) [V]' },
-        { name: 'Chute relative ΔU (%)', expr: '100 · (ΔU / U) [%]' },
+        { name: 'Résistance R_tot', expr: 'R = (ρ_T · L) / S [Ω] (ρ_Cu = 0.0225, ρ_Al = 0.036 à 75°C)' },
+        { name: 'Réactance X_tot', expr: 'X = ω · L₀ · L [Ω] (L₀ ≈ 0.08 mΩ/m câble HTA/BT)' },
+        { name: 'Chute longitudinale in-phase', expr: 'ΔV_long = (R·P + X·Q) / V₁ [V]' },
+        { name: 'Chute transverse en quadrature', expr: 'δV_trans = (X·P - R·Q) / V₁ [V]' },
+        { name: 'Tension vectorielle réceptive V₂', expr: 'V₂ = √[ (V₁ - ΔV_long)² + (δV_trans)² ] [V]' },
+        { name: 'Chute de tension vectorielle exacte', expr: 'ΔU = V₁ - V₂ [V] | ΔU% = 100 · (ΔU / V₁) [%]' },
+        { name: 'Déphasage tension δ', expr: 'δ = arctan[ δV_trans / (V₁ - ΔV_long) ] [°]' },
       ],
       results: [
-        { label: locale === 'fr' ? 'Chute de tension relative' : 'Relative Voltage Drop', value: deltaUPercent.toFixed(2), unit: '%', highlight: true, status: isDropCompliant ? 'OK' : 'DANGER' },
-        { label: locale === 'fr' ? 'Chute de tension absolue' : 'Absolute Voltage Drop', value: deltaUVolts.toFixed(2), unit: 'V' },
-        { label: locale === 'fr' ? 'Résistance totale liaison' : 'Total Circuit Resistance', value: rTotal.toFixed(3), unit: 'Ω' },
-        { label: locale === 'fr' ? 'Réactance totale liaison' : 'Total Circuit Reactance', value: xTotal.toFixed(3), unit: 'Ω' },
+        { label: locale === 'fr' ? 'Chute de tension relative exacte' : 'Exact Relative Voltage Drop', value: `${result.deltaUPercentExact.toFixed(2)}`, unit: '%', highlight: true, status: (result.isCompliant ? 'OK' : 'DANGER') as 'OK' | 'WARN' | 'DANGER' | 'INFO' },
+        { label: locale === 'fr' ? 'Chute de tension absolue exacte' : 'Exact Absolute Voltage Drop', value: `${result.deltaUVoltsExact.toFixed(2)}`, unit: 'V' },
+        { label: locale === 'fr' ? 'Tension résiduelle réceptive (V₂)' : 'Receiving End Voltage (V₂)', value: `${result.receivingVoltageV.toFixed(1)}`, unit: 'V' },
+        { label: locale === 'fr' ? 'Composante longitudinale (in-phase)' : 'Longitudinal Drop Component', value: `${result.longitudinalDropV.toFixed(2)}`, unit: 'V' },
+        { label: locale === 'fr' ? 'Composante transverse (quadrature)' : 'Quadrature Drop Component', value: `${result.transverseDropV.toFixed(2)}`, unit: 'V' },
+        { label: locale === 'fr' ? 'Déphasage vectoriel de tension (δ)' : 'Voltage Phase Shift (δ)', value: `${result.phaseAngleDeltaDeg.toFixed(2)}`, unit: '°' },
+        { label: locale === 'fr' ? 'Impédance totale de ligne (Z)' : 'Total Line Impedance (Z)', value: `${result.impedanceZohm.toFixed(4)}`, unit: 'Ω' },
       ],
       complianceVerdict: {
-        status: isDropCompliant ? 'COMPLIANT' : 'NON_COMPLIANT',
-        message: isDropCompliant
-          ? (locale === 'fr' ? `Chute de tension de ${deltaUPercent.toFixed(2)}% ≤ seuil réglementaire de 5.0% (NF C 15-100 / CEI 60364). Liaison conforme.` : `Voltage drop of ${deltaUPercent.toFixed(2)}% ≤ 5.0% standard limit. Conductor compliant.`)
-          : (locale === 'fr' ? `Chute de tension de ${deltaUPercent.toFixed(2)}% EXCÈDE le seuil maximal de 5.0%. Augmenter la section du câble ou installer une compensation réactive.` : `Voltage drop of ${deltaUPercent.toFixed(2)}% EXCEEDS 5.0% limit. Increase cable cross-section.`),
+        status: result.isCompliant ? 'COMPLIANT' : 'NON_COMPLIANT',
+        message: result.isCompliant
+          ? (locale === 'fr' ? `Chute de tension exacte de ${result.deltaUPercentExact.toFixed(2)}% ≤ seuil réglementaire de 5.0% (NF C 15-100 / CEI 60364-5-52). Liaison dimensionnée de façon optimale.` : `Exact voltage drop of ${result.deltaUPercentExact.toFixed(2)}% ≤ 5.0% limit. Circuit fully compliant.`)
+          : (locale === 'fr' ? `Chute de tension exacte de ${result.deltaUPercentExact.toFixed(2)}% DÉPASSE le seuil réglementaire de 5.0%. Augmenter la section du conducteur ou installer une compensation capacitive shunt.` : `Exact voltage drop of ${result.deltaUPercentExact.toFixed(2)}% EXCEEDS 5.0% limit. Increase cross-section or install capacitor compensation.`),
       },
       engineeringNotes: [
-        'La résistivité retenue tient compte d\'un échauffement normal de l\'âme sous charge permanente à 70°C.',
-        'Pour des longueurs importantes ou des harmoniques de rang 3, vérifier le courant dans le conducteur neutre.',
+        'La formulation vectorielle exacte intègre la composante transverse en quadrature δV_trans = (X·P - R·Q)/V, ce qui permet d\'évaluer avec exactitude le déphasage angulaire δ et évite la sous-estimation inhérente à la formule scalaire approchée.',
+        'Les impédances R et X sont calculées à la température de service continue de 75°C conformément à la norme CEI 60364-5-52.',
       ],
     });
   }

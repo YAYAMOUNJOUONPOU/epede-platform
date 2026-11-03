@@ -10,6 +10,7 @@ import { HarmonicResonanceEngine, CAMEROON_HARMONIC_PRESETS } from '../src/data/
 import { Iec60287CableAmpacityEngine, CAMEROON_CABLE_PRESETS } from '../src/data/iec60287CableAmpacityEngine';
 import { Iec61936AisClearanceEngine, CAMEROON_AIS_PRESETS } from '../src/data/iec61936AisClearanceEngine';
 import { Iec60255RelayEngine, CAMEROON_RELAY_PRESETS } from '../src/data/iec60255RelayEngine';
+import { VectorVoltageDropEngine, CAMEROON_VOLTAGE_DROP_PRESETS } from '../src/data/vectorVoltageDropEngine';
 import { EngineeringCalculationPdfExportService } from '../src/components/calculators/services/EngineeringCalculationPdfExportService';
 import { generateCalculationReport } from '../src/components/calculators/services/calculationReportService';
 import { WORKED_EXAMPLES_REGISTRY } from '../src/data/workedExamplesRegistry';
@@ -500,6 +501,89 @@ describe('⚡ Electrotechnical Physics Engine Tests', () => {
     expect(report.calcType).toBe('RELAY-COORDINATION-TCC');
     expect(report.standard).toContain('CEI 60255-151');
     expect(report.results.length).toBeGreaterThan(3);
+    expect(report.complianceVerdict.status).toBe('COMPLIANT');
+  });
+
+  it('15. Vector Voltage Drop Engine accurately models longitudinal & transverse quadrature components, feeder voltage profiles, and capacitor boost', () => {
+    // 1. Single Circuit Exact Vector Drop Verification (400 V, 180 m, 70 mm² Cu, 160 A, cos_phi = 0.85)
+    const singleBranch = VectorVoltageDropEngine.solveSingleBranch(
+      400,
+      160,
+      0.85,
+      {
+        crossSectionMm2: 70,
+        conductorMetal: 'copper',
+        installationType: 'cable_underground',
+        operatingTempC: 75,
+        lengthM: 180
+      },
+      'three_phase_ac',
+      5.0
+    );
+
+    // Verify impedance calculations
+    expect(singleBranch.resistanceOhm).toBeGreaterThan(0.04);
+    expect(singleBranch.resistanceOhm).toBeLessThan(0.08);
+    expect(singleBranch.reactanceOhm).toBeGreaterThan(0.01);
+    expect(singleBranch.impedanceZohm).toBeGreaterThan(singleBranch.resistanceOhm);
+
+    // Verify vector drop decomposition
+    expect(singleBranch.longitudinalDropV).toBeGreaterThan(10.0);
+    expect(Math.abs(singleBranch.transverseDropV)).toBeGreaterThan(1.0);
+    expect(singleBranch.quadratureCorrectionV).toBeGreaterThan(0.0);
+
+    // Exact drop: V1 - V2 must be positive and close to approximate
+    expect(singleBranch.deltaUVoltsExact).toBeGreaterThan(10.0);
+    expect(singleBranch.deltaUVoltsExact).toBeCloseTo(singleBranch.deltaUVoltsApprox, 0.5);
+
+    // Phase angle delta must be non-zero due to reactance and resistance
+    expect(Math.abs(singleBranch.phaseAngleDeltaDeg)).toBeGreaterThan(0.4);
+    expect(singleBranch.isCompliant).toBe(true);
+
+    // 2. Distributed Feeder Voltage Profile: Bassa - Ndokoti 15 kV (8.5 km radial line)
+    const bassaPreset = CAMEROON_VOLTAGE_DROP_PRESETS.find(p => p.id === 'bassa-ndokoti-15kv-feeder')!;
+    expect(bassaPreset).toBeDefined();
+
+    // Solve without capacitor compensation
+    const profileNoCap = VectorVoltageDropEngine.solveFeederProfile(
+      bassaPreset.feederTopology,
+      false,
+      bassaPreset.normativeLimitPercent
+    );
+
+    // Solve with shunt capacitor boost active
+    const profileWithCap = VectorVoltageDropEngine.solveFeederProfile(
+      bassaPreset.feederTopology,
+      true,
+      bassaPreset.normativeLimitPercent
+    );
+
+    expect(profileNoCap.nodes.length).toBe(4);
+    expect(profileWithCap.nodes.length).toBe(4);
+
+    // Cumulative voltage drop increases monotonically down the radial feeder
+    const v1 = profileNoCap.nodes[0].voltageV;
+    const v2 = profileNoCap.nodes[1].voltageV;
+    const v3 = profileNoCap.nodes[2].voltageV;
+    const v4 = profileNoCap.nodes[3].voltageV;
+    expect(v1).toBeGreaterThan(v2);
+    expect(v2).toBeGreaterThan(v3);
+    expect(v3).toBeGreaterThan(v4);
+
+    // Shunt capacitor boost must raise node voltages and reduce relative drop
+    const terminalNoCap = profileNoCap.nodes[3];
+    const terminalWithCap = profileWithCap.nodes[3];
+    expect(terminalWithCap.voltageV).toBeGreaterThan(terminalNoCap.voltageV);
+    expect(terminalWithCap.cumulativeDropPercent).toBeLessThan(terminalNoCap.cumulativeDropPercent);
+
+    // Capacitor compensation must reduce total line active Joule losses
+    expect(profileWithCap.totalActiveLossesKw).toBeLessThan(profileNoCap.totalActiveLossesKw);
+
+    // 3. Dynamic Calculation Report Generation Integration
+    const report = generateCalculationReport('voltage-drop', 'fr');
+    expect(report.calcType).toBe('VOLTAGE-DROP-CABLE');
+    expect(report.standard).toContain('CEI 60364-5-52');
+    expect(report.results.length).toBeGreaterThan(4);
     expect(report.complianceVerdict.status).toBe('COMPLIANT');
   });
 });
