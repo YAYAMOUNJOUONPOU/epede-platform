@@ -7,6 +7,11 @@ import {
   type MechanicalLoadType,
 } from '../../../data/industrialMotorDynamicsEngine';
 import { Ieee80EarthingGridEngine } from '../../../data/ieee80EarthingGridEngine';
+import {
+  HarmonicResonanceEngine,
+  type DetuningFactorOption,
+  type NonLinearLoadProfile,
+} from '../../../data/harmonicResonanceEngine';
 
 export interface InjectedCalculatorContext {
   equipmentId?: string;
@@ -840,131 +845,171 @@ export function generateCalculationReport(
     };
   }
 
-  // Default: PFC Calculator
-  const pfcPKw = 350;
-  const pfcCosPhiInitial = 0.72;
-  const pfcCosPhiTarget = 0.96;
-  const pfcVoltageV = 400;
-  const pfcStepsCount = 6;
-  const phi1 = Math.acos(Math.max(0.1, Math.min(1.0, pfcCosPhiInitial)));
-  const phi2 = Math.acos(Math.max(0.1, Math.min(1.0, pfcCosPhiTarget)));
-  const tanPhi1 = Math.tan(phi1);
-  const tanPhi2 = Math.tan(phi2);
-  const deltaTan = Math.max(0, tanPhi1 - tanPhi2);
-  const qRequiredKvar = Math.max(0, pfcPKw * deltaTan);
-  const sInitialKva = pfcPKw / pfcCosPhiInitial;
-  const sFinalKva = pfcPKw / pfcCosPhiTarget;
-  const deltaSKva = Math.max(0, sInitialKva - sFinalKva);
-  const iInitialAmps = (pfcPKw * 1000) / (Math.sqrt(3) * pfcVoltageV * pfcCosPhiInitial);
-  const iFinalAmps = (pfcPKw * 1000) / (Math.sqrt(3) * pfcVoltageV * pfcCosPhiTarget);
-  const deltaIAmps = Math.max(0, iInitialAmps - iFinalAmps);
-  const iCapAmps = (qRequiredKvar * 1000) / (Math.sqrt(3) * pfcVoltageV);
-  const omega50Hz = 2 * Math.PI * 50;
-  const cDeltaMicroFarad = (qRequiredKvar * 1000) / (3 * omega50Hz * (pfcVoltageV ** 2)) * 1e6;
+  // 9. POWER FACTOR CORRECTION & HARMONIC RESONANCE ANALYZER (IEC 60831 / IEC 61642 / IEEE 519)
+  if (activeCalc === 'pfc') {
+    const pfcPKw = injectedContext?.params?.activePowerKw
+      ? Number(injectedContext.params.activePowerKw)
+      : injectedContext?.params?.pfcPKw
+      ? Number(injectedContext.params.pfcPKw)
+      : 500;
+    const pfcCosPhiInitial = injectedContext?.params?.initialCosPhi
+      ? Number(injectedContext.params.initialCosPhi)
+      : 0.76;
+    const pfcCosPhiTarget = injectedContext?.params?.targetCosPhi
+      ? Number(injectedContext.params.targetCosPhi)
+      : 0.96;
+    const pfcVoltageV = injectedContext?.params?.voltageV
+      ? Number(injectedContext.params.voltageV)
+      : 400;
+    const supplyTrafoKva = injectedContext?.params?.supplyTrafoKva
+      ? Number(injectedContext.params.supplyTrafoKva)
+      : 1000;
+    const supplyTrafoUkPercent = injectedContext?.params?.supplyTrafoUkPercent
+      ? Number(injectedContext.params.supplyTrafoUkPercent)
+      : 6.0;
+    const detuningFactorP = (
+      injectedContext?.params?.detuningFactorP !== undefined
+        ? Number(injectedContext.params.detuningFactorP)
+        : 0.07
+    ) as DetuningFactorOption;
+    const nonLinearLoadSharePercent = injectedContext?.params?.nonLinearLoadSharePercent
+      ? Number(injectedContext.params.nonLinearLoadSharePercent)
+      : 45;
+    const loadProfile = (injectedContext?.params?.loadProfile || '6-pulse-vfd') as NonLinearLoadProfile;
 
-  return {
-    title: locale === 'fr' ? 'Compensation d\'Énergie Réactive & Batterie de Condensateurs' : 'Power Factor Correction & Capacitor Bank Sizing',
-    calcType: 'PFC-CAPACITOR-IEC60831',
-    standard: 'CEI 60831-1/2 / CEI 61642 / NF C 15-100',
-    date: dateStr,
-    referenceId: `EPEDE-CALC-PFC-${now.getTime().toString().slice(-6)}`,
-    inputs: [
-      { label: locale === 'fr' ? 'Puissance active souscrite (P)' : 'Active Load Power (P)', value: `${pfcPKw}`, unit: 'kW' },
-      { label: locale === 'fr' ? 'Facteur de puissance actuel' : 'Current Power Factor (cos φ1)', value: `${pfcCosPhiInitial}` },
-      { label: locale === 'fr' ? 'Facteur de puissance cible' : 'Target Power Factor (cos φ2)', value: `${pfcCosPhiTarget}` },
-      { label: locale === 'fr' ? 'Tension de service (U)' : 'Operating Voltage (U)', value: `${pfcVoltageV}`, unit: 'V' },
-      { label: locale === 'fr' ? 'Self de désaccord anti-harmonique' : 'Detuning Reactor Factor', value: '7% (Accord 189 Hz)' },
-      { label: locale === 'fr' ? 'Nombre de gradins automatiques' : 'Capacitor Bank Steps', value: `${pfcStepsCount}` },
-    ],
-    formulas: [
-      { name: 'Puissance réactive requise Qc', expr: 'P · (tan φ1 - tan φ2) [kvar]' },
-      { name: 'Courant de la batterie Ic', expr: '(Qc · 1000) / (√3 · U) [A]' },
-      { name: 'Capacité en triangle C_Δ', expr: 'Qc / (3 · ω · U²) [µF]' },
-      { name: 'Surtension aux condensateurs Uc', expr: 'U / (1 - p) [V]' },
-    ],
-    results: [
-      { label: locale === 'fr' ? 'Puissance réactive totale (Qc)' : 'Required Reactive Power (Qc)', value: qRequiredKvar.toFixed(1), unit: 'kvar', highlight: true, status: 'OK' },
-      { label: locale === 'fr' ? 'Courant nominal batterie (Ic)' : 'Capacitor Bank Rated Current', value: iCapAmps.toFixed(1), unit: 'A' },
-      { label: locale === 'fr' ? 'Capacité requise par phase' : 'Capacitance per phase (Delta)', value: cDeltaMicroFarad.toFixed(1), unit: 'µF' },
-      { label: locale === 'fr' ? 'Puissance apparente libérée' : 'Released Apparent Power', value: deltaSKva.toFixed(1), unit: 'kVA' },
-      { label: locale === 'fr' ? 'Allègement du courant de ligne' : 'Line Current Reduction', value: `-${deltaIAmps.toFixed(1)}`, unit: 'A' },
-      { label: locale === 'fr' ? 'Tension assignée condensateurs' : 'Recommended Capacitor Rating', value: '≥ 440', unit: 'V', status: 'WARN' },
-    ],
-    complianceVerdict: {
-      status: 'COMPLIANT',
-      message: locale === 'fr'
-        ? `La batterie de ${qRequiredKvar.toFixed(0)} kvar ramène la tangente φ de ${tanPhi1.toFixed(2)} à ${tanPhi2.toFixed(2)} (cos φ = ${pfcCosPhiTarget}). Élimination de 100% des pénalités pour consommation de réactif (seuil tan φ ≤ 0.40).`
-        : `Capacitor bank of ${qRequiredKvar.toFixed(0)} kvar improves power factor to ${pfcCosPhiTarget} (tan φ = ${tanPhi2.toFixed(2)} ≤ 0.40), completely eliminating utility reactive penalties.`,
-    },
-    engineeringNotes: [
-      'Présence d\'une self de désaccord à 7% : la fréquence d\'accord à 189 Hz est inférieure au rang harmonique 5 (250 Hz), éliminant tout risque d\'amplification par résonance.',
-      'Prévoir des contacteurs spéciaux de commutation de condensateurs munis de résistances d\'amortissement de pré-enclenchement.',
-    ],
-  };
+    const pfcSim = HarmonicResonanceEngine.solve({
+      voltageV: pfcVoltageV,
+      fundamentalFreqHz: 50,
+      activePowerKw: pfcPKw,
+      initialCosPhi: pfcCosPhiInitial,
+      targetCosPhi: pfcCosPhiTarget,
+      supplyTrafoKva,
+      supplyTrafoUkPercent,
+      upstreamGridSscMva: 250,
+      xrRatio: 8.5,
+      detuningFactorP,
+      nonLinearLoadSharePercent,
+      loadProfile,
+    });
+
+    const iCapAmps = (pfcSim.qInstalledKvar * 1000) / (Math.sqrt(3) * pfcVoltageV);
+
+    return withProvenance({
+      title:
+        locale === 'fr'
+          ? 'Compensation Réactive, Résonance LC & Filtrage Harmonique (IEEE 519)'
+          : 'Power Factor Correction, LC Resonance & Harmonic Filtering (IEEE 519)',
+      calcType: 'PFC-HARMONICS-IEEE519',
+      standard: 'CEI 60831-1/2 / CEI 61642 / IEEE Std 519-2022',
+      date: dateStr,
+      referenceId: `EPEDE-CALC-PFC-${now.getTime().toString().slice(-6)}`,
+      inputs: [
+        { label: locale === 'fr' ? 'Puissance active appelée (P)' : 'Active Load Power (P)', value: `${pfcPKw}`, unit: 'kW' },
+        { label: locale === 'fr' ? 'Facteur cos φ₁ initial → cible' : 'Displacement PF (Initial → Target)', value: `${pfcCosPhiInitial} → ${pfcCosPhiTarget}` },
+        { label: locale === 'fr' ? 'Tension assignée réseau (U)' : 'Nominal Grid Voltage (U)', value: `${pfcVoltageV}`, unit: 'V' },
+        { label: locale === 'fr' ? 'Transformateur amont (Sn, uk)' : 'Supply Transformer (Sn, uk)', value: `${supplyTrafoKva} kVA (${supplyTrafoUkPercent}%)` },
+        { label: locale === 'fr' ? 'Self de désaccordage (p)' : 'Detuning Reactor Factor (p)', value: detuningFactorP > 0 ? `${(detuningFactorP * 100).toFixed(2)}% (fs = ${pfcSim.seriesTuningFreqHz} Hz)` : 'Aucune (Batterie nue)' },
+        { label: locale === 'fr' ? 'Part de charge non-linéaire' : 'Non-Linear Load Share', value: `${nonLinearLoadSharePercent}% (${loadProfile})` },
+      ],
+      formulas: [
+        { name: 'Puissance réactive requise Qc', expr: 'P · (tan φ₁ - tan φ₂) [kvar]' },
+        { name: 'Fréquence propre parallèle nue fr', expr: 'f₁ · √(Ssc / Qc) [Hz]' },
+        { name: 'Fréquence d\'accord série self fs', expr: 'f₁ / √p [Hz]' },
+        { name: 'Facteur de puissance vrai PF_true', expr: 'cos φ₁ / √(1 + (THDi / 100)²)' },
+        { name: 'Facteur K transformateur (IEEE C57.110)', expr: '∑ (Ih / Irms)² · h²' },
+      ],
+      results: [
+        { label: locale === 'fr' ? 'Batterie installée normalisée (Qc)' : 'Installed Capacitor Bank (Qc)', value: `${pfcSim.qInstalledKvar}`, unit: 'kvar', highlight: true, status: 'OK' },
+        { label: locale === 'fr' ? 'Distorsion tension THDu (avec filtre)' : 'Active Bus Voltage THDu', value: pfcSim.thdVoltageActivePercent.toFixed(2), unit: '%', highlight: true, status: pfcSim.isIeee519CompliantActive ? 'OK' : 'DANGER' },
+        { label: locale === 'fr' ? 'Distorsion tension THDu (sans self)' : 'Bare Bank Voltage THDu', value: pfcSim.thdVoltageBarePercent.toFixed(2), unit: '%' },
+        { label: locale === 'fr' ? 'Fréquence anti-résonance nue (fr)' : 'Bare Parallel Resonance (fr)', value: `${pfcSim.naturalParallelResonanceFreqBareHz}`, unit: `Hz (h=${pfcSim.naturalParallelResonanceOrderBare})` },
+        { label: locale === 'fr' ? 'Facteur de puissance vrai (PF_true)' : 'True Power Factor (PF_true)', value: pfcSim.truePowerFactorAfter.toFixed(3) },
+        { label: locale === 'fr' ? 'Facteur K transformateur' : 'Transformer K-Factor', value: pfcSim.transformerKFactor.toFixed(2), status: pfcSim.transformerKFactor <= 4 ? 'OK' : 'WARN' },
+        { label: locale === 'fr' ? 'Courant nominal batterie (Ic)' : 'Capacitor Bank Current (Ic)', value: iCapAmps.toFixed(1), unit: 'A' },
+        { label: locale === 'fr' ? 'Tension assignée condensateurs' : 'Recommended Capacitor Rating', value: `≥ ${pfcSim.capacitorRatedVoltageRecommendedV}`, unit: 'V' },
+      ],
+      complianceVerdict: {
+        status: pfcSim.isIeee519CompliantActive ? 'COMPLIANT' : 'NON_COMPLIANT',
+        message: pfcSim.isIeee519CompliantActive
+          ? (locale === 'fr'
+              ? `CONFORME IEEE Std 519-2022 & CEI 61642 : La batterie de ${pfcSim.qInstalledKvar} kvar équipée de selfs à ${(detuningFactorP * 100).toFixed(2)}% (${pfcSim.seriesTuningFreqHz} Hz) élimine l'anti-résonance parallèle (fr nue = ${pfcSim.naturalParallelResonanceFreqBareHz} Hz) et maintient le THDu à ${pfcSim.thdVoltageActivePercent.toFixed(2)}% ≤ ${pfcSim.ieee519ThdVoltageLimitPercent.toFixed(1)}%.`
+              : `COMPLIANT with IEEE Std 519-2022 & IEC 61642: ${pfcSim.qInstalledKvar} kvar bank with ${(detuningFactorP * 100).toFixed(2)}% detuning (${pfcSim.seriesTuningFreqHz} Hz) suppresses parallel resonance and holds bus THDu at ${pfcSim.thdVoltageActivePercent.toFixed(2)}% ≤ ${pfcSim.ieee519ThdVoltageLimitPercent.toFixed(1)}%.`)
+          : (locale === 'fr'
+              ? `NON CONFORME IEEE 519 : Le THDu (${pfcSim.thdVoltageActivePercent.toFixed(2)}%) excède la limite de ${pfcSim.ieee519ThdVoltageLimitPercent.toFixed(1)}%. Prescription : installer une self de désaccordage 7% (189 Hz) ou un filtre actif IGBT (APF).`
+              : `NON-COMPLIANT with IEEE 519: Bus THDu (${pfcSim.thdVoltageActivePercent.toFixed(2)}%) exceeds ${pfcSim.ieee519ThdVoltageLimitPercent.toFixed(1)}%. Install 7% detuning reactors or an Active Power Filter (APF).`),
+      },
+      engineeringNotes: [
+        `Surcharge harmonique en courant des condensateurs : Irms / I₁ = ${pfcSim.capacitorRmsCurrentRatio} (limite thermique CEI 60831 = 1.30).`,
+        `Tension nominale minimale des gradins condensateurs : ${pfcSim.capacitorRatedVoltageRecommendedV} V pour absorber la surtension permanente aux bornes de la self Uc = U / (1 - p).`,
+      ],
+    });
+  }
 
   // 13. BUSBAR SHORT-CIRCUIT MECHANICAL & THERMAL WITHSTAND (CEI 60865-1)
-  const unBusKv = 225;
-  const ipBusKa = 80.0;
-  const ithBusKa = 31.5;
-  const tkBusSec = 1.0;
-  const aBusM = 3.5;
-  const lBusM = 8.0;
-  const dExtBusMm = 120;
-  const sWallBusMm = 10;
-  const areaBusMm2 = (Math.PI / 4) * (dExtBusMm ** 2 - (dExtBusMm - 2 * sWallBusMm) ** 2);
-  const iyBusMm4 = (Math.PI / 64) * (dExtBusMm ** 4 - (dExtBusMm - 2 * sWallBusMm) ** 4);
-  const wmBusMm3 = (2 * iyBusMm4) / dExtBusMm;
-  const fmBusN = 0.2 * (Math.sqrt(3) / 2) * ((ipBusKa ** 2) / aBusM) * lBusM;
-  const bendingMomentBusNm = (fmBusN * lBusM) / 12;
-  const vSigmaBus = 1.6;
-  const sigmaBusMpa = (vSigmaBus * 1.0 * (bendingMomentBusNm * 1000)) / wmBusMm3;
-  const sigmaPermissibleBusMpa = 1.5 * 150; // Al alloy EN AW-6101B
-  const fdInsulatorKn = (1.5 * 1.25 * fmBusN) / 1000;
-  const frPermissibleKn = 0.8 * 12.0;
-  const sThMinMm2 = (ithBusKa * 1000 * Math.sqrt(tkBusSec)) / 88;
+  if (activeCalc === 'busbar-electrodynamic') {
+    const unBusKv = 225;
+    const ipBusKa = 80.0;
+    const ithBusKa = 31.5;
+    const tkBusSec = 1.0;
+    const aBusM = 3.5;
+    const lBusM = 8.0;
+    const dExtBusMm = 120;
+    const sWallBusMm = 10;
+    const areaBusMm2 = (Math.PI / 4) * (dExtBusMm ** 2 - (dExtBusMm - 2 * sWallBusMm) ** 2);
+    const iyBusMm4 = (Math.PI / 64) * (dExtBusMm ** 4 - (dExtBusMm - 2 * sWallBusMm) ** 4);
+    const wmBusMm3 = (2 * iyBusMm4) / dExtBusMm;
+    const fmBusN = 0.2 * (Math.sqrt(3) / 2) * ((ipBusKa ** 2) / aBusM) * lBusM;
+    const bendingMomentBusNm = (fmBusN * lBusM) / 12;
+    const vSigmaBus = 1.6;
+    const sigmaBusMpa = (vSigmaBus * 1.0 * (bendingMomentBusNm * 1000)) / wmBusMm3;
+    const sigmaPermissibleBusMpa = 1.5 * 150; // Al alloy EN AW-6101B
+    const fdInsulatorKn = (1.5 * 1.25 * fmBusN) / 1000;
+    const frPermissibleKn = 0.8 * 12.0;
+    const sThMinMm2 = (ithBusKa * 1000 * Math.sqrt(tkBusSec)) / 88;
 
-  return {
-    title: locale === 'fr' 
-      ? 'Dimensionnement Électrodynamique & Thermique des Jeux de Barres' 
-      : 'Busbar Short-Circuit Electrodynamic & Thermal Sizing',
-    calcType: 'BUSBAR-ELECTRODYNAMIC-IEC60865',
-    standard: 'CEI 60865-1 / CEI 61936-1 / IEEE 605',
-    date: dateStr,
-    referenceId: `EPEDE-CALC-BUS-${now.getTime().toString().slice(-6)}`,
-    inputs: [
-      { label: locale === 'fr' ? 'Tension nominale Un' : 'Nominal Voltage Un', value: `${unBusKv}`, unit: 'kV' },
-      { label: locale === 'fr' ? 'Courant de crête de court-circuit Ip' : 'Peak Short-Circuit Current Ip', value: `${ipBusKa}`, unit: 'kA peak' },
-      { label: locale === 'fr' ? 'Courant thermique Ith (1s)' : 'Thermal Current Ith (1s)', value: `${ithBusKa}`, unit: 'kA' },
-      { label: locale === 'fr' ? 'Profil du conducteur' : 'Conductor Profile', value: 'Tube Al Alliage Ø 120/110 mm' },
-      { label: locale === 'fr' ? 'Entraxe entre phases (a)' : 'Phase Spacing (a)', value: `${aBusM}`, unit: 'm' },
-      { label: locale === 'fr' ? 'Portée entre supports (l)' : 'Span Length (l)', value: `${lBusM}`, unit: 'm' },
-      { label: locale === 'fr' ? 'Charge de rupture isolateur (Fr)' : 'Insulator Breaking Rating (Fr)', value: '12.0', unit: 'kN' },
-    ],
-    formulas: [
-      { name: 'Force de Laplace de crête Fm', expr: '(µ0 / 2π) · (√3 / 2) · (Ip² / a) · l [N]' },
-      { name: 'Contrainte de flexion dynamique σm', expr: '(Vσ · β · M) / Wm [MPa]' },
-      { name: 'Effort dynamique sur isolateur Fd', expr: 'VF · α · Fm [kN]' },
-      { name: 'Section thermique minimale Sth', expr: '(Ith · √tk) / kθ [mm²]' },
-    ],
-    results: [
-      { label: locale === 'fr' ? 'Force électrodynamique Fm' : 'Electrodynamic Force Fm', value: (fmBusN / 1000).toFixed(2), unit: 'kN', highlight: true, status: 'OK' },
-      { label: locale === 'fr' ? 'Contrainte mécanique calculée (σm)' : 'Calculated Bending Stress (σm)', value: sigmaBusMpa.toFixed(1), unit: 'MPa', status: sigmaBusMpa <= sigmaPermissibleBusMpa ? 'OK' : 'DANGER' },
-      { label: locale === 'fr' ? 'Contrainte admissible (q · Rp0.2)' : 'Permissible Bending Stress', value: sigmaPermissibleBusMpa.toFixed(1), unit: 'MPa' },
-      { label: locale === 'fr' ? 'Effort dynamique sur isolateur (Fd)' : 'Insulator Dynamic Load (Fd)', value: fdInsulatorKn.toFixed(2), unit: 'kN', status: fdInsulatorKn <= frPermissibleKn ? 'OK' : 'DANGER' },
-      { label: locale === 'fr' ? 'Section du tube réelle' : 'Actual Conductor Section', value: areaBusMm2.toFixed(0), unit: 'mm²' },
-      { label: locale === 'fr' ? 'Section thermique requise Sth' : 'Required Thermal Section Sth', value: sThMinMm2.toFixed(0), unit: 'mm²', status: areaBusMm2 >= sThMinMm2 ? 'OK' : 'DANGER' },
-    ],
-    complianceVerdict: {
-      status: sigmaBusMpa <= sigmaPermissibleBusMpa && fdInsulatorKn <= frPermissibleKn && areaBusMm2 >= sThMinMm2 ? 'COMPLIANT' : 'NON_COMPLIANT',
-      message: locale === 'fr'
-        ? `Le jeu de barres tubulaire 225 kV vérifie l'ensemble des critères de la norme CEI 60865-1 : contrainte de flexion σm = ${sigmaBusMpa.toFixed(1)} MPa (≤ ${sigmaPermissibleBusMpa.toFixed(1)} MPa), effort isolateur Fd = ${fdInsulatorKn.toFixed(2)} kN (≤ ${frPermissibleKn.toFixed(2)} kN) et section thermique adéquate.`
-        : `Tubular busbar meets all criteria of IEC 60865-1: bending stress σm = ${sigmaBusMpa.toFixed(1)} MPa (≤ ${sigmaPermissibleBusMpa.toFixed(1)} MPa), insulator load Fd = ${fdInsulatorKn.toFixed(2)} kN (≤ ${frPermissibleKn.toFixed(2)} kN) and thermal withstand confirmed.`,
-    },
-    engineeringNotes: [
-      'Calcul mené avec coefficient d\'amplification dynamique Vσ prenant en compte la réponse mécanique de la travée sous l\'effort impulsionnel initial.',
-      'Les isolateurs supports doivent être spécifiés avec une charge de rupture à la flexion Fr ≥ 12 kN pour respecter la marge de sécurité normative de 20%.',
-    ],
-  };
+    return withProvenance({
+      title: locale === 'fr' 
+        ? 'Dimensionnement Électrodynamique & Thermique des Jeux de Barres' 
+        : 'Busbar Short-Circuit Electrodynamic & Thermal Sizing',
+      calcType: 'BUSBAR-ELECTRODYNAMIC-IEC60865',
+      standard: 'CEI 60865-1 / CEI 61936-1 / IEEE 605',
+      date: dateStr,
+      referenceId: `EPEDE-CALC-BUS-${now.getTime().toString().slice(-6)}`,
+      inputs: [
+        { label: locale === 'fr' ? 'Tension nominale Un' : 'Nominal Voltage Un', value: `${unBusKv}`, unit: 'kV' },
+        { label: locale === 'fr' ? 'Courant de crête de court-circuit Ip' : 'Peak Short-Circuit Current Ip', value: `${ipBusKa}`, unit: 'kA peak' },
+        { label: locale === 'fr' ? 'Courant thermique Ith (1s)' : 'Thermal Current Ith (1s)', value: `${ithBusKa}`, unit: 'kA' },
+        { label: locale === 'fr' ? 'Profil du conducteur' : 'Conductor Profile', value: 'Tube Al Alliage Ø 120/110 mm' },
+        { label: locale === 'fr' ? 'Entraxe entre phases (a)' : 'Phase Spacing (a)', value: `${aBusM}`, unit: 'm' },
+        { label: locale === 'fr' ? 'Portée entre supports (l)' : 'Span Length (l)', value: `${lBusM}`, unit: 'm' },
+        { label: locale === 'fr' ? 'Charge de rupture isolateur (Fr)' : 'Insulator Breaking Rating (Fr)', value: '12.0', unit: 'kN' },
+      ],
+      formulas: [
+        { name: 'Force de Laplace de crête Fm', expr: '(µ0 / 2π) · (√3 / 2) · (Ip² / a) · l [N]' },
+        { name: 'Contrainte de flexion dynamique σm', expr: '(Vσ · β · M) / Wm [MPa]' },
+        { name: 'Effort dynamique sur isolateur Fd', expr: 'VF · α · Fm [kN]' },
+        { name: 'Section thermique minimale Sth', expr: '(Ith · √tk) / kθ [mm²]' },
+      ],
+      results: [
+        { label: locale === 'fr' ? 'Force électrodynamique Fm' : 'Electrodynamic Force Fm', value: (fmBusN / 1000).toFixed(2), unit: 'kN', highlight: true, status: 'OK' },
+        { label: locale === 'fr' ? 'Contrainte mécanique calculée (σm)' : 'Calculated Bending Stress (σm)', value: sigmaBusMpa.toFixed(1), unit: 'MPa', status: sigmaBusMpa <= sigmaPermissibleBusMpa ? 'OK' : 'DANGER' },
+        { label: locale === 'fr' ? 'Contrainte admissible (q · Rp0.2)' : 'Permissible Bending Stress', value: sigmaPermissibleBusMpa.toFixed(1), unit: 'MPa' },
+        { label: locale === 'fr' ? 'Effort dynamique sur isolateur (Fd)' : 'Insulator Dynamic Load (Fd)', value: fdInsulatorKn.toFixed(2), unit: 'kN', status: fdInsulatorKn <= frPermissibleKn ? 'OK' : 'DANGER' },
+        { label: locale === 'fr' ? 'Section du tube réelle' : 'Actual Conductor Section', value: areaBusMm2.toFixed(0), unit: 'mm²' },
+        { label: locale === 'fr' ? 'Section thermique requise Sth' : 'Required Thermal Section Sth', value: sThMinMm2.toFixed(0), unit: 'mm²', status: areaBusMm2 >= sThMinMm2 ? 'OK' : 'DANGER' },
+      ],
+      complianceVerdict: {
+        status: sigmaBusMpa <= sigmaPermissibleBusMpa && fdInsulatorKn <= frPermissibleKn && areaBusMm2 >= sThMinMm2 ? 'COMPLIANT' : 'NON_COMPLIANT',
+        message: locale === 'fr'
+          ? `Le jeu de barres tubulaire 225 kV vérifie l'ensemble des critères de la norme CEI 60865-1 : contrainte de flexion σm = ${sigmaBusMpa.toFixed(1)} MPa (≤ ${sigmaPermissibleBusMpa.toFixed(1)} MPa), effort isolateur Fd = ${fdInsulatorKn.toFixed(2)} kN (≤ ${frPermissibleKn.toFixed(2)} kN) et section thermique adéquate.`
+          : `Tubular busbar meets all criteria of IEC 60865-1: bending stress σm = ${sigmaBusMpa.toFixed(1)} MPa (≤ ${sigmaPermissibleBusMpa.toFixed(1)} MPa), insulator load Fd = ${fdInsulatorKn.toFixed(2)} kN (≤ ${frPermissibleKn.toFixed(2)} kN) and thermal withstand confirmed.`,
+      },
+      engineeringNotes: [
+        'Calcul mené avec coefficient d\'amplification dynamique Vσ prenant en compte la réponse mécanique de la travée sous l\'effort impulsionnel initial.',
+        'Les isolateurs supports doivent être spécifiés avec une charge de rupture à la flexion Fr ≥ 12 kN pour respecter la marge de sécurité normative de 20%.',
+      ],
+    });
+  }
 
   // 15. OVERHEAD TRANSMISSION LINE PARAMETERS & CORONA LOSS (IEC 60826 / IEEE 738 / PEEK)
   if (activeCalc === 'transmission-line') {
@@ -1318,12 +1363,13 @@ export function generateCalculationReport(
   }
 
   // Fallback if none matched
+  const fallbackCalc = String(activeCalc);
   return withProvenance({
     title: locale === 'fr' ? 'Note de Calcul Technique' : 'Technical Calculation Note',
-    calcType: activeCalc.toUpperCase(),
+    calcType: fallbackCalc.toUpperCase(),
     standard: 'CEI / IEEE Standards',
     date: dateStr,
-    referenceId: `EPEDE-CALC-${activeCalc.toUpperCase().slice(0, 4)}-${now.getTime().toString().slice(-6)}`,
+    referenceId: `EPEDE-CALC-${fallbackCalc.toUpperCase().slice(0, 4)}-${now.getTime().toString().slice(-6)}`,
     inputs: [],
     formulas: [],
     results: [],

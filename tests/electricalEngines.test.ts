@@ -6,6 +6,7 @@ import { describe, it, expect } from './testUtils';
 import { CanonicalNetworkSolver } from '../src/data/canonicalNetworkSolver';
 import { IndustrialMotorDynamicsEngine, CAMEROON_MOTOR_PRESETS } from '../src/data/industrialMotorDynamicsEngine';
 import { Ieee80EarthingGridEngine, CAMEROON_SUBSTATION_EARTHING_PRESETS } from '../src/data/ieee80EarthingGridEngine';
+import { HarmonicResonanceEngine, CAMEROON_HARMONIC_PRESETS } from '../src/data/harmonicResonanceEngine';
 import { EngineeringCalculationPdfExportService } from '../src/components/calculators/services/EngineeringCalculationPdfExportService';
 import { generateCalculationReport } from '../src/components/calculators/services/calculationReportService';
 import { WORKED_EXAMPLES_REGISTRY } from '../src/data/workedExamplesRegistry';
@@ -294,5 +295,43 @@ describe('⚡ Electrotechnical Physics Engine Tests', () => {
     const centerProfile = bekokoOutput.crossSectionProfile[0];
     const outerProfile = bekokoOutput.crossSectionProfile[bekokoOutput.crossSectionProfile.length - 1];
     expect(centerProfile.surfacePotentialV).toBeGreaterThan(outerProfile.surfacePotentialV * 1.5);
+  });
+
+  it('11. HarmonicResonanceEngine accurately models parallel LC anti-resonance, series detuning notch, THDu, True PF, and K-Factor', () => {
+    const sabcPreset = CAMEROON_HARMONIC_PRESETS.find(p => p.id === 'sabc-douala-tgbt')!;
+    expect(sabcPreset).toBeDefined();
+
+    // 1. Bare capacitor bank (p = 0%) on SABC Douala 400V TGBT
+    const bareOutput = HarmonicResonanceEngine.solve({
+      ...sabcPreset.input,
+      detuningFactorP: 0,
+    });
+
+    // Natural parallel anti-resonance should fall near h_r ~ 5.0 - 7.5 (250 - 375 Hz, dangerous 5th/7th harmonic zone)
+    expect(bareOutput.naturalParallelResonanceOrderBare).toBeGreaterThan(4.5);
+    expect(bareOutput.naturalParallelResonanceOrderBare).toBeLessThan(8.0);
+    expect(bareOutput.naturalParallelResonanceFreqBareHz).toBeGreaterThan(225);
+    expect(bareOutput.naturalParallelResonanceFreqBareHz).toBeLessThan(400);
+
+    // 2. Detuned reactor bank (p = 7%) shifts series tuning notch to f_s = 50 / sqrt(0.07) = 189 Hz (h_s = 3.78)
+    const detunedOutput = HarmonicResonanceEngine.solve({
+      ...sabcPreset.input,
+      detuningFactorP: 0.07,
+    });
+
+    expect(detunedOutput.seriesTuningOrder).toBeCloseTo(3.78, 0.05);
+    expect(detunedOutput.seriesTuningFreqHz).toBeCloseTo(189.0, 1.0);
+
+    // Detuned bank must drastically reduce THDu compared to bare capacitor bank
+    expect(detunedOutput.thdVoltageActivePercent).toBeLessThan(bareOutput.thdVoltageBarePercent);
+    expect(detunedOutput.isIeee519CompliantActive).toBe(true);
+
+    // True Power Factor must be strictly lower than displacement cos(phi) due to harmonic current distortion THDi
+    expect(detunedOutput.truePowerFactorAfter).toBeLessThan(detunedOutput.displacementCosPhiAfter);
+    expect(detunedOutput.thdCurrentPercent).toBeGreaterThan(15.0);
+
+    // Transformer K-factor must exceed 1.8 under VFD 6-pulse harmonic load
+    expect(detunedOutput.transformerKFactor).toBeGreaterThan(1.8);
+    expect(detunedOutput.frequencyScan.length).toBeGreaterThan(100);
   });
 });

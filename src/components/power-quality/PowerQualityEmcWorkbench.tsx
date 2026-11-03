@@ -40,6 +40,7 @@ import { PqCommandHeader } from './PqCommandHeader';
 import { PqClassAMeasurementEngine } from './modules/PqClassAMeasurementEngine';
 import { PqDeliverablesExportEngine } from './modules/PqDeliverablesExportEngine';
 import { usePqProjectStore } from './services/usePqProjectStore';
+import { HarmonicResonanceAnalyzer } from '../calculators/modules/HarmonicResonanceAnalyzer';
 
 interface PowerQualityEmcWorkbenchProps {
   locale: 'fr' | 'en';
@@ -628,6 +629,11 @@ export const PowerQualityEmcWorkbench: React.FC<PowerQualityEmcWorkbenchProps> =
                     <span className="text-emerald-400 font-bold">Sécurité Anti-Explosion : </span>
                     L'adjonction de la self en série abaisse l'impédance de la branche sous 189 Hz. Au-delà (rangs 5, 7, 11), le circuit devient inductif, rendant impossible toute résonance parallèle destructrice avec le réseau SONATREL.
                   </div>
+                </div>
+
+                {/* FULL INTERACTIVE HARMONIC SPECTRUM & RESONANT IMPEDANCE Z(f) ANALYZER */}
+                <div className="lg:col-span-12">
+                  <HarmonicResonanceAnalyzer locale={locale} initialPresetId="sabc-douala-tgbt" />
                 </div>
               </div>
             )}

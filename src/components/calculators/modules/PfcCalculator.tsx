@@ -1,6 +1,7 @@
 // src/components/calculators/modules/PfcCalculator.tsx
 import React, { useState } from 'react';
-import { Layers, CheckCircle2, AlertTriangle, FileText } from 'lucide-react';
+import { Layers, CheckCircle2, AlertTriangle, FileText, Waves } from 'lucide-react';
+import { HarmonicResonanceAnalyzer } from './HarmonicResonanceAnalyzer';
 
 interface PfcCalculatorProps {
   locale: 'fr' | 'en';
@@ -8,6 +9,7 @@ interface PfcCalculatorProps {
 }
 
 export const PfcCalculator: React.FC<PfcCalculatorProps> = ({ locale, onOpenReport }) => {
+  const [showHarmonicAnalyzer, setShowHarmonicAnalyzer] = useState<boolean>(true);
   // 9. PHASE 2: POWER FACTOR CORRECTION & CAPACITOR BANK (IEC 60831 / IEC 61642)
   const [pfcPKw, setPfcPKw] = useState<number>(500); // 500 kW active power
   const [pfcCosPhiInitial, setPfcCosPhiInitial] = useState<number>(0.76); // initial cos phi 0.76
@@ -63,7 +65,18 @@ export const PfcCalculator: React.FC<PfcCalculatorProps> = ({ locale, onOpenRepo
             <Layers className="h-4 w-4 text-cyan-400" />
             {locale === 'fr' ? 'COMPENSATION D\'ÉNERGIE RÉACTIVE & BATTERIE DE CONDENSATEURS' : 'POWER FACTOR CORRECTION & CAPACITOR SIZING'}
           </span>
-          <span className="text-cyan-400">CEI 60831 / CEI 61642</span>
+          <button
+            type="button"
+            onClick={() => setShowHarmonicAnalyzer(!showHarmonicAnalyzer)}
+            className="px-2.5 py-1 rounded-lg bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 text-[10px] flex items-center gap-1.5 hover:bg-cyan-500/25 transition-all cursor-pointer"
+          >
+            <Waves className="w-3.5 h-3.5 text-cyan-400" />
+            <span>
+              {showHarmonicAnalyzer
+                ? (locale === 'fr' ? 'Masquer Analyseur Z(f)' : 'Hide Z(f) Analyzer')
+                : (locale === 'fr' ? 'Afficher Analyseur Z(f)' : 'Show Z(f) Analyzer')}
+            </span>
+          </button>
         </div>
 
         {/* Metric Cards Grid */}
@@ -293,7 +306,7 @@ export const PfcCalculator: React.FC<PfcCalculatorProps> = ({ locale, onOpenRepo
             <button
               type="button"
               onClick={onOpenReport}
-              className="w-full py-2.5 rounded-xl font-mono text-xs font-bold bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 flex items-center justify-center gap-2 transition-colors"
+              className="w-full py-2.5 rounded-xl font-mono text-xs font-bold bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 flex items-center justify-center gap-2 transition-colors cursor-pointer"
             >
               <FileText className="h-4 w-4" />
               <span>{locale === 'fr' ? 'Éditer Note de Calcul PFC' : 'Generate PFC Sizing Sheet'}</span>
@@ -301,6 +314,17 @@ export const PfcCalculator: React.FC<PfcCalculatorProps> = ({ locale, onOpenRepo
           </div>
         )}
       </div>
+
+      {/* Interactive Harmonic Spectrum & Resonant Impedance Z(f) Analyzer */}
+      {showHarmonicAnalyzer && (
+        <div className="lg:col-span-3">
+          <HarmonicResonanceAnalyzer
+            locale={locale}
+            initialPresetId="sabc-douala-tgbt"
+            onOpenReport={onOpenReport}
+          />
+        </div>
+      )}
     </div>
   );
 };
