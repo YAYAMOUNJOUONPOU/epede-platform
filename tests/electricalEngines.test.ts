@@ -8,6 +8,7 @@ import { IndustrialMotorDynamicsEngine, CAMEROON_MOTOR_PRESETS } from '../src/da
 import { Ieee80EarthingGridEngine, CAMEROON_SUBSTATION_EARTHING_PRESETS } from '../src/data/ieee80EarthingGridEngine';
 import { HarmonicResonanceEngine, CAMEROON_HARMONIC_PRESETS } from '../src/data/harmonicResonanceEngine';
 import { Iec60287CableAmpacityEngine, CAMEROON_CABLE_PRESETS } from '../src/data/iec60287CableAmpacityEngine';
+import { Iec61936AisClearanceEngine, CAMEROON_AIS_PRESETS } from '../src/data/iec61936AisClearanceEngine';
 import { EngineeringCalculationPdfExportService } from '../src/components/calculators/services/EngineeringCalculationPdfExportService';
 import { generateCalculationReport } from '../src/components/calculators/services/calculationReportService';
 import { WORKED_EXAMPLES_REGISTRY } from '../src/data/workedExamplesRegistry';
@@ -388,5 +389,51 @@ describe('⚡ Electrotechnical Physics Engine Tests', () => {
 
     // Deep subsoil near cable burial depth should be significantly hotter
     expect(nomayosOutput.maxSoilTempInTrenchC).toBeGreaterThan(nomayosPreset.trench.ambientGroundTempC + 15.0);
+  });
+
+  it('13. IEC 61936-1 / IEC 60071 AIS Substation Clearances Engine accurately models phase-to-earth N, altitude factor ka, creepage, and surge arrester protection', () => {
+    // 1. Coastal Low-Altitude Substation: Békoko 225 kV (Altitude 25 m, Heavy Pollution)
+    const bekokoPreset = CAMEROON_AIS_PRESETS.find(p => p.id === 'bekoko-225kv-coastal')!;
+    expect(bekokoPreset).toBeDefined();
+
+    const bekokoOutput = Iec61936AisClearanceEngine.solve(bekokoPreset.input);
+
+    // At H <= 1000m, altitude correction factor must be 1.0 (no derating)
+    expect(bekokoOutput.altitudeCorrectionFactorKa).toBe(1.0);
+    expect(bekokoOutput.isAltitudeDeratingApplied).toBe(false);
+
+    // Standard 225 kV clearances: N = 1900 mm, P = 2400 mm
+    expect(bekokoOutput.clearancesCorrected.phaseToEarthNMm).toBe(1900);
+    expect(bekokoOutput.clearancesCorrected.phaseToPhasePMm).toBe(2400);
+
+    // Pedestrian ground safety clearance B1 = 2250 + 1900 = 4150 mm (4.15 m)
+    expect(bekokoOutput.clearancesCorrected.pedestrianSafetyB1Mm).toBe(4150);
+
+    // Heavy marine pollution (Class d: 43.3 mm/kV): Creepage for 245 kV max voltage
+    // 43.3 * 245 = 10608.5 mm (~10609 mm)
+    expect(bekokoOutput.minInsulatorCreepageDistanceMm).toBeGreaterThan(10000);
+
+    // Surge arrester at 8.0 m from transformer: Wave reflection check
+    // U_T = 560 + 2 * (1200 / 300) * 8.0 = 560 + 64 = 624 kV peak
+    expect(bekokoOutput.waveReflectionVoltageAtTrafoKvPeak).toBeCloseTo(624.0, 1.0);
+    // Protective margin: (1050 / 624 - 1) * 100% = 68.3% (well above 20% limit)
+    expect(bekokoOutput.surgeArresterProtectiveMarginPercent).toBeGreaterThan(20.0);
+    expect(bekokoOutput.isProtectiveMarginCompliant).toBe(true);
+
+    // 2. High-Altitude Substation: Bafoussam 90 kV (Altitude 1520 m, Western Highlands)
+    const bafoussamPreset = CAMEROON_AIS_PRESETS.find(p => p.id === 'bafoussam-90kv-highland')!;
+    const bafoussamOutput = Iec61936AisClearanceEngine.solve(bafoussamPreset.input);
+
+    // Altitude correction factor ka = exp(1 * (1520 - 1000) / 8150) = exp(520 / 8150) = 1.0658
+    expect(bafoussamOutput.isAltitudeDeratingApplied).toBe(true);
+    expect(bafoussamOutput.altitudeCorrectionFactorKa).toBeGreaterThan(1.06);
+    expect(bafoussamOutput.altitudeCorrectionFactorKa).toBeLessThan(1.08);
+
+    // Corrected phase-to-earth clearance N: 900 * 1.0658 = 960 mm (expanded envelope)
+    expect(bafoussamOutput.clearancesCorrected.phaseToEarthNMm).toBeGreaterThan(bafoussamOutput.clearancesStandard.phaseToEarthNMm);
+    expect(bafoussamOutput.clearancesCorrected.phaseToEarthNMm).toBeGreaterThanOrEqual(959);
+
+    // Corrected pedestrian safety height: 2250 + N_corr
+    expect(bafoussamOutput.clearancesCorrected.pedestrianSafetyB1Mm).toBe(2250 + bafoussamOutput.clearancesCorrected.phaseToEarthNMm);
   });
 });

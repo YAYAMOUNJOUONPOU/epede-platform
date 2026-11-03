@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { SUBSTATION_BAYS_CATALOG, SubstationBayDefinition } from './data/substationBaysData';
 import { HvDisconnectorKinematicsInterlockSimulator } from './modules/HvDisconnectorKinematicsInterlockSimulator';
+import { AisClearanceInsulationInspector } from './modules/AisClearanceInsulationInspector';
 
 interface SubstationBayArchitectureExplorerProps {
   locale: 'fr' | 'en';
@@ -34,7 +35,7 @@ export const SubstationBayArchitectureExplorer: React.FC<SubstationBayArchitectu
   locale,
   onSelectEquipment
 }) => {
-  const [activeViewTab, setActiveViewTab] = useState<'BAY_ARCHITECTURE' | 'DISCONNECTOR_KINEMATICS'>('BAY_ARCHITECTURE');
+  const [activeViewTab, setActiveViewTab] = useState<'BAY_ARCHITECTURE' | 'DISCONNECTOR_KINEMATICS' | 'AIS_CLEARANCES'>('BAY_ARCHITECTURE');
   const [selectedBayId, setSelectedBayId] = useState<string>('BAY_LINE_225');
   const [activeStageIdx, setActiveStageIdx] = useState<number>(0);
 
@@ -222,11 +223,26 @@ export const SubstationBayArchitectureExplorer: React.FC<SubstationBayArchitectu
           }`}
         >
           <Zap className="w-4 h-4" />
-          <span>{locale === 'fr' ? '2. Sectionneurs THT, Commande MOM & Verrouillages (CEI 62271-102)' : '2. HV Disconnectors, Motor Drive & Interlocking (IEC 62271-102)'}</span>
+          <span>{locale === 'fr' ? '2. Sectionneurs & Verrouillages (CEI 62271-102)' : '2. Disconnectors & Interlocking (IEC 62271)'}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveViewTab('AIS_CLEARANCES')}
+          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+            activeViewTab === 'AIS_CLEARANCES'
+              ? 'bg-sky-400 text-slate-950 shadow-md shadow-sky-400/20 ring-1 ring-sky-300'
+              : 'text-slate-400 hover:text-white hover:bg-slate-900'
+          }`}
+        >
+          <Layers className="w-4 h-4" />
+          <span>{locale === 'fr' ? '3. Gabarits & Isolement (CEI 61936-1)' : '3. Clearances & Insulation (IEC 61936-1)'}</span>
         </button>
       </div>
 
-      {activeViewTab === 'DISCONNECTOR_KINEMATICS' ? (
+      {activeViewTab === 'AIS_CLEARANCES' ? (
+        <AisClearanceInsulationInspector locale={locale} />
+      ) : activeViewTab === 'DISCONNECTOR_KINEMATICS' ? (
         <HvDisconnectorKinematicsInterlockSimulator locale={locale} />
       ) : (
         <>
