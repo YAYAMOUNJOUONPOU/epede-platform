@@ -1,6 +1,7 @@
 // src/components/calculators/modules/EarthingCalculator.tsx
 import React, { useState } from 'react';
-import { ShieldCheck, CheckCircle2, AlertTriangle, FileText } from 'lucide-react';
+import { ShieldCheck, CheckCircle2, AlertTriangle, FileText, Layers } from 'lucide-react';
+import { SubstationEarthingMeshHeatmap } from './SubstationEarthingMeshHeatmap';
 
 interface EarthingCalculatorProps {
   locale: 'fr' | 'en';
@@ -8,6 +9,7 @@ interface EarthingCalculatorProps {
 }
 
 export const EarthingCalculator: React.FC<EarthingCalculatorProps> = ({ locale, onOpenReport }) => {
+  const [show2dHeatmap, setShow2dHeatmap] = useState<boolean>(true);
   // 6. EARTHING GRID & TOUCH / STEP VOLTAGE (IEEE 80 / IEC 60479)
   const [earthRho, setEarthRho] = useState<number>(100); // 100 Ω·m soil resistivity
   const [earthIfaultKa, setEarthIfaultKa] = useState<number>(20); // 20 kA fault to earth
@@ -53,7 +55,14 @@ export const EarthingCalculator: React.FC<EarthingCalculatorProps> = ({ locale, 
             <ShieldCheck className="h-4 w-4 text-emerald-400" />
             {locale === 'fr' ? 'CALCUL DE MISE À LA TERRE & TENSIONS DE PAS / TOUCHER (IEEE 80 / CEI 60479)' : 'SUBSTATION EARTHING & STEP/TOUCH SAFETY'}
           </span>
-          <span className="text-emerald-400">SÉCURITÉ DES PERSONNES (70 KG)</span>
+          <button
+            type="button"
+            onClick={() => setShow2dHeatmap(!show2dHeatmap)}
+            className="px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[10px] flex items-center gap-1.5 hover:bg-emerald-500/25 transition-all cursor-pointer"
+          >
+            <Layers className="w-3.5 h-3.5" />
+            <span>{show2dHeatmap ? (locale === 'fr' ? 'Masquer Heatmap 2D' : 'Hide 2D Heatmap') : (locale === 'fr' ? 'Afficher Heatmap 2D' : 'Show 2D Heatmap')}</span>
+          </button>
         </div>
 
         {/* Big Alert KPI Cards */}
@@ -286,7 +295,7 @@ export const EarthingCalculator: React.FC<EarthingCalculatorProps> = ({ locale, 
             <button
               type="button"
               onClick={onOpenReport}
-              className="w-full py-2.5 rounded-xl font-mono text-xs font-bold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center justify-center gap-2 transition-colors"
+              className="w-full py-2.5 rounded-xl font-mono text-xs font-bold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center justify-center gap-2 transition-colors cursor-pointer"
             >
               <FileText className="h-4 w-4" />
               <span>{locale === 'fr' ? 'Éditer Note de Calcul Mise à la Terre' : 'Generate Earthing Report'}</span>
@@ -294,6 +303,17 @@ export const EarthingCalculator: React.FC<EarthingCalculatorProps> = ({ locale, 
           </div>
         )}
       </div>
+
+      {/* Interactive 2D Mesh Heatmap & Step/Touch Voltage Inspector */}
+      {show2dHeatmap && (
+        <div className="lg:col-span-3">
+          <SubstationEarthingMeshHeatmap
+            locale={locale}
+            initialPresetId="bekoko-225kv"
+            onOpenReport={onOpenReport}
+          />
+        </div>
+      )}
     </div>
   );
 };

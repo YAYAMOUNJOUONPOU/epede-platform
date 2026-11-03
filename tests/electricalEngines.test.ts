@@ -5,6 +5,7 @@
 import { describe, it, expect } from './testUtils';
 import { CanonicalNetworkSolver } from '../src/data/canonicalNetworkSolver';
 import { IndustrialMotorDynamicsEngine, CAMEROON_MOTOR_PRESETS } from '../src/data/industrialMotorDynamicsEngine';
+import { Ieee80EarthingGridEngine, CAMEROON_SUBSTATION_EARTHING_PRESETS } from '../src/data/ieee80EarthingGridEngine';
 import { EngineeringCalculationPdfExportService } from '../src/components/calculators/services/EngineeringCalculationPdfExportService';
 import { generateCalculationReport } from '../src/components/calculators/services/calculationReportService';
 import { WORKED_EXAMPLES_REGISTRY } from '../src/data/workedExamplesRegistry';
@@ -238,5 +239,60 @@ describe('⚡ Electrotechnical Physics Engine Tests', () => {
     const wePdfDoc = EngineeringCalculationPdfExportService.generateCalculationPdfDoc(weReport, 'en');
     const wePdfBuffer = wePdfDoc.output('arraybuffer');
     expect(wePdfBuffer.byteLength).toBeGreaterThan(5000);
+  });
+
+  it('10. IEEE Std 80-2013 Substation Earthing Grid engine accurately models Sverak Rg, Cs derating, GPR, and touch/step limits', () => {
+    // 1. Test Békoko 225 kV Substation (Low resistivity coastal alluvium with high 31.5 kA fault)
+    const bekokoPreset = CAMEROON_SUBSTATION_EARTHING_PRESETS.find(p => p.id === 'bekoko-225kv')!;
+    expect(bekokoPreset).toBeDefined();
+
+    const bekokoOutput = Ieee80EarthingGridEngine.solve(bekokoPreset.input);
+
+    // Rg should be well below 0.5 Ohm for 120m x 90m in 80 Ohm.m soil with 36 rods
+    expect(bekokoOutput.gridResistanceRgOhm).toBeLessThan(0.40);
+    expect(bekokoOutput.gridResistanceRgOhm).toBeGreaterThan(0.15);
+
+    // Crushed rock derating Cs for hs = 15 cm, rho = 80, rho_s = 3000
+    // Expected: Cs ~ 0.75 - 0.85
+    expect(bekokoOutput.csDerating).toBeGreaterThan(0.70);
+    expect(bekokoOutput.csDerating).toBeLessThan(0.90);
+
+    // Tolerable touch voltage for 70 kg, 0.2s duration with Cs derating
+    expect(bekokoOutput.tolerableTouchVoltageV).toBeGreaterThan(1200);
+    expect(bekokoOutput.tolerableStepVoltageV).toBeGreaterThan(3000);
+
+    // Calculated Mesh Voltage Em should be safe with dense mesh (12x9) and 36 rods
+    expect(bekokoOutput.isTouchSafe).toBe(true);
+    expect(bekokoOutput.isStepSafe).toBe(true);
+    expect(bekokoOutput.complianceStatus).toBe('COMPLIANT');
+
+    // 2. Test Maroua 90 kV Substation (High resistivity 480 Ohm.m Sahelian soil)
+    const marouaPreset = CAMEROON_SUBSTATION_EARTHING_PRESETS.find(p => p.id === 'maroua-90kv')!;
+    const marouaOutput = Ieee80EarthingGridEngine.solve(marouaPreset.input);
+
+    // Higher soil resistivity means higher ground resistance Rg
+    expect(marouaOutput.gridResistanceRgOhm).toBeGreaterThan(2.0);
+    expect(marouaOutput.gridResistanceRgOhm).toBeLessThan(6.0);
+
+    // Test effect of removing gravel: without crushed rock layer, tolerable touch voltage plummets
+    const ungravelledMaroua = Ieee80EarthingGridEngine.solve({
+      ...marouaPreset.input,
+      hasCrushedRockLayer: false,
+    });
+
+    expect(ungravelledMaroua.tolerableTouchVoltageV).toBeLessThan(marouaOutput.tolerableTouchVoltageV);
+    // Gravel layer provides at least 2.0x higher shock tolerance
+    expect(marouaOutput.tolerableTouchVoltageV).toBeGreaterThan(ungravelledMaroua.tolerableTouchVoltageV * 2.0);
+
+    // 3. Verify 2D Heatmap & 1D Profile Structure
+    expect(bekokoOutput.heatmapResolution).toBe(21);
+    expect(bekokoOutput.gridSurfacePotentials.length).toBe(21);
+    expect(bekokoOutput.gridSurfacePotentials[0].length).toBe(21);
+    expect(bekokoOutput.crossSectionProfile.length).toBeGreaterThan(25);
+
+    // The potential at grid center should be significantly higher than far outside fence
+    const centerProfile = bekokoOutput.crossSectionProfile[0];
+    const outerProfile = bekokoOutput.crossSectionProfile[bekokoOutput.crossSectionProfile.length - 1];
+    expect(centerProfile.surfacePotentialV).toBeGreaterThan(outerProfile.surfacePotentialV * 1.5);
   });
 });

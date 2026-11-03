@@ -22,6 +22,7 @@ import {
 import { EngineeringInfographicCard } from '../common/EngineeringInfographicCard';
 import { EngineeringInfographicsModal } from '../common/EngineeringInfographicsModal';
 import { SurgeArresterInsulationCoordinationSimulator } from './modules/SurgeArresterInsulationCoordinationSimulator';
+import { SubstationEarthingMeshHeatmap } from '../calculators/modules/SubstationEarthingMeshHeatmap';
 
 interface SubstationEarthingSafetyViewerProps {
   locale: 'fr' | 'en';
@@ -583,6 +584,9 @@ export const SubstationEarthingSafetyViewer: React.FC<SubstationEarthingSafetyVi
               </div>
             </div>
           </div>
+
+          {/* Interactive 2D Substation Ground Mesh Heatmap & Step/Touch Voltage Inspector */}
+          <SubstationEarthingMeshHeatmap locale={locale} initialPresetId="bekoko-225kv" />
         </div>
       )}
 

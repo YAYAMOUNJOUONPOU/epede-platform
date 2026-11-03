@@ -6,6 +6,7 @@ import {
   type MotorStartMethod,
   type MechanicalLoadType,
 } from '../../../data/industrialMotorDynamicsEngine';
+import { Ieee80EarthingGridEngine } from '../../../data/ieee80EarthingGridEngine';
 
 export interface InjectedCalculatorContext {
   equipmentId?: string;
@@ -430,59 +431,93 @@ export function generateCalculationReport(
   }
 
   if (activeCalc === 'earthing') {
-    const earthSoilRho = 120;
-    const earthStoneRho = 3000;
-    const earthStoneThicknessM = 0.15;
-    const earthFaultCurrentKa = 18;
-    const earthFaultDurationSec = 0.5;
-    const earthGridAreaM2 = 3600;
-    const earthConductorLengthM = 1250;
-    const kFactor = (earthSoilRho - earthStoneRho) / (earthSoilRho + earthStoneRho);
-    const csFactor = 1 - (0.09 * (1 - earthSoilRho / earthStoneRho)) / (2 * earthStoneThicknessM + 0.09);
-    const eTouch50 = (1000 + 1.5 * csFactor * earthStoneRho) * (0.116 / Math.sqrt(earthFaultDurationSec));
-    const eStep50 = (1000 + 6.0 * csFactor * earthStoneRho) * (0.116 / Math.sqrt(earthFaultDurationSec));
-    const rgLaurentNymanOhms = earthSoilRho * (1 / earthConductorLengthM + 1 / Math.sqrt(20 * earthGridAreaM2));
-    const gprVolts = earthFaultCurrentKa * 1000 * rgLaurentNymanOhms;
-    const isRgCompliant = rgLaurentNymanOhms <= 1.0;
+    const lengthM = injectedContext?.params?.lengthM ? Number(injectedContext.params.lengthM) : 100;
+    const widthM = injectedContext?.params?.widthM ? Number(injectedContext.params.widthM) : 80;
+    const meshCountX = injectedContext?.params?.meshCountX ? Number(injectedContext.params.meshCountX) : 10;
+    const meshCountY = injectedContext?.params?.meshCountY ? Number(injectedContext.params.meshCountY) : 8;
+    const burialDepthM = injectedContext?.params?.burialDepthM ? Number(injectedContext.params.burialDepthM) : 0.8;
+    const conductorDiameterMm = injectedContext?.params?.conductorDiameterMm ? Number(injectedContext.params.conductorDiameterMm) : 14;
+    const groundRodsCount = injectedContext?.params?.groundRodsCount ? Number(injectedContext.params.groundRodsCount) : (injectedContext?.params?.gridRodsCount ? Number(injectedContext.params.gridRodsCount) : 32);
+    const groundRodLengthM = 3.0;
+    const soilResistivityOhmM = injectedContext?.params?.soilResistivityOhmM ? Number(injectedContext.params.soilResistivityOhmM) : (injectedContext?.params?.earthRho ? Number(injectedContext.params.earthRho) : 120);
+    const hasCrushedRockLayer = injectedContext?.params?.hasCrushedRockLayer !== undefined ? Boolean(injectedContext.params.hasCrushedRockLayer) : true;
+    const crushedRockThicknessCm = injectedContext?.params?.crushedRockThicknessCm ? Number(injectedContext.params.crushedRockThicknessCm) : (injectedContext?.params?.crushedRockThicknessMm ? Number(injectedContext.params.crushedRockThicknessMm) / 10 : 15);
+    const crushedRockResistivityOhmM = injectedContext?.params?.crushedRockResistivityOhmM ? Number(injectedContext.params.crushedRockResistivityOhmM) : 3000;
+    const faultCurrentRmsKa = injectedContext?.params?.faultCurrentRmsKa ? Number(injectedContext.params.faultCurrentRmsKa) : (injectedContext?.params?.earthIfaultKa ? Number(injectedContext.params.earthIfaultKa) : 25.0);
+    const faultClearingTimeSec = injectedContext?.params?.faultClearingTimeSec ? Number(injectedContext.params.faultClearingTimeSec) : (injectedContext?.params?.earthClearTimeSec ? Number(injectedContext.params.earthClearTimeSec) : 0.2);
+    const currentSplitFactorSf = 0.60;
+    const bodyWeightKg = 70;
 
-    return {
-      title: locale === 'fr' ? 'Sécurité du Réseau de Terre de Poste Électrique' : 'Substation Grounding Grid Safety Sizing',
+    const gridSim = Ieee80EarthingGridEngine.solve({
+      lengthM,
+      widthM,
+      meshCountX,
+      meshCountY,
+      burialDepthM,
+      conductorDiameterMm,
+      groundRodsCount,
+      groundRodLengthM,
+      soilResistivityOhmM,
+      hasCrushedRockLayer,
+      crushedRockThicknessCm,
+      crushedRockResistivityOhmM,
+      faultCurrentRmsKa,
+      faultClearingTimeSec,
+      currentSplitFactorSf,
+      bodyWeightKg,
+    });
+
+    const isRgCompliant = gridSim.gridResistanceRgOhm <= 1.0;
+
+    return withProvenance({
+      title: locale === 'fr' ? 'Sécurité du Réseau de Terre de Poste HTB (IEEE Std 80)' : 'Substation Grounding Grid Safety & Step/Touch Potentials',
       calcType: 'EARTHING-GRID-IEEE80',
-      standard: 'IEEE Std 80-2013',
+      standard: 'IEEE Std 80-2013 / CEI 60479',
       date: dateStr,
       referenceId: `EPEDE-CALC-GRD-${now.getTime().toString().slice(-6)}`,
       inputs: [
-        { label: locale === 'fr' ? 'Résistivité sol sous-jacent (ρs)' : 'Subsoil Resistivity (ρs)', value: `${earthSoilRho}`, unit: 'Ω·m' },
-        { label: locale === 'fr' ? 'Résistivité gravier surface' : 'Surface Crushed Rock Resistivity', value: `${earthStoneRho}`, unit: 'Ω·m' },
-        { label: locale === 'fr' ? 'Épaisseur gravier (hs)' : 'Crushed Rock Layer Thickness', value: `${earthStoneThicknessM}`, unit: 'm' },
-        { label: locale === 'fr' ? 'Courant de défaut terre (If)' : 'Ground Fault Current (If)', value: `${earthFaultCurrentKa}`, unit: 'kA' },
-        { label: locale === 'fr' ? 'Durée du défaut (tf)' : 'Fault Duration (tf)', value: `${earthFaultDurationSec}`, unit: 's' },
-        { label: locale === 'fr' ? 'Superficie de la grille (A)' : 'Grid Enclosed Area (A)', value: `${earthGridAreaM2}`, unit: 'm²' },
-        { label: locale === 'fr' ? 'Longueur totale conducteurs (L)' : 'Total Buried Conductor Length', value: `${earthConductorLengthM}`, unit: 'm' },
+        { label: locale === 'fr' ? 'Résistivité sol sous-jacent (ρ)' : 'Native Soil Resistivity (ρ)', value: `${soilResistivityOhmM}`, unit: 'Ω·m' },
+        { label: locale === 'fr' ? 'Dimensions grille (L × l)' : 'Grid Dimensions (L × W)', value: `${lengthM} × ${widthM}`, unit: 'm' },
+        { label: locale === 'fr' ? 'Maillage conducteurs (Nx × Ny)' : 'Mesh Conductor Lines (Nx × Ny)', value: `${meshCountX} × ${meshCountY}` },
+        { label: locale === 'fr' ? 'Piquets de terre verticaux' : 'Ground Rods Count (3m each)', value: `${groundRodsCount}` },
+        { label: locale === 'fr' ? 'Couche de gravier concassé' : 'Crushed Rock Layer (hs)', value: hasCrushedRockLayer ? `${crushedRockThicknessCm} cm (ρs = ${crushedRockResistivityOhmM} Ω·m)` : 'Aucune (Sol nu)' },
+        { label: locale === 'fr' ? 'Courant de défaut terre (If)' : 'Ground Fault Current (If)', value: `${faultCurrentRmsKa}`, unit: 'kA' },
+        { label: locale === 'fr' ? 'Durée d\'élimination (ts)' : 'Fault Clearing Time (ts)', value: `${faultClearingTimeSec}`, unit: 's' },
+        { label: locale === 'fr' ? 'Poids corporel de référence' : 'Standard Body Weight', value: `${bodyWeightKg}`, unit: 'kg' },
       ],
       formulas: [
-        { name: 'Tension de pas max Estep', expr: '(1000 + 6 · Cs · ρ_gravel) · 0.116 / √ts [V]' },
-        { name: 'Tension de contact max Etouch', expr: '(1000 + 1.5 · Cs · ρ_gravel) · 0.116 / √ts [V]' },
-        { name: 'Résistance grille Rg (Laurent-Nyman)', expr: 'ρ_sol · (1/L + 1/√(20 · A)) [Ω]' },
-        { name: 'Élévation potentiel sol GPR', expr: 'If · Rg [V]' },
+        { name: 'Tension de contact admissible Etouch', expr: '(1000 + 1.5 · Cs · ρ_s) · 0.157 / √ts [V]' },
+        { name: 'Tension de pas admissible Estep', expr: '(1000 + 6.0 · Cs · ρ_s) · 0.157 / √ts [V]' },
+        { name: 'Facteur de dérating gravier Cs', expr: '1 - [0.09 · (1 - ρ/ρ_s)] / [2 · hs + 0.09]' },
+        { name: 'Résistance grille Rg (Sverak)', expr: 'ρ · [1/Lt + 1/√(20·A) · (1 + 1/(1 + h·√(20/A)))] [Ω]' },
+        { name: 'Tension de maille calculée Em', expr: '(ρ · Ig · Km · Ki) / Lm [V]' },
       ],
       results: [
-        { label: locale === 'fr' ? 'Résistance de terre (Rg)' : 'Ground Grid Resistance (Rg)', value: rgLaurentNymanOhms.toFixed(3), unit: 'Ω', highlight: true, status: isRgCompliant ? 'OK' : 'DANGER' },
-        { label: locale === 'fr' ? 'Tension de contact admissible' : 'Tolerable Touch Voltage (Etouch)', value: eTouch50.toFixed(0), unit: 'V' },
-        { label: locale === 'fr' ? 'Tension de pas admissible' : 'Tolerable Step Voltage (Estep)', value: eStep50.toFixed(0), unit: 'V' },
-        { label: locale === 'fr' ? 'Élévation de potentiel GPR' : 'Ground Potential Rise (GPR)', value: (gprVolts / 1000).toFixed(1), unit: 'kV' },
+        { label: locale === 'fr' ? 'Résistance de terre (Rg)' : 'Ground Grid Resistance (Rg)', value: gridSim.gridResistanceRgOhm.toFixed(3), unit: 'Ω', highlight: true, status: isRgCompliant ? 'OK' : 'WARN' },
+        { label: locale === 'fr' ? 'Tension de maille calculée (Em)' : 'Calculated Mesh Voltage (Em)', value: `${gridSim.meshVoltageCalculatedV}`, unit: 'V', highlight: true, status: gridSim.isTouchSafe ? 'OK' : 'DANGER' },
+        { label: locale === 'fr' ? 'Limite tolérable de toucher (Etouch)' : 'Tolerable Touch Limit (Etouch)', value: `${gridSim.tolerableTouchVoltageV}`, unit: 'V' },
+        { label: locale === 'fr' ? 'Tension de pas calculée (Es)' : 'Calculated Step Voltage (Es)', value: `${gridSim.stepVoltageCalculatedV}`, unit: 'V', status: gridSim.isStepSafe ? 'OK' : 'DANGER' },
+        { label: locale === 'fr' ? 'Limite tolérable de pas (Estep)' : 'Tolerable Step Limit (Estep)', value: `${gridSim.tolerableStepVoltageV}`, unit: 'V' },
+        { label: locale === 'fr' ? 'Élévation de potentiel (GPR)' : 'Ground Potential Rise (GPR)', value: (gridSim.groundPotentialRiseV / 1000).toFixed(1), unit: 'kV' },
+        { label: locale === 'fr' ? 'Facteur de dérating gravier (Cs)' : 'Gravel Derating Factor (Cs)', value: gridSim.csDerating.toFixed(3) },
+        { label: locale === 'fr' ? 'Longueur totale enterrée (Lt)' : 'Total Buried Conductor Length', value: `${gridSim.totalBuriedLengthLtM}`, unit: 'm' },
       ],
       complianceVerdict: {
-        status: isRgCompliant ? 'COMPLIANT' : 'NON_COMPLIANT',
-        message: isRgCompliant
-          ? (locale === 'fr' ? `Résistance de terre Rg = ${rgLaurentNymanOhms.toFixed(3)} Ω ≤ 1.0 Ω (seuil d'excellence postes HTB). Grille conforme.` : `Grid resistance Rg ≤ 1.0 Ω. Fully compliant with IEEE 80.`)
-          : (locale === 'fr' ? `Résistance de terre Rg = ${rgLaurentNymanOhms.toFixed(3)} Ω > 1.0 Ω. Ajouter des piquets profonds ou augmenter le maillage conducteur.` : `Grid resistance exceeds 1.0 Ω. Add deep ground rods or expand conductor mesh.`),
+        status: gridSim.isTouchSafe && gridSim.isStepSafe ? 'COMPLIANT' : 'NON_COMPLIANT',
+        message: gridSim.isTouchSafe && gridSim.isStepSafe
+          ? (locale === 'fr'
+              ? `Grille de terre 100% CONFORME IEEE Std 80-2013 : Rg = ${gridSim.gridResistanceRgOhm.toFixed(3)} Ω, tension de maille Em = ${gridSim.meshVoltageCalculatedV} V ≤ ${gridSim.tolerableTouchVoltageV} V (marge +${gridSim.touchSafetyMarginV} V). Risque de fibrillation cardiaque écarté.`
+              : `Ground grid 100% COMPLIANT with IEEE Std 80-2013: Rg = ${gridSim.gridResistanceRgOhm.toFixed(3)} Ω, mesh voltage Em = ${gridSim.meshVoltageCalculatedV} V ≤ ${gridSim.tolerableTouchVoltageV} V (safety margin +${gridSim.touchSafetyMarginV} V).`)
+          : (locale === 'fr'
+              ? `NON CONFORME : Tension de contact de maille (${gridSim.meshVoltageCalculatedV} V) ou de pas (${gridSim.stepVoltageCalculatedV} V) EXCÈDE les seuils physiologiques tolérables. Augmenter le lit de gravier (≥ 15 cm) ou resserrer le maillage.`
+              : `NON-COMPLIANT: Calculated touch or step voltage EXCEEDS tolerable physiological thresholds. Increase crushed rock thickness or reduce mesh spacing.`),
       },
       engineeringNotes: [
-        'La couche superficielle de gravier concassé de haute résistivité (> 3000 Ω·m) est cruciale pour élever les seuils de sécurité de contact.',
-        'Vérifier les liaisons équipotentielles avec les clôtures périphériques pour éviter tout transfert de potentiel hors du site.',
+        'La couche superficielle de gravier concassé de haute résistivité (> 2500 Ω·m) apporte une résistance additionnelle sous les pieds déterminante pour la survie du personnel.',
+        'La maille d\'angle présente le potentiel de toucher le plus élevé en raison de la concentration des lignes de champ électrique aux angles de la grille.',
+        'Prévoir une boucle d\'équipotentialité périmétrique enterrée à 1 m à l\'extérieur de la clôture métallique du poste.',
       ],
-    };
+    });
   }
 
   if (activeCalc === 'arc-flash') {
