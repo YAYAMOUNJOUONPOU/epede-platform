@@ -22,6 +22,11 @@ import {
   type CtSpecificationInput,
   type CtStandardClass,
 } from '../../../data/iec61869CtSizingEngine';
+import {
+  Iec60865BusbarEngine,
+  CAMEROON_BUSBAR_PRESETS,
+  type BusbarSpecificationInput,
+} from '../../../data/iec60865BusbarEngine';
 
 export interface InjectedCalculatorContext {
   equipmentId?: string;
@@ -1065,66 +1070,147 @@ export function generateCalculationReport(
 
   // 13. BUSBAR SHORT-CIRCUIT MECHANICAL & THERMAL WITHSTAND (CEI 60865-1)
   if (activeCalc === 'busbar-electrodynamic') {
-    const unBusKv = 225;
-    const ipBusKa = 80.0;
-    const ithBusKa = 31.5;
-    const tkBusSec = 1.0;
-    const aBusM = 3.5;
-    const lBusM = 8.0;
-    const dExtBusMm = 120;
-    const sWallBusMm = 10;
-    const areaBusMm2 = (Math.PI / 4) * (dExtBusMm ** 2 - (dExtBusMm - 2 * sWallBusMm) ** 2);
-    const iyBusMm4 = (Math.PI / 64) * (dExtBusMm ** 4 - (dExtBusMm - 2 * sWallBusMm) ** 4);
-    const wmBusMm3 = (2 * iyBusMm4) / dExtBusMm;
-    const fmBusN = 0.2 * (Math.sqrt(3) / 2) * ((ipBusKa ** 2) / aBusM) * lBusM;
-    const bendingMomentBusNm = (fmBusN * lBusM) / 12;
-    const vSigmaBus = 1.6;
-    const sigmaBusMpa = (vSigmaBus * 1.0 * (bendingMomentBusNm * 1000)) / wmBusMm3;
-    const sigmaPermissibleBusMpa = 1.5 * 150; // Al alloy EN AW-6101B
-    const fdInsulatorKn = (1.5 * 1.25 * fmBusN) / 1000;
-    const frPermissibleKn = 0.8 * 12.0;
-    const sThMinMm2 = (ithBusKa * 1000 * Math.sqrt(tkBusSec)) / 88;
+    const preset = CAMEROON_BUSBAR_PRESETS.find(p => p.id === injectedContext?.params?.presetId) || CAMEROON_BUSBAR_PRESETS[0];
+    const unBusKv = injectedContext?.params?.nominalVoltageKv ? Number(injectedContext.params.nominalVoltageKv) : preset.input.nominalVoltageKv;
+    const ikPrimeKa = injectedContext?.params?.initialSymmetricFaultCurrentKa ? Number(injectedContext.params.initialSymmetricFaultCurrentKa) : preset.input.initialSymmetricFaultCurrentKa;
+    const ipBusKa = injectedContext?.params?.peakShortCircuitCurrentKa ? Number(injectedContext.params.peakShortCircuitCurrentKa) : preset.input.peakShortCircuitCurrentKa;
+    const ithBusKa = injectedContext?.params?.thermalEquivalentFaultCurrentKa ? Number(injectedContext.params.thermalEquivalentFaultCurrentKa) : preset.input.thermalEquivalentFaultCurrentKa;
+    const tkBusSec = injectedContext?.params?.faultDurationSec ? Number(injectedContext.params.faultDurationSec) : preset.input.faultDurationSec;
+    const aBusM = injectedContext?.params?.centerDistanceA_M ? Number(injectedContext.params.centerDistanceA_M) : preset.input.centerDistanceA_M;
+    const lBusM = injectedContext?.params?.spanLengthL_M ? Number(injectedContext.params.spanLengthL_M) : preset.input.spanLengthL_M;
+    const conductorProfile = (injectedContext?.params?.conductorProfile || preset.input.conductorProfile) as any;
+    const material = (injectedContext?.params?.material || preset.input.material) as any;
+    const outerDiameterMm = injectedContext?.params?.outerDiameterMm ? Number(injectedContext.params.outerDiameterMm) : preset.input.outerDiameterMm;
+    const wallThicknessMm = injectedContext?.params?.wallThicknessMm ? Number(injectedContext.params.wallThicknessMm) : preset.input.wallThicknessMm;
+    const barWidthMm = injectedContext?.params?.barWidthMm ? Number(injectedContext.params.barWidthMm) : preset.input.barWidthMm;
+    const barThicknessMm = injectedContext?.params?.barThicknessMm ? Number(injectedContext.params.barThicknessMm) : preset.input.barThicknessMm;
+    const subBarsCount = injectedContext?.params?.subBarsCount ? Number(injectedContext.params.subBarsCount) : preset.input.subBarsCount;
+    const insulatorRatingFrKn = injectedContext?.params?.insulatorRatingFrKn ? Number(injectedContext.params.insulatorRatingFrKn) : preset.input.insulatorRatingFrKn;
+
+    const inputSpec: BusbarSpecificationInput = {
+      nominalVoltageKv: unBusKv,
+      initialSymmetricFaultCurrentKa: ikPrimeKa,
+      peakShortCircuitCurrentKa: ipBusKa,
+      thermalEquivalentFaultCurrentKa: ithBusKa,
+      faultDurationSec: tkBusSec,
+      faultType: '3ph',
+      conductorProfile,
+      material,
+      outerDiameterMm,
+      wallThicknessMm,
+      barWidthMm,
+      barThicknessMm,
+      subBarsCount,
+      centerDistanceA_M: aBusM,
+      spanLengthL_M: lBusM,
+      supportCondition: 'continuous',
+      insulatorRatingFrKn,
+      ambientTempC: 40
+    };
+
+    const sim = Iec60865BusbarEngine.solve(inputSpec);
+    const isCompliant = sim.overallVerdict === 'COMPLIANT';
 
     return withProvenance({
       title: locale === 'fr' 
-        ? 'Dimensionnement Électrodynamique & Thermique des Jeux de Barres' 
-        : 'Busbar Short-Circuit Electrodynamic & Thermal Sizing',
+        ? `Dimensionnement Électrodynamique & Thermique des Jeux de Barres — ${unBusKv} kV` 
+        : `Busbar Short-Circuit Electrodynamic & Thermal Sizing — ${unBusKv} kV`,
       calcType: 'BUSBAR-ELECTRODYNAMIC-IEC60865',
-      standard: 'CEI 60865-1 / CEI 61936-1 / IEEE 605',
+      standard: 'CEI 60865-1 / CEI 61936-1 / IEEE Std 605',
       date: dateStr,
       referenceId: `EPEDE-CALC-BUS-${now.getTime().toString().slice(-6)}`,
       inputs: [
         { label: locale === 'fr' ? 'Tension nominale Un' : 'Nominal Voltage Un', value: `${unBusKv}`, unit: 'kV' },
+        { label: locale === 'fr' ? 'Courant initial symétrique I"k' : 'Initial Sym Short-Circuit I"k', value: `${ikPrimeKa}`, unit: 'kA rms' },
         { label: locale === 'fr' ? 'Courant de crête de court-circuit Ip' : 'Peak Short-Circuit Current Ip', value: `${ipBusKa}`, unit: 'kA peak' },
-        { label: locale === 'fr' ? 'Courant thermique Ith (1s)' : 'Thermal Current Ith (1s)', value: `${ithBusKa}`, unit: 'kA' },
-        { label: locale === 'fr' ? 'Profil du conducteur' : 'Conductor Profile', value: 'Tube Al Alliage Ø 120/110 mm' },
+        { label: locale === 'fr' ? 'Courant thermique équivalent Ith (1s)' : 'Thermal Current Ith (1s)', value: `${ithBusKa}`, unit: 'kA' },
+        { label: locale === 'fr' ? 'Profil & Matériau' : 'Profile & Material', value: conductorProfile === 'tube' ? `Tube ${material === 'al_alloy' ? 'Al-Alliage' : 'Cu'} Ø ${outerDiameterMm}/${(outerDiameterMm || 120) - 2 * (wallThicknessMm || 10)} mm` : `Barres Plates ${material === 'cu_etp' ? 'Cu-ETP' : 'Al'} ${subBarsCount || 1}×(${barWidthMm}×${barThicknessMm} mm)` },
         { label: locale === 'fr' ? 'Entraxe entre phases (a)' : 'Phase Spacing (a)', value: `${aBusM}`, unit: 'm' },
         { label: locale === 'fr' ? 'Portée entre supports (l)' : 'Span Length (l)', value: `${lBusM}`, unit: 'm' },
-        { label: locale === 'fr' ? 'Charge de rupture isolateur (Fr)' : 'Insulator Breaking Rating (Fr)', value: '12.0', unit: 'kN' },
+        { label: locale === 'fr' ? 'Charge de rupture isolateur (Fr)' : 'Insulator Breaking Rating (Fr)', value: `${insulatorRatingFrKn}`, unit: 'kN' },
       ],
       formulas: [
         { name: 'Force de Laplace de crête Fm', expr: '(µ0 / 2π) · (√3 / 2) · (Ip² / a) · l [N]' },
+        { name: 'Fréquence propre mécanique fc', expr: '(cf / l²) · √(E · I / m\') [Hz]' },
         { name: 'Contrainte de flexion dynamique σm', expr: '(Vσ · β · M) / Wm [MPa]' },
         { name: 'Effort dynamique sur isolateur Fd', expr: 'VF · α · Fm [kN]' },
         { name: 'Section thermique minimale Sth', expr: '(Ith · √tk) / kθ [mm²]' },
       ],
       results: [
-        { label: locale === 'fr' ? 'Force électrodynamique Fm' : 'Electrodynamic Force Fm', value: (fmBusN / 1000).toFixed(2), unit: 'kN', highlight: true, status: 'OK' },
-        { label: locale === 'fr' ? 'Contrainte mécanique calculée (σm)' : 'Calculated Bending Stress (σm)', value: sigmaBusMpa.toFixed(1), unit: 'MPa', status: sigmaBusMpa <= sigmaPermissibleBusMpa ? 'OK' : 'DANGER' },
-        { label: locale === 'fr' ? 'Contrainte admissible (q · Rp0.2)' : 'Permissible Bending Stress', value: sigmaPermissibleBusMpa.toFixed(1), unit: 'MPa' },
-        { label: locale === 'fr' ? 'Effort dynamique sur isolateur (Fd)' : 'Insulator Dynamic Load (Fd)', value: fdInsulatorKn.toFixed(2), unit: 'kN', status: fdInsulatorKn <= frPermissibleKn ? 'OK' : 'DANGER' },
-        { label: locale === 'fr' ? 'Section du tube réelle' : 'Actual Conductor Section', value: areaBusMm2.toFixed(0), unit: 'mm²' },
-        { label: locale === 'fr' ? 'Section thermique requise Sth' : 'Required Thermal Section Sth', value: sThMinMm2.toFixed(0), unit: 'mm²', status: areaBusMm2 >= sThMinMm2 ? 'OK' : 'DANGER' },
+        {
+          label: locale === 'fr' ? 'Verdict Global CEI 60865-1' : 'Overall IEC 60865-1 Verdict',
+          value: isCompliant
+            ? (locale === 'fr' ? 'CONFORME (Mécanique & Thermique)' : 'COMPLIANT (Mechanical & Thermal)')
+            : (locale === 'fr' ? 'NON CONFORME' : 'NON-COMPLIANT'),
+          highlight: true,
+          status: (isCompliant ? 'OK' : 'DANGER') as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
+        {
+          label: locale === 'fr' ? 'Force électrodynamique Fm' : 'Electrodynamic Force Fm',
+          value: (sim.peakLaplaceForceN / 1000).toFixed(2),
+          unit: 'kN',
+          highlight: true,
+          status: 'INFO' as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
+        {
+          label: locale === 'fr' ? 'Fréquence propre mécanique (fc)' : 'Natural Frequency (fc)',
+          value: `${sim.naturalFrequencyFcHz.toFixed(1)} (Ratio fc/fn = ${sim.frequencyRatio.toFixed(2)})`,
+          unit: 'Hz',
+          status: (sim.frequencyRatio >= 0.8 && sim.frequencyRatio <= 1.25 ? 'WARN' : 'OK') as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
+        {
+          label: locale === 'fr' ? 'Contrainte mécanique calculée (σm)' : 'Calculated Bending Stress (σm)',
+          value: sim.bendingStressMpa.toFixed(1),
+          unit: 'MPa',
+          highlight: true,
+          status: (sim.isBendingStressCompliant ? 'OK' : 'DANGER') as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
+        {
+          label: locale === 'fr' ? 'Contrainte admissible (q · Rp0.2)' : 'Permissible Bending Stress',
+          value: sim.permissibleStressMpa.toFixed(1),
+          unit: 'MPa',
+          status: 'INFO' as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
+        {
+          label: locale === 'fr' ? 'Effort dynamique sur isolateur (Fd)' : 'Insulator Dynamic Load (Fd)',
+          value: sim.insulatorDynamicLoadKn.toFixed(2),
+          unit: 'kN',
+          highlight: true,
+          status: (sim.isInsulatorCompliant ? 'OK' : 'DANGER') as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
+        {
+          label: locale === 'fr' ? 'Charge isolateur admissible (0.8 · Fr)' : 'Permissible Insulator Load (0.8·Fr)',
+          value: sim.insulatorPermissibleLoadKn.toFixed(2),
+          unit: 'kN',
+          status: 'INFO' as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
+        {
+          label: locale === 'fr' ? 'Section conducteur réelle' : 'Actual Conductor Section',
+          value: sim.crossSectionAreaMm2.toFixed(0),
+          unit: 'mm²',
+          status: 'INFO' as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
+        {
+          label: locale === 'fr' ? 'Section thermique minimale Sth' : 'Min Required Thermal Section Sth',
+          value: sim.minRequiredThermalSectionMm2.toFixed(0),
+          unit: 'mm²',
+          status: (sim.isThermalWithstandCompliant ? 'OK' : 'DANGER') as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
+        {
+          label: locale === 'fr' ? 'Température finale court-circuit' : 'Final Short-Circuit Temp',
+          value: `${sim.finalTemperatureC.toFixed(0)} (Échauffement +${sim.adiabaticTempRiseC.toFixed(0)}°C)`,
+          unit: '°C',
+          status: (sim.finalTemperatureC <= sim.maxAllowableTempC ? 'OK' : 'DANGER') as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
       ],
       complianceVerdict: {
-        status: sigmaBusMpa <= sigmaPermissibleBusMpa && fdInsulatorKn <= frPermissibleKn && areaBusMm2 >= sThMinMm2 ? 'COMPLIANT' : 'NON_COMPLIANT',
-        message: locale === 'fr'
-          ? `Le jeu de barres tubulaire 225 kV vérifie l'ensemble des critères de la norme CEI 60865-1 : contrainte de flexion σm = ${sigmaBusMpa.toFixed(1)} MPa (≤ ${sigmaPermissibleBusMpa.toFixed(1)} MPa), effort isolateur Fd = ${fdInsulatorKn.toFixed(2)} kN (≤ ${frPermissibleKn.toFixed(2)} kN) et section thermique adéquate.`
-          : `Tubular busbar meets all criteria of IEC 60865-1: bending stress σm = ${sigmaBusMpa.toFixed(1)} MPa (≤ ${sigmaPermissibleBusMpa.toFixed(1)} MPa), insulator load Fd = ${fdInsulatorKn.toFixed(2)} kN (≤ ${frPermissibleKn.toFixed(2)} kN) and thermal withstand confirmed.`,
+        status: isCompliant ? 'COMPLIANT' : 'NON_COMPLIANT',
+        message: locale === 'fr' ? sim.advisoryInterpretation.fr : sim.advisoryInterpretation.en,
       },
       engineeringNotes: [
-        'Calcul mené avec coefficient d\'amplification dynamique Vσ prenant en compte la réponse mécanique de la travée sous l\'effort impulsionnel initial.',
-        'Les isolateurs supports doivent être spécifiés avec une charge de rupture à la flexion Fr ≥ 12 kN pour respecter la marge de sécurité normative de 20%.',
+        `Facteur d'amplification dynamique Vσ = ${sim.dynamicStressFactorVSigma.toFixed(2)} et VF = ${sim.dynamicSupportForceFactorVF.toFixed(2)} calculés selon le ratio fc / fn = ${sim.frequencyRatio.toFixed(2)} (${sim.resonanceZone}) selon CEI 60865-1 Clause 3.2.2.`,
+        `Moment fléchissant maximal M = ${sim.bendingMomentNm.toFixed(1)} N·m sous portée continue l = ${lBusM} m avec moment de flexion divisé par 12 (poutre continue multi-travées).`,
+        `Tenue thermique vérifiée sous Ith = ${ithBusKa} kA pendant tk = ${tkBusSec} s : élévation adiabatique de ${sim.adiabaticTempRiseC.toFixed(1)}°C n'atteignant pas la température limite (${sim.maxAllowableTempC}°C).`,
       ],
     });
   }

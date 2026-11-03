@@ -12,6 +12,7 @@ import { Iec61936AisClearanceEngine, CAMEROON_AIS_PRESETS } from '../src/data/ie
 import { Iec60255RelayEngine, CAMEROON_RELAY_PRESETS } from '../src/data/iec60255RelayEngine';
 import { VectorVoltageDropEngine, CAMEROON_VOLTAGE_DROP_PRESETS } from '../src/data/vectorVoltageDropEngine';
 import { Iec61869CtSizingEngine, CAMEROON_CT_PRESETS } from '../src/data/iec61869CtSizingEngine';
+import { Iec60865BusbarEngine, CAMEROON_BUSBAR_PRESETS } from '../src/data/iec60865BusbarEngine';
 import { EngineeringCalculationPdfExportService } from '../src/components/calculators/services/EngineeringCalculationPdfExportService';
 import { generateCalculationReport } from '../src/components/calculators/services/calculationReportService';
 import { WORKED_EXAMPLES_REGISTRY } from '../src/data/workedExamplesRegistry';
@@ -645,6 +646,61 @@ describe('⚡ Electrotechnical Physics Engine Tests', () => {
     expect(report.calcType).toBe('CT-SIZING-IEC61869');
     expect(report.standard).toContain('61869-2');
     expect(report.results.length).toBeGreaterThan(4);
+    expect(report.complianceVerdict.status).toBe('COMPLIANT');
+  });
+
+  it('17. IEC 60865-1 / IEC 61936-1 / IEEE Std 605 Busbar Electrodynamic & Thermal Withstand Engine', () => {
+    // 1. Nachtigal 225 kV Tubular Al-Alloy Busbars (80 kA peak, 8 m span, 3.5 m spacing)
+    const nachtigalPreset = CAMEROON_BUSBAR_PRESETS.find(p => p.id === 'nachtigal-225kv-ais-tubular')!;
+    expect(nachtigalPreset).toBeDefined();
+
+    const simNachtigal = Iec60865BusbarEngine.solve(nachtigalPreset.input);
+
+    // Cross-section & mechanical properties of tubular Ø 120/100 mm (s = 10 mm)
+    // A = pi/4 * (120^2 - 100^2) = 3455.75 mm^2
+    expect(simNachtigal.crossSectionAreaMm2).toBeCloseTo(3455.8, 0.5);
+    expect(simNachtigal.linearMassKgM).toBeCloseTo(9.33, 0.1);
+
+    // Peak Laplace force Fm = 0.2 * (sqrt(3)/2) * (80^2 / 3.5) * 8.0 = 2533.8 N
+    expect(simNachtigal.peakLaplaceForceN).toBeCloseTo(2533.8, 1.0);
+    expect(simNachtigal.distributedForcePerMeterNm).toBeCloseTo(316.7, 1.0);
+
+    // Natural mechanical eigenfrequency fc
+    expect(simNachtigal.naturalFrequencyFcHz).toBeGreaterThan(9.0);
+    expect(simNachtigal.naturalFrequencyFcHz).toBeLessThan(13.0);
+    expect(simNachtigal.resonanceZone).toBe('sub_resonant');
+    expect(simNachtigal.dynamicStressFactorVSigma).toBe(1.0);
+
+    // Bending stress under multi-span continuous beam (M = Fm * l / 12)
+    // M = 2533.8 * 8 / 12 = 1689.2 Nm, Wm = 87858 mm3 -> sigma_m = 19.23 MPa
+    expect(simNachtigal.bendingStressMpa).toBeCloseTo(19.23, 0.5);
+    expect(simNachtigal.isBendingStressCompliant).toBe(true);
+
+    // Dynamic reaction load on post insulator (0.8 * Fr = 0.8 * 12 = 9.6 kN)
+    expect(simNachtigal.insulatorDynamicLoadKn).toBeCloseTo(3.17, 0.2);
+    expect(simNachtigal.isInsulatorCompliant).toBe(true);
+
+    // Thermal withstand: Sth = (31.5 * 1000 * sqrt(1)) / 88 = 358 mm^2 << 3456 mm^2
+    expect(simNachtigal.minRequiredThermalSectionMm2).toBeCloseTo(357.95, 1.0);
+    expect(simNachtigal.isThermalWithstandCompliant).toBe(true);
+    expect(simNachtigal.overallVerdict).toBe('COMPLIANT');
+
+    // 2. ALUCAM 15 kV Rectifier Copper Flat Busbars (102 kA peak, 40 kA rms, 1.2 m span, 0.3 m spacing)
+    const alucamPreset = CAMEROON_BUSBAR_PRESETS.find(p => p.id === 'alucam-edea-15kv-rectifier-bus')!;
+    expect(alucamPreset).toBeDefined();
+
+    const simAlucam = Iec60865BusbarEngine.solve(alucamPreset.input);
+    expect(simAlucam.crossSectionAreaMm2).toBe(2000); // 2 * 100 * 10
+    expect(simAlucam.peakLaplaceForceN).toBeGreaterThan(6000);
+    expect(simAlucam.isBendingStressCompliant).toBe(true);
+    expect(simAlucam.isThermalWithstandCompliant).toBe(true);
+    expect(simAlucam.overallVerdict).toBe('COMPLIANT');
+
+    // 3. Dynamic Calculation Report Generation Integration
+    const report = generateCalculationReport('busbar-electrodynamic', 'fr');
+    expect(report.calcType).toBe('BUSBAR-ELECTRODYNAMIC-IEC60865');
+    expect(report.standard).toContain('60865-1');
+    expect(report.results.length).toBeGreaterThan(5);
     expect(report.complianceVerdict.status).toBe('COMPLIANT');
   });
 });

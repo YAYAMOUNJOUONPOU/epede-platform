@@ -1,5 +1,5 @@
 // src/components/calculators/modules/BusbarElectrodynamicCalculator.tsx
-// Module 13: Busbar Electrodynamic Forces & Thermal Withstand (CEI 60865-1 / CEI 61936-1 / IEEE 605)
+// Module 13: Busbar Electrodynamic Forces & Thermal Withstand (CEI 60865-1 / CEI 61936-1 / IEEE Std 605)
 // EPEDE Supreme Engineering Platform
 
 import React, { useState, useMemo } from 'react';
@@ -15,279 +15,123 @@ import {
   Info,
   Maximize2,
   BarChart2,
-  Gauge
+  Gauge,
+  X,
+  Compass,
+  Cpu
 } from 'lucide-react';
+import {
+  Iec60865BusbarEngine,
+  CAMEROON_BUSBAR_PRESETS,
+  BUSBAR_MATERIALS,
+  type BusbarSpecificationInput,
+  type BusbarMaterialType,
+  type BusbarProfileType,
+  type BusbarSupportCondition,
+  type BusbarArrangementType
+} from '../../../data/iec60865BusbarEngine';
 
 interface BusbarElectrodynamicCalculatorProps {
   locale: 'fr' | 'en';
   onOpenReport?: () => void;
 }
 
-export type BusbarPreset = 'nachtigal_225_tube' | 'mangombe_90_tube' | 'switchgear_30kv_cu' | 'tgbt_400v_cu' | 'custom';
-
 export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalculatorProps> = ({ locale, onOpenReport }) => {
   // ---------------------------------------------------------------------------
-  // INPUT STATE
+  // STATE MANAGEMENT
   // ---------------------------------------------------------------------------
-  const [activePreset, setActivePreset] = useState<BusbarPreset>('nachtigal_225_tube');
+  const [selectedPresetId, setSelectedPresetId] = useState<string>('nachtigal-225kv-ais-tubular');
+  const [isNormativeModalOpen, setIsNormativeModalOpen] = useState<boolean>(false);
 
   // Electrical Short-Circuit Parameters
-  const [unKv, setUnKv] = useState<number>(225); // Nominal system voltage (kV)
-  const [ikPrimeKa, setIkPrimeKa] = useState<number>(31.5); // Symmetrical Isc (kA rms)
-  const [ipKa, setIpKa] = useState<number>(80.0); // Peak short-circuit current (kA peak)
-  const [ithKa, setIthKa] = useState<number>(31.5); // Thermal short-circuit current (kA)
-  const [tkSec, setTkSec] = useState<number>(1.0); // Fault duration (s)
+  const [unKv, setUnKv] = useState<number>(225);
+  const [ikPrimeKa, setIkPrimeKa] = useState<number>(31.5);
+  const [ipKa, setIpKa] = useState<number>(80.0);
+  const [ithKa, setIthKa] = useState<number>(31.5);
+  const [tkSec, setTkSec] = useState<number>(1.0);
   const [faultType, setFaultType] = useState<'3ph' | '2ph'>('3ph');
 
   // Geometry & Installation
-  const [conductorProfile, setConductorProfile] = useState<'tube' | 'flat'>('tube');
-  const [material, setMaterial] = useState<'al_alloy' | 'cu_etp'>('al_alloy');
-  
+  const [conductorProfile, setConductorProfile] = useState<BusbarProfileType>('tube');
+  const [material, setMaterial] = useState<BusbarMaterialType>('al_alloy');
+
   // Tube dimensions
-  const [outerDiaMm, setOuterDiaMm] = useState<number>(120); // D (mm)
-  const [wallThickMm, setWallThickMm] = useState<number>(10); // s (mm)
-  
+  const [outerDiaMm, setOuterDiaMm] = useState<number>(120);
+  const [wallThickMm, setWallThickMm] = useState<number>(10);
+
   // Flat bar dimensions
-  const [barWidthMm, setBarWidthMm] = useState<number>(80); // h (mm)
-  const [barThickMm, setBarThickMm] = useState<number>(10); // b (mm)
-  const [subBarsCount, setSubBarsCount] = useState<number>(1); // n (1, 2, 3)
-  const [subBarSpacingMm, setSubBarSpacingMm] = useState<number>(10); // as (mm)
-  const [barArrangement, setBarArrangement] = useState<'edge_to_edge' | 'face_to_face'>('edge_to_edge');
+  const [barWidthMm, setBarWidthMm] = useState<number>(100);
+  const [barThickMm, setBarThickMm] = useState<number>(10);
+  const [subBarsCount, setSubBarsCount] = useState<number>(2);
+  const [subBarSpacingMm, setSubBarSpacingMm] = useState<number>(10);
+  const [barArrangement, setBarArrangement] = useState<BusbarArrangementType>('edge_to_edge');
 
   // Span & Support Spacing
-  const [centerDistanceA_M, setCenterDistanceA_M] = useState<number>(3.5); // a (m)
-  const [spanLengthL_M, setSpanLengthL_M] = useState<number>(8.0); // l (m)
-  const [supportCondition, setSupportCondition] = useState<'simply_supported' | 'continuous'>('continuous');
-  const [insulatorRatingFrKn, setInsulatorRatingFrKn] = useState<number>(12.0); // Fr (kN cantilever)
+  const [centerDistanceA_M, setCenterDistanceA_M] = useState<number>(3.5);
+  const [spanLengthL_M, setSpanLengthL_M] = useState<number>(8.0);
+  const [supportCondition, setSupportCondition] = useState<BusbarSupportCondition>('continuous');
+  const [insulatorRatingFrKn, setInsulatorRatingFrKn] = useState<number>(12.0);
 
   // ---------------------------------------------------------------------------
-  // PRESET SELECTION
+  // PRESET APPLICATION
   // ---------------------------------------------------------------------------
-  const handleApplyPreset = (preset: BusbarPreset) => {
-    setActivePreset(preset);
-    if (preset === 'nachtigal_225_tube') {
-      setUnKv(225);
-      setIkPrimeKa(31.5);
-      setIpKa(80.0);
-      setIthKa(31.5);
-      setTkSec(1.0);
-      setFaultType('3ph');
-      setConductorProfile('tube');
-      setMaterial('al_alloy');
-      setOuterDiaMm(120);
-      setWallThickMm(10);
-      setCenterDistanceA_M(3.5);
-      setSpanLengthL_M(8.0);
-      setSupportCondition('continuous');
-      setInsulatorRatingFrKn(12.0);
-    } else if (preset === 'mangombe_90_tube') {
-      setUnKv(90);
-      setIkPrimeKa(25.0);
-      setIpKa(63.0);
-      setIthKa(25.0);
-      setTkSec(1.0);
-      setFaultType('3ph');
-      setConductorProfile('tube');
-      setMaterial('al_alloy');
-      setOuterDiaMm(80);
-      setWallThickMm(8);
-      setCenterDistanceA_M(2.0);
-      setSpanLengthL_M(6.0);
-      setSupportCondition('continuous');
-      setInsulatorRatingFrKn(10.0);
-    } else if (preset === 'switchgear_30kv_cu') {
-      setUnKv(30);
-      setIkPrimeKa(25.0);
-      setIpKa(63.0);
-      setIthKa(25.0);
-      setTkSec(1.0);
-      setFaultType('3ph');
-      setConductorProfile('flat');
-      setMaterial('cu_etp');
-      setBarWidthMm(80);
-      setBarThickMm(10);
-      setSubBarsCount(1);
-      setBarArrangement('edge_to_edge');
-      setCenterDistanceA_M(0.25);
-      setSpanLengthL_M(0.8);
-      setSupportCondition('simply_supported');
-      setInsulatorRatingFrKn(7.5);
-    } else if (preset === 'tgbt_400v_cu') {
-      setUnKv(0.4);
-      setIkPrimeKa(50.0);
-      setIpKa(105.0);
-      setIthKa(50.0);
-      setTkSec(1.0);
-      setFaultType('3ph');
-      setConductorProfile('flat');
-      setMaterial('cu_etp');
-      setBarWidthMm(100);
-      setBarThickMm(10);
-      setSubBarsCount(2);
-      setSubBarSpacingMm(10);
-      setBarArrangement('edge_to_edge');
-      setCenterDistanceA_M(0.10);
-      setSpanLengthL_M(0.5);
-      setSupportCondition('continuous');
-      setInsulatorRatingFrKn(5.0);
-    }
+  const handleApplyPreset = (presetId: string) => {
+    setSelectedPresetId(presetId);
+    const p = CAMEROON_BUSBAR_PRESETS.find(item => item.id === presetId);
+    if (!p) return;
+
+    setUnKv(p.input.nominalVoltageKv);
+    setIkPrimeKa(p.input.initialSymmetricFaultCurrentKa);
+    setIpKa(p.input.peakShortCircuitCurrentKa);
+    setIthKa(p.input.thermalEquivalentFaultCurrentKa);
+    setTkSec(p.input.faultDurationSec);
+    setFaultType(p.input.faultType);
+    setConductorProfile(p.input.conductorProfile);
+    setMaterial(p.input.material);
+    if (p.input.outerDiameterMm) setOuterDiaMm(p.input.outerDiameterMm);
+    if (p.input.wallThicknessMm) setWallThickMm(p.input.wallThicknessMm);
+    if (p.input.barWidthMm) setBarWidthMm(p.input.barWidthMm);
+    if (p.input.barThicknessMm) setBarThickMm(p.input.barThicknessMm);
+    if (p.input.subBarsCount) setSubBarsCount(p.input.subBarsCount);
+    if (p.input.subBarSpacingMm) setSubBarSpacingMm(p.input.subBarSpacingMm);
+    if (p.input.barArrangement) setBarArrangement(p.input.barArrangement);
+    setCenterDistanceA_M(p.input.centerDistanceA_M);
+    setSpanLengthL_M(p.input.spanLengthL_M);
+    setSupportCondition(p.input.supportCondition);
+    setInsulatorRatingFrKn(p.input.insulatorRatingFrKn);
   };
 
   // ---------------------------------------------------------------------------
-  // COMPUTATION ENGINE ACCORDING TO IEC 60865-1
+  // COMPUTATION ENGINE VIA IEC 60865-1 ENGINE
   // ---------------------------------------------------------------------------
-  const calc = useMemo(() => {
-    // 1. Material Properties
-    // Al alloy EN AW-6101B T6: density=2700 kg/m³, E=70,000 MPa, Rp0.2=150 MPa, kθ=88
-    // Cu-ETP R200/R250: density=8900 kg/m³, E=110,000 MPa, Rp0.2=200 MPa, kθ=135
-    const isAl = material === 'al_alloy';
-    const densityKgM3 = isAl ? 2700 : 8900;
-    const youngModulusMpa = isAl ? 70000 : 110000;
-    const yieldStrengthRp02 = isAl ? 150 : 200; // MPa or N/mm²
-    const kTheta = isAl ? 88 : 135; // A·s^0.5 / mm²
-    const qFactor = isAl ? 1.5 : 1.4; // Permissible stress dynamic factor under short circuit
-
-    // 2. Cross-Sectional Geometry
-    let areaMm2 = 0;
-    let momentOfInertiaMm4 = 0; // Iy (principal bending axis)
-    let sectionModulusMm3 = 0; // Wm (bending section modulus)
-    let betaFactor = 1.0; // Plastic deformation resistance factor
-
-    if (conductorProfile === 'tube') {
-      const dExt = outerDiaMm;
-      const dInt = Math.max(1, outerDiaMm - 2 * wallThickMm);
-      areaMm2 = (Math.PI / 4) * (dExt ** 2 - dInt ** 2);
-      momentOfInertiaMm4 = (Math.PI / 64) * (dExt ** 4 - dInt ** 4);
-      sectionModulusMm3 = (2 * momentOfInertiaMm4) / dExt;
-      betaFactor = 1.0; // Circular cross-section
-    } else {
-      // Flat Rectangular Bar
-      const h = barWidthMm;
-      const b = barThickMm;
-      const n = subBarsCount;
-      areaMm2 = n * h * b;
-
-      // In three-phase busbars, electrodynamic repulsive force acts along the line connecting phase centers.
-      // If bars are on edge ('edge_to_edge'): force bends the bar along its strong axis (h)
-      // If bars are face to face ('face_to_face'): force bends along weak axis (b)
-      if (barArrangement === 'edge_to_edge') {
-        momentOfInertiaMm4 = (n * b * h ** 3) / 12;
-        sectionModulusMm3 = (n * b * h ** 2) / 6;
-      } else {
-        momentOfInertiaMm4 = (n * h * b ** 3) / 12;
-        sectionModulusMm3 = (n * h * b ** 2) / 6;
-      }
-      betaFactor = 0.73; // IEC 60865-1 §3.2.2.1 factor for rectangular bars
-    }
-
-    // Linear mass m' (kg/m)
-    const linearMassKgM = (areaMm2 * 1e-6) * densityKgM3;
-
-    // 3. Peak Electrodynamic Force Between Main Conductors (CEI 60865-1 Eq 1 & 2)
-    // Three-phase fault: Fm = (µ0 / 2π) * (√3 / 2) * (Ip² / a) * l
-    // Two-phase fault: Fm = (µ0 / 2π) * (Ip² / a) * l
-    // µ0 / 2π = 0.2 * 10^-6 N/A² = 0.2 N / (kA² · m)
-    const factorFault = faultType === '3ph' ? (Math.sqrt(3) / 2) : 1.0;
-    const fmForceN = 0.2 * factorFault * ((ipKa ** 2) / centerDistanceA_M) * spanLengthL_M;
-    const fmForcePerMeterN = fmForceN / spanLengthL_M;
-
-    // 4. Natural Mechanical Eigenfrequency fc (CEI 60865-1 §3.2.1)
-    // fc = (cf / l²) * sqrt(E * Iy / m')
-    // cf = pi / 2 = 1.57 (simply supported), cf = 3.56 (continuous / clamped beam)
-    const cf = supportCondition === 'continuous' ? 3.56 : 1.57;
-    const ePa = youngModulusMpa * 1e6; // N/m²
-    const iyM4 = momentOfInertiaMm4 * 1e-12; // m^4
-    const fcHz = (cf / (spanLengthL_M ** 2)) * Math.sqrt((ePa * iyM4) / linearMassKgM);
-
-    // 5. Dynamic Stress Amplification Factors V_sigma and V_F (CEI 60865-1 §3.2.2.2)
-    // Accounts for mechanical resonant response near 50 Hz (fundamental) or 100 Hz (double frequency)
-    let vSigma = 1.0;
-    let vF = 1.0;
-    const fn = 50; // Nominal frequency (Cameroon/Europe grid)
-
-    if (fcHz < 0.5 * fn) {
-      vSigma = 1.0;
-      vF = 1.0;
-    } else if (fcHz >= 0.5 * fn && fcHz <= 2.2 * fn) {
-      // Mechanical resonance amplification zone
-      const ratio = fcHz / fn;
-      if (ratio >= 0.8 && ratio <= 1.2) {
-        vSigma = 2.4; // High resonant response near 50 Hz
-        vF = 2.2;
-      } else if (ratio >= 1.8 && ratio <= 2.2) {
-        vSigma = 2.0; // Double frequency resonance near 100 Hz
-        vF = 1.9;
-      } else {
-        vSigma = 1.6;
-        vF = 1.5;
-      }
-    } else {
-      vSigma = 1.0;
-      vF = 1.0;
-    }
-
-    // 6. Bending Stress sigma_m (CEI 60865-1 Eq 12)
-    // Continuous multi-span beam: M = (Fm * l) / 10 to 12
-    // Simply supported beam: M = (Fm * l) / 8
-    const momentDivider = supportCondition === 'continuous' ? 12 : 8;
-    const bendingMomentN_Mm = (fmForceN * (spanLengthL_M * 1000)) / momentDivider;
-    const sigmaMm = (vSigma * betaFactor * bendingMomentN_Mm) / sectionModulusMm3; // N/mm² (MPa)
-    const sigmaPermissibleMpa = qFactor * yieldStrengthRp02; // MPa
-    const stressRatio = sigmaMm / sigmaPermissibleMpa;
-    const isStressOk = stressRatio <= 1.0;
-
-    // 7. Insulator Cantilever Dynamic Load Fd (CEI 60865-1 Eq 16)
-    // Fd = V_F * alpha * Fm
-    // alpha = 1.0 for end support, alpha = 1.25 for intermediate support of continuous beam
-    const alphaInsulator = supportCondition === 'continuous' ? 1.25 : 1.0;
-    const fdInsulatorN = vF * alphaInsulator * fmForceN;
-    const fdInsulatorKn = fdInsulatorN / 1000;
-    // Permissible insulator load = 0.8 * Fr (IEC 60865-1 recommended safety factor)
-    const frPermissibleKn = 0.8 * insulatorRatingFrKn;
-    const insulatorLoadRatio = fdInsulatorKn / frPermissibleKn;
-    const isInsulatorOk = insulatorLoadRatio <= 1.0;
-
-    // 8. Thermal Short-Circuit Withstand (CEI 60865-1 §4.1)
-    // S_th = (Ith * sqrt(tk)) / k_theta * 1000 (mm²)
-    const sThMinMm2 = ((ithKa * 1000 * Math.sqrt(tkSec)) / kTheta);
-    const thermalRatio = sThMinMm2 / areaMm2;
-    const isThermalOk = areaMm2 >= sThMinMm2;
-
-    // Adiabatic temperature rise delta_theta (°C)
-    // Approx Δθ = (Ith / A)² * tk * constant
-    const deltaThetaC = (ithKa * 1000 / areaMm2) ** 2 * tkSec * (isAl ? 0.0078 : 0.0042);
-    const initialTempC = 40; // Ambient / operating reference
-    const finalTempC = initialTempC + deltaThetaC;
-    const maxAllowedTempC = isAl ? 200 : 250; // CEI 60865-1 permissible short-circuit temperature
-
-    return {
-      isAl,
-      areaMm2,
-      momentOfInertiaMm4,
-      sectionModulusMm3,
-      linearMassKgM,
-      fmForceN,
-      fmForcePerMeterN,
-      fcHz,
-      vSigma,
-      vF,
-      bendingMomentN_Mm,
-      sigmaMm,
-      sigmaPermissibleMpa,
-      stressRatio,
-      isStressOk,
-      fdInsulatorKn,
-      frPermissibleKn,
-      insulatorLoadRatio,
-      isInsulatorOk,
-      sThMinMm2,
-      thermalRatio,
-      isThermalOk,
-      deltaThetaC,
-      finalTempC,
-      maxAllowedTempC,
-    };
-  }, [
+  const inputSpec: BusbarSpecificationInput = useMemo(() => ({
+    nominalVoltageKv: unKv,
+    initialSymmetricFaultCurrentKa: ikPrimeKa,
+    peakShortCircuitCurrentKa: ipKa,
+    thermalEquivalentFaultCurrentKa: ithKa,
+    faultDurationSec: tkSec,
+    faultType,
+    conductorProfile,
+    material,
+    outerDiameterMm: outerDiaMm,
+    wallThicknessMm: wallThickMm,
+    barWidthMm,
+    barThicknessMm: barThickMm,
+    subBarsCount,
+    subBarSpacingMm,
+    barArrangement,
+    centerDistanceA_M: centerDistanceA_M,
+    spanLengthL_M: spanLengthL_M,
+    supportCondition,
+    insulatorRatingFrKn,
+    ambientTempC: 40
+  }), [
+    unKv,
+    ikPrimeKa,
+    ipKa,
+    ithKa,
+    tkSec,
+    faultType,
     conductorProfile,
     material,
     outerDiaMm,
@@ -295,16 +139,16 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
     barWidthMm,
     barThickMm,
     subBarsCount,
+    subBarSpacingMm,
     barArrangement,
     centerDistanceA_M,
     spanLengthL_M,
     supportCondition,
-    insulatorRatingFrKn,
-    ipKa,
-    ithKa,
-    tkSec,
-    faultType,
+    insulatorRatingFrKn
   ]);
+
+  const sim = useMemo(() => Iec60865BusbarEngine.solve(inputSpec), [inputSpec]);
+  const activePreset = CAMEROON_BUSBAR_PRESETS.find(p => p.id === selectedPresetId);
 
   return (
     <div className="space-y-6 font-sans">
@@ -314,26 +158,35 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
           <div className="space-y-2">
             <div className="flex items-center gap-2 font-mono text-xs text-cyan-400">
               <ShieldAlert className="h-4 w-4" />
-              <span className="uppercase tracking-wider font-bold">MODULE 13 · CEI 60865-1 / CEI 61936-1 / IEEE 605</span>
+              <span className="uppercase tracking-wider font-bold">MODULE 13 · CEI 60865-1 / CEI 61936-1 / IEEE STD 605</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-bold text-[#F3F4F6]">
               {locale === 'fr'
                 ? 'Dimensionnement Électrodynamique & Thermique des Jeux de Barres'
-                : 'Busbar Short-Circuit Mechanical & Thermal Sizing'}
+                : 'Busbar Short-Circuit Mechanical & Thermal Sizing Engine'}
             </h2>
             <p className="text-xs sm:text-sm text-[#9CA3AF] max-w-3xl leading-relaxed">
               {locale === 'fr'
-                ? 'Calcul normatif des forces électrodynamiques de crête (Fm), contraintes mécaniques de flexion (σm) sous résonance propre (fc), efforts admissibles sur isolateurs supports (Fd) et tenue thermique adiabatique de court-circuit (Sth).'
-                : 'Scientific calculation of peak electrodynamic forces (Fm), bending stresses (σm) under mechanical eigenfrequency resonance (fc), insulator cantilever forces (Fd), and adiabatic thermal short-circuit withstand (Sth).'}
+                ? 'Calcul des forces de Laplace de crête (Fm), de la résonance propre mécanique (fc), des coefficients d\'amplification dynamique (Vσ, VF), des contraintes de flexion (σm) et de la tenue thermique adiabatique (Sth).'
+                : 'Engineering computation of peak Laplace repulsion forces (Fm), mechanical natural eigenfrequency (fc), dynamic amplification factors (Vσ, VF), bending stresses (σm), and adiabatic thermal short-circuit withstand (Sth).'}
             </p>
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
+            <button
+              type="button"
+              onClick={() => setIsNormativeModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-mono font-bold bg-[#161C24] hover:bg-[#1E2631] text-amber-300 border border-amber-500/30 transition-all shadow-sm"
+            >
+              <Cpu className="h-4 w-4 text-amber-400" />
+              <span>{locale === 'fr' ? 'Formules Normatives' : 'Normative Formulas'}</span>
+            </button>
+
             {onOpenReport && (
               <button
                 type="button"
                 onClick={onOpenReport}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition-all"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition-all shadow-[0_0_15px_rgba(6,182,212,0.15)]"
               >
                 <FileText className="h-4 w-4 text-cyan-400" />
                 <span>{locale === 'fr' ? 'Note de Calcul' : 'Calculation Note'}</span>
@@ -342,56 +195,38 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
           </div>
         </div>
 
-        {/* Engineering Presets Selector */}
+        {/* Cameroon Engineering Presets Selector */}
         <div className="mt-5 pt-4 border-t border-[#252E38]/80 flex flex-wrap items-center gap-2">
-          <span className="text-xs font-mono text-neutral-400 uppercase font-semibold mr-1">
-            {locale === 'fr' ? 'Configurations Industrielles :' : 'Standard Presets:'}
+          <span className="text-xs font-mono text-neutral-400 uppercase font-semibold mr-1 flex items-center gap-1">
+            <Compass className="h-3.5 w-3.5 text-cyan-400" />
+            {locale === 'fr' ? 'Postes & Usines Cameroun :' : 'Cameroon Substations & Plants:'}
           </span>
-          <button
-            type="button"
-            onClick={() => handleApplyPreset('nachtigal_225_tube')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold border transition-all ${
-              activePreset === 'nachtigal_225_tube'
-                ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.25)]'
-                : 'bg-[#161C24] border-[#252E38] text-neutral-400 hover:text-white'
-            }`}
-          >
-            Poste 225 kV Tube Al (Nachtigal)
-          </button>
-          <button
-            type="button"
-            onClick={() => handleApplyPreset('mangombe_90_tube')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold border transition-all ${
-              activePreset === 'mangombe_90_tube'
-                ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.25)]'
-                : 'bg-[#161C24] border-[#252E38] text-neutral-400 hover:text-white'
-            }`}
-          >
-            Poste 90 kV Tube Al (Mangombé)
-          </button>
-          <button
-            type="button"
-            onClick={() => handleApplyPreset('switchgear_30kv_cu')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold border transition-all ${
-              activePreset === 'switchgear_30kv_cu'
-                ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.25)]'
-                : 'bg-[#161C24] border-[#252E38] text-neutral-400 hover:text-white'
-            }`}
-          >
-            Cellule HTA 30 kV Cu (80x10)
-          </button>
-          <button
-            type="button"
-            onClick={() => handleApplyPreset('tgbt_400v_cu')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold border transition-all ${
-              activePreset === 'tgbt_400v_cu'
-                ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.25)]'
-                : 'bg-[#161C24] border-[#252E38] text-neutral-400 hover:text-white'
-            }`}
-          >
-            Jeu de Barres TGBT 400 V Cu (2x 100x10)
-          </button>
+          {CAMEROON_BUSBAR_PRESETS.map((preset) => {
+            const isSelected = selectedPresetId === preset.id;
+            return (
+              <button
+                key={preset.id}
+                type="button"
+                onClick={() => handleApplyPreset(preset.id)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold border transition-all ${
+                  isSelected
+                    ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.25)]'
+                    : 'bg-[#161C24] border-[#252E38] text-neutral-400 hover:text-white'
+                }`}
+                title={locale === 'fr' ? preset.description.fr : preset.description.en}
+              >
+                {locale === 'fr' ? preset.name.fr : preset.name.en}
+              </button>
+            );
+          })}
         </div>
+
+        {activePreset && (
+          <div className="mt-3 text-xs font-mono text-neutral-400 bg-[#0E1318] p-2.5 rounded-xl border border-[#252E38]/60 flex items-start gap-2">
+            <Info className="h-4 w-4 text-cyan-400 shrink-0 mt-0.5" />
+            <span>{locale === 'fr' ? activePreset.description.fr : activePreset.description.en}</span>
+          </div>
+        )}
       </div>
 
       {/* Main Grid: Inputs vs Results & Interactive CAD */}
@@ -414,7 +249,7 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
                   type="number"
                   step="any"
                   value={unKv}
-                  onChange={(e) => { setUnKv(parseFloat(e.target.value) || 0); setActivePreset('custom'); }}
+                  onChange={(e) => { setUnKv(parseFloat(e.target.value) || 0); setSelectedPresetId('custom'); }}
                   className="w-full bg-[#161C24] border border-[#252E38] rounded-lg px-3 py-2 text-cyan-300 font-bold mt-1"
                 />
               </div>
@@ -423,7 +258,7 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
                 <label className="text-[11px] text-neutral-400">Type de Défaut :</label>
                 <select
                   value={faultType}
-                  onChange={(e) => { setFaultType(e.target.value as any); setActivePreset('custom'); }}
+                  onChange={(e) => { setFaultType(e.target.value as any); setSelectedPresetId('custom'); }}
                   className="w-full bg-[#161C24] border border-[#252E38] rounded-lg px-3 py-2 text-[#F3F4F6] font-bold mt-1"
                 >
                   <option value="3ph">Triphasé Symétrique (3-ph)</option>
@@ -437,7 +272,7 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
                   type="number"
                   step="0.5"
                   value={ikPrimeKa}
-                  onChange={(e) => { setIkPrimeKa(parseFloat(e.target.value) || 0); setActivePreset('custom'); }}
+                  onChange={(e) => { setIkPrimeKa(parseFloat(e.target.value) || 0); setSelectedPresetId('custom'); }}
                   className="w-full bg-[#161C24] border border-[#252E38] rounded-lg px-3 py-2 text-[#F3F4F6] font-bold mt-1"
                 />
               </div>
@@ -448,7 +283,7 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
                   type="number"
                   step="1"
                   value={ipKa}
-                  onChange={(e) => { setIpKa(parseFloat(e.target.value) || 0); setActivePreset('custom'); }}
+                  onChange={(e) => { setIpKa(parseFloat(e.target.value) || 0); setSelectedPresetId('custom'); }}
                   className="w-full bg-[#161C24] border border-[#252E38] rounded-lg px-3 py-2 text-rose-300 font-bold mt-1"
                 />
               </div>
@@ -459,7 +294,7 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
                   type="number"
                   step="0.5"
                   value={ithKa}
-                  onChange={(e) => { setIthKa(parseFloat(e.target.value) || 0); setActivePreset('custom'); }}
+                  onChange={(e) => { setIthKa(parseFloat(e.target.value) || 0); setSelectedPresetId('custom'); }}
                   className="w-full bg-[#161C24] border border-[#252E38] rounded-lg px-3 py-2 text-[#F3F4F6] font-bold mt-1"
                 />
               </div>
@@ -470,7 +305,7 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
                   type="number"
                   step="0.1"
                   value={tkSec}
-                  onChange={(e) => { setTkSec(parseFloat(e.target.value) || 0); setActivePreset('custom'); }}
+                  onChange={(e) => { setTkSec(parseFloat(e.target.value) || 0); setSelectedPresetId('custom'); }}
                   className="w-full bg-[#161C24] border border-[#252E38] rounded-lg px-3 py-2 text-amber-300 font-bold mt-1"
                 />
               </div>
@@ -488,7 +323,7 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
             <div className="grid grid-cols-2 gap-2 text-xs font-mono">
               <button
                 type="button"
-                onClick={() => { setConductorProfile('tube'); setActivePreset('custom'); }}
+                onClick={() => { setConductorProfile('tube'); setSelectedPresetId('custom'); }}
                 className={`p-2.5 rounded-xl border text-center font-bold transition-all ${
                   conductorProfile === 'tube'
                     ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300'
@@ -499,7 +334,7 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
               </button>
               <button
                 type="button"
-                onClick={() => { setConductorProfile('flat'); setActivePreset('custom'); }}
+                onClick={() => { setConductorProfile('flat'); setSelectedPresetId('custom'); }}
                 className={`p-2.5 rounded-xl border text-center font-bold transition-all ${
                   conductorProfile === 'flat'
                     ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300'
@@ -515,11 +350,12 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
               <label className="text-[11px] text-neutral-400">Matériau Conducteur :</label>
               <select
                 value={material}
-                onChange={(e) => { setMaterial(e.target.value as any); setActivePreset('custom'); }}
+                onChange={(e) => { setMaterial(e.target.value as any); setSelectedPresetId('custom'); }}
                 className="w-full bg-[#161C24] border border-[#252E38] rounded-lg px-3 py-2 text-[#F3F4F6] font-bold"
               >
                 <option value="al_alloy">Aluminium Alliage EN AW-6101B T6 (Almelec / Al-Mg-Si)</option>
                 <option value="cu_etp">Cuivre Électrolytique Cu-ETP R200 / R250</option>
+                <option value="e_al">Aluminium Pur E-Al F7</option>
               </select>
             </div>
 
@@ -531,7 +367,7 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
                   <input
                     type="number"
                     value={outerDiaMm}
-                    onChange={(e) => { setOuterDiaMm(parseFloat(e.target.value) || 0); setActivePreset('custom'); }}
+                    onChange={(e) => { setOuterDiaMm(parseFloat(e.target.value) || 0); setSelectedPresetId('custom'); }}
                     className="w-full bg-[#161C24] border border-[#252E38] rounded-lg px-3 py-2 text-cyan-300 font-bold mt-1"
                   />
                 </div>
@@ -540,7 +376,7 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
                   <input
                     type="number"
                     value={wallThickMm}
-                    onChange={(e) => { setWallThickMm(parseFloat(e.target.value) || 0); setActivePreset('custom'); }}
+                    onChange={(e) => { setWallThickMm(parseFloat(e.target.value) || 0); setSelectedPresetId('custom'); }}
                     className="w-full bg-[#161C24] border border-[#252E38] rounded-lg px-3 py-2 text-cyan-300 font-bold mt-1"
                   />
                 </div>
@@ -553,7 +389,7 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
                     <input
                       type="number"
                       value={barWidthMm}
-                      onChange={(e) => { setBarWidthMm(parseFloat(e.target.value) || 0); setActivePreset('custom'); }}
+                      onChange={(e) => { setBarWidthMm(parseFloat(e.target.value) || 0); setSelectedPresetId('custom'); }}
                       className="w-full bg-[#161C24] border border-[#252E38] rounded-lg px-3 py-2 text-cyan-300 font-bold mt-1"
                     />
                   </div>
@@ -562,7 +398,7 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
                     <input
                       type="number"
                       value={barThickMm}
-                      onChange={(e) => { setBarThickMm(parseFloat(e.target.value) || 0); setActivePreset('custom'); }}
+                      onChange={(e) => { setBarThickMm(parseFloat(e.target.value) || 0); setSelectedPresetId('custom'); }}
                       className="w-full bg-[#161C24] border border-[#252E38] rounded-lg px-3 py-2 text-cyan-300 font-bold mt-1"
                     />
                   </div>
@@ -573,7 +409,7 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
                     <label className="text-[11px] text-neutral-400">Nb Barres / Phase (n):</label>
                     <select
                       value={subBarsCount}
-                      onChange={(e) => { setSubBarsCount(parseInt(e.target.value) || 1); setActivePreset('custom'); }}
+                      onChange={(e) => { setSubBarsCount(parseInt(e.target.value) || 1); setSelectedPresetId('custom'); }}
                       className="w-full bg-[#161C24] border border-[#252E38] rounded-lg px-3 py-2 text-[#F3F4F6] font-bold mt-1"
                     >
                       <option value={1}>1 barre par phase</option>
@@ -585,7 +421,7 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
                     <label className="text-[11px] text-neutral-400">Disposition :</label>
                     <select
                       value={barArrangement}
-                      onChange={(e) => { setBarArrangement(e.target.value as any); setActivePreset('custom'); }}
+                      onChange={(e) => { setBarArrangement(e.target.value as any); setSelectedPresetId('custom'); }}
                       className="w-full bg-[#161C24] border border-[#252E38] rounded-lg px-3 py-2 text-[#F3F4F6] font-bold mt-1"
                     >
                       <option value="edge_to_edge">Sur chant (Haute rigidité)</option>
@@ -611,7 +447,7 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
                   type="number"
                   step="0.05"
                   value={centerDistanceA_M}
-                  onChange={(e) => { setCenterDistanceA_M(parseFloat(e.target.value) || 0.1); setActivePreset('custom'); }}
+                  onChange={(e) => { setCenterDistanceA_M(parseFloat(e.target.value) || 0.1); setSelectedPresetId('custom'); }}
                   className="w-full bg-[#161C24] border border-[#252E38] rounded-lg px-3 py-2 text-cyan-300 font-bold mt-1"
                 />
               </div>
@@ -622,7 +458,7 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
                   type="number"
                   step="0.1"
                   value={spanLengthL_M}
-                  onChange={(e) => { setSpanLengthL_M(parseFloat(e.target.value) || 0.1); setActivePreset('custom'); }}
+                  onChange={(e) => { setSpanLengthL_M(parseFloat(e.target.value) || 0.1); setSelectedPresetId('custom'); }}
                   className="w-full bg-[#161C24] border border-[#252E38] rounded-lg px-3 py-2 text-cyan-300 font-bold mt-1"
                 />
               </div>
@@ -631,11 +467,12 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
                 <label className="text-[11px] text-neutral-400">Type de Poutre :</label>
                 <select
                   value={supportCondition}
-                  onChange={(e) => { setSupportCondition(e.target.value as any); setActivePreset('custom'); }}
+                  onChange={(e) => { setSupportCondition(e.target.value as any); setSelectedPresetId('custom'); }}
                   className="w-full bg-[#161C24] border border-[#252E38] rounded-lg px-3 py-2 text-[#F3F4F6] font-bold mt-1"
                 >
                   <option value="continuous">Continue multi-travées (AIS)</option>
                   <option value="simply_supported">Poutre simple 2 appuis</option>
+                  <option value="cantilever">En console / porte-à-faux</option>
                 </select>
               </div>
 
@@ -645,7 +482,7 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
                   type="number"
                   step="0.5"
                   value={insulatorRatingFrKn}
-                  onChange={(e) => { setInsulatorRatingFrKn(parseFloat(e.target.value) || 1); setActivePreset('custom'); }}
+                  onChange={(e) => { setInsulatorRatingFrKn(parseFloat(e.target.value) || 1); setSelectedPresetId('custom'); }}
                   className="w-full bg-[#161C24] border border-[#252E38] rounded-lg px-3 py-2 text-emerald-300 font-bold mt-1"
                 />
               </div>
@@ -660,13 +497,13 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {/* 1. Mechanical Bending Stress */}
             <div className={`p-4 rounded-2xl border transition-all ${
-              calc.isStressOk 
+              sim.isBendingStressCompliant 
                 ? 'bg-emerald-950/40 border-emerald-500/50' 
                 : 'bg-rose-950/40 border-rose-500/50'
             }`}>
               <div className="flex items-center justify-between text-xs font-mono mb-1">
                 <span className="text-neutral-400">Contrainte σm :</span>
-                {calc.isStressOk ? (
+                {sim.isBendingStressCompliant ? (
                   <span className="text-emerald-400 font-bold flex items-center gap-1">
                     <CheckCircle2 className="h-3 w-3" /> CONFORME
                   </span>
@@ -677,22 +514,22 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
                 )}
               </div>
               <div className="text-2xl font-black font-mono text-[#F3F4F6]">
-                {calc.sigmaMm.toFixed(1)} <span className="text-xs font-normal text-neutral-400">MPa</span>
+                {sim.bendingStressMpa.toFixed(1)} <span className="text-xs font-normal text-neutral-400">MPa</span>
               </div>
               <div className="text-[11px] font-mono text-neutral-400 mt-1">
-                Admissible: {calc.sigmaPermissibleMpa.toFixed(1)} MPa ({((calc.stressRatio) * 100).toFixed(0)}%)
+                Admissible: {sim.permissibleStressMpa.toFixed(1)} MPa ({((sim.stressRatio) * 100).toFixed(0)}%)
               </div>
             </div>
 
             {/* 2. Insulator Cantilever Load */}
             <div className={`p-4 rounded-2xl border transition-all ${
-              calc.isInsulatorOk 
+              sim.isInsulatorCompliant 
                 ? 'bg-emerald-950/40 border-emerald-500/50' 
                 : 'bg-rose-950/40 border-rose-500/50'
             }`}>
               <div className="flex items-center justify-between text-xs font-mono mb-1">
                 <span className="text-neutral-400">Effort Isolateur Fd :</span>
-                {calc.isInsulatorOk ? (
+                {sim.isInsulatorCompliant ? (
                   <span className="text-emerald-400 font-bold flex items-center gap-1">
                     <CheckCircle2 className="h-3 w-3" /> CONFORME
                   </span>
@@ -703,22 +540,22 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
                 )}
               </div>
               <div className="text-2xl font-black font-mono text-[#F3F4F6]">
-                {calc.fdInsulatorKn.toFixed(2)} <span className="text-xs font-normal text-neutral-400">kN</span>
+                {sim.insulatorDynamicLoadKn.toFixed(2)} <span className="text-xs font-normal text-neutral-400">kN</span>
               </div>
               <div className="text-[11px] font-mono text-neutral-400 mt-1">
-                Limite (0.8 Fr): {calc.frPermissibleKn.toFixed(2)} kN ({((calc.insulatorLoadRatio) * 100).toFixed(0)}%)
+                Limite (0.8 Fr): {sim.insulatorPermissibleLoadKn.toFixed(2)} kN ({((sim.insulatorLoadRatio) * 100).toFixed(0)}%)
               </div>
             </div>
 
             {/* 3. Thermal Short-Circuit Withstand */}
             <div className={`p-4 rounded-2xl border transition-all ${
-              calc.isThermalOk 
+              sim.isThermalWithstandCompliant 
                 ? 'bg-emerald-950/40 border-emerald-500/50' 
                 : 'bg-rose-950/40 border-rose-500/50'
             }`}>
               <div className="flex items-center justify-between text-xs font-mono mb-1">
                 <span className="text-neutral-400">Tenue Thermique :</span>
-                {calc.isThermalOk ? (
+                {sim.isThermalWithstandCompliant ? (
                   <span className="text-emerald-400 font-bold flex items-center gap-1">
                     <CheckCircle2 className="h-3 w-3" /> CONFORME
                   </span>
@@ -729,11 +566,57 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
                 )}
               </div>
               <div className="text-2xl font-black font-mono text-[#F3F4F6]">
-                {calc.areaMm2.toFixed(0)} <span className="text-xs font-normal text-neutral-400">mm²</span>
+                {sim.crossSectionAreaMm2.toFixed(0)} <span className="text-xs font-normal text-neutral-400">mm²</span>
               </div>
               <div className="text-[11px] font-mono text-neutral-400 mt-1">
-                Sth min: {calc.sThMinMm2.toFixed(0)} mm² (T_fin: {calc.finalTempC.toFixed(0)}°C)
+                Sth min: {sim.minRequiredThermalSectionMm2.toFixed(0)} mm² (T_fin: {sim.finalTemperatureC.toFixed(0)}°C)
               </div>
+            </div>
+          </div>
+
+          {/* Resonance Spectrum Indicator (50 Hz & 100 Hz Resonance Danger Bands) */}
+          <div className="bg-[#11161D] border border-[#252E38] rounded-2xl p-4 shadow-xl">
+            <div className="flex items-center justify-between text-xs font-mono mb-2">
+              <span className="text-cyan-400 font-bold flex items-center gap-1.5">
+                <Gauge className="h-4 w-4" />
+                {locale === 'fr' ? 'SPECTRE DE RÉSONANCE MÉCANIQUE (fc)' : 'MECHANICAL RESONANCE SPECTRUM (fc)'}
+              </span>
+              <span className="text-neutral-400">
+                fc = <strong className="text-white">{sim.naturalFrequencyFcHz.toFixed(1)} Hz</strong> (Ratio fc/fn = {sim.frequencyRatio.toFixed(2)})
+              </span>
+            </div>
+
+            {/* Visual Frequency Gauge Bar (0 to 150 Hz) */}
+            <div className="relative w-full h-7 bg-[#161C24] rounded-lg border border-[#252E38] overflow-hidden flex items-center">
+              {/* 50 Hz Danger Band (40 to 62.5 Hz) */}
+              <div
+                className="absolute top-0 bottom-0 bg-rose-500/25 border-x border-rose-500/50"
+                style={{ left: `${(40 / 150) * 100}%`, width: `${(22.5 / 150) * 100}%` }}
+                title="Zone de résonance 50 Hz (Vσ = 2.4)"
+              />
+              {/* 100 Hz Danger Band (90 to 110 Hz) */}
+              <div
+                className="absolute top-0 bottom-0 bg-amber-500/25 border-x border-amber-500/50"
+                style={{ left: `${(90 / 150) * 100}%`, width: `${(20 / 150) * 100}%` }}
+                title="Zone de résonance 100 Hz (Vσ = 2.0)"
+              />
+
+              {/* Grid Marks */}
+              <div className="absolute left-[33.3%] top-0 bottom-0 w-px bg-rose-400/80" />
+              <div className="absolute left-[66.6%] top-0 bottom-0 w-px bg-amber-400/80" />
+
+              {/* Operating Natural Frequency Pointer */}
+              <div
+                className="absolute top-0 bottom-0 w-1.5 bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.9)] z-10 transition-all duration-300"
+                style={{ left: `${Math.min(99, Math.max(1, (sim.naturalFrequencyFcHz / 150) * 100))}%` }}
+              />
+            </div>
+
+            <div className="flex justify-between text-[10px] font-mono text-neutral-500 mt-1">
+              <span>0 Hz</span>
+              <span className="text-rose-400">50 Hz (Vσ = 2.4)</span>
+              <span className="text-amber-400">100 Hz (Vσ = 2.0)</span>
+              <span>150 Hz</span>
             </div>
           </div>
 
@@ -763,69 +646,61 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
               </g>
 
               {/* Support Insulators (Left & Right) */}
-              {/* Phase 1 Support (Top) */}
               <rect x="70" y="45" width="20" height="25" rx="3" fill="#1E293B" stroke="#64748B" strokeWidth="1.5" />
               <rect x="550" y="45" width="20" height="25" rx="3" fill="#1E293B" stroke="#64748B" strokeWidth="1.5" />
 
-              {/* Phase 2 Support (Middle) */}
               <rect x="70" y="115" width="20" height="25" rx="3" fill="#1E293B" stroke="#64748B" strokeWidth="1.5" />
               <rect x="550" y="115" width="20" height="25" rx="3" fill="#1E293B" stroke="#64748B" strokeWidth="1.5" />
 
-              {/* Phase 3 Support (Bottom) */}
               <rect x="70" y="185" width="20" height="25" rx="3" fill="#1E293B" stroke="#64748B" strokeWidth="1.5" />
               <rect x="550" y="185" width="20" height="25" rx="3" fill="#1E293B" stroke="#64748B" strokeWidth="1.5" />
 
               {/* 3 Busbars Horizontal Spans */}
-              {/* Phase L1 */}
               <rect
                 x="80"
                 y="52"
                 width="480"
                 height={conductorProfile === 'tube' ? 12 : 8}
                 rx="2"
-                fill={calc.isAl ? '#94A3B8' : '#F97316'}
+                fill={material === 'al_alloy' || material === 'e_al' ? '#94A3B8' : '#F97316'}
                 stroke="#E2E8F0"
                 strokeWidth="1"
               />
               <text x="50" y="62" fill="#38BDF8" fontSize="11" fontFamily="monospace" fontWeight="bold">L1</text>
 
-              {/* Phase L2 */}
               <rect
                 x="80"
                 y="122"
                 width="480"
                 height={conductorProfile === 'tube' ? 12 : 8}
                 rx="2"
-                fill={calc.isAl ? '#94A3B8' : '#F97316'}
+                fill={material === 'al_alloy' || material === 'e_al' ? '#94A3B8' : '#F97316'}
                 stroke="#E2E8F0"
                 strokeWidth="1"
               />
               <text x="50" y="132" fill="#38BDF8" fontSize="11" fontFamily="monospace" fontWeight="bold">L2</text>
 
-              {/* Phase L3 */}
               <rect
                 x="80"
                 y="192"
                 width="480"
                 height={conductorProfile === 'tube' ? 12 : 8}
                 rx="2"
-                fill={calc.isAl ? '#94A3B8' : '#F97316'}
+                fill={material === 'al_alloy' || material === 'e_al' ? '#94A3B8' : '#F97316'}
                 stroke="#E2E8F0"
                 strokeWidth="1"
               />
               <text x="50" y="202" fill="#38BDF8" fontSize="11" fontFamily="monospace" fontWeight="bold">L3</text>
 
               {/* Force Vectors (Red Arrows demonstrating mutual electrodynamic repulsion) */}
-              {/* Repulsion L1 away from L2 */}
               <line x1="320" y1="52" x2="320" y2="20" stroke="#F43F5E" strokeWidth="3" markerEnd="url(#arrow-force)" />
               <text x="330" y="32" fill="#F43F5E" fontSize="11" fontFamily="monospace" fontWeight="bold">
-                Fm = {(calc.fmForcePerMeterN).toFixed(0)} N/m
+                Fm = {(sim.distributedForcePerMeterNm).toFixed(0)} N/m
               </text>
 
-              {/* Repulsion L3 away from L2 */}
               <line x1="320" y1="204" x2="320" y2="236" stroke="#F43F5E" strokeWidth="3" markerEnd="url(#arrow-force)" />
               <text x="330" y="235" fill="#F43F5E" fontSize="11" fontFamily="monospace" fontWeight="bold">
-                Fm = {(calc.fmForcePerMeterN).toFixed(0)} N/m
+                Fm = {(sim.distributedForcePerMeterNm).toFixed(0)} N/m
               </text>
 
               {/* Dimensions: Span Length L */}
@@ -849,9 +724,9 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
             <div className="flex items-center justify-between text-[11px] font-mono text-neutral-400 border-t border-[#252E38] pt-2 mt-2">
               <span className="flex items-center gap-2">
                 <span className="inline-block w-3 h-3 rounded-full bg-rose-500" />
-                <span>Force répulsive de Laplace (Fm total = {(calc.fmForceN / 1000).toFixed(2)} kN)</span>
+                <span>Force répulsive de Laplace (Fm total = {(sim.peakLaplaceForceN / 1000).toFixed(2)} kN)</span>
               </span>
-              <span>Fréquence propre mécanique fc = <strong className="text-cyan-300">{calc.fcHz.toFixed(1)} Hz</strong></span>
+              <span>Fréquence propre fc = <strong className="text-cyan-300">{sim.naturalFrequencyFcHz.toFixed(1)} Hz</strong></span>
             </div>
           </div>
 
@@ -865,54 +740,51 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               <div className="bg-[#161C24] p-3 rounded-xl border border-[#252E38]">
                 <span className="text-[10px] text-neutral-500 uppercase">SECTION & INERTIE</span>
-                <div className="text-sm font-bold text-cyan-300 mt-0.5">{calc.areaMm2.toFixed(1)} mm²</div>
-                <div className="text-[10px] text-neutral-400">Iy: {(calc.momentOfInertiaMm4 / 1e4).toFixed(1)} cm⁴</div>
+                <div className="text-sm font-bold text-cyan-300 mt-0.5">{sim.crossSectionAreaMm2.toFixed(1)} mm²</div>
+                <div className="text-[10px] text-neutral-400">Iy: {(sim.momentOfInertiaMm4 / 1e4).toFixed(1)} cm⁴</div>
               </div>
 
               <div className="bg-[#161C24] p-3 rounded-xl border border-[#252E38]">
                 <span className="text-[10px] text-neutral-500 uppercase">MASSE LINÉIQUE</span>
-                <div className="text-sm font-bold text-[#F3F4F6] mt-0.5">{calc.linearMassKgM.toFixed(2)} kg/m</div>
-                <div className="text-[10px] text-neutral-400">{calc.isAl ? 'Aluminium 2.7 t/m³' : 'Cuivre 8.9 t/m³'}</div>
+                <div className="text-sm font-bold text-[#F3F4F6] mt-0.5">{sim.linearMassKgM.toFixed(2)} kg/m</div>
+                <div className="text-[10px] text-neutral-400">{BUSBAR_MATERIALS[material].densityKgM3 / 1000} t/m³</div>
               </div>
 
               <div className="bg-[#161C24] p-3 rounded-xl border border-[#252E38]">
                 <span className="text-[10px] text-neutral-500 uppercase">RÉSONANCE PROPRE</span>
-                <div className="text-sm font-bold text-cyan-300 mt-0.5">{calc.fcHz.toFixed(1)} Hz</div>
-                <div className="text-[10px] text-neutral-400">Amplification Vσ: {calc.vSigma.toFixed(2)}</div>
+                <div className="text-sm font-bold text-cyan-300 mt-0.5">{sim.naturalFrequencyFcHz.toFixed(1)} Hz</div>
+                <div className="text-[10px] text-neutral-400">Amplification Vσ: {sim.dynamicStressFactorVSigma.toFixed(2)}</div>
               </div>
 
               <div className="bg-[#161C24] p-3 rounded-xl border border-[#252E38]">
                 <span className="text-[10px] text-neutral-500 uppercase">MOMENT FLÉCHISSANT</span>
-                <div className="text-sm font-bold text-[#F3F4F6] mt-0.5">{(calc.bendingMomentN_Mm / 1e6).toFixed(2)} kN·m</div>
-                <div className="text-[10px] text-neutral-400">Section Wm: {(calc.sectionModulusMm3 / 1e3).toFixed(1)} cm³</div>
+                <div className="text-sm font-bold text-[#F3F4F6] mt-0.5">{(sim.bendingMomentNm / 1e3).toFixed(2)} kN·m</div>
+                <div className="text-[10px] text-neutral-400">Section Wm: {(sim.sectionModulusMm3 / 1e3).toFixed(1)} cm³</div>
               </div>
 
               <div className="bg-[#161C24] p-3 rounded-xl border border-[#252E38]">
                 <span className="text-[10px] text-neutral-500 uppercase">ÉCHAUFFEMENT COURT-CIRCUIT</span>
-                <div className="text-sm font-bold text-amber-300 mt-0.5">+{calc.deltaThetaC.toFixed(1)} °C</div>
-                <div className="text-[10px] text-neutral-400">T_max: {calc.finalTempC.toFixed(1)} / {calc.maxAllowedTempC}°C</div>
+                <div className="text-sm font-bold text-amber-300 mt-0.5">+{sim.adiabaticTempRiseC.toFixed(1)} °C</div>
+                <div className="text-[10px] text-neutral-400">T_max: {sim.finalTemperatureC.toFixed(1)} / {sim.maxAllowableTempC}°C</div>
               </div>
 
               <div className="bg-[#161C24] p-3 rounded-xl border border-[#252E38]">
                 <span className="text-[10px] text-neutral-500 uppercase">FORCE SUR ISOLATEUR</span>
-                <div className="text-sm font-bold text-emerald-300 mt-0.5">{calc.fdInsulatorKn.toFixed(2)} kN</div>
-                <div className="text-[10px] text-neutral-400">Marge: {((1 - calc.insulatorLoadRatio) * 100).toFixed(1)}%</div>
+                <div className="text-sm font-bold text-emerald-300 mt-0.5">{sim.insulatorDynamicLoadKn.toFixed(2)} kN</div>
+                <div className="text-[10px] text-neutral-400">Marge: {((1 - sim.insulatorLoadRatio) * 100).toFixed(1)}%</div>
               </div>
             </div>
 
             {/* Standard Recommendations Text */}
             <div className="bg-[#161C24]/80 p-3 rounded-xl border border-[#252E38] text-[11px] text-neutral-300 leading-relaxed">
               <span className="font-bold text-cyan-400">Recommandation Normative CEI 61936-1 / CEI 60865-1 : </span>
-              {calc.isStressOk && calc.isInsulatorOk && calc.isThermalOk ? (
+              {sim.overallVerdict === 'COMPLIANT' ? (
                 <span>
-                  L’ensemble jeu de barres et supports isolateurs satisfait pleinement aux critères de tenue mécanique et thermique sous court-circuit. La fréquence propre ({calc.fcHz.toFixed(1)} Hz) est suffisamment éloignée de la zone de résonance destructive critique à 100 Hz.
+                  L’ensemble jeu de barres et supports isolateurs satisfait pleinement aux critères de tenue mécanique et thermique sous court-circuit. La fréquence propre ({sim.naturalFrequencyFcHz.toFixed(1)} Hz) est conforme aux exigences de dimensionnement.
                 </span>
               ) : (
                 <span className="text-rose-300">
-                  Avertissement : {calc.isStressOk ? '' : 'La contrainte de flexion dépasse la limite élastique admissible. '}
-                  {calc.isInsulatorOk ? '' : 'L’effort dynamique transmis aux isolateurs dépasse 80% de leur charge de rupture Fr. '}
-                  {calc.isThermalOk ? '' : 'La section thermique minimale n’est pas respectée. '}
-                  Augmenter l’entraxe des phases, réduire la portée entre supports ou choisir une section/matière supérieure.
+                  Avertissement : {locale === 'fr' ? sim.advisoryInterpretation.fr : sim.advisoryInterpretation.en}
                 </span>
               )}
             </div>
@@ -920,6 +792,73 @@ export const BusbarElectrodynamicCalculator: React.FC<BusbarElectrodynamicCalcul
         </div>
 
       </div>
+
+      {/* Normative Formulas Modal */}
+      {isNormativeModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-[#11161D] border border-cyan-500/30 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-[#252E38] pb-3">
+              <div className="flex items-center gap-2 text-cyan-400 font-mono font-bold text-sm">
+                <Cpu className="h-4 w-4" />
+                <span>FORMULATIONS NORMATIVES — CEI 60865-1 / IEEE STD 605</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsNormativeModalOpen(false)}
+                className="text-neutral-400 hover:text-white transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4 font-mono text-xs text-neutral-300 leading-relaxed">
+              <div className="bg-[#161C24] p-3 rounded-xl border border-[#252E38] space-y-1">
+                <span className="text-cyan-400 font-bold">1. Force Électrodynamique de Crête (Laplace)</span>
+                <p className="text-neutral-400">CEI 60865-1 §3.1 :</p>
+                <div className="bg-[#0B0F14] p-2 rounded text-emerald-300 text-center font-bold">
+                  {"F_m = \\frac{\\mu_0}{2\\pi} \\cdot \\frac{\\sqrt{3}}{2} \\cdot \\frac{i_p^2}{a} \\cdot l"}
+                </div>
+              </div>
+
+              <div className="bg-[#161C24] p-3 rounded-xl border border-[#252E38] space-y-1">
+                <span className="text-cyan-400 font-bold">2. Fréquence Propre Mécanique (fc)</span>
+                <p className="text-neutral-400">CEI 60865-1 §3.2.1 :</p>
+                <div className="bg-[#0B0F14] p-2 rounded text-emerald-300 text-center font-bold">
+                  {"f_c = \\frac{c_f}{l^2} \\sqrt{\\frac{E \\cdot I}{m'}}"}
+                </div>
+                <p className="text-[11px] text-neutral-400">cf = 3.56 (poutre continue multi-travées), cf = 1.57 (poutre simple 2 appuis).</p>
+              </div>
+
+              <div className="bg-[#161C24] p-3 rounded-xl border border-[#252E38] space-y-1">
+                <span className="text-cyan-400 font-bold">3. Contrainte de Flexion Dynamique & Amplification</span>
+                <p className="text-neutral-400">CEI 60865-1 §3.2.2 :</p>
+                <div className="bg-[#0B0F14] p-2 rounded text-emerald-300 text-center font-bold">
+                  {"\\sigma_m = \\frac{V_\\sigma \\cdot \\beta \\cdot M}{W_m} \\le q \\cdot R_{p0.2}"}
+                </div>
+                <p className="text-[11px] text-neutral-400">Vσ atteint 2.4 en zone critique de résonance 50 Hz (ratio fc/fn ≈ 1.0).</p>
+              </div>
+
+              <div className="bg-[#161C24] p-3 rounded-xl border border-[#252E38] space-y-1">
+                <span className="text-cyan-400 font-bold">4. Section Thermique Minimale Admissible</span>
+                <p className="text-neutral-400">CEI 60865-1 §4.1 :</p>
+                <div className="bg-[#0B0F14] p-2 rounded text-emerald-300 text-center font-bold">
+                  {"S_{th} = \\frac{I_{th} \\cdot \\sqrt{t_k}}{k_\\theta} \\cdot 1000 \\quad [\\text{mm}^2]"}
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-[#252E38] pt-3 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setIsNormativeModalOpen(false)}
+                className="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 hover:bg-cyan-500/30 transition-all"
+              >
+                Fermer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
