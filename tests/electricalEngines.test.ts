@@ -11,6 +11,7 @@ import { Iec60287CableAmpacityEngine, CAMEROON_CABLE_PRESETS } from '../src/data
 import { Iec61936AisClearanceEngine, CAMEROON_AIS_PRESETS } from '../src/data/iec61936AisClearanceEngine';
 import { Iec60255RelayEngine, CAMEROON_RELAY_PRESETS } from '../src/data/iec60255RelayEngine';
 import { VectorVoltageDropEngine, CAMEROON_VOLTAGE_DROP_PRESETS } from '../src/data/vectorVoltageDropEngine';
+import { Iec61869CtSizingEngine, CAMEROON_CT_PRESETS } from '../src/data/iec61869CtSizingEngine';
 import { EngineeringCalculationPdfExportService } from '../src/components/calculators/services/EngineeringCalculationPdfExportService';
 import { generateCalculationReport } from '../src/components/calculators/services/calculationReportService';
 import { WORKED_EXAMPLES_REGISTRY } from '../src/data/workedExamplesRegistry';
@@ -583,6 +584,66 @@ describe('⚡ Electrotechnical Physics Engine Tests', () => {
     const report = generateCalculationReport('voltage-drop', 'fr');
     expect(report.calcType).toBe('VOLTAGE-DROP-CABLE');
     expect(report.standard).toContain('CEI 60364-5-52');
+    expect(report.results.length).toBeGreaterThan(4);
+    expect(report.complianceVerdict.status).toBe('COMPLIANT');
+  });
+
+  it('16. IEC 61869-2 / IEC 60044-1 / IEEE C57.13 Current Transformer Sizing & Saturation Engine', () => {
+    // 1. Class 5P20 ALF scaling on ALUCAM Edéa preset
+    const alucamPreset = CAMEROON_CT_PRESETS.find(p => p.id === 'alucam-edee-rectifier-5p20')!;
+    expect(alucamPreset).toBeDefined();
+
+    const alucamSim = Iec61869CtSizingEngine.solve(alucamPreset.ctInput);
+
+    // Rated burden Sn = 30 VA, Isn = 5 A -> Rbn = 30 / 25 = 1.2 Ω
+    expect(alucamSim.nominalRatedBurdenOhms).toBeCloseTo(1.2, 0.01);
+
+    // Actual burden Rb = (2 * 75 * 0.02165 / 6) + (1.5 / 25) = 0.54125 + 0.06 = 0.60125 Ω
+    expect(alucamSim.totalActualBurdenOhms).toBeCloseTo(0.601, 0.01);
+    expect(alucamSim.totalActualBurdenOhms).toBeLessThan(alucamSim.nominalRatedBurdenOhms);
+
+    // Because actual burden is lower than rated burden, ALF_eff must scale up above rated ALFn = 20
+    expect(alucamSim.effectiveAlf).toBeGreaterThan(20.0);
+    expect(alucamSim.effectiveAlf).toBeCloseTo(27.97, 0.5);
+
+    // Symmetric fault multiple Kssc = 25 kA / 1.2 kA = 20.833
+    expect(alucamSim.shortCircuitCurrentFactorKssc).toBeCloseTo(20.833, 0.1);
+    expect(alucamSim.isAlfCompliant).toBe(true);
+
+    // DC transient dimensioning factor Ktd for X/R = 14
+    expect(alucamSim.transientDimensioningFactorKtd).toBeGreaterThan(1.0);
+    expect(alucamSim.primaryTimeConstantTpSec).toBeCloseTo(14 / (2 * Math.PI * 50), 0.005);
+
+    // 2. Class PX Knee-Point Voltage on SONATREL Mangombé 225 kV Busbar Differential
+    const mangombePreset = CAMEROON_CT_PRESETS.find(p => p.id === 'sonatrel-mangombe-225kv-diff')!;
+    expect(mangombePreset).toBeDefined();
+
+    const mangombeSim = Iec61869CtSizingEngine.solve(mangombePreset.ctInput);
+
+    // Required knee point Vk = 2 * K * Ifault_sec * (Rct + Rlead)
+    // 2 * 1.2 * (31500 / 2000) * (4.2 + 0.866) = 2.4 * 15.75 * 5.066 = 191.5 V
+    expect(mangombeSim.requiredKneePointVoltageV).toBeGreaterThan(180.0);
+    expect(mangombeSim.requiredKneePointVoltageV).toBeLessThan(210.0);
+
+    // Rated Vk = 450 V satisfies the required knee-point voltage with solid margin
+    expect(mangombeSim.actualEstimatedKneePointVoltageV).toBe(450);
+    expect(mangombeSim.isKneePointCompliant).toBe(true);
+    expect(mangombeSim.overallVerdict).toBe('COMPLIANT');
+
+    // Time to saturation under extreme X/R = 18 (Tp = 57.3 ms) must provide sub-cycle window (> 15 ms)
+    expect(mangombeSim.timeToSaturationMs).toBeGreaterThan(15.0);
+    expect(mangombeSim.timeToSaturationMs).toBeCloseTo(16.8, 0.5);
+
+    // Excitation curve generator verification (IEC 61869-2 knee-point definition)
+    const curve = Iec61869CtSizingEngine.generateExcitationCurve(450, 0.03);
+    expect(curve.length).toBe(20);
+    const atVk = curve.find(pt => Math.abs(pt.secondaryVoltageV - 450) < 1.0);
+    expect(atVk).toBeDefined();
+
+    // 3. Dynamic Calculation Report Generation Integration
+    const report = generateCalculationReport('ct-sizing', 'fr');
+    expect(report.calcType).toBe('CT-SIZING-IEC61869');
+    expect(report.standard).toContain('61869-2');
     expect(report.results.length).toBeGreaterThan(4);
     expect(report.complianceVerdict.status).toBe('COMPLIANT');
   });

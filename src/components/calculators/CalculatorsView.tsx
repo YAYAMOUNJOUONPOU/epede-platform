@@ -517,7 +517,7 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
             equipmentName: injectedContext.equipmentName,
             equipmentTag: injectedContext.equipmentTag,
           } : undefined}
-          onOpenReport={() => setShowReportModal(true)}
+          onOpenReport={() => setIsReportOpen(true)}
         />
       )}
 

@@ -16,6 +16,12 @@ import { Iec60287CableAmpacityEngine } from '../../../data/iec60287CableAmpacity
 import { Iec61936AisClearanceEngine } from '../../../data/iec61936AisClearanceEngine';
 import { Iec60255RelayEngine, CAMEROON_RELAY_PRESETS } from '../../../data/iec60255RelayEngine';
 import { VectorVoltageDropEngine } from '../../../data/vectorVoltageDropEngine';
+import {
+  Iec61869CtSizingEngine,
+  CAMEROON_CT_PRESETS,
+  type CtSpecificationInput,
+  type CtStandardClass,
+} from '../../../data/iec61869CtSizingEngine';
 
 export interface InjectedCalculatorContext {
   equipmentId?: string;
@@ -590,66 +596,151 @@ export function generateCalculationReport(
   }
 
   if (activeCalc === 'ct-sizing') {
-    const ctIpn = 1200;
-    const ctIsn = 5;
-    const ctAlfn = 20;
-    const ctVaRating = 30;
-    const ctRctOhms = 1.2;
-    const ctCableLengthM = 80;
-    const ctCableSectionMm2 = 4;
-    const ctRelayBurdenVa = 1.5;
-    const ctMaxFaultCurrentKa = 25;
-    const ctXrRatio = 14;
-    const rhoCu = 0.0178;
-    const rLoopOhms = (2 * ctCableLengthM * rhoCu) / ctCableSectionMm2;
-    const rRelayOhms = ctRelayBurdenVa / (ctIsn ** 2);
-    const rBurdenActual = rLoopOhms + rRelayOhms;
-    const rBurdenRated = ctVaRating / (ctIsn ** 2);
-    const alfEffective = ctAlfn * ((ctRctOhms + rBurdenRated) / (ctRctOhms + rBurdenActual));
-    const ktd = 1 + (ctXrRatio / (2 * Math.PI));
-    const ifaultSec = (ctMaxFaultCurrentKa * 1000) / (ctIpn / ctIsn);
-    const vkRequiredVolts = ktd * ifaultSec * (ctRctOhms + rBurdenActual);
-    const isCtSafeFromSaturation = alfEffective >= (ctMaxFaultCurrentKa * 1000) / ctIpn;
+    const preset = CAMEROON_CT_PRESETS.find(p => p.id === injectedContext?.params?.presetId) || CAMEROON_CT_PRESETS[0];
+    const ctStandardClass = (injectedContext?.params?.standardClass || preset.ctInput.standardClass) as CtStandardClass;
+    const ctIpn = injectedContext?.params?.ctIpn ? Number(injectedContext.params.ctIpn) : preset.ctInput.primaryRatedCurrentA;
+    const ctIsn = (injectedContext?.params?.ctIsn ? Number(injectedContext.params.ctIsn) : preset.ctInput.secondaryRatedCurrentA) as 1 | 5;
+    const ctAlfn = injectedContext?.params?.ctAlfn ? Number(injectedContext.params.ctAlfn) : (preset.ctInput.ratedAlf || 20);
+    const ctVaRating = injectedContext?.params?.ctVaRating ? Number(injectedContext.params.ctVaRating) : (preset.ctInput.ratedBurdenVa || 30);
+    const ctVk = injectedContext?.params?.ctVk ? Number(injectedContext.params.ctVk) : (preset.ctInput.ratedKneePointVoltageV || 450);
+    const ctRctOhms = injectedContext?.params?.ctRctOhms ? Number(injectedContext.params.ctRctOhms) : preset.ctInput.internalSecondaryResistanceRct;
+    const ctWiringLengthM = injectedContext?.params?.ctWiringLengthM ? Number(injectedContext.params.ctWiringLengthM) : preset.ctInput.wiringLengthM;
+    const ctWiringSectionMm2 = injectedContext?.params?.ctWiringSectionMm2 ? Number(injectedContext.params.ctWiringSectionMm2) : preset.ctInput.wiringCrossSectionMm2;
+    const ctRelayBurdenVa = injectedContext?.params?.ctRelayBurdenVa ? Number(injectedContext.params.ctRelayBurdenVa) : preset.ctInput.relayBurdenVa;
+    const ctMaxFaultCurrentKa = injectedContext?.params?.ctMaxFaultCurrentKa ? Number(injectedContext.params.ctMaxFaultCurrentKa) : preset.ctInput.maxProspectiveFaultCurrentKa;
+    const ctXrRatio = injectedContext?.params?.ctXrRatio ? Number(injectedContext.params.ctXrRatio) : preset.ctInput.systemXrRatio;
+    const ctFaultDurationSec = injectedContext?.params?.ctFaultDurationSec ? Number(injectedContext.params.ctFaultDurationSec) : preset.ctInput.faultDurationSec;
+    const ctSafetyFactorK = injectedContext?.params?.ctSafetyFactorK ? Number(injectedContext.params.ctSafetyFactorK) : preset.ctInput.safetyFactorK;
 
-    return {
-      title: locale === 'fr' ? 'Dimensionnement & Saturation Transformateur de Courant (TC)' : 'Current Transformer Sizing & Saturation Verification',
+    const inputSpec: CtSpecificationInput = {
+      standardClass: ctStandardClass,
+      primaryRatedCurrentA: ctIpn,
+      secondaryRatedCurrentA: ctIsn,
+      ratedBurdenVa: ctVaRating,
+      ratedAlf: ctAlfn,
+      ratedKneePointVoltageV: ctVk,
+      internalSecondaryResistanceRct: ctRctOhms,
+      wiringLengthM: ctWiringLengthM,
+      wiringCrossSectionMm2: ctWiringSectionMm2,
+      wiringConnection: 'two_wire',
+      relayBurdenVa: ctRelayBurdenVa,
+      maxProspectiveFaultCurrentKa: ctMaxFaultCurrentKa,
+      systemXrRatio: ctXrRatio,
+      faultDurationSec: ctFaultDurationSec,
+      safetyFactorK: ctSafetyFactorK,
+    };
+
+    const sim = Iec61869CtSizingEngine.solve(inputSpec);
+    const isCompliant = sim.overallVerdict === 'COMPLIANT';
+
+    return withProvenance({
+      title: locale === 'fr'
+        ? `Dimensionnement & Saturation Transitoire TC — ${ctStandardClass.replace('_', ' ')}`
+        : `Current Transformer Sizing & Transient Saturation — ${ctStandardClass.replace('_', ' ')}`,
       calcType: 'CT-SIZING-IEC61869',
-      standard: 'CEI 61869-2 (Protection 5P / 10P)',
+      standard: 'CEI 61869-2 / CEI 60044-1 / IEEE Std C57.13 / IEEE C37.110',
       date: dateStr,
       referenceId: `EPEDE-CALC-CT-${now.getTime().toString().slice(-6)}`,
       inputs: [
-        { label: locale === 'fr' ? 'Rapport de transformation' : 'Transformation Ratio', value: `${ctIpn} / ${ctIsn}`, unit: 'A' },
-        { label: locale === 'fr' ? 'Facteur limite de précision (ALF)' : 'Accuracy Limit Factor (ALF)', value: `${ctAlfn}` },
-        { label: locale === 'fr' ? 'Puissance de précision assignée' : 'Rated Burden', value: `${ctVaRating}`, unit: 'VA' },
-        { label: locale === 'fr' ? 'Résistance interne secondaire (Rct)' : 'CT Secondary Resistance (Rct)', value: `${ctRctOhms}`, unit: 'Ω' },
-        { label: locale === 'fr' ? 'Longueur câble de filerie' : 'Wiring Cable Length', value: `${ctCableLengthM}`, unit: 'm' },
-        { label: locale === 'fr' ? 'Section câble filerie' : 'Wiring Cable Section', value: `${ctCableSectionMm2}`, unit: 'mm²' },
-        { label: locale === 'fr' ? 'Consommation relais de protection' : 'Protection Relay Burden', value: `${ctRelayBurdenVa}`, unit: 'VA' },
-        { label: locale === 'fr' ? 'Courant de défaut maximal (Isc)' : 'Max Short-Circuit Current', value: `${ctMaxFaultCurrentKa}`, unit: 'kA' },
+        { label: locale === 'fr' ? 'Classe de précision TC' : 'CT Accuracy Class', value: ctStandardClass },
+        { label: locale === 'fr' ? 'Rapport nominal (Ipn / Isn)' : 'Rated CT Ratio', value: `${ctIpn} / ${ctIsn}`, unit: 'A' },
+        ...(ctStandardClass === 'IEC_5P' || ctStandardClass === 'IEC_10P'
+          ? [
+              { label: locale === 'fr' ? 'Facteur limite nominal (ALFn)' : 'Rated Limit Factor (ALFn)', value: `${ctAlfn}` },
+              { label: locale === 'fr' ? 'Puissance assignée (Sn)' : 'Rated Burden (Sn)', value: `${ctVaRating}`, unit: 'VA' },
+            ]
+          : [
+              { label: locale === 'fr' ? 'Tension de coude assignée (Vk)' : 'Rated Knee-Point (Vk)', value: `${ctVk}`, unit: 'V' },
+            ]),
+        { label: locale === 'fr' ? 'Résistance secondaire TC (Rct)' : 'CT Secondary Resistance (Rct)', value: `${ctRctOhms.toFixed(3)}`, unit: 'Ω' },
+        { label: locale === 'fr' ? 'Liaison filerie (L × S)' : 'Wiring Cable (L × S)', value: `${ctWiringLengthM} m × ${ctWiringSectionMm2} mm² (Cu)` },
+        { label: locale === 'fr' ? 'Consommation relais' : 'Relay Burden', value: `${ctRelayBurdenVa}`, unit: 'VA' },
+        { label: locale === 'fr' ? 'Courant C-C max primaire (Isc)' : 'Max Fault Current (Isc)', value: `${ctMaxFaultCurrentKa}`, unit: 'kA' },
         { label: locale === 'fr' ? 'Rapport X/R du réseau' : 'Network X/R Ratio', value: `${ctXrRatio}` },
+        { label: locale === 'fr' ? 'Constante de temps DC (Tp)' : 'DC Primary Time Constant (Tp)', value: (sim.primaryTimeConstantTpSec * 1000).toFixed(1), unit: 'ms' },
       ],
       formulas: [
-        { name: 'Charge totale secondaire Rb', expr: 'R_liaison + R_relais [Ω]' },
-        { name: 'Facteur limite effectif ALF_eff', expr: 'ALFn · (Rct + Rbn) / (Rct + Rb)' },
-        { name: 'Tension de coude requise Vk', expr: 'Ktd · Ifault_sec · (Rct + Rb) [V]' },
+        { name: 'Charge filerie Rb', expr: 'R_loop + R_relais = (2 · ρ_cu · L / S) + (S_relais / Isn²) [Ω]' },
+        { name: 'Facteur de surdimensionnement transitoire Ktd', expr: '1 + ω · Tp · (1 - e^(-tf / Tp))' },
+        { name: 'ALF effectif d\'exploitation', expr: 'ALFn · (Rct + Rbn) / (Rct + Rb)' },
+        { name: 'Tension de coude requise Vk_req', expr: '2 · K · Ifault_sec · (Rct + Rb) [V]' },
+        { name: 'Temps jusqu\'à saturation tsat', expr: '-Tp · ln[1 - (ALF_eff - 1) / (Kssc · ω · Tp)] [ms]' },
       ],
       results: [
-        { label: locale === 'fr' ? 'Sécurité de non-saturation' : 'Saturation Safety', value: isCtSafeFromSaturation ? 'GARANTIE (Conforme)' : 'RISQUE DE SATURATION', highlight: true, status: isCtSafeFromSaturation ? 'OK' : 'DANGER' },
-        { label: locale === 'fr' ? 'ALF effectif en exploitation' : 'Effective Operating ALF', value: alfEffective.toFixed(1) },
-        { label: locale === 'fr' ? 'Tension de coude requise (Vk)' : 'Required Knee-Point Voltage', value: vkRequiredVolts.toFixed(1), unit: 'V' },
-        { label: locale === 'fr' ? 'Charge totale secondaire (Rb)' : 'Total Secondary Burden (Rb)', value: rBurdenActual.toFixed(3), unit: 'Ω' },
+        {
+          label: locale === 'fr' ? 'Verdict de Saturation & Précision' : 'Saturation & Accuracy Verdict',
+          value: isCompliant
+            ? (locale === 'fr' ? 'CONFORME (Non-Saturé)' : 'COMPLIANT (Linear)')
+            : (locale === 'fr' ? 'RISQUE DE SATURATION' : 'SATURATION RISK'),
+          highlight: true,
+          status: (isCompliant ? 'OK' : 'DANGER') as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
+        {
+          label: locale === 'fr' ? 'Temps avant saturation (tsat)' : 'Time-to-Saturation (tsat)',
+          value: sim.timeToSaturationMs === Infinity ? '∞ (Pas de saturation)' : `${sim.timeToSaturationMs.toFixed(1)}`,
+          unit: sim.timeToSaturationMs === Infinity ? '' : 'ms',
+          highlight: true,
+          status: (sim.timeToSaturationMs > 30 || sim.timeToSaturationMs === Infinity ? 'OK' : sim.timeToSaturationMs > 15 ? 'WARN' : 'DANGER') as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
+        {
+          label: locale === 'fr' ? 'Facteur transitoire Ktd (Offset DC)' : 'DC Transient Factor (Ktd)',
+          value: sim.transientDimensioningFactorKtd.toFixed(2),
+          status: 'INFO' as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
+        ...(ctStandardClass === 'IEC_5P' || ctStandardClass === 'IEC_10P'
+          ? [
+              {
+                label: locale === 'fr' ? 'ALF effectif en exploitation' : 'Effective Operating ALF',
+                value: sim.effectiveAlf.toFixed(1),
+                highlight: true,
+                status: (sim.isAlfCompliant ? 'OK' : 'DANGER') as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+              },
+              {
+                label: locale === 'fr' ? 'ALF requis (Régime symétrique)' : 'Required Symmetric ALF',
+                value: sim.requiredAlfSymmetric.toFixed(1),
+                status: 'INFO' as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+              },
+            ]
+          : [
+              {
+                label: locale === 'fr' ? 'Tension de coude requise (Vk_req)' : 'Required Knee-Point Voltage',
+                value: sim.requiredKneePointVoltageV.toFixed(1),
+                unit: 'V',
+                highlight: true,
+                status: (sim.isKneePointCompliant ? 'OK' : 'DANGER') as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+              },
+              {
+                label: locale === 'fr' ? 'Tension de coude assignée/estimée' : 'Rated/Estimated Knee-Point',
+                value: sim.actualEstimatedKneePointVoltageV.toFixed(1),
+                unit: 'V',
+                status: 'INFO' as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+              },
+            ]),
+        {
+          label: locale === 'fr' ? 'Charge totale secondaire réelle (Rb)' : 'Total Actual Secondary Burden (Rb)',
+          value: sim.totalActualBurdenOhms.toFixed(3),
+          unit: 'Ω',
+          status: 'INFO' as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
+        {
+          label: locale === 'fr' ? 'Courant C-C secondaire (Ifault_sec)' : 'Secondary Fault Current',
+          value: sim.secondaryFaultCurrentA.toFixed(1),
+          unit: 'A',
+          status: 'INFO' as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
       ],
       complianceVerdict: {
-        status: isCtSafeFromSaturation ? 'COMPLIANT' : 'NON_COMPLIANT',
-        message: isCtSafeFromSaturation
-          ? (locale === 'fr' ? `Le TC ne saturera pas lors du courant de défaut max de ${ctMaxFaultCurrentKa} kA (ALF effectif = ${alfEffective.toFixed(1)}). Protection rapide assurée.` : `CT will not saturate under max fault current of ${ctMaxFaultCurrentKa} kA. Fast relay tripping ensured.`)
-          : (locale === 'fr' ? `RISQUE DE SATURATION : L'ALF effectif (${alfEffective.toFixed(1)}) est insuffisant face au courant de court-circuit avec composante apériodique. Augmenter la section de filerie ou choisir un TC de plus forte puissance VA.` : `RISK OF SATURATION: Effective ALF is insufficient for prospective fault current. Increase cable size or choose higher VA rated CT.`),
+        status: isCompliant ? 'COMPLIANT' : 'NON_COMPLIANT',
+        message: locale === 'fr' ? sim.advisoryInterpretation.fr : sim.advisoryInterpretation.en,
       },
       engineeringNotes: [
-        'La composante apériodique DC (facteur de surdimensionnement transitoire Ktd = ' + ktd.toFixed(2) + ') est prise en compte selon le ratio X/R = ' + ctXrRatio + '.',
-        'Pour les protections différentielles 87T ou 87B, utiliser la classe PX / PR avec contrôle strict de la tension de coude Vk.',
+        `Facteur transitoire Ktd = ${sim.transientDimensioningFactorKtd.toFixed(2)} calculé pour X/R = ${ctXrRatio} (Tp = ${(sim.primaryTimeConstantTpSec * 1000).toFixed(1)} ms) sous durée de défaut tf = ${(ctFaultDurationSec * 1000).toFixed(0)} ms selon CEI 61869-2 Clause 5.3.`,
+        sim.timeToSaturationMs < 20 && sim.timeToSaturationMs !== Infinity
+          ? `ALERTE CRITIQUE : Temps de saturation tsat = ${sim.timeToSaturationMs.toFixed(1)} ms < 20 ms. Risque de non-déclenchement ou de déclenchement intempestif des relais différentiels ou à minimum d'impédance. Augmenter la section filerie ou la tension de coude Vk.`
+          : `Marge temporelle de saturation satisfaisante (tsat = ${sim.timeToSaturationMs === Infinity ? '∞' : sim.timeToSaturationMs.toFixed(1) + ' ms'} > 20 ms). Détection sans distorsion du premier cycle sinusoïdal.`,
+        'Pour les protections différentielles 87B ou 87G à haute impédance, une résistance stabilisatrice R_stab en série garantit la stabilité lors des défauts externes avec saturation complète d\'un TC.',
       ],
-    };
+    });
   }
 
   if (activeCalc === 'solar-sizing') {
