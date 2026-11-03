@@ -7,6 +7,7 @@ import { CanonicalNetworkSolver } from '../src/data/canonicalNetworkSolver';
 import { IndustrialMotorDynamicsEngine, CAMEROON_MOTOR_PRESETS } from '../src/data/industrialMotorDynamicsEngine';
 import { Ieee80EarthingGridEngine, CAMEROON_SUBSTATION_EARTHING_PRESETS } from '../src/data/ieee80EarthingGridEngine';
 import { HarmonicResonanceEngine, CAMEROON_HARMONIC_PRESETS } from '../src/data/harmonicResonanceEngine';
+import { Iec60287CableAmpacityEngine, CAMEROON_CABLE_PRESETS } from '../src/data/iec60287CableAmpacityEngine';
 import { EngineeringCalculationPdfExportService } from '../src/components/calculators/services/EngineeringCalculationPdfExportService';
 import { generateCalculationReport } from '../src/components/calculators/services/calculationReportService';
 import { WORKED_EXAMPLES_REGISTRY } from '../src/data/workedExamplesRegistry';
@@ -333,5 +334,59 @@ describe('⚡ Electrotechnical Physics Engine Tests', () => {
     // Transformer K-factor must exceed 1.8 under VFD 6-pulse harmonic load
     expect(detunedOutput.transformerKFactor).toBeGreaterThan(1.8);
     expect(detunedOutput.frequencyScan.length).toBeGreaterThan(100);
+  });
+
+  it('12. IEC 60287 / IEC 60853 Advanced Cable Ampacity & 2D Trench Soil Heatmap Engine accurately models Kennelly T4, skin effect, cyclic boost M, and soil temperature field', () => {
+    // 1. Nomayos 225 kV Substation Feeder (630 mm² Al XLPE in deep trench)
+    const nomayosPreset = CAMEROON_CABLE_PRESETS.find(p => p.id === 'nomayos-225kv-feeder')!;
+    expect(nomayosPreset).toBeDefined();
+
+    const nomayosOutput = Iec60287CableAmpacityEngine.solve(
+      nomayosPreset.cable,
+      nomayosPreset.trench
+    );
+
+    // Continuous ampacity for 630 mm² Al XLPE at 225 kV buried deep (1.4m) in laterite (1.6 K.m/W)
+    expect(nomayosOutput.continuousAmpacityA).toBeGreaterThan(500);
+    expect(nomayosOutput.continuousAmpacityA).toBeLessThan(950);
+
+    // AC Resistance should exceed DC resistance at 20°C due to 90°C conductor temp and skin effect
+    expect(nomayosOutput.rAcOhmPerKm).toBeGreaterThan(nomayosOutput.rDcAt20COhmPerKm);
+    expect(nomayosOutput.skinEffectFactorYs).toBeGreaterThan(0.01);
+
+    // Dielectric losses on 225 kV cable must be positive and non-negligible (~0.34 W/m for XLPE tan delta = 0.0004)
+    expect(nomayosOutput.dielectricLossWPerM).toBeGreaterThan(0.2);
+
+    // Cyclic load factor mu = 0.75 must grant a cyclic boost factor M > 1.05 (IEC 60853-1)
+    expect(nomayosOutput.cyclicBoostFactorM).toBeGreaterThan(1.05);
+    expect(nomayosOutput.cyclicAmpacityA).toBeGreaterThan(nomayosOutput.continuousAmpacityA);
+
+    // Kennelly external soil thermal resistance T4
+    expect(nomayosOutput.t4_externalSoilSelf).toBeGreaterThan(0.5);
+    expect(nomayosOutput.t4_totalSurrounding).toBeGreaterThan(nomayosOutput.t4_externalSoilSelf);
+
+    // 2. Compare Garoua 15 kV dry sandy Sahelian soil (rho_s = 2.2 K.m/W) vs moist soil (rho_s = 1.0 K.m/W)
+    const garouaPreset = CAMEROON_CABLE_PRESETS.find(p => p.id === 'garoua-15kv-sahel')!;
+    const dryGaroua = Iec60287CableAmpacityEngine.solve(garouaPreset.cable, garouaPreset.trench);
+    const moistGaroua = Iec60287CableAmpacityEngine.solve(garouaPreset.cable, {
+      ...garouaPreset.trench,
+      soilThermalResistivityKmPerW: 1.0,
+    });
+
+    // Higher soil thermal resistivity strictly reduces permissible ampacity
+    expect(dryGaroua.continuousAmpacityA).toBeLessThan(moistGaroua.continuousAmpacityA);
+    expect(dryGaroua.t4_totalSurrounding).toBeGreaterThan(moistGaroua.t4_totalSurrounding);
+
+    // 3. 2D Soil Thermal Mesh Heatmap Verification
+    expect(nomayosOutput.heatmapGrid.length).toBe(25);
+    expect(nomayosOutput.heatmapGrid[0].length).toBe(25);
+
+    // Top surface row (y = 0.0) should remain close to ambient ground temperature due to isothermal boundary
+    const surfacePoints = nomayosOutput.heatmapGrid[0];
+    const surfaceMaxTemp = Math.max(...surfacePoints.map(p => p.tempC));
+    expect(surfaceMaxTemp).toBeLessThan(nomayosPreset.trench.ambientGroundTempC + 4.0);
+
+    // Deep subsoil near cable burial depth should be significantly hotter
+    expect(nomayosOutput.maxSoilTempInTrenchC).toBeGreaterThan(nomayosPreset.trench.ambientGroundTempC + 15.0);
   });
 });

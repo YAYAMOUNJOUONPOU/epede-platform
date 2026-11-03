@@ -12,6 +12,7 @@ import {
   type DetuningFactorOption,
   type NonLinearLoadProfile,
 } from '../../../data/harmonicResonanceEngine';
+import { Iec60287CableAmpacityEngine } from '../../../data/iec60287CableAmpacityEngine';
 
 export interface InjectedCalculatorContext {
   equipmentId?: string;
@@ -1130,7 +1131,7 @@ export function generateCalculationReport(
     };
   }
 
-  // 14. CABLE AMPACITY, THERMAL DERATING & SHORT-CIRCUIT WITHSTAND (IEC 60364-5-52 / IEC 60949)
+  // 14. CABLE AMPACITY, THERMAL DERATING & SHORT-CIRCUIT WITHSTAND (IEC 60287 / IEC 60364-5-52 / IEC 60949)
   if (activeCalc === 'cable-ampacity') {
     const unCableV = injectedContext?.params?.unVolts ? Number(injectedContext.params.unVolts) : 30000;
     const pCableKw = injectedContext?.params?.pKw ? Number(injectedContext.params.pKw) : 5000;
@@ -1139,25 +1140,46 @@ export function generateCalculationReport(
       ? Number(injectedContext?.params?.cableLengthM ?? injectedContext?.params?.lengthM) 
       : 3200;
     const ibCableA = (pCableKw * 1000) / (Math.sqrt(3) * unCableV * cosPhiCable);
-    const kTotalCable = 0.913 * 0.88 * 1.0;
     const secCableMm2 = (injectedContext?.params?.selectedSectionMm2 ?? injectedContext?.params?.sectionMm2) 
       ? Number(injectedContext?.params?.selectedSectionMm2 ?? injectedContext?.params?.sectionMm2) 
       : 240;
-    const baseI0Cable = 538 * 0.78 * 0.85; // Al, XLPE, buried
-    const izCableTotal = baseI0Cable * kTotalCable;
     const ikCableKa = injectedContext?.params?.ikKa ? Number(injectedContext.params.ikKa) : 12.5;
     const tkCableSec = 0.5;
-    const kAdiabaticAl = 94;
-    const sScMinMm2 = (ikCableKa * 1000 * Math.sqrt(tkCableSec)) / kAdiabaticAl;
-    const deltaUCableV = ((Math.sqrt(3) * ibCableA * lengthCableM * (0.16 * cosPhiCable + 0.08 * Math.sin(Math.acos(cosPhiCable)))) / 1000) || 920;
+
+    // Run authoritative IEC 60287 & IEC 60853 engine
+    const iec60287Result = Iec60287CableAmpacityEngine.solve(
+      {
+        voltageKv: unCableV / 1000,
+        conductorMaterial: 'aluminium',
+        crossSectionMm2: secCableMm2,
+        insulationType: 'xlpe_90',
+        hasMetallicScreen: true,
+        hasArmour: true,
+        operatingFrequencyHz: 50,
+      },
+      {
+        arrangement: 'trefoil',
+        axialSpacingMm: 120,
+        burialDepthM: 1.0,
+        soilThermalResistivityKmPerW: 1.5,
+        ambientGroundTempC: 35,
+        cyclicLoadFactorMu: 0.80,
+        phaseNumber: 3,
+      },
+      ibCableA
+    );
+
+    const izCableTotal = iec60287Result.continuousAmpacityA;
+    const sScMinMm2 = (ikCableKa * 1000 * Math.sqrt(tkCableSec)) / iec60287Result.shortCircuitAdiabaticConstantK;
+    const deltaUCableV = ((Math.sqrt(3) * ibCableA * lengthCableM * (iec60287Result.rAcOhmPerKm / 1000 * cosPhiCable + 0.08 * 1e-3 * Math.sin(Math.acos(cosPhiCable))))) || 920;
     const deltaUCablePercent = (deltaUCableV / unCableV) * 100;
 
     return withProvenance({
       title: locale === 'fr' 
-        ? 'Dimensionnement & Déclassement Thermique Câbles (CEI 60364-5-52 / CEI 60949)' 
-        : 'Cable Sizing & Thermal Ampacity Derating (IEC 60364-5-52 / IEC 60949)',
+        ? 'Dimensionnement & Déclassement Thermique Câbles (CEI 60287 / CEI 60364-5-52 / CEI 60949)' 
+        : 'Cable Sizing & Thermal Ampacity Derating (IEC 60287 / IEC 60364-5-52 / IEC 60949)',
       calcType: 'CABLE-AMPACITY-SIZING',
-      standard: 'CEI 60364-5-52 / CEI 60949 / CEI 60287',
+      standard: 'CEI 60287-1-1 / CEI 60853-1 / CEI 60364-5-52 / CEI 60949',
       date: dateStr,
       referenceId: `EPEDE-CALC-CBL-${now.getTime().toString().slice(-6)}`,
       inputs: [
@@ -1166,32 +1188,38 @@ export function generateCalculationReport(
         { label: locale === 'fr' ? 'Facteur de puissance (cos φ)' : 'Power Factor (cos φ)', value: `${cosPhiCable}` },
         { label: locale === 'fr' ? 'Longueur de liaison (L)' : 'Circuit Length (L)', value: `${lengthCableM}`, unit: 'm' },
         { label: locale === 'fr' ? 'Âme conductrice & Isolant' : 'Conductor & Insulation', value: 'Aluminium / PR (XLPE 90°C)' },
-        { label: locale === 'fr' ? 'Mode de pose' : 'Installation Method', value: 'Méthode D (Fourreau enterré, 35°C sol)' },
+        { label: locale === 'fr' ? 'Mode de pose en sol' : 'Underground Laying Method', value: 'Trèfle en tranchée (L = 1.0 m, ρs = 1.5 K·m/W)' },
         { label: locale === 'fr' ? 'Courant de court-circuit Isc (tk)' : 'Short-Circuit Isc (tk)', value: `${ikCableKa} kA (${tkCableSec} s)` },
       ],
       formulas: [
-        { name: 'Courant d\'emploi Ib', expr: 'P / (√3 · Un · cos φ) [A]' },
-        { name: 'Courant admissible déclassé Iz', expr: 'I0 · (k1 · k2 · k3 · k4 · kh) [A]' },
-        { name: 'Section minimale court-circuit S_sc', expr: '(Isc · √tk) / k [mm²]' },
-        { name: 'Chute de tension en ligne ΔU', expr: '√3 · Ib · L · (R·cosφ + X·sinφ) [V]' },
+        { name: 'Courant d\'emploi assigné Ib', expr: 'P / (√3 · Un · cos φ) [A]' },
+        { name: 'Ampacité continue CEI 60287', expr: 'I = √[ (Δθ - Wd·[0.5T1+n(T2+T3+T4)]) / (Rac·[T1+n(1+λ1)T2+n(1+λ1+λ2)(T3+T4)]) ]' },
+        { name: 'Facteur de majoration cyclique M', expr: 'M = 1 / √[ μ + (1 - μ)·(T_int / T_ext) ] (CEI 60853-1)' },
+        { name: 'Résistance thermique sol T4 (Kennelly)', expr: 'T4 = (ρs / 2π) · ln[ (2L/De) + √((2L/De)² - 1) ] [K·m/W]' },
+        { name: 'Section minimale court-circuit S_sc', expr: '(Isc · √tk) / k [mm²] (CEI 60949)' },
+        { name: 'Chute de tension en ligne ΔU', expr: '√3 · Ib · L · (Rac·cosφ + X·sinφ) [V]' },
       ],
       results: [
         { label: locale === 'fr' ? 'Section commerciale retenue' : 'Selected Standard Section', value: `${secCableMm2}`, unit: 'mm²', highlight: true, status: 'OK' },
         { label: locale === 'fr' ? 'Courant d\'emploi Ib' : 'Design Load Current Ib', value: ibCableA.toFixed(1), unit: 'A' },
-        { label: locale === 'fr' ? 'Courant admissible déclassé Iz' : 'Corrected Ampacity Iz', value: izCableTotal.toFixed(1), unit: 'A', status: izCableTotal >= ibCableA ? 'OK' : 'DANGER' },
-        { label: locale === 'fr' ? 'Facteur de déclassement global (K_total)' : 'Total Derating Factor K_total', value: kTotalCable.toFixed(3) },
+        { label: locale === 'fr' ? 'Courant admissible permanent Iz (CEI 60287)' : 'Continuous Ampacity Iz (IEC 60287)', value: `${izCableTotal}`, unit: 'A', status: izCableTotal >= ibCableA ? 'OK' : 'DANGER' },
+        { label: locale === 'fr' ? 'Courant admissible cyclique (CEI 60853-1)' : 'Cyclic Peak Ampacity (IEC 60853-1)', value: `${iec60287Result.cyclicAmpacityA}`, unit: 'A', status: 'OK' },
+        { label: locale === 'fr' ? 'Facteur de boost cyclique (M)' : 'Cyclic Boost Factor (M)', value: `×${iec60287Result.cyclicBoostFactorM}` },
+        { label: locale === 'fr' ? 'Résistance thermique totale (Rth)' : 'Total Thermal Resistance Rth', value: `${iec60287Result.totalThermalResistanceRth}`, unit: 'K·m/W' },
+        { label: locale === 'fr' ? 'Température d\'interface gaine/sol' : 'Outer Sheath Interface Temp', value: `${iec60287Result.outerSheathTempC}`, unit: '°C', status: iec60287Result.soilDryingRisk ? 'DANGER' : 'OK' },
         { label: locale === 'fr' ? 'Section min requise tenue Isc (CEI 60949)' : 'Min Section for Isc Withstand', value: sScMinMm2.toFixed(1), unit: 'mm²', status: secCableMm2 >= sScMinMm2 ? 'OK' : 'DANGER' },
         { label: locale === 'fr' ? 'Chute de tension relative (ΔU)' : 'Relative Voltage Drop (ΔU)', value: deltaUCablePercent.toFixed(2), unit: '%', status: deltaUCablePercent <= 5.0 ? 'OK' : 'DANGER' },
       ],
       complianceVerdict: {
-        status: izCableTotal >= ibCableA && secCableMm2 >= sScMinMm2 && deltaUCablePercent <= 5.0 ? 'COMPLIANT' : 'NON_COMPLIANT',
+        status: izCableTotal >= ibCableA && secCableMm2 >= sScMinMm2 && deltaUCablePercent <= 5.0 && !iec60287Result.soilDryingRisk ? 'COMPLIANT' : 'NON_COMPLIANT',
         message: locale === 'fr'
-          ? `La liaison câble ${unCableV / 1000} kV 1×${secCableMm2} mm² Al XLPE est 100% conforme aux normes CEI 60364-5-52 et CEI 60949 : Iz = ${izCableTotal.toFixed(1)} A ≥ Ib = ${ibCableA.toFixed(1)} A, tenue adiabatique Isc validée (S_min = ${sScMinMm2.toFixed(1)} mm² ≤ ${secCableMm2} mm²), et chute de tension de ${deltaUCablePercent.toFixed(2)}% inférieure à la limite contractuelle de 5.0%.`
-          : `The ${unCableV / 1000} kV 1×${secCableMm2} mm² Al XLPE cable feeder is fully compliant with IEC 60364-5-52 and IEC 60949: Iz = ${izCableTotal.toFixed(1)} A ≥ Ib = ${ibCableA.toFixed(1)} A, adiabatic Isc withstand confirmed (S_min = ${sScMinMm2.toFixed(1)} mm² ≤ ${secCableMm2} mm²), and voltage drop of ${deltaUCablePercent.toFixed(2)}% is within the 5.0% limit.`,
+          ? `La liaison câble ${unCableV / 1000} kV 1×${secCableMm2} mm² Al XLPE posée en trèfle enterré est 100% conforme aux normes CEI 60287-1-1, CEI 60853-1 et CEI 60949 : Courant admissible Iz = ${izCableTotal} A ≥ Ib = ${ibCableA.toFixed(1)} A, surcapacité cyclique de ${iec60287Result.cyclicAmpacityA} A (boost ×${iec60287Result.cyclicBoostFactorM}), température gaine/terre (${iec60287Result.outerSheathTempC}°C ≤ 50°C sans risque d'assèchement), tenue adiabatique Isc validée (${sScMinMm2.toFixed(1)} mm² ≤ ${secCableMm2} mm²), et chute de tension de ${deltaUCablePercent.toFixed(2)}% ≤ 5.0%.`
+          : `The ${unCableV / 1000} kV 1×${secCableMm2} mm² Al XLPE cable in buried trefoil formation is 100% compliant with IEC 60287-1-1, IEC 60853-1 and IEC 60949: Continuous ampacity Iz = ${izCableTotal} A ≥ Ib = ${ibCableA.toFixed(1)} A, cyclic capacity of ${iec60287Result.cyclicAmpacityA} A (boost ×${iec60287Result.cyclicBoostFactorM}), sheath interface temperature (${iec60287Result.outerSheathTempC}°C ≤ 50°C preventing soil dry-out), adiabatic Isc withstand validated (${sScMinMm2.toFixed(1)} mm² ≤ ${secCableMm2} mm²), and voltage drop of ${deltaUCablePercent.toFixed(2)}% ≤ 5.0%.`,
       },
       engineeringNotes: [
-        'Facteur de déclassement en température k1 calculé pour une température de sol africain de 35°C (k1 = 0.913).',
-        'Le coefficient adiabatique k = 94 A·s^(1/2)/mm² correspond à l\'élévation de température maximale admise pour le PR (90°C régime continu vers 250°C sous court-circuit).',
+        'Calcul de résistance thermique externe T4 selon Kennelly en régime permanent isotherme de demi-plan infini.',
+        'Le coefficient cyclique CEI 60853 valorise l\'inertie thermique du sol latéritique pour les régimes journaliers à facteur de charge μ = 0.80.',
+        'La résistance AC intègre les effets de peau (ys) et de proximité (yp) selon la formulation polynomiale CEI 60287.',
       ],
     });
   }

@@ -21,6 +21,7 @@ import {
   Flame,
   Scale
 } from 'lucide-react';
+import { CableTrenchThermalHeatmap } from './CableTrenchThermalHeatmap';
 
 export interface InjectedCableParams {
   unVolts?: number;
@@ -100,6 +101,7 @@ export const CableAmpacityCalculator: React.FC<CableAmpacityCalculatorProps> = (
   // 1. INPUT STATE
   // ---------------------------------------------------------------------------
   const [activePreset, setActivePreset] = useState<CablePreset>('depart_hta_30kv_al');
+  const [viewMode, setViewMode] = useState<'matrix' | 'trench_heatmap'>('matrix');
 
   // Electrical Load Parameters
   const [unVolts, setUnVolts] = useState<number>(30000); // 30 kV nominal
@@ -534,7 +536,51 @@ export const CableAmpacityCalculator: React.FC<CableAmpacityCalculatorProps> = (
         </div>
       </div>
 
-      {/* Live Injected Equipment Context Synchronization Banner */}
+      {/* Mode Navigation Tabs: Multi-Criteria Matrix vs 2D Trench Thermal Heatmap */}
+      <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
+        <button
+          type="button"
+          onClick={() => setViewMode('matrix')}
+          className={`px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all flex items-center gap-2 ${
+            viewMode === 'matrix'
+              ? 'bg-cyan-600 text-white shadow-lg'
+              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+          }`}
+        >
+          <Layers className="w-4 h-4" />
+          {locale === 'fr' ? 'Tableau Multi-Critères (CEI 60364-5-52)' : 'Multi-Criteria Matrix (IEC 60364-5-52)'}
+        </button>
+        <button
+          type="button"
+          onClick={() => setViewMode('trench_heatmap')}
+          className={`px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all flex items-center gap-2 ${
+            viewMode === 'trench_heatmap'
+              ? 'bg-cyan-600 text-white shadow-lg'
+              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+          }`}
+        >
+          <Thermometer className="w-4 h-4 text-cyan-400" />
+          {locale === 'fr' ? 'Champ Thermique 2D en Tranchée (CEI 60287 / Kennelly)' : '2D Trench Thermal Heatmap (IEC 60287 / Kennelly)'}
+        </button>
+      </div>
+
+      {viewMode === 'trench_heatmap' ? (
+        <CableTrenchThermalHeatmap
+          locale={locale}
+          initialPresetId={
+            activePreset === 'depart_hta_30kv_al'
+              ? 'bassa-30kv-industrial'
+              : activePreset === 'station_pompage_enterre'
+              ? 'garoua-15kv-sahel'
+              : 'nomayos-225kv-feeder'
+          }
+          onSelectAmpacity={(amp) => {
+            // Optional callback
+          }}
+        />
+      ) : (
+        <>
+          {/* Live Injected Equipment Context Synchronization Banner */}
       {injectedContextInfo && (
         <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-cyan-950/70 border border-cyan-500/50 text-cyan-200 font-mono text-xs shadow-md">
           <div className="flex items-center gap-2.5">
@@ -1079,6 +1125,8 @@ export const CableAmpacityCalculator: React.FC<CableAmpacityCalculatorProps> = (
         </div>
 
       </div>
+      </>
+      )}
     </div>
   );
 };
