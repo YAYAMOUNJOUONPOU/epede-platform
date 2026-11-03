@@ -9,6 +9,7 @@ import { Ieee80EarthingGridEngine, CAMEROON_SUBSTATION_EARTHING_PRESETS } from '
 import { HarmonicResonanceEngine, CAMEROON_HARMONIC_PRESETS } from '../src/data/harmonicResonanceEngine';
 import { Iec60287CableAmpacityEngine, CAMEROON_CABLE_PRESETS } from '../src/data/iec60287CableAmpacityEngine';
 import { Iec61936AisClearanceEngine, CAMEROON_AIS_PRESETS } from '../src/data/iec61936AisClearanceEngine';
+import { Iec60255RelayEngine, CAMEROON_RELAY_PRESETS } from '../src/data/iec60255RelayEngine';
 import { EngineeringCalculationPdfExportService } from '../src/components/calculators/services/EngineeringCalculationPdfExportService';
 import { generateCalculationReport } from '../src/components/calculators/services/calculationReportService';
 import { WORKED_EXAMPLES_REGISTRY } from '../src/data/workedExamplesRegistry';
@@ -435,5 +436,70 @@ describe('⚡ Electrotechnical Physics Engine Tests', () => {
 
     // Corrected pedestrian safety height: 2250 + N_corr
     expect(bafoussamOutput.clearancesCorrected.pedestrianSafetyB1Mm).toBe(2250 + bafoussamOutput.clearancesCorrected.phaseToEarthNMm);
+  });
+
+  it('14. IEC 60255-151 / IEEE C37.112 Relay Protection Coordination Engine accurately evaluates inverse curves, grading margins, and transformer inrush immunity', () => {
+    // 1. Exact mathematical validation of standard inverse curves at I/Is = 2.0 with TMS = 1.0
+    // Standard Inverse (SI): 0.14 / (2^0.02 - 1) = 10.029 s
+    const t_si = Iec60255RelayEngine.calculateOperatingTime('IEC_SI', 100, 1.0, 99999, 0.035, 200);
+    expect(t_si).toBeCloseTo(10.03, 0.1);
+
+    // Very Inverse (VI): 13.5 / (2^1 - 1) = 13.500 s
+    const t_vi = Iec60255RelayEngine.calculateOperatingTime('IEC_VI', 100, 1.0, 99999, 0.035, 200);
+    expect(t_vi).toBeCloseTo(13.50, 0.1);
+
+    // Extremely Inverse (EI): 80.0 / (2^2 - 1) = 80 / 3 = 26.667 s
+    const t_ei = Iec60255RelayEngine.calculateOperatingTime('IEC_EI', 100, 1.0, 99999, 0.035, 200);
+    expect(t_ei).toBeCloseTo(26.67, 0.1);
+
+    // IEEE Moderately Inverse (MI): TD=1.0, 0.0515 / (2^0.02 - 1) + 0.114 = 3.689 + 0.114 = 3.803 s
+    const t_ieee_mi = Iec60255RelayEngine.calculateOperatingTime('IEEE_MI', 100, 1.0, 99999, 0.035, 200);
+    expect(t_ieee_mi).toBeCloseTo(3.80, 0.1);
+
+    // Instantaneous ANSI 50 trip override
+    const t_inst = Iec60255RelayEngine.calculateOperatingTime('IEC_SI', 100, 1.0, 500, 0.035, 600);
+    expect(t_inst).toBe(0.035);
+
+    // 2. SONATREL Békoko Substation 225/30 kV Industrial Preset Verification
+    const bekokoPreset = CAMEROON_RELAY_PRESETS.find(p => p.id === 'sonatrel-bekoko-225-30kv')!;
+    expect(bekokoPreset).toBeDefined();
+
+    // At If = 1800 A: Below R2 (2600A) and R3 (6500A) instantaneous cutoff, but above R1 instantaneous (950A)
+    const bekokoSolution = Iec60255RelayEngine.solve(
+      bekokoPreset.stages,
+      1800,
+      250,
+      bekokoPreset.transformer,
+      bekokoPreset.cable,
+      bekokoPreset.referenceVoltageV
+    );
+
+    // R1 downstream is instantaneous at 1800 A
+    const r1 = bekokoSolution.stages.find(s => s.definition.id === 'stage_r1_client')!;
+    const r2 = bekokoSolution.stages.find(s => s.definition.id === 'stage_r2_feeder')!;
+    const r3 = bekokoSolution.stages.find(s => s.definition.id === 'stage_r3_incomer')!;
+
+    expect(r1.operatingTimeAtFaultSec).toBe(0.030); // 30 ms instantaneous
+    expect(r2.operatingTimeAtFaultSec).toBeGreaterThan(0.200); // Inverse time delay
+    expect(r3.operatingTimeAtFaultSec).toBeGreaterThan(r2.operatingTimeAtFaultSec); // Strict grading sequence
+
+    // Verify grading margins
+    expect(bekokoSolution.isGlobalSelectivityAchieved).toBe(true);
+    const margin12 = (r2.operatingTimeAtFaultSec - r1.operatingTimeAtFaultSec) * 1000;
+    const margin23 = (r3.operatingTimeAtFaultSec - r2.operatingTimeAtFaultSec) * 1000;
+    expect(margin12).toBeGreaterThanOrEqual(250);
+    expect(margin23).toBeGreaterThanOrEqual(250);
+
+    // 3. Equipment Withstand Curves Generation
+    expect(bekokoSolution.transformerDamageCurve.length).toBeGreaterThan(5);
+    expect(bekokoSolution.cableDamageCurve.length).toBeGreaterThan(5);
+    expect(bekokoSolution.inrushPoints.length).toBe(2);
+
+    // 4. Dynamic Calculation Report Generation Integration
+    const report = generateCalculationReport('relay-tcc', 'fr');
+    expect(report.calcType).toBe('RELAY-COORDINATION-TCC');
+    expect(report.standard).toContain('CEI 60255-151');
+    expect(report.results.length).toBeGreaterThan(3);
+    expect(report.complianceVerdict.status).toBe('COMPLIANT');
   });
 });
