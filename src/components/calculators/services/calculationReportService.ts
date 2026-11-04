@@ -27,6 +27,11 @@ import {
   CAMEROON_BUSBAR_PRESETS,
   type BusbarSpecificationInput,
 } from '../../../data/iec60865BusbarEngine';
+import {
+  Iec60099SurgeArresterEngine,
+  CAMEROON_ARRESTER_PRESETS,
+  type SurgeArresterInput,
+} from '../../../data/iec60099SurgeArresterEngine';
 
 export interface InjectedCalculatorContext {
   equipmentId?: string;
@@ -891,79 +896,136 @@ export function generateCalculationReport(
   }
 
   if (activeCalc === 'surge-arrester') {
-    const unKv = (injectedContext?.params?.unKv ? Number(injectedContext.params.unKv) : 225) as 15 | 30 | 90 | 225;
-    const umKv = unKv === 225 ? 245 : unKv === 90 ? 100 : unKv === 30 ? 36 : 17.5;
-    const ke = 1.4;
-    const uPhaseMaxRms = umKv / Math.sqrt(3);
-    const ucSelected = Math.ceil(uPhaseMaxRms * 1.05 * 10) / 10;
-    const urSelected = unKv === 225 ? 186 : unKv === 90 ? 96 : 30;
-    const bilKv = unKv === 225 ? 1050 : unKv === 90 ? 450 : unKv === 30 ? 170 : 95;
-    const altitudeM = injectedContext?.params?.altitudeM ? Number(injectedContext.params.altitudeM) : 750;
-    const distanceM = injectedContext?.params?.distanceM ? Number(injectedContext.params.distanceM) : 8.0;
+    const preset = CAMEROON_ARRESTER_PRESETS.find(p => p.id === injectedContext?.params?.presetId) || CAMEROON_ARRESTER_PRESETS[0];
+    const unKv = injectedContext?.params?.unKv ? Number(injectedContext.params.unKv) : preset.input.nominalVoltageKv;
+    const umKv = injectedContext?.params?.umKv ? Number(injectedContext.params.umKv) : preset.input.highestSystemVoltageUmKv;
+    const groundingMode = (injectedContext?.params?.groundingMode || preset.input.groundingMode) as any;
+    const earthFaultDurationSec = injectedContext?.params?.earthFaultDurationSec ? Number(injectedContext.params.earthFaultDurationSec) : preset.input.earthFaultDurationSec;
+    const bilKv = injectedContext?.params?.bilKv ? Number(injectedContext.params.bilKv) : preset.input.transformerBilKvPeak;
+    const nominalDischargeKa = (injectedContext?.params?.nominalDischargeKa ? Number(injectedContext.params.nominalDischargeKa) : preset.input.nominalDischargeCurrentKa) as 10 | 20;
+    const surgeSteepness = injectedContext?.params?.surgeSteepness ? Number(injectedContext.params.surgeSteepness) : preset.input.lightningWavefrontSteepnessKvPerUs;
+    const distanceM = injectedContext?.params?.distanceM ? Number(injectedContext.params.distanceM) : preset.input.separationDistanceMeters;
+    const pollutionClass = (injectedContext?.params?.pollutionClass || preset.input.pollutionClass) as any;
+    const housingMaterial = (injectedContext?.params?.housingMaterial || preset.input.housingMaterial) as any;
 
-    // Run authoritative AIS clearance and insulation coordination engine
-    const aisResult = Iec61936AisClearanceEngine.solve({
+    const inputSpec: SurgeArresterInput = {
       nominalVoltageKv: unKv,
-      highestVoltageUmKv: umKv,
-      bilKvPeak: bilKv,
-      altitudeMeters: altitudeM,
-      pollutionClass: 'class_c_medium',
-      surgeArresterDistanceMeters: distanceM,
-      surgeArresterResidualVoltageKv: unKv === 225 ? 560 : 245,
-      lightningSteepnessKvPerUs: 1200
-    });
+      highestSystemVoltageUmKv: umKv,
+      groundingMode,
+      earthFaultDurationSec,
+      transformerBilKvPeak: bilKv,
+      nominalDischargeCurrentKa: nominalDischargeKa,
+      lightningWavefrontSteepnessKvPerUs: surgeSteepness,
+      separationDistanceMeters: distanceM,
+      pollutionClass,
+      housingMaterial
+    };
 
-    const mplPercent = aisResult.surgeArresterProtectiveMarginPercent;
-    const uTransfoEstimated = aisResult.waveReflectionVoltageAtTrafoKvPeak;
-    const lMaxPermissibleM = aisResult.maxAllowableArresterDistanceMeters;
+    const sim = Iec60099SurgeArresterEngine.solve(inputSpec);
+    const isCompliant = sim.overallVerdict === 'COMPLIANT';
 
     return withProvenance({
       title: locale === 'fr' 
-        ? 'Coordination des Isolements & Gabarits en Poste HTB (CEI 61936-1 / CEI 60071 / CEI 60099)' 
-        : 'Substation Insulation Coordination & Electrical Clearances (IEC 61936-1 / IEC 60071 / IEC 60099)',
+        ? `Dimensionnement Parafoudre & Coordination des Isolements — ${unKv} kV` 
+        : `Surge Arrester Sizing & Insulation Coordination — ${unKv} kV`,
       calcType: 'SURGE-ARRESTER-IEC60099',
-      standard: 'CEI 61936-1 / CEI 60071-1 / CEI 60071-2 / CEI 60099-4',
+      standard: 'CEI 60099-4 / CEI 60071-1 / CEI 60071-2 / IEEE C62.11',
       date: dateStr,
       referenceId: `EPEDE-CALC-ARRESTER-${now.getTime().toString().slice(-6)}`,
       inputs: [
         { label: locale === 'fr' ? 'Tension nominale réseau (Un)' : 'Nominal System Voltage (Un)', value: `${unKv}`, unit: 'kV' },
         { label: locale === 'fr' ? 'Tension maximale du matériel (Um)' : 'Highest System Voltage (Um)', value: `${umKv}`, unit: 'kV' },
-        { label: locale === 'fr' ? 'Niveau d\'isolement au choc (BIL)' : 'Transformer BIL', value: `${bilKv}`, unit: 'kV crête' },
-        { label: locale === 'fr' ? 'Altitude du poste au-dessus mer (H)' : 'Substation Site Elevation', value: `${altitudeM}`, unit: 'm' },
+        { label: locale === 'fr' ? 'Régime de neutre (ke)' : 'Neutral Grounding Mode', value: `${groundingMode} (ke = ${sim.earthFaultFactorKe})` },
+        { label: locale === 'fr' ? 'Niveau d\'isolement choc foudre (BIL)' : 'Transformer BIL', value: `${bilKv}`, unit: 'kV crête' },
+        { label: locale === 'fr' ? 'Courant nominal de décharge (In)' : 'Nominal Discharge Current (In)', value: `${nominalDischargeKa}`, unit: 'kA (8/20 µs)' },
+        { label: locale === 'fr' ? 'Raideur d\'onde incidente (S)' : 'Wavefront Steepness (S)', value: `${surgeSteepness}`, unit: 'kV/µs' },
         { label: locale === 'fr' ? 'Distance parafoudre-transformateur' : 'Arrester-to-Transformer Distance', value: `${distanceM}`, unit: 'm' },
-        { label: locale === 'fr' ? 'Facteur de surélévation d\'altitude ka' : 'Altitude Correction Factor ka', value: `${aisResult.altitudeCorrectionFactorKa}` },
+        { label: locale === 'fr' ? 'Classe de pollution environnementale' : 'Pollution Severity Class', value: `${pollutionClass} (${sim.specificCreepageMmPerKv} mm/kV)` },
       ],
       formulas: [
-        { name: 'Facteur d\'altitude ka (CEI 60071-1)', expr: 'ka = e^[ m · (H - 1000) / 8150 ]' },
-        { name: 'Distance phase-masse corrigée N', expr: 'N_corr = N_base · ka [mm] (CEI 61936-1)' },
-        { name: 'Gabarit de sécurité piéton B1', expr: 'B1 = 2250 mm + N_corr [mm]' },
-        { name: 'Surtension crête réfléchie Ut', expr: 'U_res + 2 · (S / v) · d [kV crête] (CEI 60071-2)' },
-        { name: 'Marge de protection foudre PM', expr: '((BIL / Ut) - 1) · 100% [≥ 20%]' },
+        { name: 'Tension de service continu Uc (MCOV)', expr: 'Uc ≥ (Um / √3) · 1.05 [kV rms]' },
+        { name: 'Tension assignée Ur (Contrainte TOV)', expr: 'Ur ≥ max[ (ke · Um / √3) / ktov(tf), Uc / 0.80 ] [kV rms]' },
+        { name: 'Niveau de protection foudre Upl', expr: 'Upl ≈ (2.55 à 2.65) · Uc [kV crête]' },
+        { name: 'Marge de protection foudre MPL', expr: '((BIL - Upl) / Upl) · 100% [≥ 20%]' },
+        { name: 'Surtension d\'onde réfléchie au transfo Ut', expr: 'Ut = Upl + 2 · (S / v) · d [kV crête]' },
+        { name: 'Distance maximale de séparation Lmax', expr: 'Lmax = [ (BIL / 1.15 - Upl) · v ] / (2 · S) [m]' },
       ],
       results: [
-        { label: locale === 'fr' ? 'Distance phase-masse corrigée (N)' : 'Phase-to-Earth Clearance (N)', value: `${aisResult.clearancesCorrected.phaseToEarthNMm}`, unit: 'mm', highlight: true, status: 'OK' },
-        { label: locale === 'fr' ? 'Distance phase-phase corrigée (P)' : 'Phase-to-Phase Clearance (P)', value: `${aisResult.clearancesCorrected.phaseToPhasePMm}`, unit: 'mm', status: 'OK' },
-        { label: locale === 'fr' ? 'Gabarit sécurité piéton (B1)' : 'Pedestrian Safety Clearance (B1)', value: (aisResult.clearancesCorrected.pedestrianSafetyB1Mm / 1000).toFixed(2), unit: 'm', status: 'OK' },
-        { label: locale === 'fr' ? 'Gabarit circulation véhicule (B2)' : 'Vehicle Safety Clearance (B2)', value: (aisResult.clearancesCorrected.vehicularSafetyB2Mm / 1000).toFixed(2), unit: 'm', status: 'OK' },
-        { label: locale === 'fr' ? 'Ligne de fuite minimale isolateurs' : 'Min Creepage Distance (CEI 60815)', value: `${aisResult.minInsulatorCreepageDistanceMm}`, unit: 'mm' },
-        { label: locale === 'fr' ? 'Marge de protection foudre (PM)' : 'Lightning Protective Margin (PM)', value: `${mplPercent.toFixed(1)}`, unit: '%', highlight: true, status: mplPercent >= 20 ? 'OK' : 'DANGER' },
-        { label: locale === 'fr' ? 'Distance maximale admissible' : 'Max Permissible Separation', value: `${lMaxPermissibleM.toFixed(1)}`, unit: 'm', status: distanceM <= lMaxPermissibleM ? 'OK' : 'DANGER' },
-        { label: locale === 'fr' ? 'Surtension réfléchie au transfo' : 'Peak Voltage at Transformer Bushing', value: `${uTransfoEstimated.toFixed(0)}`, unit: 'kV crête' },
+        {
+          label: locale === 'fr' ? 'Verdict Global Coordination d\'Isolement' : 'Insulation Coordination Verdict',
+          value: isCompliant
+            ? (locale === 'fr' ? 'CONFORME (Protection Assurée)' : 'COMPLIANT (Protected)')
+            : (locale === 'fr' ? 'NON CONFORME (Risque Claquage)' : 'NON-COMPLIANT (Breakdown Risk)'),
+          highlight: true,
+          status: (isCompliant ? 'OK' : 'DANGER') as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
+        {
+          label: locale === 'fr' ? 'Tension nominale assignée (Ur)' : 'Selected Rated Voltage (Ur)',
+          value: `${sim.selectedRatedVoltageUrKv}`,
+          unit: 'kV rms',
+          highlight: true,
+          status: 'INFO' as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
+        {
+          label: locale === 'fr' ? 'Tension permanente de service (Uc)' : 'Continuous Operating Voltage (Uc)',
+          value: `${sim.selectedContinuousOperatingVoltageUcKv}`,
+          unit: 'kV rms',
+          status: 'INFO' as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
+        {
+          label: locale === 'fr' ? 'Niveau de protection foudre (Upl)' : 'Lightning Protection Level (Upl)',
+          value: `${sim.lightningImpulseProtectionLevelUplKv}`,
+          unit: 'kV crête',
+          status: 'INFO' as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
+        {
+          label: locale === 'fr' ? 'Marge de protection foudre (MPL)' : 'Lightning Protective Margin (MPL)',
+          value: `${sim.lightningProtectiveMarginPercent.toFixed(1)}`,
+          unit: '% (Requis ≥ 20%)',
+          highlight: true,
+          status: (sim.isLightningMarginCompliant ? 'OK' : 'DANGER') as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
+        {
+          label: locale === 'fr' ? 'Marge de manœuvre (MPS)' : 'Switching Protective Margin (MPS)',
+          value: `${sim.switchingProtectiveMarginPercent.toFixed(1)}`,
+          unit: '% (Requis ≥ 15%)',
+          status: (sim.isSwitchingMarginCompliant ? 'OK' : 'DANGER') as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
+        {
+          label: locale === 'fr' ? 'Distance maximale admissible (Lmax)' : 'Max Separation Distance (Lmax)',
+          value: `${sim.maxAllowableSeparationDistanceMeters.toFixed(1)}`,
+          unit: 'm',
+          highlight: true,
+          status: (sim.isSeparationDistanceCompliant ? 'OK' : 'DANGER') as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
+        {
+          label: locale === 'fr' ? 'Surtension crête réfléchie au transfo' : 'Peak Reflected Voltage at Transformer',
+          value: `${sim.waveReflectionVoltageAtTrafoKvPeak.toFixed(1)}`,
+          unit: 'kV crête',
+          status: (sim.isSeparationDistanceCompliant ? 'OK' : 'DANGER') as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
+        {
+          label: locale === 'fr' ? 'Classe de décharge & Énergie' : 'Discharge Class & Energy Capability',
+          value: `Classe ${sim.dischargeClass} (${sim.specificThermalEnergyKjPerKv} kJ/kV → ${sim.totalThermalEnergyCapacityKj} kJ)`,
+          status: 'INFO' as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
+        {
+          label: locale === 'fr' ? 'Ligne de fuite minimale (CEI 60815)' : 'Min Creepage Distance (IEC 60815)',
+          value: `${sim.minRequiredCreepageDistanceMm}`,
+          unit: 'mm',
+          status: 'INFO' as 'OK' | 'WARN' | 'DANGER' | 'INFO'
+        },
       ],
       complianceVerdict: {
-        status: mplPercent >= 20 && distanceM <= lMaxPermissibleM ? 'COMPLIANT' : 'NON_COMPLIANT',
-        message: mplPercent >= 20 && distanceM <= lMaxPermissibleM
-          ? (locale === 'fr'
-              ? `Coordination des isolements et gabarits électriques 100% conforme aux normes CEI 61936-1 et CEI 60071 : Marge de protection parafoudre de ${mplPercent.toFixed(1)}% ≥ 20%, distance phase-masse de ${aisResult.clearancesCorrected.phaseToEarthNMm} mm (intégrant ka = ${aisResult.altitudeCorrectionFactorKa} pour ${altitudeM} m d'altitude), et gabarit piéton de ${(aisResult.clearancesCorrected.pedestrianSafetyB1Mm / 1000).toFixed(2)} m respecté.`
-              : `Substation clearances and insulation coordination fully compliant with IEC 61936-1 and IEC 60071: Lightning margin of ${mplPercent.toFixed(1)}% ≥ 20%, phase-to-earth clearance of ${aisResult.clearancesCorrected.phaseToEarthNMm} mm (including ka = ${aisResult.altitudeCorrectionFactorKa} at ${altitudeM} m), and pedestrian safety clearance of ${(aisResult.clearancesCorrected.pedestrianSafetyB1Mm / 1000).toFixed(2)} m safely met.`)
-          : (locale === 'fr'
-              ? 'ATTENTION : Risque de dépassement de la tenue diélectrique du transformateur par réflexion d\'onde ! Rapprocher impérativement le parafoudre des traversées.'
-              : 'WARNING: Potential transformer dielectric breakdown due to wave reflection! Arrester must be mounted closer to bushings.'),
+        status: isCompliant ? 'COMPLIANT' : 'NON_COMPLIANT',
+        message: locale === 'fr' ? sim.advisoryInterpretation.fr : sim.advisoryInterpretation.en,
       },
       engineeringNotes: [
-        'Technologie requise : Parafoudre à Oxyde Métallique (ZnO) sans éclateur sous enveloppe en caoutchouc silicone HTV hydrophobe.',
-        'Ligne de fuite minimale calculée selon CEI 60815 en fonction de la classe de pollution du site.',
-        'Les gabarits piétons B1 et véhicules B2 doivent être balisés par caniveaux de câbles au sol et bordures d\'allées de circulation goudronnées.',
+        `Parafoudre à Oxyde Métallique (ZnO) sans éclateur dimensionné selon CEI 60099-4 pour réseau de ${unKv} kV (Um = ${umKv} kV, ke = ${sim.earthFaultFactorKe}).`,
+        `Capacité thermique de ${sim.totalThermalEnergyCapacityKj} kJ (${sim.specificThermalEnergyKjPerKv} kJ/kV d'Ur) de Classe ${sim.dischargeClass} assurant l'absorption des manœuvres de ligne et décharges de foudre directes.`,
+        sim.isSeparationDistanceCompliant
+          ? `Implantation satisfaisante : distance de séparation de ${distanceM} m inférieure à la limite critique Lmax de ${sim.maxAllowableSeparationDistanceMeters} m. Surtension réfléchie de ${sim.waveReflectionVoltageAtTrafoKvPeak} kV crête ne sollicite pas l'isolement du transformateur.`
+          : `ATTENTION : Distance de ${distanceM} m supérieure à Lmax (${sim.maxAllowableSeparationDistanceMeters} m). Rapprocher impérativement le parafoudre des traversées du transformateur pour éviter le claquage diélectrique par réflexion d'onde.`,
       ],
     });
   }

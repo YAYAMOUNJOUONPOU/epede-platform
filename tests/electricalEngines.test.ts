@@ -13,6 +13,7 @@ import { Iec60255RelayEngine, CAMEROON_RELAY_PRESETS } from '../src/data/iec6025
 import { VectorVoltageDropEngine, CAMEROON_VOLTAGE_DROP_PRESETS } from '../src/data/vectorVoltageDropEngine';
 import { Iec61869CtSizingEngine, CAMEROON_CT_PRESETS } from '../src/data/iec61869CtSizingEngine';
 import { Iec60865BusbarEngine, CAMEROON_BUSBAR_PRESETS } from '../src/data/iec60865BusbarEngine';
+import { Iec60099SurgeArresterEngine, CAMEROON_ARRESTER_PRESETS } from '../src/data/iec60099SurgeArresterEngine';
 import { EngineeringCalculationPdfExportService } from '../src/components/calculators/services/EngineeringCalculationPdfExportService';
 import { generateCalculationReport } from '../src/components/calculators/services/calculationReportService';
 import { WORKED_EXAMPLES_REGISTRY } from '../src/data/workedExamplesRegistry';
@@ -700,6 +701,60 @@ describe('⚡ Electrotechnical Physics Engine Tests', () => {
     const report = generateCalculationReport('busbar-electrodynamic', 'fr');
     expect(report.calcType).toBe('BUSBAR-ELECTRODYNAMIC-IEC60865');
     expect(report.standard).toContain('60865-1');
+    expect(report.results.length).toBeGreaterThan(5);
+    expect(report.complianceVerdict.status).toBe('COMPLIANT');
+  });
+
+  it('18. IEC 60099-4 / IEC 60071-1 / IEC 60071-2 Metal-Oxide Surge Arrester & Insulation Coordination Engine', () => {
+    // 1. Nachtigal 225 kV Substation GSU Transformer Bay (245 kV Um, Solid Grounding, BIL 1050 kV)
+    const nachtigalPreset = CAMEROON_ARRESTER_PRESETS.find(p => p.id === 'nachtigal-225kv-stepup')!;
+    expect(nachtigalPreset).toBeDefined();
+
+    const simNachtigal = Iec60099SurgeArresterEngine.solve(nachtigalPreset.input);
+
+    // MCOV continuous operating voltage: Uc >= 245 / sqrt(3) * 1.05 = 148.52 -> 148.6 kV
+    expect(simNachtigal.phaseToGroundMaxRmsKv).toBeCloseTo(141.45, 0.1);
+    expect(simNachtigal.selectedContinuousOperatingVoltageUcKv).toBe(148.6);
+
+    // Earth fault factor ke = 1.40 for effectively grounded network
+    expect(simNachtigal.earthFaultFactorKe).toBe(1.4);
+    expect(simNachtigal.systemTovVoltageKv).toBeCloseTo(198.03, 0.2);
+
+    // Rated voltage Ur selection: Ur >= max(198.03 / 1.15 = 172.2 kV, 148.6 / 0.8 = 185.75 kV) -> 186 kV
+    expect(simNachtigal.selectedRatedVoltageUrKv).toBe(186);
+
+    // Protective levels: Upl (8/20 µs at 10 kA) ≈ 148.6 * 2.55 = 378.9 kV peak
+    expect(simNachtigal.lightningImpulseProtectionLevelUplKv).toBeCloseTo(378.9, 0.5);
+
+    // Insulation margins: MPL = (1050 - 378.9) / 378.9 * 100% = 177.1% >> 20%
+    expect(simNachtigal.lightningProtectiveMarginPercent).toBeGreaterThan(100.0);
+    expect(simNachtigal.isLightningMarginCompliant).toBe(true);
+    expect(simNachtigal.isSwitchingMarginCompliant).toBe(true);
+
+    // Traveling wave reflection at transformer: Ut = 378.9 + 2 * (1000 / 300) * 15 = 478.9 kV peak
+    expect(simNachtigal.waveReflectionVoltageAtTrafoKvPeak).toBeCloseTo(478.9, 0.5);
+    expect(simNachtigal.maxAllowableSeparationDistanceMeters).toBeGreaterThan(50.0);
+    expect(simNachtigal.isSeparationDistanceCompliant).toBe(true);
+
+    // Energy class for 225 kV: Station Heavy (SH), 8.0 kJ/kV -> 1488 kJ
+    expect(simNachtigal.dischargeClass).toBe('SH');
+    expect(simNachtigal.totalThermalEnergyCapacityKj).toBeCloseTo(8.0 * 186, 1.0);
+    expect(simNachtigal.overallVerdict).toBe('COMPLIANT');
+
+    // 2. Bafoussam 30 kV Distribution Feeder (Isolated neutral, ke = 1.732, tf = 10s)
+    const bafoussamPreset = CAMEROON_ARRESTER_PRESETS.find(p => p.id === 'bafoussam-ouest-30kv-distribution')!;
+    expect(bafoussamPreset).toBeDefined();
+
+    const simBafoussam = Iec60099SurgeArresterEngine.solve(bafoussamPreset.input);
+    expect(simBafoussam.earthFaultFactorKe).toBeCloseTo(Math.sqrt(3), 0.001);
+    expect(simBafoussam.arresterTovFactorKtov).toBe(0.98); // 10s TOV curve
+    expect(simBafoussam.selectedRatedVoltageUrKv).toBeGreaterThanOrEqual(37);
+    expect(simBafoussam.overallVerdict).toBe('COMPLIANT');
+
+    // 3. Dynamic Calculation Report Generation Integration
+    const report = generateCalculationReport('surge-arrester', 'fr');
+    expect(report.calcType).toBe('SURGE-ARRESTER-IEC60099');
+    expect(report.standard).toContain('60099-4');
     expect(report.results.length).toBeGreaterThan(5);
     expect(report.complianceVerdict.status).toBe('COMPLIANT');
   });
