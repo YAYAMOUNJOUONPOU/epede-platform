@@ -65,6 +65,7 @@ import { CameroonSubstationArchitectureExplorer } from './modules/CameroonSubsta
 import { CameroonDistributionNetworkViewer } from './modules/CameroonDistributionNetworkViewer';
 import { CameroonGenerationPortfolioVisualizer } from './modules/CameroonGenerationPortfolioVisualizer';
 import { CameroonTransmissionEngineeringVisualizer } from './modules/CameroonTransmissionEngineeringVisualizer';
+import { CameroonSeasonalReliabilityWorkbench } from './modules/CameroonSeasonalReliabilityWorkbench';
 import {
   CameroonInstitutionalGovernanceViewer,
   CameroonGridTimelineViewer,
@@ -74,6 +75,7 @@ import {
 
 export type FilterCategory = 
   | 'map' 
+  | 'seasonal_reliability'
   | 'overview_journey'
   | 'scada_dispatching'
   | 'sanaga_cascade'
@@ -139,6 +141,7 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
   const [demarcationSubTab, setDemarcationSubTab] = useState<'disciplines_matrix' | 'contractual_gate3'>('disciplines_matrix');
   const [mapDisplayMode, setMapDisplayMode] = useState<'real_geo' | 'topological_sld'>('real_geo');
   const [selectedContingencyScenarioId, setSelectedContingencyScenarioId] = useState<string | undefined>(undefined);
+  const [selectedSeasonalPlantId, setSelectedSeasonalPlantId] = useState<string | undefined>(undefined);
 
   // Filtered Plants
   const filteredPlants = useMemo(() => {
@@ -417,6 +420,24 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
           >
             <Waves className="w-3.5 h-3.5 text-cyan-300" />
             <span>{locale === 'fr' ? 'Cascade Sanaga & Lom Pangar' : 'Sanaga Cascade & Lom Pangar'}</span>
+          </button>
+
+          {/* 3B. Seasonal Generation & Grid Reliability Monitor */}
+          <button
+            type="button"
+            onClick={() => setActiveCategory('seasonal_reliability')}
+            className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer ${
+              activeCategory === 'seasonal_reliability'
+                ? 'bg-teal-600 text-white shadow-md ring-1 ring-teal-300'
+                : 'text-teal-300 hover:text-white hover:bg-slate-800 border border-teal-500/30'
+            }`}
+          >
+            <Droplets className="w-3.5 h-3.5 text-teal-300" />
+            <span>
+              {locale === 'fr'
+                ? 'Production Saisonnière & Fiabilité (Jan–Déc)'
+                : 'Seasonal Generation & Grid Reliability'}
+            </span>
           </button>
 
           {/* 4. Contingency N-1 (Step 3) */}
@@ -700,6 +721,16 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
         </div>
       )}
 
+      {/* SECTION: Seasonal Generation, Hydrological Variations & Power Supply Reliability */}
+      {activeCategory === 'seasonal_reliability' && (
+        <div className="space-y-4">
+          <CameroonSeasonalReliabilityWorkbench
+            locale={locale}
+            initialPlantId={selectedSeasonalPlantId}
+          />
+        </div>
+      )}
+
       {/* SECTION: Cameroon Grid Contingency Simulator (Step 3) */}
       {activeCategory === 'contingency_n1' && (
         <div className="space-y-4">
@@ -897,6 +928,23 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
 
                 {/* Computational & Simulation links & Spine */}
                 <div className="pt-3 border-t border-[#567A87]/25 flex flex-wrap items-center gap-2">
+                  {(plant.type === 'hydro' || plant.type === 'reservoir') && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedSeasonalPlantId(plant.id);
+                        setActiveCategory('seasonal_reliability');
+                      }}
+                      className="w-full flex items-center justify-center gap-1.5 py-1.5 px-2 rounded bg-teal-500/15 hover:bg-teal-500/25 text-teal-300 border border-teal-500/40 text-[11px] font-mono font-bold transition-all cursor-pointer"
+                    >
+                      <Droplets className="h-3 w-3 text-teal-300" />
+                      <span>
+                        {locale === 'fr'
+                          ? 'Profil Saisonnier & Hydrologie (Jan–Déc)'
+                          : 'Seasonal Profile & Hydrology (Jan–Dec)'}
+                      </span>
+                    </button>
+                  )}
                   {plant.type === 'hydro' && onNavigateHydropower && (
                     <button
                       type="button"
