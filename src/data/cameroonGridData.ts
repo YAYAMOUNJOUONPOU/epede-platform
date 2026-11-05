@@ -6,6 +6,30 @@
 import type { CalculatorTabType } from '../components/calculators/services/calculationReportService';
 import type { SimulationTabType } from '../components/simulation/SimulationLabView';
 import type { DomainCode } from '../types/epede';
+import {
+  ADDITIONAL_POWER_PLANTS,
+  ADDITIONAL_SUBSTATIONS,
+  ADDITIONAL_TRANSMISSION_CORRIDORS,
+  CAMEROON_DISTRIBUTION_SPECS,
+  CAMEROON_SECTOR_INSTITUTIONS,
+  CAMEROON_GRID_TIMELINE,
+  CAMEROON_ENGINEERING_COMPONENTS,
+  CAMEROON_TECHNICAL_DOCUMENTS,
+} from './cameroonGridReferenceData';
+export {
+  CAMEROON_DISTRIBUTION_SPECS,
+  CAMEROON_SECTOR_INSTITUTIONS,
+  CAMEROON_GRID_TIMELINE,
+  CAMEROON_ENGINEERING_COMPONENTS,
+  CAMEROON_TECHNICAL_DOCUMENTS,
+};
+export type {
+  CameroonDistributionSpecs,
+  CameroonSectorInstitution,
+  CameroonGridTimelineMilestone,
+  CameroonEngineeringComponent,
+  CameroonTechnicalDocument,
+} from './cameroonGridReferenceData';
 
 export type VerificationStatus =
   | 'CONFIRMED_PUBLIC_SOURCE'
@@ -480,6 +504,7 @@ export const CAMEROON_POWER_PLANTS: PowerPlantNode[] = [
     relevant_calculator: 'transformer',
     relevant_simulation: 'generator-capability',
   },
+  ...ADDITIONAL_POWER_PLANTS,
 ];
 
 export const CAMEROON_SUBSTATIONS: SubstationNode[] = [
@@ -716,6 +741,7 @@ export const CAMEROON_SUBSTATIONS: SubstationNode[] = [
     related_domains: ['D04', 'D05', 'D06', 'D11'],
     associated_diagram_topology: 'double-bus',
   },
+  ...ADDITIONAL_SUBSTATIONS,
 ];
 
 export const CAMEROON_TRANSMISSION_CORRIDORS: TransmissionCorridor[] = [
@@ -811,4 +837,5 @@ export const CAMEROON_TRANSMISSION_CORRIDORS: TransmissionCorridor[] = [
     source_date: '2023–2024',
     related_domains: ['D02', 'D03', 'D13'],
   },
+  ...ADDITIONAL_TRANSMISSION_CORRIDORS,
 ];

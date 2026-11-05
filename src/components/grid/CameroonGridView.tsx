@@ -60,17 +60,33 @@ import { Substation3DFlyoverWorkbench } from './modules/Substation3DFlyoverWorkb
 import { ContractualGovernanceFlowViewer } from './modules/ContractualGovernanceFlowViewer';
 import { GenerationMasterPlan2035Workbench } from './modules/GenerationMasterPlan2035Workbench';
 import { CameroonGridBriefingPdfService } from './services/CameroonGridBriefingPdfService';
+import { CameroonPowerFlowJourney } from './modules/CameroonPowerFlowJourney';
+import { CameroonSubstationArchitectureExplorer } from './modules/CameroonSubstationArchitectureExplorer';
+import { CameroonDistributionNetworkViewer } from './modules/CameroonDistributionNetworkViewer';
+import {
+  CameroonInstitutionalGovernanceViewer,
+  CameroonGridTimelineViewer,
+  CameroonEngineeringReferenceDatabase,
+  CameroonTechnicalSourcesLibrary,
+} from './modules/CameroonReferenceEncyclopediaModules';
 
 export type FilterCategory = 
   | 'map' 
+  | 'overview_journey'
   | 'scada_dispatching'
   | 'sanaga_cascade'
   | 'contingency_n1'
   | 'pirect_interconnexion'
   | 'industrial_offtakers'
   | 'substation_3d_bim'
+  | 'substation_architectures'
+  | 'distribution_hta_bt'
   | 'governance_loi2011'
+  | 'institutions_matrix'
+  | 'history_timeline'
   | 'masterplan_2035'
+  | 'apparatus_encyclopedia'
+  | 'sources_library'
   | 'all' 
   | 'ris' 
   | 'rin' 
@@ -500,17 +516,24 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
           </button>
         </div>
 
-        {/* Row 2: Equipment Registry & Search Filter */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-800/80">
+        {/* Row 2: 12-Section Reference Centre Navigation & Search Filter */}
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 pt-2 border-t border-slate-800/80">
           <div className="flex flex-wrap items-center gap-1.5 font-mono text-[11px]">
-            <span className="text-slate-500 mr-1 uppercase">{locale === 'fr' ? 'Registre :' : 'Registry:'}</span>
+            <span className="text-slate-500 mr-1 uppercase">{locale === 'fr' ? 'Centre de Référence :' : 'Reference Centre:'}</span>
             {[
+              { id: 'overview_journey', label: locale === 'fr' ? 'Parcours 7 Étapes' : '7-Stage Power Flow' },
               { id: 'all', label: locale === 'fr' ? 'Tout le Parc' : 'All Grid' },
               { id: 'ris', label: 'RIS (Sud 225/90)' },
               { id: 'rin', label: 'RIN (Nord 110)' },
-              { id: 'plants', label: locale === 'fr' ? 'Centrales' : 'Plants' },
-              { id: 'substations', label: locale === 'fr' ? 'Postes HT' : 'Substations' },
-              { id: 'lines', label: locale === 'fr' ? 'Lignes 225/90 kV' : 'Corridors' },
+              { id: 'plants', label: locale === 'fr' ? 'Centrales (18)' : 'Plants (18)' },
+              { id: 'substations', label: locale === 'fr' ? 'Postes HT (17)' : 'Substations (17)' },
+              { id: 'substation_architectures', label: locale === 'fr' ? 'Schémas Jeux de Barres' : 'Busbar SLD Topologies' },
+              { id: 'lines', label: locale === 'fr' ? 'Lignes HTB (14)' : 'HV Corridors (14)' },
+              { id: 'distribution_hta_bt', label: locale === 'fr' ? 'Distribution HTA/BT (30/15 kV)' : 'MV/LV Distribution (30/15 kV)' },
+              { id: 'institutions_matrix', label: locale === 'fr' ? 'Institutions & Gouvernance' : 'Institutions & Governance' },
+              { id: 'history_timeline', label: locale === 'fr' ? 'Chronologie 1953–2035' : 'Timeline 1953–2035' },
+              { id: 'apparatus_encyclopedia', label: locale === 'fr' ? 'Encyclopédie Appareillages' : 'Apparatus Encyclopedia' },
+              { id: 'sources_library', label: locale === 'fr' ? 'Lois & Sources Officielles' : 'Laws & Official Sources' },
             ].map(subTab => (
               <button
                 key={subTab.id}
@@ -719,6 +742,56 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
       {activeCategory === 'masterplan_2035' && (
         <div className="space-y-4">
           <GenerationMasterPlan2035Workbench />
+        </div>
+      )}
+
+      {/* SECTION: 7-Stage Power Flow Journey (Overview & All Grid) */}
+      {(activeCategory === 'overview_journey' || activeCategory === 'all') && (
+        <div className="space-y-4">
+          <CameroonPowerFlowJourney locale={locale} />
+        </div>
+      )}
+
+      {/* SECTION: Substation Busbar Topologies & Single-Line Architectures */}
+      {(activeCategory === 'substation_architectures' || activeCategory === 'substations') && (
+        <div className="space-y-4">
+          <CameroonSubstationArchitectureExplorer locale={locale} />
+        </div>
+      )}
+
+      {/* SECTION: Medium & Low-Voltage Distribution Network (30/15 kV & 400/230 V) */}
+      {activeCategory === 'distribution_hta_bt' && (
+        <div className="space-y-4">
+          <CameroonDistributionNetworkViewer locale={locale} />
+        </div>
+      )}
+
+      {/* SECTION: Institutional Organization & Governance Matrix (Law 2011/022) */}
+      {activeCategory === 'institutions_matrix' && (
+        <div className="space-y-6">
+          <CameroonInstitutionalGovernanceViewer locale={locale} />
+          <ContractualGovernanceFlowViewer />
+        </div>
+      )}
+
+      {/* SECTION: Historical Evolution Timeline (1953 - 2035) */}
+      {activeCategory === 'history_timeline' && (
+        <div className="space-y-4">
+          <CameroonGridTimelineViewer locale={locale} />
+        </div>
+      )}
+
+      {/* SECTION: Engineering Apparatus Reference Encyclopedia */}
+      {activeCategory === 'apparatus_encyclopedia' && (
+        <div className="space-y-4">
+          <CameroonEngineeringReferenceDatabase locale={locale} />
+        </div>
+      )}
+
+      {/* SECTION: Official Laws, Grid Codes & Sourced Documentation Library */}
+      {activeCategory === 'sources_library' && (
+        <div className="space-y-4">
+          <CameroonTechnicalSourcesLibrary locale={locale} />
         </div>
       )}
 

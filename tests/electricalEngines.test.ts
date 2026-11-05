@@ -14,6 +14,11 @@ import { VectorVoltageDropEngine, CAMEROON_VOLTAGE_DROP_PRESETS } from '../src/d
 import { Iec61869CtSizingEngine, CAMEROON_CT_PRESETS } from '../src/data/iec61869CtSizingEngine';
 import { Iec60865BusbarEngine, CAMEROON_BUSBAR_PRESETS } from '../src/data/iec60865BusbarEngine';
 import { Iec60099SurgeArresterEngine, CAMEROON_ARRESTER_PRESETS } from '../src/data/iec60099SurgeArresterEngine';
+import {
+  Iec60826TensionSagEngine,
+  CAMEROON_TRANSMISSION_LINE_PRESETS,
+  CANONICAL_CONDUCTORS,
+} from '../src/data/iec60826TensionSagEngine';
 import { EngineeringCalculationPdfExportService } from '../src/components/calculators/services/EngineeringCalculationPdfExportService';
 import { generateCalculationReport } from '../src/components/calculators/services/calculationReportService';
 import { WORKED_EXAMPLES_REGISTRY } from '../src/data/workedExamplesRegistry';
@@ -756,6 +761,81 @@ describe('⚡ Electrotechnical Physics Engine Tests', () => {
     expect(report.calcType).toBe('SURGE-ARRESTER-IEC60099');
     expect(report.standard).toContain('60099-4');
     expect(report.results.length).toBeGreaterThan(5);
+    expect(report.complianceVerdict.status).toBe('COMPLIANT');
+  });
+
+  it('19. IEC 60826 / Cigré TB 273 Overhead Transmission Line Mechanical Tension-Sag & Conductor State Engine', () => {
+    // 1. Song Loulou - Mangombé 225 kV Line (Aster 570 mm², 380 m ruling span, 18% EDS at 15°C, evaluated at 75°C)
+    const songloulouPreset = CAMEROON_TRANSMISSION_LINE_PRESETS.find(p => p.id === 'songloulou-mangombe-225kv-aster570')!;
+    expect(songloulouPreset).toBeDefined();
+
+    const simSongloulou = Iec60826TensionSagEngine.solve(songloulouPreset.input);
+
+    // Conductor properties verification
+    expect(simSongloulou.conductor.ratedTensileStrengthKn).toBe(166.0);
+    expect(simSongloulou.conductor.nominalSectionMm2).toBe(570);
+    expect(simSongloulou.conductor.outerDiameterMm).toBe(31.05);
+
+    // State 1 EDS: 18% of RTS = 29.88 kN
+    expect(simSongloulou.state1.horizontalTensionKn).toBeCloseTo(29.88, 0.05);
+    expect(simSongloulou.state1.mechanicalStressMpa).toBeCloseTo(29880 / 570.2, 0.2); // ~52.4 MPa
+    // Initial sag f1 = (wc * a^2) / (8 * H1) = (15.416 * 380^2) / (8 * 29880) ≈ 9.31 m
+    expect(simSongloulou.state1.midSpanSagMeters).toBeCloseTo(9.31, 0.2);
+
+    // State 2 (75°C thermal elongation):
+    // Thermal expansion relaxes tension and increases mid-span sag
+    expect(simSongloulou.state2.horizontalTensionKn).toBeLessThan(simSongloulou.state1.horizontalTensionKn);
+    expect(simSongloulou.state2.totalMidSpanSagMeters).toBeGreaterThan(simSongloulou.state1.midSpanSagMeters);
+    expect(simSongloulou.state2.totalMidSpanSagMeters).toBeGreaterThan(12.0);
+    expect(simSongloulou.state2.totalMidSpanSagMeters).toBeLessThan(14.0);
+
+    // Statutory ground clearance verification (Height 22.0 m - Sag ~12.7 m = ~9.3 m >= 7.5 m)
+    expect(simSongloulou.state2.actualGroundClearanceMeters).toBeGreaterThan(7.5);
+    expect(simSongloulou.state2.isGroundClearanceCompliant).toBe(true);
+
+    // Safety factor against RTS: SF = 166.0 / T_max >= 2.50
+    expect(simSongloulou.state2.safetyFactorAgainstRts).toBeGreaterThanOrEqual(2.50);
+    expect(simSongloulou.state2.isTensionSafetyCompliant).toBe(true);
+    expect(simSongloulou.overallVerdict).toBe('COMPLIANT');
+
+    // 2. Nachtigal - Bafoussam 225 kV Mountain Line (520 m span, 32 m/s wind gusts)
+    const nachtigalPreset = CAMEROON_TRANSMISSION_LINE_PRESETS.find(p => p.id === 'nachtigal-bafoussam-225kv-mountain')!;
+    expect(nachtigalPreset).toBeDefined();
+
+    const simNachtigal = Iec60826TensionSagEngine.solve(nachtigalPreset.input);
+
+    // Dynamic wind pressure qw = 0.5 * 1.225 * 32^2 = 627.2 Pa
+    expect(simNachtigal.state2.windPressurePa).toBeCloseTo(627.2, 0.5);
+    // Wind force Fw = 627.2 * 1.0 * (31.05 / 1000) = 19.47 N/m
+    expect(simNachtigal.state2.windForcePerMeterN).toBeCloseTo(19.47, 0.2);
+    // Resultant weight W_res = sqrt(15.416^2 + 19.475^2) ≈ 24.84 N/m
+    expect(simNachtigal.state2.resultantWeightPerMeterN).toBeCloseTo(24.84, 0.5);
+
+    // Conductor swing angle under crosswind: phi_w = atan(19.47 / 15.42) ≈ 51.6°
+    expect(simNachtigal.state2.windDeflectionAngleDeg).toBeGreaterThan(45.0);
+    expect(simNachtigal.state2.windDeflectionAngleDeg).toBeCloseTo(51.6, 1.0);
+    // Significant horizontal blowout swing
+    expect(simNachtigal.state2.horizontalSwingMeters).toBeGreaterThan(10.0);
+    expect(simNachtigal.state2.isTensionSafetyCompliant).toBe(true);
+
+    // 3. Multi-Temperature Sag Profile Table Monotonicity
+    expect(simSongloulou.temperatureProfile.length).toBe(9); // 10°C to 90°C in steps of 10°C
+    const p10 = simSongloulou.temperatureProfile[0]; // 10°C
+    const p90 = simSongloulou.temperatureProfile[8]; // 90°C
+    expect(p10.temperatureC).toBe(10);
+    expect(p90.temperatureC).toBe(90);
+    // Sag strictly increases with temperature
+    expect(p90.midSpanSagMeters).toBeGreaterThan(p10.midSpanSagMeters);
+    // Horizontal tension strictly decreases with temperature
+    expect(p90.horizontalTensionKn).toBeLessThan(p10.horizontalTensionKn);
+    // Clearance strictly decreases with temperature
+    expect(p90.groundClearanceMeters).toBeLessThan(p10.groundClearanceMeters);
+
+    // 4. Dynamic Calculation Report Generation Integration
+    const report = generateCalculationReport('transmission-line', 'fr');
+    expect(report.calcType).toBe('TRANSMISSION-LINE-IEC60826');
+    expect(report.standard).toContain('60826');
+    expect(report.results.length).toBeGreaterThanOrEqual(8);
     expect(report.complianceVerdict.status).toBe('COMPLIANT');
   });
 });

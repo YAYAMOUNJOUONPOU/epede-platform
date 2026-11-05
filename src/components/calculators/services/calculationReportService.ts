@@ -32,6 +32,12 @@ import {
   CAMEROON_ARRESTER_PRESETS,
   type SurgeArresterInput,
 } from '../../../data/iec60099SurgeArresterEngine';
+import {
+  Iec60826TensionSagEngine,
+  CAMEROON_TRANSMISSION_LINE_PRESETS,
+  CANONICAL_CONDUCTORS,
+  type TensionSagInput,
+} from '../../../data/iec60826TensionSagEngine';
 
 export interface InjectedCalculatorContext {
   equipmentId?: string;
@@ -1277,69 +1283,173 @@ export function generateCalculationReport(
     });
   }
 
-  // 15. OVERHEAD TRANSMISSION LINE PARAMETERS & CORONA LOSS (IEC 60826 / IEEE 738 / PEEK)
+  // 15. OVERHEAD TRANSMISSION LINE TENSION-SAG & PARAMETERS (IEC 60826 / CIGRÉ TB 273 / EN 50341 / PEEK)
   if (activeCalc === 'transmission-line') {
-    const unKv = 225;
-    const lengthKm = 50.8;
-    const powerMw = 420;
-    const bundleN = 2;
-    const spacingMm = 400;
-    const gmdM = 8.19;
-    const zcOhm = 286.4;
-    const silMw = 176.7;
-    const rPrimeOhmPerKm = 0.0298;
+    const preset = CAMEROON_TRANSMISSION_LINE_PRESETS.find(p => p.id === injectedContext?.params?.presetId) || CAMEROON_TRANSMISSION_LINE_PRESETS[0];
+    
+    // Mechanical Tension-Sag Input Parameters
+    const conductorKey = (injectedContext?.params?.conductorKey || preset.input.conductorKey) as string;
+    const rulingSpanMeters = injectedContext?.params?.rulingSpanMeters !== undefined 
+      ? Number(injectedContext.params.rulingSpanMeters) 
+      : preset.input.rulingSpanMeters;
+    const state1TemperatureC = injectedContext?.params?.state1TemperatureC !== undefined 
+      ? Number(injectedContext.params.state1TemperatureC) 
+      : preset.input.state1TemperatureC;
+    const state1TensionPercentRts = injectedContext?.params?.state1TensionPercentRts !== undefined 
+      ? Number(injectedContext.params.state1TensionPercentRts) 
+      : preset.input.state1TensionPercentRts;
+    const state2TemperatureC = injectedContext?.params?.state2TemperatureC !== undefined 
+      ? Number(injectedContext.params.state2TemperatureC) 
+      : preset.input.state2TemperatureC;
+    const state2WindSpeedMPerS = injectedContext?.params?.state2WindSpeedMPerS !== undefined 
+      ? Number(injectedContext.params.state2WindSpeedMPerS) 
+      : preset.input.state2WindSpeedMPerS;
+    const minRequiredGroundClearanceM = injectedContext?.params?.minRequiredGroundClearanceM !== undefined 
+      ? Number(injectedContext.params.minRequiredGroundClearanceM) 
+      : preset.input.minRequiredGroundClearanceM;
+    const crossarmAttachmentHeightM = injectedContext?.params?.crossarmAttachmentHeightM !== undefined 
+      ? Number(injectedContext.params.crossarmAttachmentHeightM) 
+      : preset.input.crossarmAttachmentHeightM;
+
+    const tensionSagInput: TensionSagInput = {
+      conductorKey,
+      rulingSpanMeters,
+      state1TemperatureC,
+      state1TensionPercentRts,
+      state2TemperatureC,
+      state2WindSpeedMPerS,
+      minRequiredGroundClearanceM,
+      crossarmAttachmentHeightM,
+    };
+
+    // Execute authoritative IEC 60826 & Cigré TB 273 mechanical change-of-state physics engine
+    const mechSim = Iec60826TensionSagEngine.solve(tensionSagInput);
+
+    // Electrical Line Parameters & Corona Calculation
+    const unKv = injectedContext?.params?.unKv !== undefined 
+      ? Number(injectedContext.params.unKv) 
+      : (preset.voltageLevel.includes('400') ? 400 : preset.voltageLevel.includes('225') ? 225 : preset.voltageLevel.includes('90') ? 90 : 30);
+    const lengthKm = injectedContext?.params?.lineLengthKm !== undefined ? Number(injectedContext.params.lineLengthKm) : 50.8;
+    const powerMw = injectedContext?.params?.transferredPowerMw !== undefined ? Number(injectedContext.params.transferredPowerMw) : (unKv === 225 ? 420 : unKv === 90 ? 45 : 12);
+    const bundleN = unKv >= 225 ? 2 : 1;
+    const spacingMm = bundleN > 1 ? 400 : 0;
+    const gmdM = unKv >= 225 ? 8.19 : unKv >= 90 ? 4.2 : 2.5;
+    const zcOhm = bundleN > 1 ? 286.4 : 375.0;
+    const silMw = Math.pow(unKv, 2) / zcOhm;
+    const rPrimeOhmPerKm = mechSim.conductor.dcResistance20OhmPerKm / bundleN;
     const xLPrimeOhmPerKm = 0.312;
     const cPrimeMicroFPerKm = 0.0118;
-    const eOperatingKvCm = 15.4;
+    const eOperatingKvCm = unKv >= 225 ? 15.4 : 10.2;
     const e0CriticalKvCm = 19.8;
     const coronaSafetyMargin = e0CriticalKvCm / eOperatingKvCm;
-    const coronaLossKwPerKm = 0.15;
+    const coronaLossKwPerKm = unKv >= 225 ? 0.15 : 0.02;
     const totalLineCoronaLossKw = coronaLossKwPerKm * lengthKm;
 
-    return {
+    const isMechCompliant = mechSim.overallVerdict === 'COMPLIANT';
+    const isOverallCompliant = isMechCompliant && coronaSafetyMargin >= 1.05;
+
+    return withProvenance({
       title: locale === 'fr'
-        ? 'Paramètres R-L-C de Ligne THT, Faisceaux & Pertes Corona (CEI 60826 / Peek)'
-        : 'Overhead Transmission Line R-L-C, Bundles & Corona Losses (IEC 60826 / Peek)',
-      calcType: 'LINE-PARAMETERS-CORONA',
-      standard: 'CEI 60826 / IEEE Std 738 / Formule de Peek',
+        ? `Tension-Flèche Mécanique & Paramètres Ligne Aérienne — ${preset.voltageLevel}`
+        : `Mechanical Tension-Sag & Overhead Line Parameters — ${preset.voltageLevel}`,
+      calcType: 'TRANSMISSION-LINE-IEC60826',
+      standard: 'CEI 60826 / Cigré TB 273 / EN 50341 / IEEE Std 738 / Peek',
       date: dateStr,
       referenceId: `EPEDE-CALC-TLN-${now.getTime().toString().slice(-6)}`,
       inputs: [
-        { label: locale === 'fr' ? 'Tension nominale de ligne (Un)' : 'Line Voltage (Un)', value: `${unKv}`, unit: 'kV' },
-        { label: locale === 'fr' ? 'Longueur de liaison (L)' : 'Line Length (L)', value: `${lengthKm}`, unit: 'km' },
-        { label: locale === 'fr' ? 'Puissance transitée (P)' : 'Transferred Active Power', value: `${powerMw}`, unit: 'MW' },
-        { label: locale === 'fr' ? 'Conducteurs par faisceau (n)' : 'Subconductors / Phase', value: `${bundleN}× Aster 570 mm² (${spacingMm} mm)` },
-        { label: locale === 'fr' ? 'Distance moyenne géométrique (GMD)' : 'Geometric Mean Distance (GMD)', value: `${gmdM}`, unit: 'm' },
-        { label: locale === 'fr' ? 'Conditions atmosphériques' : 'Weather Conditions', value: 'Temps Sec / Beau Temps (m = 0.87)' },
+        { label: locale === 'fr' ? 'Corridor / Liaison Réseau' : 'Transmission Line Corridor', value: locale === 'fr' ? preset.corridor.fr : preset.corridor.en },
+        { label: locale === 'fr' ? 'Conducteur normalisé' : 'Conductor Type', value: `${mechSim.conductor.codeName} (RTS = ${mechSim.conductor.ratedTensileStrengthKn} kN)` },
+        { label: locale === 'fr' ? 'Portée équivalente de réglage (a)' : 'Ruling Span Length (a)', value: `${rulingSpanMeters}`, unit: 'm' },
+        { label: locale === 'fr' ? 'État 1 : Température de pose (θ1)' : 'State 1: Stringing Temp (θ1)', value: `${state1TemperatureC}`, unit: '°C' },
+        { label: locale === 'fr' ? 'État 1 : Tension initiale EDS (% RTS)' : 'State 1: EDS Tension (% RTS)', value: `${state1TensionPercentRts}`, unit: '%' },
+        { label: locale === 'fr' ? 'État 2 : Température d\'évaluation (θ2)' : 'State 2: Evaluation Temp (θ2)', value: `${state2TemperatureC}`, unit: '°C' },
+        { label: locale === 'fr' ? 'État 2 : Vitesse du vent transversal' : 'State 2: Crosswind Velocity', value: `${state2WindSpeedMPerS}`, unit: 'm/s' },
+        { label: locale === 'fr' ? 'Hauteur d\'accrochage console (H)' : 'Crossarm Attachment Height (H)', value: `${crossarmAttachmentHeightM}`, unit: 'm' },
+        { label: locale === 'fr' ? 'Garde au sol réglementaire minimale' : 'Min Statutory Ground Clearance', value: `${minRequiredGroundClearanceM}`, unit: 'm' },
       ],
       formulas: [
-        { name: 'Impédance caractéristique Zc', expr: '√(L\' / C\') [Ω]' },
-        { name: 'Puissance naturelle SIL', expr: 'Un² / Zc [MW]' },
-        { name: 'Gradient critique disruptif E0 (Peek)', expr: '21.2 · m · δ · (1 + 0.301 / √(δ · r)) [kV_rms/cm]' },
-        { name: 'Champ électrique de surface E_surf', expr: 'V_ph / (n · r · ln(GMD / r_eq)) · (1 + (n-1)·r/R_faisceau) [kV/cm]' },
-        { name: 'Pertes Joule à pleine charge', expr: '3 · I² · R_tot [MW]' },
+        { name: 'Équation d\'état cubique (Blondel / Cigré TB 273)', expr: 'σ2² · [ σ2 + E·(γ1·a)²/(24·σ1²) + E·α·Δθ - σ1 ] = E·(γ2·a)² / 24 [N/mm²]' },
+        { name: 'Pression dynamique de vent qw (CEI 60826)', expr: 'qw = 0.5 · ρ_air · vw² [Pa] ; Fw = qw · Cd · d · 10⁻³ [N/m]' },
+        { name: 'Angle de balancement sous vent φw', expr: 'tan(φw) = Fw / wc ; W_res = √(wc² + Fw²) [N/m]' },
+        { name: 'Flèche à mi-portée f2 & Garde au sol', expr: 'f2 = (W_res · a²) / (8 · H2) [m] ; Garde = H - f_verticale [m]' },
+        { name: 'Facteur de sécurité mécanique SF_rts', expr: 'RTS / T_max ≥ 2.5 (CEI 60826 / Arrêté Interministériel)' },
+        { name: 'Puissance naturelle SIL & Peek E0', expr: 'SIL = Un² / Zc [MW] ; E0 = 21.2 · m · δ · (1 + 0.301 / √(δ·r)) [kV/cm]' },
       ],
       results: [
-        { label: locale === 'fr' ? 'Puissance naturelle (SIL)' : 'Surge Impedance Loading (SIL)', value: silMw.toFixed(1), unit: 'MW', highlight: true, status: 'OK' },
-        { label: locale === 'fr' ? 'Impédance caractéristique (Zc)' : 'Characteristic Surge Impedance', value: zcOhm.toFixed(1), unit: 'Ω' },
-        { label: locale === 'fr' ? 'Réactance linéique (X\'L)' : 'Distributed Inductive Reactance', value: xLPrimeOhmPerKm.toFixed(4), unit: 'Ω/km' },
-        { label: locale === 'fr' ? 'Capacité linéique (C\')' : 'Distributed Capacitance', value: cPrimeMicroFPerKm.toFixed(4), unit: 'μF/km' },
-        { label: locale === 'fr' ? 'Gradient critique de Peek (E0)' : 'Critical Disruptive Field (E0)', value: e0CriticalKvCm.toFixed(2), unit: 'kV/cm' },
-        { label: locale === 'fr' ? 'Champ de surface en exploitation' : 'Operating Surface Electric Field', value: eOperatingKvCm.toFixed(2), unit: 'kV/cm' },
-        { label: locale === 'fr' ? 'Marge de sécurité Corona (E0 / E_surf)' : 'Corona Inception Safety Margin', value: coronaSafetyMargin.toFixed(2), status: coronaSafetyMargin >= 1.05 ? 'OK' : 'DANGER' },
-        { label: locale === 'fr' ? 'Pertes Corona globales de la ligne' : 'Total Corona Power Losses', value: totalLineCoronaLossKw.toFixed(1), unit: 'kW' },
+        {
+          label: locale === 'fr' ? 'Verdict Global CEI 60826 / Garde au Sol' : 'Overall IEC 60826 / Clearance Verdict',
+          value: isOverallCompliant
+            ? (locale === 'fr' ? 'CONFORME (Garde au sol & Résistance)' : 'COMPLIANT (Clearance & Strength)')
+            : (locale === 'fr' ? 'NON CONFORME' : 'NON-COMPLIANT'),
+          highlight: true,
+          status: isOverallCompliant ? 'OK' : 'DANGER',
+        },
+        {
+          label: locale === 'fr' ? 'Flèche totale à mi-portée (f2)' : 'Mid-Span Conductor Sag (f2)',
+          value: mechSim.state2.totalMidSpanSagMeters.toFixed(2),
+          unit: 'm',
+          highlight: true,
+          status: 'INFO',
+        },
+        {
+          label: locale === 'fr' ? 'Flèche verticale résiduelle (f_vert)' : 'Vertical Sag Component',
+          value: mechSim.state2.verticalSagMeters.toFixed(2),
+          unit: 'm',
+          status: 'INFO',
+        },
+        {
+          label: locale === 'fr' ? 'Garde au sol réelle sous conducteur' : 'Actual Conductor Ground Clearance',
+          value: `${mechSim.state2.actualGroundClearanceMeters.toFixed(2)} (Min requis: ${minRequiredGroundClearanceM} m)`,
+          unit: 'm',
+          highlight: true,
+          status: mechSim.state2.isGroundClearanceCompliant ? 'OK' : 'DANGER',
+        },
+        {
+          label: locale === 'fr' ? 'Tension horizontale État 2 (H2)' : 'Horizontal Conductor Tension (H2)',
+          value: `${mechSim.state2.horizontalTensionKn.toFixed(2)} (${mechSim.state2.percentRts.toFixed(1)}% RTS)`,
+          unit: 'kN',
+          status: 'INFO',
+        },
+        {
+          label: locale === 'fr' ? 'Tension max à l\'accrochage (T_max)' : 'Max Tension at Tower Support',
+          value: mechSim.state2.maxTensionAtSupportKn.toFixed(2),
+          unit: 'kN',
+          status: 'INFO',
+        },
+        {
+          label: locale === 'fr' ? 'Coefficient de sécurité mécanique' : 'Mechanical Safety Factor against RTS',
+          value: `${mechSim.state2.safetyFactorAgainstRts.toFixed(2)} (Seuil ≥ 2.50)`,
+          highlight: true,
+          status: mechSim.state2.isTensionSafetyCompliant ? 'OK' : 'DANGER',
+        },
+        {
+          label: locale === 'fr' ? 'Débattement angulaire sous vent (φw)' : 'Conductor Wind Swing Angle (φw)',
+          value: `${mechSim.state2.windDeflectionAngleDeg.toFixed(1)}° (Déplacement lat: ${mechSim.state2.horizontalSwingMeters.toFixed(2)} m)`,
+          status: mechSim.state2.windDeflectionAngleDeg > 45 ? 'WARN' : 'OK',
+        },
+        {
+          label: locale === 'fr' ? 'Puissance naturelle de ligne (SIL)' : 'Surge Impedance Loading (SIL)',
+          value: silMw.toFixed(1),
+          unit: 'MW',
+          status: 'OK',
+        },
+        {
+          label: locale === 'fr' ? 'Marge de sécurité Corona (E0 / E_surf)' : 'Corona Safety Margin (E0 / E_surf)',
+          value: `${coronaSafetyMargin.toFixed(2)} (Seuil > 1.05)`,
+          status: coronaSafetyMargin >= 1.05 ? 'OK' : 'DANGER',
+        },
       ],
       complianceVerdict: {
-        status: coronaSafetyMargin >= 1.05 ? 'COMPLIANT' : 'NON_COMPLIANT',
-        message: locale === 'fr'
-          ? `La ligne THT 225 kV Nachtigal - Nyom II (faisceau 2×Aster 570 mm²) est conforme aux critères CEI 60826 et de l'effet Corona : marge de sécurité E0 / E_surf = ${coronaSafetyMargin.toFixed(2)} (> 1.05), absence d'ionisation disruptive permanente et pertes Corona limitées à ${totalLineCoronaLossKw.toFixed(1)} kW.`
-          : `The 225 kV Nachtigal - Nyom II transmission line (2×Aster 570 mm² bundle) complies with IEC 60826 and Corona inception criteria: safety margin E0 / E_surf = ${coronaSafetyMargin.toFixed(2)} (> 1.05), no disruptive continuous ionization, and Corona losses restricted to ${totalLineCoronaLossKw.toFixed(1)} kW.`,
+        status: isOverallCompliant ? 'COMPLIANT' : 'NON_COMPLIANT',
+        message: locale === 'fr' ? mechSim.advisoryInterpretation.fr : mechSim.advisoryInterpretation.en,
       },
       engineeringNotes: [
-        'Le faisceau biconducteur (n=2, d=400 mm) augmente le rayon équivalent r_eq de 15.5 mm à 78.8 mm, réduisant drastiquement le champ électrique superficiel et élevant la puissance naturelle SIL à 176.7 MW.',
-        'Sous pluie tropicale battante (m_meteo = 0.72), le gradient critique E0 s\'abaisse temporairement à 16.4 kV/cm, entraînant un bourdonnement acoustique modéré conforme aux seuils environnementaux SONATREL (< 53 dB(A) à la limite d\'emprise).',
+        `Résolution exacte par méthode itérative de Newton-Raphson sur l'équation d'état cubique de Cigré TB 273 avec module de Young E = ${mechSim.conductor.modulusOfElasticityMpa} MPa et coefficient de dilatation thermique α = ${(mechSim.conductor.thermalExpansionCoeffPerC * 1e6).toFixed(1)}×10⁻⁶ /°C.`,
+        `État 1 (Référence EDS à ${state1TemperatureC}°C) : Traction initiale H1 = ${mechSim.state1.horizontalTensionKn.toFixed(2)} kN (${state1TensionPercentRts}% RTS), flèche initiale f1 = ${mechSim.state1.midSpanSagMeters.toFixed(2)} m.`,
+        `État 2 (${state2TemperatureC}°C, vent ${state2WindSpeedMPerS} m/s) : Traction H2 = ${mechSim.state2.horizontalTensionKn.toFixed(2)} kN, flèche verticale = ${mechSim.state2.verticalSagMeters.toFixed(2)} m, garde au sol résiduelle = ${mechSim.state2.actualGroundClearanceMeters.toFixed(2)} m.`,
+        `Le faisceau biconducteur (n=${bundleN}) stabilise la réactance à X'L = ${xLPrimeOhmPerKm.toFixed(3)} Ω/km, porte la puissance naturelle SIL à ${silMw.toFixed(1)} MW et garantit l'absence d'ionisation Corona disruptive permanente (marge E0/E = ${coronaSafetyMargin.toFixed(2)}).`,
       ],
-    };
+    });
   }
 
   // 16. NEUTRAL GROUNDING RESISTOR & PETERSEN COIL TUNING (IEC 60071 / NF C 13-200 / IEEE 142)
