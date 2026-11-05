@@ -63,6 +63,8 @@ import { CameroonGridBriefingPdfService } from './services/CameroonGridBriefingP
 import { CameroonPowerFlowJourney } from './modules/CameroonPowerFlowJourney';
 import { CameroonSubstationArchitectureExplorer } from './modules/CameroonSubstationArchitectureExplorer';
 import { CameroonDistributionNetworkViewer } from './modules/CameroonDistributionNetworkViewer';
+import { CameroonGenerationPortfolioVisualizer } from './modules/CameroonGenerationPortfolioVisualizer';
+import { CameroonTransmissionEngineeringVisualizer } from './modules/CameroonTransmissionEngineeringVisualizer';
 import {
   CameroonInstitutionalGovernanceViewer,
   CameroonGridTimelineViewer,
@@ -797,7 +799,8 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
 
       {/* SECTION 1: Major Power Generation Plants */}
       {activeCategory !== 'demarcation' && (activeCategory === 'all' || activeCategory === 'plants' || activeCategory === 'ris' || activeCategory === 'rin') && (
-        <div className="space-y-4">
+        <div className="space-y-6">
+          <CameroonGenerationPortfolioVisualizer locale={locale} />
           <div className="flex items-center justify-between border-b border-[#252E38] pb-2">
             <div className="flex items-center gap-2">
               <Zap className="h-4 w-4 text-amber-400" />
@@ -1127,7 +1130,8 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
 
       {/* SECTION 3: Transmission Corridors & Interconnections */}
       {activeCategory !== 'demarcation' && (activeCategory === 'all' || activeCategory === 'lines') && (
-        <div className="space-y-4 pt-4">
+        <div className="space-y-6 pt-4">
+          <CameroonTransmissionEngineeringVisualizer locale={locale} />
           <div className="flex items-center justify-between border-b border-[#567A87]/30 pb-2">
             <div className="flex items-center gap-2">
               <Compass className="h-4 w-4 text-[#D7A64A]" />
