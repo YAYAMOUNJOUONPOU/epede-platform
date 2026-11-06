@@ -120,6 +120,34 @@ export const CALCULATOR_TAB_TO_SLUG_FR: Record<CalculatorTabType, string> = {
 };
 
 /**
+ * Resolves the active route state from the browser URL, supporting both
+ * clean paths (/cameroon-grid, /journey) and hash fragments (#/cameroon-grid).
+ */
+export function parseCurrentLocation(): RouteState {
+  if (typeof window === 'undefined') {
+    return { view: 'home', lang: 'en' };
+  }
+  const hash = window.location.hash;
+  if (hash && hash !== '#' && hash !== '#/') {
+    return parseRouteHash(hash);
+  }
+  const pathname = window.location.pathname;
+  if (pathname && pathname !== '/' && pathname !== '/index.html') {
+    return parseRouteHash(pathname + window.location.search);
+  }
+  return { view: 'home', lang: 'en' };
+}
+
+/**
+ * Builds clean pathname string from a route state conforming to:
+ * - /en/cameroon-grid or /cameroon-grid
+ */
+export function buildCleanPath(state: RouteState, localeOverride?: 'fr' | 'en'): string {
+  const hash = buildRouteHash(state, localeOverride);
+  return hash.replace(/^#/, '');
+}
+
+/**
  * Parses current window.location.hash into structured RouteState
  * Supports:
  * - French canonical URLs by default: #/calculateurs/chute-de-tension

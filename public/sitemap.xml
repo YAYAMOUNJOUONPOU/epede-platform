@@ -7,126 +7,126 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://epede-platform.vercel.app/#/journey</loc>
+    <loc>https://epede-platform.vercel.app/journey</loc>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
-    <loc>https://epede-platform.vercel.app/#/calculators</loc>
+    <loc>https://epede-platform.vercel.app/calculators</loc>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
-    <loc>https://epede-platform.vercel.app/#/equipment</loc>
+    <loc>https://epede-platform.vercel.app/equipment</loc>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
-    <loc>https://epede-platform.vercel.app/#/cameroon-grid</loc>
+    <loc>https://epede-platform.vercel.app/cameroon-grid</loc>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://epede-platform.vercel.app/#/domains</loc>
+    <loc>https://epede-platform.vercel.app/domains</loc>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://epede-platform.vercel.app/#/simulation</loc>
+    <loc>https://epede-platform.vercel.app/simulation</loc>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://epede-platform.vercel.app/#/diagrams</loc>
+    <loc>https://epede-platform.vercel.app/diagrams</loc>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://epede-platform.vercel.app/#/hydropower</loc>
+    <loc>https://epede-platform.vercel.app/hydropower</loc>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://epede-platform.vercel.app/#/standards</loc>
+    <loc>https://epede-platform.vercel.app/standards</loc>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://epede-platform.vercel.app/#/regulatory</loc>
+    <loc>https://epede-platform.vercel.app/regulatory</loc>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://epede-platform.vercel.app/#/substations</loc>
+    <loc>https://epede-platform.vercel.app/substations</loc>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://epede-platform.vercel.app/#/installations</loc>
+    <loc>https://epede-platform.vercel.app/installations</loc>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://epede-platform.vercel.app/#/protection</loc>
+    <loc>https://epede-platform.vercel.app/protection</loc>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://epede-platform.vercel.app/#/commissioning</loc>
+    <loc>https://epede-platform.vercel.app/commissioning</loc>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://epede-platform.vercel.app/#/asset-management</loc>
+    <loc>https://epede-platform.vercel.app/asset-management</loc>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://epede-platform.vercel.app/#/laboratory</loc>
+    <loc>https://epede-platform.vercel.app/laboratory</loc>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://epede-platform.vercel.app/#/roles</loc>
+    <loc>https://epede-platform.vercel.app/roles</loc>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://epede-platform.vercel.app/#/glossary</loc>
+    <loc>https://epede-platform.vercel.app/glossary</loc>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://epede-platform.vercel.app/#/lifecycle</loc>
+    <loc>https://epede-platform.vercel.app/lifecycle</loc>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://epede-platform.vercel.app/#/knowledge-graph</loc>
+    <loc>https://epede-platform.vercel.app/knowledge-graph</loc>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://epede-platform.vercel.app/#/traceability</loc>
+    <loc>https://epede-platform.vercel.app/traceability</loc>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
 
   <!-- 16 Engineering Domains (D01-D16) -->
-  <url><loc>https://epede-platform.vercel.app/#/domain/D01</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
-  <url><loc>https://epede-platform.vercel.app/#/domain/D02</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
-  <url><loc>https://epede-platform.vercel.app/#/domain/D03</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
-  <url><loc>https://epede-platform.vercel.app/#/domain/D04</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
-  <url><loc>https://epede-platform.vercel.app/#/domain/D05</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
-  <url><loc>https://epede-platform.vercel.app/#/domain/D06</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
-  <url><loc>https://epede-platform.vercel.app/#/domain/D07</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
-  <url><loc>https://epede-platform.vercel.app/#/domain/D08</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
-  <url><loc>https://epede-platform.vercel.app/#/domain/D09</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
-  <url><loc>https://epede-platform.vercel.app/#/domain/D10</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
-  <url><loc>https://epede-platform.vercel.app/#/domain/D11</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
-  <url><loc>https://epede-platform.vercel.app/#/domain/D12</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
-  <url><loc>https://epede-platform.vercel.app/#/domain/D13</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
-  <url><loc>https://epede-platform.vercel.app/#/domain/D14</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
-  <url><loc>https://epede-platform.vercel.app/#/domain/D15</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
-  <url><loc>https://epede-platform.vercel.app/#/domain/D16</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
+  <url><loc>https://epede-platform.vercel.app/domain/D01</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
+  <url><loc>https://epede-platform.vercel.app/domain/D02</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
+  <url><loc>https://epede-platform.vercel.app/domain/D03</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
+  <url><loc>https://epede-platform.vercel.app/domain/D04</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
+  <url><loc>https://epede-platform.vercel.app/domain/D05</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
+  <url><loc>https://epede-platform.vercel.app/domain/D06</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
+  <url><loc>https://epede-platform.vercel.app/domain/D07</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
+  <url><loc>https://epede-platform.vercel.app/domain/D08</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
+  <url><loc>https://epede-platform.vercel.app/domain/D09</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
+  <url><loc>https://epede-platform.vercel.app/domain/D10</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
+  <url><loc>https://epede-platform.vercel.app/domain/D11</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
+  <url><loc>https://epede-platform.vercel.app/domain/D12</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
+  <url><loc>https://epede-platform.vercel.app/domain/D13</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
+  <url><loc>https://epede-platform.vercel.app/domain/D14</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
+  <url><loc>https://epede-platform.vercel.app/domain/D15</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
+  <url><loc>https://epede-platform.vercel.app/domain/D16</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>
 </urlset>

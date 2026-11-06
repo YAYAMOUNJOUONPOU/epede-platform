@@ -211,7 +211,12 @@ export const WorkedExampleViewer: React.FC<WorkedExampleViewerProps> = ({
         <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
-            onClick={() => EngineeringCalculationPdfExportService.exportWorkedExamplePdf(example, locale)}
+            onClick={async () => {
+              const { EngineeringCalculationPdfExportService } = await import(
+                '../calculators/services/EngineeringCalculationPdfExportService'
+              );
+              EngineeringCalculationPdfExportService.exportWorkedExamplePdf(example, locale);
+            }}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#B8F000]/10 hover:bg-[#B8F000]/20 text-[#B8F000] font-mono text-[10px] font-bold border border-[#B8F000]/30 transition-colors cursor-pointer"
           >
             <Download className="w-3.5 h-3.5 text-[#B8F000]" />

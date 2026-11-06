@@ -69,6 +69,7 @@ import type { SldTopologyType } from './components/diagrams/modules/SldHeaderToo
 import type { StageId } from './components/journey/types';
 import { 
   parseRouteHash, 
+  parseCurrentLocation,
   buildRouteHash, 
   getDocumentTitle, 
   type RouteState, 
@@ -122,8 +123,8 @@ export default function App() {
     }
   }, [locale]);
 
-  // Derive initial route from window.location.hash
-  const initialRoute = parseRouteHash(typeof window !== 'undefined' ? window.location.hash : '');
+  // Derive initial route from window.location (hash or clean pathname)
+  const initialRoute = parseCurrentLocation();
 
   const [currentView, setCurrentView] = useState<AppViewType>(initialRoute.view);
   const [activeDomainCode, setActiveDomainCode] = useState<DomainCode>(initialRoute.domainCode || 'D01');
@@ -218,10 +219,10 @@ export default function App() {
     }
   };
 
-  // Synchronize browser Back/Forward navigation (hashchange event)
+  // Synchronize browser Back/Forward navigation (hashchange and popstate events)
   useEffect(() => {
-    const handleHashChange = () => {
-      const route = parseRouteHash(window.location.hash);
+    const handleRouteChange = () => {
+      const route = parseCurrentLocation();
       setCurrentView(route.view);
       if (route.domainCode) setActiveDomainCode(route.domainCode);
       if (route.equipmentId) setActiveEquipmentId(route.equipmentId);
@@ -238,8 +239,12 @@ export default function App() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    window.addEventListener('hashchange', handleRouteChange);
+    window.addEventListener('popstate', handleRouteChange);
+    return () => {
+      window.removeEventListener('hashchange', handleRouteChange);
+      window.removeEventListener('popstate', handleRouteChange);
+    };
   }, []);
 
   // Update dynamic document title based on route and locale
