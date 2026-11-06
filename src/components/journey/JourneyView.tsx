@@ -1,5 +1,8 @@
 // src/components/journey/JourneyView.tsx
-import React, { useState, useEffect } from 'react';
+// EPEDE 2.0 - 9-Stage Electrical Systems Journey View
+// Conforms to SITEWIDE-REDESIGN.md and HOMEPAGE-EXACT-MATCH.md porcelain-and-navy specification.
+
+import React, { useState } from 'react';
 import { 
   EcosystemHeaderToolbar 
 } from './EcosystemHeaderToolbar';
@@ -34,14 +37,13 @@ import {
   ArrowLeft, 
   Sparkles, 
   Layers, 
-  CheckCircle2, 
-  ShieldAlert, 
-  Activity, 
-  Info,
   Zap,
   X,
   RotateCcw
 } from 'lucide-react';
+import { PageHeader } from '../common/PageHeader';
+import { DataStrip } from '../common/DataStrip';
+import { FinalCTA } from '../common/FinalCTA';
 
 interface JourneyViewProps {
   locale: 'fr' | 'en';
@@ -76,17 +78,10 @@ export const JourneyView: React.FC<JourneyViewProps> = ({
 
   // Navigation & Layer state
   const [activeStage, setActiveStage] = useState<StageId>(initialStage || 'generation');
-  const [activeLayer, setActiveLayer] = useState<VisualizationLayer>('conceptual');
+  const [activeLayer, setActiveLayer] = useState<VisualizationLayer>('electrical');
   const [isFlowActive, setIsFlowActive] = useState<boolean>(true);
   const [animationSpeed, setAnimationSpeed] = useState<number>(1);
-  const [isLampOn, setIsLampOn] = useState<boolean>(true);
-
-  // Sync initialStage if passed from external navigation
-  useEffect(() => {
-    if (initialStage) {
-      setActiveStage(initialStage);
-    }
-  }, [initialStage]);
+  const [isLampOn, setIsLampOn] = useState<boolean>(false);
 
   // Modals state
   const [isLightningModalOpen, setIsLightningModalOpen] = useState<boolean>(false);
@@ -225,55 +220,79 @@ export const JourneyView: React.FC<JourneyViewProps> = ({
     setIsTracingUpstream(false);
   };
 
-  return (
-    <div className="min-h-screen bg-[#F6F4EE] text-[#17282C] pb-24 font-sans">
-      {/* Top Editorial Header & Experience Mode Switcher */}
-      <div className="border-t border-[#17282C] pt-8 pb-6 mb-4">
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-          <div className="space-y-3 max-w-3xl">
-            <span className="epede-eyebrow block">
-              {locale === 'fr'
-                ? 'Systèmes Électriques — Chaîne de Puissance'
-                : 'Electrical Systems — Power Chain Explorer'}
-            </span>
-            <h1 className="epede-h1">
-              {locale === 'fr' ? (
-                <>
-                  De la centrale hydroélectrique{' '}
-                  <em className="font-serif-editorial text-[#147C78]">jusqu’à la charge finale</em>.
-                </>
-              ) : (
-                <>
-                  From hydroelectric turbine{' '}
-                  <em className="font-serif-editorial text-[#147C78]">to the final load</em>.
-                </>
-              )}
-            </h1>
-            <p className="epede-lead">
-              {locale === 'fr'
-                ? 'Parcourez les 9 étapes physiques du réseau électrique, inspectez les 13 scènes immersives ou basculez dans le laboratoire schématique unifilaire CEI.'
-                : 'Step through the 9 physical stages of the power system, explore the 13-scene visual narrative, or switch into the multi-layer IEC single-line schematic lab.'}
-            </p>
-          </div>
+  const isFr = locale === 'fr';
 
+  return (
+    <div className="min-h-screen bg-[#FBFCFD] text-[#0B1B2B] flex flex-col font-['Space_Grotesk',sans-serif]">
+      {/* 1. Page Header (SITEWIDE-REDESIGN.md Section 2) */}
+      <PageHeader
+        breadcrumb={[
+          { label: isFr ? 'Accueil' : 'Home', onClick: () => onNavigateView?.('home') },
+          { label: isFr ? 'Systèmes Électriques' : 'Electrical Systems' },
+          { label: isFr ? 'Chaîne de Puissance' : 'Power Chain' },
+        ]}
+        eyebrow={isFr ? 'LE PARCOURS SYSTÈME · 9 ÉTAPES' : 'THE SYSTEM JOURNEY · 9 STAGES'}
+        title={
+          isFr
+            ? 'De la centrale hydroélectrique jusqu’à la charge finale'
+            : 'From hydroelectric turbine to the final load'
+        }
+        intro={
+          isFr
+            ? 'Parcourez les 9 étapes physiques du réseau électrique, inspectez les 13 scènes immersives ou basculez dans le laboratoire schématique unifilaire CEI.'
+            : 'Step through the 9 physical stages of the power system, explore the 13-scene visual narrative, or switch into the multi-layer IEC single-line schematic lab.'
+        }
+      >
+        <DataStrip
+          items={[
+            {
+              label: isFr ? 'Étapes Physiques' : 'Physical Stages',
+              value: '09',
+              subtext: isFr ? 'De la production à la consommation' : 'From generation to end-users',
+            },
+            {
+              label: isFr ? 'Plage de Tension' : 'Voltage Span',
+              value: '0.7 → 225',
+              unit: 'kV',
+              subtext: 'LV · MV · HV Transmission',
+            },
+            {
+              label: isFr ? 'Fréquence Réseau' : 'Grid Frequency',
+              value: '50.00',
+              unit: 'Hz',
+              subtext: isFr ? 'Réseau synchrone' : 'Synchronous grid',
+            },
+            {
+              label: isFr ? 'Corridor Réseau' : 'Transmission Corridor',
+              value: 'RIS / RIN',
+              subtext: 'SONATREL National Backbone',
+            },
+          ]}
+        />
+      </PageHeader>
+
+      {/* Main Container */}
+      <main id="main-content" className="flex-1 max-w-[1360px] w-full mx-auto px-5 sm:px-8 lg:px-12 py-10">
+        {/* Experience Mode Switcher Pills */}
+        <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
           <div
             role="tablist"
-            aria-label={locale === 'fr' ? 'Mode de parcours' : 'Journey view mode'}
-            className="inline-flex flex-wrap items-center gap-1 p-1 bg-[#EFECE3] border border-[#DEDACF] rounded-full font-mono text-xs self-start shrink-0"
+            aria-label={isFr ? 'Mode de parcours' : 'Journey view mode'}
+            className="inline-flex flex-wrap items-center gap-1.5 p-1 bg-[#EEF4F8] border border-[#D5E0E8] rounded-full font-mono text-xs"
           >
             <button
               type="button"
               role="tab"
               aria-selected={journeyMode === '9stages'}
               onClick={() => setJourneyMode('9stages')}
-              className={`px-4 py-2 rounded-full font-semibold transition-colors flex items-center gap-2 cursor-pointer ${
+              className={`px-4 py-2 rounded-full font-semibold transition-all flex items-center gap-2 cursor-pointer border-0 ${
                 journeyMode === '9stages'
-                  ? 'bg-[#17282C] text-[#FFFDF9]'
-                  : 'text-[#5C6C70] hover:text-[#17282C]'
+                  ? 'bg-[#0B1B2B] text-[#FBFCFD] shadow-xs'
+                  : 'bg-transparent text-[#5B6B7B] hover:text-[#0B1B2B]'
               }`}
             >
-              <Zap className="h-3.5 w-3.5 text-[#B8872D]" />
-              <span>{locale === 'fr' ? '9 Étapes (01–09)' : '9 Stages (01–09)'}</span>
+              <Zap className="h-3.5 w-3.5 text-[#F2A541]" />
+              <span>{isFr ? '9 Étapes (01–09)' : '9 Stages (01–09)'}</span>
             </button>
 
             <button
@@ -281,14 +300,14 @@ export const JourneyView: React.FC<JourneyViewProps> = ({
               role="tab"
               aria-selected={journeyMode === 'lab'}
               onClick={() => setJourneyMode('lab')}
-              className={`px-4 py-2 rounded-full font-semibold transition-colors flex items-center gap-2 cursor-pointer ${
+              className={`px-4 py-2 rounded-full font-semibold transition-all flex items-center gap-2 cursor-pointer border-0 ${
                 journeyMode === 'lab'
-                  ? 'bg-[#17282C] text-[#FFFDF9]'
-                  : 'text-[#5C6C70] hover:text-[#17282C]'
+                  ? 'bg-[#0B1B2B] text-[#FBFCFD] shadow-xs'
+                  : 'bg-transparent text-[#5B6B7B] hover:text-[#0B1B2B]'
               }`}
             >
-              <Layers className="h-3.5 w-3.5 text-[#147C78]" />
-              <span>{locale === 'fr' ? 'Schéma & SLD Multi-Couches' : 'Multi-Layer Schematic & SLD'}</span>
+              <Layers className="h-3.5 w-3.5 text-[#1F5FAE]" />
+              <span>{isFr ? 'Schéma & SLD Multi-Couches' : 'Multi-Layer Schematic & SLD'}</span>
             </button>
 
             <button
@@ -296,21 +315,20 @@ export const JourneyView: React.FC<JourneyViewProps> = ({
               role="tab"
               aria-selected={journeyMode === '13scenes'}
               onClick={() => setJourneyMode('13scenes')}
-              className={`px-4 py-2 rounded-full font-semibold transition-colors flex items-center gap-2 cursor-pointer ${
+              className={`px-4 py-2 rounded-full font-semibold transition-all flex items-center gap-2 cursor-pointer border-0 ${
                 journeyMode === '13scenes'
-                  ? 'bg-[#17282C] text-[#FFFDF9]'
-                  : 'text-[#5C6C70] hover:text-[#17282C]'
+                  ? 'bg-[#0B1B2B] text-[#FBFCFD] shadow-xs'
+                  : 'bg-transparent text-[#5B6B7B] hover:text-[#0B1B2B]'
               }`}
             >
-              <Sparkles className="h-3.5 w-3.5 text-[#B8872D]" />
-              <span>{locale === 'fr' ? '13 Scènes Narratives' : '13-Scene Narrative'}</span>
+              <Sparkles className="h-3.5 w-3.5 text-[#F2A541]" />
+              <span>{isFr ? '13 Scènes Narratives' : '13-Scene Narrative'}</span>
             </button>
           </div>
         </div>
-      </div>
 
-      {journeyMode === '9stages' ? (
-        <div className="py-2">
+        {/* View Mode Rendering */}
+        {journeyMode === '9stages' ? (
           <NineStagePowerGridExplorer
             locale={locale}
             initialStageId={activeStage}
@@ -332,9 +350,7 @@ export const JourneyView: React.FC<JourneyViewProps> = ({
               }
             }}
           />
-        </div>
-      ) : journeyMode === '13scenes' ? (
-        <div className="py-2">
+        ) : journeyMode === '13scenes' ? (
           <Epede13ScenesJourney
             locale={locale}
             onNavigateView={(view) => {
@@ -345,321 +361,318 @@ export const JourneyView: React.FC<JourneyViewProps> = ({
               }
             }}
           />
-        </div>
-      ) : (
-        <div className="bg-[#FFFDF9] border border-[#DEDACF] rounded-[12px] p-4 sm:p-6 text-[#17282C]">
-          {/* 1. Header Toolbar */}
-          <EcosystemHeaderToolbar
-        locale={locale}
-        activeStage={activeStage}
-        onSelectStage={setActiveStage}
-        activeLayer={activeLayer}
-        onSelectLayer={setActiveLayer}
-        isFlowActive={isFlowActive}
-        onToggleFlow={() => setIsFlowActive(!isFlowActive)}
-        animationSpeed={animationSpeed}
-        onSetSpeed={setAnimationSpeed}
-        onOpenLightningModal={() => setIsLightningModalOpen(true)}
-        onOpenFaultModal={() => setIsFaultModalOpen(true)}
-        onOpenStabilityModal={() => setIsStabilityModalOpen(true)}
-        onOpenDisciplinesModal={() => setIsDisciplinesModalOpen(true)}
-        onOpenLossModal={() => setIsLossModalOpen(true)}
-        onOpenProtectionModal={() => setIsProtectionModalOpen(true)}
-        onOpenBlackStartModal={() => setIsBlackStartModalOpen(true)}
-        onOpenHarmonicsModal={() => setIsHarmonicsModalOpen(true)}
-      />
-
-      {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-8">
-        {/* 2. Interactive House Lamp & Upstream Mystery Hero */}
-        <InteractiveHouseLamp
-          locale={locale}
-          isLampOn={isLampOn}
-          onToggleLamp={() => setIsLampOn(!isLampOn)}
-          onTraceUpstream={handleTraceUpstream}
-          onJumpToStage={(stage) => setActiveStage(stage)}
-        />
-
-        {/* Active Upstream Trace Physics HUD */}
-        {isTracingUpstream && (
-          <div className="bg-white/95 border border-sky-200/90 rounded-2xl p-6 shadow-sm space-y-4 relative overflow-hidden animate-in fade-in duration-300">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-sky-100 pb-3">
-              <div className="flex items-center gap-3">
-                <span className="flex h-3 w-3 relative">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500" />
-                </span>
-                <span className="font-mono text-xs font-black text-sky-800 uppercase tracking-wider">
-                  {locale === 'fr' 
-                    ? `PROPAGATION DE L'ONDE ÉLECTROMAGNÉTIQUE · ÉTAPE ${UPSTREAM_TRACE_STEPS[traceStepIndex].stepNum}`
-                    : `ELECTROMAGNETIC WAVE PROPAGATION · STEP ${UPSTREAM_TRACE_STEPS[traceStepIndex].stepNum}`}
-                </span>
-                <span className="font-mono text-[10px] px-2 py-0.5 rounded bg-sky-50 text-sky-700 border border-sky-200">
-                  {UPSTREAM_TRACE_STEPS[traceStepIndex].delayMs}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleTraceUpstream}
-                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono text-xs flex items-center gap-1 border border-slate-200"
-                >
-                  <RotateCcw className="h-3 w-3" />
-                  <span>{locale === 'fr' ? 'Recommencer' : 'Restart'}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={handleStopTrace}
-                  className="p-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800"
-                  title="Fermer"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* Stage Title and Physical Description */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-              <div className="md:col-span-8 space-y-1">
-                <h3 className="text-base sm:text-lg font-mono font-black text-slate-900 flex items-center gap-2">
-                  <Zap className="h-4 w-4 text-amber-500" />
-                  <span>{UPSTREAM_TRACE_STEPS[traceStepIndex].label[locale]}</span>
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  {UPSTREAM_TRACE_STEPS[traceStepIndex].physics[locale]}
-                </p>
-              </div>
-
-              <div className="md:col-span-4 bg-slate-50 p-4 rounded-xl border border-sky-200/60 font-mono text-center">
-                <span className="text-[10px] text-slate-500 uppercase block mb-1">
-                  {locale === 'fr' ? 'ÉQUATION PHYSIQUE DU NŒUD' : 'NODE PHYSICAL EQUATION'}
-                </span>
-                <span className="text-xs font-bold text-amber-700 tracking-wide">
-                  {UPSTREAM_TRACE_STEPS[traceStepIndex].formula}
-                </span>
-              </div>
-            </div>
-
-            {/* Step Progress Bar */}
-            <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden flex border border-slate-200/60">
-              {UPSTREAM_TRACE_STEPS.map((s, idx) => (
-                <div
-                  key={s.stage}
-                  className={`h-full flex-1 transition-all duration-500 ${
-                    idx <= traceStepIndex
-                      ? 'bg-gradient-to-r from-sky-500 to-amber-500'
-                      : 'bg-slate-100'
-                  } ${idx > 0 ? 'border-l border-white' : ''}`}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* 3. Main Multi-Layer Synchronized Visualizer Canvas */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold text-slate-700 uppercase">
-                {locale === 'fr' ? 'REPRÉSENTATION SYNCHRONISÉE DU PARCOURS' : 'SYNCHRONIZED JOURNEY CANVAS'}
-              </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-50 text-sky-800 border border-sky-200 uppercase font-bold">
-                {activeLayer === 'conceptual' 
-                  ? (locale === 'fr' ? 'Vue Conceptuelle Globale' : 'Conceptual Flow')
-                  : activeLayer === 'electrical'
-                    ? (locale === 'fr' ? 'Unifilaire CEI / IEEE' : 'IEC Single-Line')
-                    : (locale === 'fr' ? 'Coupe & Élévation CAD' : 'CAD Cross-Section')}
-              </span>
-            </div>
-
-            <div className="text-xs font-mono text-slate-500 hidden sm:block">
-              {locale === 'fr' ? 'Cliquez sur les icônes pour inspecter les équipements' : 'Click icons to inspect equipment'}
-            </div>
-          </div>
-
-          {/* Conditional View Rendering based on activeLayer */}
-          {activeLayer === 'conceptual' && (
-            <ConceptualSystemSvg
+        ) : (
+          <div className="bg-[#FBFCFD] border border-[#D5E0E8] rounded-[6px] p-5 sm:p-8 space-y-8 shadow-[0_4px_24px_rgba(11,27,43,0.04)]">
+            {/* Header Toolbar */}
+            <EcosystemHeaderToolbar
               locale={locale}
               activeStage={activeStage}
               onSelectStage={setActiveStage}
-              onSelectEquipment={handleSelectEquipment}
+              activeLayer={activeLayer}
+              onSelectLayer={setActiveLayer}
               isFlowActive={isFlowActive}
+              onToggleFlow={() => setIsFlowActive(!isFlowActive)}
               animationSpeed={animationSpeed}
+              onSetSpeed={setAnimationSpeed}
+              onOpenLightningModal={() => setIsLightningModalOpen(true)}
+              onOpenFaultModal={() => setIsFaultModalOpen(true)}
+              onOpenStabilityModal={() => setIsStabilityModalOpen(true)}
+              onOpenDisciplinesModal={() => setIsDisciplinesModalOpen(true)}
+              onOpenLossModal={() => setIsLossModalOpen(true)}
+              onOpenProtectionModal={() => setIsProtectionModalOpen(true)}
+              onOpenBlackStartModal={() => setIsBlackStartModalOpen(true)}
+              onOpenHarmonicsModal={() => setIsHarmonicsModalOpen(true)}
+            />
+
+            {/* Interactive House Lamp & Upstream Mystery Hero */}
+            <InteractiveHouseLamp
+              locale={locale}
               isLampOn={isLampOn}
               onToggleLamp={() => setIsLampOn(!isLampOn)}
+              onTraceUpstream={handleTraceUpstream}
+              onJumpToStage={(stage) => setActiveStage(stage)}
             />
-          )}
 
-          {activeLayer === 'electrical' && (
-            <ElectricalSldSvg
-              locale={locale}
-              activeStage={activeStage}
-              onSelectStage={setActiveStage}
-              onSelectEquipment={handleSelectEquipment}
-              isFlowActive={isFlowActive}
-              animationSpeed={animationSpeed}
-            />
-          )}
+            {/* Active Upstream Trace Physics HUD */}
+            {isTracingUpstream && (
+              <div className="bg-[#EEF4F8] border border-[#D5E0E8] rounded-[6px] p-5 sm:p-6 shadow-sm space-y-4 relative overflow-hidden animate-in fade-in duration-300">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#D5E0E8] pb-3">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-3 w-3 relative">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#1F5FAE] opacity-75" />
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-[#1F5FAE]" />
+                    </span>
+                    <span className="font-mono text-xs font-bold text-[#0B1B2B] uppercase tracking-wider">
+                      {isFr 
+                        ? `PROPAGATION DE L'ONDE ÉLECTROMAGNÉTIQUE · ÉTAPE ${UPSTREAM_TRACE_STEPS[traceStepIndex].stepNum}`
+                        : `ELECTROMAGNETIC WAVE PROPAGATION · STEP ${UPSTREAM_TRACE_STEPS[traceStepIndex].stepNum}`}
+                    </span>
+                    <span className="font-mono text-[11px] px-2 py-0.5 rounded-[3px] bg-[#FBFCFD] text-[#1F5FAE] border border-[#D5E0E8]">
+                      {UPSTREAM_TRACE_STEPS[traceStepIndex].delayMs}
+                    </span>
+                  </div>
 
-          {activeLayer === 'physical' && (
-            <PhysicalEngineeringSvg
-              locale={locale}
-              activeStage={activeStage}
-              onSelectStage={setActiveStage}
-              onSelectEquipment={handleSelectEquipment}
-              isLampOn={isLampOn}
-              onToggleLamp={() => setIsLampOn(!isLampOn)}
-            />
-          )}
-        </div>
-
-        {/* 4. Active Stage Detailed Engineering Card */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-8 shadow-xs space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-5">
-            <div>
-              <div className="flex items-center gap-3 mb-1.5">
-                <span className="h-7 px-2.5 rounded-lg bg-amber-500 text-white font-mono font-bold text-xs flex items-center justify-center shadow-xs">
-                  ÉTAPE {stageData.stepNumber ?? stageData.number} / 6
-                </span>
-                <span className="text-sm font-mono font-bold text-sky-700">
-                  {stageData.voltageLevel ?? stageData.voltageRating}
-                </span>
-              </div>
-              <h2 className="text-xl sm:text-2xl font-black font-mono text-slate-900">
-                {stageData.title[locale]}
-              </h2>
-              <p className="text-sm text-slate-600 mt-1 font-sans">
-                {stageData.description?.[locale] ?? stageData.subtitle[locale]}
-              </p>
-            </div>
-
-            {/* Stage navigation buttons */}
-            <div className="flex flex-wrap items-center gap-2">
-              {onNavigateContextStack && (
-                <button
-                  type="button"
-                  onClick={() => onNavigateContextStack(STAGE_SPINE_MAPPING[activeStage])}
-                  className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-cyan-300 font-mono text-xs font-bold flex items-center gap-1.5 transition-colors border border-slate-700 shadow-xs"
-                >
-                  <Zap className="h-3.5 w-3.5 text-cyan-400" />
-                  <span>{locale === 'fr' ? 'Épine Dorsale & TCC' : 'Spine & TCC Stack'}</span>
-                </button>
-              )}
-
-              <button
-                type="button"
-                disabled={(stageData.stepNumber ?? stageData.number) === 1}
-                onClick={() => {
-                  const currentNum = stageData.stepNumber ?? stageData.number;
-                  const prevStage = ECOSYSTEM_STAGES.find((s) => s.number === currentNum - 1 || s.stepNumber === currentNum - 1);
-                  if (prevStage) setActiveStage(prevStage.id);
-                }}
-                className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-40 text-xs font-mono flex items-center gap-1.5 transition-colors border border-slate-200/80"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span>{locale === 'fr' ? 'Précédent' : 'Previous'}</span>
-              </button>
-
-              <button
-                type="button"
-                disabled={(stageData.stepNumber ?? stageData.number) === 6}
-                onClick={() => {
-                  const currentNum = stageData.stepNumber ?? stageData.number;
-                  const nextStage = ECOSYSTEM_STAGES.find((s) => s.number === currentNum + 1 || s.stepNumber === currentNum + 1);
-                  if (nextStage) setActiveStage(nextStage.id);
-                }}
-                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-mono font-bold disabled:opacity-40 text-xs flex items-center gap-1.5 transition-colors shadow-xs"
-              >
-                <span>{locale === 'fr' ? 'Étape Suivante' : 'Next Stage'}</span>
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-
-          {/* Technical Physics & Transformations */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-5 rounded-xl bg-amber-50/60 border border-amber-200/80 space-y-2">
-              <span className="text-xs font-mono font-bold text-amber-800 uppercase flex items-center gap-2">
-                <Zap className="h-4 w-4 text-amber-600" />
-                <span>TRANSFORMATION ÉNERGÉTIQUE / PHYSIQUE</span>
-              </span>
-              <p className="text-xs text-slate-700 font-sans leading-relaxed">
-                {stageData.physicsTransformation?.[locale] ?? stageData.transformationPrinciple?.[locale] ?? stageData.keyRole[locale]}
-              </p>
-            </div>
-
-            <div className="p-5 rounded-xl bg-indigo-50/60 border border-indigo-200/80 space-y-2">
-              <span className="text-xs font-mono font-bold text-indigo-800 uppercase flex items-center gap-2">
-                <Layers className="h-4 w-4 text-indigo-600" />
-                <span>DISCIPLINE & NORMES ASSOCIÉES</span>
-              </span>
-              <div className="space-y-1 text-xs font-mono">
-                <div className="text-slate-700">
-                  <span className="text-slate-500">Médiation: </span>
-                  <span className="text-emerald-700 font-bold">
-                    {stageData.primaryDiscipline?.[locale] ?? (locale === 'fr' ? 'Génie Électrotechnique' : 'Electrical Engineering')}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleTraceUpstream}
+                      className="px-2.5 py-1 rounded-[4px] bg-[#FBFCFD] hover:bg-[#EEF4F8] text-[#0B1B2B] font-mono text-xs flex items-center gap-1 border border-[#D5E0E8] cursor-pointer"
+                    >
+                      <RotateCcw className="h-3 w-3" />
+                      <span>{isFr ? 'Recommencer' : 'Restart'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleStopTrace}
+                      className="p-1 rounded-[4px] bg-[#FBFCFD] hover:bg-[#EEF4F8] text-[#5B6B7B] hover:text-[#0B1B2B] border border-[#D5E0E8] cursor-pointer"
+                      title={isFr ? 'Fermer' : 'Close'}
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
-                <div className="text-slate-700">
-                  <span className="text-slate-500">Standards: </span>
-                  <span className="text-sky-700 font-medium">
-                    {stageData.keyStandards ? stageData.keyStandards.join(' · ') : 'IEC 60034 · IEC 60076 · IEEE 80'}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
 
-          {/* Equipment Grid for Current Stage */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xs font-mono font-bold text-slate-700 uppercase">
-                {locale === 'fr' ? 'ÉQUIPEMENTS CLÉS DU MAILLON (CLIQUER POUR INSPECTION COMPLÈTE)' : 'KEY LINK EQUIPMENT (CLICK TO INSPECT)'}
-              </h3>
-              <span className="text-xs font-mono text-amber-700 font-bold">
-                {stageEquipments.length} {locale === 'fr' ? 'équipements documentés' : 'documented assets'}
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              {stageEquipments.map((eq) => (
-                <button
-                  key={eq.id}
-                  type="button"
-                  onClick={() => handleSelectEquipment(eq.id)}
-                  className="p-4 rounded-xl bg-white border border-slate-200/90 hover:border-amber-400 hover:shadow-md hover:bg-slate-50/50 text-left transition-all group flex flex-col justify-between space-y-3 shadow-2xs"
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-50 text-amber-800 font-bold border border-amber-200">
-                        {eq.tag}
-                      </span>
-                      <span className="text-[10px] font-mono text-sky-700 font-semibold">
-                        {eq.voltageLevel ?? ''}
-                      </span>
-                    </div>
-                    <h4 className="text-xs font-bold font-mono text-slate-900 group-hover:text-amber-700 transition-colors">
-                      {eq.name[locale]}
-                    </h4>
-                    <p className="text-[11px] text-slate-600 mt-1 font-sans line-clamp-2">
-                      {eq.shortDesc[locale]}
+                {/* Stage Title and Physical Description */}
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                  <div className="md:col-span-8 space-y-1">
+                    <h3 className="text-base sm:text-lg font-bold text-[#0B1B2B] flex items-center gap-2 m-0 font-['Space_Grotesk']">
+                      <Zap className="h-4 w-4 text-[#F2A541]" />
+                      <span>{UPSTREAM_TRACE_STEPS[traceStepIndex].label[locale]}</span>
+                    </h3>
+                    <p className="text-xs sm:text-sm text-[#3A4B5C] leading-relaxed m-0 font-['Space_Grotesk']">
+                      {UPSTREAM_TRACE_STEPS[traceStepIndex].physics[locale]}
                     </p>
                   </div>
 
-                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] font-mono text-slate-500">
-                    <span>{eq.standards?.[0]?.code ?? 'IEC'}</span>
-                    <span className="text-amber-600 font-bold group-hover:translate-x-0.5 transition-transform">
-                      Fiche CEI →
+                  <div className="md:col-span-4 bg-[#FBFCFD] p-3.5 rounded-[4px] border border-[#D5E0E8] font-mono text-center">
+                    <span className="text-[10px] text-[#5B6B7B] uppercase block mb-1">
+                      {isFr ? 'ÉQUATION PHYSIQUE DU NŒUD' : 'NODE PHYSICAL EQUATION'}
+                    </span>
+                    <span className="text-xs font-bold text-[#1F5FAE] tracking-wide">
+                      {UPSTREAM_TRACE_STEPS[traceStepIndex].formula}
                     </span>
                   </div>
-                </button>
-              ))}
+                </div>
+
+                {/* Step Progress Bar */}
+                <div className="w-full bg-[#D5E0E8] h-1.5 rounded-full overflow-hidden flex">
+                  {UPSTREAM_TRACE_STEPS.map((s, idx) => (
+                    <div
+                      key={s.stage}
+                      className={`h-full flex-1 transition-all duration-500 ${
+                        idx <= traceStepIndex ? 'bg-[#F2A541]' : 'bg-[#D5E0E8]'
+                      } ${idx > 0 ? 'border-l border-white' : ''}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Main Multi-Layer Synchronized Visualizer Canvas */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono font-bold text-[#0B1B2B] uppercase">
+                    {isFr ? 'REPRÉSENTATION SYNCHRONISÉE DU PARCOURS' : 'SYNCHRONIZED JOURNEY CANVAS'}
+                  </span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-[3px] bg-[#EEF4F8] text-[#1F5FAE] border border-[#D5E0E8] uppercase font-bold">
+                    {activeLayer === 'conceptual' 
+                      ? (isFr ? 'Vue Conceptuelle Globale' : 'Conceptual Flow')
+                      : activeLayer === 'electrical'
+                        ? (isFr ? 'Unifilaire CEI / IEEE' : 'IEC Single-Line')
+                        : (isFr ? 'Coupe & Élévation CAD' : 'CAD Cross-Section')}
+                  </span>
+                </div>
+
+                <div className="text-xs font-mono text-[#5B6B7B] hidden sm:block">
+                  {isFr ? 'Cliquez sur les icônes pour inspecter les équipements' : 'Click icons to inspect equipment'}
+                </div>
+              </div>
+
+              {/* Conditional View Rendering based on activeLayer */}
+              {activeLayer === 'conceptual' && (
+                <ConceptualSystemSvg
+                  locale={locale}
+                  activeStage={activeStage}
+                  onSelectStage={setActiveStage}
+                  onSelectEquipment={handleSelectEquipment}
+                  isFlowActive={isFlowActive}
+                  animationSpeed={animationSpeed}
+                  isLampOn={isLampOn}
+                  onToggleLamp={() => setIsLampOn(!isLampOn)}
+                />
+              )}
+
+              {activeLayer === 'electrical' && (
+                <ElectricalSldSvg
+                  locale={locale}
+                  activeStage={activeStage}
+                  onSelectStage={setActiveStage}
+                  onSelectEquipment={handleSelectEquipment}
+                  isFlowActive={isFlowActive}
+                  animationSpeed={animationSpeed}
+                />
+              )}
+
+              {activeLayer === 'physical' && (
+                <PhysicalEngineeringSvg
+                  locale={locale}
+                  activeStage={activeStage}
+                  onSelectStage={setActiveStage}
+                  onSelectEquipment={handleSelectEquipment}
+                  isLampOn={isLampOn}
+                  onToggleLamp={() => setIsLampOn(!isLampOn)}
+                />
+              )}
+            </div>
+
+            {/* Active Stage Detailed Engineering Card */}
+            <div className="bg-[#FBFCFD] border border-[#D5E0E8] rounded-[6px] p-6 sm:p-8 space-y-6">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#D5E0E8] pb-5">
+                <div>
+                  <div className="flex items-center gap-2.5 mb-1.5 font-mono text-xs">
+                    <span className="px-2.5 py-0.5 rounded-[3px] bg-[#0B1B2B] text-[#FBFCFD] font-bold">
+                      ÉTAPE {stageData.stepNumber ?? stageData.number} / 6
+                    </span>
+                    <span className="font-bold text-[#1F5FAE]">
+                      {stageData.voltageLevel ?? stageData.voltageRating}
+                    </span>
+                  </div>
+                  <h2 className="text-xl sm:text-2xl font-bold text-[#0B1B2B] font-['Space_Grotesk'] m-0">
+                    {stageData.title[locale]}
+                  </h2>
+                  <p className="text-sm text-[#3A4B5C] mt-1 font-['Space_Grotesk'] m-0">
+                    {stageData.description?.[locale] ?? stageData.subtitle[locale]}
+                  </p>
+                </div>
+
+                {/* Stage navigation buttons */}
+                <div className="flex flex-wrap items-center gap-2">
+                  {onNavigateContextStack && (
+                    <button
+                      type="button"
+                      onClick={() => onNavigateContextStack(STAGE_SPINE_MAPPING[activeStage])}
+                      className="px-3.5 py-1.5 rounded-full bg-[#0B1B2B] hover:bg-[#1F5FAE] text-[#FBFCFD] font-mono text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer border-0"
+                    >
+                      <Zap className="h-3.5 w-3.5 text-[#F2A541]" />
+                      <span>{isFr ? 'Épine Dorsale & TCC' : 'Spine & TCC Stack'}</span>
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    disabled={(stageData.stepNumber ?? stageData.number) === 1}
+                    onClick={() => {
+                      const currentNum = stageData.stepNumber ?? stageData.number;
+                      const prevStage = ECOSYSTEM_STAGES.find((s) => s.number === currentNum - 1 || s.stepNumber === currentNum - 1);
+                      if (prevStage) setActiveStage(prevStage.id);
+                    }}
+                    className="px-3.5 py-1.5 rounded-full bg-[#FBFCFD] hover:bg-[#EEF4F8] text-[#0B1B2B] disabled:opacity-30 text-xs font-mono flex items-center gap-1.5 transition-colors border border-[#D5E0E8] cursor-pointer"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    <span>{isFr ? 'Précédent' : 'Previous'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled={(stageData.stepNumber ?? stageData.number) === 6}
+                    onClick={() => {
+                      const currentNum = stageData.stepNumber ?? stageData.number;
+                      const nextStage = ECOSYSTEM_STAGES.find((s) => s.number === currentNum + 1 || s.stepNumber === currentNum + 1);
+                      if (nextStage) setActiveStage(nextStage.id);
+                    }}
+                    className="px-4 py-1.5 rounded-full bg-[#0B1B2B] hover:bg-[#1F5FAE] text-[#FBFCFD] font-mono font-bold disabled:opacity-30 text-xs flex items-center gap-1.5 transition-colors cursor-pointer border-0"
+                  >
+                    <span>{isFr ? 'Étape Suivante' : 'Next Stage'}</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Technical Physics & Transformations */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 rounded-[4px] bg-[#EEF4F8] border border-[#D5E0E8] space-y-1.5">
+                  <span className="text-xs font-mono font-bold text-[#0B1B2B] uppercase flex items-center gap-2">
+                    <Zap className="h-3.5 w-3.5 text-[#F2A541]" />
+                    <span>TRANSFORMATION ÉNERGÉTIQUE / PHYSIQUE</span>
+                  </span>
+                  <p className="text-xs text-[#3A4B5C] font-['Space_Grotesk'] leading-relaxed m-0">
+                    {stageData.physicsTransformation?.[locale] ?? stageData.transformationPrinciple?.[locale] ?? stageData.keyRole[locale]}
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-[4px] bg-[#EEF4F8] border border-[#D5E0E8] space-y-1.5">
+                  <span className="text-xs font-mono font-bold text-[#0B1B2B] uppercase flex items-center gap-2">
+                    <Layers className="h-3.5 w-3.5 text-[#1F5FAE]" />
+                    <span>DISCIPLINE & NORMES ASSOCIÉES</span>
+                  </span>
+                  <div className="space-y-1 text-xs font-mono">
+                    <div className="text-[#3A4B5C]">
+                      <span className="text-[#5B6B7B]">Médiation: </span>
+                      <span className="text-[#0B1B2B] font-bold">
+                        {stageData.primaryDiscipline?.[locale] ?? (isFr ? 'Génie Électrotechnique' : 'Electrical Engineering')}
+                      </span>
+                    </div>
+                    <div className="text-[#3A4B5C]">
+                      <span className="text-[#5B6B7B]">Standards: </span>
+                      <span className="text-[#1F5FAE] font-medium">
+                        {stageData.keyStandards ? stageData.keyStandards.join(' · ') : 'IEC 60034 · IEC 60076 · IEEE 80'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Equipment Grid for Current Stage */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-mono font-bold text-[#0B1B2B] uppercase m-0">
+                    {isFr ? 'ÉQUIPEMENTS CLÉS DU MAILLON' : 'KEY LINK APPARATUS'}
+                  </h3>
+                  <span className="text-xs font-mono text-[#1F5FAE] font-bold">
+                    {stageEquipments.length} {isFr ? 'équipements documentés' : 'documented assets'}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  {stageEquipments.map((eq) => (
+                    <button
+                      key={eq.id}
+                      type="button"
+                      onClick={() => handleSelectEquipment(eq.id)}
+                      className="p-3.5 rounded-[4px] bg-[#FBFCFD] border border-[#D5E0E8] hover:border-[#1F5FAE] hover:shadow-xs text-left transition-all group flex flex-col justify-between space-y-3 cursor-pointer"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-[2px] bg-[#EEF4F8] text-[#1F5FAE] font-bold border border-[#D5E0E8]">
+                            {eq.tag}
+                          </span>
+                          <span className="text-[10px] font-mono text-[#5B6B7B] font-medium">
+                            {eq.voltageLevel ?? ''}
+                          </span>
+                        </div>
+                        <h4 className="text-xs font-bold text-[#0B1B2B] group-hover:text-[#1F5FAE] transition-colors m-0 font-['Space_Grotesk']">
+                          {eq.name[locale]}
+                        </h4>
+                        <p className="text-[11px] text-[#5B6B7B] mt-1 line-clamp-2 m-0 font-['Space_Grotesk']">
+                          {eq.shortDesc[locale]}
+                        </p>
+                      </div>
+
+                      <div className="pt-2 border-t border-[#D5E0E8] flex items-center justify-between text-[10px] font-mono text-[#5B6B7B]">
+                        <span>{eq.standards?.[0]?.code ?? 'IEC'}</span>
+                        <span className="text-[#1F5FAE] font-bold group-hover:translate-x-0.5 transition-transform">
+                          Fiche CEI →
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        )}
+      </main>
 
       {/* Slide-over Equipment Inspector Drawer */}
       <EquipmentDrawer
@@ -725,8 +738,25 @@ export const JourneyView: React.FC<JourneyViewProps> = ({
         onClose={() => setIsHarmonicsModalOpen(false)}
         onSelectEquipment={handleSelectEquipment}
       />
-        </div>
-      )}
+
+      {/* Bottom Final CTA (Navy Section with radial amber glow) */}
+      <FinalCTA
+        eyebrow={isFr ? 'PLATEFORME D’INGÉNIERIE ÉLECTROTECHNIQUE' : 'EPEDE POWER ENGINEERING PLATFORM'}
+        title={isFr ? 'Visualisez chaque liaison. Maîtrisez le système.' : 'See every connection. Master the system.'}
+        description={
+          isFr
+            ? 'De la centrale hydroélectrique 225 kV aux armoires de distribution industrielle basse tension. Conçu pour les ingénieurs électriciens et réseaux.'
+            : 'From 225 kV hydroelectric generation to low-voltage industrial switchboards. Engineered for electrical and power systems practitioners.'
+        }
+        primaryAction={{
+          label: isFr ? 'Ouvrir les Calculateurs CEI' : 'Open IEC Solvers',
+          onClick: () => onNavigateCalculator?.('cable-ampacity'),
+        }}
+        secondaryAction={{
+          label: isFr ? 'Explorer le Réseau Camerounais' : 'Explore Cameroon Grid',
+          onClick: () => onNavigateView?.('cameroon-grid'),
+        }}
+      />
     </div>
   );
 };

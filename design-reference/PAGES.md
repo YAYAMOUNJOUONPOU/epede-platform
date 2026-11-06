@@ -106,3 +106,4 @@ This document lists every active route across the EPEDE platform, tagged strictl
 | `/follow-the-energy` | `#/follow-the-energy` | `follow-the-energy` | **Simulation** | Real-time animated vector power flow across Cameroon generation, transmission, and load nodes. |
 | `/scenarios` | `#/scenarios` | `scenarios` | **Simulation** | N-1 contingency, blackout recovery, and islanding scenario simulator. |
 | `/asset-management` | `#/asset-management` | `asset-management` | **Lesson / article pages** | ISO 55000 asset health indexing, dissolved gas analysis (DGA - Duval Triangle), transformer lifespan estimation. |
+

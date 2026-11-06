@@ -538,7 +538,7 @@ export default function App() {
 
   return (
     <UsageLevelProvider>
-      <div className="min-h-screen bg-[#F6F4EE] text-[#17282C] font-sans selection:bg-[#147C78]/20 selection:text-[#17282C] flex flex-col relative overflow-x-hidden">
+      <div className="min-h-screen bg-[#FBFCFD] text-[#0B1B2B] font-['Space_Grotesk',sans-serif] selection:bg-[#1F5FAE]/20 selection:text-[#0B1B2B] flex flex-col relative overflow-x-hidden">
       {/* Background canvas */}
       {currentView !== 'ecosystem' && <EngineeringBackground interactive={false} />}
 

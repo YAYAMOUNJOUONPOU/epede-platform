@@ -1,5 +1,6 @@
 // src/components/layout/Header.tsx
-// EPEDE ProCode Editorial Header (72px Desktop & Accessible Mobile Navigation + Grouped Searchable Library Panel)
+// EPEDE Sitewide Fixed Header (68px Desktop & Accessible Mobile Navigation + Grouped Searchable Library Panel)
+// Follows SITEWIDE-REDESIGN.md and HOMEPAGE-EXACT-MATCH.md porcelain-and-navy specification.
 
 import React, { useState, useEffect, useRef } from 'react';
 import {
@@ -127,7 +128,7 @@ export const Header: React.FC<HeaderProps> = ({
   useEffect(() => {
     const handleScroll = () => {
       const y = window.scrollY;
-      setIsScrolled(y > 24);
+      setIsScrolled(y > 20);
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
       setScrollProgress(maxScroll > 0 ? Math.min(100, (y / maxScroll) * 100) : 0);
     };
@@ -326,7 +327,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <>
-      {/* Top 2px Continuous Scroll Progress Indicator */}
+      {/* Top Accessible Skip Link */}
       <a
         href="#main-content"
         onClick={(e) => {
@@ -337,26 +338,27 @@ export const Header: React.FC<HeaderProps> = ({
             mainEl.scrollIntoView({ behavior: 'smooth' });
           }
         }}
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-4 focus:z-[70] focus:px-4 focus:py-2 focus:bg-[#17282C] focus:text-[#F6F4EE] focus:font-mono focus:text-xs focus:font-semibold focus:rounded-[4px] focus:shadow-lg"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-4 focus:z-[70] focus:px-4 focus:py-2 focus:bg-[#0B1B2B] focus:text-[#FBFCFD] focus:font-mono focus:text-xs focus:font-semibold focus:rounded-[4px] focus:shadow-lg"
       >
         {isFr ? 'Aller au contenu principal' : 'Skip to main content'}
       </a>
 
+      {/* Top Amber Continuous Scroll Progress Indicator */}
       <div
         aria-hidden="true"
-        className="fixed top-0 left-0 h-[2px] z-[60] bg-[#147C78] transition-[width] duration-150 pointer-events-none"
+        className="fixed top-0 left-0 h-[2px] z-[60] bg-[#F2A541] transition-[width] duration-150 pointer-events-none"
         style={{ width: `${scrollProgress}%` }}
       />
 
       <header
-        id="epede-minimal-header"
-        className={`fixed top-0 inset-x-0 z-50 h-[72px] transition-colors duration-200 ${
+        id="epede-sitewide-header"
+        className={`fixed top-0 inset-x-0 z-50 h-[68px] transition-colors duration-200 ${
           isScrolled || mobileMenuOpen || libraryOpen
-            ? 'bg-[#FFFDF9]/94 border-b border-[#E4E0D5] backdrop-blur-md'
-            : 'bg-[#F6F4EE]/82 border-b border-transparent backdrop-blur-sm'
+            ? 'bg-[#FBFCFD]/95 border-b border-[#D5E0E8] backdrop-blur-md shadow-[0_2px_12px_rgba(11,27,43,0.04)]'
+            : 'bg-[#FBFCFD]/85 border-b border-[#D5E0E8]/70 backdrop-blur-sm'
         }`}
       >
-        <div className="max-w-[1280px] mx-auto h-full px-5 sm:px-8 lg:px-12 flex items-center justify-between gap-4">
+        <div className="max-w-[1360px] mx-auto h-full px-5 sm:px-8 lg:px-12 flex items-center justify-between gap-4">
           {/* Brand Logo */}
           <a
             href={isFr ? '#/' : '#/en/'}
@@ -366,18 +368,18 @@ export const Header: React.FC<HeaderProps> = ({
                 navigateTo('home');
               }
             }}
-            className="inline-flex items-center gap-2.5 text-[#17282C] font-extrabold text-[19px] tracking-[-0.03em] no-underline shrink-0"
+            className="inline-flex items-center gap-2.5 text-[#0B1B2B] font-bold text-[20px] tracking-[-0.03em] no-underline shrink-0"
           >
-            <span className="w-7 h-7 rounded-[7px] bg-[#17282C] text-[#F6F4EE] grid place-items-center text-sm font-extrabold">
+            <span className="w-7 h-7 rounded-[6px] bg-[#0B1B2B] text-[#FBFCFD] grid place-items-center text-sm font-bold">
               E
             </span>
-            <span>EPEDE</span>
+            <span className="font-['Space_Grotesk']">EPEDE</span>
           </a>
 
-          {/* Primary Desktop Navigation (7 Concise Items) */}
+          {/* Primary Desktop Navigation */}
           <nav
             aria-label={isFr ? 'Navigation principale' : 'Primary'}
-            className="hidden lg:flex items-center gap-5 xl:gap-6 text-[14px] font-semibold"
+            className="hidden lg:flex items-center gap-5 xl:gap-6 text-[14px] font-medium font-['Space_Grotesk']"
           >
             <a
               href={isFr ? '#/' : '#/en/'}
@@ -388,7 +390,7 @@ export const Header: React.FC<HeaderProps> = ({
                 }
               }}
               className={`no-underline py-2 transition-colors ${
-                currentView === 'home' ? 'text-[#147C78] font-bold' : 'text-[#17282C] hover:text-[#147C78]'
+                currentView === 'home' ? 'text-[#1F5FAE] font-bold' : 'text-[#3A4B5C] hover:text-[#1F5FAE]'
               }`}
             >
               {isFr ? 'Accueil' : 'Home'}
@@ -404,8 +406,8 @@ export const Header: React.FC<HeaderProps> = ({
               }}
               className={`no-underline py-2 transition-colors ${
                 currentView === 'thematic-journeys' || currentView === 'scenarios'
-                  ? 'text-[#147C78] font-bold'
-                  : 'text-[#17282C] hover:text-[#147C78]'
+                  ? 'text-[#1F5FAE] font-bold'
+                  : 'text-[#3A4B5C] hover:text-[#1F5FAE]'
               }`}
             >
               {isFr ? 'Apprendre' : 'Learn'}
@@ -421,8 +423,8 @@ export const Header: React.FC<HeaderProps> = ({
               }}
               className={`no-underline py-2 transition-colors ${
                 currentView === 'journey' || currentView === 'follow-the-energy'
-                  ? 'text-[#147C78] font-bold'
-                  : 'text-[#17282C] hover:text-[#147C78]'
+                  ? 'text-[#1F5FAE] font-bold'
+                  : 'text-[#3A4B5C] hover:text-[#1F5FAE]'
               }`}
             >
               {isFr ? 'Systèmes électriques' : 'Electrical Systems'}
@@ -440,8 +442,8 @@ export const Header: React.FC<HeaderProps> = ({
                 currentView === 'equipment-list' ||
                 currentView === 'equipment' ||
                 currentView === 'equipment-reference'
-                  ? 'text-[#147C78] font-bold'
-                  : 'text-[#17282C] hover:text-[#147C78]'
+                  ? 'text-[#1F5FAE] font-bold'
+                  : 'text-[#3A4B5C] hover:text-[#1F5FAE]'
               }`}
             >
               {isFr ? 'Équipements' : 'Equipment'}
@@ -457,8 +459,8 @@ export const Header: React.FC<HeaderProps> = ({
               }}
               className={`no-underline py-2 transition-colors ${
                 currentView === 'industrial-projects'
-                  ? 'text-[#147C78] font-bold'
-                  : 'text-[#17282C] hover:text-[#147C78]'
+                  ? 'text-[#1F5FAE] font-bold'
+                  : 'text-[#3A4B5C] hover:text-[#1F5FAE]'
               }`}
             >
               {isFr ? 'Ingénierie industrielle' : 'Industrial Engineering'}
@@ -473,8 +475,8 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => setLibraryOpen((prev) => !prev)}
                 className={`inline-flex items-center gap-1.5 py-2 bg-transparent border-0 cursor-pointer transition-colors ${
                   isLibraryActive || libraryOpen
-                    ? 'text-[#147C78] font-bold'
-                    : 'text-[#17282C] hover:text-[#147C78]'
+                    ? 'text-[#1F5FAE] font-bold'
+                    : 'text-[#3A4B5C] hover:text-[#1F5FAE]'
                 }`}
               >
                 <span>{isFr ? 'Bibliothèque' : 'Library'}</span>
@@ -489,13 +491,13 @@ export const Header: React.FC<HeaderProps> = ({
                 <div
                   role="dialog"
                   aria-label={isFr ? 'Bibliothèque technique EPEDE' : 'EPEDE Engineering Library'}
-                  className="fixed left-1/2 -translate-x-1/2 top-[72px] w-[min(1120px,calc(100vw-32px))] max-h-[calc(100vh-92px)] overflow-y-auto bg-[#FFFDF9] border border-[#DEDACF] shadow-[0_24px_60px_rgba(23,40,44,0.14)] p-6 sm:p-8 z-50"
+                  className="fixed left-1/2 -translate-x-1/2 top-[68px] w-[min(1160px,calc(100vw-32px))] max-h-[calc(100vh-88px)] overflow-y-auto bg-[#FBFCFD] border border-[#D5E0E8] shadow-[0_24px_60px_rgba(11,27,43,0.14)] p-6 sm:p-8 z-50 rounded-b-[8px]"
                 >
-                  <div className="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-[#DEDACF]">
+                  <div className="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-[#D5E0E8]">
                     <div className="flex-1 min-w-[240px]">
                       <label
                         htmlFor="epede-library-filter"
-                        className="block font-mono text-[11px] uppercase tracking-[0.08em] text-[#5C6C70] mb-1.5"
+                        className="block font-mono text-[11px] uppercase tracking-[0.08em] text-[#5B6B7B] mb-1.5"
                       >
                         {isFr
                           ? 'FILTRER LES DOMAINES D01–D16, LE RÉSEAU CAMEROUNAIS ET LES OUTILS'
@@ -512,14 +514,14 @@ export const Header: React.FC<HeaderProps> = ({
                             ? 'ex. D04, postes, protection, calculateurs, Cameroun…'
                             : 'e.g. D04, substations, protection, calculators, Cameroon…'
                         }
-                        className="w-full h-11 px-3.5 bg-[#F6F4EE] border border-[#CFCABD] text-[#17282C] text-sm font-medium focus:outline-none focus:border-[#147C78]"
+                        className="w-full h-11 px-3.5 bg-[#EEF4F8] border border-[#D5E0E8] text-[#0B1B2B] text-sm font-medium rounded-[4px] focus:outline-none focus:border-[#1F5FAE]"
                       />
                     </div>
                     <div className="flex items-center gap-3">
                       <button
                         type="button"
                         onClick={() => navigateTo('domains')}
-                        className="h-11 px-4 bg-[#147C78] hover:bg-[#0E5E5B] text-[#FFFDF9] font-bold text-xs rounded-full border-0 cursor-pointer"
+                        className="h-11 px-4 bg-[#0B1B2B] hover:bg-[#1F5FAE] text-white font-bold text-xs rounded-full border-0 cursor-pointer transition-colors"
                       >
                         {isFr ? 'Ouvrir l’index D01–D16 →' : 'Open full D01–D16 directory →'}
                       </button>
@@ -527,7 +529,7 @@ export const Header: React.FC<HeaderProps> = ({
                         type="button"
                         aria-label={isFr ? 'Fermer la bibliothèque' : 'Close library'}
                         onClick={() => setLibraryOpen(false)}
-                        className="h-11 w-11 grid place-items-center border border-[#DEDACF] bg-transparent text-[#17282C] hover:border-[#17282C] rounded-full cursor-pointer"
+                        className="h-11 w-11 grid place-items-center border border-[#D5E0E8] bg-transparent text-[#0B1B2B] hover:border-[#0B1B2B] rounded-full cursor-pointer transition-colors"
                       >
                         <X className="h-4 w-4" />
                       </button>
@@ -537,22 +539,22 @@ export const Header: React.FC<HeaderProps> = ({
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-6">
                     {/* Column 1: Physical Chain D01-D06 */}
                     <div>
-                      <div className="font-mono text-xs tracking-[0.08em] uppercase text-[#147C78] mb-3">
+                      <div className="font-mono text-xs tracking-[0.08em] uppercase text-[#1F5FAE] mb-3">
                         {isFr ? '01 · CHAÎNE PHYSIQUE (D01–D06)' : '01 · PHYSICAL POWER CHAIN (D01–D06)'}
                       </div>
-                      <div className="border-t border-[#17282C]">
+                      <div className="border-t border-[#0B1B2B]">
                         {physicalDomains.map((d) => (
                           <button
                             key={d.code}
                             type="button"
                             onClick={() => navigateTo(`domain:${d.code}`)}
-                            className="w-full text-left py-2.5 px-2 border-b border-[#EEEAE0] bg-transparent hover:bg-[#F6F4EE] flex items-baseline justify-between gap-3 cursor-pointer"
+                            className="w-full text-left py-2.5 px-2 border-b border-[#D5E0E8]/70 bg-transparent hover:bg-[#EEF4F8] flex items-baseline justify-between gap-3 cursor-pointer transition-colors"
                           >
-                            <span className="text-sm font-semibold text-[#17282C]">
-                              <span className="font-mono text-xs text-[#B8872D] mr-2">{d.code}</span>
+                            <span className="text-sm font-semibold text-[#0B1B2B]">
+                              <span className="font-mono text-xs text-[#1F5FAE] mr-2">{d.code}</span>
                               {isFr ? d.name_fr : d.name_en}
                             </span>
-                            <span className="text-[#147C78] text-xs shrink-0">→</span>
+                            <span className="text-[#1F5FAE] text-xs shrink-0">→</span>
                           </button>
                         ))}
                       </div>
@@ -560,24 +562,24 @@ export const Header: React.FC<HeaderProps> = ({
 
                     {/* Column 2: Transversal & Protection D07-D16 */}
                     <div>
-                      <div className="font-mono text-xs tracking-[0.08em] uppercase text-[#147C78] mb-3">
+                      <div className="font-mono text-xs tracking-[0.08em] uppercase text-[#1F5FAE] mb-3">
                         {isFr
                           ? '02 · DISCIPLINES TRANSVERSALES & SÉCURITÉ (D07–D16)'
                           : '02 · TRANSVERSAL, PROTECTION & SAFETY (D07–D16)'}
                       </div>
-                      <div className="border-t border-[#17282C] max-h-[340px] overflow-y-auto">
+                      <div className="border-t border-[#0B1B2B] max-h-[340px] overflow-y-auto">
                         {transversalDomains.map((d) => (
                           <button
                             key={d.code}
                             type="button"
                             onClick={() => navigateTo(`domain:${d.code}`)}
-                            className="w-full text-left py-2 px-2 border-b border-[#EEEAE0] bg-transparent hover:bg-[#F6F4EE] flex items-baseline justify-between gap-3 cursor-pointer"
+                            className="w-full text-left py-2 px-2 border-b border-[#D5E0E8]/70 bg-transparent hover:bg-[#EEF4F8] flex items-baseline justify-between gap-3 cursor-pointer transition-colors"
                           >
-                            <span className="text-sm font-semibold text-[#17282C]">
-                              <span className="font-mono text-xs text-[#B8872D] mr-2">{d.code}</span>
+                            <span className="text-sm font-semibold text-[#0B1B2B]">
+                              <span className="font-mono text-xs text-[#1F5FAE] mr-2">{d.code}</span>
                               {isFr ? d.name_fr : d.name_en}
                             </span>
-                            <span className="text-[#147C78] text-xs shrink-0">→</span>
+                            <span className="text-[#1F5FAE] text-xs shrink-0">→</span>
                           </button>
                         ))}
                       </div>
@@ -585,21 +587,21 @@ export const Header: React.FC<HeaderProps> = ({
 
                     {/* Column 3: Grid, Workbenches & Standards */}
                     <div>
-                      <div className="font-mono text-xs tracking-[0.08em] uppercase text-[#147C78] mb-3">
+                      <div className="font-mono text-xs tracking-[0.08em] uppercase text-[#1F5FAE] mb-3">
                         {isFr
                           ? '03 · RÉSEAU CAMEROUN, ATELIERS & NORMES'
                           : '03 · CAMEROON GRID, WORKBENCHES & STANDARDS'}
                       </div>
-                      <div className="border-t border-[#17282C]">
+                      <div className="border-t border-[#0B1B2B]">
                         {libraryWorkbenches.map((item) => (
                           <button
                             key={item.view}
                             type="button"
                             onClick={() => navigateTo(item.view)}
-                            className="w-full text-left py-2.5 px-2 border-b border-[#EEEAE0] bg-transparent hover:bg-[#F6F4EE] flex items-baseline justify-between gap-3 cursor-pointer"
+                            className="w-full text-left py-2.5 px-2 border-b border-[#D5E0E8]/70 bg-transparent hover:bg-[#EEF4F8] flex items-baseline justify-between gap-3 cursor-pointer transition-colors"
                           >
-                            <span className="text-sm font-semibold text-[#17282C]">{item.label}</span>
-                            <span className="font-mono text-[11px] text-[#5C6C70] shrink-0">
+                            <span className="text-sm font-semibold text-[#0B1B2B]">{item.label}</span>
+                            <span className="font-mono text-[11px] text-[#5B6B7B] shrink-0">
                               {item.code}
                             </span>
                           </button>
@@ -621,8 +623,8 @@ export const Header: React.FC<HeaderProps> = ({
               }}
               className={`no-underline py-2 transition-colors ${
                 currentView === 'about'
-                  ? 'text-[#147C78] font-bold'
-                  : 'text-[#17282C] hover:text-[#147C78]'
+                  ? 'text-[#1F5FAE] font-bold'
+                  : 'text-[#3A4B5C] hover:text-[#1F5FAE]'
               }`}
             >
               {isFr ? 'À propos' : 'About'}
@@ -635,9 +637,9 @@ export const Header: React.FC<HeaderProps> = ({
               type="button"
               onClick={handleSearch}
               aria-label={isFr ? 'Rechercher' : 'Search'}
-              className="h-11 px-3 border-0 bg-transparent text-[#17282C] hover:text-[#147C78] text-sm font-semibold inline-flex items-center gap-2 cursor-pointer"
+              className="h-10 px-3 border-0 bg-transparent text-[#0B1B2B] hover:text-[#1F5FAE] text-sm font-medium inline-flex items-center gap-2 cursor-pointer transition-colors"
             >
-              <Search className="h-4 w-4 text-[#17282C]" />
+              <Search className="h-4 w-4 text-[#0B1B2B]" />
               <span className="hidden sm:inline">{isFr ? 'Rechercher' : 'Search'}</span>
             </button>
 
@@ -645,7 +647,7 @@ export const Header: React.FC<HeaderProps> = ({
               type="button"
               onClick={() => handleLocale(locale === 'fr' ? 'en' : 'fr')}
               aria-label={isFr ? 'Passer en anglais' : 'Switch language to French'}
-              className="h-11 px-2.5 border-0 bg-transparent font-mono text-[13px] text-[#5C6C70] hover:text-[#17282C] cursor-pointer"
+              className="h-10 px-2.5 border-0 bg-transparent font-mono text-[13px] text-[#5B6B7B] hover:text-[#0B1B2B] cursor-pointer transition-colors"
             >
               {locale === 'en' ? 'EN · fr' : 'FR · en'}
             </button>
@@ -657,7 +659,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => setUserDropdownOpen((prev) => !prev)}
                 aria-label={isFr ? 'Profil et outils' : 'Profile and settings'}
                 aria-expanded={userDropdownOpen}
-                className="h-11 w-11 rounded-full border border-[#D8D4C8] bg-[#FFFDF9] text-[#17282C] hover:border-[#17282C] inline-flex items-center justify-center cursor-pointer"
+                className="h-10 w-10 rounded-full border border-[#D5E0E8] bg-[#FBFCFD] text-[#0B1B2B] hover:border-[#0B1B2B] inline-flex items-center justify-center cursor-pointer transition-colors"
               >
                 {user?.photoURL ? (
                   <img
@@ -666,29 +668,29 @@ export const Header: React.FC<HeaderProps> = ({
                     className="w-6 h-6 rounded-full object-cover"
                   />
                 ) : (
-                  <UserIcon className="h-4 w-4 text-[#17282C]" />
+                  <UserIcon className="h-4 w-4 text-[#0B1B2B]" />
                 )}
               </button>
 
               {userDropdownOpen && (
-                <div className="absolute right-0 top-full mt-2 w-80 bg-[#FFFDF9] border border-[#DEDACF] shadow-[0_20px_50px_rgba(23,40,44,0.15)] p-4 z-50 text-xs space-y-3.5">
-                  <div className="pb-3 border-b border-[#EEEAE0] flex items-center justify-between">
+                <div className="absolute right-0 top-full mt-2 w-80 bg-[#FBFCFD] border border-[#D5E0E8] shadow-[0_20px_50px_rgba(11,27,43,0.15)] p-4 z-50 text-xs space-y-3.5 rounded-[6px]">
+                  <div className="pb-3 border-b border-[#D5E0E8] flex items-center justify-between">
                     <div>
-                      <div className="font-bold text-[#17282C] text-sm">
+                      <div className="font-bold text-[#0B1B2B] text-sm">
                         {user
                           ? user.displayName || 'Engineer'
                           : isFr
                           ? 'Session Ingénieur'
                           : 'Engineer Workspace'}
                       </div>
-                      <div className="text-[11px] text-[#5C6C70] font-mono">
+                      <div className="text-[11px] text-[#5B6B7B] font-mono">
                         {user ? user.email : isFr ? 'Stockage local actif' : 'Local study storage active'}
                       </div>
                     </div>
                     <button
                       type="button"
                       onClick={handleSidebarToggle}
-                      className="h-9 px-2.5 border border-[#DEDACF] bg-[#F6F4EE] text-[#17282C] font-mono text-[11px] inline-flex items-center gap-1.5 cursor-pointer"
+                      className="h-8 px-2.5 border border-[#D5E0E8] bg-[#EEF4F8] text-[#0B1B2B] font-mono text-[11px] inline-flex items-center gap-1.5 cursor-pointer rounded-[4px] hover:border-[#0B1B2B]"
                     >
                       <PanelLeftOpen className="h-3.5 w-3.5" />
                       <span>{isFr ? 'Volet' : 'Index'}</span>
@@ -700,45 +702,45 @@ export const Header: React.FC<HeaderProps> = ({
                     <button
                       type="button"
                       onClick={() => navigateTo('calculators')}
-                      className="p-2.5 bg-[#F6F4EE] border border-[#DEDACF] hover:border-[#147C78] cursor-pointer"
+                      className="p-2.5 bg-[#EEF4F8] border border-[#D5E0E8] hover:border-[#1F5FAE] cursor-pointer rounded-[4px] transition-colors"
                     >
-                      <div className="font-mono font-bold text-sm text-[#147C78]">
+                      <div className="font-mono font-bold text-sm text-[#1F5FAE]">
                         {calculationNotes.length}
                       </div>
-                      <div className="text-[11px] text-[#5C6C70]">
+                      <div className="text-[11px] text-[#5B6B7B]">
                         {isFr ? 'Études' : 'Studies'}
                       </div>
                     </button>
                     <button
                       type="button"
                       onClick={() => navigateTo('equipment-list')}
-                      className="p-2.5 bg-[#F6F4EE] border border-[#DEDACF] hover:border-[#147C78] cursor-pointer"
+                      className="p-2.5 bg-[#EEF4F8] border border-[#D5E0E8] hover:border-[#1F5FAE] cursor-pointer rounded-[4px] transition-colors"
                     >
-                      <div className="font-mono font-bold text-sm text-[#17282C]">
+                      <div className="font-mono font-bold text-sm text-[#0B1B2B]">
                         {bookmarks.length}
                       </div>
-                      <div className="text-[11px] text-[#5C6C70]">
+                      <div className="text-[11px] text-[#5B6B7B]">
                         {isFr ? 'Signets' : 'Saved'}
                       </div>
                     </button>
                     <button
                       type="button"
                       onClick={() => navigateTo('diagrams')}
-                      className="p-2.5 bg-[#F6F4EE] border border-[#DEDACF] hover:border-[#147C78] cursor-pointer"
+                      className="p-2.5 bg-[#EEF4F8] border border-[#D5E0E8] hover:border-[#1F5FAE] cursor-pointer rounded-[4px] transition-colors"
                     >
-                      <div className="font-mono font-bold text-sm text-[#B8872D]">
+                      <div className="font-mono font-bold text-sm text-[#F2A541]">
                         {Object.keys(sldAnnotations).length}
                       </div>
-                      <div className="text-[11px] text-[#5C6C70]">SLD</div>
+                      <div className="text-[11px] text-[#5B6B7B]">SLD</div>
                     </button>
                   </div>
 
                   {/* Active Engineering Role */}
                   <div>
-                    <div className="font-mono text-[11px] uppercase tracking-[0.06em] text-[#5C6C70] mb-1.5">
+                    <div className="font-mono text-[11px] uppercase tracking-[0.06em] text-[#5B6B7B] mb-1.5">
                       {isFr ? 'RÔLE D’INGÉNIERIE ACTIF' : 'ACTIVE ENGINEERING ROLE'}
                     </div>
-                    <div className="max-h-40 overflow-y-auto border-t border-[#EEEAE0]">
+                    <div className="max-h-40 overflow-y-auto border-t border-[#D5E0E8]">
                       {CANONICAL_ROLES.map((r) => {
                         const isSelected = r.slug === activeRoleSlug;
                         return (
@@ -746,17 +748,17 @@ export const Header: React.FC<HeaderProps> = ({
                             key={r.slug}
                             type="button"
                             onClick={() => setActiveRoleSlug(r.slug)}
-                            className={`w-full flex items-center justify-between py-2 px-2 border-b border-[#EEEAE0] text-left cursor-pointer ${
-                              isSelected ? 'bg-[#E3EFEC] text-[#17282C] font-bold' : 'bg-transparent text-[#33474B]'
+                            className={`w-full flex items-center justify-between py-2 px-2 border-b border-[#D5E0E8]/70 text-left cursor-pointer transition-colors ${
+                              isSelected ? 'bg-[#EEF4F8] text-[#1F5FAE] font-bold' : 'bg-transparent text-[#3A4B5C] hover:bg-[#EEF4F8]'
                             }`}
                           >
                             <span className="truncate">
-                              <span className="font-mono text-[11px] text-[#147C78] mr-1.5">
+                              <span className="font-mono text-[11px] text-[#1F5FAE] mr-1.5">
                                 {r.domain_code}
                               </span>
                               {isFr ? r.name_fr : r.name_en}
                             </span>
-                            {isSelected && <Check className="h-3.5 w-3.5 text-[#147C78] shrink-0" />}
+                            {isSelected && <Check className="h-3.5 w-3.5 text-[#1F5FAE] shrink-0" />}
                           </button>
                         );
                       })}
@@ -768,35 +770,35 @@ export const Header: React.FC<HeaderProps> = ({
                     <button
                       type="button"
                       onClick={handleAssistant}
-                      className="w-full h-10 px-3 bg-[#F6F4EE] border border-[#DEDACF] hover:border-[#147C78] text-[#17282C] font-semibold inline-flex items-center justify-between cursor-pointer"
+                      className="w-full h-9 px-3 bg-[#EEF4F8] border border-[#D5E0E8] hover:border-[#1F5FAE] text-[#0B1B2B] font-semibold inline-flex items-center justify-between cursor-pointer rounded-[4px] transition-colors"
                     >
                       <span className="inline-flex items-center gap-2">
-                        <Bot className="h-4 w-4 text-[#147C78]" />
+                        <Bot className="h-4 w-4 text-[#1F5FAE]" />
                         {isFr ? 'Guide pédagogique IA' : 'AI Engineering Guide'}
                       </span>
-                      <span className="text-[#147C78]">→</span>
+                      <span className="text-[#1F5FAE]">→</span>
                     </button>
                     <div className="grid grid-cols-2 gap-2">
                       <button
                         type="button"
                         onClick={() => navigateTo('protection')}
-                        className="h-9 px-2.5 bg-[#F6F4EE] border border-[#DEDACF] hover:border-[#147C78] text-[#17282C] font-semibold inline-flex items-center gap-1.5 cursor-pointer"
+                        className="h-8 px-2.5 bg-[#EEF4F8] border border-[#D5E0E8] hover:border-[#1F5FAE] text-[#0B1B2B] font-semibold inline-flex items-center gap-1.5 cursor-pointer rounded-[4px] transition-colors"
                       >
-                        <Activity className="h-3.5 w-3.5 text-[#147C78]" />
+                        <Activity className="h-3.5 w-3.5 text-[#1F5FAE]" />
                         <span>Protection</span>
                       </button>
                       <button
                         type="button"
                         onClick={() => navigateTo('commissioning')}
-                        className="h-9 px-2.5 bg-[#F6F4EE] border border-[#DEDACF] hover:border-[#147C78] text-[#17282C] font-semibold inline-flex items-center gap-1.5 cursor-pointer"
+                        className="h-8 px-2.5 bg-[#EEF4F8] border border-[#D5E0E8] hover:border-[#1F5FAE] text-[#0B1B2B] font-semibold inline-flex items-center gap-1.5 cursor-pointer rounded-[4px] transition-colors"
                       >
-                        <Layers className="h-3.5 w-3.5 text-[#B8872D]" />
+                        <Layers className="h-3.5 w-3.5 text-[#F2A541]" />
                         <span>FAT / SAT</span>
                       </button>
                     </div>
                   </div>
 
-                  <div className="pt-2 border-t border-[#EEEAE0]">
+                  <div className="pt-2 border-t border-[#D5E0E8]">
                     {user ? (
                       <button
                         type="button"
@@ -804,7 +806,7 @@ export const Header: React.FC<HeaderProps> = ({
                           signOutUser();
                           setUserDropdownOpen(false);
                         }}
-                        className="w-full h-10 border border-[#DEDACF] bg-transparent text-[#B91C1C] font-semibold inline-flex items-center justify-center gap-2 cursor-pointer"
+                        className="w-full h-9 border border-[#D5E0E8] bg-transparent text-[#B91C1C] font-semibold inline-flex items-center justify-center gap-2 cursor-pointer rounded-[4px] hover:border-[#B91C1C] transition-colors"
                       >
                         <LogOut className="h-3.5 w-3.5" />
                         <span>{isFr ? 'Déconnexion' : 'Sign Out'}</span>
@@ -816,7 +818,7 @@ export const Header: React.FC<HeaderProps> = ({
                           signInWithGoogle();
                           setUserDropdownOpen(false);
                         }}
-                        className="w-full h-10 bg-[#17282C] text-[#F6F4EE] font-semibold inline-flex items-center justify-center gap-2 cursor-pointer border-0"
+                        className="w-full h-9 bg-[#0B1B2B] hover:bg-[#1F5FAE] text-[#FBFCFD] font-semibold inline-flex items-center justify-center gap-2 cursor-pointer border-0 rounded-[4px] transition-colors"
                       >
                         <UserIcon className="h-3.5 w-3.5" />
                         <span>{isFr ? 'Synchronisation Google' : 'Google Cloud Sync'}</span>
@@ -836,12 +838,12 @@ export const Header: React.FC<HeaderProps> = ({
                   navigateTo('journey');
                 }
               }}
-              className="hidden xl:inline-flex h-10 px-4 border border-[#17282C] rounded-full text-[#17282C] hover:bg-[#17282C] hover:text-[#F6F4EE] text-[13px] font-bold items-center no-underline transition-colors"
+              className="hidden xl:inline-flex h-9 px-4 border border-[#0B1B2B] rounded-full text-[#0B1B2B] hover:bg-[#0B1B2B] hover:text-[#FBFCFD] text-[13px] font-bold items-center no-underline transition-colors"
             >
               {isFr ? 'Entrer dans EPEDE' : 'Enter EPEDE'}
             </a>
 
-            {/* Mobile Menu Toggle Button (Explicit Label + >=44px Target) */}
+            {/* Mobile Menu Toggle Button */}
             <button
               type="button"
               onClick={() => setMobileMenuOpen((prev) => !prev)}
@@ -855,7 +857,7 @@ export const Header: React.FC<HeaderProps> = ({
                   ? 'Ouvrir le menu'
                   : 'Open navigation menu'
               }
-              className="lg:hidden h-11 px-4 border border-[#D8D4C8] rounded-full bg-[#FFFDF9] text-[#17282C] text-sm font-bold cursor-pointer"
+              className="lg:hidden h-10 px-3.5 border border-[#D5E0E8] rounded-full bg-[#FBFCFD] text-[#0B1B2B] text-sm font-bold cursor-pointer hover:border-[#0B1B2B] transition-colors"
             >
               {mobileMenuOpen ? (isFr ? 'Fermer' : 'Close') : 'Menu'}
             </button>
@@ -866,7 +868,7 @@ export const Header: React.FC<HeaderProps> = ({
         {mobileMenuOpen && (
           <nav
             aria-label={isFr ? 'Menu mobile' : 'Mobile'}
-            className="lg:hidden bg-[#FFFDF9] border-b border-[#E4E0D5] px-5 pt-2 pb-6 max-h-[calc(100vh-72px)] overflow-y-auto flex flex-col"
+            className="lg:hidden bg-[#FBFCFD] border-b border-[#D5E0E8] px-5 pt-2 pb-6 max-h-[calc(100vh-68px)] overflow-y-auto flex flex-col shadow-lg"
           >
             {[
               { label: isFr ? 'Accueil' : 'Home', view: 'home', href: isFr ? '#/' : '#/en/' },
@@ -935,10 +937,10 @@ export const Header: React.FC<HeaderProps> = ({
                     navigateTo(item.view);
                   }
                 }}
-                className="min-h-[52px] flex items-center justify-between border-b border-[#EEEAE0] text-[#17282C] text-[17px] font-semibold no-underline"
+                className="min-h-[50px] flex items-center justify-between border-b border-[#D5E0E8]/70 text-[#0B1B2B] text-[16px] font-medium no-underline hover:text-[#1F5FAE] transition-colors"
               >
                 <span>{item.label}</span>
-                <span className="text-[#147C78]">→</span>
+                <span className="text-[#1F5FAE]">→</span>
               </a>
             ))}
           </nav>
