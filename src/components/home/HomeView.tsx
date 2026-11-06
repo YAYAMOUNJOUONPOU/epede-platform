@@ -765,15 +765,15 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </div>
 
             <h1 style={{ margin: '28px 0 0', fontSize: 'clamp(2.4rem, 5.6vw, 5.4rem)', lineHeight: 0.96, letterSpacing: '-0.05em', fontWeight: 700, maxWidth: 1100 }}>
-              <span style={{ display: 'block' }}>{isFR ? 'Suivez le courant' : 'Follow the current'}</span>
-              <span style={{ display: 'block', color: '#1F5FAE' }}>{isFR ? 'de la turbine au moteur.' : 'from turbine to motor.'}</span>
+              <span style={{ display: 'block' }}>{isFR ? 'Suivez le flux d’énergie,' : 'Trace the flow of energy,'}</span>
+              <span style={{ display: 'block', color: '#1F5FAE' }}>{isFR ? 'de la centrale à la charge finale.' : 'from generation to the final load.'}</span>
             </h1>
 
             <div style={{ marginTop: 36, display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 28 }}>
               <p style={{ margin: 0, maxWidth: 560, fontSize: 'clamp(1.1rem, 1.5vw, 1.3rem)', lineHeight: 1.55, color: '#3A4B5C' }}>
                 {isFR
-                  ? 'Un environnement connecté pour les réseaux électriques, les installations industrielles et l’automatisme — chaque étape expliquée, calculée et simulée, en français et en anglais.'
-                  : 'One connected environment for power systems, industrial installations and automation — every stage explained, calculated and simulated, in English and French.'}
+                  ? 'Un environnement numérique d’ingénierie pour les réseaux électriques, les postes et l’industrie — chaque étape expliquée, calculée et simulée selon les normes CEI & IEEE.'
+                  : 'A digital power engineering environment for grid networks, substations and industrial plants — every stage explained, calculated and simulated under IEC & IEEE standards.'}
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
                 <a
