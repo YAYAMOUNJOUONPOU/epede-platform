@@ -380,6 +380,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeStageIndex, setActiveStageIndex] = useState(0);
+  const [activeNavSection, setActiveNavSection] = useState<'journey' | 'grid' | 'workbench' | 'case' | 'pathways' | null>(null);
+  const [hoveredSldNode, setHoveredSldNode] = useState<number | null>(null);
   const stageRefs = useRef<(HTMLElement | null)[]>([]);
 
   useEffect(() => {
@@ -391,6 +393,21 @@ export const HomeView: React.FC<HomeViewProps> = ({
           const y = window.scrollY;
           setScrollProgress(max > 0 ? Math.min(100, Math.max(0, (y / max) * 100)) : 0);
           setIsScrolled(y > 40);
+
+          // Active Nav Section Scrollspy
+          const sectionIds = ['pathways', 'case', 'workbench', 'grid', 'journey'] as const;
+          let currentNav: typeof activeNavSection = null;
+          for (const sId of sectionIds) {
+            const el = document.getElementById(sId);
+            if (el) {
+              const rect = el.getBoundingClientRect();
+              if (rect.top <= 200 && rect.bottom >= 100) {
+                currentNav = sId;
+                break;
+              }
+            }
+          }
+          setActiveNavSection(currentNav);
 
           // Find closest stage
           const mid = window.innerHeight * 0.45;
@@ -630,7 +647,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
         }}
       >
         <div style={{ maxWidth: 1360, margin: '0 auto', height: 68, padding: '0 clamp(20px, 4vw, 48px)', display: 'flex', alignItems: 'center', gap: 28 }}>
-          <a href="#top" style={{ display: 'flex', alignItems: 'baseline', gap: 12, color: '#0B1B2B', textDecoration: 'none' }}>
+          <a href="#top" style={{ display: 'flex', alignItems: 'center', gap: 10, color: '#0B1B2B', textDecoration: 'none' }}>
+            <span style={{ width: 28, height: 28, borderRadius: 6, background: '#0B1B2B', color: '#FFFFFF', display: 'grid', placeItems: 'center', fontSize: 13, fontWeight: 700 }}>
+              E
+            </span>
             <span style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.03em' }}>EPEDE</span>
             {isWide && (
               <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '0.1em', color: '#5B6B7B' }}>
@@ -640,27 +660,63 @@ export const HomeView: React.FC<HomeViewProps> = ({
           </a>
 
           {isWide && (
-            <nav aria-label="Primary" style={{ display: 'flex', gap: 26, marginLeft: 'auto', fontSize: 14, fontWeight: 500 }}>
-              <a href="#journey" style={{ color: '#0B1B2B', textDecoration: 'none' }} className="hover:text-[#1F5FAE] transition-colors">{isFR ? 'Parcours' : 'Journey'}</a>
-              <a href="#grid" style={{ color: '#0B1B2B', textDecoration: 'none' }} className="hover:text-[#1F5FAE] transition-colors">{isFR ? 'Réseau du Cameroun' : 'Cameroon grid'}</a>
-              <a href="#workbench" style={{ color: '#0B1B2B', textDecoration: 'none' }} className="hover:text-[#1F5FAE] transition-colors">{isFR ? 'Atelier' : 'Workbench'}</a>
-              <a href="#case" style={{ color: '#0B1B2B', textDecoration: 'none' }} className="hover:text-[#1F5FAE] transition-colors">{isFR ? 'Étude de cas' : 'Case study'}</a>
-              <a href="#pathways" style={{ color: '#0B1B2B', textDecoration: 'none' }} className="hover:text-[#1F5FAE] transition-colors">{isFR ? 'Formations' : 'Pathways'}</a>
+            <nav aria-label="Primary" style={{ display: 'flex', gap: 18, marginLeft: 'auto', fontSize: 14, fontWeight: 500 }}>
+              {[
+                { href: '#journey', id: 'journey', label: isFR ? 'Parcours' : 'Journey' },
+                { href: '#grid', id: 'grid', label: isFR ? 'Réseau Cameroun' : 'Cameroon grid' },
+                { href: '#workbench', id: 'workbench', label: isFR ? 'Atelier' : 'Workbench' },
+                { href: '#case', id: 'case', label: isFR ? 'Étude de cas' : 'Case study' },
+                { href: '#pathways', id: 'pathways', label: isFR ? 'Formations' : 'Pathways' }
+              ].map((item) => {
+                const isActive = activeNavSection === item.id;
+                return (
+                  <a
+                    key={item.id}
+                    href={item.href}
+                    style={{
+                      color: isActive ? '#1F5FAE' : '#0B1B2B',
+                      fontWeight: isActive ? 700 : 500,
+                      textDecoration: 'none',
+                      padding: '4px 8px',
+                      borderRadius: 6,
+                      background: isActive ? 'rgba(31, 95, 174, 0.08)' : 'transparent',
+                      transition: 'all 0.2s ease'
+                    }}
+                    className="hover:text-[#1F5FAE]"
+                  >
+                    {item.label}
+                  </a>
+                );
+              })}
             </nav>
           )}
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginLeft: isWide ? undefined : 'auto' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: isWide ? undefined : 'auto' }}>
             <button
               onClick={() => onOpenSearch?.()}
-              style={{ height: 44, padding: '0 12px', border: 0, background: 'transparent', color: '#0B1B2B', fontSize: 14, fontWeight: 500 }}
-              className="hover:text-[#1F5FAE] transition-colors"
+              style={{
+                height: 38,
+                padding: '0 12px',
+                border: '1px solid #D5E0E8',
+                borderRadius: 999,
+                background: '#FFFFFF',
+                color: '#0B1B2B',
+                fontSize: 13,
+                fontWeight: 500,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                cursor: 'pointer'
+              }}
+              className="hover:border-[#1F5FAE] hover:text-[#1F5FAE] transition-colors"
             >
-              {isFR ? 'Rechercher' : 'Search'}
+              <span>{isFR ? 'Rechercher' : 'Search'}</span>
+              <kbd style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, background: '#EEF4F8', padding: '1px 5px', borderRadius: 4, color: '#5B6B7B' }}>⌘K</kbd>
             </button>
             <button
               onClick={() => onLocaleChange?.(isFR ? 'en' : 'fr')}
               aria-label="Switch language"
-              style={{ whiteSpace: 'nowrap', height: 44, padding: '0 12px', border: 0, background: 'transparent', color: '#5B6B7B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 13 }}
+              style={{ whiteSpace: 'nowrap', height: 44, padding: '0 10px', border: 0, background: 'transparent', color: '#5B6B7B', fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, cursor: 'pointer' }}
             >
               <span style={{ color: !isFR ? '#1F5FAE' : '#5B6B7B', fontWeight: !isFR ? 700 : 400 }}>EN</span>
               {' / '}
@@ -669,10 +725,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
             {isWide ? (
               <a
                 href="#pathways"
-                style={{ height: 40, marginLeft: 8, padding: '0 18px', borderRadius: 999, background: '#0B1B2B', color: '#FFFFFF', fontSize: 14, fontWeight: 600, display: 'flex', alignItems: 'center', textDecoration: 'none' }}
+                style={{ height: 40, marginLeft: 4, padding: '0 18px', borderRadius: 999, background: '#0B1B2B', color: '#FFFFFF', fontSize: 14, fontWeight: 600, display: 'flex', alignItems: 'center', textDecoration: 'none' }}
                 className="hover:bg-[#1F5FAE] transition-colors"
               >
-                {isFR ? 'Commencer' : 'Start learning'}
+                {isFR ? 'Formations →' : 'Start learning →'}
               </a>
             ) : (
               <button
@@ -768,8 +824,11 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
           {/* Hero Typography & Primary CTA */}
           <div style={{ position: 'relative', width: '100%', maxWidth: 1360, margin: '0 auto', padding: '150px clamp(20px, 4vw, 48px) 0' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, letterSpacing: '0.12em', color: '#5B6B7B' }}>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#F2A541', boxShadow: '0 0 12px #F2A541' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, letterSpacing: '0.1em', color: '#5B6B7B', flexWrap: 'wrap' }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 10px', borderRadius: 999, background: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.3)', color: '#15803D', fontWeight: 600, fontSize: 11 }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22C55E', boxShadow: '0 0 8px #22C55E' }} />
+                <span>50.00 Hz · {isFR ? 'RÉSEAU STABLE (RIS/RIN)' : 'STABLE GRID (RIS/RIN)'}</span>
+              </span>
               <span>{isFR ? 'ENVIRONNEMENT NUMÉRIQUE D’INGÉNIERIE ÉLECTRIQUE' : 'ELECTRICAL POWER ENGINEERING DIGITAL ENVIRONMENT'}</span>
             </div>
 
@@ -808,7 +867,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
           <div style={{ position: 'relative', width: '100%', maxWidth: 1360, margin: 'clamp(48px, 7vw, 88px) auto 0', padding: '0 clamp(20px, 4vw, 48px) 28px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, flexWrap: 'wrap', paddingBottom: 14, borderBottom: '1px solid #D5E0E8' }}>
               <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '0.12em', color: '#5B6B7B' }}>
-                {isFR ? 'UNIFILAIRE ANIMÉ · SOURCE → CHARGE' : 'LIVE ONE-LINE · SOURCE → LOAD'}
+                {isFR ? 'UNIFILAIRE INTERACTIF · SOURCE → CHARGE' : 'INTERACTIVE ONE-LINE · SOURCE → LOAD'}
               </span>
               <div style={{ display: 'flex', alignItems: 'center', gap: 14, fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: '#5B6B7B' }}>
                 <span>
@@ -831,7 +890,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 viewBox="0 0 1200 124"
                 width="100%"
                 role="img"
-                aria-label={isFR ? 'Schéma unifilaire de la source à la charge' : 'One-line diagram from source to load'}
+                aria-label={isFR ? 'Schéma unifilaire interactif de la source à la charge' : 'Interactive one-line diagram from source to load'}
                 style={{ display: 'block', minWidth: 860 }}
               >
                 {/* Background track */}
@@ -847,22 +906,39 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
                 {/* 7 Canonical Nodes */}
                 {[
-                  { x: 80, volt: '15 kV', en: 'Generation', fr: 'Production', glyph: 'G' },
-                  { x: 260, volt: '225 kV', en: 'Step-up', fr: 'Élévation', glyph: 'trafo' },
-                  { x: 440, volt: '225 kV', en: 'Transmission', fr: 'Transport', glyph: 'tower' },
-                  { x: 620, volt: '225/90 kV', en: 'Substation', fr: 'Poste', glyph: 'substation' },
-                  { x: 800, volt: '30 kV', en: 'MV feeder', fr: 'Départ HTA', glyph: 'rmu' },
-                  { x: 980, volt: '400 V', en: 'LV board', fr: 'Tableau BT', glyph: 'tgbt' },
-                  { x: 1140, volt: '400 V', en: 'Motor', fr: 'Moteur', glyph: 'M' }
+                  { x: 80, volt: '15 kV', en: 'Generation', fr: 'Production', glyph: 'G', stageIdx: 0, std: 'CEI 60034' },
+                  { x: 260, volt: '225 kV', en: 'Step-up', fr: 'Élévation', glyph: 'trafo', stageIdx: 1, std: 'CEI 60076' },
+                  { x: 440, volt: '225 kV', en: 'Transmission', fr: 'Transport', glyph: 'tower', stageIdx: 2, std: 'Cigré TB 273' },
+                  { x: 620, volt: '225/90 kV', en: 'Substation', fr: 'Poste', glyph: 'substation', stageIdx: 3, std: 'CEI 62271' },
+                  { x: 800, volt: '30 kV', en: 'MV feeder', fr: 'Départ HTA', glyph: 'rmu', stageIdx: 4, std: 'CEI 62271-200' },
+                  { x: 980, volt: '400 V', en: 'LV board', fr: 'Tableau BT', glyph: 'tgbt', stageIdx: 6, std: 'CEI 61439-1' },
+                  { x: 1140, volt: '400 V', en: 'Motor', fr: 'Moteur', glyph: 'M', stageIdx: 8, std: 'CEI 60034-1' }
                 ].map((node, i) => {
                   const t = (node.x - 40) / 1120 * 0.92;
                   const a = Math.max(0.001, t - 0.012);
                   const c = Math.min(0.999, t + 0.16);
+                  const isHovered = hoveredSldNode === i;
                   return (
-                    <g key={i}>
+                    <g
+                      key={i}
+                      style={{ cursor: 'pointer' }}
+                      onMouseEnter={() => setHoveredSldNode(i)}
+                      onMouseLeave={() => setHoveredSldNode(null)}
+                      onClick={() => scrollToStage(node.stageIdx)}
+                      role="button"
+                      aria-label={`${node.volt} ${isFR ? node.fr : node.en} (${node.std})`}
+                    >
+                      {/* Interactive Target Circle */}
+                      <circle cx={node.x} cy="62" r="32" fill="transparent" />
+
+                      {/* Hover Halo Ring */}
+                      {isHovered && (
+                        <circle cx={node.x} cy="62" r="28" fill="rgba(31, 95, 174, 0.12)" stroke="#1F5FAE" strokeWidth="1.5" strokeDasharray="3 3" />
+                      )}
+
                       {/* Node Glyph Group with animated stroke lighting */}
-                      <g stroke={reducedMotion ? '#D9821C' : '#A9BAC6'} strokeWidth="2">
-                        {!reducedMotion && (
+                      <g stroke={isHovered ? '#1F5FAE' : (reducedMotion ? '#D9821C' : '#A9BAC6')} strokeWidth={isHovered ? '2.5' : '2'}>
+                        {!reducedMotion && !isHovered && (
                           <animate
                             attributeName="stroke"
                             values="#A9BAC6;#A9BAC6;#D9821C;#A9BAC6;#A9BAC6"
@@ -916,11 +992,11 @@ export const HomeView: React.FC<HomeViewProps> = ({
                       </g>
 
                       {/* Voltage tag above */}
-                      <text x={node.x} y="18" textAnchor="middle" fill="#5B6B7B" fontSize="12" fontFamily="IBM Plex Mono">
+                      <text x={node.x} y="18" textAnchor="middle" fill={isHovered ? '#1F5FAE' : '#5B6B7B'} fontSize="12" fontWeight={isHovered ? '700' : '400'} fontFamily="IBM Plex Mono">
                         {node.volt}
                       </text>
                       {/* Name below */}
-                      <text x={node.x} y="112" textAnchor="middle" fill="#0B1B2B" fontSize="15" fontWeight="600" fontFamily="Space Grotesk">
+                      <text x={node.x} y="112" textAnchor="middle" fill={isHovered ? '#1F5FAE' : '#0B1B2B'} fontSize="15" fontWeight={isHovered ? '700' : '600'} fontFamily="Space Grotesk">
                         {isFR ? node.fr : node.en}
                       </text>
                     </g>
@@ -935,6 +1011,79 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   </circle>
                 )}
               </svg>
+            </div>
+
+            {/* Interactive SLD Node Telemetry Card */}
+            <div style={{ marginTop: 12, minHeight: 40, display: 'flex', alignItems: 'center' }}>
+              {hoveredSldNode !== null ? (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: 12,
+                    width: '100%',
+                    padding: '8px 16px',
+                    borderRadius: 8,
+                    background: 'rgba(31, 95, 174, 0.08)',
+                    border: '1px solid rgba(31, 95, 174, 0.25)',
+                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontSize: 12
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                    <span style={{ color: '#1F5FAE', fontWeight: 700 }}>
+                      {[
+                        { volt: '15 kV', en: 'Generation', fr: 'Production' },
+                        { volt: '225 kV', en: 'Step-up', fr: 'Élévation' },
+                        { volt: '225 kV', en: 'Transmission', fr: 'Transport' },
+                        { volt: '225/90 kV', en: 'Substation', fr: 'Poste' },
+                        { volt: '30 kV', en: 'MV feeder', fr: 'Départ HTA' },
+                        { volt: '400 V', en: 'LV board', fr: 'Tableau BT' },
+                        { volt: '400 V', en: 'Motor', fr: 'Moteur' }
+                      ][hoveredSldNode].volt} · {isFR
+                        ? ['Production', 'Élévation', 'Transport', 'Poste', 'Départ HTA', 'Tableau BT', 'Moteur'][hoveredSldNode]
+                        : ['Generation', 'Step-up', 'Transmission', 'Substation', 'MV Feeder', 'LV Board', 'Motor'][hoveredSldNode]}
+                    </span>
+                    <span style={{ color: '#3A4B5C' }}>
+                      {isFR
+                        ? [
+                            'Alternateur synchrone triphasé (15 kV) · Centrale hydroélectrique',
+                            'Transformateur de puissance élévateur 15/225 kV',
+                            'Ligne aérienne 225 kV double terne · Réseau de transport RIS',
+                            'Poste d’interconnexion 225/90 kV · Jeux de barres & GIS',
+                            'Départ réseau de distribution HTA 30 kV · Cellule RMU',
+                            'Tableau Général Basse Tension (TGBT 400 V / 230 V)',
+                            'Moteur asynchrone triphasé 400 V · Charge industrielle finale'
+                          ][hoveredSldNode]
+                        : [
+                            'Synchronous Generator (15 kV) · Hydropower plant',
+                            'Step-up Power Transformer 15/225 kV',
+                            '225 kV double-circuit overhead transmission line',
+                            '225/90 kV Transmission Substation · Busbars & GIS',
+                            '30 kV MV distribution feeder · Ring Main Unit (RMU)',
+                            'Main Low-Voltage Switchboard (MLVS 400 V / 230 V)',
+                            '3-phase induction motor 400 V · Terminal industrial load'
+                          ][hoveredSldNode]}
+                    </span>
+                    <span style={{ padding: '2px 8px', borderRadius: 4, background: '#1F5FAE', color: '#FFFFFF', fontSize: 11, fontWeight: 600 }}>
+                      {['CEI 60034', 'CEI 60076', 'Cigré TB 273', 'CEI 62271', 'CEI 62271-200', 'CEI 61439-1', 'CEI 60034-1'][hoveredSldNode]}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => scrollToStage([0, 1, 2, 3, 4, 6, 8][hoveredSldNode])}
+                    style={{ border: 0, background: 'transparent', color: '#1F5FAE', fontWeight: 700, cursor: 'pointer', padding: 0 }}
+                  >
+                    {isFR ? 'Explorer cette étape dans le parcours ↓' : 'Explore stage in journey ↓'}
+                  </button>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#6A7A8A', fontFamily: "'IBM Plex Mono', monospace" }}>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#1F5FAE' }} />
+                  <span>{isFR ? 'Survolez ou cliquez un équipement pour inspecter sa tension, sa norme et son rôle physique' : 'Hover or click any apparatus to inspect voltage, standard and physical role'}</span>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -958,56 +1107,120 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 <div style={{ marginTop: 8, fontSize: 15, color: '#5B6B7B' }}>{isFR ? 'parcours d’apprentissage' : 'learning pathways'}</div>
               </div>
               <div style={{ borderTop: '2px solid #0B1B2B', paddingTop: 16 }}>
-                <div style={{ fontSize: 'clamp(2.6rem, 4.4vw, 3.8rem)', fontWeight: 700, letterSpacing: '-0.05em', lineHeight: 1 }}>EN · FR</div>
-                <div style={{ marginTop: 8, fontSize: 15, color: '#5B6B7B' }}>{isFR ? 'entièrement bilingue' : 'fully bilingual'}</div>
+                <div style={{ fontSize: 'clamp(2.6rem, 4.4vw, 3.8rem)', fontWeight: 700, letterSpacing: '-0.05em', lineHeight: 1 }}>39</div>
+                <div style={{ marginTop: 8, fontSize: 15, color: '#5B6B7B' }}>{isFR ? 'matériels spécifiés (CEI)' : 'specified apparatus (IEC)'}</div>
               </div>
             </div>
 
-            <div style={{ marginTop: 36, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '10px 28px', fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, color: '#0B1B2B' }}>
-              <span style={{ color: '#5B6B7B', letterSpacing: '0.1em', fontSize: 11 }}>{isFR ? 'RÉFÉRENCÉ À' : 'REFERENCED TO'}</span>
-              <span>IEC 60364</span>
-              <span>NF C 15-100</span>
-              <span>NF C 13-100</span>
-              <span>IEC 61850</span>
-              <span>IEC 60909</span>
-              <span>{isFR ? 'Données ARSEL (2026)' : 'ARSEL data (2026)'}</span>
+            {/* Interactive Normative Badges */}
+            <div style={{ marginTop: 36, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 10, fontFamily: "'IBM Plex Mono', monospace" }}>
+              <span style={{ color: '#5B6B7B', letterSpacing: '0.1em', fontSize: 11, marginRight: 6 }}>{isFR ? 'RÉFÉRENTIEL NORMATIF :' : 'NORMATIVE FRAMEWORK:'}</span>
+              {[
+                { code: 'CEI 60364', scope: isFR ? 'Basse Tension' : 'Low Voltage', linkView: 'standards' },
+                { code: 'NF C 15-100', scope: isFR ? 'Installations BT' : 'LV Installations', linkView: 'standards' },
+                { code: 'NF C 13-100', scope: isFR ? 'Postes HT' : 'HV Delivery Substations', linkView: 'standards' },
+                { code: 'CEI 61850', scope: isFR ? 'Réseaux & Protocoles' : 'Substation Automation', linkView: 'standards' },
+                { code: 'CEI 60909', scope: isFR ? 'Courants Court-circuit' : 'Short-Circuit Currents', linkView: 'standards' },
+                { code: 'Code Réseau ARSEL', scope: isFR ? 'Cameroun 2026' : 'Cameroon 2026', linkView: 'regulatory' }
+              ].map((badge, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => onNavigateView(badge.linkView)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '6px 12px',
+                    borderRadius: 6,
+                    background: '#FFFFFF',
+                    border: '1px solid #BAC8D3',
+                    fontSize: 12,
+                    color: '#0B1B2B',
+                    cursor: 'pointer',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
+                  }}
+                  className="hover:border-[#1F5FAE] hover:text-[#1F5FAE] transition-all hover:-translate-y-0.5"
+                >
+                  <strong style={{ fontWeight: 600 }}>{badge.code}</strong>
+                  <span style={{ color: '#6A7A8A', fontSize: 11 }}>· {badge.scope}</span>
+                </button>
+              ))}
             </div>
           </div>
         </section>
 
         {/* ========================================================================= */}
-        {/* 02b VOLTAGE BAND (PARALLAX MARQUEE)                                       */}
+        {/* 02b VOLTAGE BAND (CONTINUOUS SMOOTH MARQUEE)                              */}
         {/* ========================================================================= */}
         <section aria-hidden="true" data-screen-label="02b Voltage band" style={{ background: '#FBFCFD', overflow: 'hidden', padding: 'clamp(56px, 7vw, 96px) 0 0' }}>
-          <div
-            style={{
-              whiteSpace: 'nowrap',
-              fontSize: 'clamp(2.4rem, 6vw, 5.5rem)',
-              fontWeight: 700,
-              letterSpacing: '-0.04em',
-              lineHeight: 1.1,
-              color: 'transparent',
-              WebkitTextStroke: '1.5px #A9BAC6',
-              willChange: 'transform'
-            }}
-          >
-            15 kV · 225 kV · 90 kV · 30 kV · 400 V · 230 V · 24 V DC · 15 kV · 225 kV · 90 kV
+          {/* Track 1: Voltage Levels */}
+          <div className="epede-marquee-track-left">
+            <span
+              style={{
+                display: 'inline-block',
+                whiteSpace: 'nowrap',
+                fontSize: 'clamp(2.4rem, 6vw, 5.5rem)',
+                fontWeight: 700,
+                letterSpacing: '-0.04em',
+                lineHeight: 1.1,
+                color: 'transparent',
+                WebkitTextStroke: '1.5px #A9BAC6',
+                paddingRight: '2rem'
+              }}
+            >
+              15 kV · 225 kV · 90 kV · 30 kV · 400 V · 230 V · 24 V DC · 15 kV · 225 kV · 90 kV · 30 kV · 400 V · 230 V · 24 V DC · 
+            </span>
+            <span
+              style={{
+                display: 'inline-block',
+                whiteSpace: 'nowrap',
+                fontSize: 'clamp(2.4rem, 6vw, 5.5rem)',
+                fontWeight: 700,
+                letterSpacing: '-0.04em',
+                lineHeight: 1.1,
+                color: 'transparent',
+                WebkitTextStroke: '1.5px #A9BAC6',
+                paddingRight: '2rem'
+              }}
+            >
+              15 kV · 225 kV · 90 kV · 30 kV · 400 V · 230 V · 24 V DC · 15 kV · 225 kV · 90 kV · 30 kV · 400 V · 230 V · 24 V DC · 
+            </span>
           </div>
-          <div
-            style={{
-              marginLeft: '-40vw',
-              whiteSpace: 'nowrap',
-              fontSize: 'clamp(2.4rem, 6vw, 5.5rem)',
-              fontWeight: 700,
-              letterSpacing: '-0.04em',
-              lineHeight: 1.1,
-              color: '#1F5FAE',
-              willChange: 'transform'
-            }}
-          >
-            {isFR
-              ? 'PRODUIRE · TRANSFORMER · TRANSPORTER · DISTRIBUER · PROTÉGER · COMMANDER · PRODUIRE · TRANSFORMER'
-              : 'GENERATE · TRANSFORM · TRANSMIT · DISTRIBUTE · PROTECT · CONTROL · GENERATE · TRANSFORM'}
+
+          {/* Track 2: Engineering Action Verbs */}
+          <div className="epede-marquee-track-right" style={{ marginTop: 8 }}>
+            <span
+              style={{
+                display: 'inline-block',
+                whiteSpace: 'nowrap',
+                fontSize: 'clamp(2.4rem, 6vw, 5.5rem)',
+                fontWeight: 700,
+                letterSpacing: '-0.04em',
+                lineHeight: 1.1,
+                color: '#1F5FAE',
+                paddingRight: '2rem'
+              }}
+            >
+              {isFR
+                ? 'PRODUIRE · TRANSFORMER · TRANSPORTER · DISTRIBUER · PROTÉGER · COMMANDER · SIMULER · '
+                : 'GENERATE · TRANSFORM · TRANSMIT · DISTRIBUTE · PROTECT · CONTROL · SIMULATE · '}
+            </span>
+            <span
+              style={{
+                display: 'inline-block',
+                whiteSpace: 'nowrap',
+                fontSize: 'clamp(2.4rem, 6vw, 5.5rem)',
+                fontWeight: 700,
+                letterSpacing: '-0.04em',
+                lineHeight: 1.1,
+                color: '#1F5FAE',
+                paddingRight: '2rem'
+              }}
+            >
+              {isFR
+                ? 'PRODUIRE · TRANSFORMER · TRANSPORTER · DISTRIBUER · PROTÉGER · COMMANDER · SIMULER · '
+                : 'GENERATE · TRANSFORM · TRANSMIT · DISTRIBUTE · PROTECT · CONTROL · SIMULATE · '}
+            </span>
           </div>
         </section>
 
