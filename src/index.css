@@ -361,6 +361,27 @@
   to { stroke-dashoffset: -20; }
 }
 
+@keyframes epedeRotorSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.epede-rotor-spin {
+  animation: epedeRotorSpin 0.6s linear infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.epede-rotor-spin-fast {
+  animation: epedeRotorSpin 0.3s linear infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
 /* Accessibility: Strict Reduced Motion Compliance */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {

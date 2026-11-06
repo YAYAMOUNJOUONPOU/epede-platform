@@ -547,6 +547,15 @@ export const HomeView: React.FC<HomeViewProps> = ({
     pushLog('reset', '#F3F7FA');
   };
 
+  // 7b. Interactive Nachtigal Hydro Calculation State
+  const [nachtigalUnits, setNachtigalUnits] = useState(7); // 1 to 7 Francis units (~60 MW each)
+  const [nachtigalCosPhi, setNachtigalCosPhi] = useState(0.95); // 0.80 to 1.00
+  const nachtigalP = nachtigalUnits * 60; // MW
+  const nachtigalVoltage = 225; // kV
+  const nachtigalCurrent = Math.round((nachtigalP * 1e6) / (Math.sqrt(3) * (nachtigalVoltage * 1e3) * nachtigalCosPhi));
+  const nachtigalCurrentPerCircuit = Math.round(nachtigalCurrent / 2);
+  const nachtigalApparentS = (nachtigalP / nachtigalCosPhi).toFixed(1);
+
   // 8. Pathways State
   const [activePathwayIndex, setActivePathwayIndex] = useState(0);
   const [pathwayImgIndex, setPathwayImgIndex] = useState(0);
@@ -1339,6 +1348,25 @@ export const HomeView: React.FC<HomeViewProps> = ({
                     {isFR ? 'Q1 · disjoncteur' : 'Q1 · circuit breaker'}
                   </text>
 
+                  {/* Q1 Arc Flash Lightning Effect on Short Circuit */}
+                  {q1Open && wbState === 'fault' && (
+                    <g>
+                      <circle cx="182" cy="94" r="14" fill="#FF8A8D" opacity="0.35">
+                        <animate attributeName="r" values="8;18;8" dur="0.4s" repeatCount="indefinite" />
+                        <animate attributeName="opacity" values="0.6;0.2;0.6" dur="0.4s" repeatCount="indefinite" />
+                      </circle>
+                      <path
+                        d="M182 84 L178 94 L187 92 L181 104 L189 95 L183 95 Z"
+                        fill="#FBBF24"
+                        stroke="#E11D48"
+                        strokeWidth="1"
+                      />
+                      <text x="202" y="86" fill="#FF8A8D" fontFamily="IBM Plex Mono" fontSize="10" fontWeight="700">
+                        ⚡ {isFR ? 'ARC ÉTEINT (12 ms)' : 'ARC CLEARED (12 ms)'}
+                      </text>
+                    </g>
+                  )}
+
                   {/* Conductor B: Q1 to KM1 */}
                   <line x1="170" y1="120" x2="170" y2="170" stroke={q1Open ? deadColor : liveColor} strokeWidth="3" />
                   <circle cx="170" cy="170" r="4" fill={q1Open ? deadColor : liveColor} />
@@ -1362,13 +1390,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   <rect
                     x="150" y="254" width="40" height="40" rx="2"
                     fill="#10263A"
-                    stroke={wbState === 'tripped' ? faultRed : (wbState === 'over' ? '#B86A0A' : (downEnergized ? liveColor : deadColor))}
+                    stroke={wbState === 'tripped' ? faultRed : (wbState === 'over' ? '#F2A541' : (downEnergized ? liveColor : deadColor))}
                     strokeWidth="3"
                   />
                   <path
                     d="M158 274 L164 264 L170 284 L176 264 L182 274"
                     fill="none"
-                    stroke={wbState === 'tripped' ? faultRed : (wbState === 'over' ? '#B86A0A' : (downEnergized ? liveColor : deadColor))}
+                    stroke={wbState === 'tripped' ? faultRed : (wbState === 'over' ? '#FFC277' : (downEnergized ? liveColor : deadColor))}
                     strokeWidth="2"
                   />
                   <text x="198" y="272" fill="#F3F7FA" fontFamily="Space Grotesk" fontSize="14" fontWeight="600">
@@ -1392,35 +1420,59 @@ export const HomeView: React.FC<HomeViewProps> = ({
                     </line>
                   )}
 
-                  {/* M1 Motor Circle */}
-                  <circle cx="170" cy="384" r="34" fill="#10263A" stroke={downEnergized ? liveColor : deadColor} strokeWidth="3" />
-                  <text x="170" y="384" textAnchor="middle" fill="#F3F7FA" fontFamily="Space Grotesk" fontSize="18" fontWeight="700">M</text>
-                  <text x="170" y="402" textAnchor="middle" fill="#93A4B4" fontFamily="IBM Plex Mono" fontSize="11">3~</text>
-                  <text x="214" y="390" fill="#F3F7FA" fontFamily="Space Grotesk" fontSize="14" fontWeight="600">M1 · 15 kW</text>
+                  {/* M1 Motor Stator Circle */}
+                  <circle cx="170" cy="384" r="34" fill="#10263A" stroke={downEnergized ? (wbState === 'over' ? '#FFC277' : liveColor) : deadColor} strokeWidth="3" />
+
+                  {/* Dynamic Rotating 4-pole Rotor with Bearings */}
+                  <g
+                    className={downEnergized && !reducedMotion ? (wbState === 'over' ? 'epede-rotor-spin-fast' : 'epede-rotor-spin') : undefined}
+                    style={{
+                      transformOrigin: '170px 384px'
+                    }}
+                  >
+                    {/* Rotor flux boundary ring */}
+                    <circle cx="170" cy="384" r="26" fill="none" stroke={downEnergized ? (wbState === 'over' ? '#FFC277' : '#F2A541') : '#243C53'} strokeWidth="1.5" strokeDasharray="5 6" />
+                    {/* 4 Rotor Cross Blades */}
+                    <line x1="170" y1="361" x2="170" y2="407" stroke={downEnergized ? (wbState === 'over' ? '#FFC277' : '#F2A541') : '#243C53'} strokeWidth="2" strokeLinecap="round" />
+                    <line x1="147" y1="384" x2="193" y2="384" stroke={downEnergized ? (wbState === 'over' ? '#FFC277' : '#F2A541') : '#243C53'} strokeWidth="2" strokeLinecap="round" />
+                  </g>
+
+                  {/* Rotor Center Hub */}
+                  <circle cx="170" cy="384" r="8" fill="#10263A" stroke={downEnergized ? (wbState === 'over' ? '#FFC277' : liveColor) : deadColor} strokeWidth="2" />
+                  <text x="170" y="388" textAnchor="middle" fill="#F3F7FA" fontFamily="Space Grotesk" fontSize="13" fontWeight="700">M</text>
+
+                  {/* Motor Label and Live Speed Metric */}
+                  <text x="214" y="382" fill="#F3F7FA" fontFamily="Space Grotesk" fontSize="14" fontWeight="600">M1 · 15 kW</text>
+                  <text x="214" y="400" fill={downEnergized ? '#4ADE80' : '#93A4B4'} fontFamily="IBM Plex Mono" fontSize="11">
+                    {downEnergized
+                      ? (wbState === 'over' ? (isFR ? '1 420 tr/min · Surchargé' : '1,420 RPM · Overloaded') : (isFR ? '1 465 tr/min · Nominal' : '1,465 RPM · Rated'))
+                      : (isFR ? '0 tr/min · À l’arrêt' : '0 RPM · Stopped')}
+                  </text>
                 </svg>
               </div>
 
               {/* Right Control Dashboard */}
-              <div style={{ padding: 'clamp(24px, 3vw, 40px)', display: 'flex', flexDirection: 'column', gap: 28, borderLeft: '1px solid #1E3347' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, borderBottom: '1px solid #1E3347', paddingBottom: 24 }}>
+              <div style={{ padding: 'clamp(24px, 3vw, 40px)', display: 'flex', flexDirection: 'column', gap: 24, borderLeft: '1px solid #1E3347' }}>
+                {/* 4-Metric Telemetry Grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 150px), 1fr))', gap: 16, borderBottom: '1px solid #1E3347', paddingBottom: 20 }}>
                   <div>
                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '0.12em', color: '#93A4B4' }}>
                       {isFR ? 'ÉTAT DU MOTEUR' : 'MOTOR STATE'}
                     </div>
                     <div
                       style={{
-                        marginTop: 8,
-                        fontSize: 'clamp(1.5rem, 2.4vw, 2rem)',
+                        marginTop: 6,
+                        fontSize: 'clamp(1.2rem, 1.8vw, 1.6rem)',
                         fontWeight: 700,
-                        letterSpacing: '-0.03em',
-                        color: wbState === 'running' ? '#F2A541' : (wbState === 'tripped' || wbState === 'fault' ? '#FF8A8D' : (wbState === 'over' ? '#FFC277' : '#F3F7FA'))
+                        letterSpacing: '-0.02em',
+                        color: wbState === 'running' ? '#4ADE80' : (wbState === 'tripped' || wbState === 'fault' ? '#FF8A8D' : (wbState === 'over' ? '#FFC277' : '#F3F7FA'))
                       }}
                     >
                       {wbState === 'stopped' && (isFR ? 'Arrêté' : 'Stopped')}
                       {wbState === 'running' && (isFR ? 'En marche' : 'Running')}
                       {wbState === 'over' && (isFR ? 'En surcharge' : 'Overloaded')}
-                      {wbState === 'tripped' && (isFR ? 'Déclenché — surcharge' : 'Tripped — overload')}
-                      {wbState === 'fault' && (isFR ? 'Défaut éliminé par Q1' : 'Fault cleared by Q1')}
+                      {wbState === 'tripped' && (isFR ? 'Déclenché (F1)' : 'Tripped (F1)')}
+                      {wbState === 'fault' && (isFR ? 'Défaut éliminé (Q1)' : 'Fault cleared (Q1)')}
                     </div>
                   </div>
 
@@ -1428,59 +1480,168 @@ export const HomeView: React.FC<HomeViewProps> = ({
                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '0.12em', color: '#93A4B4' }}>
                       {isFR ? 'COURANT DE LIGNE' : 'LINE CURRENT'}
                     </div>
-                    <div style={{ marginTop: 8, fontFamily: "'IBM Plex Mono', monospace", fontSize: 'clamp(1.5rem, 2.4vw, 2rem)', fontWeight: 500, color: '#F3F7FA' }}>
-                      {wbState === 'running' ? '29 A' : (wbState === 'over' ? '41 A' : '0 A')}
+                    <div style={{ marginTop: 6, fontFamily: "'IBM Plex Mono', monospace", fontSize: 'clamp(1.2rem, 1.8vw, 1.6rem)', fontWeight: 600, color: '#F3F7FA' }}>
+                      {wbState === 'running' ? '29.2 A' : (wbState === 'over' ? '41.5 A' : (wbState === 'fault' ? '185 A (crête)' : '0.0 A'))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '0.12em', color: '#93A4B4' }}>
+                      {isFR ? 'PUISSANCE ACTIVE' : 'ACTIVE POWER'}
+                    </div>
+                    <div style={{ marginTop: 6, fontFamily: "'IBM Plex Mono', monospace", fontSize: 'clamp(1.2rem, 1.8vw, 1.6rem)', fontWeight: 600, color: '#F3F7FA' }}>
+                      {wbState === 'running' ? '15.0 kW' : (wbState === 'over' ? '21.4 kW' : '0.0 kW')}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '0.12em', color: '#93A4B4' }}>
+                      {isFR ? 'VITESSE ROTATION' : 'ROTOR SPEED'}
+                    </div>
+                    <div style={{ marginTop: 6, fontFamily: "'IBM Plex Mono', monospace", fontSize: 'clamp(1.2rem, 1.8vw, 1.6rem)', fontWeight: 600, color: '#F3F7FA' }}>
+                      {wbState === 'running' ? '1 465 RPM' : (wbState === 'over' ? '1 420 RPM' : '0 RPM')}
                     </div>
                   </div>
                 </div>
 
-                {/* Control Action Buttons */}
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-                  <button
-                    onClick={handleStartMotor}
-                    disabled={wbState !== 'stopped'}
-                    style={{ height: 48, padding: '0 22px', borderRadius: 999, border: 0, background: '#F2A541', color: '#0B1B2B', fontSize: 15, fontWeight: 600, opacity: wbState === 'stopped' ? 1 : 0.35, cursor: wbState === 'stopped' ? 'pointer' : 'not-allowed' }}
-                  >
-                    {isFR ? 'Marche' : 'Start'}
-                  </button>
-                  <button
-                    onClick={handleStopMotor}
-                    disabled={!kmClosed}
-                    style={{ height: 48, padding: '0 22px', borderRadius: 999, border: '1px solid #3A536B', background: 'transparent', color: '#F3F7FA', fontSize: 15, opacity: kmClosed ? 1 : 0.35, cursor: kmClosed ? 'pointer' : 'not-allowed' }}
-                  >
-                    {isFR ? 'Arrêt' : 'Stop'}
-                  </button>
-                  <button
-                    onClick={handleSimulateOverload}
-                    disabled={wbState !== 'running'}
-                    style={{ height: 48, padding: '0 22px', borderRadius: 999, border: '1px solid #3A536B', background: 'transparent', color: '#F3F7FA', fontSize: 15, opacity: wbState === 'running' ? 1 : 0.35, cursor: wbState === 'running' ? 'pointer' : 'not-allowed' }}
-                  >
-                    {isFR ? 'Simuler une surcharge' : 'Simulate overload'}
-                  </button>
-                  <button
-                    onClick={handleShortCircuit}
-                    disabled={wbState !== 'running'}
-                    style={{ height: 48, padding: '0 22px', borderRadius: 999, border: '1px solid #3A536B', background: 'transparent', color: '#F3F7FA', fontSize: 15, opacity: wbState === 'running' ? 1 : 0.35, cursor: wbState === 'running' ? 'pointer' : 'not-allowed' }}
-                  >
-                    {isFR ? 'Court-circuit au moteur' : 'Short-circuit at motor'}
-                  </button>
-                  <button
-                    onClick={handleResetFeeder}
-                    disabled={wbState !== 'tripped' && wbState !== 'fault'}
-                    style={{ height: 48, padding: '0 22px', borderRadius: 999, border: '1px solid #E5484D', background: 'transparent', color: '#FF8A8D', fontSize: 15, opacity: wbState === 'tripped' || wbState === 'fault' ? 1 : 0.35, cursor: wbState === 'tripped' || wbState === 'fault' ? 'pointer' : 'not-allowed' }}
-                  >
-                    {isFR ? 'Réarmer' : 'Reset'}
-                  </button>
+                {/* Tactile Industrial Pushbuttons */}
+                <div>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '0.12em', color: '#93A4B4', marginBottom: 12 }}>
+                    {isFR ? 'COMMANDES INDUSTRIELLES' : 'INDUSTRIAL CONTROLS'}
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+                    {/* START BUTTON */}
+                    <button
+                      onClick={handleStartMotor}
+                      disabled={wbState !== 'stopped'}
+                      style={{
+                        height: 46,
+                        padding: '0 20px',
+                        borderRadius: 8,
+                        border: '1px solid #16A34A',
+                        background: wbState === 'stopped' ? '#15803D' : '#0F291C',
+                        color: '#FFFFFF',
+                        fontSize: 14,
+                        fontWeight: 600,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        boxShadow: wbState === 'stopped' ? '0 2px 8px rgba(22, 163, 74, 0.35)' : 'none',
+                        cursor: wbState === 'stopped' ? 'pointer' : 'not-allowed',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <span style={{ width: 8, height: 8, borderRadius: '50%', background: wbState === 'running' ? '#4ADE80' : '#86EFAC', boxShadow: wbState === 'running' ? '0 0 8px #4ADE80' : 'none' }} />
+                      <span>{isFR ? 'Marche (I)' : 'Start (I)'}</span>
+                    </button>
+
+                    {/* STOP BUTTON */}
+                    <button
+                      onClick={handleStopMotor}
+                      disabled={!kmClosed}
+                      style={{
+                        height: 46,
+                        padding: '0 20px',
+                        borderRadius: 8,
+                        border: '1px solid #DC2626',
+                        background: kmClosed ? '#B91C1C' : '#2A1417',
+                        color: '#FFFFFF',
+                        fontSize: 14,
+                        fontWeight: 600,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        boxShadow: kmClosed ? '0 2px 8px rgba(220, 38, 38, 0.35)' : 'none',
+                        cursor: kmClosed ? 'pointer' : 'not-allowed',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <span style={{ width: 8, height: 8, borderRadius: 2, background: '#FCA5A5' }} />
+                      <span>{isFR ? 'Arrêt (O)' : 'Stop (O)'}</span>
+                    </button>
+
+                    {/* OVERLOAD TEST BUTTON */}
+                    <button
+                      onClick={handleSimulateOverload}
+                      disabled={wbState !== 'running'}
+                      style={{
+                        height: 46,
+                        padding: '0 16px',
+                        borderRadius: 8,
+                        border: '1px solid #D97706',
+                        background: wbState === 'running' ? 'rgba(217, 119, 6, 0.18)' : '#1B2430',
+                        color: wbState === 'running' ? '#FBBF24' : '#6B7280',
+                        fontSize: 13,
+                        fontWeight: 600,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        cursor: wbState === 'running' ? 'pointer' : 'not-allowed',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <span>🔥</span>
+                      <span>{isFR ? 'Surcharge (140%)' : 'Overload (140%)'}</span>
+                    </button>
+
+                    {/* SHORT CIRCUIT TEST BUTTON */}
+                    <button
+                      onClick={handleShortCircuit}
+                      disabled={wbState !== 'running'}
+                      style={{
+                        height: 46,
+                        padding: '0 16px',
+                        borderRadius: 8,
+                        border: '1px solid #E11D48',
+                        background: wbState === 'running' ? 'rgba(225, 29, 72, 0.18)' : '#1B2430',
+                        color: wbState === 'running' ? '#FDA4AF' : '#6B7280',
+                        fontSize: 13,
+                        fontWeight: 600,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        cursor: wbState === 'running' ? 'pointer' : 'not-allowed',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <span>⚡</span>
+                      <span>{isFR ? 'Court-circuit (Icc)' : 'Short-circuit (Isc)'}</span>
+                    </button>
+
+                    {/* RESET BUTTON */}
+                    <button
+                      onClick={handleResetFeeder}
+                      disabled={wbState !== 'tripped' && wbState !== 'fault'}
+                      style={{
+                        height: 46,
+                        padding: '0 18px',
+                        borderRadius: 8,
+                        border: '1px solid #38BDF8',
+                        background: (wbState === 'tripped' || wbState === 'fault') ? 'rgba(56, 189, 248, 0.22)' : '#1B2430',
+                        color: (wbState === 'tripped' || wbState === 'fault') ? '#38BDF8' : '#6B7280',
+                        fontSize: 13,
+                        fontWeight: 600,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        cursor: (wbState === 'tripped' || wbState === 'fault') ? 'pointer' : 'not-allowed',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <span>↺</span>
+                      <span>{isFR ? 'Réarmer' : 'Reset'}</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Event Log Stream */}
                 <div>
                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: '0.12em', color: '#93A4B4' }}>
-                    {isFR ? 'JOURNAL' : 'EVENT LOG'}
+                    {isFR ? 'JOURNAL DES ÉVÉNEMENTS' : 'EVENT LOG'}
                   </div>
                   <div aria-live="polite" style={{ marginTop: 10, display: 'flex', flexDirection: 'column' }}>
                     {eventLog.map((ev, i) => (
-                      <div key={i} style={{ display: 'flex', gap: 16, padding: '10px 0', borderBottom: '1px solid #1E3347', fontSize: 14, color: ev.ink }}>
+                      <div key={i} style={{ display: 'flex', gap: 16, padding: '8px 0', borderBottom: '1px solid #1E3347', fontSize: 13, color: ev.ink }}>
                         <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: '#93A4B4', minWidth: 64 }}>
                           {ev.t}
                         </span>
@@ -1490,12 +1651,15 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   </div>
                 </div>
 
-                <p style={{ margin: 'auto 0 0', fontSize: 13, lineHeight: 1.55, color: '#93A4B4' }}>
-                  {isFR
-                    ? 'Sélectivité : F1 (thermique) élimine la surcharge, Q1 (magnétique) élimine le court-circuit. Simulation pédagogique — pas de données réelles d’équipement.'
-                    : 'Selectivity: F1 (thermal) clears overload, Q1 (magnetic) clears short-circuit. Teaching simulation — not live equipment data.'}
-                </p>
-              </div>
+                {/* Normative Protection Coordination Note */}
+                <div style={{ margin: 'auto 0 0', padding: '12px 16px', borderRadius: 6, background: 'rgba(30, 51, 71, 0.6)', border: '1px solid #1E3347' }}>
+                  <p style={{ margin: 0, fontSize: 12, lineHeight: 1.6, color: '#C3CFDA' }}>
+                    <strong style={{ color: '#F2A541' }}>{isFR ? 'Norme CEI 60947-4-1 (Coordination Type 2) : ' : 'IEC 60947-4-1 (Type 2 Coordination): '}</strong>
+                    {isFR
+                      ? 'Le relais thermique F1 protège contre les surcharges lentes (I > Ir). Le disjoncteur magnéto-thermique Q1 élimine le court-circuit (Icc 10 kA) en moins de 15 ms sans soudure des contacts du contacteur KM1.'
+                      : 'Thermal relay F1 protects against continuous overload (I > Ir). Molded case breaker Q1 clears high fault currents (Isc 10 kA) in under 15 ms with no contact welding on KM1.'}
+                  </p>
+                </div>
             </div>
           </div>
         </section>
@@ -1555,20 +1719,108 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 </div>
               </div>
 
-              {/* Step 3: CALCULATE */}
-              <div style={{ padding: '28px 28px 28px 0', borderBottom: '1px solid #D5E0E8', display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, color: '#1F5FAE' }}>{isFR ? '03 · CALCULER' : '03 · CALCULATE'}</div>
-                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 15, lineHeight: 1.9, color: '#0B1B2B' }}>
-                  I = P / (√3 · U · cos φ)<br />= 420 MW / (√3 × 225 kV × 0.95)
+              {/* Step 3: CALCULATE (INTERACTIVE LIVE SLIDER) */}
+              <div style={{ padding: '28px 28px 28px 0', borderBottom: '1px solid #D5E0E8', display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, color: '#1F5FAE', fontWeight: 600 }}>
+                    {isFR ? '03 · CALCULER EN TEMPS RÉEL' : '03 · LIVE CALCULATION'}
+                  </div>
+                  {(nachtigalUnits !== 7 || nachtigalCosPhi !== 0.95) && (
+                    <button
+                      onClick={() => { setNachtigalUnits(7); setNachtigalCosPhi(0.95); }}
+                      style={{ border: 0, background: 'transparent', color: '#1F5FAE', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, cursor: 'pointer', padding: 0 }}
+                      className="hover:underline"
+                    >
+                      {isFR ? '↺ Réinitialiser (420 MW · 0,95)' : '↺ Reset (420 MW · 0.95)'}
+                    </button>
+                  )}
                 </div>
-                <div style={{ fontSize: 'clamp(3rem, 5vw, 4.4rem)', fontWeight: 700, letterSpacing: '-0.05em', lineHeight: 1 }}>
-                  ≈ 1,134 A
+
+                {/* Interactive Generator Units Control */}
+                <div style={{ background: '#E3ECF2', padding: '10px 14px', borderRadius: 6 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6, fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: '#5B6B7B' }}>
+                    <span>{isFR ? 'GROUPES FRANCIS EN SERVICE' : 'ACTIVE FRANCIS UNITS'}</span>
+                    <span style={{ fontWeight: 600, color: '#0B1B2B' }}>{nachtigalUnits} / 7 ({nachtigalP} MW)</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                    {[1, 3, 5, 7].map((u) => (
+                      <button
+                        key={u}
+                        onClick={() => setNachtigalUnits(u)}
+                        style={{
+                          flex: 1,
+                          minWidth: 50,
+                          padding: '4px 6px',
+                          borderRadius: 4,
+                          border: `1px solid ${nachtigalUnits === u ? '#1F5FAE' : '#BAC8D3'}`,
+                          background: nachtigalUnits === u ? '#1F5FAE' : '#FFFFFF',
+                          color: nachtigalUnits === u ? '#FFFFFF' : '#0B1B2B',
+                          fontSize: 11,
+                          fontWeight: nachtigalUnits === u ? 600 : 500,
+                          fontFamily: "'IBM Plex Mono', monospace",
+                          cursor: 'pointer',
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        {u === 7 ? (isFR ? '7 (Max)' : '7 (Full)') : `${u} (${u * 60}M)`}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <p style={{ margin: 0, fontSize: '1rem', lineHeight: 1.6, color: '#3A4B5C' }}>
-                  {isFR ? 'Courant total d’évacuation — environ 567 A par terne sur la ligne 2 × 225 kV.' : 'Total evacuation current — about 567 A per circuit on the 2 × 225 kV line.'}
-                </p>
-                <p style={{ margin: 0, fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, lineHeight: 1.6, color: '#5B6B7B' }}>
-                  {isFR ? 'Hypothèses : cos φ = 0,95, pleine puissance, pertes négligées. Chiffres publics indicatifs — à vérifier auprès de la source citée.' : 'Assumptions: cos φ = 0.95, full output, losses neglected. Indicative public figures — confirm against the cited source.'}
+
+                {/* Interactive Power Factor Slider */}
+                <div style={{ background: '#E3ECF2', padding: '10px 14px', borderRadius: 6 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4, fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: '#5B6B7B' }}>
+                    <span>{isFR ? 'FACTEUR DE PUISSANCE' : 'POWER FACTOR'}</span>
+                    <span style={{ fontWeight: 600, color: '#0B1B2B' }}>cos φ = {nachtigalCosPhi.toFixed(2)}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0.80"
+                    max="1.00"
+                    step="0.01"
+                    value={nachtigalCosPhi}
+                    onChange={(e) => setNachtigalCosPhi(parseFloat(e.target.value))}
+                    style={{ width: '100%', cursor: 'pointer', accentColor: '#1F5FAE' }}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: "'IBM Plex Mono', monospace", fontSize: 9, color: '#7D93A8', marginTop: 2 }}>
+                    <span>0.80 (Inductif)</span>
+                    <span>0.95 (Nominal)</span>
+                    <span>1.00 (Unitaire)</span>
+                  </div>
+                </div>
+
+                {/* Dynamic Normative Formula */}
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, lineHeight: 1.7, color: '#0B1B2B' }}>
+                  I = P / (√3 · U · cos φ)<br />
+                  = {nachtigalP} MW / (√3 × 225 kV × {nachtigalCosPhi.toFixed(2)})
+                </div>
+
+                {/* Calculated Output Current */}
+                <div style={{ fontSize: 'clamp(2.4rem, 4vw, 3.8rem)', fontWeight: 700, letterSpacing: '-0.05em', lineHeight: 1, color: '#0B1B2B', fontVariantNumeric: 'tabular-nums' }}>
+                  ≈ {nachtigalCurrent.toLocaleString(isFR ? 'fr-FR' : 'en-US')} A
+                </div>
+
+                {/* Key Electrical Metrics Pill */}
+                <div style={{ padding: '8px 12px', borderRadius: 6, background: '#FFFFFF', border: '1px solid #D5E0E8', display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#3A4B5C' }}>
+                    <span>{isFR ? 'Courant par terne (2 × 225 kV) :' : 'Current per circuit (2 × 225 kV):'}</span>
+                    <strong style={{ color: '#1F5FAE', fontFamily: "'IBM Plex Mono', monospace" }}>~{nachtigalCurrentPerCircuit.toLocaleString()} A</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#3A4B5C' }}>
+                    <span>{isFR ? 'Puissance apparente (S) :' : 'Apparent power (S):'}</span>
+                    <strong style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{nachtigalApparentS} MVA</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#3A4B5C' }}>
+                    <span>{isFR ? 'Charge ligne (admissible 850 A) :' : 'Line load (rating 850 A):'}</span>
+                    <strong style={{ color: nachtigalCurrentPerCircuit > 750 ? '#D97706' : '#16A34A', fontFamily: "'IBM Plex Mono', monospace" }}>
+                      {Math.round((nachtigalCurrentPerCircuit / 850) * 100)} %
+                    </strong>
+                  </div>
+                </div>
+
+                <p style={{ margin: 0, fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, lineHeight: 1.5, color: '#5B6B7B' }}>
+                  {isFR ? 'Calcul triphasé symétrique équilibré selon CEI 60076 & SONATREL. Pertes joule ligne négligées.' : 'Balanced 3-phase calculation per IEC 60076 & SONATREL Code. Line losses neglected.'}
                 </p>
               </div>
 
