@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cameroon grid map — EPEDE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/d3@7.9.0/dist/d3.min.js" integrity="sha384-CjloA8y00+1SDAUkjs099PVfnY2KmDC2BZnws9kh8D/lX1s46w6EPhpXdqMfjK6i" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/topojson-client@3.1.0/dist/topojson-client.min.js" integrity="sha384-Ukv1p/xTma6P4/2bY5KzWBw+ydSpXmhCMtyciIQVDJ1RmOxtCYNMF1uXT9T63H67" crossorigin="anonymous"></script>
+<style>
+:root{--paper:#F6F4EE;--surface:#FFFDF9;--ink:#17282C;--slate:#5C6C70;--line:#DEDACF;--teal:#147C78;--amber:#B8872D;--rust:#B5532F;--sun:#C9A227;--mono:'IBM Plex Mono',monospace}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--surface);color:var(--ink);font-family:Manrope,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--teal)}a:hover{color:#0E5E5B}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:0;border-top:1px solid var(--ink)}
+.left{display:flex;flex-direction:column;min-width:0;border-right:1px solid var(--line)}
+.filters{display:flex;flex-direction:column;gap:10px;padding:18px 20px;border-bottom:1px solid var(--line)}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.row .lab{font:12px var(--mono);letter-spacing:.06em;color:var(--slate);min-width:74px}
+.chip{height:36px;padding:0 14px;border-radius:999px;border:1px solid #CFCABD;background:transparent;color:var(--ink);font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:7px;transition:background .15s,color .15s,border-color .15s}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.mapbox{position:relative;flex:1;height:640px;background:var(--paper);overflow:hidden}
+svg{display:block;width:100%;height:100%;touch-action:none}
+.zoom{position:absolute;right:14px;top:14px;display:flex;flex-direction:column;gap:6px}
+.zoom button{width:40px;height:40px;border-radius:50%;border:1px solid #CFCABD;background:var(--surface);color:var(--ink);font-size:18px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;padding:12px 20px;border-top:1px solid var(--line);font:12px var(--mono);color:var(--slate)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.sw{width:22px;height:0;border-top:2px solid}
+.panel{padding:24px 24px 28px;display:flex;flex-direction:column;min-width:0}
+.eyebrow{font:12px var(--mono);letter-spacing:.08em;color:var(--teal)}
+.panel h3{margin:10px 0 0;font-size:30px;line-height:1.05;letter-spacing:-.03em;font-weight:700}
+.badge{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font:12px var(--mono);color:var(--teal)}
+.badge::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.badge.plan{color:var(--amber)}
+dl{margin:20px 0 0;display:grid;grid-template-columns:132px minmax(0,1fr);border-top:1px solid var(--ink)}
+dt,dd{margin:0;padding:11px 0;border-bottom:1px solid #EEEAE0;font-size:14px;line-height:1.45}
+dt{color:var(--slate)}dd{font-weight:600}
+.note{margin:18px 0 0;font-size:14px;line-height:1.6;color:#33474B;text-wrap:pretty}
+.src{margin:14px 0 0;font:12px/1.6 var(--mono);color:var(--slate)}
+.hint{margin-top:auto;padding-top:20px;font:12px/1.6 var(--mono);color:var(--slate)}
+.site{cursor:pointer}
+.site text{font:600 11px Manrope,sans-serif;fill:var(--ink);paint-order:stroke;stroke:var(--paper);stroke-width:3px;stroke-linejoin:round;pointer-events:none}
+.region-label{font:11px var(--mono);letter-spacing:.08em;fill:#9AA4A2;pointer-events:none}
+.country-label{font:italic 13px 'Instrument Serif',serif;fill:#9AA4A2;pointer-events:none}
+@media (max-width:700px){.wrap{grid-template-columns:1fr}.left{border-right:0}.mapbox{height:460px}.panel{border-top:1px solid var(--ink)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<script>if(location.search.indexOf('v2')>-1){document.write('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"><style>body,button,h3,input{font-family:"Space Grotesk",system-ui,sans-serif!important}</style>');}</script>
+</head>
+<body>
+<div class="wrap">
+  <div class="left">
+    <div class="filters" role="group" aria-label="Map filters">
+      <div class="row" id="f-volt"><span class="lab" data-i="VOLTAGE">VOLTAGE</span></div>
+      <div class="row" id="f-type"><span class="lab" data-i="ASSETS">ASSETS</span></div>
+      <div class="row" id="f-area"><span class="lab" data-i="AREA">AREA</span></div>
+    </div>
+    <div class="mapbox" id="mapbox">
+      <svg id="map" role="img" aria-label="Map of Cameroon's electricity grid: power plants, substations and schematic lines"></svg>
+      <div class="zoom"><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button><button id="zfit" aria-label="Fit Cameroon" style="font-size:13px">⤢</button></div>
+    </div>
+    <div class="legend">
+      <span><i class="sw" style="border-color:#147C78"></i>225 kV</span>
+      <span><i class="sw" style="border-color:#5C6C70"></i>110 kV</span>
+      <span><i class="sw" style="border-color:#B8872D"></i>90 kV</span>
+      <span><i class="sw" style="border-color:#17282C;border-top-style:dashed"></i><b data-i="Schematic route (not surveyed)" style="font-weight:400">Schematic route (not surveyed)</b></span>
+      <span>■ <b data-i="Substation" style="font-weight:400">Substation</b></span>
+      <span style="margin-left:auto"><b data-i="Dataset: demonstration positions · connect to EPEDE’s dated source database" style="font-weight:400">Dataset: demonstration positions · connect to EPEDE’s dated source database</b></span>
+    </div>
+  </div>
+  <aside class="panel" id="panel" aria-live="polite"></aside>
+</div>
+<script>
+let LANG='EN';
+const I={'VOLTAGE':'TENSION','ASSETS':'OUVRAGES','AREA':'ZONE','Schematic route (not surveyed)':'Tracé schématique (non cartographié)','Substation':'Poste','Dataset: demonstration positions · connect to EPEDE’s dated source database':'Jeu de données : positions de démonstration · à relier à la base sourcée et datée d’EPEDE',
+ 'All voltages':'Toutes tensions','Hydro':'Hydraulique','Thermal':'Thermique','Solar':'Solaire','Substations':'Postes','Cameroon':'Cameroun','North (RIN)':'Nord (RIN)','Kribi – South':'Kribi – Sud',
+ 'Hydro plant':'Centrale hydraulique','Thermal plant':'Centrale thermique','Solar plant':'Centrale solaire','Type':'Type','Installed capacity':'Puissance installée','Voltage level':'Niveau de tension','Region, grid':'Région, réseau','Position':'Position','Approximate':'Approximative',
+ 'In service':'En service','Record to be completed':'Fiche à compléter','Sources':'Sources','see EPEDE reference record':'voir la fiche de référence EPEDE','Open in':'Ouvrir dans',
+ 'Select any site on the map. Close sites are offset slightly so they stay clickable. Dashed routes are schematic, not surveyed geometry.':'Sélectionnez un site sur la carte. Les sites très proches sont légèrement écartés pour rester cliquables. Les tracés en pointillés sont schématiques, non cartographiés.',
+ 'Nigeria':'Nigeria','Chad':'Tchad','Central African Rep.':'Rép. centrafricaine','Gabon':'Gabon','Congo':'Congo','Gulf of Guinea':'Golfe de Guinée'};
+const tr=s=>LANG==='FR'&&I[s]?I[s]:s;
+const DOM={hydro:['D01','Generation','Production'],thermal:['D01','Generation','Production'],solar:['D01','Generation','Production'],sub225:['D04','Substations','Postes'],sub:['D06','MV distribution','Distribution HTA']};
+const C={hydro:'#147C78',thermal:'#B5532F',solar:'#C9A227',sub:'#17282C'};
+const VC={225:'#147C78',110:'#5C6C70',90:'#B8872D'};
+// Approximate positions. Production version must read EPEDE's dated, source-linked dataset.
+const SITES=[
+ {id:'nachtigal',n:'Nachtigal Amont',t:'hydro',mw:420,ll:[11.63,4.35],net:'RIS',reg:'Centre',area:'yaounde',status:'In service',
+  rows:[['Installed capacity','420 MW'],['Energy delivered 2025','2,070.68 GWh (−28 % vs forecast)'],['Turbine','Francis'],['River','Sanaga'],['Region, grid','Centre, RIS'],['Commissioning','First unit 10 May 2024; seventh unit May 2025'],['Ownership','NHPC. Shareholders at financial close: EDF 40 %, IFC 20 %, State 15 %, Africa50 15 %, STOA 10 %'],['Connection','2 × 225 kV line to Nyom II, about 50 km, transferred to SONATREL in 2025']],
+  note:'2025 output was 28 % below forecast, partly for hydrological reasons, and the evacuation lines toward the Littoral were still under construction. 35-year concession from commercial operation. A 4.5 MW small plant was completed on site at the end of 2025.',
+  rowsFR:[['Puissance installée','420 MW'],['Énergie livrée en 2025','2 070,68 GWh (−28 % par rapport à la prévision)'],['Turbine','Francis'],['Cours d’eau','Sanaga'],['Région, réseau','Centre, RIS'],['Mise en service','Premier groupe le 10 mai 2024, septième groupe en mai 2025'],['Propriété et exploitation','NHPC. Actionnaires au bouclage financier : EDF 40 %, IFC 20 %, État 15 %, Africa50 15 %, STOA 10 %'],['Raccordement','Ligne 2 × 225 kV vers Nyom II, environ 50 km, transférée à la SONATREL en 2025']],
+  noteFR:'La production 2025 est inférieure de 28 % à la prévision, en partie pour des raisons hydrologiques, et les lignes d’évacuation vers le Littoral étaient encore en construction. Concession de 35 ans à compter de la mise en service commerciale. Une petite centrale de 4,5 MW a été achevée sur le site fin 2025.',
+  src:'ARSEL (2026) · Proparco (2018-11-08) · IFC / Early Warning System (2018) · EcoMatin (2026-10-29)'},
+ {id:'songloulou',n:'Song Loulou',t:'hydro',mw:384,ll:[10.45,3.74],net:'RIS',reg:'Littoral',area:'douala'},
+ {id:'edea',n:'Edéa',t:'hydro',mw:276,ll:[10.13,3.80],net:'RIS',reg:'Littoral',area:'douala'},
+ {id:'memveele',n:'Memve’ele',t:'hydro',mw:211,ll:[10.40,2.40],net:'RIS',reg:'Sud',area:'kribi'},
+ {id:'lagdo',n:'Lagdo',t:'hydro',mw:72,ll:[13.66,9.06],net:'RIN',reg:'Nord',area:'nord'},
+ {id:'lompangar',n:'Lom Pangar',t:'hydro',mw:30,ll:[13.51,5.36],net:'RIE',reg:'Est',area:'cameroun'},
+ {id:'mekin',n:'Mékin',t:'hydro',mw:15,ll:[12.39,3.12],net:'RIS',reg:'Sud',area:'kribi'},
+ {id:'mbakaou',n:'Mbakaou (mini-hydro)',t:'hydro',mw:1.4,ll:[12.82,6.33],net:'Isolated',reg:'Adamaoua',area:'cameroun'},
+ {id:'kribi',n:'Kribi gas',t:'thermal',mw:216,ll:[9.95,3.00],net:'RIS',reg:'Sud',area:'kribi'},
+ {id:'dibamba',n:'Dibamba',t:'thermal',mw:86,ll:[9.85,4.00],net:'RIS',reg:'Littoral',area:'douala'},
+ {id:'limbe',n:'Limbé',t:'thermal',mw:85,ll:[9.21,4.02],net:'RIS',reg:'Sud-Ouest',area:'douala'},
+ {id:'djamboutou',n:'Djamboutou (Garoua)',t:'thermal',mw:20,ll:[13.40,9.30],net:'RIN',reg:'Nord',area:'nord'},
+ {id:'mbalmayo',n:'Mbalmayo (thermal)',t:'thermal',mw:13.2,ll:[11.50,3.52],net:'RIS',reg:'Centre',area:'yaounde'},
+ {id:'bafoussamT',n:'Bafoussam (thermal)',t:'thermal',mw:6,ll:[10.38,5.50],net:'RIS',reg:'Ouest',area:'cameroun'},
+ {id:'kousseri',n:'Kousseri (thermal)',t:'thermal',mw:4.4,ll:[15.03,12.08],net:'Isolated',reg:'Extrême-Nord',area:'nord'},
+ {id:'guider',n:'Guider solar',t:'solar',mw:18,ll:[13.95,9.93],net:'RIN',reg:'Nord',area:'nord'},
+ {id:'maroua',n:'Maroua solar',t:'solar',mw:18,ll:[14.32,10.59],net:'RIN',reg:'Extrême-Nord',area:'nord'},
+ {id:'nyom',n:'Nyom II',t:'sub',kv:225,ll:[11.53,3.95],net:'RIS',reg:'Centre',area:'yaounde'},
+ {id:'ngousso',n:'Ngousso',t:'sub',kv:90,ll:[11.56,3.89],net:'RIS',reg:'Centre',area:'yaounde'},
+ {id:'bekoko',n:'Bekoko',t:'sub',kv:225,ll:[9.60,4.09],net:'RIS',reg:'Littoral',area:'douala'},
+ {id:'deido',n:'Deido',t:'sub',kv:90,ll:[9.70,4.06],net:'RIS',reg:'Littoral',area:'douala'},
+ {id:'logbaba',n:'Logbaba',t:'sub',kv:225,ll:[9.78,4.03],net:'RIS',reg:'Littoral',area:'douala'},
+ {id:'mangombe',n:'Mangombe (Edéa)',t:'sub',kv:225,ll:[10.10,3.84],net:'RIS',reg:'Littoral',area:'douala'},
+ {id:'nkongsamba',n:'Nkongsamba',t:'sub',kv:90,ll:[9.94,4.95],net:'RIS',reg:'Littoral',area:'cameroun'},
+ {id:'bafoussam',n:'Bafoussam',t:'sub',kv:90,ll:[10.42,5.47],net:'RIS',reg:'Ouest',area:'cameroun'},
+ {id:'bamenda',n:'Bamenda',t:'sub',kv:90,ll:[10.15,5.96],net:'RIS',reg:'Nord-Ouest',area:'cameroun'},
+ {id:'ebolowa',n:'Ebolowa',t:'sub',kv:225,ll:[11.15,2.91],net:'RIS',reg:'Sud',area:'kribi'},
+ {id:'kribiS',n:'Mpolongwé (Kribi)',t:'sub',kv:225,ll:[9.97,2.97],net:'RIS',reg:'Sud',area:'kribi'},
+ {id:'abong',n:'Abong-Mbang',t:'sub',kv:90,ll:[13.18,3.98],net:'RIS',reg:'Est',area:'cameroun'},
+ {id:'bertoua',n:'Bertoua',t:'sub',kv:90,ll:[13.68,4.58],net:'RIE',reg:'Est',area:'cameroun'},
+ {id:'ngaoundere',n:'Ngaoundéré',t:'sub',kv:110,ll:[13.58,7.32],net:'RIN',reg:'Adamaoua',area:'nord'},
+ {id:'garoua',n:'Garoua',t:'sub',kv:110,ll:[13.40,9.30],net:'RIN',reg:'Nord',area:'nord'},
+ {id:'maroua-s',n:'Maroua',t:'sub',kv:110,ll:[14.32,10.60],net:'RIN',reg:'Extrême-Nord',area:'nord'}
+];
+const LINES=[
+ ['nachtigal','nyom',225],['songloulou','mangombe',225],['edea','mangombe',225],['mangombe','logbaba',225],['logbaba','bekoko',225],['mangombe','nyom',225],
+ ['kribi','kribiS',225],['kribiS','mangombe',225],['memveele','ebolowa',225],['ebolowa','nyom',225],['bekoko','limbe',90],['logbaba','deido',90],['deido','dibamba',90],
+ ['bekoko','nkongsamba',90],['nkongsamba','bafoussam',90],['bafoussam','bamenda',90],['bafoussam','bafoussamT',90],['nyom','ngousso',90],['ngousso','mbalmayo',90],
+ ['ngousso','abong',90],['lompangar','bertoua',90],['mekin','ebolowa',90],
+ ['lagdo','garoua',110],['garoua','djamboutou',110],['garoua','ngaoundere',110],['garoua','guider',110],['guider','maroua-s',110],['maroua-s','maroua',110]
+];
+const AREAS={cameroun:'Cameroon',nord:'North (RIN)',douala:'Douala – Edéa',yaounde:'Yaoundé',kribi:'Kribi – South'};
+const AREA_BOX={nord:[[12.6,7.0],[15.4,12.4]],douala:[[9.0,3.6],[10.7,4.3]],yaounde:[[11.2,3.4],[11.9,4.5]],kribi:[[9.7,2.2],[12.6,3.3]]};
+const byId=Object.fromEntries(SITES.map(s=>[s.id,s]));
+const state={volt:'all',types:new Set(['hydro','thermal','solar','sub']),area:'cameroun',sel:'nachtigal'};
+
+function chips(){
+  const fv=document.getElementById('f-volt'),ft=document.getElementById('f-type'),fa=document.getElementById('f-area');
+  [['all','All voltages'],['225','225 kV'],['110','110 kV'],['90','90 kV']].forEach(([v,l])=>fv.append(btn(l,()=>state.volt===v,()=>{state.volt=v;draw();})));
+  [['hydro','Hydro'],['thermal','Thermal'],['solar','Solar'],['sub','Substations']].forEach(([v,l])=>ft.append(btn(l,()=>state.types.has(v),()=>{state.types.has(v)?state.types.delete(v):state.types.add(v);draw();},C[v])));
+  Object.entries(AREAS).forEach(([v,l])=>fa.append(btn(l,()=>state.area===v,()=>{state.area=v;zoomArea(v);sync();})));
+}
+const buttons=[];
+function btn(label,on,act,dot){const b=document.createElement('button');b.className='chip';b.dataset.l=label;b.dataset.d=dot||'';b.innerHTML=(dot?`<i style="background:${dot}"></i>`:'')+label;b.onclick=()=>{act();sync();};buttons.push([b,on]);return b;}
+function sync(){buttons.forEach(([b,on])=>b.setAttribute('aria-pressed',on()?'true':'false'));}
+function relabel(){buttons.forEach(([b])=>{b.innerHTML=(b.dataset.d?`<i style="background:${b.dataset.d}"></i>`:'')+tr(b.dataset.l);});
+  document.querySelectorAll('[data-i]').forEach(e=>e.textContent=tr(e.dataset.i));g.selectAll('.country-label').text(d=>tr(d[0]));panel();}
+addEventListener('message',e=>{if(e.data&&e.data.epedeLang&&e.data.epedeLang!==LANG){LANG=e.data.epedeLang;relabel();}});
+
+const svg=d3.select('#map'),g=svg.append('g'),box=document.getElementById('mapbox');
+let proj,path,zoom,W,H,cmr;
+async function init(){
+  chips();sync();
+  const topo=await (await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json')).json();
+  const all=topojson.feature(topo,topo.objects.countries).features;
+  cmr=all.find(f=>+f.id===120);
+  const nb=all.filter(f=>[566,148,140,226,266,178].includes(+f.id));
+  W=box.clientWidth;H=box.clientHeight;
+  proj=d3.geoMercator().fitExtent([[30,30],[W-30,H-30]],cmr);path=d3.geoPath(proj);
+  g.append('g').selectAll('path').data(nb).join('path').attr('d',path).attr('fill','#EEEBE3').attr('stroke','#D6D1C4').attr('stroke-width',.8);
+  g.append('path').datum(cmr).attr('d',path).attr('fill','#FFFDF9').attr('stroke','#17282C').attr('stroke-width',1.2);
+  const lbl=[['Nigeria',[11.0,8.6]],['Chad',[15.6,10.2]],['Central African Rep.',[15.0,6.0]],['Gabon',[11.0,1.7]],['Congo',[15.0,1.7]],['Gulf of Guinea',[8.6,3.0]]];
+  g.append('g').selectAll('text').data(lbl).join('text').attr('class','country-label').attr('x',d=>proj(d[1])[0]).attr('y',d=>proj(d[1])[1]).attr('text-anchor','middle').text(d=>tr(d[0]));
+  g.append('g').attr('id','lines');g.append('g').attr('id','sites');
+  zoom=d3.zoom().scaleExtent([1,12]).on('zoom',e=>{g.attr('transform',e.transform);g.selectAll('.site').attr('transform',d=>`translate(${proj(d.ll)}) scale(${1/e.transform.k})`);g.selectAll('#lines path').attr('stroke-width',d=>(d[2]===225?2.4:1.6)/e.transform.k);labels(e.transform.k);});
+  svg.call(zoom);
+  document.getElementById('zin').onclick=()=>svg.transition().duration(300).call(zoom.scaleBy,1.6);
+  document.getElementById('zout').onclick=()=>svg.transition().duration(300).call(zoom.scaleBy,1/1.6);
+  document.getElementById('zfit').onclick=()=>{state.area='cameroun';zoomArea('cameroun');sync();};
+  draw();panel();
+}
+function vis(s){if(!state.types.has(s.t))return false;if(state.volt==='all')return true;if(s.t==='sub')return String(s.kv)===state.volt;return LINES.some(l=>(l[0]===s.id||l[1]===s.id)&&String(l[2])===state.volt);}
+function draw(){
+  const k=d3.zoomTransform(svg.node()).k;
+  const ls=LINES.filter(l=>state.volt==='all'||String(l[2])===state.volt);
+  g.select('#lines').selectAll('path').data(ls,d=>d.join()).join('path')
+   .attr('d',d=>`M${proj(byId[d[0]].ll)}L${proj(byId[d[1]].ll)}`).attr('fill','none').attr('stroke',d=>VC[d[2]]).attr('stroke-width',d=>(d[2]===225?2.4:1.6)/k).attr('stroke-dasharray','5 4').attr('stroke-linecap','round').attr('opacity',.9);
+  const ss=SITES.filter(vis);
+  const sel=g.select('#sites').selectAll('.site').data(ss,d=>d.id).join(en=>{const e=en.append('g').attr('class','site').attr('tabindex',0).attr('role','button');
+     e.append('circle').attr('class','halo').attr('r',13).attr('fill','none');
+     e.each(function(d){const n=d3.select(this);if(d.t==='sub')n.append('rect').attr('x',-4.5).attr('y',-4.5).attr('width',9).attr('height',9).attr('fill','#FFFDF9').attr('stroke',C.sub).attr('stroke-width',1.6);
+       else{const r=Math.max(5,Math.min(11,3+Math.sqrt(d.mw)*0.4));n.append('circle').attr('r',r).attr('fill','#FFFDF9').attr('stroke',C[d.t]).attr('stroke-width',2.2);n.append('circle').attr('r',2.4).attr('fill',C[d.t]);}});
+     e.append('text').attr('x',12).attr('y',4).text(d=>d.n+(d.mw?` (${d.mw} MW)`:''));
+     e.on('click',(ev,d)=>{state.sel=d.id;panel();ring();}).on('keydown',(ev,d)=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();state.sel=d.id;panel();ring();}});
+     e.append('title').text(d=>d.n);return e;});
+  sel.attr('transform',d=>`translate(${proj(d.ll)}) scale(${1/k})`);
+  ring();labels(k);
+}
+function ring(){g.selectAll('.site .halo').attr('stroke',d=>d.id===state.sel?'#17282C':'none').attr('stroke-width',1.4).attr('stroke-dasharray','3 2');}
+function labels(k){g.selectAll('.site text').attr('display',d=>d.id===state.sel||k>=3||(d.mw&&d.mw>=70)?null:'none');}
+function zoomArea(a){
+  const t=d3.zoomIdentity;
+  if(a==='cameroun'){svg.transition().duration(700).call(zoom.transform,t);return;}
+  const [[x0,y0],[x1,y1]]=AREA_BOX[a].map(p=>proj(p));const bx=[Math.min(x0,x1),Math.min(y0,y1),Math.abs(x1-x0),Math.abs(y1-y0)];
+  const k=Math.min(12,0.85/Math.max(bx[2]/W,bx[3]/H));
+  svg.transition().duration(800).call(zoom.transform,t.translate(W/2,H/2).scale(k).translate(-(bx[0]+bx[2]/2),-(bx[1]+bx[3]/2)));
+}
+const TYPE={hydro:'Hydro plant',thermal:'Thermal plant',solar:'Solar plant',sub:'Substation'};
+var panel=function(){
+  const s=byId[state.sel],p=document.getElementById('panel');
+  const FR=LANG==='FR';
+  const rows=(FR&&s.rowsFR)||s.rows||[['Type',tr(TYPE[s.t])],s.mw?['Installed capacity',s.mw+' MW']:['Voltage level',s.kv+' kV'],['Region, grid',s.reg+', '+s.net],['Position',tr('Approximate')]].map(r=>[tr(r[0]),r[1]]);
+  const dm=DOM[s.t==='sub'&&s.kv===225?'sub225':s.t];
+  p.innerHTML=`<div class="eyebrow">${tr(TYPE[s.t]).toUpperCase()} · ${s.net}</div><h3>${s.n}</h3><div class="badge${s.status?'':' plan'}">${tr(s.status||'Record to be completed')}</div>
+  <dl>${rows.map(r=>`<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('')}</dl>
+  ${s.note?`<p class="note">${FR&&s.noteFR?s.noteFR:s.note}</p>`:''}
+  <p class="src">${tr('Sources')}: ${s.src||tr('see EPEDE reference record')}</p>
+  <a href="#${dm[0]}" target="_top" style="margin-top:14px;display:inline-flex;gap:8px;font-weight:700;text-decoration:none">${tr('Open in')} ${dm[0]} — ${FR?dm[2]:dm[1]} <span>→</span></a>
+  <p class="hint">${tr('Select any site on the map. Close sites are offset slightly so they stay clickable. Dashed routes are schematic, not surveyed geometry.')}</p>`;
+}
+init();
+function refit(){if(!cmr)return;const w=box.clientWidth,h=box.clientHeight;if(w===W&&h===H)return;W=w;H=h;
+  proj.fitExtent([[30,30],[W-30,H-30]],cmr);
+  g.selectAll('path').filter(function(){return !this.closest('#lines');}).attr('d',path);
+  g.selectAll('.country-label').attr('x',d=>proj(d[1])[0]).attr('y',d=>proj(d[1])[1]);
+  draw();}
+function report(){const h=document.documentElement.scrollHeight;if(window.parent!==window)parent.postMessage({epedeMapHeight:h},'*');}
+new ResizeObserver(()=>{clearTimeout(window._rt);window._rt=setTimeout(()=>{refit();report();},150);}).observe(document.body);
+const _panel=panel;panel=function(){_panel();report();};
+setTimeout(()=>{report();if(window.parent!==window)parent.postMessage({epedeMapReady:true},'*');},300);
+</script>
+</body>
+</html>

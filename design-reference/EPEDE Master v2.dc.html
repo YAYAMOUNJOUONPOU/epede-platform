@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>EPEDE — Electrical Power Engineering Digital Environment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<script src="./image-slot.js"></script>
+<style>
+html{scroll-behavior:smooth}
+body{margin:0;background:#FBFCFD;color:#0B1B2B;font-family:'Space Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#1F5FAE;text-decoration:none}
+a:hover{color:#174A88}
+button{font-family:inherit;cursor:pointer}
+button:disabled{cursor:not-allowed}
+::selection{background:#0B1B2B;color:#FFFFFF}
+:focus-visible{outline:2px solid #F2A541;outline-offset:3px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</helmet>
+
+<header style="position:fixed;top:0;left:0;right:0;z-index:60;background:{{ headBg }};backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid {{ headLine }};transition:background .3s ease,border-color .3s ease">
+  <div style="max-width:1360px;margin:0 auto;height:68px;padding:0 clamp(20px,4vw,48px);display:flex;align-items:center;gap:28px">
+    <a href="#top" style="display:flex;align-items:baseline;gap:12px;color:#0B1B2B">
+      <span style="font-size:22px;font-weight:700;letter-spacing:-.03em">EPEDE</span>
+      <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;color:#5B6B7B">POWER · AUTOMATION · INSTALLATIONS</span></sc-if>
+    </a>
+    <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+      <nav aria-label="Primary" style="display:flex;gap:26px;margin-left:auto;font-size:14px;font-weight:500">
+        <a href="#journey" style="color:#0B1B2B" style-hover="color:#1F5FAE">Journey</a>
+        <a href="#grid" style="color:#0B1B2B" style-hover="color:#1F5FAE">Cameroon grid</a>
+        <a href="#workbench" style="color:#0B1B2B" style-hover="color:#1F5FAE">Workbench</a>
+        <a href="#case" style="color:#0B1B2B" style-hover="color:#1F5FAE">Case study</a>
+        <a href="#pathways" style="color:#0B1B2B" style-hover="color:#1F5FAE">Pathways</a>
+      </nav>
+    </sc-if>
+    <div style="display:flex;align-items:center;gap:4px;margin-left:auto">
+      <button onClick="{{ openSearch }}" style="height:44px;padding:0 12px;border:0;background:transparent;color:#0B1B2B;font-size:14px;font-weight:500">Search</button>
+      <button onClick="{{ toggleLang }}" aria-label="Switch language" style="white-space:nowrap;height:44px;padding:0 12px;border:0;background:transparent;color:#5B6B7B;font-family:'IBM Plex Mono',monospace;font-size:13px"><span style="color:{{ enInk }}">EN</span> / <span style="color:{{ frInk }}">FR</span></button>
+      <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+        <a href="#pathways" style="height:40px;margin-left:8px;padding:0 18px;border-radius:999px;background:#0B1B2B;color:#FFFFFF;font-size:14px;font-weight:600;display:flex;align-items:center" style-hover="background:#1F5FAE;color:#FFFFFF">Start learning</a>
+      </sc-if>
+      <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ toggleMenu }}" aria-expanded="{{ menu }}" style="height:44px;padding:0 14px;border:1px solid #B9C7D2;border-radius:999px;background:transparent;color:#0B1B2B;font-size:14px">Menu</button>
+      </sc-if>
+    </div>
+  </div>
+  <div style="position:absolute;left:0;bottom:-1px;height:2px;width:{{ progress }}%;background:#F2A541"></div>
+</header>
+
+<sc-if value="{{ menu }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:68px 0 0 0;z-index:55;background:#FBFCFD;padding:28px clamp(20px,4vw,48px);display:flex;flex-direction:column;gap:4px">
+    <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+      <a href="{{ n.href }}" onClick="{{ closeMenu }}" style="padding:16px 0;border-bottom:1px solid #D5E0E8;color:#0B1B2B;font-size:28px;font-weight:600;letter-spacing:-.02em">{{ n.label }}</a>
+    </sc-for>
+  </div>
+</sc-if>
+
+<sc-if value="{{ search }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeSearch }}" style="position:fixed;inset:0;z-index:70;background:rgba(14,26,28,.35);backdrop-filter:blur(8px);display:flex;justify-content:center;padding:14vh 20px 20px">
+    <div onClick="{{ stop }}" role="dialog" aria-label="Search EPEDE" style="width:100%;max-width:640px;height:max-content;background:#E3ECF2;border:1px solid #D5E0E8;border-radius:8px;padding:28px">
+      <label for="ep2-search" style="display:block;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;color:#5B6B7B;margin-bottom:10px">SEARCH SYSTEMS, EQUIPMENT, DOMAINS AND TOOLS</label>
+      <input id="ep2-search" autofocus="" placeholder="transformer vector group" style="width:100%;height:56px;border:0;border-bottom:2px solid #F2A541;background:transparent;color:#0B1B2B;font:500 22px 'Space Grotesk',sans-serif;outline:none">
+      <div style="display:flex;flex-direction:column;margin-top:18px">
+        <sc-for list="{{ searchItems }}" as="r" hint-placeholder-count="5">
+          <a href="{{ r.href }}" onClick="{{ closeSearch }}" style="display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid #D5E0E8;color:#0B1B2B;font-size:16px" style-hover="color:#1F5FAE"><span>{{ r.t }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5B6B7B">{{ r.k }}</span></a>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<main id="top">
+
+<!-- 01 HERO -->
+<section data-screen-label="01 Hero" style="position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:#FBFCFD">
+  <div data-hpx="" aria-hidden="true" style="position:absolute;inset:-6% 0 -14% 0;will-change:transform">
+  <sc-for list="{{ heroLayers }}" as="l" hint-placeholder-count="1">
+    <div aria-hidden="true" style="position:absolute;inset:0;overflow:hidden;opacity:{{ l.op }};transition:opacity 1.8s ease">
+      <img src="{{ l.src }}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(.85) brightness(1.12);transform:{{ l.tf }};transition:transform 9s linear"></img>
+    </div>
+  </sc-for>
+  </div>
+  <div aria-hidden="true" style="position:absolute;inset:0;background:#7D93A8;mix-blend-mode:color;opacity:.35"></div>
+  <div aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(251,252,253,.7) 0%,rgba(251,252,253,.15) 35%,rgba(251,252,253,.55) 62%,#FBFCFD 100%),linear-gradient(90deg,rgba(251,252,253,.96) 0%,rgba(251,252,253,.88) 40%,rgba(251,252,253,.35) 62%,rgba(251,252,253,0) 80%)"></div>
+
+  <div data-herofade="" style="position:relative;width:100%;max-width:1360px;margin:0 auto;padding:150px clamp(20px,4vw,48px) 0">
+    <div data-reveal="up" style="display:flex;align-items:center;gap:12px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;color:#5B6B7B"><span style="width:8px;height:8px;border-radius:50%;background:#F2A541;box-shadow:0 0 12px #F2A541"></span><span>ELECTRICAL POWER ENGINEERING DIGITAL ENVIRONMENT</span></div>
+    <h1 style="margin:28px 0 0;font-size:clamp(2.4rem,5.6vw,5.4rem);line-height:.96;letter-spacing:-.05em;font-weight:700;max-width:1100px">
+      <span data-words="" style="display:block">Follow the current</span>
+      <span data-words="" style="display:block;color:#1F5FAE">from turbine to motor.</span>
+    </h1>
+    <div style="margin-top:36px;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:28px">
+      <p data-reveal="up" style="margin:0;max-width:560px;font-size:clamp(1.1rem,1.5vw,1.3rem);line-height:1.55;color:#3A4B5C;text-wrap:pretty">One connected environment for power systems, industrial installations and automation — every stage explained, calculated and simulated, in English and French.</p>
+      <div data-reveal="up" style="display:flex;flex-wrap:wrap;gap:12px">
+        <a href="#journey" style="height:56px;padding:0 26px;border-radius:999px;background:#0B1B2B;color:#FFFFFF;font-size:16px;font-weight:600;display:flex;align-items:center;gap:10px" style-hover="background:#1F5FAE;color:#FFFFFF"><span>Start the journey</span><span>↓</span></a>
+        <a href="#grid" style="height:56px;padding:0 26px;border-radius:999px;border:1px solid #A9BAC6;color:#0B1B2B;font-size:16px;font-weight:500;display:flex;align-items:center;white-space:nowrap" style-hover="border-color:#0B1B2B;color:#0B1B2B">Explore the Cameroon grid</a>
+      </div>
+    </div>
+  </div>
+
+  <div style="position:relative;width:100%;max-width:1360px;margin:clamp(48px,7vw,88px) auto 0;padding:0 clamp(20px,4vw,48px) 28px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding-bottom:14px;border-bottom:1px solid #D5E0E8">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;color:#5B6B7B">LIVE ONE-LINE · SOURCE → LOAD</span>
+      <div style="display:flex;align-items:center;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5B6B7B">
+        <span><span style="color:#0B1B2B">{{ heroCur.tag }}</span> · {{ heroCur.cap }} · {{ heroCur.cr }}</span>
+        <button onClick="{{ togglePause }}" aria-label="{{ pauseLabel }}" style="height:32px;padding:0 12px;border:1px solid #B9C7D2;border-radius:999px;background:transparent;color:#0B1B2B;font-family:'IBM Plex Mono',monospace;font-size:11px">{{ pauseText }}</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto;scrollbar-width:none;padding-top:10px">{{ sld }}</div>
+  </div>
+</section>
+
+<!-- 02 TRUST -->
+<section data-screen-label="02 Trust" style="background:#EEF4F8;color:#0B1B2B">
+  <div style="max-width:1360px;margin:0 auto;padding:clamp(40px,5vw,64px) clamp(20px,4vw,48px)">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:28px 40px">
+      <div data-reveal="up" style="border-top:2px solid #0B1B2B;padding-top:16px"><div style="font-size:clamp(2.6rem,4.4vw,3.8rem);font-weight:700;letter-spacing:-.05em;line-height:1">16</div><div style="margin-top:8px;font-size:15px;color:#5B6B7B">engineering domains</div></div>
+      <div data-reveal="up" style="border-top:2px solid #0B1B2B;padding-top:16px"><div style="font-size:clamp(2.6rem,4.4vw,3.8rem);font-weight:700;letter-spacing:-.05em;line-height:1">9</div><div style="margin-top:8px;font-size:15px;color:#5B6B7B">system stages</div></div>
+      <div data-reveal="up" style="border-top:2px solid #0B1B2B;padding-top:16px"><div style="font-size:clamp(2.6rem,4.4vw,3.8rem);font-weight:700;letter-spacing:-.05em;line-height:1">8</div><div style="margin-top:8px;font-size:15px;color:#5B6B7B">learning pathways</div></div>
+      <div data-reveal="up" style="border-top:2px solid #0B1B2B;padding-top:16px"><div style="font-size:clamp(2.6rem,4.4vw,3.8rem);font-weight:700;letter-spacing:-.05em;line-height:1">EN · FR</div><div style="margin-top:8px;font-size:15px;color:#5B6B7B">fully bilingual</div></div>
+    </div>
+    <div data-reveal="up" style="margin-top:36px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 28px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:#0B1B2B">
+      <span style="color:#5B6B7B;letter-spacing:.1em;font-size:11px">REFERENCED TO</span>
+      <span>IEC 60364</span><span>NF C 15-100</span><span>NF C 13-100</span><span>IEC 61850</span><span>IEC 60909</span><span>ARSEL data (2026)</span>
+    </div>
+  </div>
+</section>
+
+<!-- 02b MARQUEE -->
+<section aria-hidden="true" data-screen-label="02b Voltage band" style="background:#FBFCFD;overflow:hidden;padding:clamp(56px,7vw,96px) 0 0">
+  <div data-px="x,-0.9" style="white-space:nowrap;font-size:clamp(2.4rem,6vw,5.5rem);font-weight:700;letter-spacing:-.04em;line-height:1.1;color:transparent;-webkit-text-stroke:1.5px #A9BAC6;will-change:transform">15 kV · 225 kV · 90 kV · 30 kV · 400 V · 230 V · 24 V DC · 15 kV · 225 kV · 90 kV</div>
+  <div data-px="x,0.9" style="margin-left:-80vw;white-space:nowrap;font-size:clamp(2.4rem,6vw,5.5rem);font-weight:700;letter-spacing:-.04em;line-height:1.1;color:#1F5FAE;will-change:transform">GENERATE · TRANSFORM · TRANSMIT · DISTRIBUTE · PROTECT · CONTROL · GENERATE · TRANSFORM</div>
+</section>
+
+<!-- 03 JOURNEY -->
+<section id="journey" data-screen-label="03 Journey" style="background:#FBFCFD;padding:clamp(80px,10vw,140px) 0 clamp(60px,8vw,120px);scroll-margin-top:68px">
+  <div style="max-width:1360px;margin:0 auto;padding:0 clamp(20px,4vw,48px)">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:24px 64px;align-items:end">
+      <div>
+        <div data-reveal="up" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;color:#1F5FAE">THE SYSTEM JOURNEY · 9 STAGES</div>
+        <h2 style="margin:18px 0 0;font-size:clamp(2.4rem,5vw,4.6rem);line-height:.98;letter-spacing:-.045em;font-weight:700"><span data-words="" style="display:block">Nine stages.</span><span data-words="" style="display:block;color:#5B6B7B">One continuous path.</span></h2>
+      </div>
+      <p data-read="" style="margin:0;max-width:520px;font-size:1.15rem;line-height:1.6;color:#3A4B5C;text-wrap:pretty">Scroll the chain. Each stage shows the equipment as it stands in the field, the voltage it runs at, and where to study it next.</p>
+    </div>
+
+    <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+      <div style="position:sticky;top:68px;z-index:20;margin:40px calc(-1 * clamp(20px,4vw,48px)) 0;padding:12px clamp(20px,4vw,48px);background:rgba(251,252,253,.94);backdrop-filter:blur(10px);border-bottom:1px solid #D5E0E8">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;font-family:'IBM Plex Mono',monospace;font-size:12px"><span style="color:#0B1B2B">{{ cur.num }} · {{ cur.short }}</span><span style="color:#1F5FAE">{{ cur.volt }}</span></div>
+        <div style="margin-top:10px;display:flex;gap:4px">
+          <sc-for list="{{ stages }}" as="s" hint-placeholder-count="9">
+            <button onClick="{{ s.go }}" aria-label="{{ s.short }}" style="flex:1;height:20px;border:0;padding:8px 0;background:transparent"><span style="display:block;height:4px;border-radius:2px;background:{{ s.bar }};transition:background .3s ease"></span></button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <div style="margin-top:clamp(40px,6vw,80px);display:grid;grid-template-columns:{{ jCols }};gap:56px;align-items:start">
+      <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+        <nav aria-label="Journey stages" style="position:sticky;top:110px">
+          <div style="position:relative;padding-left:28px">
+            <div style="position:absolute;left:6px;top:8px;bottom:8px;width:2px;background:#D5E0E8"></div>
+            <div style="position:absolute;left:6px;top:8px;width:2px;height:{{ jFill }}%;max-height:calc(100% - 16px);background:#F2A541;transition:height .5s cubic-bezier(.2,.8,.2,1)"></div>
+            <sc-for list="{{ stages }}" as="s" hint-placeholder-count="9">
+              <button onClick="{{ s.go }}" style="position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;min-height:52px;padding:6px 0;border:0;background:transparent;text-align:left">
+                <span style="position:absolute;left:-28px;top:10px;width:14px;height:14px;border-radius:50%;background:{{ s.dot }};border:2px solid {{ s.ring }};box-shadow:{{ s.glow }};transition:all .3s ease"></span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:{{ s.voltInk }}">{{ s.num }} · {{ s.volt }}</span>
+                <span style="font-size:16px;font-weight:{{ s.weight }};color:{{ s.ink }};transition:color .3s ease">{{ s.short }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </nav>
+      </sc-if>
+
+      <div style="display:flex;flex-direction:column;gap:clamp(72px,10vw,140px)">
+        <sc-for list="{{ stages }}" as="s" hint-placeholder-count="2">
+          <article data-stage="{{ $index }}" style="opacity:{{ s.op }};transition:opacity .6s ease">
+            <div data-reveal="clip" style="position:relative;aspect-ratio:16/9;overflow:hidden;border-radius:4px;background:#E3ECF2">
+              <img src="{{ s.img }}" alt="{{ s.cap }}" loading="lazy" style="width:100%;height:100%;object-fit:cover;filter:{{ s.filter }};transform:{{ s.zoom }};transition:filter 1s ease,transform 6s ease"></img>
+              <div style="position:absolute;inset:auto 0 0 0;padding:40px 20px 14px;background:linear-gradient(180deg,rgba(251,252,253,0),rgba(251,252,253,.85));display:flex;justify-content:space-between;gap:16px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#3A4B5C"><span>{{ s.cap }}</span><span style="color:#1F5FAE">{{ s.num }} / 09</span></div>
+            </div>
+            <div style="margin-top:32px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:28px 48px">
+              <div>
+                <div data-reveal="up" style="font-family:'IBM Plex Mono',monospace;font-size:clamp(1.6rem,3vw,2.6rem);font-weight:500;color:#1F5FAE;letter-spacing:-.02em">{{ s.volt }}</div>
+                <h3 data-reveal="up" style="margin:10px 0 0;font-size:clamp(1.9rem,3.2vw,3rem);line-height:1;letter-spacing:-.04em;font-weight:700">{{ s.title }}</h3>
+                <p data-reveal="up" style="margin:18px 0 0;font-size:1.08rem;line-height:1.6;color:#3A4B5C;text-wrap:pretty">{{ s.purpose }}</p>
+                <a href="#journey" style="margin-top:20px;display:inline-flex;align-items:center;gap:10px;min-height:44px;font-weight:600;font-size:15px">{{ s.link }} <span>→</span></a>
+              </div>
+              <div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;color:#5B6B7B">KEY APPARATUS</div>
+                <ol style="margin:10px 0 0;padding:0;list-style:none">
+                  <sc-for list="{{ s.app }}" as="a" hint-placeholder-count="4">
+                    <li data-reveal="left" style="display:flex;gap:16px;align-items:baseline;padding:13px 0;border-bottom:1px solid #D5E0E8;font-size:16px"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#1F5FAE">{{ a.n }}</span><span>{{ a.t }}</span></li>
+                  </sc-for>
+                </ol>
+              </div>
+            </div>
+          </article>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 CAMEROON GRID -->
+<section id="grid" data-screen-label="04 Cameroon grid" style="background:#EEF4F8;color:#0B1B2B;padding:clamp(80px,10vw,140px) 0;scroll-margin-top:68px">
+  <div style="max-width:1360px;margin:0 auto;padding:0 clamp(20px,4vw,48px)">
+    <div data-reveal="up" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;color:#1F5FAE">CAMEROON GRID</div>
+    <div data-count="" data-px="x,-0.18" style="margin-top:14px;will-change:transform;display:flex;align-items:baseline;flex-wrap:wrap;gap:0 18px">
+      <span style="font-size:clamp(3.6rem,10vw,8.5rem);font-weight:700;letter-spacing:-.06em;line-height:.9;font-variant-numeric:tabular-nums">{{ capVal }}</span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:clamp(1.2rem,2.2vw,2rem);font-weight:500;color:#1F5FAE">MW</span>
+    </div>
+    <div style="margin-top:28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:24px 64px;align-items:start">
+      <h2 data-words="" style="margin:0;font-size:clamp(1.5rem,2.4vw,2.2rem);line-height:1.1;letter-spacing:-.03em;font-weight:700;text-wrap:balance">installed on two separate grids.</h2>
+      <p data-read="" style="margin:0;font-size:1.1rem;line-height:1.6;color:#3A4B5C;text-wrap:pretty">The Southern (RIS) and Northern (RIN) grids are not interconnected. Every site below comes from a dated record with its source; approximate positions and routes are marked as such.</p>
+    </div>
+    <div style="margin-top:44px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));column-gap:40px;border-top:1px solid #0B1B2B">
+      <div data-reveal="up" style="padding:20px 0;border-bottom:1px solid #D5E0E8"><div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:2.6rem;font-weight:700;letter-spacing:-.04em">3,233.9</span><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#1F5FAE">km</span></div><div style="margin-top:4px;font-weight:600">High-voltage lines (2023)</div></div>
+      <div data-reveal="up" style="padding:20px 0;border-bottom:1px solid #D5E0E8"><div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:2.6rem;font-weight:700;letter-spacing:-.04em">2</span><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#1F5FAE">grids</span></div><div style="margin-top:4px;font-weight:600">Not interconnected (2025)</div></div>
+      <div data-reveal="up" style="padding:20px 0;border-bottom:1px solid #D5E0E8;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.6;color:#5B6B7B;display:flex;align-items:center">Sources: ARSEL (2026) · Government of Cameroon / World Bank (2025)</div>
+    </div>
+    <div data-reveal="up" style="margin-top:40px;border:1px solid #D5E0E8;border-radius:6px;overflow:hidden;background:#FFFFFF">
+      <iframe src="./Cameroon Grid Map.html?v2" title="Interactive map of Cameroon's electricity grid" scrolling="no" style="display:block;width:100%;height:{{ mapH }}px;border:0;transition:height .3s ease"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- 05 WORKBENCH -->
+<section id="workbench" data-screen-label="05 Workbench" style="background:#0B1B2B;color:#F3F7FA;padding:clamp(80px,10vw,140px) 0;scroll-margin-top:68px">
+  <div style="max-width:1360px;margin:0 auto;padding:0 clamp(20px,4vw,48px)">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:24px 64px;align-items:end">
+      <div>
+        <div data-reveal="up" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;color:#F2A541">WORKBENCH · DIRECT-ON-LINE STARTER</div>
+        <h2 style="margin:18px 0 0;font-size:clamp(2.4rem,5vw,4.6rem);line-height:.98;letter-spacing:-.045em;font-weight:700"><span data-words="" style="display:block">Protection logic,</span><span data-words="" style="display:block;color:#93A4B4">made visible.</span></h2>
+      </div>
+      <p data-read="" style="margin:0;max-width:520px;font-size:1.15rem;line-height:1.6;color:#C3CFDA;text-wrap:pretty">Start, stop and fault a 15 kW motor feeder. Watch energy move through the breaker, contactor and thermal relay — and see which device clears which fault.</p>
+    </div>
+    <div data-reveal="up" style="margin-top:clamp(40px,6vw,72px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));border:1px solid #1E3347;border-radius:6px;overflow:hidden">
+      <div style="background:#10263A;padding:clamp(20px,3vw,40px);display:flex;justify-content:center">
+        <svg viewBox="0 0 340 440" width="100%" style="max-width:380px;display:block" role="img" aria-label="Motor feeder one-line diagram">
+          <line x1="40" y1="34" x2="300" y2="34" stroke="#D9821C" stroke-width="4"></line>
+          <text x="40" y="20" fill="#93A4B4" font-family="IBM Plex Mono" font-size="12">400 V · 3~ · 50 Hz</text>
+          <line x1="170" y1="34" x2="170" y2="80" stroke="{{ wb.cA }}" stroke-width="3"></line>
+          <circle cx="170" cy="80" r="4" fill="{{ wb.cA }}"></circle>
+          <line x1="170" y1="80" x2="{{ wb.q1x }}" y2="{{ wb.q1y }}" stroke="{{ wb.q1c }}" stroke-width="3" style="transition:all .2s ease"></line>
+          <text x="198" y="104" fill="#F3F7FA" font-family="Space Grotesk" font-size="14" font-weight="600">Q1 · circuit breaker</text>
+          <line x1="170" y1="120" x2="170" y2="170" stroke="{{ wb.cB }}" stroke-width="3"></line>
+          <circle cx="170" cy="170" r="4" fill="{{ wb.cB }}"></circle>
+          <line x1="170" y1="170" x2="{{ wb.k1x }}" y2="{{ wb.k1y }}" stroke="{{ wb.k1c }}" stroke-width="3" style="transition:all .2s ease"></line>
+          <text x="198" y="194" fill="#F3F7FA" font-family="Space Grotesk" font-size="14" font-weight="600">KM1 · contactor</text>
+          <line x1="170" y1="210" x2="170" y2="254" stroke="{{ wb.cC }}" stroke-width="3"></line>
+          <rect x="150" y="254" width="40" height="40" rx="2" fill="#10263A" stroke="{{ wb.f1c }}" stroke-width="3"></rect>
+          <path d="M158 274 L164 264 L170 284 L176 264 L182 274" fill="none" stroke="{{ wb.f1c }}" stroke-width="2"></path>
+          <text x="198" y="272" fill="#F3F7FA" font-family="Space Grotesk" font-size="14" font-weight="600">F1 · thermal relay</text>
+          <text x="198" y="290" fill="{{ wb.f1c }}" font-family="IBM Plex Mono" font-size="11">{{ wb.f1t }}</text>
+          <line x1="170" y1="294" x2="170" y2="350" stroke="{{ wb.cD }}" stroke-width="3"></line>
+          <line x1="170" y1="34" x2="170" y2="350" stroke="#FFFFFF" stroke-width="3" stroke-dasharray="6 18" opacity="{{ wb.flow }}"><animate attributeName="stroke-dashoffset" values="24;0" dur="0.6s" repeatCount="indefinite"></animate></line>
+          <circle cx="170" cy="384" r="34" fill="#10263A" stroke="{{ wb.cD }}" stroke-width="3"></circle>
+          <text x="170" y="384" text-anchor="middle" fill="#F3F7FA" font-family="Space Grotesk" font-size="18" font-weight="700">M</text>
+          <text x="170" y="402" text-anchor="middle" fill="#93A4B4" font-family="IBM Plex Mono" font-size="11">3~</text>
+          <text x="214" y="390" fill="#F3F7FA" font-family="Space Grotesk" font-size="14" font-weight="600">M1 · 15 kW</text>
+        </svg>
+      </div>
+      <div style="padding:clamp(24px,3vw,40px);display:flex;flex-direction:column;gap:28px;border-left:1px solid #1E3347">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;border-bottom:1px solid #1E3347;padding-bottom:24px">
+          <div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;color:#93A4B4">MOTOR STATE</div><div style="margin-top:8px;font-size:clamp(1.5rem,2.4vw,2rem);font-weight:700;letter-spacing:-.03em;color:{{ wb.stateInk }}">{{ wb.state }}</div></div>
+          <div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;color:#93A4B4">LINE CURRENT</div><div style="margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:clamp(1.5rem,2.4vw,2rem);font-weight:500;color:#F3F7FA">{{ wb.amps }}</div></div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <button onClick="{{ wb.start }}" disabled="{{ wb.dStart }}" style="height:48px;padding:0 22px;border-radius:999px;border:0;background:#F2A541;color:#0B1B2B;font-size:15px;font-weight:600;opacity:{{ wb.oStart }}">Start</button>
+          <button onClick="{{ wb.stopM }}" disabled="{{ wb.dStop }}" style="height:48px;padding:0 22px;border-radius:999px;border:1px solid #3A536B;background:transparent;color:#F3F7FA;font-size:15px;opacity:{{ wb.oStop }}">Stop</button>
+          <button onClick="{{ wb.over }}" disabled="{{ wb.dFault }}" style="height:48px;padding:0 22px;border-radius:999px;border:1px solid #3A536B;background:transparent;color:#F3F7FA;font-size:15px;opacity:{{ wb.oFault }}">Simulate overload</button>
+          <button onClick="{{ wb.short }}" disabled="{{ wb.dFault }}" style="height:48px;padding:0 22px;border-radius:999px;border:1px solid #3A536B;background:transparent;color:#F3F7FA;font-size:15px;opacity:{{ wb.oFault }}">Short-circuit at motor</button>
+          <button onClick="{{ wb.reset }}" disabled="{{ wb.dReset }}" style="height:48px;padding:0 22px;border-radius:999px;border:1px solid #E5484D;background:transparent;color:#FF8A8D;font-size:15px;opacity:{{ wb.oReset }}">Reset</button>
+        </div>
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;color:#93A4B4">EVENT LOG</div>
+          <div aria-live="polite" style="margin-top:10px;display:flex;flex-direction:column">
+            <sc-for list="{{ wb.log }}" as="e" hint-placeholder-count="2">
+              <div style="display:flex;gap:16px;padding:10px 0;border-bottom:1px solid #1E3347;font-size:14px;color:{{ e.ink }}"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#93A4B4;min-width:64px">{{ e.t }}</span><span>{{ e.m }}</span></div>
+            </sc-for>
+          </div>
+        </div>
+        <p style="margin:auto 0 0;font-size:13px;line-height:1.55;color:#93A4B4">Selectivity: F1 (thermal) clears overload, Q1 (magnetic) clears short-circuit. Teaching simulation — not live equipment data.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 CASE STUDY -->
+<section id="case" data-screen-label="06 Case study" style="background:#EEF4F8;color:#0B1B2B;padding:clamp(80px,10vw,140px) 0;scroll-margin-top:68px">
+  <div style="max-width:1360px;margin:0 auto;padding:0 clamp(20px,4vw,48px)">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:24px 64px;align-items:end">
+      <div>
+        <div data-reveal="up" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;color:#1F5FAE">CASE STUDY · NACHTIGAL HYDRO, SANAGA</div>
+        <h2 data-words="" style="margin:18px 0 0;font-size:clamp(2.4rem,5vw,4.6rem);line-height:.98;letter-spacing:-.045em;font-weight:700;text-wrap:balance">Four moves, shown on one plant.</h2>
+      </div>
+      <p data-read="" style="margin:0;max-width:520px;font-size:1.15rem;line-height:1.6;color:#3A4B5C;text-wrap:pretty">This is how every EPEDE lesson works: see the equipment, understand the one-line, calculate with stated assumptions, then apply it in simulation.</p>
+    </div>
+    <div style="margin-top:clamp(48px,6vw,80px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:0;border-top:2px solid #0B1B2B">
+      <div data-reveal="up" style="padding:28px 28px 28px 0;border-bottom:1px solid #D5E0E8;display:flex;flex-direction:column;gap:16px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#1F5FAE">01 · SEE</div>
+        <div data-reveal="clip" style="aspect-ratio:4/3;border-radius:4px;overflow:hidden;background:#E3ECF2"><image-slot id="case-nachtigal" placeholder="Nachtigal powerhouse or spillway photograph" shape="rect"></image-slot></div>
+        <p style="margin:0;font-size:1rem;line-height:1.6;color:#3A4B5C">A run-of-river plant on the Sanaga: seven Francis units of about 60 MW — 420 MW at full output.</p>
+      </div>
+      <div data-reveal="up" style="padding:28px 28px 28px 0;border-bottom:1px solid #D5E0E8;display:flex;flex-direction:column;gap:16px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#1F5FAE">02 · UNDERSTAND</div>
+        <div style="display:flex;flex-direction:column">
+          <sc-for list="{{ caseChain }}" as="c" hint-placeholder-count="5">
+            <div style="position:relative;display:flex;justify-content:space-between;gap:12px;padding:12px 0 12px 22px;border-bottom:1px solid #D5E0E8">
+              <span style="position:absolute;left:4px;top:18px;width:9px;height:9px;border-radius:50%;background:{{ c.fill }};border:2px solid #0B1B2B"></span>
+              <span style="font-size:15px;font-weight:600">{{ c.t }}</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#1F5FAE;white-space:nowrap">{{ c.v }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div data-reveal="up" style="padding:28px 28px 28px 0;border-bottom:1px solid #D5E0E8;display:flex;flex-direction:column;gap:16px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#1F5FAE">03 · CALCULATE</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:15px;line-height:1.9;color:#0B1B2B">I = P / (√3 · U · cos φ)<br>= 420 MW / (√3 × 225 kV × 0.95)</div>
+        <div style="font-size:clamp(3rem,5vw,4.4rem);font-weight:700;letter-spacing:-.05em;line-height:1">≈ 1,134 A</div>
+        <p style="margin:0;font-size:1rem;line-height:1.6;color:#3A4B5C">Total evacuation current — about 567 A per circuit on the 2 × 225 kV line.</p>
+        <p style="margin:0;font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.6;color:#5B6B7B">Assumptions: cos φ = 0.95, full output, losses neglected. Indicative public figures — confirm against the cited source.</p>
+      </div>
+      <div data-reveal="up" style="padding:28px 0;border-bottom:1px solid #D5E0E8;display:flex;flex-direction:column;gap:16px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#1F5FAE">04 · APPLY</div>
+        <p style="margin:0;font-size:1.25rem;line-height:1.45;font-weight:500;letter-spacing:-.01em;text-wrap:pretty">Load the evacuation line in the simulation lab, trip one circuit and check whether the other can carry the full output.</p>
+        <a href="#workbench" style="display:inline-flex;align-items:center;gap:10px;min-height:48px;width:max-content;padding:0 22px;border-radius:999px;background:#0B1B2B;color:#FFFFFF;font-weight:600" style-hover="background:#1F5FAE;color:#FFFFFF">Open the simulation →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 PROJECTS -->
+<section data-screen-label="07 Projects" style="background:#FBFCFD;padding:clamp(80px,10vw,140px) 0">
+  <div style="max-width:1360px;margin:0 auto;padding:0 clamp(20px,4vw,48px)">
+    <div data-reveal="up" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;color:#1F5FAE">CAMEROON IN CONTEXT</div>
+    <h2 style="margin:18px 0 0;font-size:clamp(2.4rem,5vw,4.6rem);line-height:.98;letter-spacing:-.045em;font-weight:700"><span data-words="" style="display:block">Real infrastructure,</span><span data-words="" style="display:block;color:#5B6B7B">read as engineering.</span></h2>
+    <div style="margin-top:clamp(48px,6vw,80px);display:flex;flex-direction:column">
+      <sc-for list="{{ projects }}" as="p" hint-placeholder-count="3">
+        <article data-reveal="up" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:28px 56px;padding:36px 0;border-top:1px solid #D5E0E8;align-items:center">
+          <div data-reveal="clip" style="aspect-ratio:16/10;border-radius:4px;overflow:hidden;background:#E3ECF2"><image-slot id="{{ p.slot }}" placeholder="{{ p.ph }}" shape="rect"></image-slot></div>
+          <div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;color:#1F5FAE">{{ p.meta }}</div>
+            <h3 style="margin:12px 0 0;font-size:clamp(1.8rem,3vw,2.6rem);line-height:1.02;letter-spacing:-.04em;font-weight:700">{{ p.t }}</h3>
+            <p style="margin:16px 0 0;max-width:520px;font-size:1.05rem;line-height:1.6;color:#3A4B5C;text-wrap:pretty">{{ p.d }}</p>
+            <a href="#journey" style="margin-top:18px;display:inline-flex;gap:10px;min-height:44px;align-items:center;font-weight:600">{{ p.cta }} <span>→</span></a>
+          </div>
+        </article>
+      </sc-for>
+    </div>
+    <p style="margin:24px 0 0;font-size:13px;color:#5B6B7B">Capacities are indicative public figures; confirm against the cited source in each project page.</p>
+  </div>
+</section>
+
+<!-- 08 PATHWAYS -->
+<section id="pathways" data-screen-label="08 Pathways" style="background:#EEF4F8;color:#0B1B2B;padding:clamp(80px,10vw,140px) 0;scroll-margin-top:68px">
+  <div style="max-width:1360px;margin:0 auto;padding:0 clamp(20px,4vw,48px)">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:24px 64px;align-items:end">
+      <div>
+        <div data-reveal="up" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;color:#1F5FAE">LEARNING PATHWAYS</div>
+        <h2 style="margin:18px 0 0;font-size:clamp(2.4rem,5vw,4.6rem);line-height:.98;letter-spacing:-.045em;font-weight:700"><span data-words="" style="display:block">Eight pathways.</span><span data-words="" style="display:block;color:#6A7A8A">One connected practice.</span></h2>
+      </div>
+      <p data-read="" style="margin:0;max-width:520px;font-size:1.15rem;line-height:1.6;color:#3A4B5C;text-wrap:pretty">From the first volt to the control room: eight structured pathways, each built on real equipment, standards and Cameroonian infrastructure.</p>
+    </div>
+
+    <div style="margin-top:clamp(48px,6vw,80px);display:grid;grid-template-columns:{{ pwCols }};gap:clamp(32px,5vw,72px);align-items:start">
+      <div role="tablist" aria-label="Learning pathways" style="border-top:2px solid #0B1B2B">
+        <sc-for list="{{ pws }}" as="p" hint-placeholder-count="8">
+          <div data-reveal="left" style="border-bottom:1px solid #D5E0E8">
+            <button role="tab" aria-selected="{{ p.on }}" onClick="{{ p.pick }}" onMouseEnter="{{ p.hover }}" style="position:relative;width:100%;display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:16px;align-items:center;padding:22px 0;border:0;background:transparent;text-align:left;color:#0B1B2B">
+              <span style="position:absolute;left:0;top:-1px;height:2px;width:{{ p.bar }};background:#F2A541;transition:width .6s cubic-bezier(.16,1,.3,1)"></span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:{{ p.numInk }};transition:color .3s ease">{{ p.n }}</span>
+              <span style="font-size:clamp(1.1rem,1.6vw,1.35rem);line-height:1.25;font-weight:{{ p.weight }};letter-spacing:-.02em;color:{{ p.ink }};transform:{{ p.shift }};transition:color .3s ease,transform .4s cubic-bezier(.16,1,.3,1)">{{ p.t }}</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.04em;color:#5B6B7B;white-space:nowrap;text-align:right">{{ p.tag }}</span>
+            </button>
+            <sc-if value="{{ p.inline }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:0 0 28px;display:flex;flex-direction:column;gap:16px">
+                <div style="aspect-ratio:16/10;border-radius:4px;overflow:hidden;background:#E3ECF2"><img src="{{ p.img }}" alt="{{ p.t }}" loading="lazy" style="width:100%;height:100%;object-fit:cover"></img></div>
+                <p style="margin:0;font-size:1rem;line-height:1.6;color:#3A4B5C">{{ p.d }}</p>
+                <ul style="margin:0;padding:0;list-style:none">
+                  <sc-for list="{{ p.topics }}" as="x" hint-placeholder-count="6">
+                    <li style="display:flex;gap:14px;padding:10px 0;border-bottom:1px solid #D5E0E8;font-size:15px;line-height:1.45"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#1F5FAE;padding-top:3px">{{ x.n }}</span><span>{{ x.t }}</span></li>
+                  </sc-for>
+                </ul>
+                <a href="#pathways" style="display:inline-flex;align-items:center;gap:10px;min-height:48px;width:max-content;padding:0 22px;border-radius:999px;background:#0B1B2B;color:#FFFFFF;font-weight:600" style-hover="background:#1F5FAE;color:#FFFFFF">{{ pwCta }} <span>→</span></a>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+        <div data-reveal="up" style="position:sticky;top:100px">
+          <div style="position:relative;aspect-ratio:16/10;border-radius:6px;overflow:hidden;background:#E3ECF2">
+            <sc-for list="{{ pwImgs }}" as="i" hint-placeholder-count="1">
+              <img src="{{ i.src }}" alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:{{ i.op }};transform:{{ i.tf }};transition:opacity .9s ease,transform 6s ease"></img>
+            </sc-for>
+            <div style="position:absolute;inset:auto 0 0 0;padding:48px 20px 14px;background:linear-gradient(180deg,rgba(14,26,28,0),rgba(14,26,28,.6));display:flex;justify-content:space-between;gap:16px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#F2F0EA"><span>{{ pw.cr }}</span><span>{{ pw.n }} / 08</span></div>
+            <div style="position:absolute;left:16px;top:16px;display:flex;gap:8px;flex-wrap:wrap">
+              <span style="height:30px;padding:0 12px;border-radius:999px;background:#0B1B2B;color:#FFFFFF;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.06em;display:flex;align-items:center">{{ pwLabel }} {{ pw.n }}</span>
+              <span style="height:30px;padding:0 12px;border-radius:999px;background:rgba(242,240,234,.92);color:#0B1B2B;font-family:'IBM Plex Mono',monospace;font-size:11px;display:flex;align-items:center">{{ pw.tag }}</span>
+            </div>
+          </div>
+          <div style="opacity:{{ pwOp }};transform:{{ pwTf }};transition:opacity .35s ease,transform .5s cubic-bezier(.16,1,.3,1)">
+            <h3 style="margin:28px 0 0;font-size:clamp(1.8rem,2.8vw,2.6rem);line-height:1.04;letter-spacing:-.04em;font-weight:700;text-wrap:balance">{{ pw.t }}</h3>
+            <p style="margin:14px 0 0;max-width:640px;font-size:1.08rem;line-height:1.6;color:#3A4B5C;text-wrap:pretty">{{ pw.d }}</p>
+            <div style="margin-top:24px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;color:#5B6B7B">{{ pwTopics }}</div>
+            <ul style="margin:8px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));column-gap:32px">
+              <sc-for list="{{ pw.topics }}" as="x" hint-placeholder-count="6">
+                <li style="display:flex;gap:14px;padding:12px 0;border-bottom:1px solid #D5E0E8;font-size:15px;line-height:1.45"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#1F5FAE;padding-top:3px">{{ x.n }}</span><span>{{ x.t }}</span></li>
+              </sc-for>
+            </ul>
+            <a href="#pathways" style="margin-top:28px;display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:0 26px;border-radius:999px;background:#0B1B2B;color:#FFFFFF;font-weight:600" style-hover="background:#1F5FAE;color:#FFFFFF">{{ pwCta }} <span>→</span></a>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+</section>
+
+<!-- 09 CTA -->
+<section data-screen-label="09 CTA" style="position:relative;background:#0B1B2B;color:#F3F7FA;padding:clamp(100px,14vw,200px) 0;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;inset:0;background:radial-gradient(60% 80% at 80% 100%,rgba(242,165,65,.16),rgba(242,165,65,0) 70%)"></div>
+  <div style="position:relative;max-width:1360px;margin:0 auto;padding:0 clamp(20px,4vw,48px)">
+    <h2 data-px="x,0.1" style="margin:0;will-change:transform;font-size:clamp(3rem,8vw,8rem);line-height:.92;letter-spacing:-.06em;font-weight:700"><span data-words="" style="display:block">See every connection.</span><span data-words="" style="display:block;color:#F2A541">Master the system.</span></h2>
+    <div data-reveal="up" style="margin-top:48px;display:flex;flex-wrap:wrap;gap:12px">
+      <a href="#journey" style="height:56px;padding:0 26px;border-radius:999px;background:#F2A541;color:#0B1B2B;font-size:16px;font-weight:600;display:flex;align-items:center" style-hover="background:#FFC277;color:#0B1B2B">Explore the power journey →</a>
+      <a href="#pathways" style="height:56px;padding:0 26px;border-radius:999px;border:1px solid #3A536B;color:#F3F7FA;font-size:16px;display:flex;align-items:center" style-hover="border-color:#F3F7FA;color:#F3F7FA">Browse learning paths</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer style="background:#07131F;color:#FFFFFF;border-top:1px solid #1A2D40">
+  <div style="max-width:1360px;margin:0 auto;padding:clamp(56px,7vw,88px) clamp(20px,4vw,48px) 32px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:40px">
+      <div style="grid-column:span 1">
+        <div style="font-size:26px;font-weight:700;letter-spacing:-.03em">EPEDE</div>
+        <p style="margin:14px 0 0;max-width:300px;font-size:14px;line-height:1.6;color:#93A4B4">A bilingual digital environment for understanding, analysing and simulating electrical power engineering.</p>
+      </div>
+      <sc-for list="{{ footerCols }}" as="c" hint-placeholder-count="3">
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;color:#93A4B4">{{ c.h }}</div>
+          <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ c.links }}" as="l" hint-placeholder-count="4"><a href="#top" style="color:#F3F7FA;font-size:14px" style-hover="color:#F2A541">{{ l }}</a></sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <p style="margin:56px 0 0;padding-top:24px;border-top:1px solid #1A2D40;max-width:900px;font-size:13px;line-height:1.6;color:#93A4B4">Engineering synthesis notice — EPEDE content is an educational synthesis of public standards and sources. It does not replace official standards text, manufacturer data or a qualified engineer's study.</p>
+    <div style="margin-top:20px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#93A4B4">
+      <span>© 2026 EPEDE · Electrical Power Engineering Digital Environment</span>
+      <span>Version 2.0 · Updated November 2026</span>
+      <span>Photos: Wikimedia Commons contributors, credited on each image.</span>
+    </div>
+  </div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;autoplay&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;pulse&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;startLang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;EN&quot;,&quot;FR&quot;],&quot;default&quot;:&quot;EN&quot;,&quot;tsType&quot;:&quot;'EN'|'FR'&quot;,&quot;section&quot;:&quot;Language&quot;}}">
+const IMG='assets/hero/';
+const HERO=[
+ {f:'production/hydro.jpg',tag:'GENERATION',tagFR:'PRODUCTION',cap:'Hydroelectric dam & powerhouse',capFR:'Barrage et centrale hydroélectrique',cr:'Jeff Hitchcock · CC BY 2.0'},
+ {f:'transmission/ehv.jpg',tag:'TRANSMISSION · 380 kV',tagFR:'TRANSPORT · 380 kV',cap:'Line crossing, Ems',capFR:'Croisement de lignes, Ems',cr:'Smial · FAL'},
+ {f:'substation/hv-outdoor.jpg',tag:'SUBSTATION',tagFR:'POSTE',cap:'Outdoor switchyard · busbars & filters',capFR:'Poste extérieur · jeux de barres et filtres',cr:'Greg Goebel · CC BY-SA 2.0'},
+ {f:'substation/gis.jpg',tag:'SUBSTATION · GIS',tagFR:'POSTE · PSEM',cap:'Gas-insulated switchgear hall',capFR:'Salle de poste sous enveloppe métallique',cr:'Сайга · CC BY-SA 4.0'},
+ {f:'distribution/pole-transformer.jpg',tag:'DISTRIBUTION · 11 kV / 440 V',tagFR:'DISTRIBUTION · 11 kV / 440 V',cap:'Pole-mounted transformer',capFR:'Transformateur sur poteau',cr:'T. A. Gonsalves · CC BY-SA 4.0'},
+ {f:'industrial/mcc-technician.jpg',tag:'INSTALLATIONS · MCC',tagFR:'INSTALLATIONS · CCM',cap:'Wiring a motor control centre',capFR:'Câblage d’un centre de commande moteurs',cr:'MTA Capital Construction · CC BY 2.0'},
+ {f:'automation/scada.jpg',tag:'AUTOMATION · SCADA',tagFR:'AUTOMATISME · SCADA',cap:'SCADA control room',capFR:'Salle de supervision SCADA',cr:'Z22 · CC BY-SA 4.0'}];
+const ST=[
+ ['01','Generation','Production','Generation','Production','15 kV','D01','Generation','Production','production/hydro-grand-coulee.jpg','Dam spillway, Grand Coulee · David Brodbeck · CC BY 2.0',
+  'Hydro, thermal and solar plants convert primary energy into electrical energy at generator voltage, held steady by governor and excitation control.','Les centrales hydroélectriques, thermiques et solaires convertissent l’énergie primaire en énergie électrique à la tension de l’alternateur, sous le contrôle du régulateur et de l’excitation.',
+  ['Turbine / prime mover','Synchronous generator','Excitation system','Generator circuit breaker'],['Turbine / moteur primaire','Alternateur synchrone','Système d’excitation','Disjoncteur de groupe']],
+ ['02','Step-up','Élévation','Step-up transformation','Transformation élévatrice','15 → 225 kV','D02','Transformation','Transformation','substation/equipment.jpg','CTs, VTs & breakers, Kimanis · CEphoto, Uwe Aranas · CC BY-SA 3.0',
+  'Step-up transformers raise the voltage so the same power travels with far less current — and far lower line losses.','Les transformateurs élévateurs augmentent la tension pour que la même puissance circule avec un courant bien plus faible et moins de pertes en ligne.',
+  ['Step-up transformer','Surge arresters','HV circuit breaker','Bushings & CTs'],['Transformateur élévateur','Parafoudres','Disjoncteur HT','Traversées & TC']],
+ ['03','Transmission','Transport HT','High-voltage transmission','Transport haute tension','225 kV','D03','Transmission','Transport','transmission/hv-line.jpg','750 kV anchor pylon · Novoklimov · CC0',
+  'Bulk power crosses long corridors on overhead lines. Line protection, reactive compensation and right-of-way define what a corridor can carry.','La puissance en vrac traverse de longs corridors sur lignes aériennes. Protections de ligne, compensation réactive et emprise définissent sa capacité.',
+  ['Overhead conductors','Lattice towers & insulators','Distance protection','Shunt reactors'],['Conducteurs aériens','Pylônes treillis & isolateurs','Protection de distance','Réactances shunt']],
+ ['04','Substation','Poste','Transmission substation','Poste de transport','225 / 90 kV','D04','Substations','Postes','substation/hv-outdoor.jpg','Outdoor switchyard, Denver · Greg Goebel · CC BY-SA 2.0',
+  'Grid nodes switch, transform, measure and protect. Every bay pairs primary equipment with protection and control.','Les nœuds du réseau commutent, transforment, mesurent et protègent. Chaque travée associe appareillage primaire et contrôle-commande.',
+  ['Busbars & disconnectors','Power transformers','CTs / VTs','Protection relays'],['Jeux de barres & sectionneurs','Transformateurs de puissance','TC / TT','Relais de protection']],
+ ['05','Sub-transmission','Répartition','Sub-transmission network','Réseau de répartition','90 kV','D05','Sub-transmission','Répartition','transmission/to-substation.jpg','Lines entering a substation, Mabelvale · Nickthestick26 · CC BY-SA 3.0',
+  'Regional networks carry power from the main grid to load centres, balancing capacity, losses and security of supply.','Les réseaux régionaux acheminent l’énergie du réseau principal vers les centres de consommation, en équilibrant capacité, pertes et sécurité d’alimentation.',
+  ['90 kV lines','Regional substations','On-load tap changers','Telecontrol RTUs'],['Lignes 90 kV','Postes régionaux','Régleurs en charge','RTU de téléconduite']],
+ ['06','MV distribution','Distribution HTA','Medium-voltage distribution','Distribution moyenne tension','30 kV','D06','MV distribution','Distribution HTA','substation/indoor.jpg','20 kV indoor switchgear · Izma94 · CC BY-SA 4.0',
+  'Feeders leave primary substations and loop through ring main units towards towns, districts and industrial sites.','Les départs quittent les postes sources et bouclent par des postes en coupure d’artère vers villes, quartiers et sites industriels.',
+  ['MV feeders','Ring main units','Reclosers','MV switchgear'],['Départs HTA','Cellules RMU','Disjoncteurs-réenclencheurs','Cellules HTA']],
+ ['07','LV distribution','Distribution BT','Low-voltage distribution','Distribution basse tension','400 V','D07','LV distribution','Distribution BT','distribution/pole-transformer.jpg','Pole-mounted transformer, Coorg · T. A. Gonsalves · CC BY-SA 4.0',
+  'Distribution transformers step down to low voltage, and LV boards share the supply out to the final user.','Les transformateurs de distribution abaissent en basse tension et les tableaux BT répartissent l’alimentation vers l’usager final.',
+  ['Distribution transformer','LV board','Service cables','Metering'],['Transformateur de distribution','Tableau BT','Câbles de branchement','Comptage']],
+ ['08','Installations','Installations','Electrical installations','Installations électriques','400 / 230 V','D08','Installations','Installations','industrial/mcc.jpg','480 V motor control centre · Wtshymanski · CC BY-SA 3.0',
+  'Inside buildings and plants, switchboards, protective devices and earthing make energy safe at the point of use.','Dans les bâtiments et usines, tableaux, dispositifs de protection et mise à la terre rendent l’énergie sûre au point d’utilisation.',
+  ['Main LV switchboard','Breakers & RCDs','Motor starters','Earthing'],['TGBT','Disjoncteurs & DDR','Démarreurs moteurs','Mise à la terre']],
+ ['09','Automation','Automatisme','Automation & control','Automatisme & contrôle-commande','24 V DC','D09','Automation','Automatisme','automation/scada.jpg','SCADA control room, NEWater · Z22 · CC BY-SA 4.0',
+  'PLCs, drives and SCADA supervise the whole chain — keeping control signals and process values separate from the power path.','Automates, variateurs et SCADA supervisent toute la chaîne — en séparant signaux de commande et valeurs process du chemin de puissance.',
+  ['PLC / DCS','Variable-speed drives','SCADA HMI','Field instrumentation'],['API / SNCC','Variateurs de fréquence','IHM SCADA','Instrumentation terrain']]];
+const PATHS=[
+ ['Generation & production','Production d’énergie','Plants, generators and excitation — how power enters the grid.','Centrales, alternateurs et excitation — comment l’énergie entre dans le réseau.',['Students','Engineers']],
+ ['Transmission & distribution','Transport & distribution','Lines, cables and networks from 225 kV down to 400 V.','Lignes, câbles et réseaux de 225 kV à 400 V.',['Students','Technicians','Engineers']],
+ ['Equipment & ratings','Équipements & caractéristiques','Transformers, switchgear and cables — reading and choosing ratings.','Transformateurs, appareillage et câbles — lire et choisir les caractéristiques.',['Technicians','Engineers']],
+ ['Protection & selectivity','Protection & sélectivité','Relays, fuses and breakers that clear faults without blacking out the rest.','Relais, fusibles et disjoncteurs qui éliminent les défauts sans couper le reste.',['Technicians','Engineers']],
+ ['Control & automation','Contrôle-commande & automatisme','PLCs, drives and SCADA — from field signal to operator screen.','API, variateurs et SCADA — du signal terrain à l’écran opérateur.',['Technicians','Engineers']],
+ ['Industrial installations','Installations industrielles','Switchboards, cable routing, motor circuits and earthing on site.','Tableaux, cheminements de câbles, circuits moteurs et mise à la terre sur site.',['Students','Technicians']],
+ ['Grid planning & Cameroon context','Planification du réseau & contexte camerounais','RIS, RIN and the projects shaping Cameroon’s supply.','RIS, RIN et les projets qui façonnent l’approvisionnement du Cameroun.',['Engineers','Students']]];
+const PW=[["installations/lighting-routing.jpg","KVDP · Public domain","Foundations","Débutant & Bases","Electrical fundamentals","Fondamentaux de l’électricité","Understand the physics before the formulas: charge, voltage, current, resistance, power vs energy, AC/DC, single- and three-phase.","Comprendre concrètement les phénomènes physiques avant les formules : charge, tension, courant, résistance, puissance vs énergie, AC/DC, monophasé et triphasé.",["Voltage (V), current (A) and resistance (Ω)","Ohm’s law and how a circuit works","Power (W / kVA) vs energy (kWh)","Direct (DC) vs alternating current (AC 50 Hz)","Single-phase (230 V) vs three-phase (400 V)","Power factor (cos φ)"],["Tension (V), courant (A) et résistance (Ω)","Loi d’Ohm et fonctionnement d’un circuit","Puissance (W / kVA) vs énergie (kWh)","Courant continu (DC) vs alternatif (AC 50 Hz)","Monophasé (230 V) vs triphasé (400 V)","Facteur de puissance (cos φ)"]],["substation/breakers.jpg","KaiBorgeest · CC BY-SA 4.0","Key equipment","Équipements clés","Electrical components & equipment","Composants & équipements électriques","Look inside real equipment: photographs, internal anatomy, operating principle, electrical symbol and field installation.","Observer l’intérieur du matériel réel : photographie, anatomie interne, principe de fonctionnement, symbole électrique et installation sur le terrain.",["Circuit breakers and fuses","Contactors and thermal overload relays","Power and distribution transformers","Electric motors and alternators","Current (CT) and voltage (VT) transformers","MV/LV switchgear and power cables"],["Disjoncteurs et fusibles","Contacteurs et relais thermiques","Transformateurs de puissance et de distribution","Moteurs électriques et alternateurs","Transformateurs de courant (TC) et de tension (TT)","Cellules HTA/BT et câbles électriques"]],["installations/cable-tray.jpg","Santeri Viinamäki · CC BY-SA 4.0","Field practice","Pratique terrain","Electrical installations (residential & commercial)","Installations électriques (bâtiment & tertiaire)","Master domestic, commercial and industrial installation work: lighting, sockets, switchboards, earthing and protection.","Maîtriser la réalisation des installations domestiques, tertiaires et industrielles : éclairage, prises, tableaux, mise à la terre et protections.",["Residential and commercial installations","Lighting and socket-outlet circuits","Distribution boards and main LV switchboard","Earth electrodes and earthing systems (TT, TN, IT)","RCDs (30 mA) and circuit breakers","Cable routing and sizing"],["Installations résidentielles et tertiaires","Circuits d’éclairage et prises de courant","Tableaux de répartition et TGBT","Prises de terre et régimes de neutre (TT, TN, IT)","Dispositifs différentiels (DDR 30 mA) et disjoncteurs","Cheminement et dimensionnement des câbles"]],["production/wind.jpg","Kim Hansen · CC BY-SA 3.0","Generation","Production","Electrical power generation","Production d’énergie électrique","See how hydro, thermal, solar and wind plants produce electricity, regulate voltage (AVR) and synchronise to the grid.","Découvrir comment les centrales hydroélectriques, thermiques, solaires et éoliennes produisent l’électricité, règlent la tension (AVR) et se couplent au réseau.",["Hydroelectric plants (Song Loulou, Nachtigal)","Thermal and gas plants (Kribi, Logbaba)","Solar PV and wind plants","Synchronous generators (rotor / stator)","Excitation systems (AVR) and 50 Hz control","Grid synchronisation (ANSI 25)"],["Centrales hydroélectriques (Song Loulou, Nachtigal)","Centrales thermiques et à gaz (Kribi, Logbaba)","Centrales solaires PV et éoliennes","Alternateurs synchrones (rotor / stator)","Systèmes d’excitation (AVR) et réglage 50 Hz","Couplage et synchronisation au réseau (ANSI 25)"]],["transmission/oregon.jpg","Flickr contributor · CC BY 2.0","HV transmission","Transport HTB","High-voltage transmission & substations","Transport haute tension & postes HTB","Explore 90 kV / 225 kV lines, towers, insulators, transformer substations, power transformers and HV bays.","Explorer les lignes haute tension (90 kV / 225 kV), pylônes, isolateurs, postes de transformation, transformateurs de puissance et travées HTB.",["HV networks (90 kV, 110 kV, 225 kV)","Towers, AAAC/ACSR conductors and insulators","Air-insulated (AIS) and gas-insulated (GIS) substations","Power transformers and autotransformers","SF6 breakers, disconnectors and interlocking","Distance (21) and differential (87) protection"],["Réseaux haute tension (90 kV, 110 kV, 225 kV)","Pylônes, conducteurs Almelec/ACSR et isolateurs","Postes HTB ouverts (AIS) et blindés (GIS)","Transformateurs de puissance et autotransformateurs","Disjoncteurs SF6, sectionneurs et verrouillages","Protections de distance (21) et différentielle (87)"]],["distribution/transformer.jpg","Sukkoria · CC BY-SA 4.0","MV / LV distribution","Distribution MT / BT","Electrical distribution (MV & LV networks)","Distribution électrique (réseaux HTA & BT)","Follow electricity from 15 kV / 30 kV MV networks, ring main units and pole-mounted H61 substations to 400 V / 230 V service connections.","Suivre l’électricité depuis les réseaux HTA (15 kV / 30 kV), les cellules RMU et les postes sur poteau H61 jusqu’aux branchements basse tension 400 V / 230 V.",["MV networks (15 kV, 20 kV, 30 kV)","Ring main units and looped MV switchboards","Pole-mounted (H61) and kiosk MV/LV transformers","Overhead bundled and underground LV networks","LV boards, cut-out boxes and metering","Customer service connections"],["Réseaux moyenne tension HTA (15 kV, 20 kV, 30 kV)","Cellules RMU et tableaux HTA en boucle","Transformateurs MT/BT sur poteau (H61) et en cabine","Réseaux basse tension aériens torsadés et souterrains","Tableaux BT, coffrets de coupure et comptage","Branchements des abonnés"]],["industrial/control-panel.jpg","Bridgeland · CC BY-SA 3.0","Industrial electrical","Électricité industrielle","Industrial electrical engineering & automation","Génie électrique industriel & automatisme","Move from single components to complete industrial systems: three-phase motors, starters, VFDs, PLCs, sensors and SCADA.","Passer des composants isolés aux systèmes industriels complets : moteurs triphasés, démarreurs, variateurs VFD, automates PLC, capteurs et SCADA.",["Three-phase induction motors and star/delta connection","Direct-on-line and star-delta starters (power + control)","Variable-frequency drives (VFD) and soft starters","Programmable logic controllers (PLC) and 24 V DC control","Industrial sensors, instrumentation and actuators","SCADA supervision and industrial maintenance"],["Moteurs asynchrones triphasés et couplages étoile/triangle","Démarreurs directs et étoile-triangle (puissance + commande)","Variateurs de vitesse (VFD) et démarreurs progressifs","Automates programmables (API / PLC) et commande 24 V DC","Capteurs industriels, instrumentation et actionneurs","Supervision SCADA et maintenance industrielle"]],["installations/electrician.jpg","MTA Capital Construction · CC BY 2.0","Diagrams & safety","Schémas & sécurité","Electrical diagrams, standards & safety","Schémas électriques, normes & sécurité","Learn to read single-line, power and control diagrams, IEC 60617 symbols, terminal strips, LOTO isolation and safety.","Apprendre à lire un schéma unifilaire, un schéma de puissance et de commande, les symboles CEI 60617, les borniers, la consignation LOTO et la sécurité.",["Standard electrical symbols (IEC 60617)","Single-line vs multi-line diagrams","Power vs control diagrams","Conductor marking, terminals and layout","Protection against direct and indirect contact","Lockout (LOTO), PPE and arc-flash risk"],["Symboles électriques normalisés (CEI 60617)","Schémas unifilaires vs schémas multifilaires","Schémas de puissance vs schémas de commande","Repérage des conducteurs, borniers et implantation","Protection contre les contacts directs et indirects","Consignation (LOTO), EPI et risque d’arc électrique"]]];
+const AUD=['All','Students','Technicians','Engineers'], AUD_FR={All:'Tous',Students:'Étudiants',Technicians:'Techniciens',Engineers:'Ingénieurs'};
+const PROJ=[
+ {slot:'proj-nachtigal',ph:'Nachtigal hydro plant photograph',meta:'GENERATION · SANAGA · 420 MW',metaFR:'PRODUCTION · SANAGA · 420 MW',t:'Nachtigal hydroelectric scheme',tFR:'Aménagement hydroélectrique de Nachtigal',d:'A run-of-river plant tied to the Southern grid by a 2 × 225 kV line to Nyom II — a case study in integrating large units and evacuation lines.',dFR:'Une centrale au fil de l’eau reliée au réseau Sud par une ligne 2 × 225 kV vers Nyom II — un cas d’étude d’intégration de grands groupes et de lignes d’évacuation.',cta:'Study in D01 Generation',ctaFR:'Étudier dans D01 Production'},
+ {slot:'proj-memveele',ph:'Memve’ele dam or transmission line photograph',meta:'GENERATION · NTEM · ~211 MW',metaFR:'PRODUCTION · NTEM · ~211 MW',t:'Memve’ele hydroelectric scheme',tFR:'Aménagement hydroélectrique de Memve’ele',d:'A southern plant whose value depends on its transmission link — read it alongside the HV corridor and substation stages.',dFR:'Une centrale du Sud dont la valeur dépend de sa liaison de transport — à lire avec les étapes corridor HT et poste.',cta:'Study in D03 Transmission',ctaFR:'Étudier dans D03 Transport'},
+ {slot:'proj-lompangar',ph:'Lom Pangar reservoir dam photograph',meta:'STORAGE & REGULATION · EAST REGION',metaFR:'STOCKAGE & RÉGULATION · RÉGION DE L’EST',t:'Lom Pangar reservoir dam',tFR:'Barrage-réservoir de Lom Pangar',d:'A reservoir that regulates Sanaga flows for downstream plants, with a foot-of-dam plant supplying the East.',dFR:'Un réservoir qui régule les débits de la Sanaga pour les centrales aval, avec une usine de pied alimentant l’Est.',cta:'Study in D01 Generation',ctaFR:'Étudier dans D01 Production'}];
+const LOG={start:['KM1 closes — motor accelerates to 1,460 rpm','KM1 se ferme — le moteur accélère à 1 460 tr/min'],stop:['KM1 opens — motor coasts to rest','KM1 s’ouvre — le moteur s’arrête en roue libre'],over:['Mechanical overload — current rises to 41 A (1.4 × In)','Surcharge mécanique — le courant monte à 41 A (1,4 × In)'],trip:['F1 trips on overload, KM1 drops out','F1 déclenche sur surcharge, KM1 retombe'],sc:['Short-circuit at motor terminals — Q1 opens instantly','Court-circuit aux bornes — Q1 s’ouvre instantanément'],reset:['Fault reset — feeder ready','Défaut acquitté — départ prêt'],ready:['Feeder energised to KM1 — ready to start','Départ sous tension jusqu’à KM1 — prêt à démarrer']};
+const DICT={"Journey":"Parcours","Cameroon grid":"Réseau du Cameroun","Workbench":"Atelier","Case study":"Étude de cas","Pathways":"Formations","Search":"Rechercher","Start learning":"Commencer","POWER · AUTOMATION · INSTALLATIONS":"ÉNERGIE · AUTOMATISME · INSTALLATIONS",
+"ELECTRICAL POWER ENGINEERING DIGITAL ENVIRONMENT":"ENVIRONNEMENT NUMÉRIQUE D’INGÉNIERIE ÉLECTRIQUE","Follow the current":"Suivez le courant","from turbine to motor.":"de la turbine au moteur.",
+"One connected environment for power systems, industrial installations and automation — every stage explained, calculated and simulated, in English and French.":"Un environnement connecté pour les réseaux électriques, les installations industrielles et l’automatisme — chaque étape expliquée, calculée et simulée, en français et en anglais.",
+"Start the journey":"Commencer le parcours","Explore the Cameroon grid":"Explorer le réseau du Cameroun","LIVE ONE-LINE · SOURCE → LOAD":"UNIFILAIRE ANIMÉ · SOURCE → CHARGE",
+"engineering domains":"domaines d’ingénierie","system stages":"étapes du système","learning pathways":"parcours d’apprentissage","fully bilingual":"entièrement bilingue","REFERENCED TO":"RÉFÉRENCÉ À","ARSEL data (2026)":"Données ARSEL (2026)",
+"THE SYSTEM JOURNEY · 9 STAGES":"LE PARCOURS DU SYSTÈME · 9 ÉTAPES","Nine stages.":"Neuf étapes.","One continuous path.":"Un seul chemin continu.",
+"Scroll the chain. Each stage shows the equipment as it stands in the field, the voltage it runs at, and where to study it next.":"Faites défiler la chaîne. Chaque étape montre l’équipement tel qu’il est sur le terrain, sa tension de service et où l’étudier ensuite.",
+"KEY APPARATUS":"ÉQUIPEMENTS CLÉS","CAMEROON GRID":"RÉSEAU DU CAMEROUN","installed on two separate grids.":"installés sur deux réseaux séparés.",
+"The Southern (RIS) and Northern (RIN) grids are not interconnected. Every site below comes from a dated record with its source; approximate positions and routes are marked as such.":"Le réseau Sud (RIS) et le réseau Nord (RIN) ne sont pas reliés entre eux. Chaque site ci-dessous provient d’une fiche datée et sourcée ; les positions et tracés approximatifs sont signalés comme tels.",
+"High-voltage lines (2023)":"Lignes haute tension (2023)","grids":"réseaux","Not interconnected (2025)":"Non reliés entre eux (2025)","Sources: ARSEL (2026) · Government of Cameroon / World Bank (2025)":"Sources : ARSEL (2026) · Gouvernement du Cameroun / Banque mondiale (2025)",
+"WORKBENCH · DIRECT-ON-LINE STARTER":"ATELIER · DÉMARREUR DIRECT","Protection logic,":"La logique de protection,","made visible.":"rendue visible.",
+"Start, stop and fault a 15 kW motor feeder. Watch energy move through the breaker, contactor and thermal relay — and see which device clears which fault.":"Démarrez, arrêtez et mettez en défaut un départ moteur de 15 kW. Suivez l’énergie à travers le disjoncteur, le contacteur et le relais thermique — et voyez quel appareil élimine quel défaut.",
+"Q1 · circuit breaker":"Q1 · disjoncteur","KM1 · contactor":"KM1 · contacteur","F1 · thermal relay":"F1 · relais thermique","MOTOR STATE":"ÉTAT DU MOTEUR","LINE CURRENT":"COURANT DE LIGNE","EVENT LOG":"JOURNAL",
+"Start":"Marche","Stop":"Arrêt","Simulate overload":"Simuler une surcharge","Short-circuit at motor":"Court-circuit au moteur","Reset":"Réarmer",
+"Selectivity: F1 (thermal) clears overload, Q1 (magnetic) clears short-circuit. Teaching simulation — not live equipment data.":"Sélectivité : F1 (thermique) élimine la surcharge, Q1 (magnétique) élimine le court-circuit. Simulation pédagogique — pas de données réelles d’équipement.",
+"CASE STUDY · NACHTIGAL HYDRO, SANAGA":"ÉTUDE DE CAS · NACHTIGAL, SANAGA","Four moves, shown on one plant.":"Quatre gestes, sur une seule centrale.",
+"This is how every EPEDE lesson works: see the equipment, understand the one-line, calculate with stated assumptions, then apply it in simulation.":"C’est ainsi que fonctionne chaque leçon EPEDE : voir l’équipement, comprendre l’unifilaire, calculer avec des hypothèses explicites, puis appliquer en simulation.",
+"01 · SEE":"01 · VOIR","02 · UNDERSTAND":"02 · COMPRENDRE","03 · CALCULATE":"03 · CALCULER","04 · APPLY":"04 · APPLIQUER",
+"A run-of-river plant on the Sanaga: seven Francis units of about 60 MW — 420 MW at full output.":"Une centrale au fil de l’eau sur la Sanaga : sept groupes Francis d’environ 60 MW — 420 MW à pleine puissance.",
+"Total evacuation current — about 567 A per circuit on the 2 × 225 kV line.":"Courant total d’évacuation — environ 567 A par terne sur la ligne 2 × 225 kV.",
+"Assumptions: cos φ = 0.95, full output, losses neglected. Indicative public figures — confirm against the cited source.":"Hypothèses : cos φ = 0,95, pleine puissance, pertes négligées. Chiffres publics indicatifs — à vérifier auprès de la source citée.",
+"Load the evacuation line in the simulation lab, trip one circuit and check whether the other can carry the full output.":"Chargez la ligne d’évacuation dans le laboratoire de simulation, déclenchez un terne et vérifiez si l’autre peut transiter toute la puissance.",
+"Open the simulation →":"Ouvrir la simulation →","CAMEROON IN CONTEXT":"LE CAMEROUN EN CONTEXTE","Real infrastructure,":"Des infrastructures réelles,","read as engineering.":"lues en ingénieur.",
+"Capacities are indicative public figures; confirm against the cited source in each project page.":"Les puissances sont des chiffres publics indicatifs ; vérifiez-les auprès de la source citée sur chaque page projet.",
+"LEARNING PATHWAYS":"PARCOURS D’APPRENTISSAGE","Eight pathways.":"Huit parcours.","One connected practice.":"Une pratique connectée.","01 · START HERE · ALL AUDIENCES":"01 · COMMENCER ICI · TOUS PUBLICS","Electrical fundamentals":"Fondamentaux de l’électricité",
+"Current, voltage, power, AC systems and essential safety — the vocabulary every later stage relies on.":"Courant, tension, puissance, régimes alternatifs et sécurité essentielle — le vocabulaire sur lequel reposent toutes les étapes suivantes.",
+"Begin the pathway →":"Commencer le parcours →","No pathways for this audience.":"Aucun parcours pour ce public.","See every connection.":"Voir chaque connexion.","Master the system.":"Maîtriser le système.","Explore the power journey →":"Explorer le parcours de l’énergie →","Browse learning paths":"Parcourir les formations",
+"A bilingual digital environment for understanding, analysing and simulating electrical power engineering.":"Un environnement numérique bilingue pour comprendre, analyser et simuler l’ingénierie électrique.",
+"Engineering synthesis notice — EPEDE content is an educational synthesis of public standards and sources. It does not replace official standards text, manufacturer data or a qualified engineer's study.":"Avertissement de synthèse — le contenu d’EPEDE est une synthèse pédagogique de normes et sources publiques. Il ne remplace ni le texte officiel des normes, ni les données constructeur, ni l’étude d’un ingénieur qualifié.",
+"© 2026 EPEDE · Electrical Power Engineering Digital Environment":"© 2026 EPEDE · Environnement numérique d’ingénierie électrique","Version 2.0 · Updated November 2026":"Version 2.0 · Mise à jour novembre 2026","Photos: Wikimedia Commons contributors, credited on each image.":"Photos : contributeurs de Wikimedia Commons, crédités sur chaque image.",
+"From the first volt to the control room: eight structured pathways, each built on real equipment, standards and Cameroonian infrastructure.":"Du premier volt à la salle de commande : huit parcours structurés, chacun fondé sur du matériel réel, des normes et les infrastructures camerounaises.","SEARCH SYSTEMS, EQUIPMENT, DOMAINS AND TOOLS":"RECHERCHER SYSTÈMES, ÉQUIPEMENTS, DOMAINES ET OUTILS","GENERATE · TRANSFORM · TRANSMIT · DISTRIBUTE · PROTECT · CONTROL · GENERATE · TRANSFORM":"PRODUIRE · TRANSFORMER · TRANSPORTER · DISTRIBUER · PROTÉGER · COMMANDER · PRODUIRE · TRANSFORMER"};
+
+class Component extends DCLogic {
+  state = { lang:'EN', w:1280, scrolled:false, prog:0, hero:0, paused:false, stage:0, m:'stopped', log:[{k:'ready',t:'00:00'}], aud:'All', pw:0, pwImg:0, pwOut:false, search:false, menu:false, cap:2033, mapH:820 };
+  constructor(p){ super(p); this.rm = typeof matchMedia!=='undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches; this._sld={}; this._reads=[]; this.t0=Date.now(); }
+  componentDidMount(){
+    this.setState({w:innerWidth, lang:this.props.startLang||'EN'});
+    this._rs=()=>this.setState({w:innerWidth});
+    this._sc=()=>{ if(this._raf) return; this._raf=requestAnimationFrame(()=>{ this._raf=0; this.measure(); }); };
+    addEventListener('resize',this._rs); addEventListener('scroll',this._sc,{passive:true});
+    this._iv=setInterval(()=>{ if(!this.state.paused && (this.props.autoplay??true) && !this.rm) this.setState(s=>({hero:(s.hero+1)%HERO.length})); },6500);
+    this._msg=e=>{ const d=e.data||{}; if(d.epedeMapReady) this.sendLang(); if(d.epedeMapHeight && Math.abs(d.epedeMapHeight-this.state.mapH)>2) this.setState({mapH:d.epedeMapHeight}); };
+    addEventListener('message',this._msg);
+    this._key=e=>{ if(e.key==='Escape') this.setState({search:false,menu:false}); };
+    addEventListener('keydown',this._key);
+    this.setupReveal(); setTimeout(()=>this.setupReveal(),600);
+    const cnt=document.querySelector('[data-count]');
+    if(cnt && !this.rm){ this.setState({cap:0}); const io=new IntersectionObserver(es=>{ if(es[0].isIntersecting){ io.disconnect(); const t0=performance.now(); const step=t=>{ const k=Math.min(1,(t-t0)/1600), e=1-Math.pow(1-k,3); this.setState({cap:Math.round(2033*e)}); if(k<1) requestAnimationFrame(step); }; requestAnimationFrame(step);} },{threshold:.4}); io.observe(cnt); this._cio=io; }
+    this.measure(); if((this.props.startLang||'EN')==='FR') setTimeout(()=>this.swapText(),0);
+  }
+  componentWillUnmount(){ removeEventListener('resize',this._rs); removeEventListener('scroll',this._sc); removeEventListener('message',this._msg); removeEventListener('keydown',this._key); clearInterval(this._iv); this._rio&&this._rio.disconnect(); this._wio&&this._wio.disconnect(); this._cio&&this._cio.disconnect(); }
+  splitEl(el,mode){
+    if(!el.__key) el.__key=el.textContent.replace(/\s+/g,' ').trim();
+    const FR=(this.state.lang||this.props.startLang)==='FR', txt=FR&&DICT[el.__key]?DICT[el.__key]:el.__key;
+    el.textContent=''; el.__w=[];
+    txt.split(' ').forEach((w,i)=>{ if(i) el.appendChild(document.createTextNode(' '));
+      const s=document.createElement('span'); s.textContent=w;
+      if(mode==='words'){ const o=document.createElement('span'); o.style.cssText='display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.12em;margin-bottom:-.12em'; s.style.cssText='display:inline-block;will-change:transform'; if(!el.__shown&&!this.rm) s.style.transform='translateY(110%) rotate(4deg)'; o.appendChild(s); el.appendChild(o); }
+      else { s.style.transition='opacity .35s linear'; s.style.opacity=this.rm?1:.18; el.appendChild(s); }
+      el.__w.push(s); });
+  }
+  showWords(el){ el.__shown=true; el.__w.forEach((s,i)=>{ s.style.transition=`transform 1.1s cubic-bezier(.16,1,.3,1) ${i*55}ms`; s.style.transform='none'; }); }
+  rebuildText(){ document.querySelectorAll('[data-words]').forEach(el=>this.splitEl(el,'words')); this._reads.forEach(el=>{ this.splitEl(el,'read'); el.__w.forEach(s=>s.__o=undefined); }); this.measure(); }
+  setupReveal(){
+    if(!this._wio) this._wio=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ this.showWords(e.target); this._wio.unobserve(e.target);} }),{threshold:.2});
+    document.querySelectorAll('[data-words]').forEach(el=>{ if(el.__sp) return; el.__sp=1; this.splitEl(el,'words'); if(this.rm) el.__shown=true; else this._wio.observe(el); });
+    document.querySelectorAll('[data-read]').forEach(el=>{ if(el.__sp) return; el.__sp=1; this.splitEl(el,'read'); this._reads.push(el); });
+    if(this.rm) return;
+    const INIT={up:['0','translateY(32px)','none'],left:['0','translateX(-24px)','none'],clip:['1','scale(1.08)','inset(12% 8% 12% 8%)']};
+    const show=el=>{ const d=el.dataset.rvd||0; el.style.transition=`opacity .9s cubic-bezier(.16,1,.3,1) ${d}ms, transform 1.2s cubic-bezier(.16,1,.3,1) ${d}ms, clip-path 1.3s cubic-bezier(.16,1,.3,1) ${d}ms`; el.style.opacity='1'; el.style.transform='none'; el.style.clipPath='inset(0% 0% 0% 0%)'; };
+    if(!this._rio) this._rio=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ show(e.target); this._rio.unobserve(e.target);} }),{threshold:.12,rootMargin:'0px 0px -8% 0px'});
+    let lp=null,i=0;
+    document.querySelectorAll('[data-reveal]').forEach(el=>{ if(el.__rv) return; el.__rv=1; const t=INIT[el.dataset.reveal]||INIT.up;
+      if(el.parentElement!==lp){ lp=el.parentElement; i=0; } el.dataset.rvd=Math.min(i++,6)*80;
+      el.style.opacity=t[0]; el.style.transform=t[1]; if(t[2]!=='none') el.style.clipPath=t[2];
+      this._rio.observe(el); });
+  }
+  measure(){
+    const de=document.documentElement, max=de.scrollHeight-innerHeight, vh=innerHeight, y=scrollY;
+    const prog=max>0?Math.round(y/max*1000)/10:0, scrolled=y>40;
+    let stage=this.state.stage, best=1e9; const mid=vh*.45;
+    document.querySelectorAll('[data-stage]').forEach((p,i)=>{ const r=p.getBoundingClientRect(); const d=Math.abs(r.top+Math.min(r.height,vh)*.4-mid); if(d<best){best=d;stage=i;} });
+    if(!this.rm){
+      if(y<vh*1.3){ const hp=document.querySelector('[data-hpx]'); if(hp) hp.style.transform=`translate3d(0,${y*.35}px,0)`;
+        const hf=document.querySelector('[data-herofade]'); if(hf){ hf.style.opacity=Math.max(0,1-y/(vh*.7)); hf.style.transform=`translate3d(0,${-y*.18}px,0)`; } }
+      document.querySelectorAll('[data-px]').forEach(el=>{ const r=el.getBoundingClientRect(); if(r.bottom<-300||r.top>vh+300) return; const [ax,k]=el.dataset.px.split(','); const off=(r.top+r.height/2-vh/2)*parseFloat(k); el.style.transform=ax==='x'?`translate3d(${off}px,0,0)`:`translate3d(0,${off}px,0)`; });
+      this._reads.forEach(el=>{ const r=el.getBoundingClientRect(); const p=Math.min(1,Math.max(0,(vh*.88-r.top)/(vh*.42))); const k=p*el.__w.length; el.__w.forEach((s,i)=>{ const o=i<k?1:.18; if(s.__o!==o){ s.__o=o; s.style.opacity=o; } }); });
+    }
+    if(prog!==this.state.prog||scrolled!==this.state.scrolled||stage!==this.state.stage) this.setState({prog,scrolled,stage});
+  }
+  pickPw(i){ if(i===this.state.pw) return; clearTimeout(this._pt); if(this.rm){ this.setState({pw:i,pwImg:i}); return; } this.setState({pwImg:i,pwOut:true}); this._pt=setTimeout(()=>this.setState({pw:i,pwOut:false}),200); }
+  goStage(i){ const el=document.querySelectorAll('[data-stage]')[i]; if(el) window.scrollTo({top:el.getBoundingClientRect().top+scrollY-(this.state.w<1100?150:110),behavior:this.rm?'auto':'smooth'}); }
+  swapText(){
+    const FR=this.state.lang==='FR'; const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT); let n;
+    while((n=w.nextNode())){
+      if(n.__en!==undefined && n.nodeValue!==n.__en && n.nodeValue!==n.__fr) n.__en=undefined;
+      if(n.__en===undefined){ const k=n.nodeValue.replace(/\s+/g,' ').trim(); if(!DICT[k]) continue; n.__en=n.nodeValue; n.__fr=n.nodeValue.replace(k,DICT[k]); }
+      const v=FR?n.__fr:n.__en; if(n.nodeValue!==v) n.nodeValue=v;
+    }
+    document.documentElement.lang=FR?'fr':'en';
+  }
+  sendLang(){ const fr=document.querySelector('iframe[src*="Cameroon"]'); if(fr&&fr.contentWindow) fr.contentWindow.postMessage({epedeLang:this.state.lang},'*'); }
+  after(fn){ setTimeout(()=>{ this.swapText(); fn&&fn(); },0); }
+  stamp(){ const s=Math.floor((Date.now()-this.t0)/1000); return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); }
+  ev(k,patch){ this.setState(s=>({...patch, log:[{k,t:this.stamp()},...s.log].slice(0,4)})); }
+  buildSLD(lang){
+    if(this._sld[lang]) return this._sld[lang];
+    const h=React.createElement, FR=lang==='FR', anim=!this.rm && (this.props.pulse??true);
+    const X=[80,260,440,620,800,980,1140], Y=62, DIM='#A9BAC6', LIT='#D9821C', D='7s';
+    const names=FR?['Production','Élévation','Transport','Poste','Départ HTA','Tableau BT','Moteur']:['Generation','Step-up','Transmission','Substation','MV feeder','LV board','Motor'];
+    const volts=['15 kV','225 kV','225 kV','225/90 kV','30 kV','400 V','400 V'];
+    const k=[h('line',{key:'b',x1:40,y1:Y,x2:1160,y2:Y,stroke:'#D5E0E8',strokeWidth:2})];
+    if(anim) k.push(h('line',{key:'tr',x1:40,y1:Y,x2:40,y2:Y,stroke:LIT,strokeWidth:2},
+      h('animate',{attributeName:'x2',values:'40;1160;1160',keyTimes:'0;0.92;1',dur:D,repeatCount:'indefinite'}),
+      h('animate',{attributeName:'opacity',values:'0.6;0.6;0',keyTimes:'0;0.9;1',dur:D,repeatCount:'indefinite'})));
+    const glyph=(i,x)=>{ const c={fill:'#FBFCFD'};
+      if(i===0||i===6) return [h('circle',{key:'c',cx:x,cy:Y,r:18,...c}),h('text',{key:'t',x,y:Y+5,textAnchor:'middle',fill:'#0B1B2B',stroke:'none',fontSize:15,fontWeight:700,fontFamily:'Space Grotesk'},i===0?'G':'M')];
+      if(i===1) return [h('circle',{key:'a',cx:x-8,cy:Y,r:13,...c}),h('circle',{key:'b',cx:x+8,cy:Y,r:13,fill:'none'})];
+      if(i===2) return [h('path',{key:'p',d:`M${x-14} ${Y+22} L${x} ${Y-24} L${x+14} ${Y+22} M${x-20} ${Y-10} L${x+20} ${Y-10} M${x-9} ${Y+6} L${x+9} ${Y+6}`,fill:'none'})];
+      if(i===3) return [h('rect',{key:'r',x:x-4,y:Y-24,width:8,height:48,...c}),h('rect',{key:'s',x:x-24,y:Y-7,width:14,height:14,...c}),h('rect',{key:'u',x:x+10,y:Y-7,width:14,height:14,...c})];
+      if(i===4) return [h('rect',{key:'r',x:x-11,y:Y-11,width:22,height:22,...c}),h('line',{key:'l',x1:x-11,y1:Y+11,x2:x+11,y2:Y-11})];
+      return [h('rect',{key:'r',x:x-15,y:Y-20,width:30,height:40,...c}),h('line',{key:'l',x1:x-8,y1:Y-8,x2:x+8,y2:Y-8}),h('line',{key:'m',x1:x-8,y1:Y+4,x2:x+8,y2:Y+4})];
+    };
+    X.forEach((x,i)=>{ const t=(x-40)/1120*.92, a=Math.max(.001,t-.012), c=Math.min(.999,t+.16);
+      const an=anim?h('animate',{key:'an',attributeName:'stroke',values:`${DIM};${DIM};${LIT};${DIM};${DIM}`,keyTimes:`0;${a.toFixed(3)};${t.toFixed(3)};${c.toFixed(3)};1`,dur:D,repeatCount:'indefinite'}):null;
+      k.push(h('g',{key:'g'+i,stroke:anim?DIM:LIT,strokeWidth:2},an,...glyph(i,x)));
+      k.push(h('text',{key:'v'+i,x,y:18,textAnchor:'middle',fill:'#5B6B7B',fontSize:12,fontFamily:'IBM Plex Mono'},volts[i]));
+      k.push(h('text',{key:'n'+i,x,y:112,textAnchor:'middle',fill:'#0B1B2B',fontSize:15,fontWeight:600,fontFamily:'Space Grotesk'},names[i]));
+    });
+    if(anim) k.push(h('circle',{key:'pl',cx:40,cy:Y,r:6,fill:LIT,style:{filter:'drop-shadow(0 0 8px #F2A541)'}},
+      h('animate',{attributeName:'cx',values:'40;1160;1160',keyTimes:'0;0.92;1',dur:D,repeatCount:'indefinite'}),
+      h('animate',{attributeName:'opacity',values:'1;1;0',keyTimes:'0;0.92;1',dur:D,repeatCount:'indefinite'})));
+    return this._sld[lang]=h('svg',{viewBox:'0 0 1200 124',width:'100%',role:'img','aria-label':FR?'Schéma unifilaire de la source à la charge':'One-line diagram from source to load',style:{display:'block',minWidth:860}},k);
+  }
+  renderVals(){
+    const s=this.state, FR=s.lang==='FR', wide=s.w>=1100, L=FR?1:0;
+    const live='#D9821C', dead='#3A536B', red='#E5484D';
+    const stages=ST.map((r,i)=>{ const on=i===s.stage, past=i<s.stage;
+      return {num:r[0],short:r[1+L],title:r[3+L],volt:r[5],img:IMG+r[9],cap:r[10],purpose:r[11+L],
+        app:r[13+L].map((t,j)=>({n:String(j+1).padStart(2,'0'),t})),
+        link:(FR?'Ouvrir ':'Open ')+r[6]+' — '+(FR?r[8]:r[7]),
+        op:on||!wide?1:.38, filter:on?'grayscale(.1) contrast(1.05)':'grayscale(1) brightness(1.05) opacity(.8)', zoom:on?'scale(1.04)':'scale(1)',
+        dot:on||past?live:'#FBFCFD', ring:on||past?live:'#A9BAC6', glow:on?'0 0 0 6px rgba(242,165,65,.18)':'none',
+        voltInk:on?'#1F5FAE':'#5B6B7B', ink:on?'#0B1B2B':'#5B6B7B', weight:on?700:500, bar:i<=s.stage?live:'#D5E0E8',
+        go:()=>this.goStage(i)}; });
+    const m=s.m, q1Open=m==='fault', kmClosed=m==='running'||m==='over', down=kmClosed;
+    const stateTx={stopped:['Stopped','Arrêté'],running:['Running','En marche'],over:['Overloaded','En surcharge'],tripped:['Tripped — overload','Déclenché — surcharge'],fault:['Fault cleared by Q1','Défaut éliminé par Q1']}[m][L];
+    const en=(c)=>c?1:.35;
+    const wb={ cA:live, q1c:q1Open?red:live, q1x:q1Open?194:170, q1y:q1Open?108:120, cB:q1Open?dead:live,
+      k1c:kmClosed?live:(q1Open?dead:live), k1x:kmClosed?170:194, k1y:kmClosed?210:198, cC:down?live:dead,
+      f1c:m==='tripped'?red:(m==='over'?'#B86A0A':(down?live:dead)), f1t:m==='tripped'?(FR?'DÉCLENCHÉ':'TRIPPED'):(m==='over'?(FR?'ÉCHAUFFEMENT':'HEATING'):''),
+      cD:down?live:dead, flow:down&&!this.rm?.9:0,
+      state:stateTx, stateInk:m==='running'?'#F2A541':(m==='tripped'||m==='fault'?'#FF8A8D':(m==='over'?'#FFC277':'#F3F7FA')),
+      amps:m==='running'?'29 A':(m==='over'?'41 A':'0 A'),
+      dStart:m!=='stopped', oStart:en(m==='stopped'), dStop:!kmClosed, oStop:en(kmClosed), dFault:m!=='running', oFault:en(m==='running'), dReset:!(m==='tripped'||m==='fault'), oReset:en(m==='tripped'||m==='fault'),
+      log:s.log.map(e=>({t:e.t,m:LOG[e.k][L],ink:e.k==='trip'||e.k==='sc'?'#FF8A8D':'#F3F7FA'})),
+      start:()=>this.ev('start',{m:'running'}), stopM:()=>this.ev('stop',{m:'stopped'}),
+      over:()=>{ this.ev('over',{m:'over'}); clearTimeout(this._ot); this._ot=setTimeout(()=>{ if(this.state.m==='over') this.ev('trip',{m:'tripped'}); },1600); },
+      short:()=>this.ev('sc',{m:'fault'}), reset:()=>this.ev('reset',{m:'stopped'}) };
+    const hc=HERO[s.hero];
+    const nav=FR?['Parcours','Réseau du Cameroun','Atelier','Étude de cas','Formations']:['Journey','Cameroon grid','Workbench','Case study','Pathways'];
+    return {
+      wide, narrow:!wide, menu:s.menu, search:s.search, progress:s.prog,
+      headBg:s.scrolled?'rgba(251,252,253,.92)':'rgba(251,252,253,0)', headLine:s.scrolled?'#D5E0E8':'rgba(214,208,195,0)',
+      enInk:FR?'#5B6B7B':'#1F5FAE', frInk:FR?'#1F5FAE':'#5B6B7B',
+      heroLayers:HERO.map((x,i)=>({src:IMG+x.f,op:i===s.hero?1:0,tf:i===s.hero&&!this.rm?'scale(1.1)':'scale(1.02)'})),
+      heroCur:{tag:FR?hc.tagFR:hc.tag,cap:FR?hc.capFR:hc.cap,cr:hc.cr},
+      pauseText:s.paused?(FR?'▶ Lecture':'▶ Play'):(FR?'❚❚ Pause':'❚❚ Pause'), pauseLabel:s.paused?(FR?'Reprendre le diaporama':'Resume slideshow'):(FR?'Mettre en pause':'Pause slideshow'),
+      togglePause:()=>this.setState({paused:!s.paused}),
+      sld:this.buildSLD(s.lang),
+      stages, cur:stages[s.stage], jFill:s.stage/8*100, jCols:wide?'240px minmax(0,1fr)':'minmax(0,1fr)',
+      capVal:s.cap.toLocaleString('en-US'), mapH:s.mapH, wb,
+      caseChain:(FR?[['7 groupes Francis','7 × ~60 MW'],['Transformateurs élévateurs','→ 225 kV'],['Ligne d’évacuation 2 × 225 kV','~50 km'],['Poste de Nyom II, Yaoundé','225 kV'],['Réseau interconnecté Sud','RIS']]:[['7 Francis units','7 × ~60 MW'],['Step-up transformers','→ 225 kV'],['2 × 225 kV evacuation line','~50 km'],['Nyom II substation, Yaoundé','225 kV'],['Southern interconnected grid','RIS']]).map((c,i)=>({t:c[0],v:c[1],fill:i===0||i===4?'#F2A541':'#F2F0EA'})),
+      projects:PROJ.map(p=>({slot:p.slot,ph:p.ph,meta:FR?p.metaFR:p.meta,t:FR?p.tFR:p.t,d:FR?p.dFR:p.d,cta:FR?p.ctaFR:p.cta})),
+      pwCols:wide?'minmax(0,5fr) minmax(0,7fr)':'minmax(0,1fr)', pwCta:FR?'Ouvrir ce parcours':'Open this pathway', pwLabel:FR?'PARCOURS':'PATHWAY', pwTopics:FR?'AU PROGRAMME':'WHAT YOU WILL COVER',
+      pws:PW.map((p,i)=>{ const on=i===s.pw; return {n:String(i+1).padStart(2,'0'),t:p[4+L],tag:p[2+L],d:p[6+L],img:IMG+p[0],topics:p[8+L].map((t,j)=>({n:String(j+1).padStart(2,'0'),t})),
+        on, inline:!wide&&on, bar:on?'100%':'0%', numInk:on?'#1F5FAE':'#5B6B7B', ink:on?'#0B1B2B':'#3A4B5C', weight:on?700:500, shift:on&&wide?'translateX(6px)':'none',
+        pick:()=>this.pickPw(i), hover:()=>{ if(!wide) return; clearTimeout(this._ph); this._ph=setTimeout(()=>this.pickPw(i),140); }}; }),
+      pw:(()=>{ const p=PW[s.pw]; return {n:String(s.pw+1).padStart(2,'0'),t:p[4+L],tag:p[2+L],d:p[6+L],cr:p[1],topics:p[8+L].map((t,j)=>({n:String(j+1).padStart(2,'0'),t}))}; })(),
+      pwImgs:PW.map((p,i)=>({src:IMG+p[0],op:i===s.pwImg?1:0,tf:i===s.pwImg&&!this.rm?'scale(1.06)':'scale(1)'})),
+      pwOp:s.pwOut?0:1, pwTf:s.pwOut?'translateY(10px)':'none',
+      navItems:nav.map((label,i)=>({label,href:['#journey','#grid','#workbench','#case','#pathways'][i]})),
+      searchItems:(FR?[['Parcours de l’énergie en neuf étapes','#journey','PARCOURS'],['Réseau du Cameroun — RIS / RIN','#grid','CARTE'],['Atelier démarreur moteur','#workbench','OUTIL'],['Courant d’évacuation de Nachtigal','#case','CALCUL'],['Parcours d’apprentissage','#pathways','FORMATION']]:[['Nine-stage power journey','#journey','JOURNEY'],['Cameroon grid — RIS / RIN','#grid','MAP'],['Motor starter workbench','#workbench','TOOL'],['Nachtigal evacuation current','#case','CALC'],['Learning pathways','#pathways','LEARN']]).map(r=>({t:r[0],href:r[1],k:r[2]})),
+      footerCols:FR?[{h:'EXPLORER',links:['Systèmes électriques','Équipements','Réseau du Cameroun','Ingénierie industrielle']},{h:'APPRENDRE',links:['Parcours d’apprentissage','Bibliothèque D01–D16','Normes','Réglementation']},{h:'OUTILS',links:['Calculateurs','Laboratoire de simulation','Unifilaires & postes','À propos d’EPEDE']}]:[{h:'EXPLORE',links:['Electrical systems','Equipment','Cameroon grid','Industrial engineering']},{h:'LEARN',links:['Learning pathways','Engineering library D01–D16','Standards','Regulatory']},{h:'TOOLS',links:['Calculators','Simulation lab','SLD & substations','About EPEDE']}],
+      toggleLang:()=>this.setState({lang:FR?'EN':'FR'},()=>this.after(()=>{ this.rebuildText(); this.sendLang(); })),
+      openSearch:()=>this.setState({search:true,menu:false},()=>this.after()), closeSearch:()=>this.setState({search:false}),
+      toggleMenu:()=>this.setState({menu:!s.menu},()=>this.after()), closeMenu:()=>this.setState({menu:false}),
+      stop:e=>e.stopPropagation()
+    };
+  }
+}
+</script>
+</body>
+</html>
