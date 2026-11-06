@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Header } from './components/layout/Header';
 import { Sidebar } from './components/layout/Sidebar';
 import { Disclaimer } from './components/layout/Disclaimer';
+import { Footer } from './components/layout/Footer';
 import { MobileFieldQuickDock } from './components/layout/MobileFieldQuickDock';
 import { ScadaTelemetryBar } from './components/layout/ScadaTelemetryBar';
 import { PersistentEngineeringContextDock } from './components/layout/PersistentEngineeringContextDock';
@@ -85,13 +86,13 @@ export default function App() {
     return 'en';
   });
 
-  // Theme state: dark | light with local storage persistence
+  // Theme state: bright editorial default with local storage persistence
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('epede_theme');
       if (saved === 'dark' || saved === 'light') return saved;
     }
-    return 'dark';
+    return 'light';
   });
 
   useEffect(() => {
@@ -532,12 +533,12 @@ export default function App() {
 
   return (
     <UsageLevelProvider>
-      <div className="min-h-screen bg-[#0B0F12] text-[#F4F1E8] font-sans selection:bg-[#D7A64A]/25 selection:text-[#F4F1E8] flex flex-col relative overflow-x-hidden">
+      <div className="min-h-screen bg-[#F6F4EE] text-[#17282C] font-sans selection:bg-[#147C78]/20 selection:text-[#17282C] flex flex-col relative overflow-x-hidden">
       {/* Background canvas */}
       {currentView !== 'ecosystem' && <EngineeringBackground interactive={false} />}
 
-      {/* Top SCADA Telemetry Bar (Shown only in Simulation/SLD or when Engineering Context HUD is toggled) */}
-      {currentView !== 'ecosystem' && (isContextHUDOpen || currentView === 'simulation' || currentView === 'diagrams') && (
+      {/* Top SCADA Telemetry Bar (Shown only when Engineering Context HUD is explicitly toggled) */}
+      {currentView !== 'ecosystem' && isContextHUDOpen && (
         <ScadaTelemetryBar locale={locale} />
       )}
 
@@ -556,6 +557,8 @@ export default function App() {
           onMenuToggle={() => setIsSidebarOpen((prev) => !prev)}
           isSidebarOpen={isSidebarOpen}
           currentView={currentView}
+          activeDomainCode={activeDomainCode}
+          onSelectDomain={handleNavigateDomain}
           onNavigateHome={() => navigate({ view: 'home' })}
           onNavigateJourney={() => navigate({ view: 'journey' })}
           onNavigateDomains={() => navigate({ view: 'domains' })}
@@ -761,7 +764,7 @@ export default function App() {
       )}
 
         {/* Right Main Content Stream */}
-        <main className={`flex-1 min-w-0 w-full ${currentView === 'home' || currentView === 'ecosystem' ? 'p-0 max-w-none' : 'pt-24 p-4 sm:p-6 lg:p-8 pb-20 md:pb-8 max-w-7xl mx-auto space-y-6'}`}>
+        <main className={`flex-1 min-w-0 w-full ${currentView === 'home' || currentView === 'ecosystem' ? 'p-0 max-w-none' : 'pt-[88px] px-5 sm:px-8 lg:px-12 pb-16 max-w-[1280px] mx-auto space-y-8'}`}>
           {/* View Routing with Smooth Page Transition */}
           <AnimatePresence mode="wait">
             <motion.div
@@ -1225,10 +1228,19 @@ export default function App() {
           </motion.div>
         </AnimatePresence>
 
-        {/* Discreet Engineering Notice Footer per Section 17 */}
-        {currentView !== 'ecosystem' && <Disclaimer locale={locale} />}
+        {/* Route-Specific Engineering Synthesis Notice before Shared Footer */}
+        {currentView !== 'ecosystem' && currentView !== 'home' && <Disclaimer locale={locale} />}
         </main>
       </div>
+
+      {/* Shared Sitewide Footer on Every Route */}
+      {currentView !== 'ecosystem' && (
+        <Footer
+          locale={locale}
+          onLocaleChange={setLocale}
+          onNavigate={(v) => navigate({ view: v as AppViewType })}
+        />
+      )}
 
       {/* Global Modals (Lazy Loaded on Demand) */}
       {isSearchOpen && (

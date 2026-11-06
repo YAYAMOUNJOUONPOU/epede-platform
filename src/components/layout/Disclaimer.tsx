@@ -1,5 +1,6 @@
 // src/components/layout/Disclaimer.tsx
-// EPEDE Subtle Engineering Notice per Section 17 Directive
+// EPEDE Route-Specific Engineering Synthesis Notice (placed immediately before shared Footer)
+
 import React from 'react';
 import { ShieldCheck } from 'lucide-react';
 
@@ -18,21 +19,20 @@ export const Disclaimer: React.FC<DisclaimerProps> = ({ locale }) => {
   }[locale];
 
   return (
-    <footer
+    <aside
       id="epede-discreet-disclaimer"
-      role="contentinfo"
-      aria-label="Engineering Notice"
-      className="border border-[#567A87]/30 bg-[#151C1E] rounded-xl px-5 py-4 mt-12 transition-all"
+      aria-label="Engineering Synthesis Notice"
+      className="disclaimer-bar border-t border-[#DEDACF] bg-[#F6F4EE] py-6 mt-12 transition-colors"
     >
-      <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center sm:items-start gap-3 text-center sm:text-left">
-        <ShieldCheck className="h-4 w-4 text-[#D7A64A] shrink-0 mt-0.5" />
-        <p className="text-[11px] text-[#A9ADA5] font-mono leading-relaxed">
-          <span className="font-bold text-[#F4F1E8] mr-1.5 uppercase tracking-wider text-[10px]">
+      <div className="max-w-[1280px] mx-auto px-5 sm:px-8 lg:px-12 flex flex-col sm:flex-row items-start gap-3">
+        <ShieldCheck className="h-4 w-4 text-[#147C78] shrink-0 mt-0.5" />
+        <p className="text-xs text-[#5C6C70] font-mono leading-relaxed m-0">
+          <span className="font-bold text-[#17282C] mr-1.5 uppercase tracking-wider">
             {locale === 'fr' ? 'RÉFÉRENTIEL TECHNIQUE' : 'ENGINEERING SYNTHESIS NOTICE'} :
           </span>
           {content.text}
         </p>
       </div>
-    </footer>
+    </aside>
   );
 };

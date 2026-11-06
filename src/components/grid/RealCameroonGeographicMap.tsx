@@ -641,63 +641,101 @@ export const RealCameroonGeographicMap: React.FC<RealCameroonGeographicMapProps>
                       fill="#050914"
                     />
 
-                    {/* Text Label */}
-                    {showLabels && (
-                      <text
-                        x={node.coords.x + 12}
-                        y={node.coords.y + 4}
-                        fill="#F8FAFC"
-                        fontSize="11"
-                        fontFamily="monospace"
-                        fontWeight={isSelected ? 'bold' : 'normal'}
-                        className="pointer-events-none select-none drop-shadow-md"
-                      >
-                        {node.shortLabel}
-                      </text>
-                    )}
+                    {/* Text Label with Anti-Collision Placement */}
+                    {showLabels && (() => {
+                      const labelOffsets: Record<string, { dx: number; dy: number; anchor: 'start' | 'end' | 'middle' }> = {
+                        'node-maroua-solar': { dx: -12, dy: -6, anchor: 'end' },
+                        'node-maroua-sub': { dx: 12, dy: 6, anchor: 'start' },
+                        'node-guider-solar': { dx: -12, dy: 4, anchor: 'end' },
+                        'node-garoua-sub': { dx: 12, dy: -4, anchor: 'start' },
+                        'node-lagdo': { dx: 12, dy: 6, anchor: 'start' },
+                        'node-bamenda': { dx: 12, dy: 4, anchor: 'start' },
+                        'node-bafoussam': { dx: 12, dy: 4, anchor: 'start' },
+                        'node-bekoko': { dx: -12, dy: -6, anchor: 'end' },
+                        'node-limbe': { dx: -12, dy: 4, anchor: 'end' },
+                        'node-dibamba-hfo': { dx: -12, dy: 14, anchor: 'end' },
+                        'node-logbaba-gas': { dx: -12, dy: -16, anchor: 'end' },
+                        'node-songloulou': { dx: 0, dy: -14, anchor: 'middle' },
+                        'node-mangombe': { dx: -14, dy: -4, anchor: 'end' },
+                        'node-edea': { dx: 12, dy: 12, anchor: 'start' },
+                        'node-nachtigal': { dx: 0, dy: -16, anchor: 'middle' },
+                        'node-nyom2': { dx: 14, dy: -4, anchor: 'start' },
+                        'node-ahala': { dx: 14, dy: 6, anchor: 'start' },
+                        'node-nomayos': { dx: 14, dy: 16, anchor: 'start' },
+                        'node-kribi-gas': { dx: -12, dy: 2, anchor: 'end' },
+                        'node-kribi-sub': { dx: -12, dy: 14, anchor: 'end' },
+                      };
+                      const pos = labelOffsets[node.id] || { dx: 12, dy: 4, anchor: 'start' as const };
+                      return (
+                        <text
+                          x={node.coords.x + pos.dx}
+                          y={node.coords.y + pos.dy}
+                          textAnchor={pos.anchor}
+                          fill="#F8FAFC"
+                          fontSize="11"
+                          fontFamily="monospace"
+                          fontWeight={isSelected ? 'bold' : 'normal'}
+                          className="pointer-events-none select-none drop-shadow-md"
+                        >
+                          {node.shortLabel}
+                        </text>
+                      );
+                    })()}
                   </g>
                 );
               })}
             </svg>
           </div>
 
-          {/* Bottom Map Legend */}
-          <div className="relative z-10 flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-slate-800/80 text-xs font-mono">
-            <div className="flex flex-wrap items-center gap-4">
-              <span className="flex items-center gap-1.5 text-rose-400">
-                <span className="w-3.5 h-1 bg-rose-500 rounded" />
-                <span>225 kV THT</span>
-              </span>
-              <span className="flex items-center gap-1.5 text-sky-400">
-                <span className="w-3.5 h-1 bg-sky-400 rounded" />
-                <span>110 kV RIN</span>
-              </span>
-              <span className="flex items-center gap-1.5 text-indigo-400">
-                <span className="w-3.5 h-1 bg-indigo-400 rounded" />
-                <span>90 kV Répartition</span>
-              </span>
-              <span className="flex items-center gap-1.5 text-amber-400">
-                <span className="w-3.5 h-1 border-t border-dashed border-amber-400" />
-                <span>Projet RIS ↔ RIN</span>
-              </span>
-            </div>
+          {/* Persistent Legend: Mapped Locations vs Schematic Connections */}
+          <div className="relative z-10 space-y-2.5 pt-3 border-t border-slate-800/80 text-xs font-mono">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center gap-4">
+                <span className="flex items-center gap-1.5 text-rose-400">
+                  <span className="w-3.5 h-1 bg-rose-500 rounded" />
+                  <span>225 kV THT</span>
+                </span>
+                <span className="flex items-center gap-1.5 text-sky-400">
+                  <span className="w-3.5 h-1 bg-sky-400 rounded" />
+                  <span>110 kV RIN</span>
+                </span>
+                <span className="flex items-center gap-1.5 text-indigo-400">
+                  <span className="w-3.5 h-1 bg-indigo-400 rounded" />
+                  <span>90 kV Répartition</span>
+                </span>
+                <span className="flex items-center gap-1.5 text-amber-400">
+                  <span className="w-3.5 h-1 border-t border-dashed border-amber-400" />
+                  <span>Projet RIS ↔ RIN</span>
+                </span>
+              </div>
 
-            <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1.5 text-cyan-400">
-                <Droplets className="w-3.5 h-3.5" />
-                <span>Hydro</span>
+              <div className="flex items-center gap-3">
+                <span className="flex items-center gap-1.5 text-cyan-400">
+                  <Droplets className="w-3.5 h-3.5" />
+                  <span>Hydro</span>
+                </span>
+                <span className="flex items-center gap-1.5 text-orange-400">
+                  <Flame className="w-3.5 h-3.5" />
+                  <span>Gaz/HFO</span>
+                </span>
+                <span className="flex items-center gap-1.5 text-yellow-400">
+                  <Sun className="w-3.5 h-3.5" />
+                  <span>Solaire</span>
+                </span>
+                <span className="flex items-center gap-1.5 text-emerald-400">
+                  <Radio className="w-3.5 h-3.5" />
+                  <span>Dispatching</span>
+                </span>
+              </div>
+            </div>
+            <div className="text-[10px] text-slate-400 bg-black/40 px-3 py-1.5 rounded-lg border border-white/10 flex flex-wrap items-center justify-between gap-2">
+              <span>
+                {isFr
+                  ? '● Nœuds : coordonnées géographiques réelles (WGS84) — Lignes droites/pointillées : liaisons électriques schématiques & corridors THT SONATREL.'
+                  : '● Nodes: verified WGS84 geographic coordinates — Straight/dashed lines: schematic electrical interconnections & SONATREL HV corridors.'}
               </span>
-              <span className="flex items-center gap-1.5 text-orange-400">
-                <Flame className="w-3.5 h-3.5" />
-                <span>Gaz/HFO</span>
-              </span>
-              <span className="flex items-center gap-1.5 text-yellow-400">
-                <Sun className="w-3.5 h-3.5" />
-                <span>Solaire</span>
-              </span>
-              <span className="flex items-center gap-1.5 text-emerald-400">
-                <Radio className="w-3.5 h-3.5" />
-                <span>Dispatching</span>
+              <span className="text-[#6CC3BD] font-bold">
+                {isFr ? 'Flux MW = Modèle de simulation pédagogique' : 'MW Flow = Educational simulation model'}
               </span>
             </div>
           </div>

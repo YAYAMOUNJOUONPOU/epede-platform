@@ -153,7 +153,46 @@ export const InteractiveSldView: React.FC<InteractiveSldViewProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-[#17282C]">
+      {/* Bright Editorial Orientation Header */}
+      <div className="rounded-2xl border border-[#DEDACF] bg-[#FFFDF9] p-6 sm:p-8 shadow-sm flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+        <div>
+          <div className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-[#147C78] mb-1.5">
+            {locale === 'fr' ? 'SCHÉMAS UNIFILAIRES INTERACTIFS · CEI 60617 & CEI 61850' : 'INTERACTIVE SINGLE-LINE DIAGRAMS · IEC 60617 & IEC 61850'}
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#17282C] tracking-tight">
+            {locale === 'fr' ? (
+              <>Poste HTB & <span className="font-serif-editorial font-normal text-[#147C78]">Verrouillages de Manœuvre</span></>
+            ) : (
+              <>Substation SLD & <span className="font-serif-editorial font-normal text-[#147C78]">Switching Interlocks</span></>
+            )}
+          </h1>
+          <p className="text-sm sm:text-base text-[#33474B] mt-2 max-w-3xl leading-relaxed">
+            {locale === 'fr'
+              ? 'Opérez les disjoncteurs Q0, sectionneurs d’aiguillage Q1/Q2 et sectionneurs de terre Q8 sous verrouillage électromécanique strict, injectez des défauts CEI 60909 et inspectez la sélectivité TCC et les flux GOOSE CEI 61850.'
+              : 'Operate Q0 circuit breakers, Q1/Q2 busbar disconnectors, and Q8 earthing switches under strict mechanical/electrical interlocking, inject IEC 60909 faults, and inspect TCC selectivity and IEC 61850 GOOSE streams.'}
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={() => setShowLotoModal(true)}
+            className="px-3.5 py-2 rounded-lg bg-[#F6F4EE] hover:border-[#B8872D] text-[#17282C] border border-[#DEDACF] font-mono text-xs font-bold transition-all cursor-pointer"
+          >
+            {locale === 'fr' ? 'Consignation LOTO (5 Règles)' : 'LOTO Playbook (5 Rules)'}
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowTccModal(true)}
+            className="px-3.5 py-2 rounded-lg bg-[#147C78] hover:bg-[#0E5E5B] text-white font-mono text-xs font-bold transition-all cursor-pointer"
+          >
+            {locale === 'fr' ? 'Courbes Sélectivité TCC' : 'TCC Coordination Curves'}
+          </button>
+        </div>
+      </div>
+
+      {/* Dark Technical Workbench Container for SLD Canvas & Controls */}
+      <div className="epede-workbench rounded-2xl p-4 sm:p-6 shadow-md space-y-6">
       {/* Top Header & Topology Controls */}
       <SldHeaderToolbar
         locale={locale}
@@ -545,6 +584,7 @@ export const InteractiveSldView: React.FC<InteractiveSldViewProps> = ({
       </div>
         </>
       )}
+      </div>
 
       {/* Embedded Engineering Context Stack for Current Substation Bay / Feeder */}
       {showContextStack && (

@@ -317,230 +317,270 @@ export const IndustrialProjectsView: React.FC<Props> = ({
     };
   })();
 
-  return (
-    <div className="space-y-8 font-sans text-slate-100 pb-20">
-      
-      {/* 1. Header Banner & Context */}
-      <div className="rounded-2xl bg-gradient-to-br from-slate-900 via-slate-950 to-sky-950/40 border border-slate-800 p-6 sm:p-8 relative overflow-hidden shadow-2xl">
-        <div className="absolute -right-16 -top-16 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute right-32 -bottom-20 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+  const projectImages: Record<string, string> = {
+    'PROJ-GEN-DOUALA': '/images/homepage_uploads/8.jpg',
+    'PROJ-SUB-NORTH': '/images/homepage_uploads/4.jpeg',
+    'PROJ-SCADA-YAOUNDE': '/images/homepage_uploads/9.jpg',
+    'PROJ-UPS-HOSPITAL': '/images/homepage_uploads/6.jpg',
+  };
 
-        <div className="relative z-10 max-w-4xl space-y-4">
-          <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
-            <span className="px-2.5 py-1 rounded-full bg-sky-500/20 text-sky-300 font-bold border border-sky-500/30 flex items-center gap-1.5">
-              <Factory className="w-3.5 h-3.5 text-sky-400" />
-              <span>{isFr ? 'INGÉNIERIE & PROJETS INDUSTRIELS' : 'INDUSTRIAL ENGINEERING & FIELD PROJECTS'}</span>
+  return (
+    <div className="space-y-14 font-sans text-[#17282C] pb-20">
+      {/* 1. Editorial Field/Project Lead Story */}
+      <section className="border-t border-[#17282C] pt-8 sm:pt-10 space-y-10">
+        <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-6 lg:gap-12">
+          <div>
+            <span className="epede-eyebrow block">
+              {isFr ? 'Ingénierie Industrielle' : 'Industrial Engineering'}
             </span>
-            <span className="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30 flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-              <span>{isFr ? 'NORMES CEI / IEEE / NF C' : 'IEC / IEEE / NF C STANDARDS'}</span>
-            </span>
-            <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30 flex items-center gap-1.5">
-              <Award className="w-3.5 h-3.5 text-emerald-400" />
-              <span>{isFr ? '30 ANS D\'EXPERTISE DE TERRAIN' : '30 YEARS FIELD EXCELLENCE'}</span>
-            </span>
+            <p className="mt-2 font-mono text-xs text-[#5C6C70]">
+              {isFr ? 'Chantiers · Postes · FAT/SAT' : 'Field Projects · Substations · FAT/SAT'}
+            </p>
           </div>
 
-          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white font-mono leading-tight">
-            {isFr ? (
-              <>Projets Industriels, Postes HT & <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-amber-300">Certainté Électrotechnique</span></>
-            ) : (
-              <>Industrial Projects, HV Substations & <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-amber-300">Electrical Certainty</span></>
-            )}
-          </h1>
+          <div className="space-y-6 max-w-4xl">
+            <h1 className="epede-h1">
+              {isFr ? (
+                <>
+                  Projets industriels, postes HT et{' '}
+                  <em className="font-serif-editorial text-[#147C78]">
+                    certitude électrotechnique sur site
+                  </em>
+                  .
+                </>
+              ) : (
+                <>
+                  Industrial projects, HV substations, and{' '}
+                  <em className="font-serif-editorial text-[#147C78]">
+                    field electrical certainty
+                  </em>
+                  .
+                </>
+              )}
+            </h1>
 
-          <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-3xl">
-            {isFr ? (
-              <>
-                De la centrale autonome à l'usine de concassage minier, de la station de pompage d'eau à l'hôpital régional : explorez les cas réels d'ingénierie, les calculs physiques de ligne, le cycle de vie contractuel (FAT/SAT) et dimensionnez vos propres infrastructures électriques.
-              </>
-            ) : (
-              <>
-                From autonomous generation to northern mining crushers, municipal water SCADA to regional hospital power: explore real-world engineering project archetypes, transmission physics, project commissioning lifecycles (FAT/SAT), and configure your own facility scopes.
-              </>
-            )}
-          </p>
+            <p className="epede-lead">
+              {isFr
+                ? "De la centrale autonome 4×500 kVA synchronisée de Douala Bassa au poste source minier 33/11 kV du Nord, de la téléconduite SCADA d'eau potable à l'alimentation secourue IT médicale d'un hôpital régional : explorez les études de réalisation, l'échelle de tension et le cycle contractuel FAT/SAT."
+                : 'From the 4×500 kVA synchronized powerhouse in Douala Bassa to a 33/11 kV northern mining substation, municipal water SCADA, and zero-downtime medical IT hospital power: inspect real project scopes, transmission loss physics, and the 5-stage FAT/SAT engineering lifecycle.'}
+            </p>
 
-          {/* Quick Stats Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 font-mono">
-            <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
-              <span className="text-[10px] text-slate-400 uppercase">{isFr ? 'Puissance Raccordée' : 'Commissioned Power'}</span>
-              <div className="text-lg sm:text-xl font-bold text-sky-400">2 400 MW+</div>
-            </div>
-            <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
-              <span className="text-[10px] text-slate-400 uppercase">{isFr ? 'Chantiers Livrés' : 'Projects Completed'}</span>
-              <div className="text-lg sm:text-xl font-bold text-amber-400">340+ Usines</div>
-            </div>
-            <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
-              <span className="text-[10px] text-slate-400 uppercase">{isFr ? 'Disponibilité Critique' : 'Critical Uptime'}</span>
-              <div className="text-lg sm:text-xl font-bold text-emerald-400">99.8%</div>
-            </div>
-            <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
-              <span className="text-[10px] text-slate-400 uppercase">{isFr ? 'Réseau Couvert' : 'Voltage Scope'}</span>
-              <div className="text-lg sm:text-xl font-bold text-purple-400">400V → 225kV</div>
+            {/* Concise Editorial Metrics Strip */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-6 border-t border-[#DEDACF] font-mono">
+              <div>
+                <span className="text-[11px] text-[#5C6C70] uppercase block">
+                  {isFr ? 'Plage de Tension' : 'Voltage Envelope'}
+                </span>
+                <div className="text-lg font-bold text-[#17282C] mt-0.5">400 V → 225 kV</div>
+              </div>
+              <div>
+                <span className="text-[11px] text-[#5C6C70] uppercase block">
+                  {isFr ? 'Archétypes Documentés' : 'Documented Scopes'}
+                </span>
+                <div className="text-lg font-bold text-[#147C78] mt-0.5">
+                  {isFr ? '4 Dossiers Complets' : '4 Turnkey Dossiers'}
+                </div>
+              </div>
+              <div>
+                <span className="text-[11px] text-[#5C6C70] uppercase block">
+                  {isFr ? 'Disponibilité Cible' : 'Critical Uptime'}
+                </span>
+                <div className="text-lg font-bold text-[#B8872D] mt-0.5">99.8% (N+1)</div>
+              </div>
+              <div>
+                <span className="text-[11px] text-[#5C6C70] uppercase block">
+                  {isFr ? 'Référentiel' : 'Governing Codes'}
+                </span>
+                <div className="text-lg font-bold text-[#17282C] mt-0.5">IEC · IEEE · NF C</div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* 2. Top Navigation Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-800 font-mono text-xs">
-        <button
-          type="button"
-          onClick={() => setActiveTab('PROJECTS')}
-          className={`px-4 py-2.5 rounded-xl font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'PROJECTS'
-              ? 'bg-sky-500 text-slate-950 shadow-lg shadow-sky-500/20'
-              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
-          }`}
-        >
-          <Factory className="w-4 h-4" />
-          <span>{isFr ? '1. Cas Réels & Chantiers (4)' : '1. Real Field Projects (4)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('POWER_FLOW')}
-          className={`px-4 py-2.5 rounded-xl font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'POWER_FLOW'
-              ? 'bg-sky-500 text-slate-950 shadow-lg shadow-sky-500/20'
-              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
-          }`}
-        >
-          <Zap className="w-4 h-4" />
-          <span>{isFr ? '2. Échelle de Tension & Pertes Joule' : '2. Voltage Ladder & Losses'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('LIFECYCLE')}
-          className={`px-4 py-2.5 rounded-xl font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'LIFECYCLE'
-              ? 'bg-sky-500 text-slate-950 shadow-lg shadow-sky-500/20'
-              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
-          }`}
-        >
-          <Clock className="w-4 h-4" />
-          <span>{isFr ? '3. Cycle de Vie Projet (FAT / SAT)' : '3. 5-Stage Project Lifecycle'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('STANDARDS')}
-          className={`px-4 py-2.5 rounded-xl font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'STANDARDS'
-              ? 'bg-sky-500 text-slate-950 shadow-lg shadow-sky-500/20'
-              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
-          }`}
-        >
-          <BookOpen className="w-4 h-4" />
-          <span>{isFr ? '4. Référentiel & Normes (IEEE/CEI)' : '4. Normative Framework'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('ADVISOR')}
-          className={`px-4 py-2.5 rounded-xl font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'ADVISOR'
-              ? 'bg-amber-400 text-slate-950 shadow-lg shadow-amber-400/20'
-              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
-          }`}
-        >
-          <Sliders className="w-4 h-4 text-amber-400" />
-          <span>{isFr ? '5. Simulateur de Cadrage d\'Usine' : '5. Facility Scope Advisor'}</span>
-        </button>
+      {/* 2. Section Navigation Tabs */}
+      <div
+        role="tablist"
+        aria-label={isFr ? 'Sections ingénierie industrielle' : 'Industrial engineering sections'}
+        className="flex items-center gap-2 overflow-x-auto py-3 border-y border-[#17282C] bg-[#FFFDF9] px-4 font-mono text-xs"
+      >
+        {[
+          {
+            id: 'PROJECTS',
+            icon: <Factory className="w-3.5 h-3.5" />,
+            label: isFr ? '01 · Chantiers & Cas Réels (4)' : '01 · Field Project Dossiers (4)',
+          },
+          {
+            id: 'POWER_FLOW',
+            icon: <Zap className="w-3.5 h-3.5" />,
+            label: isFr ? '02 · Échelle de Tension & Pertes Joule' : '02 · Voltage Ladder & Joule Losses',
+          },
+          {
+            id: 'LIFECYCLE',
+            icon: <Clock className="w-3.5 h-3.5" />,
+            label: isFr ? '03 · Cycle de Projet (FAT / SAT)' : '03 · 5-Stage Lifecycle (FAT / SAT)',
+          },
+          {
+            id: 'STANDARDS',
+            icon: <BookOpen className="w-3.5 h-3.5" />,
+            label: isFr ? '04 · Normes & Habilitations' : '04 · Standards & Arc-Flash Safety',
+          },
+          {
+            id: 'ADVISOR',
+            icon: <Sliders className="w-3.5 h-3.5" />,
+            label: isFr ? '05 · Cadrage & Dimensionnement Site' : '05 · Facility Scope Advisor',
+          },
+        ].map((tab) => {
+          const active = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`px-4 py-2 rounded-full font-semibold transition-colors flex items-center gap-2 whitespace-nowrap ${
+                active
+                  ? 'bg-[#147C78] text-[#FFFDF9]'
+                  : 'text-[#5C6C70] hover:text-[#17282C] hover:bg-[#F6F4EE]'
+              }`}
+            >
+              {tab.icon}
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* ─────────────────────────────────────────────────────────────
-          VIEW 1: THE 4 REAL INDUSTRIAL PROJECT CASE STUDIES
+          VIEW 1: THE 4 REAL INDUSTRIAL PROJECT CASE STUDIES (EDITORIAL ROWS)
       ────────────────────────────────────────────────────────────── */}
       {activeTab === 'PROJECTS' && (
-        <div className="space-y-6">
-          {/* Project Archetype Selector Buttons */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {projects.map((proj) => {
+        <div className="space-y-10">
+          {/* Editorial Index Rows of the 4 Projects */}
+          <div className="divide-y divide-[#DEDACF] border-y border-[#17282C] bg-[#FFFDF9]">
+            {projects.map((proj, idx) => {
               const isSelected = proj.id === selectedProjectId;
               return (
                 <button
                   key={proj.id}
                   type="button"
                   onClick={() => setSelectedProjectId(proj.id)}
-                  className={`p-4 rounded-xl text-left transition-all border font-mono ${
+                  className={`w-full p-5 sm:p-6 text-left transition-colors grid grid-cols-1 md:grid-cols-[56px_160px_1fr_auto] gap-5 items-center ${
                     isSelected
-                      ? 'bg-slate-900 border-sky-500 shadow-lg shadow-sky-500/10 ring-1 ring-sky-500/50'
-                      : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 hover:bg-slate-900/60'
+                      ? 'bg-[#E3EFEC]/70 border-l-4 border-l-[#147C78]'
+                      : 'hover:bg-[#F6F4EE]'
                   }`}
                 >
-                  <div className="flex items-center justify-between gap-2 mb-2">
-                    <span className="text-[10px] text-sky-400 uppercase font-bold tracking-wider">{proj.tag}</span>
-                    <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 font-bold border border-amber-500/20">
-                      {proj.badge}
-                    </span>
+                  <span className="font-mono text-sm font-bold text-[#147C78]">
+                    0{idx + 1}
+                  </span>
+
+                  <div className="h-24 w-full rounded-lg overflow-hidden border border-[#DEDACF] bg-[#10191D]">
+                    <img
+                      src={projectImages[proj.id] || '/images/homepage_uploads/8.jpg'}
+                      alt={isFr ? proj.title_fr : proj.title_en}
+                      className="w-full h-full object-cover epede-photo-grade"
+                      loading="lazy"
+                    />
                   </div>
-                  <h3 className="text-sm font-bold text-white line-clamp-2">
-                    {isFr ? proj.title_fr : proj.title_en}
-                  </h3>
-                  <p className="text-[11px] text-slate-400 mt-1 truncate">
-                    {isFr ? proj.category_fr : proj.category_en}
-                  </p>
+
+                  <div className="space-y-1.5 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
+                      <span className="text-[#147C78] font-semibold uppercase">{proj.tag}</span>
+                      <span className="text-[#5C6C70]">·</span>
+                      <span className="text-[#B8872D] font-semibold">{proj.badge}</span>
+                      <span className="text-[#5C6C70]">·</span>
+                      <span className="text-[#5C6C70]">
+                        {isFr ? proj.category_fr : proj.category_en}
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-bold text-[#17282C] leading-snug">
+                      {isFr ? proj.title_fr : proj.title_en}
+                    </h3>
+                    <p className="text-sm text-[#33474B] line-clamp-2 leading-relaxed">
+                      {isFr ? proj.summary_fr : proj.summary_en}
+                    </p>
+                  </div>
+
+                  <div className="font-mono text-xs font-semibold text-[#17282C] inline-flex items-center gap-1.5 shrink-0">
+                    <span>{isSelected ? (isFr ? 'Dossier Actif' : 'Active Dossier') : (isFr ? 'Inspecter' : 'Inspect')}</span>
+                    <ChevronRight className="w-4 h-4 text-[#147C78]" />
+                  </div>
                 </button>
               );
             })}
           </div>
 
-          {/* Detailed Selected Project Sheet */}
-          <div className="rounded-2xl bg-slate-900/90 border border-slate-800 p-6 sm:p-8 space-y-6">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-slate-800">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-1 rounded bg-sky-500/20 text-sky-300 text-xs font-mono font-bold">
+          {/* Detailed Selected Project Engineering Sheet */}
+          <div className="rounded-[10px] bg-[#FFFDF9] border border-[#DEDACF] p-6 sm:p-10 space-y-8">
+            <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6 pb-6 border-b border-[#DEDACF]">
+              <div className="space-y-3 max-w-3xl">
+                <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
+                  <span className="px-2.5 py-1 rounded bg-[#17282C] text-[#FFFDF9] font-semibold">
                     {activeProject.tag}
                   </span>
-                  <span className="text-xs text-slate-400 font-mono">
+                  <span className="px-2.5 py-1 rounded bg-[#F6F4EE] text-[#B8872D] border border-[#DEDACF] font-semibold">
+                    {activeProject.badge}
+                  </span>
+                  <span className="text-[#5C6C70]">
                     {isFr ? activeProject.category_fr : activeProject.category_en}
                   </span>
                 </div>
-                <h2 className="text-xl sm:text-2xl font-bold text-white font-mono">
+                <h2 className="epede-h2">
                   {isFr ? activeProject.title_fr : activeProject.title_en}
                 </h2>
-                <p className="text-sm text-slate-300 max-w-3xl leading-relaxed">
+                <p className="text-base text-[#33474B] leading-relaxed">
                   {isFr ? activeProject.summary_fr : activeProject.summary_en}
                 </p>
               </div>
 
-              {/* Action Buttons linking to EPEDE tools */}
-              <div className="flex flex-wrap items-center gap-2 shrink-0">
+              {/* Action Buttons linking to EPEDE Workbenches */}
+              <div className="flex flex-wrap items-center gap-3 shrink-0">
                 {onNavigateDiagram && (
                   <button
                     type="button"
                     onClick={() => onNavigateDiagram()}
-                    className="px-3.5 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-slate-950 font-mono text-xs font-bold transition-colors flex items-center gap-1.5"
+                    className="epede-btn-primary text-xs px-5 min-h-[42px]"
                   >
-                    <Activity className="w-3.5 h-3.5" />
-                    <span>{isFr ? 'Voir Schéma SLD' : 'View SLD CAD'}</span>
+                    <Activity className="w-4 h-4" />
+                    <span>{isFr ? 'Ouvrir Schéma Unifilaire SLD' : 'Open Interactive SLD'}</span>
                   </button>
                 )}
                 {onNavigateCalculator && (
                   <button
                     type="button"
                     onClick={() => onNavigateCalculator()}
-                    className="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-mono text-xs font-bold transition-colors border border-slate-700 flex items-center gap-1.5"
+                    className="epede-btn-secondary text-xs min-h-[42px]"
                   >
-                    <Sliders className="w-3.5 h-3.5 text-amber-400" />
-                    <span>{isFr ? 'Calculer Court-Circuit' : 'Calculate Short-Circuit'}</span>
+                    <Sliders className="w-4 h-4 text-[#147C78]" />
+                    <span>{isFr ? 'Solveurs CEI / IEEE' : 'IEC / IEEE Calculators'}</span>
+                  </button>
+                )}
+                {onNavigateSimulation && (
+                  <button
+                    type="button"
+                    onClick={() => onNavigateSimulation('motor-start')}
+                    className="epede-btn-secondary text-xs min-h-[42px]"
+                  >
+                    <Zap className="w-4 h-4 text-[#B8872D]" />
+                    <span>{isFr ? 'Banc Démarrage Moteur' : 'Motor Starter Lab'}</span>
                   </button>
                 )}
               </div>
             </div>
 
             {/* KPIs Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {activeProject.kpis.map((kpi, idx) => (
-                <div key={idx} className="p-4 rounded-xl bg-slate-950 border border-slate-800/80 font-mono">
-                  <span className="text-[11px] text-slate-400 block mb-1">
+                <div
+                  key={idx}
+                  className="p-4 rounded-lg bg-[#F6F4EE] border border-[#DEDACF] font-mono"
+                >
+                  <span className="text-[11px] text-[#5C6C70] block mb-1">
                     {isFr ? kpi.label_fr : kpi.label_en}
                   </span>
-                  <span className="text-base sm:text-lg font-black text-amber-300 block">
+                  <span className="text-base sm:text-lg font-bold text-[#17282C] block">
                     {kpi.val}
                   </span>
                 </div>
@@ -549,40 +589,54 @@ export const IndustrialProjectsView: React.FC<Props> = ({
 
             {/* Technical Specifications Table */}
             <div className="space-y-3">
-              <h3 className="text-sm font-mono font-bold uppercase tracking-wider text-sky-400 flex items-center gap-2">
+              <h3 className="font-mono text-xs font-semibold uppercase tracking-[0.08em] text-[#147C78] flex items-center gap-2">
                 <Settings className="w-4 h-4" />
-                <span>{isFr ? 'Spécifications Électromécaniques du Projet' : 'Electromechanical Technical Specifications'}</span>
+                <span>
+                  {isFr
+                    ? 'Spécifications Électromécaniques du Projet'
+                    : 'Electromechanical Technical Specifications'}
+                </span>
               </h3>
-              <div className="rounded-xl border border-slate-800 overflow-hidden font-mono text-xs divide-y divide-slate-800/70 bg-slate-950">
+              <div className="rounded-lg border border-[#DEDACF] overflow-hidden text-xs divide-y divide-[#DEDACF] bg-[#FFFDF9]">
                 {activeProject.techSpecs.map((spec, idx) => (
-                  <div key={idx} className="grid grid-cols-1 sm:grid-cols-3 p-3.5 gap-2 hover:bg-slate-900/50 transition-colors">
-                    <span className="text-slate-400 font-semibold sm:col-span-1">
+                  <div
+                    key={idx}
+                    className="grid grid-cols-1 sm:grid-cols-3 p-4 gap-2 hover:bg-[#F6F4EE] transition-colors"
+                  >
+                    <span className="font-mono text-[#17282C] font-semibold sm:col-span-1">
                       {isFr ? spec.key_fr : spec.key_en}
                     </span>
-                    <span className="text-slate-200 sm:col-span-2">
-                      {spec.val}
-                    </span>
+                    <span className="text-[#33474B] sm:col-span-2">{spec.val}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Engineering Challenge & Key Solution Note */}
-            <div className="p-4 rounded-xl bg-sky-950/20 border border-sky-800/40 text-xs font-mono space-y-1.5">
-              <div className="text-sky-300 font-bold flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-sky-400" />
-                <span>{isFr ? 'Point Clé d\'Ingénierie & Sécurité Système' : 'Engineering Highlight & System Safety'}</span>
+            <div className="p-5 rounded-lg bg-[#E3EFEC]/60 border border-[#147C78]/35 text-xs space-y-1.5">
+              <div className="font-mono text-[#147C78] font-semibold uppercase flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4" />
+                <span>
+                  {isFr
+                    ? 'Point Clé d’Ingénierie & Sélectivité Système'
+                    : 'Engineering Highlight & Protection Coordination'}
+                </span>
               </div>
-              <p className="text-slate-300 leading-relaxed">
+              <p className="text-[#17282C] text-sm leading-relaxed">
                 {activeProject.diagramHighlight}
               </p>
             </div>
 
             {/* Applied Norms Badges */}
-            <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-800 text-xs font-mono">
-              <span className="text-slate-500 font-bold">{isFr ? 'Normes Appliquées :' : 'Applicable Standards:'}</span>
+            <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-[#DEDACF] text-xs font-mono">
+              <span className="text-[#5C6C70] font-semibold">
+                {isFr ? 'Normes Appliquées :' : 'Applicable Standards:'}
+              </span>
               {activeProject.standardsApplied.map((norm, i) => (
-                <span key={i} className="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-amber-300">
+                <span
+                  key={i}
+                  className="px-3 py-1 rounded-full bg-[#F6F4EE] border border-[#DEDACF] text-[#17282C] font-medium"
+                >
                   {norm}
                 </span>
               ))}
@@ -592,34 +646,45 @@ export const IndustrialProjectsView: React.FC<Props> = ({
       )}
 
       {/* ─────────────────────────────────────────────────────────────
-          VIEW 2: THE INTERACTIVE POWER FLOW & VOLTAGE LADDER
+          VIEW 2: THE INTERACTIVE POWER FLOW & VOLTAGE LADDER (#10191D WORKBENCH)
       ────────────────────────────────────────────────────────────── */}
       {activeTab === 'POWER_FLOW' && (
         <div className="space-y-6">
-          <div className="rounded-2xl bg-slate-900/90 border border-slate-800 p-6 space-y-6">
+          <div className="rounded-[12px] epede-workbench p-6 sm:p-8 space-y-6">
             <div className="max-w-3xl space-y-2">
-              <h2 className="text-xl sm:text-2xl font-bold text-white font-mono">
-                {isFr ? 'Chaîne de Transport & Pourquoi Élever la Tension ?' : 'The Power Flow Chain & Why High Voltage Reduces Losses'}
+              <span className="font-mono text-xs uppercase tracking-[0.08em] text-[#6CC3BD] block">
+                {isFr ? 'Banc de Simulation Physique' : 'Interactive Transmission Physics Workbench'}
+              </span>
+              <h2 className="text-xl sm:text-2xl font-bold text-[#F4F1E8]">
+                {isFr
+                  ? 'Chaîne de Transport & Pourquoi Élever la Tension ?'
+                  : 'The Power Flow Chain & Why High Voltage Slashes Losses'}
               </h2>
-              <p className="text-sm text-slate-300 leading-relaxed">
+              <p className="text-sm text-[#B9C2C0] leading-relaxed">
                 {isFr ? (
                   <>
-                    La formule fondamentale des pertes par effet Joule est <strong className="text-amber-400">P = 3·R·I²</strong>. Lorsque la tension est multipliée par 12 (de 11 kV à 132 kV), le courant est divisé par 12, et les pertes calorifiques sont réduites par un facteur <strong className="text-sky-400">12² = 144</strong> (soit plus de 99% d'énergie économisée) !
+                    La loi fondamentale des pertes par effet Joule est{' '}
+                    <strong className="text-[#F4F1E8] font-mono">P = 3·R·I²</strong>. Lorsque la tension est multipliée par 12 (de 11 kV à 132 kV), le courant est divisé par 12 et les pertes résistives sont divisées par{' '}
+                    <strong className="text-[#6CC3BD] font-mono">12² = 144</strong>.
                   </>
                 ) : (
                   <>
-                    The fundamental Joule loss formula is <strong className="text-amber-400">P = 3·R·I²</strong>. When voltage is stepped up by a factor of 12 (from 11kV to 132kV), line current drops by 12, and resistive heat losses are reduced by <strong className="text-sky-400">12² = 144 times</strong> (&gt;99% loss reduction)!
+                    The governing Joule loss equation is{' '}
+                    <strong className="text-[#F4F1E8] font-mono">P = 3·R·I²</strong>. Stepping voltage up by a factor of 12 (11 kV to 132 kV) divides line current by 12 and reduces resistive line losses by{' '}
+                    <strong className="text-[#6CC3BD] font-mono">12² = 144×</strong>.
                   </>
                 )}
               </p>
             </div>
 
             {/* Interactive Physics Sliders */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-5 rounded-lg bg-[#162227] border border-[#2A383C] font-mono text-xs">
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <label htmlFor="flow-power-slider" className="text-slate-400">{isFr ? 'Puissance Transmise (MW) :' : 'Transmitted Power (MW):'}</label>
-                  <span className="text-sky-400 font-bold">{flowPowerMW} MW</span>
+                  <label htmlFor="flow-power-slider" className="text-[#B9C2C0]">
+                    {isFr ? 'Puissance Transmise (MW)' : 'Transmitted Active Power (MW)'}
+                  </label>
+                  <span className="text-[#6CC3BD] font-bold">{flowPowerMW} MW</span>
                 </div>
                 <input
                   id="flow-power-slider"
@@ -629,14 +694,16 @@ export const IndustrialProjectsView: React.FC<Props> = ({
                   step="5"
                   value={flowPowerMW}
                   onChange={(e) => setFlowPowerMW(Number(e.target.value))}
-                  className="w-full accent-sky-400 cursor-pointer"
+                  className="w-full accent-[#147C78] cursor-pointer"
                 />
               </div>
 
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <label htmlFor="flow-distance-slider" className="text-slate-400">{isFr ? 'Distance de Transport (km) :' : 'Transmission Distance (km):'}</label>
-                  <span className="text-amber-400 font-bold">{flowLineDistanceKm} km</span>
+                  <label htmlFor="flow-distance-slider" className="text-[#B9C2C0]">
+                    {isFr ? 'Distance de Transport (km)' : 'Corridor Distance (km)'}
+                  </label>
+                  <span className="text-[#F4F1E8] font-bold">{flowLineDistanceKm} km</span>
                 </div>
                 <input
                   id="flow-distance-slider"
@@ -646,73 +713,80 @@ export const IndustrialProjectsView: React.FC<Props> = ({
                   step="5"
                   value={flowLineDistanceKm}
                   onChange={(e) => setFlowLineDistanceKm(Number(e.target.value))}
-                  className="w-full accent-amber-400 cursor-pointer"
+                  className="w-full accent-[#B8872D] cursor-pointer"
                 />
               </div>
             </div>
 
             {/* Stage-by-Stage Visual Ladder */}
-            <div className="grid grid-cols-1 sm:grid-cols-6 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-6 gap-2.5">
               {[
-                { stage: 0, title_fr: 'Centrale', title_en: 'Power Station', kv: '11 kV', current: `${currentAt11kV.toFixed(0)} A`, color: 'border-emerald-500/50 text-emerald-400' },
-                { stage: 1, title_fr: 'Transfo Élévateur', title_en: 'Step-Up Trafo', kv: '11kV → 132kV', current: 'Élévation ×12', color: 'border-sky-500/50 text-sky-400' },
-                { stage: 2, title_fr: 'Ligne HTB Ligne', title_en: 'HV Lines', kv: '132 kV', current: `${currentAt132kV.toFixed(0)} A`, color: 'border-amber-500/50 text-amber-400' },
-                { stage: 3, title_fr: 'Poste Source', title_en: 'Step-Down Sub', kv: '132kV → 33kV', current: 'Distribution', color: 'border-sky-500/50 text-sky-400' },
-                { stage: 4, title_fr: 'Réseau HTA', title_en: 'Medium Voltage', kv: '33 kV / 15 kV', current: 'Foyers & Zones', color: 'border-purple-500/50 text-purple-400' },
-                { stage: 5, title_fr: 'Usine / TGBT', title_en: 'Facility / LV', kv: '400 V / 230 V', current: 'Utilisation', color: 'border-emerald-500/50 text-emerald-400' },
+                { stage: 0, title_fr: 'Centrale', title_en: 'Power Station', kv: '11 kV', current: `${currentAt11kV.toFixed(0)} A` },
+                { stage: 1, title_fr: 'Transfo GSU', title_en: 'Step-Up Trafo', kv: '11→132 kV', current: '×12 U' },
+                { stage: 2, title_fr: 'Ligne HTB', title_en: 'HV Corridor', kv: '132 kV', current: `${currentAt132kV.toFixed(0)} A` },
+                { stage: 3, title_fr: 'Poste Source', title_en: 'Step-Down Sub', kv: '132→33 kV', current: 'OLTC' },
+                { stage: 4, title_fr: 'Réseau HTA', title_en: 'MV Feeders', kv: '33 / 15 kV', current: 'RMU Loop' },
+                { stage: 5, title_fr: 'Usine / TGBT', title_en: 'Facility LV', kv: '400 V', current: 'MCC / Loads' },
               ].map((stg) => (
-                <div
+                <button
                   key={stg.stage}
+                  type="button"
                   onClick={() => setActiveFlowStage(stg.stage)}
-                  className={`p-3 rounded-xl border font-mono text-center cursor-pointer transition-all ${
+                  className={`p-3.5 rounded-lg border font-mono text-left transition-colors ${
                     activeFlowStage === stg.stage
-                      ? 'bg-slate-800 border-amber-400 shadow-md ring-1 ring-amber-400/50'
-                      : 'bg-slate-950 border-slate-800 hover:border-slate-700'
+                      ? 'bg-[#162227] border-[#6CC3BD] text-[#F4F1E8]'
+                      : 'bg-[#10191D] border-[#2A383C] text-[#B9C2C0] hover:border-[#4A5A5E]'
                   }`}
                 >
-                  <span className="text-[10px] text-slate-500 block uppercase">Étape {stg.stage + 1}</span>
-                  <div className="font-bold text-xs text-white my-1">{isFr ? stg.title_fr : stg.title_en}</div>
-                  <div className={`text-xs font-bold ${stg.color}`}>{stg.kv}</div>
-                  <div className="text-[10px] text-slate-400 mt-1">{stg.current}</div>
-                </div>
+                  <span className="text-[10px] text-[#8A9694] block uppercase">0{stg.stage + 1}</span>
+                  <div className="font-bold text-xs text-[#F4F1E8] my-1">
+                    {isFr ? stg.title_fr : stg.title_en}
+                  </div>
+                  <div className="text-xs font-bold text-[#6CC3BD]">{stg.kv}</div>
+                  <div className="text-[11px] text-[#B9C2C0] mt-1">{stg.current}</div>
+                </button>
               ))}
             </div>
 
             {/* Physics Comparison Box */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono">
-              <div className="p-4 rounded-xl bg-red-950/20 border border-red-800/40">
-                <span className="text-[11px] text-red-400 block mb-1">
-                  {isFr ? 'Si transporté en 11 kV (Sans Élévation) :' : 'If transmitted at 11kV (Direct):'}
+              <div className="p-4 rounded-lg bg-[#162227] border border-[#E07A5F]/50">
+                <span className="text-[11px] text-[#F2A48F] block mb-1">
+                  {isFr ? 'Sans élévation (11 kV direct)' : 'Without Step-Up (11 kV direct)'}
                 </span>
-                <div className="text-xl font-black text-red-300">
-                  {losses11kVMW > 1000 ? '> 100 MW (Impossible)' : `${losses11kVMW.toFixed(1)} MW`}
+                <div className="text-xl font-bold text-[#F2A48F]">
+                  {losses11kVMW > 1000 ? '> 100 MW (Thermal collapse)' : `${losses11kVMW.toFixed(1)} MW`}
                 </div>
-                <p className="text-[10px] text-slate-400 mt-1">
-                  {isFr ? 'Pertes Joule monstrueuses, échauffement et destruction des câbles.' : 'Extreme Joule losses, catastrophic conductor melting.'}
+                <p className="text-[11px] text-[#B9C2C0] mt-1 font-sans">
+                  {isFr ? 'Chute de tension et échauffement rédhibitoires.' : 'Prohibitive voltage drop and conductor overheating.'}
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-800/40">
-                <span className="text-[11px] text-emerald-400 block mb-1">
-                  {isFr ? 'Transporté en Haute Tension 132 kV :' : 'Transmitted at High Voltage 132kV:'}
+              <div className="p-4 rounded-lg bg-[#162227] border border-[#6CC3BD]/50">
+                <span className="text-[11px] text-[#6CC3BD] block mb-1">
+                  {isFr ? 'Avec transport HTB (132 kV)' : 'With HV Transmission (132 kV)'}
                 </span>
-                <div className="text-xl font-black text-emerald-300">
+                <div className="text-xl font-bold text-[#6CC3BD]">
                   {losses132kVMW.toFixed(2)} MW
                 </div>
-                <p className="text-[10px] text-slate-400 mt-1">
-                  {isFr ? `Seulement ${((losses132kVMW / flowPowerMW) * 100).toFixed(2)}% de pertes sur ${flowLineDistanceKm} km.` : `Only ${((losses132kVMW / flowPowerMW) * 100).toFixed(2)}% loss over ${flowLineDistanceKm} km.`}
+                <p className="text-[11px] text-[#B9C2C0] mt-1 font-sans">
+                  {isFr
+                    ? `Seulement ${((losses132kVMW / flowPowerMW) * 100).toFixed(2)}% de pertes sur ${flowLineDistanceKm} km.`
+                    : `Only ${((losses132kVMW / flowPowerMW) * 100).toFixed(2)}% line loss over ${flowLineDistanceKm} km.`}
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-sky-950/20 border border-sky-800/40">
-                <span className="text-[11px] text-sky-400 block mb-1">
-                  {isFr ? 'Économie Réalisée par l\'Élévation :' : 'Joule Loss Reduction Factor:'}
+              <div className="p-4 rounded-lg bg-[#162227] border border-[#2A383C]">
+                <span className="text-[11px] text-[#B9C2C0] block mb-1">
+                  {isFr ? 'Réduction des Pertes Joule' : 'Joule Loss Reduction'}
                 </span>
-                <div className="text-xl font-black text-sky-300">
+                <div className="text-xl font-bold text-[#F4F1E8]">
                   -{lossesReductionPercent}%
                 </div>
-                <p className="text-[10px] text-slate-400 mt-1">
-                  {isFr ? 'Justifie l\'investissement dans les postes et transformateurs HT.' : 'Empirical economic rationale for grid substations.'}
+                <p className="text-[11px] text-[#B9C2C0] mt-1 font-sans">
+                  {isFr
+                    ? 'Justification physique directe des postes élévateurs.'
+                    : 'Direct physical rationale for step-up substations.'}
                 </p>
               </div>
             </div>
@@ -724,71 +798,65 @@ export const IndustrialProjectsView: React.FC<Props> = ({
           VIEW 3: THE 5-STAGE ENGINEERING PROJECT LIFECYCLE
       ────────────────────────────────────────────────────────────── */}
       {activeTab === 'LIFECYCLE' && (
-        <div className="space-y-6">
+        <div className="space-y-8">
           <div className="max-w-3xl space-y-2">
-            <h2 className="text-xl sm:text-2xl font-bold text-white font-mono">
-              {isFr ? 'Le Cycle de Vie d\'un Projet Électrique Industriel' : 'The 5-Stage Engineering Project Delivery Lifecycle'}
+            <span className="epede-eyebrow block">
+              {isFr ? 'Méthodologie EPC & Essais' : 'EPC Delivery & Commissioning'}
+            </span>
+            <h2 className="epede-h2">
+              {isFr
+                ? 'Le cycle de réalisation en 5 étapes (Audit, Études, FAT, SAT, Exploitation)'
+                : 'The 5-Stage Engineering Project Lifecycle (Survey, Design, FAT, SAT, O&M)'}
             </h2>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              {isFr ? (
-                <>
-                  Du premier relevé de charge sur site jusqu'à la mise sous tension commerciale et la maintenance prédictive : découvrez le processus rigoureux exigé par les donneurs d'ordre et les normes internationales.
-                </>
-              ) : (
-                <>
-                  From the initial site power survey through factory acceptance tests (FAT), site acceptance tests (SAT), and predictive maintenance: understand the rigorous engineering lifecycle required on industrial sites.
-                </>
-              )}
-            </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="divide-y divide-[#DEDACF] border-y border-[#17282C] bg-[#FFFDF9]">
             {lifecycleSteps.map((stg) => (
-              <div
-                key={stg.step}
-                className="rounded-2xl bg-slate-900/90 border border-slate-800 p-6 space-y-4 hover:border-slate-700 transition-colors"
-              >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-800">
-                  <div className="flex items-center gap-3">
-                    <span className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/30 font-mono font-black text-sky-400 flex items-center justify-center text-base shrink-0">
+              <div key={stg.step} className="p-6 sm:p-8 space-y-5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#DEDACF]">
+                  <div className="flex items-center gap-4">
+                    <span className="font-mono text-base font-bold text-[#147C78]">
                       {stg.step}
                     </span>
                     <div>
-                      <h3 className="text-base sm:text-lg font-bold text-white font-mono">
+                      <h3 className="text-lg font-bold text-[#17282C]">
                         {isFr ? stg.title_fr : stg.title_en}
                       </h3>
-                      <p className="text-xs text-slate-400">
+                      <p className="text-sm text-[#5C6C70]">
                         {isFr ? stg.lead_fr : stg.lead_en}
                       </p>
                     </div>
                   </div>
-                  <span className="px-2.5 py-1 rounded bg-amber-500/10 text-amber-300 text-[11px] font-mono font-bold border border-amber-500/20 shrink-0 self-start sm:self-auto">
+                  <span className="px-3 py-1 rounded-full bg-[#F6F4EE] text-[#B8872D] text-xs font-mono font-semibold border border-[#DEDACF] self-start sm:self-auto">
                     {stg.deliverable_fr}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
                   <div className="md:col-span-2 space-y-2">
-                    <span className="text-[11px] font-bold text-sky-400 uppercase tracking-wider block">
-                      {isFr ? 'Opérations Clés Réalisées :' : 'Key Field Activities:'}
+                    <span className="font-mono text-xs font-semibold text-[#147C78] uppercase block">
+                      {isFr ? 'Opérations de Vérification' : 'Verification & Field Operations'}
                     </span>
-                    <ul className="space-y-1.5 text-slate-300">
+                    <ul className="space-y-2 text-[#33474B]">
                       {(isFr ? stg.activities_fr : stg.activities_en).map((act, idx) => (
-                        <li key={idx} className="flex items-start gap-2">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 mt-0.5 shrink-0" />
+                        <li key={idx} className="flex items-start gap-2.5">
+                          <CheckCircle2 className="w-4 h-4 text-[#147C78] mt-0.5 shrink-0" />
                           <span>{act}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800/80 space-y-2">
-                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
-                      {isFr ? 'Instruments & Outils Référents :' : 'Tools & Benchmark Standards:'}
+                  <div className="p-4 rounded-lg bg-[#F6F4EE] border border-[#DEDACF] space-y-2">
+                    <span className="font-mono text-xs font-semibold text-[#5C6C70] uppercase block">
+                      {isFr ? 'Instruments & Normes' : 'Instruments & Standards'}
                     </span>
-                    <div className="flex flex-wrap gap-1.5">
+                    <div className="flex flex-wrap gap-1.5 font-mono text-xs">
                       {stg.tools.map((t, i) => (
-                        <span key={i} className="px-2 py-0.5 rounded bg-slate-800 text-slate-200 border border-slate-700 text-[11px]">
+                        <span
+                          key={i}
+                          className="px-2.5 py-1 rounded bg-[#FFFDF9] text-[#17282C] border border-[#DEDACF]"
+                        >
                           {t}
                         </span>
                       ))}
@@ -805,126 +873,96 @@ export const IndustrialProjectsView: React.FC<Props> = ({
           VIEW 4: NORMATIVE & COMPLIANCE FRAMEWORK
       ────────────────────────────────────────────────────────────── */}
       {activeTab === 'STANDARDS' && (
-        <div className="space-y-6">
+        <div className="space-y-8">
           <div className="max-w-3xl space-y-2">
-            <h2 className="text-xl sm:text-2xl font-bold text-white font-mono">
-              {isFr ? 'Référentiel Normatif & Sécurité des Personnes' : 'Engineering Norms & Arc-Flash Safety Standards'}
+            <span className="epede-eyebrow block">
+              {isFr ? 'Conformité & Sécurité' : 'Compliance & Life Safety'}
+            </span>
+            <h2 className="epede-h2">
+              {isFr
+                ? 'Référentiel normatif, Arc-Flash et habilitations électriques'
+                : 'Normative codes, Arc-Flash limits, and safety lockouts'}
             </h2>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              {isFr ? (
-                <>
-                  Une installation industrielle ne se conçoit pas uniquement sur des calculs de courant : elle doit garantir la protection des intervenants contre l'éclair d'arc électrique (<strong className="text-amber-400">IEEE 1584</strong>), la fiabilité des transformateurs (<strong className="text-sky-400">IEC 60076</strong>) et la sécurité d'exploitation selon les habilitations électriques.
-                </>
-              ) : (
-                <>
-                  Industrial power systems must strictly protect personnel from arc-flash blast injuries (<strong className="text-amber-400">IEEE 1584</strong>), ensure transformer dielectric durability (<strong className="text-sky-400">IEC 60076</strong>), and enforce electrical safety qualifications.
-                </>
-              )}
-            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4 font-mono">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="p-6 rounded-[10px] bg-[#FFFDF9] border border-[#DEDACF] space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-                  <Flame className="w-5 h-5" />
-                </div>
+                <Flame className="w-5 h-5 text-[#B91C1C]" />
                 <div>
-                  <h3 className="text-base font-bold text-white">IEEE 1584 & NFPA 70E</h3>
-                  <span className="text-xs text-amber-400 font-bold">{isFr ? 'Risque d\'Éclair d\'Arc (Arc Flash)' : 'Arc Flash Hazard Calculation'}</span>
+                  <h3 className="text-lg font-bold text-[#17282C]">IEEE 1584 & NFPA 70E</h3>
+                  <span className="font-mono text-xs text-[#B91C1C] font-semibold">
+                    {isFr ? 'Risque d’Éclair d’Arc (Arc Flash)' : 'Arc-Flash Incident Energy'}
+                  </span>
                 </div>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                {isFr ? (
-                  <>
-                    Définit les formules de calcul de l'énergie incidente (en <strong className="text-amber-400">cal/cm²</strong>) et la distance de sécurité (Arc Flash Boundary). Permet de prescrire les Équipements de Protection Individuelle (EPI) obligatoires (combinaisons ignifugées Catégorie 1 à 4, écrans faciaux avec protection mentonnière).
-                  </>
-                ) : (
-                  <>
-                    Formulates incident energy calculations (<strong className="text-amber-400">cal/cm²</strong>) and Arc Flash Protection Boundaries. Mandates required Personal Protective Equipment (PPE Categories 1 through 4, arc-rated suits, face shields with chin cups).
-                  </>
-                )}
+              <p className="text-sm text-[#33474B] leading-relaxed">
+                {isFr
+                  ? "Calcul de l'énergie incidente (cal/cm²) et de la distance limite de protection d'arc (AFPB) pour prescrire la catégorie d'EPI ignifugé (Cat 1 à 4)."
+                  : 'Determines incident energy (cal/cm²) and Arc-Flash Protection Boundaries (AFPB) to specify flame-resistant PPE categories (Cat 1–4).'}
               </p>
-              <div className="p-3 rounded-lg bg-slate-950 border border-slate-800 text-[11px] text-slate-400">
-                {isFr ? 'Seuil critique sans brûlure au 2e degré : 1.2 cal/cm²' : 'Threshold for second-degree curable burn: 1.2 cal/cm²'}
+              <div className="p-3 rounded bg-[#F6F4EE] border border-[#DEDACF] font-mono text-xs text-[#5C6C70]">
+                {isFr ? 'Seuil de brûlure du 2e degré : 1.2 cal/cm²' : 'Second-degree burn threshold: 1.2 cal/cm²'}
               </div>
             </div>
 
-            <div className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4 font-mono">
+            <div className="p-6 rounded-[10px] bg-[#FFFDF9] border border-[#DEDACF] space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
-                  <Zap className="w-5 h-5" />
-                </div>
+                <Zap className="w-5 h-5 text-[#147C78]" />
                 <div>
-                  <h3 className="text-base font-bold text-white">IEC 60076 & IEC 60255</h3>
-                  <span className="text-xs text-sky-400 font-bold">{isFr ? 'Transformateurs & Relais de Protection' : 'Power Transformers & Measuring Relays'}</span>
+                  <h3 className="text-lg font-bold text-[#17282C]">IEC 60076 & IEC 60255</h3>
+                  <span className="font-mono text-xs text-[#147C78] font-semibold">
+                    {isFr ? 'Transformateurs & Relais Numériques' : 'Power Transformers & Protection Relays'}
+                  </span>
                 </div>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                {isFr ? (
-                  <>
-                    Régit les échauffements limites des enroulements (65K pour huile minérale), les niveaux d'isolement aux ondes de foudre (BIL), les pertes à vide (P₀) et en charge (P_k), ainsi que les caractéristiques de déclenchement des relais numériques ANSI 50/51/87.
-                  </>
-                ) : (
-                  <>
-                    Defines permissible winding temperature rise limits (65K for mineral oil), Basic Impulse Insulation Levels (BIL), no-load losses (P₀) and load losses (P_k), as well as trip characteristics for ANSI 50/51/87 numerical relays.
-                  </>
-                )}
+              <p className="text-sm text-[#33474B] leading-relaxed">
+                {isFr
+                  ? "Échauffements admissibles (65 K huile), niveaux d'isolement au choc de foudre (BIL), pertes à vide/charge et courbes de déclenchement ANSI 50/51/87."
+                  : 'Permissible winding temperature rise (65 K oil), Basic Impulse Insulation Levels (BIL), losses, and ANSI 50/51/87 protection relay curves.'}
               </p>
-              <div className="p-3 rounded-lg bg-slate-950 border border-slate-800 text-[11px] text-slate-400">
-                {isFr ? 'Essais de type : Tenue aux courts-circuits dynamiques (IEC 60076-5)' : 'Type testing: Short-circuit dynamic withstand (IEC 60076-5)'}
+              <div className="p-3 rounded bg-[#F6F4EE] border border-[#DEDACF] font-mono text-xs text-[#5C6C70]">
+                IEC 60076-5 · IEC 60255-151
               </div>
             </div>
 
-            <div className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4 font-mono">
+            <div className="p-6 rounded-[10px] bg-[#FFFDF9] border border-[#DEDACF] space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-                  <ShieldCheck className="w-5 h-5" />
-                </div>
+                <ShieldCheck className="w-5 h-5 text-[#147C78]" />
                 <div>
-                  <h3 className="text-base font-bold text-white">NF C 15-100 & NF C 13-200</h3>
-                  <span className="text-xs text-emerald-400 font-bold">{isFr ? 'Installations Basse & Haute Tension' : 'LV and HV Installation Safety Codes'}</span>
+                  <h3 className="text-lg font-bold text-[#17282C]">NF C 15-100 & NF C 13-200</h3>
+                  <span className="font-mono text-xs text-[#147C78] font-semibold">
+                    {isFr ? 'Installations BT & Postes HTA' : 'LV Installations & MV Substations'}
+                  </span>
                 </div>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                {isFr ? (
-                  <>
-                    Normes d'application obligatoire pour les réseaux industriels : choix des régimes de neutre (TT, TN, IT), coupure automatique de l'alimentation en cas de défaut d'isolement, protection différentielle et sections minimales des conducteurs de protection (PE).
-                  </>
-                ) : (
-                  <>
-                    Mandatory standards for industrial grids: earthing arrangements (TT, TN, IT schemes), automatic disconnection of supply upon earth fault, residual current devices (RCD), and protective earth (PE) cross-section sizing.
-                  </>
-                )}
+              <p className="text-sm text-[#33474B] leading-relaxed">
+                {isFr
+                  ? "Schémas des liaisons à la terre (TT, TN-S, IT), coupure automatique en cas de défaut d'isolement et dimensionnement des conducteurs de protection."
+                  : 'Earthing arrangements (TT, TN-S, IT), automatic fault disconnection times, and protective earth conductor sizing.'}
               </p>
-              <div className="p-3 rounded-lg bg-slate-950 border border-slate-800 text-[11px] text-slate-400">
-                {isFr ? 'Temps de coupure maximal en 230/400V : 0.4 seconde en schéma TN' : 'Max disconnection time at 230/400V: 0.4 seconds in TN system'}
+              <div className="p-3 rounded bg-[#F6F4EE] border border-[#DEDACF] font-mono text-xs text-[#5C6C70]">
+                {isFr ? 'Temps de coupure max en schéma TN 230/400 V : 0.4 s' : 'Max disconnection time in 230/400 V TN system: 0.4 s'}
               </div>
             </div>
 
-            <div className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4 font-mono">
+            <div className="p-6 rounded-[10px] bg-[#FFFDF9] border border-[#DEDACF] space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
-                  <Award className="w-5 h-5" />
-                </div>
+                <Award className="w-5 h-5 text-[#B8872D]" />
                 <div>
-                  <h3 className="text-base font-bold text-white">Habilitations & Sécurité</h3>
-                  <span className="text-xs text-purple-400 font-bold">{isFr ? 'Habilitations B1V, B2V, BR, BC, H1V, H2V, HC' : 'Worker Electrical Certifications'}</span>
+                  <h3 className="text-lg font-bold text-[#17282C]">NF C 18-510 · Consignation</h3>
+                  <span className="font-mono text-xs text-[#B8872D] font-semibold">
+                    B1V, B2V, BR, BC, H1V, H2V, HC
+                  </span>
                 </div>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                {isFr ? (
-                  <>
-                    Cadre réglementaire de consignation et d'intervention : vérification d'absence de tension (VAT), mise à la terre et en court-circuit (MALT/CC), balisage des zones de voisinage et délimitation stricte des accès en poste HTA/HTB.
-                  </>
-                ) : (
-                  <>
-                    Safety lockout-tagout (LOTO) protocols: live-line voltage detector verification (VAT), portable grounding and short-circuiting clamps, safety zone delimitation, and restricted switchgear access.
-                  </>
-                )}
+              <p className="text-sm text-[#33474B] leading-relaxed">
+                {isFr
+                  ? "Procédure stricte de consignation en 5 étapes : Séparer, Condamner, Identifier, Vérifier l'Absence de Tension (VAT) et Mettre à la Terre et en Court-Circuit (MALT/CC)."
+                  : 'Five-step lockout-tagout sequence: Disconnect, Lock, Identify, Verify Absence of Voltage (VAT), and Apply Earthing & Short-Circuit Clamps (MALT/CC).'}
               </p>
-              <div className="p-3 rounded-lg bg-slate-950 border border-slate-800 text-[11px] text-slate-400">
-                {isFr ? 'Règle d\'or : Séparer, Condamner, Identifier, Vérifier (VAT), Mettre à la terre' : 'Golden rules: Disconnect, Lock, Tag, Verify zero voltage, Ground'}
+              <div className="p-3 rounded bg-[#F6F4EE] border border-[#DEDACF] font-mono text-xs text-[#5C6C70]">
+                NF C 18-510 · LOTO / VAT / MALT
               </div>
             </div>
           </div>
@@ -935,176 +973,172 @@ export const IndustrialProjectsView: React.FC<Props> = ({
           VIEW 5: INTERACTIVE FACILITY SCOPE & SIZING ADVISOR
       ────────────────────────────────────────────────────────────── */}
       {activeTab === 'ADVISOR' && (
-        <div className="space-y-6">
-          <div className="rounded-2xl bg-slate-900/90 border border-slate-800 p-6 sm:p-8 space-y-6">
-            <div className="max-w-3xl space-y-2">
-              <span className="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                <Sliders className="w-4 h-4" />
-                <span>{isFr ? 'Aide au Dimensionnement & Cadrage Technique' : 'Engineering Sizing & Scope Advisor'}</span>
+        <div className="rounded-[12px] epede-workbench p-6 sm:p-8 space-y-6">
+          <div className="max-w-3xl space-y-2">
+            <span className="font-mono text-xs uppercase tracking-[0.08em] text-[#6CC3BD] block">
+              {isFr ? 'Pré-Dimensionnement de Site' : 'Facility Scope & Sizing Workbench'}
+            </span>
+            <h2 className="text-xl sm:text-2xl font-bold text-[#F4F1E8]">
+              {isFr
+                ? 'Dimensionnez l’équipement d’une nouvelle installation industrielle'
+                : 'Configure primary sizing for an industrial facility'}
+            </h2>
+          </div>
+
+          {/* Inputs Form */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 font-mono text-xs">
+            <div className="space-y-2">
+              <label className="text-[#B9C2C0] font-semibold block">
+                {isFr ? 'Typologie de Site' : 'Facility Typology'}
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { id: 'factory', label_fr: 'Usine / Cimenterie', label_en: 'Manufacturing' },
+                  { id: 'mine', label_fr: 'Mine / Carrière', label_en: 'Mining / Quarry' },
+                  { id: 'hospital', label_fr: 'Hôpital Régional', label_en: 'Hospital / ICU' },
+                  { id: 'water', label_fr: 'Station d’Eau', label_en: 'Water Utility' },
+                ].map((ind) => (
+                  <button
+                    key={ind.id}
+                    type="button"
+                    onClick={() => setAdvisorIndustry(ind.id as any)}
+                    className={`p-2.5 rounded-lg border text-center transition-colors ${
+                      advisorIndustry === ind.id
+                        ? 'bg-[#147C78] border-[#6CC3BD] text-[#FFFDF9] font-semibold'
+                        : 'bg-[#162227] border-[#2A383C] text-[#B9C2C0] hover:text-[#F4F1E8]'
+                    }`}
+                  >
+                    {isFr ? ind.label_fr : ind.label_en}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="advisor-power-slider" className="text-[#B9C2C0] font-semibold block">
+                {isFr ? 'Puissance Appelée :' : 'Apparent Demand:'}{' '}
+                <span className="text-[#6CC3BD]">{advisorPowerKVA} kVA</span>
+              </label>
+              <input
+                id="advisor-power-slider"
+                type="range"
+                min="250"
+                max="5000"
+                step="250"
+                value={advisorPowerKVA}
+                onChange={(e) => setAdvisorPowerKVA(Number(e.target.value))}
+                className="w-full accent-[#147C78] cursor-pointer"
+              />
+              <div className="flex justify-between text-[10px] text-[#8A9694]">
+                <span>250 kVA</span>
+                <span>2 500 kVA</span>
+                <span>5 000 kVA</span>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[#B9C2C0] font-semibold block">
+                {isFr ? 'Tension d’Arrivée HTA' : 'MV Utility Incomer'}
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {[15, 20, 33].map((v) => (
+                  <button
+                    key={v}
+                    type="button"
+                    onClick={() => setAdvisorGridVoltageKV(v)}
+                    className={`p-2.5 rounded-lg border text-center transition-colors ${
+                      advisorGridVoltageKV === v
+                        ? 'bg-[#147C78] border-[#6CC3BD] text-[#FFFDF9] font-semibold'
+                        : 'bg-[#162227] border-[#2A383C] text-[#B9C2C0] hover:text-[#F4F1E8]'
+                    }`}
+                  >
+                    {v} kV
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Results Display */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-[#2A383C] font-mono">
+            <div className="p-4 rounded-lg bg-[#162227] border border-[#2A383C]">
+              <span className="text-[11px] text-[#B9C2C0] block mb-1">
+                {isFr ? 'Transformateur HTA/BT Normalisé' : 'Standard Transformer Rating'}
               </span>
-              <h2 className="text-xl sm:text-2xl font-bold text-white font-mono">
-                {isFr ? 'Dimensionnez l\'Équipement d\'un Nouveau Site' : 'Instant Sizing for a New Industrial Facility'}
-              </h2>
-              <p className="text-sm text-slate-300 leading-relaxed">
-                {isFr ? (
-                  <>
-                    Sélectionnez la typologie de votre site et sa puissance prévisionnelle pour obtenir immédiatement les calibres recommandés de transformateurs, groupes électrogènes, onduleurs et courants de service.
-                  </>
-                ) : (
-                  <>
-                    Select your facility typology and expected load demand to instantly determine recommended transformer kVA, backup generator ratings, UPS capacity, and nominal operating currents.
-                  </>
-                )}
+              <div className="text-xl font-bold text-[#6CC3BD]">
+                {advisorComputed.standardTrafoKva} kVA
+              </div>
+              <p className="text-[11px] text-[#8A9694] mt-1">
+                {advisorGridVoltageKV} kV / 400 V — Dyn11
               </p>
             </div>
 
-            {/* Inputs Form */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
-              <div className="space-y-2">
-                <label className="text-slate-400 font-bold block">{isFr ? 'Typologie d\'Activité :' : 'Facility Typology:'}</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {[
-                    { id: 'factory', label_fr: 'Usine / Cimenterie', label_en: 'Manufacturing' },
-                    { id: 'mine', label_fr: 'Mine / Carrière', label_en: 'Mining / Quarry' },
-                    { id: 'hospital', label_fr: 'Hôpital Régional', label_en: 'Hospital / ICU' },
-                    { id: 'water', label_fr: 'Station d\'Eau', label_en: 'Water Utility' }
-                  ].map((ind) => (
-                    <button
-                      key={ind.id}
-                      type="button"
-                      onClick={() => setAdvisorIndustry(ind.id as any)}
-                      className={`p-2.5 rounded-lg border text-center transition-all ${
-                        advisorIndustry === ind.id
-                          ? 'bg-amber-500/20 border-amber-400 text-amber-300 font-bold'
-                          : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      {isFr ? ind.label_fr : ind.label_en}
-                    </button>
-                  ))}
-                </div>
+            <div className="p-4 rounded-lg bg-[#162227] border border-[#2A383C]">
+              <span className="text-[11px] text-[#B9C2C0] block mb-1">
+                {isFr ? 'Groupe Électrogène Secours' : 'Emergency Gen-Set Rating'}
+              </span>
+              <div className="text-xl font-bold text-[#F4F1E8]">
+                {advisorComputed.genRecommendedKva} kVA
               </div>
-
-              <div className="space-y-2">
-                <label htmlFor="advisor-power-slider" className="text-slate-400 font-bold block">
-                  {isFr ? 'Puissance Appelée Prévue :' : 'Expected Apparent Power:'} <span className="text-sky-400">{advisorPowerKVA} kVA</span>
-                </label>
-                <input
-                  id="advisor-power-slider"
-                  type="range"
-                  min="250"
-                  max="5000"
-                  step="250"
-                  value={advisorPowerKVA}
-                  onChange={(e) => setAdvisorPowerKVA(Number(e.target.value))}
-                  className="w-full accent-sky-400 cursor-pointer"
-                />
-                <div className="flex justify-between text-[10px] text-slate-500">
-                  <span>250 kVA</span>
-                  <span>2 500 kVA</span>
-                  <span>5 000 kVA</span>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-slate-400 font-bold block">
-                  {isFr ? 'Tension Réseau HTA Disponible :' : 'Grid MV Incomer Voltage:'}
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {[15, 20, 33].map((v) => (
-                    <button
-                      key={v}
-                      type="button"
-                      onClick={() => setAdvisorGridVoltageKV(v)}
-                      className={`p-2.5 rounded-lg border text-center transition-all ${
-                        advisorGridVoltageKV === v
-                          ? 'bg-sky-500/20 border-sky-400 text-sky-300 font-bold'
-                          : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      {v} kV
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Results Display */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-slate-800 font-mono">
-              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800">
-                <span className="text-[11px] text-slate-400 block mb-1">
-                  {isFr ? 'Transformateur HTA/BT Recommandé' : 'Recommended Transformer Rating'}
-                </span>
-                <div className="text-xl font-black text-sky-400">
-                  {advisorComputed.standardTrafoKva} kVA
-                </div>
-                <p className="text-[10px] text-slate-500 mt-1">
-                  {advisorGridVoltageKV} kV / 400 V — Dyn11
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800">
-                <span className="text-[11px] text-slate-400 block mb-1">
-                  {isFr ? 'Secours Groupe Électrogène' : 'Emergency Gen-Set Capacity'}
-                </span>
-                <div className="text-xl font-black text-amber-400">
-                  {advisorComputed.genRecommendedKva} kVA
-                </div>
-                <p className="text-[10px] text-slate-500 mt-1">
-                  {isFr ? 'Démarrage automatique ATS < 15s' : 'Automatic ATS start in < 15s'}
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800">
-                <span className="text-[11px] text-slate-400 block mb-1">
-                  {isFr ? 'Onduleur Sans Coupure (UPS)' : 'Online Modular UPS System'}
-                </span>
-                <div className="text-xl font-black text-purple-400">
-                  {advisorComputed.upsKva} kVA
-                </div>
-                <p className="text-[10px] text-slate-500 mt-1">
-                  {isFr ? '0 ms / VFI double conversion' : '0 ms / VFI double conversion'}
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800">
-                <span className="text-[11px] text-slate-400 block mb-1">
-                  {isFr ? 'Courants Nominaux HTA / BT' : 'Rated Currents MV / LV'}
-                </span>
-                <div className="text-sm font-bold text-emerald-400">
-                  HTA: {advisorComputed.iprimaryA} A
-                </div>
-                <div className="text-sm font-bold text-emerald-300">
-                  BT: {advisorComputed.isecA} A
-                </div>
-              </div>
-            </div>
-
-            {/* Practical Advice Banner */}
-            <div className="p-4 rounded-xl bg-amber-950/20 border border-amber-800/40 text-xs font-mono space-y-1">
-              <div className="text-amber-300 font-bold flex items-center gap-1.5">
-                <AlertTriangle className="w-4 h-4 text-amber-400" />
-                <span>{isFr ? 'Recommandation Spécifique pour cette Typologie' : 'Typology Engineering Recommendation'}</span>
-              </div>
-              <p className="text-slate-300 leading-relaxed">
-                {advisorIndustry === 'hospital' && (isFr 
-                  ? 'Pour un hôpital : Obligation de schéma IT médicalisé (NF C 15-211) pour les blocs opératoires et salles de réveil avec transformateurs de séparation 230/230V et CPI dédié.' 
-                  : 'For healthcare facilities: Mandatory medical IT system (IEC 60364-7-710) for surgical rooms with medical isolating transformers and local insulation fault monitoring.')}
-                {advisorIndustry === 'mine' && (isFr 
-                  ? 'Pour une mine : Prévoyez des démarreurs progressifs ou variateurs moyenne tension pour les concasseurs afin d\'éviter les chutes de tension brutales sur le réseau 33 kV.' 
-                  : 'For mining sites: Install soft starters or medium-voltage VFDs on raw crushers to eliminate extreme voltage dips across the 33kV utility feeder.')}
-                {advisorIndustry === 'factory' && (isFr 
-                  ? 'Pour une usine : Batterie de condensateurs à gradins automatiques recommandée pour maintenir cos φ > 0.93 et éviter les pénalités pour consommation d\'énergie réactive.' 
-                  : 'For manufacturing: Automatic stepped capacitor banks recommended to sustain power factor > 0.93 and avoid utility reactive energy surcharges.')}
-                {advisorIndustry === 'water' && (isFr 
-                  ? 'Pour une station d\'eau : Filtres anti-harmoniques actifs requis sur les variateurs de fréquence des pompes de refoulement pour garantir THD-I < 5%.' 
-                  : 'For water utilities: Active harmonic filters required on high-power pump VFDs to guarantee input current total harmonic distortion THD-I < 5%.')}
+              <p className="text-[11px] text-[#8A9694] mt-1">
+                {isFr ? 'Inverseur ATS < 15 s' : 'ATS Transfer < 15 s'}
               </p>
             </div>
+
+            <div className="p-4 rounded-lg bg-[#162227] border border-[#2A383C]">
+              <span className="text-[11px] text-[#B9C2C0] block mb-1">
+                {isFr ? 'Onduleur Modulaire (UPS)' : 'Online Double-Conversion UPS'}
+              </span>
+              <div className="text-xl font-bold text-[#6CC3BD]">
+                {advisorComputed.upsKva} kVA
+              </div>
+              <p className="text-[11px] text-[#8A9694] mt-1">
+                0 ms · IEC 62040-3 VFI
+              </p>
+            </div>
+
+            <div className="p-4 rounded-lg bg-[#162227] border border-[#2A383C]">
+              <span className="text-[11px] text-[#B9C2C0] block mb-1">
+                {isFr ? 'Courants Assignés HTA / BT' : 'Nominal Currents MV / LV'}
+              </span>
+              <div className="text-sm font-bold text-[#F4F1E8]">
+                HTA: {advisorComputed.iprimaryA} A
+              </div>
+              <div className="text-sm font-bold text-[#6CC3BD]">
+                BT: {advisorComputed.isecA} A
+              </div>
+            </div>
+          </div>
+
+          {/* Practical Advice Banner */}
+          <div className="p-4 rounded-lg bg-[#162227] border border-[#2A383C] text-xs space-y-1">
+            <div className="font-mono text-[#6CC3BD] font-semibold flex items-center gap-1.5">
+              <AlertTriangle className="w-4 h-4" />
+              <span>
+                {isFr ? 'Prescription Technique Spécifique' : 'Typology Engineering Prescription'}
+              </span>
+            </div>
+            <p className="text-[#B9C2C0] leading-relaxed">
+              {advisorIndustry === 'hospital' &&
+                (isFr
+                  ? 'Hôpital : Schéma IT médicalisé obligatoire (NF C 15-211 / IEC 60364-7-710) pour les blocs opératoires avec transformateurs d’isolement 230/230 V et Contrôleur Permanent d’Isolement (CPI).'
+                  : 'Healthcare: Mandatory medical IT earthing system (IEC 60364-7-710) for surgical theatres with 230/230 V isolating transformers and permanent insulation monitoring (IMD).')}
+              {advisorIndustry === 'mine' &&
+                (isFr
+                  ? 'Mine : Démarreurs progressifs ou variateurs moyenne tension requis sur les concasseurs pour limiter les creux de tension sur l’artère 33 kV.'
+                  : 'Mining: Soft starters or MV variable frequency drives required on primary crushers to limit voltage sags on the 33 kV feeder.')}
+              {advisorIndustry === 'factory' &&
+                (isFr
+                  ? 'Usine : Batterie automatique de condensateurs avec selfs anti-harmoniques pour maintenir cos φ ≥ 0.93.'
+                  : 'Manufacturing: Detuned automatic capacitor bank required to maintain power factor cos φ ≥ 0.93.')}
+              {advisorIndustry === 'water' &&
+                (isFr
+                  ? 'Station de pompage : Filtres actifs d’harmoniques sur les variateurs VFD des pompes pour garantir THD-I < 5%.'
+                  : 'Water pumping: Active harmonic filtering on high-power pump VFDs to guarantee input current distortion THD-I < 5%.')}
+            </p>
           </div>
         </div>
       )}
-
     </div>
   );
 };

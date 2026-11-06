@@ -318,15 +318,15 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
   ];
 
   return (
-    <div className="space-y-6 text-[#F4F1E8]">
+    <div className="space-y-6 text-[#17282C]">
       
       {/* Top Bar: Back Button & CAD Breadcrumbs */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={onBack}
-            className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-[#A9ADA5] hover:text-[#D7A64A] transition-colors"
+            className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-[#5C6C70] hover:text-[#147C78] transition-colors cursor-pointer"
           >
             <ArrowLeft className="h-4 w-4" />
             <span>{locale === 'fr' ? 'RETOUR CATALOGUE' : 'BACK TO CATALOG'}</span>
@@ -336,10 +336,10 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
           <button
             type="button"
             onClick={() => setViewMode(prev => prev === 'visual_10_sections' ? 'overview' : 'visual_10_sections')}
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono font-black uppercase tracking-wider transition-all cursor-pointer border ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer border ${
               viewMode === 'visual_10_sections'
-                ? 'bg-[#D7A64A] text-[#0B0F12] border-[#D7A64A] shadow-md'
-                : 'bg-[#D7A64A]/15 hover:bg-[#D7A64A]/25 text-[#D7A64A] border-[#D7A64A]/40'
+                ? 'bg-[#147C78] text-white border-[#147C78] shadow-sm'
+                : 'bg-[#FFFDF9] hover:bg-[#E3EFEC] text-[#17282C] border-[#DEDACF]'
             }`}
           >
             <GraduationCap className="h-3.5 w-3.5" />
@@ -348,18 +348,15 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
                 ? (locale === 'fr' ? 'Vue CAO & Réseau' : 'CAD & Network View')
                 : (locale === 'fr' ? 'Apprentissage Visuel (10 Sec)' : 'Visual Learning (10 Sec)')}
             </span>
-            <span className="px-1.5 py-0.2 rounded bg-[#0B0F12] text-[#D7A64A] text-[10px] font-mono border border-[#D7A64A]/30">
-              EPEDE 2.0
-            </span>
           </button>
 
           {onCompareEquipment && (
             <button
               type="button"
               onClick={() => onCompareEquipment(equipment.id)}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#151C1E] hover:bg-[#567A87]/20 text-[#F4F1E8] border border-[#567A87]/40 text-xs font-mono font-bold uppercase tracking-wider transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FFFDF9] hover:border-[#147C78] text-[#17282C] border border-[#DEDACF] text-xs font-mono font-bold uppercase tracking-wider transition-colors cursor-pointer"
             >
-              <Scale className="h-3.5 w-3.5 text-[#D7A64A]" />
+              <Scale className="h-3.5 w-3.5 text-[#147C78]" />
               <span>{locale === 'fr' ? 'Comparer cet appareil' : 'Compare this asset'}</span>
             </button>
           )}
@@ -368,9 +365,9 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
             <button
               type="button"
               onClick={() => onNavigateContextStack(mappedNodeId)}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#151C1E] hover:bg-[#567A87]/20 text-[#F4F1E8] border border-[#567A87]/40 text-xs font-mono font-bold uppercase tracking-wider transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FFFDF9] hover:border-[#147C78] text-[#17282C] border border-[#DEDACF] text-xs font-mono font-bold uppercase tracking-wider transition-colors cursor-pointer"
             >
-              <Zap className="h-3.5 w-3.5 text-[#D7A64A]" />
+              <Zap className="h-3.5 w-3.5 text-[#B8872D]" />
               <span>{locale === 'fr' ? 'Épine Dorsale & TCC' : 'Spine & TCC Stack'}</span>
             </button>
           )}
@@ -379,20 +376,17 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
             <button
               type="button"
               onClick={() => setViewMode(prev => prev === 'universal_fiche' ? 'overview' : 'universal_fiche')}
-              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer border ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer border ${
                 viewMode === 'universal_fiche'
-                  ? 'bg-[#D7A64A] text-[#0B0F12] border-[#D7A64A] shadow-md'
-                  : 'bg-[#D7A64A]/15 hover:bg-[#D7A64A]/25 text-[#D7A64A] border-[#D7A64A]/40'
+                  ? 'bg-[#17282C] text-white border-[#17282C] shadow-sm'
+                  : 'bg-[#FFFDF9] hover:border-[#147C78] text-[#17282C] border-[#DEDACF]'
               }`}
             >
-              <FileText className="h-3.5 w-3.5" />
+              <FileText className="h-3.5 w-3.5 text-[#147C78]" />
               <span>
                 {viewMode === 'universal_fiche'
                   ? (locale === 'fr' ? 'Retour Vue CAO' : 'Back to CAD View')
                   : (locale === 'fr' ? 'Fiche Universelle (12 Sec)' : 'Universal Fiche (12 Sec)')}
-              </span>
-              <span className="px-1.5 py-0.2 rounded bg-[#0B0F12]/80 text-[#F4F1E8] text-[10px] font-mono border border-[#567A87]/40">
-                12/12
               </span>
             </button>
           )}
@@ -401,20 +395,17 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
             <button
               type="button"
               onClick={() => setViewMode(prev => prev === 'dossier_30_sections' ? 'overview' : 'dossier_30_sections')}
-              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer border ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer border ${
                 viewMode === 'dossier_30_sections'
-                  ? 'bg-[#F4F1E8] text-[#0B0F12] border-[#F4F1E8] shadow-md'
-                  : 'bg-[#151C1E] hover:bg-[#567A87]/20 text-[#F4F1E8] border-[#567A87]/40'
+                  ? 'bg-[#17282C] text-white border-[#17282C] shadow-sm'
+                  : 'bg-[#FFFDF9] hover:border-[#147C78] text-[#17282C] border-[#DEDACF]'
               }`}
             >
-              <FileText className="h-3.5 w-3.5" />
+              <FileText className="h-3.5 w-3.5 text-[#B8872D]" />
               <span>
                 {viewMode === 'dossier_30_sections'
                   ? (locale === 'fr' ? 'Retour Vue CAO' : 'Back to CAD View')
                   : (locale === 'fr' ? 'Dossier 30 Sections' : '30-Sec Dossier')}
-              </span>
-              <span className="px-1.5 py-0.2 rounded bg-[#0B0F12] text-[#A9ADA5] text-[10px] font-mono border border-[#567A87]/35">
-                30/30
               </span>
             </button>
           )}
@@ -423,20 +414,17 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
           <button
             type="button"
             onClick={() => setViewMode(prev => prev === 'aas_v3_shell' ? 'overview' : 'aas_v3_shell')}
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer border ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer border ${
               viewMode === 'aas_v3_shell'
-                ? 'bg-[#D7A64A] text-[#0B0F12] border-[#D7A64A] shadow-md'
-                : 'bg-[#151C1E] hover:bg-[#567A87]/20 text-[#F4F1E8] border-[#567A87]/40'
+                ? 'bg-[#17282C] text-white border-[#17282C] shadow-sm'
+                : 'bg-[#FFFDF9] hover:border-[#147C78] text-[#17282C] border-[#DEDACF]'
             }`}
           >
-            <Cpu className="h-3.5 w-3.5 text-[#D7A64A]" />
+            <Cpu className="h-3.5 w-3.5 text-[#147C78]" />
             <span>
               {viewMode === 'aas_v3_shell'
                 ? (locale === 'fr' ? 'Retour Vue CAO' : 'Back to CAD View')
                 : (locale === 'fr' ? 'Jumeau Numérique AAS v3' : 'AAS v3 Digital Twin')}
-            </span>
-            <span className="px-1.5 py-0.2 rounded bg-[#0B0F12] text-[#D7A64A] text-[10px] font-mono border border-[#567A87]/35">
-              IEC 63278
             </span>
           </button>
 
@@ -444,20 +432,17 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
           <button
             type="button"
             onClick={() => setViewMode(prev => prev === 'engineering_calculation' ? 'overview' : 'engineering_calculation')}
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer border ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer border ${
               viewMode === 'engineering_calculation'
-                ? 'bg-[#D7A64A] text-[#0B0F12] border-[#D7A64A] shadow-md'
-                : 'bg-[#151C1E] hover:bg-[#567A87]/20 text-[#F4F1E8] border-[#567A87]/40'
+                ? 'bg-[#147C78] text-white border-[#147C78] shadow-sm'
+                : 'bg-[#FFFDF9] hover:border-[#147C78] text-[#17282C] border-[#DEDACF]'
             }`}
           >
-            <Calculator className="h-3.5 w-3.5 text-[#D7A64A]" />
+            <Calculator className="h-3.5 w-3.5 text-[#147C78]" />
             <span>
               {viewMode === 'engineering_calculation'
                 ? (locale === 'fr' ? 'Retour Vue CAO' : 'Back to CAD View')
                 : (locale === 'fr' ? 'Calculs & Dimensionnement' : 'Calculations & Sizing')}
-            </span>
-            <span className="px-1.5 py-0.2 rounded bg-[#0B0F12] text-[#D7A64A] text-[10px] font-mono border border-[#567A87]/35">
-              IEC 60909
             </span>
           </button>
 
@@ -465,19 +450,19 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
           <button
             type="button"
             onClick={() => setViewMode(prev => prev === 'documentation' ? 'overview' : 'documentation')}
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer border ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer border ${
               viewMode === 'documentation'
-                ? 'bg-[#D7A64A] text-[#0B0F12] border-[#D7A64A] shadow-md'
-                : 'bg-[#151C1E] hover:bg-[#567A87]/20 text-[#F4F1E8] border-[#567A87]/40'
+                ? 'bg-[#17282C] text-white border-[#17282C] shadow-sm'
+                : 'bg-[#FFFDF9] hover:border-[#147C78] text-[#17282C] border-[#DEDACF]'
             }`}
           >
-            <FolderOpen className="h-3.5 w-3.5 text-[#D7A64A]" />
+            <FolderOpen className="h-3.5 w-3.5 text-[#B8872D]" />
             <span>
               {viewMode === 'documentation'
                 ? (locale === 'fr' ? 'Retour Vue CAO' : 'Back to CAD View')
                 : (locale === 'fr' ? 'Dossier Spécifications & Docs' : 'Specs & Doc Dossier')}
             </span>
-            <span className="px-1.5 py-0.2 rounded bg-[#0B0F12] text-[#D7A64A] text-[10px] font-mono border border-[#567A87]/35">
+            <span className="px-1.5 py-0.2 rounded bg-[#F6F4EE] text-[#17282C] text-[10px] font-mono border border-[#DEDACF]">
               {equipmentDocs.length}
             </span>
           </button>
@@ -503,39 +488,39 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
                 });
               }
             }}
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer border ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer border ${
               isBookmarked(equipment.id)
-                ? 'bg-[#D7A64A]/20 text-[#D7A64A] border-[#D7A64A]/50 shadow-sm'
-                : 'bg-[#151C1E] hover:bg-[#567A87]/20 text-[#F4F1E8] border-[#567A87]/40 hover:border-[#D7A64A]/50'
+                ? 'bg-[#E3EFEC] text-[#147C78] border-[#147C78]/40 shadow-sm'
+                : 'bg-[#FFFDF9] hover:border-[#147C78] text-[#17282C] border-[#DEDACF]'
             }`}
             title={locale === 'fr' ? 'Enregistrer dans vos signets' : 'Save to bookmarks'}
           >
             {isBookmarked(equipment.id) ? (
               <>
-                <Check className="h-3.5 w-3.5 text-[#D7A64A]" />
+                <Check className="h-3.5 w-3.5 text-[#147C78]" />
                 <span>{locale === 'fr' ? 'Enregistré' : 'Saved'}</span>
               </>
             ) : (
               <>
-                <Bookmark className="h-3.5 w-3.5 text-[#D7A64A]" />
+                <Bookmark className="h-3.5 w-3.5 text-[#B8872D]" />
                 <span>{locale === 'fr' ? 'Signet' : 'Bookmark'}</span>
               </>
             )}
           </button>
         </div>
 
-        <nav aria-label="Breadcrumb" className="font-mono text-xs text-[#A9ADA5] flex items-center gap-1.5 bg-[#151C1E] px-3 py-1.5 rounded-lg border border-[#567A87]/35">
+        <nav aria-label="Breadcrumb" className="font-mono text-xs text-[#5C6C70] flex items-center gap-1.5 bg-[#FFFDF9] px-3 py-1.5 rounded-lg border border-[#DEDACF]">
           <button
             type="button"
             onClick={() => onNavigateDomain(equipment.domain_code)}
-            className="text-[#D7A64A] hover:text-[#F4F1E8] font-bold"
+            className="text-[#147C78] hover:text-[#17282C] font-bold cursor-pointer"
           >
             {equipment.domain_code}
           </button>
-          <span className="text-[#567A87]">/</span>
-          <span className="text-[#A9ADA5] font-medium">{formatEntityType(equipment.entity_type, locale)}</span>
-          <span className="text-[#567A87]">/</span>
-          <span className="text-[#F4F1E8] font-bold">{equipment.id}</span>
+          <span className="text-[#DEDACF]">/</span>
+          <span className="text-[#5C6C70] font-medium">{formatEntityType(equipment.entity_type, locale)}</span>
+          <span className="text-[#DEDACF]">/</span>
+          <span className="text-[#17282C] font-bold">{equipment.id}</span>
         </nav>
       </div>
 
@@ -571,36 +556,16 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
 
       {/* Substation Bay Apparatus Quick-Switcher Ribbon */}
       {isSubstationApparatus && (
-        <div className="p-3 rounded-xl bg-[#151C1E] border border-[#567A87]/35 flex flex-wrap items-center justify-between gap-3 text-xs font-mono shadow-md">
-          <div className="flex items-center gap-2 text-[#A9ADA5]">
-            <span className="p-1 rounded bg-[#D7A64A]/15 text-[#D7A64A] border border-[#D7A64A]/35">
+        <div className="p-3 rounded-xl bg-[#FFFDF9] border border-[#DEDACF] flex flex-wrap items-center justify-between gap-3 text-xs font-mono shadow-sm">
+          <div className="flex items-center gap-2 text-[#5C6C70]">
+            <span className="p-1 rounded bg-[#E3EFEC] text-[#147C78] border border-[#147C78]/30">
               <Layers className="h-3.5 w-3.5" />
             </span>
-            <span className="font-bold text-[#F4F1E8]">
+            <span className="font-bold text-[#17282C]">
               {locale === 'fr' ? 'Appareils de Travée 225 kV :' : '225 kV Bay Apparatus:'}
             </span>
           </div>
           <div className="flex items-center gap-1.5 flex-wrap">
-          {/* EPEDE 2.0 10-Section Pedagogical Learning Template Button */}
-          <button
-            type="button"
-            onClick={() => setViewMode(prev => prev === 'visual_10_sections' ? 'overview' : 'visual_10_sections')}
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono font-black uppercase tracking-wider transition-all cursor-pointer border ${
-              viewMode === 'visual_10_sections'
-                ? 'bg-[#D7A64A] text-[#0B0F12] border-[#D7A64A] shadow-md'
-                : 'bg-[#D7A64A]/15 hover:bg-[#D7A64A]/25 text-[#D7A64A] border-[#D7A64A]/40'
-            }`}
-          >
-            <GraduationCap className="h-3.5 w-3.5" />
-            <span>
-              {viewMode === 'visual_10_sections'
-                ? (locale === 'fr' ? 'Vue CAO & Réseau' : 'CAD & Network View')
-                : (locale === 'fr' ? 'Apprentissage Visuel (10 Sec)' : 'Visual Learning (10 Sec)')}
-            </span>
-            <span className="px-1.5 py-0.2 rounded bg-[#0B0F12] text-[#D7A64A] text-[10px] font-mono border border-[#D7A64A]/30">
-              EPEDE 2.0
-            </span>
-          </button>
             {substationApparatusList.map((item) => {
               const isCurrent = canonicalEquipment?.id === item.id || equipment.id === item.id;
               return (
@@ -608,13 +573,13 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
                   key={item.id}
                   type="button"
                   onClick={() => onNavigateEquipment(item.id)}
-                  className={`px-2.5 py-1 rounded-lg border text-[11px] font-bold transition-all ${
+                  className={`px-2.5 py-1 rounded-lg border text-[11px] font-bold transition-all cursor-pointer ${
                     isCurrent
-                      ? 'bg-[#D7A64A] text-[#0B0F12] border-[#D7A64A] shadow-sm'
-                      : 'bg-[#0B0F12] text-[#A9ADA5] hover:text-[#F4F1E8] hover:border-[#D7A64A]/40 border-[#567A87]/35'
+                      ? 'bg-[#147C78] text-white border-[#147C78] shadow-sm'
+                      : 'bg-[#F6F4EE] text-[#5C6C70] hover:text-[#17282C] hover:border-[#147C78]/50 border-[#DEDACF]'
                   }`}
                 >
-                  <span className="font-mono font-extrabold mr-1 opacity-75">{item.code}</span>
+                  <span className="font-mono font-extrabold mr-1">{item.code}</span>
                   <span className="hidden sm:inline">· {locale === 'fr' ? item.name_fr : item.name_en}</span>
                 </button>
               );
@@ -639,21 +604,21 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
       />
 
       {/* Engineering Header */}
-      <header className="rounded-2xl border border-[#567A87]/35 bg-[#151C1E] p-6 sm:p-7 shadow-xl cad-grid-dense">
+      <header className="rounded-2xl border border-[#DEDACF] bg-[#FFFDF9] p-6 sm:p-8 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="font-mono text-xs font-bold text-[#D7A64A] tracking-wide bg-[#0B0F12] px-2.5 py-1 rounded border border-[#567A87]/35">
+              <span className="font-mono text-xs font-bold text-[#147C78] tracking-wide bg-[#E3EFEC] px-2.5 py-1 rounded border border-[#147C78]/30">
                 {formatEntityType(equipment.entity_type, locale)}
               </span>
-              <span className="font-mono text-xs font-bold text-[#A9ADA5]">
+              <span className="font-mono text-xs font-bold text-[#5C6C70]">
                 {locale === 'fr' ? `Domaine ${equipment.domain_code}` : `Domain ${equipment.domain_code}`}
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#F4F1E8] font-mono">
+            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-[#17282C]">
               {locale === 'fr' ? equipment.name_fr : equipment.name_en}
             </h1>
-            <p className="mt-2 text-xs sm:text-sm text-[#A9ADA5] leading-relaxed max-w-3xl font-medium">
+            <p className="mt-2.5 text-sm sm:text-base text-[#33474B] leading-relaxed max-w-3xl">
               {locale === 'fr' ? equipment.description_fr : equipment.description_en}
             </p>
           </div>
@@ -666,9 +631,9 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
         </div>
 
         {/* Dynamic Apparatus Compliance Status Ribbon */}
-        <div className="mt-5 pt-4 border-t border-[#567A87]/30 flex flex-wrap items-center justify-between gap-3">
+        <div className="mt-5 pt-4 border-t border-[#DEDACF] flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[11px] font-mono font-bold text-[#A9ADA5] uppercase tracking-wider">
+            <span className="text-[11px] font-mono font-bold text-[#5C6C70] uppercase tracking-wider">
               {locale === 'fr' ? 'Statut Normatif & Confiance :' : 'Normative Status & Evidence:'}
             </span>
             <EvidenceTrustBadge
@@ -807,22 +772,22 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
       {/* Main Content Area: Switch between Overview / CAD, Full 30-Section Dossier, AAS v3 Shell, Dedicated Calculation Workbench, or Documentation Dossier */}
       {viewMode === 'documentation' ? (
         <div className="space-y-6">
-          <div className="p-6 rounded-2xl bg-[#090D15] border border-sky-500/30 space-y-3">
+          <div className="p-6 rounded-2xl bg-[#FFFDF9] border border-[#DEDACF] space-y-3 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <span className="font-mono text-xs font-black uppercase tracking-widest text-sky-400 flex items-center gap-1.5">
+                <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#147C78] flex items-center gap-1.5">
                   <FolderOpen className="h-4 w-4" />
                   <span>{locale === 'fr' ? 'DOSSIER TECHNIQUE & SPÉCIFICATIONS APPAREIL' : 'EQUIPMENT TECHNICAL DOSSIER & SPECIFICATIONS'}</span>
                 </span>
-                <h3 className="text-xl font-black text-white font-mono uppercase">
+                <h3 className="text-xl font-extrabold text-[#17282C]">
                   {locale === 'fr' ? equipment.name_fr : equipment.name_en}
                 </h3>
               </div>
-              <span className="font-mono text-xs px-2.5 py-1 rounded bg-sky-500/10 text-sky-300 border border-sky-500/20 font-bold">
+              <span className="font-mono text-xs px-2.5 py-1 rounded bg-[#E3EFEC] text-[#147C78] border border-[#147C78]/30 font-bold">
                 {equipmentDocs.length} {locale === 'fr' ? 'Documents Rattachés' : 'Attached Documents'}
               </span>
             </div>
-            <p className="text-xs font-mono text-neutral-300">
+            <p className="text-xs text-[#33474B]">
               {locale === 'fr'
                 ? 'Documents d\'ingénierie formels et spécifications matérielles associés à cet appareil, incluant les paramètres physiques et clauses normatives.'
                 : 'Formal engineering specifications and technical datasheets associated with this apparatus, with structured parameters and governing clauses.'}
@@ -834,25 +799,25 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
               <div
                 key={doc.id}
                 onClick={() => setSelectedDocModal(doc)}
-                className="p-5 rounded-2xl bg-[#080C14] border border-[#1E293B] hover:border-sky-400 transition-all cursor-pointer flex flex-col justify-between space-y-4 group shadow-lg"
+                className="p-5 rounded-2xl bg-[#FFFDF9] border border-[#DEDACF] hover:border-[#147C78] transition-all cursor-pointer flex flex-col justify-between space-y-4 group shadow-sm"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-black uppercase text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">
+                    <span className="font-mono text-xs font-bold uppercase text-[#B8872D] bg-[#B8872D]/10 px-2 py-0.5 rounded border border-[#B8872D]/30">
                       {doc.documentNumber} ({doc.revision})
                     </span>
-                    <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-[#E3EFEC] text-[#147C78] border border-[#147C78]/30">
                       {doc.status}
                     </span>
                   </div>
-                  <h4 className="font-mono text-sm font-black text-white group-hover:text-sky-300 transition-colors">
+                  <h4 className="text-sm font-bold text-[#17282C] group-hover:text-[#147C78] transition-colors">
                     {locale === 'fr' ? doc.title_fr : doc.title_en}
                   </h4>
-                  <p className="font-sans text-xs text-neutral-300 line-clamp-2">
+                  <p className="font-sans text-xs text-[#5C6C70] line-clamp-2">
                     {locale === 'fr' ? doc.summary_fr : doc.summary_en}
                   </p>
                 </div>
-                <div className="pt-3 border-t border-[#162030] flex items-center justify-between text-xs font-mono text-sky-400 font-bold">
+                <div className="pt-3 border-t border-[#DEDACF] flex items-center justify-between text-xs font-mono text-[#147C78] font-bold">
                   <span>{doc.documentType}</span>
                   <span>{locale === 'fr' ? 'Consulter le Document →' : 'View Document →'}</span>
                 </div>
@@ -953,17 +918,17 @@ export const EquipmentDetailView: React.FC<EquipmentDetailViewProps> = ({
             <div className="space-y-6">
               
               {/* SYSTEM FUNCTION */}
-              <div className="rounded-xl border border-[#567A87]/35 bg-[#151C1E] p-5">
-                <h3 className="text-xs font-mono font-bold text-[#D7A64A] uppercase tracking-widest mb-2 flex items-center gap-1.5">
+              <div className="rounded-xl border border-[#DEDACF] bg-[#FFFDF9] p-5 shadow-sm">
+                <h3 className="text-xs font-mono font-bold text-[#147C78] uppercase tracking-widest mb-2 flex items-center gap-1.5">
                   <span>⚡</span> {locale === 'fr' ? 'FONCTION SYSTÈME & RÔLE EN EXPLOITATION' : 'SYSTEM FUNCTION & GRID ROLE'}
                 </h3>
-                <p className="text-sm text-[#F4F1E8] leading-relaxed font-medium">
+                <p className="text-sm text-[#33474B] leading-relaxed font-medium">
                   {locale === 'fr' ? equipment.function_fr : equipment.function_en}
                 </p>
                 {(equipment.typical_location_fr || equipment.typical_location_en) && (
-                  <div className="mt-3 pt-3 border-t border-[#567A87]/30 text-xs font-mono text-[#A9ADA5] flex items-center gap-1.5">
-                    <span className="text-[#D7A64A] font-bold">📍 {locale === 'fr' ? 'IMPLANTATION TYPIQUE :' : 'TYPICAL LOCATION:'}</span>
-                    <span className="text-[#F4F1E8] font-bold">{locale === 'fr' ? equipment.typical_location_fr : equipment.typical_location_en}</span>
+                  <div className="mt-3 pt-3 border-t border-[#DEDACF] text-xs font-mono text-[#5C6C70] flex items-center gap-1.5">
+                    <span className="text-[#B8872D] font-bold">📍 {locale === 'fr' ? 'IMPLANTATION TYPIQUE :' : 'TYPICAL LOCATION:'}</span>
+                    <span className="text-[#17282C] font-bold">{locale === 'fr' ? equipment.typical_location_fr : equipment.typical_location_en}</span>
                   </div>
                 )}
               </div>

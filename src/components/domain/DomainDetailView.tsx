@@ -15,7 +15,7 @@ import { StandardBadge } from '../ui/StandardBadge';
 import { VoltageIndicator } from '../ui/VoltageIndicator';
 import { ArrowLeft, ExternalLink, Zap, Globe, FileCode, ClipboardList, Award, CheckCircle2, Layers, ChevronDown, Activity } from 'lucide-react';
 import type { DomainCode, Subdomain } from '../../types/epede';
-import { EPEDE_MATURITY_REGISTRY } from '../../data/contentMaturityEngine';
+import { DOMAIN_EDITORIAL_ASSETS } from '../../data/assets/editorialAssetManifest';
 import { Phase2SpecViewer } from './Phase2SpecViewer';
 import { DomainAnsiTable } from './modules/DomainAnsiTable';
 import { DomainSystemsTab } from './modules/DomainSystemsTab';
@@ -305,50 +305,48 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
   const domainRoles = ENGINEERING_ROLES.filter((r) => r.domain_codes?.includes(domainCode));
   const displayRoles = domainRoles.length > 0 ? domainRoles : activeContent.roles;
 
-  // Header background & styling
-  const headerBg = isD11
-    ? 'bg-gradient-to-r from-[#3B0707] via-[#200A0A] to-[#0D1117] border-red-900/60'
-    : isD16
-    ? 'bg-gradient-to-r from-[#3B0707] via-[#2D1606] to-[#0D1117] border-red-900/60'
-    : 'bg-[#0D1117] border-[#252E38] cad-grid-dense';
+  const domainEditorialAsset = DOMAIN_EDITORIAL_ASSETS[domainCode] || DOMAIN_EDITORIAL_ASSETS.D04;
 
   return (
-    <div className="space-y-6">
-      
-      {/* Top Back Navigation Bar */}
-      <div className="flex items-center justify-between">
+    <div className="space-y-10 pb-20 text-[#17282C] font-sans">
+      {/* 1. Back-to-Directory & Domain Context Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[#17282C] pt-6">
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-neutral-400 hover:text-cyan-400 transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-[#17282C] hover:text-[#147C78] transition-colors"
         >
-          <ArrowLeft className="h-4 w-4" />
-          <span>{locale === 'fr' ? 'RETOUR À LA VUE GLOBALE' : 'BACK TO GLOBAL VIEW'}</span>
+          <ArrowLeft className="h-4 w-4 text-[#147C78]" />
+          <span>{locale === 'fr' ? 'Retour au Répertoire des Domaines' : 'Back to Domains Directory'}</span>
         </button>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
           {onNavigateContextStack && (
             <button
               type="button"
               onClick={() => onNavigateContextStack(DOMAIN_SPINE_MAPPING[domainCode] || 'node-trafo-main-30')}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-mono text-xs font-bold transition-all shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#17282C] hover:bg-[#147C78] text-[#FFFDF9] font-semibold transition-colors"
             >
-              <Zap className="h-3.5 w-3.5 text-sky-200" />
+              <Zap className="h-3.5 w-3.5 text-[#B8872D]" />
               <span>{locale === 'fr' ? 'Épine Dorsale & TCC' : 'Spine & TCC Stack'}</span>
             </button>
           )}
-          <span className="font-mono text-xs font-bold text-neutral-500">
+          <span className="text-[#5C6C70] font-semibold uppercase">
             {domain.domain_group === 'chain'
-              ? locale === 'fr' ? 'CHAÎNE PHYSIQUE' : 'PHYSICAL CHAIN'
-              : locale === 'fr' ? 'DISCIPLINE SYSTÈME' : 'ENGINEERING DISCIPLINE'}
+              ? locale === 'fr'
+                ? 'Chaîne Physique'
+                : 'Physical Chain'
+              : locale === 'fr'
+              ? 'Discipline Transversale'
+              : 'Transversal Discipline'}
           </span>
-          <span className="font-mono text-xs font-bold text-cyan-400 bg-[#080B10] px-2.5 py-1 rounded-lg border border-[#252E38]">
+          <span className="font-bold text-[#147C78] bg-[#E3EFEC] px-2.5 py-1 rounded-full border border-[#147C78]/30">
             {domain.code}
           </span>
         </div>
       </div>
 
-      {/* EPEDE Master Physical Chain Stepper Navigator (Production → Architecture → Transport → Postes → Distribution → Installations → Tableaux) */}
+      {/* Physical Chain Stepper Navigator (D01–D06) */}
       {isChainDomain && (
         <PowerSystemChainNavigator
           currentStageId={currentChainStageId}
@@ -357,174 +355,143 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
         />
       )}
 
-      {/* Domain Header Screen */}
-      <header
-        className={`rounded-2xl border p-6 sm:p-8 relative overflow-hidden shadow-2xl ${headerBg}`}
-      >
-        <div className="relative z-10">
-          <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="font-mono text-xs font-bold tracking-widest text-cyan-400 uppercase">
-                DOMAIN {domain.code} · CAD ARCHITECTURE v1.2
-              </span>
-              <EvidenceTrustBadge
-                type="VERIFIED_STANDARD"
-                locale={locale}
-                size="sm"
-                governingStandard={`IEC / CIGRE / NF · Domain ${domain.code}`}
-              />
+      {/* 2. Bright Editorial Domain Header + Domain-Specific Visual */}
+      <header className="rounded-[12px] border border-[#DEDACF] bg-[#FFFDF9] overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-12">
+          <div className="lg:col-span-7 p-6 sm:p-10 flex flex-col justify-between space-y-6">
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <span className="epede-eyebrow">
+                  {locale === 'fr' ? `Domaine ${domain.code}` : `Domain ${domain.code}`}
+                </span>
+                <EvidenceTrustBadge
+                  type="VERIFIED_STANDARD"
+                  locale={locale}
+                  size="sm"
+                  governingStandard={pedagogicalGuide.primaryStandard || `IEC / IEEE · ${domain.code}`}
+                />
+                {(isD11 || isD16) && (
+                  <span className="font-mono text-[11px] text-[#B91C1C] bg-[#FEE2E2] px-2.5 py-0.5 rounded-full font-semibold">
+                    {locale === 'fr' ? 'Protection & Sécurité Critique' : 'Safety & Protection Critical'}
+                  </span>
+                )}
+              </div>
+
+              <h1 className="epede-h1">
+                {locale === 'fr' ? domain.name_fr : domain.name_en}
+              </h1>
+
+              <p className="epede-lead">
+                {locale === 'fr' ? domain.description_fr : domain.description_en}
+              </p>
             </div>
-            {isD11 && (
-              <span className="font-mono text-xs text-red-200 bg-red-950/90 border border-red-800 px-3 py-1 rounded font-bold tracking-wider uppercase">
-                ⚠️ CRITICAL PROTECTION & MEASUREMENTS
-              </span>
-            )}
+
+            {/* Domain Metadata Strip */}
+            <div className="pt-6 border-t border-[#DEDACF] grid grid-cols-2 sm:grid-cols-3 gap-4 font-mono text-xs">
+              <div>
+                <span className="text-[10px] text-[#5C6C70] uppercase block">
+                  {locale === 'fr' ? 'Plage de Tension' : 'Voltage Envelope'}
+                </span>
+                <span className="text-[#17282C] font-semibold mt-0.5 block">
+                  {pedagogicalGuide.voltageLevel}
+                </span>
+              </div>
+              <div>
+                <span className="text-[10px] text-[#5C6C70] uppercase block">
+                  {locale === 'fr' ? 'Norme Directrice' : 'Primary Standard'}
+                </span>
+                <span className="text-[#147C78] font-semibold mt-0.5 block">
+                  {pedagogicalGuide.primaryStandard}
+                </span>
+              </div>
+              <div className="col-span-2 sm:col-span-1">
+                <span className="text-[10px] text-[#5C6C70] uppercase block">
+                  {locale === 'fr' ? 'Appareils Documentés' : 'Documented Assets'}
+                </span>
+                <span className="text-[#B8872D] font-semibold mt-0.5 block">
+                  {domainEquipments.length} {locale === 'fr' ? 'fiches CEI' : 'IEC sheets'}
+                </span>
+              </div>
+            </div>
           </div>
 
-          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-[#F3F4F6] font-mono">
-            {locale === 'fr' ? domain.name_fr : domain.name_en}
-          </h1>
-
-          <p className="mt-2 text-sm sm:text-base text-neutral-300 max-w-3xl leading-relaxed font-medium">
-            {locale === 'fr' ? domain.description_fr : domain.description_en}
-          </p>
-
-          {/* Key Domain Tags / Voltage indicator */}
-          <div className="mt-6 pt-5 border-t border-[#252E38] flex flex-wrap items-center justify-between gap-4">
-            <div className="flex flex-wrap items-center gap-2">
-              {isD01 && (
-                <>
-                  {['Hydro', 'Thermal', 'Nuclear', 'Solar PV', 'Wind', 'Biomass'].map((tag) => (
-                    <span
-                      key={tag}
-                      className="font-mono text-xs font-bold bg-[#080B10] text-neutral-300 px-2.5 py-1 rounded border border-[#252E38]"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </>
-              )}
-              {isD11 && (
-                <>
-                  {['87T', '87G', '87B', '21', '50/51', '67N', '81', 'IEC 60255'].map((tag) => (
-                    <span
-                      key={tag}
-                      className="font-mono text-xs bg-red-950/90 text-red-200 font-bold px-2.5 py-1 rounded border border-red-800"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </>
-              )}
-              {!isD01 && !isD11 && (
-                <span className="font-mono text-xs font-bold text-neutral-400">
-                  {domainEquipments.length} {locale === 'fr' ? 'équipements documentés' : 'documented equipment'}
-                </span>
-              )}
-            </div>
-
-            {/* Voltage Level */}
-            <div className="flex items-center gap-2 font-mono text-xs font-bold">
-              <span className="text-neutral-500">{locale === 'fr' ? 'Niveau de tension :' : 'Voltage Level:'}</span>
-              <span className="text-cyan-400 font-bold">
-                {isD01
-                  ? '11 kV → 225 kV (GSU)'
-                  : isD02
-                  ? '225 kV · 90 kV · 30 kV · 400 V'
-                  : isD05
-                  ? '30 kV · 15 kV · 400 V / 230 V (HTA/BT)'
-                  : isD06
-                  ? '400 V / 230 V L1-L2-L3-N-PE (BT)'
-                  : isD07
-                  ? '24 V DC · 400 V / 230 V (Automatisme & Contrôle)'
-                  : isD08
-                  ? '12 V / 24 V / 48 V DC · PoE 802.3bt (Courants Faibles)'
-                  : isD09
-                  ? 'Edge / Cloud · IoT / Télémétrie · IIoT'
-                  : isD11
-                  ? 'HTB / HTA / BT'
-                  : '225 kV / 30 kV'}
+          {/* Domain-Specific Photograph / Schematic Frame */}
+          <figure className="lg:col-span-5 relative min-h-[240px] lg:min-h-full bg-[#10191D] overflow-hidden border-t lg:border-t-0 lg:border-l border-[#DEDACF]">
+            <img
+              src={domainEditorialAsset.src}
+              alt={locale === 'fr' ? domainEditorialAsset.alt.fr : domainEditorialAsset.alt.en}
+              className="w-full h-full object-cover epede-photo-grade"
+              loading="lazy"
+            />
+            <figcaption className="absolute bottom-3 left-3 right-3 px-3.5 py-2 rounded bg-[#10191D]/90 text-[#F4F1E8] font-mono text-[11px] flex items-center justify-between gap-2">
+              <span className="truncate">
+                {domain.code} · {locale === 'fr' ? domain.short_fr : domain.short_en}
               </span>
+              <span className="text-[#6CC3BD] shrink-0">{pedagogicalGuide.voltageLevel}</span>
+            </figcaption>
+          </figure>
+        </div>
+
+        {/* Three Key Questions Index Row */}
+        <div className="border-t border-[#DEDACF] bg-[#F6F4EE] p-6 sm:px-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <span className="font-mono text-[11px] font-semibold text-[#147C78] uppercase block">
+              {locale === 'fr' ? '01 · Rôle dans le Réseau' : '01 · Role in the Grid'}
+            </span>
+            <p className="text-xs text-[#33474B] mt-1 leading-relaxed">
+              {locale === 'fr' ? pedagogicalGuide.roleInGrid.fr : pedagogicalGuide.roleInGrid.en}
+            </p>
+          </div>
+          <div>
+            <span className="font-mono text-[11px] font-semibold text-[#147C78] uppercase block">
+              {locale === 'fr' ? '02 · Objectif d’Ingénierie' : '02 · Key Learning Objective'}
+            </span>
+            <p className="text-xs text-[#33474B] mt-1 leading-relaxed">
+              {(locale === 'fr'
+                ? pedagogicalGuide.learningObjectives.fr[0]
+                : pedagogicalGuide.learningObjectives.en[0]) ||
+                (locale === 'fr' ? domain.description_fr : domain.description_en)}
+            </p>
+          </div>
+          <div>
+            <span className="font-mono text-[11px] font-semibold text-[#B8872D] uppercase block">
+              {locale === 'fr' ? '03 · Passerelle de Calcul & Norme' : '03 · Linked Solver & Code'}
+            </span>
+            <div className="mt-1.5 flex flex-wrap items-center gap-2 font-mono text-xs">
+              <button
+                type="button"
+                onClick={() => onNavigateView?.('calculators')}
+                className="text-[#17282C] font-semibold underline hover:text-[#147C78]"
+              >
+                {pedagogicalGuide.keyCalculators[0]
+                  ? locale === 'fr'
+                    ? pedagogicalGuide.keyCalculators[0].labelFr
+                    : pedagogicalGuide.keyCalculators[0].labelEn
+                  : locale === 'fr'
+                  ? 'Solveurs CEI'
+                  : 'IEC Solvers'}
+              </button>
+              <span className="text-[#5C6C70]">·</span>
+              <button
+                type="button"
+                onClick={() => onNavigateView?.('standards')}
+                className="text-[#147C78] font-semibold hover:underline"
+              >
+                {pedagogicalGuide.primaryStandard}
+              </button>
             </div>
           </div>
         </div>
       </header>
 
-      {/* 3-PILLAR PEDAGOGICAL ORIENTATION HEADER (AUDIT REPORT §2.2 & §4) */}
-      <PedagogicalPageOrientationHeader
-        locale={locale}
-        whereAmI={{
-          domainName: `${domainCode} · ${locale === 'fr' ? domain.name_fr : domain.name_en}`,
-          roleInGrid: locale === 'fr' ? pedagogicalGuide.roleInGrid.fr : pedagogicalGuide.roleInGrid.en,
-          voltageLevel: pedagogicalGuide.voltageLevel,
-          stageNumber: domainCode,
-          categoryTag: domain.short_fr || domain.short_en,
-        }}
-        learningObjectives={locale === 'fr' ? pedagogicalGuide.learningObjectives.fr : pedagogicalGuide.learningObjectives.en}
-        nextActions={[
-          {
-            id: 'calculator',
-            label: pedagogicalGuide.keyCalculators[0]
-              ? (locale === 'fr' ? pedagogicalGuide.keyCalculators[0].labelFr : pedagogicalGuide.keyCalculators[0].labelEn)
-              : (locale === 'fr' ? "Calculateurs & Outils d'ingénierie" : 'Calculators & Engineering Tools'),
-            description: locale === 'fr' ? "Calculs d'ingénierie avec hypothèses explicites" : 'Engineering calculations with explicit bounds',
-            onClick: () => {
-              if (onNavigateView) {
-                onNavigateView('reference-hub');
-              } else {
-                window.location.hash = '#/centre-reference';
-              }
-            },
-            badge: 'Hub',
-          },
-          {
-            id: 'standard',
-            label: `${locale === 'fr' ? 'Norme de référence :' : 'Reference Standard:'} ${pedagogicalGuide.primaryStandard}`,
-            description: locale === 'fr' ? 'Consulter le cadre normatif dans la bibliothèque' : 'Inspect standard requirements in library',
-            onClick: () => {
-              if (onNavigateView) {
-                onNavigateView('standards');
-              } else {
-                window.location.hash = '#/standards';
-              }
-            },
-            badge: 'IEC / NF',
-          },
-          {
-            id: 'equipments',
-            label: locale === 'fr' ? 'Matériels & Équipements réels' : 'Real Equipment & Apparatus',
-            description: `${domainEquipments.length} ${locale === 'fr' ? 'appareils avec fiches techniques' : 'assets with datasheets'}`,
-            onClick: () => {
-              if (domainEquipments.length > 0) {
-                onSelectEquipment(domainEquipments[0].id);
-              }
-            },
-            badge: `${domainEquipments.length}`,
-          },
-          {
-            id: 'lab',
-            label: locale === 'fr' ? 'Laboratoire & Schéma unifilaire' : 'Laboratory & SLD Simulation',
-            description: locale === 'fr' ? 'Explorer les phénomènes électriques et régimes' : 'Explore electrical phenomena & regimes',
-            onClick: () => {
-              if (onNavigateView) {
-                onNavigateView('reference-hub');
-              } else {
-                window.location.hash = '#/centre-reference';
-              }
-            },
-            badge: 'Lab',
-          },
-        ]}
-      />
-
-      {/* UNIFIED EXPLORATION MODE SWITCHER (SINGLE SOURCE OF TRUTH FOR D01–D16) */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-sm">
+      {/* 3. Unified Exploration Mode Switcher (D01–D16) */}
+      <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-[10px] bg-[#FFFDF9] border border-[#DEDACF]">
         <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
-          <span className="text-xs font-mono font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
+          <span className="w-2 h-2 rounded-full bg-[#147C78]" />
+          <span className="text-xs font-mono font-semibold text-[#17282C] uppercase tracking-wider">
             {locale === 'fr'
-              ? `Mode d'Exploration ${domain.code} · ${domain.name_fr} :`
-              : `Exploration Mode ${domain.code} · ${domain.name_en}:`}
+              ? `Mode d'étude ${domain.code} :`
+              : `Study Mode ${domain.code}:`}
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -532,86 +499,90 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
             <button
               type="button"
               onClick={() => setModeForCurrentDomain('pedagogical_pilot')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all cursor-pointer ${
+              className={`px-4 py-2 rounded-full text-xs font-semibold font-mono transition-colors cursor-pointer ${
                 currentDomainMode === 'pedagogical_pilot'
-                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700'
+                  ? 'bg-[#17282C] text-[#FFFDF9]'
+                  : 'bg-[#F6F4EE] text-[#5C6C70] hover:text-[#17282C] border border-[#DEDACF]'
               }`}
             >
-              {locale === 'fr' ? '🎓 Parcours Pédagogique (Sections A à F)' : '🎓 6-Part Pedagogical Framework'}
+              {locale === 'fr' ? '01 · Parcours Pédagogique (A–F)' : '01 · Pedagogical Guide (A–F)'}
             </button>
           )}
           <button
             type="button"
             onClick={() => setModeForCurrentDomain('visual_journey')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-semibold font-mono transition-colors cursor-pointer ${
               currentDomainMode === 'visual_journey'
-                ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700'
+                ? 'bg-[#17282C] text-[#FFFDF9]'
+                : 'bg-[#F6F4EE] text-[#5C6C70] hover:text-[#17282C] border border-[#DEDACF]'
             }`}
           >
-            {locale === 'fr' ? '🛠️ Banc d\'Ingénierie & Simulateur Métier' : '🛠️ Interactive Engineering Workbench'}
+            {locale === 'fr' ? '02 · Banc d’Ingénierie Interactif' : '02 · Interactive Workbench'}
           </button>
           {isD15 && (
             <button
               type="button"
               onClick={() => setModeForCurrentDomain('asset_management')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all cursor-pointer ${
+              className={`px-4 py-2 rounded-full text-xs font-semibold font-mono transition-colors cursor-pointer ${
                 currentDomainMode === 'asset_management'
-                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700'
+                  ? 'bg-[#17282C] text-[#FFFDF9]'
+                  : 'bg-[#F6F4EE] text-[#5C6C70] hover:text-[#17282C] border border-[#DEDACF]'
               }`}
             >
-              {locale === 'fr' ? '🔬 Diagnostic DGA & Health Index' : '🔬 DGA Diagnostics & Health Index'}
+              {locale === 'fr' ? '03 · Diagnostic DGA & Santé' : '03 · DGA & Health Index'}
             </button>
           )}
           <button
             type="button"
             onClick={() => setModeForCurrentDomain('spec_catalog')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-semibold font-mono transition-colors cursor-pointer ${
               currentDomainMode === 'spec_catalog'
-                ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700'
+                ? 'bg-[#17282C] text-[#FFFDF9]'
+                : 'bg-[#F6F4EE] text-[#5C6C70] hover:text-[#17282C] border border-[#DEDACF]'
             }`}
           >
-            {locale === 'fr' ? '📋 Fiches Sous-Domaines & Spécifications' : '📋 Subdomain Catalog & Specs'}
+            {locale === 'fr' ? '04 · Sous-Domaines & Spécifications' : '04 · Subdomains & Specs'}
           </button>
         </div>
       </div>
 
-      {/* UNIFIED COLLAPSIBLE DIAGNOSTICS, TRACEABILITY & NCR TRAY (ALL DOMAINS D01–D16) */}
-      <div className="rounded-xl border border-slate-800 bg-slate-900/50 overflow-hidden">
+      {/* Collapsible Diagnostics, Traceability & NCR Tray */}
+      <div className="rounded-[10px] border border-[#DEDACF] bg-[#FFFDF9] overflow-hidden">
         <button
           type="button"
           onClick={() => setShowD06Metrics(!showD06Metrics)}
-          className="w-full flex items-center justify-between p-2.5 px-4 text-xs font-mono font-bold text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all cursor-pointer"
+          className="w-full flex items-center justify-between p-3.5 px-5 text-xs font-mono font-semibold text-[#17282C] hover:bg-[#F6F4EE] transition-colors cursor-pointer"
         >
           <div className="flex items-center gap-2">
-            <Activity className="w-4 h-4 text-amber-400" />
+            <Activity className="w-4 h-4 text-[#147C78]" />
             <span>
               {locale === 'fr'
-                ? 'Traçabilité Système, Métriques KPI & Registre NCR (Conformité)'
+                ? 'Traçabilité Système, Métriques KPI & Registre NCR'
                 : 'System Traceability, KPI Metrics & NCR Registry'}
             </span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
-              {domainEquipments.length} {locale === 'fr' ? 'équipements' : 'assets'}
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#F6F4EE] text-[#5C6C70] border border-[#DEDACF]">
+              {domainEquipments.length} {locale === 'fr' ? 'appareils' : 'assets'}
             </span>
           </div>
-          <div className="flex items-center gap-2 text-slate-400 text-[11px]">
+          <div className="flex items-center gap-2 text-[#5C6C70] text-[11px]">
             <span>
               {showD06Metrics
                 ? locale === 'fr'
                   ? 'Masquer'
                   : 'Hide'
                 : locale === 'fr'
-                  ? 'Afficher les métriques globales'
-                  : 'Show global metrics'}
+                ? 'Afficher'
+                : 'Expand'}
             </span>
-            <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${showD06Metrics ? 'rotate-180' : ''}`} />
+            <ChevronDown
+              className={`w-4 h-4 transition-transform duration-200 ${
+                showD06Metrics ? 'rotate-180' : ''
+              }`}
+            />
           </div>
         </button>
         {showD06Metrics && (
-          <div className="p-4 space-y-4 border-t border-slate-800 bg-slate-950/40">
+          <div className="p-5 space-y-4 border-t border-[#DEDACF] bg-[#10191D] text-[#F4F1E8]">
             <ObjectRelationshipActionBar
               nodeId={DOMAIN_SPINE_MAPPING[domainCode] || 'node-trafo-main-30'}
               locale={locale}
@@ -624,10 +595,7 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
               onSelectEquipment={onSelectEquipment}
               onNavigateView={onNavigateView}
             />
-            <DomainPendingIssuesPanel
-              locale={locale}
-              domainCode={domainCode}
-            />
+            <DomainPendingIssuesPanel locale={locale} domainCode={domainCode} />
           </div>
         )}
       </div>
@@ -961,11 +929,11 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           {subdomains.length > 0 && (
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-mono font-bold text-xs sm:text-sm text-white uppercase tracking-widest flex items-center gap-2">
-              <span className="text-cyan-400">◈</span>
+            <h3 className="font-mono font-bold text-xs sm:text-sm text-[#17282C] uppercase tracking-widest flex items-center gap-2">
+              <span className="text-[#147C78]">◈</span>
               <span>{locale === 'fr' ? 'SOUS-DOMAINES & TECHNOLOGIES' : 'SUBDOMAINS & TECHNOLOGIES'}</span>
             </h3>
-            <span className="font-mono text-xs font-bold text-neutral-500">
+            <span className="font-mono text-xs font-bold text-[#5C6C70]">
               {subdomains.length} {locale === 'fr' ? 'sous-domaines' : 'subdomains'}
             </span>
           </div>
@@ -981,12 +949,12 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
                   onClick={() => setActiveSubdomainCode(sub.code)}
                   className={`shrink-0 px-4 py-2.5 rounded-xl border text-left transition-all ${
                     isSelected
-                      ? 'border-cyan-400 bg-cyan-500/10 text-cyan-300 shadow-md ring-1 ring-cyan-400'
-                      : 'border-[#252E38] bg-[#0D1117] text-neutral-400 hover:text-white hover:border-cyan-500/40'
+                      ? 'border-[#147C78] bg-[#E3EFEC] text-[#17282C] shadow-sm ring-1 ring-[#147C78]/30'
+                      : 'border-[#DEDACF] bg-[#FFFDF9] text-[#5C6C70] hover:text-[#17282C] hover:border-[#147C78]/50'
                   }`}
                 >
-                  <div className="font-mono text-xs font-bold text-cyan-400">{sub.code}</div>
-                  <div className="text-xs font-bold truncate max-w-[200px] mt-0.5 font-mono">
+                  <div className="font-mono text-xs font-bold text-[#147C78]">{sub.code}</div>
+                  <div className="text-xs font-bold truncate max-w-[200px] mt-0.5 text-[#17282C]">
                     {locale === 'fr' ? sub.name_fr : sub.name_en}
                   </div>
                 </button>
@@ -997,9 +965,9 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
       )}
 
       {/* 10 GROUPED CONTENT TABS */}
-      <section className="rounded-2xl border border-[#252E38] bg-[#0D1117] overflow-hidden shadow-xl">
+      <section className="rounded-2xl border border-[#DEDACF] bg-[#FFFDF9] overflow-hidden shadow-sm">
         {/* Navigation bar for the tabs */}
-        <div className="border-b border-[#252E38] bg-[#080B10] px-4 flex items-center gap-1 overflow-x-auto">
+        <div className="border-b border-[#DEDACF] bg-[#F6F4EE] px-4 flex items-center gap-1 overflow-x-auto">
           {[
             ...(['D07', 'D08', 'D09', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'D16'].includes(domainCode) ? [{ 
               id: 'workbench', 
@@ -1027,8 +995,8 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
                 onClick={() => setActiveGroupTab(tab.id as typeof activeGroupTab)}
                 className={`py-3.5 px-4 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 whitespace-nowrap font-mono ${
                   isTabActive
-                    ? 'border-cyan-400 text-cyan-300 bg-cyan-400/5'
-                    : 'border-transparent text-neutral-400 hover:text-white'
+                    ? 'border-[#147C78] text-[#17282C] bg-[#FFFDF9]'
+                    : 'border-transparent text-[#5C6C70] hover:text-[#17282C]'
                 }`}
               >
                 {locale === 'fr' ? tab.label_fr : tab.label_en}
@@ -1069,10 +1037,10 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           {/* 1. CONCEPT */}
           {activeGroupTab === 'concept' && (
             <div className="space-y-4 max-w-4xl">
-              <h4 className="text-lg font-bold uppercase tracking-tight text-white font-mono">
+              <h4 className="text-lg font-bold uppercase tracking-tight text-[#17282C] font-mono">
                 {locale === 'fr' ? '1. Principes Physiques & Variantes' : '1. Physical Principles & Variants'}
               </h4>
-              <p className="text-sm sm:text-base text-neutral-300 leading-relaxed whitespace-pre-line font-medium">
+              <p className="text-sm sm:text-base text-[#33474B] leading-relaxed whitespace-pre-line font-medium">
                 {locale === 'fr' ? activeContent.concept_fr : activeContent.concept_en}
               </p>
             </div>
@@ -1092,10 +1060,10 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           {/* 3. INGÉNIERIE */}
           {activeGroupTab === 'engineering' && (
             <div className="space-y-4 max-w-4xl">
-              <h4 className="text-lg font-bold uppercase tracking-tight text-white font-mono">
+              <h4 className="text-lg font-bold uppercase tracking-tight text-[#17282C] font-mono">
                 {locale === 'fr' ? '3. Philosophie d\'Ingénierie, Contrôle & Protection' : '3. Engineering Philosophy, Control & Protection'}
               </h4>
-              <p className="text-sm sm:text-base text-neutral-300 leading-relaxed whitespace-pre-line bg-[#080B10] p-5 rounded-xl border border-[#252E38] font-mono">
+              <p className="text-sm sm:text-base text-[#33474B] leading-relaxed whitespace-pre-line bg-[#F6F4EE] p-5 rounded-xl border border-[#DEDACF]">
                 {locale === 'fr' ? activeContent.engineering_fr : activeContent.engineering_en}
               </p>
             </div>
@@ -1126,7 +1094,7 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
                 );
               })()}
 
-              <h4 className="text-lg font-bold uppercase tracking-tight text-white font-mono pt-4 border-t border-slate-800">
+              <h4 className="text-lg font-bold uppercase tracking-tight text-[#17282C] font-mono pt-4 border-t border-[#DEDACF]">
                 {locale === 'fr' ? 'Formules Théoriques du Domaine' : 'Domain Theoretical Formulations'}
               </h4>
               <div className="space-y-4">
@@ -1140,7 +1108,7 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           {/* 5. NORMES */}
           {activeGroupTab === 'standards' && (
             <div className="space-y-4 max-w-4xl">
-              <h4 className="text-lg font-bold uppercase tracking-tight text-white font-mono">
+              <h4 className="text-lg font-bold uppercase tracking-tight text-[#17282C] font-mono">
                 {locale === 'fr' ? '5. Normes CEI & Standards Internationaux' : '5. IEC & International Standards'}
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1148,16 +1116,16 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
                   <div
                     key={std.id}
                     onClick={() => onSelectStandard(std.reference)}
-                    className="p-4 rounded-xl border border-[#252E38] bg-[#080B10] hover:border-cyan-400 cursor-pointer transition-colors"
+                    className="p-4 rounded-xl border border-[#DEDACF] bg-[#F6F4EE] hover:border-[#147C78] cursor-pointer transition-colors"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-mono text-sm font-bold text-cyan-400">{std.reference}</span>
-                      <span className="text-xs font-mono font-bold text-neutral-500">({std.issuer})</span>
+                      <span className="font-mono text-sm font-bold text-[#147C78]">{std.reference}</span>
+                      <span className="text-xs font-mono font-bold text-[#5C6C70]">({std.issuer})</span>
                     </div>
-                    <h5 className="font-bold uppercase tracking-tight text-sm text-white mt-1.5 font-mono">
+                    <h5 className="font-bold uppercase tracking-tight text-sm text-[#17282C] mt-1.5">
                       {locale === 'fr' ? std.title_fr : std.title_en}
                     </h5>
-                    <p className="text-xs text-neutral-400 mt-1 line-clamp-2 font-medium">
+                    <p className="text-xs text-[#5C6C70] mt-1 line-clamp-2 font-medium">
                       {locale === 'fr' ? std.scope_fr : std.scope_en}
                     </p>
                   </div>
@@ -1169,7 +1137,7 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           {/* 6. RÔLES */}
           {activeGroupTab === 'roles' && (
             <div className="space-y-4 max-w-4xl">
-              <h4 className="text-lg font-bold uppercase tracking-tight text-white font-mono">
+              <h4 className="text-lg font-bold uppercase tracking-tight text-[#17282C] font-mono">
                 {locale === 'fr' ? '6. Rôles d\'Ingénierie & Métiers Associés' : '6. Engineering Roles & Career Tracks'}
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1177,13 +1145,13 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
                   <div
                     key={r.id}
                     onClick={() => onSelectRole(r.slug)}
-                    className="p-4 rounded-xl border border-[#252E38] bg-[#080B10] hover:border-cyan-400 cursor-pointer transition-colors"
+                    className="p-4 rounded-xl border border-[#DEDACF] bg-[#F6F4EE] hover:border-[#147C78] cursor-pointer transition-colors"
                   >
                     <span className="text-xl">👷</span>
-                    <h5 className="font-bold uppercase tracking-tight text-sm text-white mt-2 font-mono">
+                    <h5 className="font-bold uppercase tracking-tight text-sm text-[#17282C] mt-2">
                       {locale === 'fr' ? r.name_fr : r.name_en}
                     </h5>
-                    <p className="text-xs text-neutral-400 mt-1 line-clamp-2 font-medium">
+                    <p className="text-xs text-[#5C6C70] mt-1 line-clamp-2 font-medium">
                       {locale === 'fr' ? r.description_fr : r.description_en}
                     </p>
                   </div>
@@ -1231,16 +1199,16 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           {/* 11. INFOGRAPHIES & SCHÉMATHÈQUE TECHNIQUE */}
           {activeGroupTab === 'visuals' && (
             <div className="space-y-6">
-              <div className="p-4 rounded-xl bg-cyan-950/20 border border-cyan-800/30 flex items-center justify-between">
+              <div className="p-4 rounded-xl bg-[#E3EFEC] border border-[#147C78]/30 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <span className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                  <span className="p-2 rounded-lg bg-[#FFFDF9] text-[#147C78] border border-[#147C78]/30">
                     <Layers className="w-5 h-5" />
                   </span>
                   <div>
-                    <h4 className="text-sm font-bold text-white font-mono">
+                    <h4 className="text-sm font-bold text-[#17282C] font-mono">
                       {locale === 'fr' ? 'SCHÉMATHÈQUE & INFOGRAPHIES TECHNIQUES' : 'TECHNICAL SCHEMATICS & INFOGRAPHICS'}
                     </h4>
-                    <p className="text-xs text-neutral-400">
+                    <p className="text-xs text-[#33474B]">
                       {locale === 'fr' 
                         ? 'Schémas unifilaires, architectures fonctionnelles et coupes interactives annotées avec références normatives CEI/IEEE.'
                         : 'Single-line diagrams, functional architectures, and interactive cutaways annotated with IEC/IEEE standards references.'}
@@ -1264,7 +1232,7 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
       {/* ========================================================================= */}
       {/* ENGINEERING CONTEXT INTELLIGENCE LAYER (CROSS-DOMAIN DECISION & TRACE)    */}
       {/* ========================================================================= */}
-      <section className="space-y-6 pt-4 border-t border-slate-800/80">
+      <section className="space-y-6 pt-4 border-t border-[#DEDACF]">
         <RoleExplorationToolbar locale={locale} />
 
         <EngineeringRelationshipTraceCard
@@ -1301,16 +1269,16 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
         />
 
         {/* POUR ALLER PLUS LOIN · BRIDGES & COMPLEMENTARY DOMAINS (AUDIT REPORT §2.3) */}
-        <div className="rounded-2xl border border-sky-200 dark:border-sky-900/60 bg-gradient-to-br from-sky-50/60 via-white to-amber-50/40 dark:from-slate-900 dark:via-slate-900/90 dark:to-slate-950 p-6 shadow-sm">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-sky-100 dark:border-slate-800 pb-4">
+        <div className="rounded-2xl border border-[#DEDACF] bg-[#FFFDF9] p-6 shadow-sm">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#DEDACF] pb-4">
             <div>
-              <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-sky-700 dark:text-sky-400 bg-sky-100 dark:bg-sky-950/60 px-2.5 py-1 rounded border border-sky-300 dark:border-sky-800">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#147C78] bg-[#E3EFEC] px-2.5 py-1 rounded border border-[#147C78]/30">
                 {locale === 'fr' ? 'POUR ALLER PLUS LOIN' : 'EXPLORE FURTHER'}
               </span>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white mt-2">
+              <h3 className="text-base font-bold text-[#17282C] mt-2">
                 {locale === 'fr' ? 'Interconnexions & Domaines Complémentaires' : 'Interconnections & Complementary Domains'}
               </h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 max-w-2xl">
+              <p className="text-xs text-[#5C6C70] mt-1 max-w-2xl">
                 {locale === 'fr'
                   ? 'Une installation électrique ne s\'analyse pas isolément : faites le lien avec les domaines amont/aval, les calculs normalisés et le cadre réglementaire.'
                   : 'An electrical installation cannot be analyzed in isolation: link with upstream/downstream domains, standardized calculations, and regulatory frameworks.'}
@@ -1325,7 +1293,7 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
                   window.location.hash = '#/centre-reference';
                 }
               }}
-              className="px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-mono text-xs font-bold transition-all shadow-sm shrink-0 flex items-center gap-2 cursor-pointer"
+              className="px-4 py-2.5 rounded-xl bg-[#147C78] hover:bg-[#0E5E5B] text-white font-mono text-xs font-bold transition-all shadow-sm shrink-0 flex items-center gap-2 cursor-pointer"
             >
               <Zap className="w-3.5 h-3.5" />
               <span>{locale === 'fr' ? 'Centre de Référence Technique →' : 'Technical Reference Hub →'}</span>
@@ -1342,15 +1310,15 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
                   window.location.hash = '#/standards';
                 }
               }}
-              className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 hover:border-amber-400 dark:hover:border-amber-500 transition-all text-left group cursor-pointer"
+              className="p-3.5 rounded-xl border border-[#DEDACF] bg-[#F6F4EE] hover:border-[#B8872D] transition-all text-left group cursor-pointer"
             >
-              <div className="font-mono text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase">
+              <div className="font-mono text-[10px] font-bold text-[#B8872D] uppercase">
                 {locale === 'fr' ? 'RÉFÉRENTIELS' : 'STANDARDS'}
               </div>
-              <div className="text-xs font-bold text-slate-900 dark:text-white mt-1 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+              <div className="text-xs font-bold text-[#17282C] mt-1 group-hover:text-[#B8872D] transition-colors">
                 {locale === 'fr' ? 'Normes & Contextes Cameroun' : 'Standards & Cameroon Grid'}
               </div>
-              <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+              <div className="text-[11px] text-[#5C6C70] mt-0.5">
                 {locale === 'fr' ? 'IEC, NF C, ARSEL & déclassements thermiques' : 'IEC, NF C, ARSEL & thermal derating'}
               </div>
             </button>
@@ -1364,15 +1332,15 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
                   window.location.hash = '#/calculators';
                 }
               }}
-              className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 hover:border-sky-400 dark:hover:border-sky-500 transition-all text-left group cursor-pointer"
+              className="p-3.5 rounded-xl border border-[#DEDACF] bg-[#F6F4EE] hover:border-[#147C78] transition-all text-left group cursor-pointer"
             >
-              <div className="font-mono text-[10px] font-bold text-sky-600 dark:text-sky-400 uppercase">
+              <div className="font-mono text-[10px] font-bold text-[#147C78] uppercase">
                 {locale === 'fr' ? 'CALCUL' : 'CALCULATION'}
               </div>
-              <div className="text-xs font-bold text-slate-900 dark:text-white mt-1 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
+              <div className="text-xs font-bold text-[#17282C] mt-1 group-hover:text-[#147C78] transition-colors">
                 {locale === 'fr' ? 'Calculateurs & Dimensionnement' : 'Calculators & Sizing'}
               </div>
-              <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+              <div className="text-[11px] text-[#5C6C70] mt-0.5">
                 {locale === 'fr' ? '19 calculateurs IEC avec hypothèses et limites' : '19 IEC calculators with validity ranges'}
               </div>
             </button>
@@ -1386,15 +1354,15 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
                   window.location.hash = '#/laboratory';
                 }
               }}
-              className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 hover:border-emerald-400 dark:hover:border-emerald-500 transition-all text-left group cursor-pointer"
+              className="p-3.5 rounded-xl border border-[#DEDACF] bg-[#F6F4EE] hover:border-[#147C78] transition-all text-left group cursor-pointer"
             >
-              <div className="font-mono text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase">
+              <div className="font-mono text-[10px] font-bold text-[#147C78] uppercase">
                 {locale === 'fr' ? 'EXPÉRIMENTATION' : 'EXPERIMENTATION'}
               </div>
-              <div className="text-xs font-bold text-slate-900 dark:text-white mt-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+              <div className="text-xs font-bold text-[#17282C] mt-1 group-hover:text-[#147C78] transition-colors">
                 {locale === 'fr' ? 'Laboratoire Virtuel & SLD' : 'Virtual Lab & SLD Explorer'}
               </div>
-              <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+              <div className="text-[11px] text-[#5C6C70] mt-0.5">
                 {locale === 'fr' ? 'Simulations de régimes et transitoires' : 'Regime and transient simulations'}
               </div>
             </button>

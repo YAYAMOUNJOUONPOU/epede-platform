@@ -1,36 +1,14 @@
 // src/components/home/HomeView.tsx
-// EPEDE 2.0 — Visual & Interactive Electrical Engineering Learning Environment Homepage
-// Implements the 8-Section Simplified & Immersive Homepage Architecture
+// EPEDE ProCode Bright Editorial & Technical Workbench Homepage
+// Implements the 10-scene narrative sequence from design-reference/EPEDE Master.dc.html & procode-spec.md
 
-import React, { useState } from 'react';
-import {
-  ArrowRight,
-  BookOpen,
-  Layers,
-  ShieldCheck,
-  Compass,
-  Cpu,
-  Activity,
-  Factory,
-  Wrench,
-  Zap,
-  MapPin,
-  CheckCircle2,
-  ChevronRight,
-  Eye,
-  FileText,
-  Play,
-} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 import type { DomainCode } from '../../types/epede';
 import type { CalculatorTabType } from '../calculators/services/calculationReportService';
 import type { SimulationTabType } from '../simulation/SimulationLabView';
 import type { StageId } from '../journey/types';
-import { CinematicVernovaHero } from './CinematicVernovaHero';
+import { EditorialImage } from '../common/EditorialImage';
 import { RealCameroonGeographicMap } from '../grid/RealCameroonGeographicMap';
-import { DynamicSectionBackground } from '../ui/DynamicSectionBackground';
-import { HOMEPAGE_IMAGE_LIBRARY } from '../../data/homepageImageLibrary';
-import { CANONICAL_POWER_STAGES, CanonicalPowerStage } from '../../data/canonicalPowerChain';
-import { PowerChain } from '../common/PowerChain';
 
 export interface HomeViewProps {
   locale: 'fr' | 'en';
@@ -48,440 +26,517 @@ export interface HomeViewProps {
   onNavigateDiagram?: () => void;
 }
 
-interface LearningPathwayCard {
-  id: string;
+interface HeroTheme {
+  key: string;
+  assetId: string;
+  volt: string;
+  domain: DomainCode;
+  en: { label: string; eyebrow: string; head: string; em: string; sub: string };
+  fr: { label: string; eyebrow: string; head: string; em: string; sub: string };
+  credit: string;
+}
+
+interface JourneyStageItem {
   num: string;
-  level: 'beginner' | 'technician' | 'engineer';
-  levelBadgeEn: string;
-  levelBadgeFr: string;
-  titleEn: string;
-  titleFr: string;
-  summaryEn: string;
-  summaryFr: string;
-  topicsEn: string[];
-  topicsFr: string[];
-  imageUrl: string;
-  targetDomain?: DomainCode;
-  targetView?: string;
+  stageId: string;
+  assetId: string;
+  volt: string;
+  domain: DomainCode;
+  en: {
+    short: string;
+    title: string;
+    purpose: string;
+    apparatus: { label: string; eqId: string }[];
+  };
+  fr: {
+    short: string;
+    title: string;
+    purpose: string;
+    apparatus: { label: string; eqId: string }[];
+  };
 }
 
-interface FeaturedEquipmentItem {
-  id: string;
-  nameEn: string;
-  nameFr: string;
-  voltageBadge: string;
-  iecSymbolLabel: string;
-  roleEn: string;
-  roleFr: string;
-  insideAnatomyEn: string;
-  insideAnatomyFr: string;
-  imageUrl: string;
-}
-
-interface MotorStarterElement {
-  code: string;
-  nameEn: string;
-  nameFr: string;
-  symbolText: string;
-  roleEn: string;
-  roleFr: string;
-  principleEn: string;
-  principleFr: string;
-  terminals: string;
-  equipmentId: string;
-}
-
-const LEARNING_PATHWAYS: LearningPathwayCard[] = [
+const HERO_THEMES: HeroTheme[] = [
   {
-    id: 'pathway-01-fundamentals',
+    key: 'production',
+    assetId: 'hero-production',
+    volt: '11–15 kV',
+    domain: 'D01',
+    en: {
+      label: 'Production',
+      eyebrow: 'PRODUCTION',
+      head: 'Power begins where',
+      em: 'energy is converted.',
+      sub: 'Understand how electricity is generated, moved and used—from real equipment to complete power systems. Hydro, thermal and solar plants turn primary energy into electricity at generator voltage.',
+    },
+    fr: {
+      label: 'Production',
+      eyebrow: 'PRODUCTION',
+      head: 'L’énergie naît là où',
+      em: 'elle est convertie.',
+      sub: 'Comprenez comment l’électricité est produite, transportée et utilisée — du matériel réel aux réseaux complets. Les centrales hydroélectriques, thermiques et solaires convertissent l’énergie primaire à la tension de l’alternateur.',
+    },
+    credit: 'EPEDE Verified Infrastructure Archive · Hydroelectric Generation (11–15 kV)',
+  },
+  {
+    key: 'transmission',
+    assetId: 'hero-transmission',
+    volt: '225 kV',
+    domain: 'D03',
+    en: {
+      label: 'Transmission',
+      eyebrow: 'HV TRANSMISSION',
+      head: 'Moved at high voltage,',
+      em: 'across the country.',
+      sub: 'Overhead corridors carry bulk power over long distances with low losses — protected by distance relays and supervised end to end.',
+    },
+    fr: {
+      label: 'Transport',
+      eyebrow: 'TRANSPORT HTB',
+      head: 'Transportée en haute tension,',
+      em: 'à travers tout le pays.',
+      sub: 'Les corridors aériens acheminent de grandes puissances sur de longues distances avec peu de pertes — protégés et supervisés de bout en bout.',
+    },
+    credit: 'EPEDE Verified Infrastructure Archive · 225 kV Bulk Transmission Corridor',
+  },
+  {
+    key: 'substation',
+    assetId: 'hero-substation',
+    volt: '225 / 90 kV',
+    domain: 'D04',
+    en: {
+      label: 'Substations',
+      eyebrow: 'SUBSTATIONS',
+      head: 'Switched, transformed',
+      em: 'and protected.',
+      sub: 'Grid nodes step voltage down, isolate faults in milliseconds and keep the interconnected network stable.',
+    },
+    fr: {
+      label: 'Postes',
+      eyebrow: 'POSTES ÉLECTRIQUES',
+      head: 'Commutée, transformée',
+      em: 'et protégée.',
+      sub: 'Les nœuds du réseau abaissent la tension, isolent les défauts en quelques millisecondes et maintiennent la stabilité du système.',
+    },
+    credit: 'EPEDE Verified Infrastructure Archive · 225/90 kV Substation Switchyard',
+  },
+  {
+    key: 'distribution',
+    assetId: 'hero-distribution',
+    volt: '30 kV → 0.4 kV',
+    domain: 'D05',
+    en: {
+      label: 'Distribution',
+      eyebrow: 'MV / LV DISTRIBUTION',
+      head: 'Delivered to every',
+      em: 'district and site.',
+      sub: 'Medium-voltage switchgear, feeders and ring main units bring power safely to towns, buildings and industrial plants.',
+    },
+    fr: {
+      label: 'Distribution',
+      eyebrow: 'DISTRIBUTION HTA / BT',
+      head: 'Livrée à chaque quartier',
+      em: 'et à chaque site.',
+      sub: 'Cellules HTA, départs et postes en boucle amènent l’énergie en toute sécurité aux villes, bâtiments et usines.',
+    },
+    credit: 'EPEDE Verified Infrastructure Archive · 30/15 kV MV Switchgear & RMUs',
+  },
+  {
+    key: 'industry',
+    assetId: 'hero-industry',
+    volt: '400 / 230 V',
+    domain: 'D06',
+    en: {
+      label: 'Industrial installations',
+      eyebrow: 'INDUSTRIAL INSTALLATIONS',
+      head: 'Put to work in',
+      em: 'industrial installations.',
+      sub: 'Switchboards, motor control centres and drives turn electrical energy into motion, heat and industrial process.',
+    },
+    fr: {
+      label: 'Installations industrielles',
+      eyebrow: 'INSTALLATIONS INDUSTRIELLES',
+      head: 'Mise au travail dans',
+      em: 'les installations industrielles.',
+      sub: 'Tableaux TGBT, centres de commande moteurs (MCC) et variateurs transforment l’énergie électrique en mouvement et procédé.',
+    },
+    credit: 'EPEDE Verified Infrastructure Archive · 400 V Switchboards & Motor Control Centres',
+  },
+  {
+    key: 'automation',
+    assetId: 'hero-automation',
+    volt: '24 V DC · IEC 61850',
+    domain: 'D07',
+    en: {
+      label: 'Automation & smart systems',
+      eyebrow: 'AUTOMATION · SMART SYSTEMS',
+      head: 'Supervised by',
+      em: 'smart, automated systems.',
+      sub: 'PLCs, SCADA and digital protection monitor and control the whole chain — from production to the final load.',
+    },
+    fr: {
+      label: 'Automatisme & systèmes intelligents',
+      eyebrow: 'AUTOMATISME · SYSTÈMES INTELLIGENTS',
+      head: 'Supervisée par des systèmes',
+      em: 'intelligents et automatisés.',
+      sub: 'API/PLC, SCADA et protections numériques surveillent et pilotent toute la chaîne — de la production à la charge finale.',
+    },
+    credit: 'EPEDE Verified Infrastructure Archive · SCADA & IEC 61850 Control Room',
+  },
+];
+
+const JOURNEY_STAGES: JourneyStageItem[] = [
+  {
     num: '01',
-    level: 'beginner',
-    levelBadgeEn: 'Beginner & Foundation',
-    levelBadgeFr: 'Débutant & Bases',
-    titleEn: 'Electrical Fundamentals',
-    titleFr: 'Fondamentaux de l’Électricité',
-    summaryEn:
-      'Understand the physical phenomena behind every circuit before touching a formula: charge, voltage, current, resistance, power vs. energy, AC/DC, and single-phase vs. three-phase.',
-    summaryFr:
-      'Comprendre concrètement les phénomènes physiques avant les formules : charge, tension, courant, résistance, puissance vs énergie, AC/DC, monophasé et triphasé.',
-    topicsEn: [
-      'Voltage (V), Current (A) & Resistance (Ω)',
-      'Ohm’s Law & Electrical Circuits',
-      'Power (W / kVA) vs. Energy (kWh)',
-      'AC vs. DC & 50 Hz Frequency',
-      'Single-Phase (230 V) vs. Three-Phase (400 V)',
-      'Power Factor (cos φ) & Active/Reactive Power',
-    ],
-    topicsFr: [
-      'Tension (V), Courant (A) et Résistance (Ω)',
-      'Loi d’Ohm et fonctionnement d’un circuit',
-      'Puissance (W / kVA) vs Énergie (kWh)',
-      'Courant continu (DC) vs alternatif (AC 50 Hz)',
-      'Monophasé (230 V) vs Triphasé (400 V)',
-      'Facteur de puissance (cos φ)',
-    ],
-    imageUrl: '/images/homepage_uploads/batch_04_image_019.jpg',
-    targetDomain: 'D16',
-    targetView: 'journey',
+    stageId: 'generation',
+    assetId: 'stage-01',
+    volt: '11–15 kV',
+    domain: 'D01',
+    en: {
+      short: 'Generation',
+      title: 'Generation',
+      purpose:
+        'Hydro, thermal and solar plants convert primary energy into electrical energy at generator voltage, under speed governor and automatic voltage regulator (AVR) control.',
+      apparatus: [
+        { label: 'Turbine / prime mover (Francis, Kaplan, Gas)', eqId: 'eq-hydro-dam-01' },
+        { label: 'Synchronous alternator (11–15.75 kV)', eqId: 'eq-sync-generator-01' },
+        { label: 'Static excitation system (AVR) & governor', eqId: 'eq-sync-generator-01' },
+        { label: 'Generator circuit breaker (IEEE C37.013)', eqId: 'eq-hv-cb-sf6-01' },
+      ],
+    },
+    fr: {
+      short: 'Production',
+      title: 'Production d’énergie',
+      purpose:
+        'Les centrales hydroélectriques, thermiques et solaires convertissent l’énergie primaire en énergie électrique à la tension de l’alternateur, sous contrôle du régulateur de vitesse et d’excitation (AVR).',
+      apparatus: [
+        { label: 'Turbine / machine primaire (Francis, Kaplan, Gaz)', eqId: 'eq-hydro-dam-01' },
+        { label: 'Alternateur synchrone (11–15,75 kV)', eqId: 'eq-sync-generator-01' },
+        { label: 'Système d’excitation statique (AVR) & régulateur', eqId: 'eq-sync-generator-01' },
+        { label: 'Disjoncteur de groupe (IEEE C37.013)', eqId: 'eq-hv-cb-sf6-01' },
+      ],
+    },
   },
   {
-    id: 'pathway-02-components',
     num: '02',
-    level: 'beginner',
-    levelBadgeEn: 'Core Equipment',
-    levelBadgeFr: 'Équipements Clés',
-    titleEn: 'Electrical Components & Equipment',
-    titleFr: 'Composants & Équipements Électriques',
-    summaryEn:
-      'Look inside real electrical hardware: see the photograph, internal anatomy, operating mechanism, electrical symbol, and real installation of every major component.',
-    summaryFr:
-      'Observer l’intérieur du matériel réel : photographie, anatomie interne, principe de fonctionnement, symbole électrique et installation sur le terrain.',
-    topicsEn: [
-      'Circuit Breakers & Fuses',
-      'Contactors & Thermal Overload Relays',
-      'Power & Distribution Transformers',
-      'Electric Motors & Synchronous Generators',
-      'Current (CT) & Voltage Transformers (VT)',
-      'Switchgear & Electrical Cables',
-    ],
-    topicsFr: [
-      'Disjoncteurs et Fusibles',
-      'Contacteurs et Relais Thermiques',
-      'Transformateurs de puissance et distribution',
-      'Moteurs électriques et Alternateurs',
-      'Transformateurs de courant (TC) et tension (TT)',
-      'Cellules HTA/BT et Câbles électriques',
-    ],
-    imageUrl: '/images/homepage_uploads/batch_02_image_009.jpg',
-    targetView: 'equipment',
+    stageId: 'stepup_substation',
+    assetId: 'stage-02',
+    volt: '15 / 225 kV',
+    domain: 'D04',
+    en: {
+      short: 'Step-up',
+      title: 'Step-up transformation',
+      purpose:
+        'Generator step-up (GSU) transformers raise voltage so that the same active power travels across the country with far lower current and dramatically reduced I²R line losses.',
+      apparatus: [
+        { label: 'Generator step-up (GSU) transformer', eqId: 'eq-power-trafo-225-01' },
+        { label: 'ZnO metal-oxide surge arresters', eqId: 'eq-surge-arrester-hv-01' },
+        { label: 'HV SF6 circuit breaker', eqId: 'eq-hv-cb-sf6-01' },
+        { label: 'Condenser bushings & current transformers (CT)', eqId: 'eq-ct-vt-hv-01' },
+      ],
+    },
+    fr: {
+      short: 'Élévation HTB',
+      title: 'Transformation élévatrice',
+      purpose:
+        'Les transformateurs élévateurs de centrale (GSU) élèvent la tension afin que la même puissance transite avec un courant réduit et des pertes Joule I²R minimales.',
+      apparatus: [
+        { label: 'Transformateur élévateur de groupe (GSU)', eqId: 'eq-power-trafo-225-01' },
+        { label: 'Parafoudres à oxyde de zinc (ZnO)', eqId: 'eq-surge-arrester-hv-01' },
+        { label: 'Disjoncteur HTB au SF6', eqId: 'eq-hv-cb-sf6-01' },
+        { label: 'Traversées condensateurs & transformateurs de courant (TC)', eqId: 'eq-ct-vt-hv-01' },
+      ],
+    },
   },
   {
-    id: 'pathway-03-installations',
     num: '03',
-    level: 'technician',
-    levelBadgeEn: 'Field Technician',
-    levelBadgeFr: 'Pratique Terrain',
-    titleEn: 'Electrical Installations',
-    titleFr: 'Installations Électriques (Bâtiment & Tertiaire)',
-    summaryEn:
-      'Master how residential, commercial, and industrial installations are structured, wired, earthed, and protected against electric shock and overcurrent.',
-    summaryFr:
-      'Maîtriser la réalisation des installations domestiques, tertiaires et industrielles : éclairage, prises, tableaux, mise à la terre et protections.',
-    topicsEn: [
-      'Residential & Commercial Installations',
-      'Lighting Circuits & Socket Outlets',
-      'Distribution Boards & Main Switchboards (TGBT)',
-      'Earthing Systems (TT, TN-S, IT)',
-      'Residual Current Devices (RCD 30 mA) & Breakers',
-      'Cable Routing & Conductor Sizing',
-    ],
-    topicsFr: [
-      'Installations résidentielles et tertiaires',
-      'Circuits d’éclairage et prises de courant',
-      'Tableaux de répartition et TGBT',
-      'Prises de terre et régimes de neutre (TT, TN, IT)',
-      'Dispositifs différentiels (DDR 30 mA) et disjoncteurs',
-      'Cheminement et dimensionnement des câbles',
-    ],
-    imageUrl: '/images/homepage_uploads/batch_03_image_014.jpg',
-    targetDomain: 'D06',
+    stageId: 'hv_transmission',
+    assetId: 'stage-03',
+    volt: '225 kV',
+    domain: 'D03',
+    en: {
+      short: 'HV transmission',
+      title: 'High-voltage transmission',
+      purpose:
+        'Bulk power crosses long corridors on overhead lines. Line distance protection (ANSI 21), line differential (87L), reactive compensation and right-of-way define corridor capacity.',
+      apparatus: [
+        { label: 'ACSR / AAAC overhead phase conductors & OPGW', eqId: 'eq-transmission-line-03' },
+        { label: 'Lattice steel towers & glass insulator strings', eqId: 'eq-transmission-line-03' },
+        { label: 'Numerical distance protection relay (ANSI 21)', eqId: 'eq-numerical-relay-01' },
+        { label: 'Shunt reactors & reactive compensation', eqId: 'eq-capacitor-bank-01' },
+      ],
+    },
+    fr: {
+      short: 'Transport HTB',
+      title: 'Transport haute tension',
+      purpose:
+        'Les grands transits franchissent de longs corridors aériens. La protection de distance (ANSI 21), le différentiel de ligne (87L) et la compensation réactive définissent la capacité.',
+      apparatus: [
+        { label: 'Conducteurs aériens ACSR / Almélec & câble de garde OPGW', eqId: 'eq-transmission-line-03' },
+        { label: 'Pylônes treillis & chaînes d’isolateurs en verre trempé', eqId: 'eq-transmission-line-03' },
+        { label: 'Relais numérique de protection de distance (ANSI 21)', eqId: 'eq-numerical-relay-01' },
+        { label: 'Réactances shunt & compensation réactive', eqId: 'eq-capacitor-bank-01' },
+      ],
+    },
   },
   {
-    id: 'pathway-04-generation',
     num: '04',
-    level: 'engineer',
-    levelBadgeEn: 'Power Systems',
-    levelBadgeFr: 'Production',
-    titleEn: 'Power Generation',
-    titleFr: 'Production d’Énergie Électrique',
-    summaryEn:
-      'Discover how hydroelectric dams, thermal gas plants, solar PV farms, and wind turbines generate electricity, regulate voltage (AVR), and synchronize to the grid.',
-    summaryFr:
-      'Découvrir comment les centrales hydroélectriques, thermiques, solaires et éoliennes produisent l’électricité, règlent la tension (AVR) et se couplent au réseau.',
-    topicsEn: [
-      'Hydroelectric Power Plants (Song Loulou, Nachtigal)',
-      'Thermal & Gas Power Plants (Kribi, Logbaba)',
-      'Solar Photovoltaic & Wind Power Plants',
-      'Synchronous Generators & Alternators',
-      'Excitation Systems (AVR) & Frequency Control',
-      'Grid Synchronization (ANSI 25)',
-    ],
-    topicsFr: [
-      'Centrales hydroélectriques (Song Loulou, Nachtigal)',
-      'Centrales thermiques et à gaz (Kribi, Logbaba)',
-      'Centrales solaires PV et éoliennes',
-      'Alternateurs synchrones (rotor / stator)',
-      'Systèmes d’excitation (AVR) et réglage 50 Hz',
-      'Couplage et synchronisation au réseau (ANSI 25)',
-    ],
-    imageUrl: '/images/homepage_uploads/batch_06_image_030.jpg',
-    targetDomain: 'D01',
+    stageId: 'hv_mv_substation',
+    assetId: 'stage-04',
+    volt: '225 / 90 kV',
+    domain: 'D04',
+    en: {
+      short: 'Substation',
+      title: 'Transmission substation',
+      purpose:
+        'Grid nodes switch, transform, measure and protect. Every bay combines primary high-voltage apparatus with secondary protection, interlocking and telecontrol.',
+      apparatus: [
+        { label: 'Double busbars & motorised disconnectors (89)', eqId: 'eq-disconnector-hv-01' },
+        { label: 'Autotransformers & OLTC tap-changers (225/90/30 kV)', eqId: 'eq-power-trafo-225-01' },
+        { label: 'Instrument transformers (CT / CVT)', eqId: 'eq-ct-vt-hv-01' },
+        { label: 'Numerical protection IEDs & Bay Control Units', eqId: 'eq-numerical-relay-01' },
+      ],
+    },
+    fr: {
+      short: 'Poste HTB',
+      title: 'Poste de transport & interconnexion',
+      purpose:
+        'Les nœuds du réseau aiguillent, transforment, mesurent et protègent. Chaque travée associe l’appareillage primaire HTB aux équipements secondaires de protection et contrôle-commande.',
+      apparatus: [
+        { label: 'Doubles jeux de barres & sectionneurs motorisés (89)', eqId: 'eq-disconnector-hv-01' },
+        { label: 'Autotransformateurs & régleurs en charge OLTC (225/90/30 kV)', eqId: 'eq-power-trafo-225-01' },
+        { label: 'Transformateurs de mesure (TC / TT)', eqId: 'eq-ct-vt-hv-01' },
+        { label: 'Relais numériques IED & calculateurs de travée BCU', eqId: 'eq-numerical-relay-01' },
+      ],
+    },
   },
   {
-    id: 'pathway-05-transmission',
     num: '05',
-    level: 'engineer',
-    levelBadgeEn: 'HV Grid',
-    levelBadgeFr: 'Transport HTB',
-    titleEn: 'Power Transmission & Substations',
-    titleFr: 'Transport Haute Tension & Postes HTB',
-    summaryEn:
-      'Explore 90 kV to 225 kV transmission corridors, steel towers, insulator strings, substations, power transformers, and high-voltage switching bays.',
-    summaryFr:
-      'Explorer les lignes haute tension (90 kV / 225 kV), pylônes, isolateurs, postes de transformation, transformateurs de puissance et travées HTB.',
-    topicsEn: [
-      'High-Voltage Networks (90 kV, 110 kV, 225 kV)',
-      'Transmission Towers, ACSR Conductors & Insulators',
-      'Air-Insulated (AIS) & Gas-Insulated (GIS) Substations',
-      'Step-Up & Step-Down Power Transformers',
-      'HV Circuit Breakers, Disconnectors & Earthing Switches',
-      'Distance (21) & Differential (87) Protection',
-    ],
-    topicsFr: [
-      'Réseaux haute tension (90 kV, 110 kV, 225 kV)',
-      'Pylônes, conducteurs Almelec/ACSR et isolateurs',
-      'Postes HTB ouverts (AIS) et blindés (GIS)',
-      'Transformateurs de puissance et autotransformateurs',
-      'Disjoncteurs SF6, sectionneurs et verrouillages',
-      'Protections de distance (21) et différentielle (87)',
-    ],
-    imageUrl: '/images/homepage_uploads/batch_02_image_007.jpg',
-    targetDomain: 'D03',
+    stageId: 'mv_distribution',
+    assetId: 'stage-05',
+    volt: '90 kV',
+    domain: 'D02',
+    en: {
+      short: 'Sub-transmission',
+      title: 'Sub-transmission & grid planning',
+      purpose:
+        'Regional networks (90 kV in RIS, 110 kV in RIN) carry power from the backbone to urban and industrial load centres, balancing N-1 security, voltage profile and losses.',
+      apparatus: [
+        { label: '90 kV / 110 kV regional sub-transmission lines', eqId: 'eq-transmission-line-03' },
+        { label: 'Regional step-down substations (90/30 kV & 90/15 kV)', eqId: 'eq-power-trafo-225-01' },
+        { label: 'On-load tap changers (OLTC) & AVR voltage control', eqId: 'eq-power-trafo-225-01' },
+        { label: 'Telecontrol RTUs & SCADA state estimation', eqId: 'eq-scada-rtu-01' },
+      ],
+    },
+    fr: {
+      short: 'Répartition',
+      title: 'Répartition régionale & architecture réseau',
+      purpose:
+        'Les réseaux régionaux (90 kV au RIS, 110 kV au RIN) acheminent l’énergie vers les centres de charge urbains et industriels en conciliant sécurité N-1 et tenue de tension.',
+      apparatus: [
+        { label: 'Lignes régionales de répartition 90 kV / 110 kV', eqId: 'eq-transmission-line-03' },
+        { label: 'Postes sources régionaux (90/30 kV et 90/15 kV)', eqId: 'eq-power-trafo-225-01' },
+        { label: 'Régleurs en charge (OLTC) & régulation de tension', eqId: 'eq-power-trafo-225-01' },
+        { label: 'Passerelles RTU de téléconduite & SCADA', eqId: 'eq-scada-rtu-01' },
+      ],
+    },
   },
   {
-    id: 'pathway-06-distribution',
     num: '06',
-    level: 'technician',
-    levelBadgeEn: 'MV / LV Grid',
-    levelBadgeFr: 'Distribution MT / BT',
-    titleEn: 'Power Distribution (MV & LV Networks)',
-    titleFr: 'Distribution Électrique (Réseaux HTA & BT)',
-    summaryEn:
-      'Follow electricity from 15 kV / 30 kV medium-voltage networks through Ring Main Units (RMUs) and pole-mounted H61 transformers down to 400 V / 230 V consumer connections.',
-    summaryFr:
-      'Suivre l’électricité depuis les réseaux HTA (15 kV / 30 kV), les cellules RMU et les postes sur poteau H61 jusqu’aux branchements basse tension 400 V / 230 V.',
-    topicsEn: [
-      'Medium-Voltage Networks (15 kV, 20 kV, 30 kV)',
-      'Ring Main Units (RMUs) & MV Switchgear',
-      'Pole-Mounted (H61) & Cabin Distribution Transformers',
-      'Low-Voltage Overhead & Underground Networks',
-      'LV Switchgear, Feeder Pillars & Metering',
-      'Consumer Service Connections',
-    ],
-    topicsFr: [
-      'Réseaux moyenne tension HTA (15 kV, 20 kV, 30 kV)',
-      'Cellules RMU et tableaux HTA en boucle',
-      'Transformateurs MT/BT sur poteau (H61) et en cabine',
-      'Réseaux basse tension aériens torsadés et souterrains',
-      'Tableaux BT, coffrets de coupure et comptage',
-      'Branchements des abonnés',
-    ],
-    imageUrl: '/images/homepage_uploads/batch_03_image_011.jpg',
-    targetDomain: 'D05',
+    stageId: 'mv_lv_transformer',
+    assetId: 'stage-06',
+    volt: '30 / 15 kV',
+    domain: 'D05',
+    en: {
+      short: 'MV distribution',
+      title: 'Medium-voltage distribution',
+      purpose:
+        'Feeders leave primary substations at 15 kV (urban) or 30 kV (peri-urban/interurban) and loop through ring main units (RMUs) toward districts, hospitals and factories.',
+      apparatus: [
+        { label: '30 kV & 15 kV underground XLPE / overhead MV feeders', eqId: 'eq-mv-cable-xlpe-01' },
+        { label: 'Ring Main Units (RMU — I / I / P cubicles)', eqId: 'eq-rmu-mv-01' },
+        { label: 'Pole-mounted auto-reclosers (ANSI 79) & sectionalisers', eqId: 'eq-recloser-mv-01' },
+        { label: 'Metal-enclosed MV switchgear bays', eqId: 'eq-mv-switchgear-01' },
+      ],
+    },
+    fr: {
+      short: 'Distribution HTA',
+      title: 'Distribution moyenne tension (HTA)',
+      purpose:
+        'Les départs quittent les postes sources en 15 kV (urbain) ou 30 kV (interurbain) et transitent par des cellules en boucle ouverte (RMU) vers les quartiers et sites industriels.',
+      apparatus: [
+        { label: 'Artères HTA 30 kV / 15 kV souterraines PRC et aériennes', eqId: 'eq-mv-cable-xlpe-01' },
+        { label: 'Cellules HTA RMU (interrupteurs-sectionneurs & protection)', eqId: 'eq-rmu-mv-01' },
+        { label: 'Réenclencheurs automatiques en tête de ligne (ANSI 79)', eqId: 'eq-recloser-mv-01' },
+        { label: 'Tableaux HTA sous enveloppe métallique', eqId: 'eq-mv-switchgear-01' },
+      ],
+    },
   },
   {
-    id: 'pathway-07-industrial',
     num: '07',
-    level: 'technician',
-    levelBadgeEn: 'Industrial Practice',
-    levelBadgeFr: 'Électricité Industrielle',
-    titleEn: 'Industrial Electrical Engineering',
-    titleFr: 'Génie Électrique Industriel & Automatisme',
-    summaryEn:
-      'Move from individual components to complete industrial systems: three-phase motors, DOL/Star-Delta starters, VFDs, PLCs, industrial sensors, and SCADA control.',
-    summaryFr:
-      'Passer des composants isolés aux systèmes industriels complets : moteurs triphasés, démarreurs, variateurs VFD, automates PLC, capteurs et SCADA.',
-    topicsEn: [
-      'Three-Phase Induction Motors & Nameplates',
-      'Direct-On-Line (DOL) & Star-Delta Motor Starters',
-      'Variable Frequency Drives (VFDs) & Soft Starters',
-      'PLC Automation Systems & Control Circuits (24 V DC)',
-      'Industrial Sensors, Actuators & Instrumentation',
-      'SCADA Supervision & Industrial Maintenance',
-    ],
-    topicsFr: [
-      'Moteurs asynchrones triphasés et couplages Étoile/Triangle',
-      'Démarreurs directs et Étoile-Triangle (Puissance + Commande)',
-      'Variateurs de vitesse (VFD) et démarreurs progressifs',
-      'Automates programmables (API / PLC) et commande 24 V DC',
-      'Capteurs industriels, instrumentation et actionneurs',
-      'Supervision SCADA et maintenance industrielle',
-    ],
-    imageUrl: '/images/homepage_uploads/batch_05_image_024.jpg',
-    targetDomain: 'D07',
+    stageId: 'lv_switchboard',
+    assetId: 'stage-07',
+    volt: '0.4 kV',
+    domain: 'D05',
+    en: {
+      short: 'LV distribution',
+      title: 'Low-voltage distribution',
+      purpose:
+        'Pole-mounted H61 or masonry cabin transformers (Dyn11) step voltage down to 400/230 V, feeding LV distribution boards and twisted aerial bundled cables (ABC) to consumers.',
+      apparatus: [
+        { label: 'MV/LV distribution transformer (H61 pole or cabin, Dyn11)', eqId: 'eq-trafo-hta-01' },
+        { label: 'LV distribution pillar & NH HRC fuse switches', eqId: 'eq-lv-switchboard-tgbt-01' },
+        { label: 'Twisted Aerial Bundled Cables (ABC) & service drops', eqId: 'eq-lv-cable-01' },
+        { label: 'Smart / STS prepayment & 4-quadrant revenue meters', eqId: 'eq-smart-meter-01' },
+      ],
+    },
+    fr: {
+      short: 'Distribution BT',
+      title: 'Distribution basse tension (400 / 230 V)',
+      purpose:
+        'Les transformateurs HTA/BT sur poteau (H61) ou en cabine maçonnée (Dyn11) abaissent la tension en 400/230 V et alimentent les départs BT torsadés jusqu’aux branchements.',
+      apparatus: [
+        { label: 'Transformateur HTA/BT (H61 sur poteau ou cabine, Dyn11)', eqId: 'eq-trafo-hta-01' },
+        { label: 'Tableau de distribution publique BT & fusibles HPC', eqId: 'eq-lv-switchboard-tgbt-01' },
+        { label: 'Câbles aériens torsadés de branchement', eqId: 'eq-lv-cable-01' },
+        { label: 'Compteurs intelligents AMI & prépaiement STS', eqId: 'eq-smart-meter-01' },
+      ],
+    },
   },
   {
-    id: 'pathway-08-drawings-safety',
     num: '08',
-    level: 'beginner',
-    levelBadgeEn: 'Essential Skills',
-    levelBadgeFr: 'Schémas & Sécurité',
-    titleEn: 'Electrical Drawings, Standards & Safety',
-    titleFr: 'Schémas Électriques, Normes & Sécurité',
-    summaryEn:
-      'Learn to read and interpret Single-Line Diagrams, power vs. control schematics, IEC 60617 symbols, terminal markings, LOTO consignation, and life-saving protections.',
-    summaryFr:
-      'Apprendre à lire un schéma unifilaire, un schéma de puissance et de commande, les symboles CEI 60617, les borniers, la consignation LOTO et la sécurité.',
-    topicsEn: [
-      'Normalized Electrical Symbols (IEC 60617)',
-      'Single-Line (SLD) vs. Multi-Line Diagrams',
-      'Power Schematics vs. Control Schematics',
-      'Terminal Blocks, Wire Markings & Layout Plans',
-      'Direct/Indirect Contact Protection & Earthing',
-      'Lockout / Tagout (LOTO), PPE & Arc Flash Safety',
-    ],
-    topicsFr: [
-      'Symboles électriques normalisés (CEI 60617)',
-      'Schémas unifilaires vs schémas multifilaires',
-      'Schémas de puissance vs schémas de commande',
-      'Repérage des conducteurs, borniers et implantation',
-      'Protection contre les contacts directs et indirects',
-      'Consignation (LOTO), EPI et risque d’arc électrique',
-    ],
-    imageUrl: '/images/homepage_uploads/batch_03_image_015.jpg',
-    targetDomain: 'D16',
+    stageId: 'protection_safety',
+    assetId: 'stage-08',
+    volt: '400 / 230 V',
+    domain: 'D06',
+    en: {
+      short: 'Installations',
+      title: 'Electrical installations',
+      purpose:
+        'Inside buildings and industrial plants, main LV switchboards (TGBT), circuit breakers, RCDs and earthing schemes (TT, TN-S, IT) make electricity safe at the point of use.',
+      apparatus: [
+        { label: 'Main LV switchboard (TGBT Form 2b–4b, IEC 61439)', eqId: 'eq-lv-switchboard-tgbt-01' },
+        { label: 'ACBs, MCCBs & residual current devices (RCD 30 mA)', eqId: 'eq-lv-acb-mccb-01' },
+        { label: 'Direct-on-line (DOL) & VFD motor starter feeders', eqId: 'eq-induction-motor-01' },
+        { label: 'Earthing system (TT / TN-S / IT) & surge protection (SPD)', eqId: 'eq-earthing-grid-01' },
+      ],
+    },
+    fr: {
+      short: 'Installations',
+      title: 'Installations électriques & TGBT',
+      purpose:
+        'Au sein des bâtiments et usines, les tableaux généraux basse tension (TGBT), disjoncteurs, différentiels et schémas de liaison à la terre (TT, TN-S, IT) assurent la sécurité.',
+      apparatus: [
+        { label: 'Tableau général basse tension (TGBT Forme 2b–4b, CEI 61439)', eqId: 'eq-lv-switchboard-tgbt-01' },
+        { label: 'Disjoncteurs ouverts (ACB), boîtiers moulés (MCCB) & DDR 30 mA', eqId: 'eq-lv-acb-mccb-01' },
+        { label: 'Départs moteurs (directs DOL, étoile-triangle, variateurs VFD)', eqId: 'eq-induction-motor-01' },
+        { label: 'Schéma de liaison à la terre (TT / TN-S / IT) & parafoudres BT', eqId: 'eq-earthing-grid-01' },
+      ],
+    },
+  },
+  {
+    num: '09',
+    stageId: 'loads_automation',
+    assetId: 'stage-09',
+    volt: '24 V DC · signals',
+    domain: 'D07',
+    en: {
+      short: 'Automation',
+      title: 'Automation & control',
+      purpose:
+        'PLCs, variable-frequency drives and SCADA supervise the entire chain — separating 24 V DC control signals and process telemetry from the high-energy power path they command.',
+      apparatus: [
+        { label: 'Programmable Logic Controllers (PLC / DCS, IEC 61131-3)', eqId: 'eq-plc-controller-01' },
+        { label: 'Variable-frequency drives (VFD) & soft starters', eqId: 'eq-vfd-drive-01' },
+        { label: 'SCADA HMI & IEC 61850 / Modbus TCP gateways', eqId: 'eq-scada-rtu-01' },
+        { label: '4–20 mA field instrumentation & PT100 thermal probes', eqId: 'eq-plc-controller-01' },
+      ],
+    },
+    fr: {
+      short: 'Automatisme',
+      title: 'Automatisme, contrôle & SCADA',
+      purpose:
+        'Les automates API/PLC, variateurs de vitesse et systèmes SCADA supervisent toute la chaîne — en séparant les signaux 24 V CC du circuit de puissance qu’ils commandent.',
+      apparatus: [
+        { label: 'Automates programmables industriels (API / DCS, CEI 61131-3)', eqId: 'eq-plc-controller-01' },
+        { label: 'Variateurs de vitesse (VFD) & démarreurs progressifs', eqId: 'eq-vfd-drive-01' },
+        { label: 'Supervision SCADA IHM & passerelles CEI 61850 / Modbus', eqId: 'eq-scada-rtu-01' },
+        { label: 'Instrumentation 4–20 mA & sondes thermiques PT100', eqId: 'eq-plc-controller-01' },
+      ],
+    },
   },
 ];
 
-// Note: 9-Stage Power Chain data is imported canonically from src/data/canonicalPowerChain.ts (CANONICAL_POWER_STAGES)
-
-// 6 Featured Equipment Cards (Section 5 of EPEDE 2.0 Homepage)
-const FEATURED_EQUIPMENT: FeaturedEquipmentItem[] = [
+const DIRECTORY_PATHWAYS = [
   {
-    id: 'eq-cb-sf6-01',
-    nameEn: 'Circuit Breaker (LV / MV / HV)',
-    nameFr: 'Disjoncteur Électrique (BT / HTA / HTB)',
-    voltageBadge: '230 V – 225 kV',
-    iecSymbolLabel: 'IEC Symbol: Q / CB (× interrupt contact)',
-    roleEn: 'Automatically interrupts overload and short-circuit fault currents to protect cables, equipment, and human life.',
-    roleFr: 'Coupe automatiquement le courant en cas de surcharge ou de court-circuit pour protéger les câbles et les personnes.',
-    insideAnatomyEn: 'Thermal bimetal strip (overload), magnetic coil (short-circuit), main contacts, and arc-extinguishing chamber.',
-    insideAnatomyFr: 'Bilame thermique (surcharge), bobine magnétique (court-circuit), contacts de puissance et chambre de coupure d’arc.',
-    imageUrl: '/images/homepage_uploads/batch_06_image_029.jpg',
+    n: '02',
+    id: 'path-generation',
+    en: 'Generation & power plants',
+    fr: 'Production & centrales électriques',
+    aud: ['Students', 'Engineers'],
+    audFr: 'Étudiants · Ingénieurs',
+    stage: '01',
+    domain: 'D01' as DomainCode,
   },
   {
-    id: 'eq-trafo-hta-01',
-    nameEn: 'Power & Distribution Transformer',
-    nameFr: 'Transformateur de Puissance & Distribution',
-    voltageBadge: '15/30 kV ↔ 400 V / 225 kV',
-    iecSymbolLabel: 'IEC Symbol: T (Two coupled windings)',
-    roleEn: 'Transfers electrical energy between two voltage levels via electromagnetic induction without changing the 50 Hz frequency.',
-    roleFr: 'Élève ou abaisse la tension par induction électromagnétique tout en conservant la fréquence de 50 Hz.',
-    insideAnatomyEn: 'Laminated magnetic core, primary HV winding, secondary LV winding, insulating oil, bushings, and cooling fins.',
-    insideAnatomyFr: 'Circuit magnétique feuilleté, enroulements primaire et secondaire, huile isolante, traversées et radiateurs.',
-    imageUrl: '/images/homepage_uploads/batch_02_image_006.jpg',
+    n: '03',
+    id: 'path-transmission-distribution',
+    en: 'Transmission & distribution networks',
+    fr: 'Réseaux de transport & de distribution',
+    aud: ['Students', 'Engineers'],
+    audFr: 'Étudiants · Ingénieurs',
+    stage: '03–07',
+    domain: 'D03' as DomainCode,
   },
   {
-    id: 'eq-lv-acb-01',
-    nameEn: 'Contactor & Thermal Overload Relay',
-    nameFr: 'Contacteur & Relais Thermique',
-    voltageBadge: '400 V Power / 24–230 V Coil',
-    iecSymbolLabel: 'IEC Symbol: KM (Contactor) + F (Thermal)',
-    roleEn: 'The contactor switches motors on/off remotely via an electromagnetic coil; the thermal relay protects the motor if it draws excessive current.',
-    roleFr: 'Le contacteur commande à distance le moteur via sa bobine A1-A2 ; le relais thermique protège le moteur contre les surcharges.',
-    insideAnatomyEn: 'Electromagnetic coil (A1–A2), movable iron core, 3 main power poles (1–2, 3–4, 5–6), auxiliary contact (13–14), and 3 bimetallic strips.',
-    insideAnatomyFr: 'Bobine électromagnétique (A1–A2), circuit magnétique mobile, 3 pôles de puissance (1–2, 3–4, 5–6), contact auxiliaire (13–14) et bilames.',
-    imageUrl: '/images/homepage_uploads/batch_03_image_013.jpg',
+    n: '04',
+    id: 'path-equipment',
+    en: 'Equipment, anatomy & ratings',
+    fr: 'Équipements, anatomie & caractéristiques',
+    aud: ['Technicians', 'Engineers'],
+    audFr: 'Techniciens · Ingénieurs',
+    stage: '02–07',
+    view: 'equipment-list',
   },
   {
-    id: 'eq-ind-motor-01',
-    nameEn: 'Three-Phase Induction Motor',
-    nameFr: 'Moteur Asynchrone Triphasé',
-    voltageBadge: '400 V / 690 V · 3Φ',
-    iecSymbolLabel: 'IEC Symbol: M 3~',
-    roleEn: 'The workhorse of industry: converts three-phase electrical power into mechanical shaft rotation for pumps, fans, conveyors, and crushers.',
-    roleFr: 'Le cœur de l’industrie : convertit l’énergie électrique triphasée en couple mécanique pour entraîner pompes, ventilateurs et convoyeurs.',
-    insideAnatomyEn: 'Three-phase stator windings (creating a rotating magnetic field), squirrel-cage rotor, bearings, cooling fan, and Star/Delta terminal box.',
-    insideAnatomyFr: 'Stator triphasé (champ magnétique tournant), rotor à cage d’écureuil, roulements, ventilateur et plaque à bornes (U1-V1-W1 / W2-U2-V2).',
-    imageUrl: '/images/homepage_uploads/batch_05_image_025.jpg',
+    n: '05',
+    id: 'path-protection',
+    en: 'Protection, faults & selectivity',
+    fr: 'Protections, défauts & sélectivité',
+    aud: ['Engineers'],
+    audFr: 'Ingénieurs',
+    stage: '04',
+    domain: 'D11' as DomainCode,
   },
   {
-    id: 'eq-rmu-hta-01',
-    nameEn: 'MV Ring Main Unit (RMU) & Switchgear',
-    nameFr: 'Cellule Moyenne Tension (RMU / HTA)',
-    voltageBadge: '15 kV / 20 kV / 30 kV',
-    iecSymbolLabel: 'IEC Symbol: Load-Break Switch + Fuse/CB',
-    roleEn: 'Connects, loops, and protects medium-voltage underground cables and distribution transformers inside compact metal-enclosed cubicles.',
-    roleFr: 'Assure le bouclage des câbles souterrains HTA et la protection du transformateur MT/BT dans un tableau compact.',
-    insideAnatomyEn: 'SF6 or vacuum switching chamber, three-position disconnector/earthing switch, busbars, voltage presence lamps (VPIS), and mechanical interlocks.',
-    insideAnatomyFr: 'Enceinte de coupure SF6 ou vide, sectionneur 3 positions (Fermé / Ouvert / Terre), diviseurs capacitifs (VPIS) et verrouillages.',
-    imageUrl: '/images/homepage_uploads/batch_02_image_009.jpg',
+    n: '06',
+    id: 'path-automation',
+    en: 'Control, drives & industrial automation',
+    fr: 'Commande, variateurs & automatisme industriel',
+    aud: ['Technicians'],
+    audFr: 'Techniciens',
+    stage: '09',
+    domain: 'D07' as DomainCode,
   },
   {
-    id: 'eq-hydro-gen-01',
-    nameEn: 'Synchronous Generator (Alternator)',
-    nameFr: 'Alternateur Synchrone de Centrale',
-    voltageBadge: '10.3 kV – 15.5 kV · 50 Hz',
-    iecSymbolLabel: 'IEC Symbol: G 3~',
-    roleEn: 'Converts mechanical torque from a hydraulic, gas, or steam turbine into synchronized three-phase AC electrical power.',
-    roleFr: 'Convertit l’énergie mécanique de rotation de la turbine en énergie électrique alternative triphasée à 50 Hz.',
-    insideAnatomyEn: 'Salient-pole or cylindrical rotor fed with DC excitation current, Roebel-bar stator windings, air/water coolers, and neutral grounding transformer.',
-    insideAnatomyFr: 'Rotor inducteur alimenté en courant continu (excitation), stator induit à barres Roebel, refroidisseurs air/eau et mise à la terre du neutre.',
-    imageUrl: '/images/homepage_uploads/batch_06_image_030.jpg',
-  },
-];
-
-// Complete System Assembly: 3-Phase Motor Starter (Addressing Challenge F of the Brief)
-const MOTOR_STARTER_CHAIN: MotorStarterElement[] = [
-  {
-    code: 'L1-L2-L3',
-    nameEn: '1. Three-Phase Power Supply (400 V AC)',
-    nameFr: '1. Alimentation Triphasée (400 V AC + PE)',
-    symbolText: '3~ 400 V 50 Hz + PE',
-    roleEn: 'Supplies three sinusoidal voltages shifted by 120° plus the protective earth (PE) conductor from the main switchboard.',
-    roleFr: 'Fournit les trois phases décalées de 120° (400 V entre phases) ainsi que le conducteur de protection (Terre PE) depuis le TGBT.',
-    principleEn: 'Three-phase power creates a naturally rotating magnetic field inside the motor without needing a starting capacitor.',
-    principleFr: 'Le système triphasé permet de créer directement un champ magnétique tournant dans le moteur avec un couple constant.',
-    terminals: 'L1, L2, L3, PE',
-    equipmentId: 'eq-lv-acb-01',
+    n: '07',
+    id: 'path-installations',
+    en: 'Electrical installations & LV switchboards',
+    fr: 'Installations électriques & tableaux BT',
+    aud: ['Technicians'],
+    audFr: 'Techniciens',
+    stage: '08',
+    domain: 'D06' as DomainCode,
   },
   {
-    code: 'Q1',
-    nameEn: '2. Magnetic Circuit Breaker / Isolator (Q1)',
-    nameFr: '2. Sectionneur / Disjoncteur Magnétique (Q1)',
-    symbolText: 'Q1 (I>> Short-Circuit Protection)',
-    roleEn: 'Provides manual isolation for safe maintenance and instantaneous magnetic tripping if a short-circuit occurs in the cable or motor.',
-    roleFr: 'Permet d’isoler le départ à l’arrêt (sectionnement) et coupe instantanément en cas de court-circuit franc (protection magnétique).',
-    principleEn: 'If current spikes to 10× rated current (short-circuit), the magnetic solenoid strikes the latch open in milliseconds.',
-    principleFr: 'Si le courant dépasse ~10× In (court-circuit entre phases), l’électroaimant ouvre mécaniquement les pôles en quelques millisecondes.',
-    terminals: 'In: 1-3-5 / Out: 2-4-6',
-    equipmentId: 'eq-cb-sf6-01',
-  },
-  {
-    code: 'KM1',
-    nameEn: '3. Power Contactor (KM1)',
-    nameFr: '3. Contacteur de Puissance (KM1)',
-    symbolText: 'KM1 (Remote Electromagnetic Switch)',
-    roleEn: 'Closes or opens the three power phases frequently whenever the operator presses START/STOP or when a PLC sends a 24 V / 230 V command.',
-    roleFr: 'Établit ou interrompt l’alimentation du moteur à distance lorsque sa bobine (A1–A2) est alimentée par le circuit de commande.',
-    principleEn: 'When control voltage energizes coil A1–A2, the electromagnet pulls the main contacts (1-2, 3-4, 5-6) closed and latches auxiliary contact (13-14).',
-    principleFr: 'Quand la bobine A1–A2 reçoit la tension de commande, l’armature mobile ferme les 3 pôles de puissance et le contact d’auto-maintien (13–14).',
-    terminals: 'Power: 1-2, 3-4, 5-6 · Coil: A1-A2 · Aux NO: 13-14',
-    equipmentId: 'eq-lv-acb-01',
-  },
-  {
-    code: 'F1',
-    nameEn: '4. Thermal Overload Relay (F1)',
-    nameFr: '4. Relais Thermique de Surcharge (F1)',
-    symbolText: 'F1 (Thermal Overload Protection)',
-    roleEn: 'Monitors the actual current drawn by the motor; if the motor is mechanically overloaded or loses a phase, F1 opens the control circuit to stop KM1.',
-    roleFr: 'Surveille l’échauffement lié au courant du moteur ; en cas de surcharge mécanique ou de coupure d’une phase, il ouvre son contact 95–96 pour couper KM1.',
-    principleEn: 'Note: F1 does not break the power circuit directly! Its bimetallic strips bend with heat and open auxiliary contact 95–96 in series with coil A1–A2.',
-    principleFr: 'Point clé : le relais thermique ne coupe pas la puissance lui-même ! Ses bilames ouvrent le contact auxiliaire NC (95–96) qui coupe la bobine de KM1.',
-    terminals: 'Power: 2-4-6 · Control NC: 95-96 · Alarm NO: 97-98',
-    equipmentId: 'eq-lv-acb-01',
-  },
-  {
-    code: 'M1',
-    nameEn: '5. Three-Phase Induction Motor (M1)',
-    nameFr: '5. Moteur Asynchrone Triphasé (M1)',
-    symbolText: 'M1 (3~ Squirrel-Cage Motor)',
-    roleEn: 'Converts the three-phase electrical energy into mechanical rotation on the shaft to drive the industrial machine.',
-    roleFr: 'Transforme l’énergie électrique triphasée en mouvement mécanique de rotation sur l’arbre pour entraîner la machine.',
-    principleEn: 'Stator windings (coupled in Star or Delta inside the terminal box) create a 50 Hz rotating magnetic field that induces current and torque in the rotor.',
-    principleFr: 'Les 3 enroulements du stator (couplés en Étoile ou en Triangle sur la plaque à bornes) créent un champ tournant qui entraîne le rotor en cage d’écureuil.',
-    terminals: 'U1, V1, W1 + PE (Chassis Earth)',
-    equipmentId: 'eq-ind-motor-01',
+    n: '08',
+    id: 'path-cameroon-grid',
+    en: 'Grid planning & Cameroon national network',
+    fr: 'Planification réseau & système électrique du Cameroun',
+    aud: ['Engineers'],
+    audFr: 'Ingénieurs',
+    stage: '05',
+    view: 'cameroon-grid',
   },
 ];
 
@@ -491,921 +546,1487 @@ export const HomeView: React.FC<HomeViewProps> = ({
   onSelectEquipment,
   onNavigateView,
   onNavigateJourney,
-  onNavigateDiagram,
-  onOpenSearch,
-  onOpenAssistant,
-  onLocaleChange,
-  onNavigateStandard,
-  onNavigateRole,
   onNavigateCalculator,
-  onNavigateSimulation,
+  onNavigateDiagram,
 }) => {
   const isFr = locale === 'fr';
-  const [pathwayFilter, setPathwayFilter] = useState<'all' | 'beginner' | 'technician' | 'engineer'>('all');
-  const [selectedStageId, setSelectedStageId] = useState<string>('stage-01');
-  const [selectedStarterIdx, setSelectedStarterIdx] = useState<number>(2); // Default highlight: KM1 Contactor
+  const [heroIdx, setHeroIdx] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [stageIdx, setStageIdx] = useState(0);
+  const [audienceFilter, setAudienceFilter] = useState<'All' | 'Students' | 'Technicians' | 'Engineers'>('All');
+  const [motorState, setMotorState] = useState<'stopped' | 'running' | 'tripped' | 'fault'>('stopped');
+  const [motorEvent, setMotorEvent] = useState<string>(
+    isFr ? 'Q1 fermé · KM1 ouvert · prêt au démarrage' : 'Q1 closed · KM1 open · ready to start'
+  );
+  const [scrollProg, setScrollProg] = useState(0);
+  const [showRail, setShowRail] = useState(false);
 
-  const filteredPathways = LEARNING_PATHWAYS.filter(
-    (p) => pathwayFilter === 'all' || p.level === pathwayFilter
+  useEffect(() => {
+    const mq = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+    if (mq?.matches) {
+      setReducedMotion(true);
+      setPaused(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (paused || reducedMotion) return;
+    const timer = setInterval(() => {
+      setHeroIdx((prev) => (prev + 1) % HERO_THEMES.length);
+    }, 8000);
+    return () => clearInterval(timer);
+  }, [paused, reducedMotion]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const y = window.scrollY;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      setScrollProg(max > 0 ? Math.min(100, (y / max) * 100) : 0);
+      setShowRail(y > window.innerHeight * 0.65 && window.innerWidth >= 1180);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const currentHero = HERO_THEMES[heroIdx];
+  const currentStage = JOURNEY_STAGES[stageIdx];
+  const railStageIdx = Math.min(8, Math.floor((scrollProg / 100) * 9));
+  const railStage = JOURNEY_STAGES[railStageIdx];
+
+  const filteredPaths = DIRECTORY_PATHWAYS.filter(
+    (p) => audienceFilter === 'All' || p.aud.includes(audienceFilter)
   );
 
-  const activeStage =
-    CANONICAL_POWER_STAGES.find((s) => s.id === selectedStageId) ||
-    CANONICAL_POWER_STAGES[0];
-  const activeStarterItem = MOTOR_STARTER_CHAIN[selectedStarterIdx] || MOTOR_STARTER_CHAIN[0];
+  // Motor starter state handlers
+  const handleMotorStart = () => {
+    if (motorState === 'tripped' || motorState === 'fault') {
+      setMotorEvent(
+        isFr
+          ? 'Démarrage verrouillé · réarmer la protection F1/Q1 d’abord'
+          : 'Start blocked · reset protection first'
+      );
+      return;
+    }
+    setMotorState('running');
+    setMotorEvent(
+      isFr ? 'KM1 fermé · moteur M1 sous tension (400 V AC)' : 'KM1 closed · motor energised (400 V AC)'
+    );
+  };
+
+  const handleMotorStop = () => {
+    if (motorState === 'tripped' || motorState === 'fault') return;
+    setMotorState('stopped');
+    setMotorEvent(
+      isFr ? 'KM1 ouvert · alimentation coupée normalement' : 'KM1 opened · supply removed'
+    );
+  };
+
+  const handleMotorOverload = () => {
+    if (motorState !== 'running') {
+      setMotorEvent(
+        isFr
+          ? 'Démarrez le moteur avant de simuler une surcharge thermique'
+          : 'Start the motor before simulating overload'
+      );
+      return;
+    }
+    setMotorState('tripped');
+    setMotorEvent(
+      isFr
+        ? 'Déclenchement thermique F1 (classe 10A) · ouverture bobine KM1'
+        : 'F1 thermal trip · KM1 dropped out'
+    );
+  };
+
+  const handleMotorFault = () => {
+    if (motorState !== 'running') {
+      setMotorEvent(
+        isFr
+          ? 'Démarrez le moteur avant d’injecter un court-circuit'
+          : 'Start the motor before applying a fault'
+      );
+      return;
+    }
+    setMotorState('fault');
+    setMotorEvent(
+      isFr
+        ? 'Court-circuit franc · déclenchement magnétique Q1 en < 10 ms · KM1 retombé'
+        : 'Short-circuit · Q1 magnetic trip in < 10 ms · KM1 dropped out'
+    );
+  };
+
+  const handleMotorReset = () => {
+    setMotorState('stopped');
+    setMotorEvent(
+      isFr ? 'Protections Q1 / F1 réarmées · prêt au démarrage' : 'Protection reset · ready to start'
+    );
+  };
+
+  const jumpToJourneySection = (idx: number) => {
+    setStageIdx(idx);
+    const el = document.getElementById('epede-home-journey');
+    if (el) {
+      window.scrollTo({ top: el.offsetTop - 72, behavior: reducedMotion ? 'auto' : 'smooth' });
+    }
+  };
+
+  const methods = isFr
+    ? [
+        {
+          n: '01',
+          t: 'Observer',
+          d: 'Partir d’une photographie réelle d’ouvrage ou d’équipement — tel qu’il est installé sur le terrain.',
+        },
+        {
+          n: '02',
+          t: 'Comprendre',
+          d: 'Lire le principe physique, le schéma unifilaire et la norme CEI / IEEE qui régit son fonctionnement.',
+        },
+        {
+          n: '03',
+          t: 'Calculer',
+          d: 'Appliquer la formule d’ingénierie avec ses unités et hypothèses explicites, puis conserver l’étude.',
+        },
+        {
+          n: '04',
+          t: 'Appliquer',
+          d: 'Tester le comportement dans un banc de simulation ou un schéma interactif avant l’intervention sur site.',
+        },
+      ]
+    : [
+        {
+          n: '01',
+          t: 'See',
+          d: 'Start from a real photograph or plant — the equipment as it stands in the field.',
+        },
+        {
+          n: '02',
+          t: 'Understand',
+          d: 'Read the principle, the single-line diagram and the standard that governs it.',
+        },
+        {
+          n: '03',
+          t: 'Calculate',
+          d: 'Apply the formula with units and assumptions stated, then save the study.',
+        },
+        {
+          n: '04',
+          t: 'Apply',
+          d: 'Test it in a workbench or simulation before it matters on site.',
+        },
+      ];
+
+  const cameroonProjects = [
+    {
+      key: 'nachtigal',
+      assetId: 'proj-nachtigal',
+      meta: isFr
+        ? 'PRODUCTION · FLEUVE SANAGA · ~420 MW (7 × 60 MW)'
+        : 'GENERATION · SANAGA RIVER · ~420 MW (7 × 60 MW)',
+      title: isFr ? 'Aménagement hydroélectrique de Nachtigal' : 'Nachtigal hydropower',
+      desc: isFr
+        ? 'Centrale au fil de l’eau sur la Sanaga raccordée au Réseau Interconnecté Sud (RIS) — étude de référence pour l’intégration de groupes de 60 MW et l’évacuation en 225 kV vers Nyom II.'
+        : 'A run-of-river plant on the Sanaga connected to the Southern Interconnected Grid — a case study in large-unit integration and 225 kV evacuation lines.',
+      cta: isFr ? 'Étudier dans D01 Production' : 'Study in D01 Generation',
+      domain: 'D01' as DomainCode,
+    },
+    {
+      key: 'memveele',
+      assetId: 'proj-memveele',
+      meta: isFr
+        ? 'PRODUCTION & TRANSPORT · FLEUVE NTEM · ~211 MW'
+        : 'GENERATION & CORRIDOR · NTEM RIVER · ~211 MW',
+      title: isFr ? 'Centrale hydroélectrique de Memve’ele' : "Memve'ele hydropower",
+      desc: isFr
+        ? 'Aménagement du Sud-Cameroun dont la disponibilité dépend directement de son corridor d’évacuation 225 kV vers Ahala (Yaoundé) — à lire en lien avec les étapes lignes et postes.'
+        : 'A southern plant whose value depends on its 225 kV transmission link to Yaoundé — read alongside the HV corridor and substation stages.',
+      cta: isFr ? 'Étudier dans D03 Transport HTB' : 'Study in D03 Transmission',
+      domain: 'D03' as DomainCode,
+    },
+    {
+      key: 'lompangar',
+      assetId: 'proj-lompangar',
+      meta: isFr
+        ? 'STOCKAGE & RÉGULATION · RÉGION DE L’EST · 6,0 Gm³ / 30 MW'
+        : 'STORAGE & REGULATION · EAST REGION · 6.0 Gm³ / 30 MW',
+      title: isFr ? 'Barrage-réservoir régulateur de Lom Pangar' : 'Lom Pangar regulating dam',
+      desc: isFr
+        ? 'Retenue de 6 milliards de m³ régulant les débits d’étiage de la Sanaga pour Nachtigal, Songloulou et Edéa, complétée par une usine de pied de 30 MW alimentant Bertoua en 90 kV.'
+        : 'A 6.0 billion m³ reservoir that regulates Sanaga dry-season flows for downstream plants, with its own 30 MW toe powerhouse supplying the East Region.',
+      cta: isFr ? 'Étudier dans D02 Architecture réseau' : 'Study in D02 Grid architecture',
+      domain: 'D02' as DomainCode,
+    },
+  ];
+
+  const isRunning = motorState === 'running';
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-b from-[#07131F] via-[#0E2034] to-[#07131F] text-[#F7F8F5] space-y-16 pb-20">
-      {/* Ambient Subtle Technical Grid Pattern */}
-      <div className="absolute inset-0 bg-[radial-gradient(#2878A5_1px,transparent_1px)] [background-size:32px_32px] opacity-10 pointer-events-none" />
+    <div className="bg-[#F6F4EE] text-[#17282C]">
+      {/* Continuous Right-Side Power-Flow Rail Indicator on Wide Screens */}
+      {showRail && (
+        <div
+          aria-hidden="true"
+          className="fixed right-3.5 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-center gap-3.5 pointer-events-none"
+        >
+          <div
+            className="font-mono text-[11px] tracking-[0.08em] text-[#5C6C70] whitespace-nowrap"
+            style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+          >
+            {(isFr ? railStage.fr.short : railStage.en.short).toUpperCase()} ·{' '}
+            <span className="text-[#B8872D]">{railStage.volt}</span>
+          </div>
+          <div className="relative w-[2px] h-[220px] bg-[#DEDACF]">
+            <div
+              className="absolute left-0 top-0 w-[2px] bg-[#147C78]"
+              style={{ height: `${scrollProg}%` }}
+            />
+            {JOURNEY_STAGES.map((st, idx) => {
+              const topPct = (idx / 8) * 100;
+              return (
+                <div
+                  key={st.num}
+                  className="absolute -left-[3px] w-2 h-[1px]"
+                  style={{
+                    top: `${topPct}%`,
+                    backgroundColor: topPct <= scrollProg ? '#147C78' : '#B9B4A6',
+                  }}
+                />
+              );
+            })}
+            <div
+              className="absolute -left-[5px] w-3 h-3 -mt-1.5 rounded-full bg-[#B8872D] shadow-[0_0_0_5px_rgba(184,135,45,0.2)]"
+              style={{ top: `${scrollProg}%` }}
+            />
+          </div>
+          <div className="font-mono text-[11px] text-[#17282C]">
+            {railStage.num} / 09
+          </div>
+        </div>
+      )}
 
       {/* =====================================================================
-          SECTION 1: CINEMATIC FULL-SCREEN HERO EXPERIENCE (GE VERNOVA COMPOSITION)
+          SCENE 01 — PHOTO-LED HERO (85–95 svh)
           ===================================================================== */}
-      <CinematicVernovaHero
-        locale={locale}
-        onNavigateView={(view) => {
-          if (view === 'power-chain') {
-            onNavigateView('journey');
-          } else if (view === 'learn') {
-            onNavigateView('thematic-journeys');
-          } else {
-            onNavigateView(view);
-          }
-        }}
-      />
+      <section
+        data-screen-label="01 Hero"
+        className="relative min-h-[92svh] flex items-end overflow-hidden bg-[#E9E5DA]"
+      >
+        {/* Background Art-Directed Photographs */}
+        {HERO_THEMES.map((t, i) => {
+          const isActive = i === heroIdx;
+          return (
+            <div
+              key={t.key}
+              aria-hidden={!isActive}
+              className="absolute inset-0 overflow-hidden transition-opacity duration-700"
+              style={{ opacity: isActive ? 1 : 0, pointerEvents: isActive ? 'auto' : 'none' }}
+            >
+              <EditorialImage
+                assetId={t.assetId}
+                locale={locale}
+                priority={i === 0}
+                decorative={!isActive}
+                className="w-full h-full"
+              />
+            </div>
+          );
+        })}
 
-      {/* Container wrapper for structured below-the-fold content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+        {/* Warm Paper Editorial Gradient Wash (Text sits directly on wash, not in a floating card) */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              'linear-gradient(90deg, rgba(246,244,238,0.95) 0%, rgba(246,244,238,0.85) 30%, rgba(246,244,238,0.48) 52%, rgba(246,244,238,0.10) 72%, rgba(246,244,238,0) 84%), linear-gradient(180deg, rgba(246,244,238,0.72) 0%, rgba(246,244,238,0) 24%), linear-gradient(0deg, rgba(246,244,238,1) 0%, rgba(246,244,238,0.62) 12%, rgba(246,244,238,0) 32%)',
+          }}
+        />
 
-        {/* =====================================================================
-            SECTION 2: WHAT IS EPEDE? (THE 4-STEP LEARNING PHILOSOPHY)
-            ===================================================================== */}
-        <section className="relative rounded-3xl border border-white/10 overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.35)]">
-          <DynamicSectionBackground
-            photos={HOMEPAGE_IMAGE_LIBRARY.generation}
-            overlayOpacityClass="bg-[#102A43]/65"
-            locale={locale}
-            showCaptionBadge={true}
-            className="p-6 sm:p-10 space-y-8"
-          >
-            <div className="max-w-3xl space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.06] border border-[#B8F000]/40 text-[#B8F000] text-xs font-mono font-bold uppercase tracking-wider backdrop-blur-sm">
-                <BookOpen className="w-3.5 h-3.5" />
-                <span>{isFr ? 'QU’EST-CE QU’EPEDE ?' : 'WHAT IS EPEDE?'}</span>
+        {/* Photo Provenance Caption */}
+        <div className="hidden md:block absolute right-8 lg:right-12 bottom-4 z-10 font-mono text-[11px] text-[#5C6C70] text-right pointer-events-none">
+          {currentHero.credit}
+        </div>
+
+        <div className="relative z-10 w-full max-w-[1280px] mx-auto pt-32 pb-14 px-5 sm:px-8 lg:px-12">
+          <div className="max-w-[720px]">
+            <div className="flex items-center gap-2.5 font-mono text-[13px] tracking-[0.08em] text-[#17282C] mb-6">
+              <span className="w-2 h-2 rounded-full bg-[#B8872D] shadow-[0_0_0_4px_rgba(184,135,45,0.18)]" />
+              <span>
+                {isFr
+                  ? 'EPEDE · DE LA PRODUCTION À LA CHARGE FINALE'
+                  : 'EPEDE · FROM PRODUCTION TO FINAL LOAD'}
+              </span>
+            </div>
+
+            <h1 className="sr-only">
+              {isFr
+                ? 'EPEDE — Comprenez comment l’électricité est produite, transportée et utilisée, du matériel réel aux réseaux complets'
+                : 'EPEDE — Understand how electricity is generated, moved and used—from real equipment to complete power systems'}
+            </h1>
+
+            <div aria-live="polite">
+              <div className="font-mono text-[13px] tracking-[0.06em] text-[#147C78]">
+                {String(heroIdx + 1).padStart(2, '0')} / 06 ·{' '}
+                {isFr ? currentHero.fr.eyebrow : currentHero.en.eyebrow} ·{' '}
+                <span className="text-[#B8872D]">{currentHero.volt}</span>
               </div>
 
-              <h2 className="text-2xl sm:text-3xl font-black text-[#F4F1E8] tracking-tight">
-                {isFr
-                  ? 'Un environnement visuel pour comprendre réellement comment fonctionne l’électricité'
-                  : 'A Visual Learning Environment Built to Bridge Theory and Real Electrical Systems'}
-              </h2>
+              <div
+                role="heading"
+                aria-level={2}
+                className="mt-3.5 text-[clamp(2.6rem,5.6vw,5.5rem)] leading-[0.98] tracking-[-0.045em] font-bold text-[#17282C]"
+              >
+                {isFr ? currentHero.fr.head : currentHero.en.head}{' '}
+                <span className="font-serif-editorial text-[1.08em] text-[#147C78]">
+                  {isFr ? currentHero.fr.em : currentHero.en.em}
+                </span>
+              </div>
 
-              <p className="text-sm sm:text-base text-[#A9ADA5] leading-relaxed">
-                {isFr
-                  ? 'Vous n’avez pas besoin d’être déjà ingénieur pour utiliser EPEDE. Que vous soyez étudiant, électricien de chantier, technicien de maintenance ou jeune ingénieur, la plateforme vous fait passer progressivement du principe physique à l’équipement réel, puis au schéma et à l’installation complète.'
-                  : 'You do not need prior mastery of electrical engineering to use EPEDE. Whether you are a student, a field electrician, an industrial maintenance technician, or an early-career engineer, EPEDE guides you step by step from physical intuition to real hardware, schematics, and complete installations.'}
+              <p className="mt-6 max-w-[580px] text-[clamp(1.08rem,1.35vw,1.25rem)] leading-[1.56] text-[#33474B]">
+                {isFr ? currentHero.fr.sub : currentHero.en.sub}
               </p>
             </div>
 
-            {/* 4-Step Core Philosophy Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {[
-                {
-                  step: '01',
-                  titleEn: 'LEARN THE PRINCIPLE',
-                  titleFr: 'COMPRENDRE LE PRINCIPE',
-                  descEn:
-                    'Grasp what voltage, current, power, magnetic induction, and three-phase systems physically do before memorizing equations.',
-                  descFr:
-                    'Comprendre physiquement ce que font la tension, le courant, l’induction magnétique et le triphasé avant de réciter des formules.',
-                  icon: Zap,
-                },
-                {
-                  step: '02',
-                  titleEn: 'UNDERSTAND THE EQUIPMENT',
-                  titleFr: 'OBSERVER L’ÉQUIPEMENT',
-                  descEn:
-                    'Inspect real photographs, internal cutaways, windings, contacts, arc chutes, and IEC symbols of every component.',
-                  descFr:
-                    'Observer de vraies photographies, l’architecture interne en coupe, les bornes et le symbole normalisé de chaque appareil.',
-                  icon: Eye,
-                },
-                {
-                  step: '03',
-                  titleEn: 'VISUALIZE THE SYSTEM',
-                  titleFr: 'VISUALISER LE SYSTÈME',
-                  descEn:
-                    'See how individual devices (breakers, contactors, relays, transformers, motors) connect and work together on schematics.',
-                  descFr:
-                    'Comprendre comment les appareils (disjoncteur, contacteur, relais thermique, transformateur, moteur) interagissent ensemble.',
-                  icon: Layers,
-                },
-                {
-                  step: '04',
-                  titleEn: 'DISCOVER REAL APPLICATIONS',
-                  titleFr: 'DÉCOUVRIR LE TERRAIN RÉEL',
-                  descEn:
-                    'Connect every concept to real installations in Cameroon and internationally: power plants, 225 kV substations, H61 poles, and factories.',
-                  descFr:
-                    'Relier chaque notion aux installations réelles au Cameroun et dans le monde : centrales, postes 225 kV, poteaux H61 et usines.',
-                  icon: MapPin,
-                },
-              ].map((item) => {
-                const Icon = item.icon;
+            {/* One Primary Filled CTA + One Restrained Secondary CTA */}
+            <div className="flex flex-wrap items-center gap-4 mt-9">
+              <button
+                type="button"
+                onClick={() =>
+                  onNavigateJourney ? onNavigateJourney() : onNavigateView('journey')
+                }
+                className="h-[52px] px-7 rounded-full bg-[#147C78] hover:bg-[#0E5E5B] text-[#FFFDF9] font-bold text-[15px] inline-flex items-center gap-2.5 border-0 cursor-pointer transition-colors"
+              >
+                <span>
+                  {isFr ? 'Explorer le parcours de l’énergie' : 'Explore the power journey'}
+                </span>
+                <span>→</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onNavigateView('thematic-journeys')}
+                className="h-[52px] px-5 bg-transparent text-[#17282C] hover:text-[#147C78] font-bold text-[15px] inline-flex items-center gap-2 border-0 border-b border-[#17282C] hover:border-[#147C78] rounded-none cursor-pointer transition-colors"
+              >
+                <span>{isFr ? 'Parcourir les formations' : 'Browse learning paths'}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* 6-Stage Hero Carousel Tablist + Explicit Pause/Play Control */}
+          <div className="mt-16 flex flex-wrap items-center gap-5">
+            <div
+              role="tablist"
+              aria-label={isFr ? 'Chaîne du système électrique' : 'Power flow chain'}
+              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-3.5 gap-y-2 flex-1 max-w-[920px]"
+            >
+              {HERO_THEMES.map((t, i) => {
+                const isSelected = i === heroIdx;
                 return (
-                  <div
-                    key={item.step}
-                    className="rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-md p-5 space-y-3 hover:border-[#B8F000]/50 hover:bg-white/[0.07] transition-all"
+                  <button
+                    key={t.key}
+                    type="button"
+                    role="tab"
+                    aria-selected={isSelected}
+                    onClick={() => {
+                      setPaused(true);
+                      setHeroIdx(i);
+                    }}
+                    className="relative min-h-[52px] pt-3 pb-1.5 border-0 bg-transparent text-left cursor-pointer"
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-xs font-black text-[#B8F000] bg-white/[0.06] px-2.5 py-1 rounded-md border border-[#B8F000]/30">
-                        STEP {item.step}
-                      </span>
-                      <Icon className="w-5 h-5 text-[#B8F000]" />
-                    </div>
-                    <h3 className="text-sm font-black text-[#F4F1E8] tracking-wide uppercase">
-                      {isFr ? item.titleFr : item.titleEn}
-                    </h3>
-                    <p className="text-xs text-[#A9ADA5] leading-relaxed">
-                      {isFr ? item.descFr : item.descEn}
-                    </p>
-                  </div>
+                    <span className="absolute inset-x-0 top-0 h-[2px] bg-[#CFCABD]" />
+                    <span
+                      className="absolute left-0 top-0 h-[2px] bg-[#147C78] transition-[width] duration-300"
+                      style={{ width: i <= heroIdx ? '100%' : '0%' }}
+                    />
+                    <span className="block font-mono text-xs text-[#5C6C70]">
+                      {String(i + 1).padStart(2, '0')} →
+                    </span>
+                    <span
+                      className={`block text-sm font-bold ${
+                        isSelected ? 'text-[#17282C]' : 'text-[#5C6C70]'
+                      }`}
+                    >
+                      {isFr ? t.fr.label : t.en.label}
+                    </span>
+                  </button>
                 );
               })}
             </div>
-          </DynamicSectionBackground>
-        </section>
 
-        {/* =====================================================================
-            SECTION 3: INTERACTIVE CAMEROON ELECTRICAL POWER NETWORK MAP
-            (Verified SONATREL & Eneo Generation & Transmission Infrastructure)
-            ===================================================================== */}
-        <section className="relative rounded-3xl border border-white/10 overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.35)]">
-          <DynamicSectionBackground
-            photos={HOMEPAGE_IMAGE_LIBRARY.transmission}
-            overlayOpacityClass="bg-[#07131F]/80"
-            locale={locale}
-            showCaptionBadge={true}
-            className="p-6 sm:p-10 space-y-6"
-          >
-            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-4 border-b border-white/10">
-              <div className="space-y-2">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.06] border border-[#2878A5]/40 text-[#2878A5] text-xs font-mono font-bold uppercase tracking-wider backdrop-blur-sm">
-                  <MapPin className="w-3.5 h-3.5 text-[#B8F000]" />
-                  <span>{isFr ? 'CARTOGRAPHIE GÉOGRAPHIQUE OFFICIELLE' : 'OFFICIAL GEOGRAPHIC INFRASTRUCTURE MAP'}</span>
-                </div>
-
-                <h2 className="text-2xl sm:text-3xl font-black text-[#F4F1E8] tracking-tight">
-                  {isFr
-                    ? 'Réseau Électrique Interconnecté du Cameroun (RIS & RIN)'
-                    : 'Interconnected Power Grid of Cameroon (Southern RIS & Northern RIN)'}
-                </h2>
-
-                <p className="text-sm text-[#A9ADA5] max-w-3xl leading-relaxed">
-                  {isFr
-                    ? 'Explorez la géographie réelle des grands ouvrages hydroélectriques (Nachtigal 420 MW, Song Loulou 384 MW, Edéa 276 MW, Memve\'ele 211 MW), des centrales thermiques, des fermes solaires PV et des artères de transport THT 225 kV et 110 kV opérées par la SONATREL.'
-                    : 'Explore verified generation facilities (Nachtigal 420 MW, Song Loulou 384 MW, Edéa 276 MW, Memve\'ele 211 MW), gas thermal plants, solar farms, and 225 kV / 110 kV transmission corridors operated by SONATREL.'}
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => onNavigateView('cameroon-grid')}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 hover:bg-[#102A43] text-white border border-white/20 hover:border-[#B8F000] text-xs font-mono font-bold transition-all shrink-0 cursor-pointer backdrop-blur-md"
-              >
-                <span>{isFr ? 'Plein Écran & Données Réseau' : 'Full Screen Grid Explorer'}</span>
-                <ArrowRight className="w-4 h-4 text-[#B8F000]" />
-              </button>
-            </div>
-
-            {/* Embedded Real Cameroon Geographic Map */}
-            <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#07131F]/90 backdrop-blur-md shadow-2xl">
-              <RealCameroonGeographicMap
-                locale={locale}
-                onNavigateEquipment={onSelectEquipment}
-                onNavigateDiagram={(topo) => onNavigateDiagram && onNavigateDiagram()}
-              />
-            </div>
-          </DynamicSectionBackground>
-        </section>
+            <button
+              type="button"
+              onClick={() => setPaused((p) => !p)}
+              aria-label={
+                paused
+                  ? isFr
+                    ? 'Relancer le défilement automatique'
+                    : 'Resume slide rotation'
+                  : isFr
+                  ? 'Mettre en pause le défilement'
+                  : 'Pause slide rotation'
+              }
+              className="h-11 px-4 border border-[#CFCABD] rounded-full bg-[#FFFDF9]/85 font-mono text-xs text-[#17282C] hover:border-[#17282C] cursor-pointer"
+            >
+              {paused ? (isFr ? '▶ Lecture' : '▶ Play') : isFr ? '❚❚ Pause' : '❚❚ Pause'}
+            </button>
+          </div>
+        </div>
+      </section>
 
       {/* =====================================================================
-          SECTION 3: EXPLORE THE 8 PROGRESSIVE LEARNING PATHWAYS
+          SCENE 02 — CONCISE "POWER SOURCE TO USER" FLOW LINE
           ===================================================================== */}
-      <section className="space-y-6">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 font-mono text-xs font-bold text-[#B8F000] uppercase tracking-wider">
-              <Compass className="w-4 h-4 text-[#B8F000]" />
-              <span>{isFr ? 'PAR OÙ COMMENCER ?' : 'WHERE SHOULD I BEGIN?'}</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-[#F4F1E8] tracking-tight">
+      <section
+        data-screen-label="02 Flow"
+        className="bg-[#F6F4EE] pt-20 md:pt-28 pb-16 md:pb-24"
+      >
+        <div className="max-w-[1280px] mx-auto px-5 sm:px-8 lg:px-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 items-end">
+            <h2 className="m-0 text-[clamp(1.9rem,3.4vw,3.35rem)] leading-[1.05] tracking-[-0.035em] font-bold text-[#17282C]">
               {isFr
-                ? '8 Parcours d’Apprentissage Progressifs'
-                : '8 Progressive Learning Pathways'}
+                ? 'L’énergie électrique est un parcours continu — pas une collection d’appareils isolés.'
+                : 'Electrical power is a journey — not a collection of isolated components.'}
             </h2>
-            <p className="text-sm text-[#A9ADA5] max-w-2xl">
+            <p className="m-0 text-[1.125rem] leading-[1.65] text-[#5C6C70] max-w-[540px]">
               {isFr
-                ? 'Choisissez votre point de départ selon votre niveau : des bases de l’électricité (Parcours 01) jusqu’aux réseaux haute tension, moteurs industriels et lecture de schémas.'
-                : 'Choose your starting point by experience level: from foundational electricity (Pathway 01) to high-voltage grids, industrial motor control, and schematic reading.'}
+                ? 'EPEDE suit l’énergie de la turbine au transformateur, à la ligne HTB, au poste, au départ HTA, au TGBT, au moteur et à la salle de contrôle. Observez d’abord l’ensemble du système, puis entrez dans les parcours, schémas et outils de chaque étape.'
+                : 'EPEDE follows energy from turbine to transformer, line, substation, feeder, switchboard, motor and control room. See the whole system first, then move into the lessons, diagrams and tools that bring each part into focus.'}
             </p>
           </div>
 
-          {/* Level Filter Pills */}
-          <div className="flex flex-wrap items-center gap-1.5">
-            {[
-              { id: 'all', labelEn: 'All 8 Pathways', labelFr: 'Les 8 Parcours' },
-              { id: 'beginner', labelEn: 'Beginner & Student', labelFr: 'Débutant & Étudiant' },
-              { id: 'technician', labelEn: 'Field Technician', labelFr: 'Technicien & Chantier' },
-              { id: 'engineer', labelEn: 'Power Systems', labelFr: 'Réseaux & Centrales' },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setPathwayFilter(tab.id as any)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer border ${
-                  pathwayFilter === tab.id
-                    ? 'bg-[#B8F000] text-[#102A43] border-[#B8F000] font-black'
-                    : 'bg-white/[0.04] text-[#A9ADA5] hover:text-[#F4F1E8] border-white/10'
-                }`}
+          <div className="relative mt-14 md:mt-20">
+            <div className="hidden md:block absolute inset-x-0 top-[7px] h-[1px] bg-[#CFCABD]" />
+            {!reducedMotion && (
+              <div
+                aria-hidden="true"
+                className="hidden md:block absolute inset-x-0 top-[3px] h-2.5 pointer-events-none"
               >
-                {isFr ? tab.labelFr : tab.labelEn}
+                <span
+                  className="absolute top-0 w-2.5 h-2.5 -ml-1 rounded-full bg-[#B8872D] shadow-[0_0_0_4px_rgba(184,135,45,0.18)]"
+                  style={{ animation: 'epPulse 6s linear infinite' }}
+                />
+              </div>
+            )}
+
+            <div className="relative grid grid-cols-2 sm:grid-cols-3 md:grid-cols-9 gap-y-5 gap-x-3">
+              {JOURNEY_STAGES.map((st, idx) => {
+                const activeOrPast = idx <= stageIdx;
+                return (
+                  <button
+                    key={st.num}
+                    type="button"
+                    onClick={() => jumpToJourneySection(idx)}
+                    className="border-0 bg-transparent text-left p-0 flex flex-col gap-2.5 min-h-[48px] cursor-pointer group"
+                  >
+                    <span
+                      className="w-4 h-4 rounded-full bg-[#F6F4EE] border-2 transition-colors"
+                      style={{
+                        borderColor: activeOrPast ? '#147C78' : '#B9B4A6',
+                      }}
+                    />
+                    <span className="font-mono text-xs text-[#B8872D]">{st.volt}</span>
+                    <span className="text-sm font-bold text-[#17282C] group-hover:text-[#147C78] leading-snug">
+                      {isFr ? st.fr.short : st.en.short}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* =====================================================================
+          SCENE 03 — GENERATION PHOTO STORY
+          ===================================================================== */}
+      <section
+        data-screen-label="03 Generation"
+        className="overflow-x-clip bg-gradient-to-b from-[#F6F4EE] to-[#FFFDF9] pb-20 md:pb-32"
+      >
+        <div className="max-w-[1280px] mx-auto px-5 sm:px-8 lg:px-12 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+          <div className="lg:col-span-6 relative">
+            <EditorialImage
+              assetId="gen-story"
+              locale={locale}
+              aspectRatio="4/3"
+              className="w-full"
+            />
+            <div className="mt-3 sm:mt-0 sm:absolute sm:right-6 sm:-bottom-6 bg-[#17282C] text-[#F4F1E8] px-5 py-4 font-mono text-xs leading-relaxed">
+              <div className="text-[#E3C17A]">
+                {isFr ? 'ÉTAPE 01 · PRODUCTION' : 'STAGE 01 · GENERATION'}
+              </div>
+              <div>
+                {isFr
+                  ? '11–15 kV aux bornes de l’alternateur'
+                  : '11–15 kV at generator terminals'}
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-6 max-w-[600px]">
+            <div className="epede-eyebrow">
+              {isFr ? 'LÀ OÙ TOUT COMMENCE' : 'WHERE IT BEGINS'}
+            </div>
+            <h2 className="mt-4 text-[clamp(1.9rem,3.2vw,3.2rem)] leading-[1.05] tracking-[-0.035em] font-bold text-[#17282C]">
+              {isFr ? 'L’eau devient rotation.' : 'Water becomes rotation.'}{' '}
+              <span className="font-serif-editorial text-[1.1em] text-[#147C78]">
+                {isFr ? 'La rotation devient puissance.' : 'Rotation becomes power.'}
+              </span>
+            </h2>
+            <p className="mt-6 text-[1.08rem] leading-[1.7] text-[#33474B]">
+              {isFr
+                ? 'Dans une centrale hydroélectrique, la chute d’eau entraîne une turbine accouplée à un alternateur synchrone. Le système d’excitation (AVR) fixe le champ magnétique, le régulateur de vitesse maintient 50 Hz, et le disjoncteur de groupe raccorde l’unité au transformateur élévateur — première décision de coupure de la chaîne.'
+                : 'In a hydroelectric plant, falling water drives a turbine coupled to a synchronous alternator. The excitation system sets the field, the governor holds speed, and the generator breaker connects the unit to the step-up transformer — the first switching decision in the chain.'}
+            </p>
+
+            <div className="mt-8 grid grid-cols-2 border-t border-[#DEDACF]">
+              <div className="py-4 pr-4 border-b border-[#DEDACF]">
+                <div className="font-mono text-xs text-[#5C6C70]">SOURCE</div>
+                <div className="font-bold mt-1 text-[#17282C]">
+                  {isFr ? 'Hauteur de chute H & débit Q' : 'Head & flow'}
+                </div>
+              </div>
+              <div className="py-4 pl-4 border-b border-l border-[#DEDACF]">
+                <div className="font-mono text-xs text-[#5C6C70]">
+                  {isFr ? 'TURBINE' : 'PRIME MOVER'}
+                </div>
+                <div className="font-bold mt-1 text-[#17282C]">
+                  {isFr ? 'Turbine Francis / Kaplan' : 'Francis / Kaplan turbine'}
+                </div>
+              </div>
+              <div className="py-4 pr-4 border-b border-[#DEDACF]">
+                <div className="font-mono text-xs text-[#5C6C70]">MACHINE</div>
+                <div className="font-bold mt-1 text-[#17282C]">
+                  {isFr ? 'Alternateur synchrone' : 'Synchronous alternator'}
+                </div>
+              </div>
+              <div className="py-4 pl-4 border-b border-l border-[#DEDACF]">
+                <div className="font-mono text-xs text-[#5C6C70]">
+                  {isFr ? 'ÉVACUATION' : 'OUTPUT'}
+                </div>
+                <div className="font-bold mt-1 text-[#17282C]">
+                  {isFr ? 'Réseau via transformateur GSU' : 'Grid via GSU transformer'}
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => onSelectDomain('D01')}
+              className="mt-7 inline-flex items-center gap-2.5 font-bold text-[#147C78] hover:text-[#0E5E5B] bg-transparent border-0 p-0 cursor-pointer text-[15px]"
+            >
+              <span>
+                {isFr
+                  ? 'Ouvrir le domaine D01 — Production d’énergie'
+                  : 'Open domain D01 — Generation'}
+              </span>
+              <span>→</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* =====================================================================
+          SCENE 04 — NINE-STAGE INTERACTIVE SYSTEM JOURNEY
+          ===================================================================== */}
+      <section
+        id="epede-home-journey"
+        data-screen-label="04 Journey"
+        className="bg-[#FFFDF9] py-20 md:py-28 scroll-mt-[72px]"
+      >
+        <div className="max-w-[1280px] mx-auto px-5 sm:px-8 lg:px-12">
+          <div className="flex flex-wrap justify-between items-end gap-6">
+            <div>
+              <div className="epede-eyebrow">
+                {isFr ? 'LE PARCOURS DU SYSTÈME · 9 ÉTAPES' : 'THE SYSTEM JOURNEY · 9 STAGES'}
+              </div>
+              <h2 className="mt-4 text-[clamp(1.9rem,3.2vw,3.2rem)] leading-[1.05] tracking-[-0.035em] font-bold text-[#17282C]">
+                {isFr ? 'De la source primaire' : 'From source'}{' '}
+                <span className="font-serif-editorial text-[1.1em] text-[#147C78]">
+                  {isFr ? 'jusqu’au tableau basse tension.' : 'to switchboard.'}
+                </span>
+              </h2>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() =>
+                  setStageIdx((prev) => (prev + JOURNEY_STAGES.length - 1) % JOURNEY_STAGES.length)
+                }
+                aria-label={isFr ? 'Étape précédente' : 'Previous stage'}
+                className="w-12 h-12 rounded-full border border-[#CFCABD] bg-transparent text-[#17282C] hover:border-[#17282C] text-lg cursor-pointer"
+              >
+                ←
               </button>
+              <button
+                type="button"
+                onClick={() => setStageIdx((prev) => (prev + 1) % JOURNEY_STAGES.length)}
+                aria-label={isFr ? 'Étape suivante' : 'Next stage'}
+                className="w-12 h-12 rounded-full border-0 bg-[#17282C] text-[#F6F4EE] hover:bg-[#147C78] text-lg cursor-pointer"
+              >
+                →
+              </button>
+            </div>
+          </div>
+
+          {/* Connected 9-Stage Horizontal Stepper */}
+          <div
+            role="tablist"
+            aria-label={isFr ? 'Étapes du réseau électrique' : 'Power system stages'}
+            className="relative mt-12 flex overflow-x-auto pb-2"
+          >
+            <div className="absolute inset-x-0 top-[21px] h-[1px] bg-[#DEDACF]" />
+            <div
+              className="absolute left-0 top-[21px] h-[2px] bg-[#147C78] transition-[width] duration-300"
+              style={{ width: `${(stageIdx / (JOURNEY_STAGES.length - 1)) * 100}%` }}
+            />
+            {JOURNEY_STAGES.map((st, idx) => {
+              const isSelected = idx === stageIdx;
+              const isPast = idx < stageIdx;
+              return (
+                <button
+                  key={st.num}
+                  type="button"
+                  role="tab"
+                  aria-selected={isSelected}
+                  onClick={() => setStageIdx(idx)}
+                  className="relative flex-1 min-w-[104px] border-0 bg-transparent pr-2 text-left flex flex-col gap-3 min-h-[48px] cursor-pointer"
+                >
+                  <span
+                    className="w-[42px] h-[42px] rounded-full grid place-items-center font-mono text-[13px] border transition-colors"
+                    style={{
+                      backgroundColor: isSelected
+                        ? '#147C78'
+                        : isPast
+                        ? '#E3EFEC'
+                        : '#FFFDF9',
+                      color: isSelected ? '#FFFDF9' : '#17282C',
+                      borderColor: isSelected || isPast ? '#147C78' : '#B9B4A6',
+                    }}
+                  >
+                    {st.num}
+                  </span>
+                  <span
+                    className={`text-[13px] leading-snug ${
+                      isSelected ? 'font-extrabold text-[#17282C]' : 'font-semibold text-[#5C6C70]'
+                    }`}
+                  >
+                    {isFr ? st.fr.short : st.en.short}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Selected Stage Detail Panel */}
+          <div
+            aria-live="polite"
+            className="mt-14 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start"
+          >
+            <div className="lg:col-span-6">
+              <EditorialImage
+                assetId={currentStage.assetId}
+                locale={locale}
+                aspectRatio="4/3"
+                showCredit
+              />
+            </div>
+
+            <div className="lg:col-span-6">
+              <div className="font-mono text-[13px] text-[#B8872D]">
+                {isFr ? 'ÉTAPE' : 'STAGE'} {currentStage.num} / 09
+              </div>
+              <h3 className="mt-3 text-[clamp(2.1rem,3.8vw,3.6rem)] leading-[1.02] tracking-[-0.04em] font-bold text-[#17282C]">
+                {isFr ? currentStage.fr.title : currentStage.en.title}
+              </h3>
+
+              {/* Concise Voltage & Domain Strip */}
+              <div className="mt-6 flex flex-wrap border-t border-[#17282C] border-b border-[#DEDACF]">
+                <div className="py-3 pr-6">
+                  <div className="font-mono text-xs text-[#5C6C70]">
+                    {isFr ? 'TENSION' : 'VOLTAGE'}
+                  </div>
+                  <div className="font-mono text-base font-medium text-[#17282C] mt-0.5">
+                    {currentStage.volt}
+                  </div>
+                </div>
+                <div className="py-3 px-6 border-l border-[#DEDACF]">
+                  <div className="font-mono text-xs text-[#5C6C70]">
+                    {isFr ? 'DOMAINE' : 'DOMAIN'}
+                  </div>
+                  <div className="font-mono text-base font-medium text-[#17282C] mt-0.5">
+                    {currentStage.domain}
+                  </div>
+                </div>
+              </div>
+
+              <p className="mt-6 text-[1.125rem] leading-[1.65] text-[#33474B]">
+                {isFr ? currentStage.fr.purpose : currentStage.en.purpose}
+              </p>
+
+              <div className="mt-7 font-mono text-xs tracking-[0.06em] uppercase text-[#5C6C70]">
+                {isFr ? 'APPAREILLAGE CLÉ' : 'KEY APPARATUS'}
+              </div>
+              <div className="mt-2 flex flex-col">
+                {(isFr ? currentStage.fr.apparatus : currentStage.en.apparatus).map((item) => (
+                  <button
+                    key={item.label}
+                    type="button"
+                    onClick={() => onSelectEquipment(item.eqId)}
+                    className="py-3 border-b border-[#EEEAE0] bg-transparent border-x-0 border-t-0 text-left font-semibold text-[#17282C] hover:text-[#147C78] flex items-center justify-between gap-3.5 cursor-pointer"
+                  >
+                    <span className="flex items-center gap-3.5">
+                      <span className="text-[#147C78]">—</span>
+                      <span>{item.label}</span>
+                    </span>
+                    <span className="font-mono text-xs text-[#5C6C70]">↗</span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="mt-7 flex flex-wrap items-center gap-6">
+                <button
+                  type="button"
+                  onClick={() => onSelectDomain(currentStage.domain)}
+                  className="inline-flex items-center gap-2.5 font-bold text-[#147C78] hover:text-[#0E5E5B] bg-transparent border-0 p-0 cursor-pointer text-[15px]"
+                >
+                  <span>
+                    {isFr
+                      ? `Ouvrir ${currentStage.domain} dans la bibliothèque`
+                      : `Open ${currentStage.domain} in the library`}
+                  </span>
+                  <span>→</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    onNavigateJourney
+                      ? onNavigateJourney(currentStage.stageId as StageId)
+                      : onNavigateView('journey')
+                  }
+                  className="inline-flex items-center gap-2 font-semibold text-[#17282C] hover:text-[#147C78] bg-transparent border-0 border-b border-[#17282C] p-0 pb-0.5 cursor-pointer text-sm"
+                >
+                  <span>
+                    {isFr
+                      ? 'Vue détaillée des 9 étapes'
+                      : 'Open full 9-stage system explorer'}
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* =====================================================================
+          SCENE 05 — FOUR OPEN LEARNING-METHOD STEPS (NOT BOXED CARDS)
+          ===================================================================== */}
+      <section
+        data-screen-label="05 Method"
+        className="bg-[#FFFDF9] pb-20 md:pb-28"
+      >
+        <div className="max-w-[1280px] mx-auto px-5 sm:px-8 lg:px-12">
+          <div className="border-t border-[#DEDACF] pt-14 md:pt-24 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10">
+            <div>
+              <div className="epede-eyebrow">
+                {isFr ? 'MÉTHODE PÉDAGOGIQUE' : 'HOW EPEDE TEACHES'}
+              </div>
+              <h2 className="mt-4 text-[clamp(1.6rem,2.4vw,2.4rem)] leading-[1.08] tracking-[-0.03em] font-bold text-[#17282C]">
+                {isFr
+                  ? 'Quatre gestes, répétés à chaque étape.'
+                  : 'Four moves, repeated at every stage.'}
+              </h2>
+            </div>
+
+            {methods.map((m) => (
+              <div key={m.n}>
+                <div className="text-[clamp(3.2rem,4.8vw,4.4rem)] font-serif-editorial text-[#B8872D] leading-none">
+                  {m.n}
+                </div>
+                <h3 className="mt-4 text-xl font-bold text-[#17282C]">{m.t}</h3>
+                <p className="mt-2.5 text-base leading-[1.65] text-[#5C6C70]">{m.d}</p>
+              </div>
             ))}
           </div>
         </div>
-
-        {/* 8 Pathways Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-          {filteredPathways.map((pathway) => (
-            <div
-              key={pathway.id}
-              onClick={() => {
-                if (pathway.targetView) {
-                  onNavigateView(pathway.targetView);
-                } else if (pathway.targetDomain) {
-                  onSelectDomain(pathway.targetDomain);
-                } else {
-                  onNavigateView('thematic-journeys');
-                }
-              }}
-              className="group rounded-2xl bg-[#102A43]/40 border border-white/10 hover:border-[#B8F000]/50 backdrop-blur-xl overflow-hidden flex flex-col justify-between transition-all duration-300 hover:shadow-[0_12px_30px_rgba(0,0,0,0.5)] cursor-pointer"
-            >
-              <div>
-                {/* Top Photo Header */}
-                <div className="relative h-36 overflow-hidden bg-gradient-to-br from-[#102A43]/70 to-[#0B192C]/90 flex items-center justify-center">
-                  {pathway.imageUrl ? (
-                    <img
-                      src={pathway.imageUrl}
-                      alt={isFr ? pathway.titleFr : pathway.titleEn}
-                      loading="lazy"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center p-4 border-b border-white/10 select-none">
-                      <Zap className="w-6 h-6 text-[#B8F000]/40 mb-1.5" />
-                      <span className="text-[10px] font-mono text-white/35 tracking-widest uppercase">
-                        {isFr ? 'Photographie en attente' : 'Image pending'}
-                      </span>
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#102A43]/90 via-transparent to-transparent pointer-events-none" />
-                  <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                    <span className="px-2.5 py-1 rounded-lg bg-black/40 border border-[#D7A64A]/40 font-mono text-xs font-black text-[#D7A64A] backdrop-blur-sm">
-                      {isFr ? `PARCOURS ${pathway.num}` : `PATHWAY ${pathway.num}`}
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-md bg-black/40 border border-white/20 font-mono text-[10px] font-bold text-[#F4F1E8] backdrop-blur-sm">
-                      {isFr ? pathway.levelBadgeFr : pathway.levelBadgeEn}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Card Body */}
-                <div className="p-5 space-y-3">
-                  <h3 className="text-base font-black text-[#F4F1E8] group-hover:text-[#B8F000] transition-colors">
-                    {isFr ? pathway.titleFr : pathway.titleEn}
-                  </h3>
-                  <p className="text-xs text-[#A9ADA5] leading-relaxed">
-                    {isFr ? pathway.summaryFr : pathway.summaryEn}
-                  </p>
-
-                  <ul className="space-y-1.5 pt-2 border-t border-white/10">
-                    {(isFr ? pathway.topicsFr : pathway.topicsEn).map((topic) => (
-                      <li key={topic} className="flex items-start gap-2 text-xs text-[#F4F1E8]/90">
-                        <span className="text-[#B8F000] font-bold">▪</span>
-                        <span>{topic}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              {/* Footer Action */}
-              <div className="px-5 py-3.5 bg-white/[0.03] border-t border-white/10 flex items-center justify-between text-xs font-mono font-bold text-[#B8F000] group-hover:text-white transition-colors">
-                <span>{isFr ? 'Ouvrir ce parcours' : 'Start this pathway'}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </div>
-          ))}
-        </div>
       </section>
 
       {/* =====================================================================
-          SECTION 4: VISUAL EXPLORER OF THE ELECTRICAL POWER SYSTEM (9 STAGES)
+          SCENE 06 — CAMEROON GRID TEASER WITH SOURCE/PROVENANCE NOTE
           ===================================================================== */}
-      <section className="relative rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
-        <DynamicSectionBackground
-          photos={HOMEPAGE_IMAGE_LIBRARY.substations}
-          overlayOpacityClass="bg-[#102A43]/70"
-          locale={locale}
-          showCaptionBadge={true}
-          className="p-6 sm:p-10 space-y-6"
-        >
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 font-mono text-xs font-bold text-[#B8F000] uppercase tracking-wider">
-              <Activity className="w-4 h-4 text-[#B8F000]" />
-              <span>{isFr ? 'EXPLORATEUR VISUEL DU SYSTÈME ÉLECTRIQUE' : 'VISUAL ELECTRICAL POWER SYSTEM EXPLORER'}</span>
+      <section
+        id="epede-home-grid"
+        data-screen-label="06 Cameroon grid"
+        className="bg-gradient-to-b from-[#FFFDF9] to-[#EEF0EA] py-20 md:py-28 scroll-mt-[72px]"
+      >
+        <div className="max-w-[1280px] mx-auto px-5 sm:px-8 lg:px-12 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+          <div className="lg:col-span-5">
+            <div className="epede-eyebrow">
+              {isFr ? 'RÉSEAU ÉLECTRIQUE DU CAMEROUN' : 'CAMEROON GRID'}
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-[#F4F1E8] tracking-tight">
-              {isFr
-                ? 'Les 9 Étapes de la Chaîne Électrique : de la Centrale à la Prise'
-                : 'Follow Electricity Across All 9 Stages of the Power System'}
-            </h2>
-            <p className="text-sm text-[#A9ADA5] max-w-3xl">
-              {isFr
-                ? 'Cliquez sur n’importe quelle étape ci-dessous pour observer sa photographie réelle, son rôle, son principe de fonctionnement, ses équipements principaux et son application au Cameroun.'
-                : 'Click any stage below to inspect its real-world photograph, purpose, operating principle, main equipment, and application in Cameroon.'}
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => onNavigateView('journey')}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-[#102A43] text-white font-mono text-xs font-bold border border-white/20 hover:border-[#B8F000] transition-colors shrink-0 cursor-pointer backdrop-blur-md"
-          >
-            <span>{isFr ? 'Ouvrir l’Explorateur Plein Écran' : 'Open Full System Explorer'}</span>
-            <ArrowRight className="w-4 h-4 text-[#B8F000]" />
-          </button>
-        </div>
-
-        {/* Connected 9-Stage Canonical Power Chain */}
-        <PowerChain
-          locale={locale}
-          currentStageId={selectedStageId}
-          onSelectStage={(stage) => setSelectedStageId(stage.id)}
-          showDetails={false}
-          showNavigationButtons={false}
-        />
-
-        {/* Selected Stage Detailed Visual Inspection Panel */}
-        <div className="rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xl overflow-hidden grid grid-cols-1 lg:grid-cols-12">
-          {/* Left Real Photograph */}
-          <div className="lg:col-span-5 relative min-h-[280px] sm:min-h-[340px] bg-gradient-to-br from-[#0B192C] to-[#102A43] flex items-center justify-center">
-            {activeStage.imageUrl ? (
-              <img
-                src={activeStage.imageUrl}
-                alt={isFr ? activeStage.title.fr : activeStage.title.en}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full min-h-[280px] flex flex-col items-center justify-center p-8 text-center select-none">
-                <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-3">
-                  <Zap className="w-7 h-7 text-[#B8F000]/60" />
-                </div>
-                <span className="text-xs font-mono text-white/40 uppercase tracking-widest">
-                  {isFr ? 'Photographie Haute Définition en attente' : 'High-definition photo pending'}
-                </span>
-              </div>
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#102A43]/90 via-transparent to-transparent pointer-events-none" />
-            <div className="absolute bottom-4 left-4 right-4 space-y-1">
-              <span className="inline-block px-2.5 py-1 rounded-md bg-black/50 border border-[#B8F000]/40 font-mono text-xs font-bold text-[#B8F000] backdrop-blur-sm">
-                {isFr ? `ÉTAPE ${activeStage.stageNumber} · ${activeStage.voltage}` : `STAGE ${activeStage.stageNumber} · ${activeStage.voltage}`}
+            <h2 className="mt-4 text-[clamp(1.9rem,3.2vw,3.2rem)] leading-[1.05] tracking-[-0.035em] font-bold text-[#17282C]">
+              {isFr ? 'Deux réseaux interconnectés,' : 'Two interconnected networks,'}{' '}
+              <span className="font-serif-editorial text-[1.1em] text-[#147C78]">
+                {isFr
+                  ? 'un système national en construction.'
+                  : 'one national system in the making.'}
               </span>
-              <h3 className="text-xl font-black text-[#F4F1E8]">
-                {isFr ? activeStage.title.fr : activeStage.title.en}
-              </h3>
-            </div>
-          </div>
-
-          {/* Right Explanation, Purpose, Equipment & Cameroon Context */}
-          <div className="lg:col-span-7 p-6 sm:p-7 space-y-5 flex flex-col justify-between">
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 space-y-1.5">
-                  <div className="text-[11px] font-mono font-bold text-[#B8F000] uppercase tracking-wider">
-                    {isFr ? 'POURQUOI CETTE ÉTAPE EXISTE (RÔLE)' : 'PURPOSE IN THE POWER SYSTEM'}
-                  </div>
-                  <p className="text-xs text-[#A9ADA5] leading-relaxed">
-                    {isFr ? activeStage.purpose.fr : activeStage.purpose.en}
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 space-y-1.5">
-                  <div className="text-[11px] font-mono font-bold text-[#B8F000] uppercase tracking-wider">
-                    {isFr ? 'PRINCIPE PHYSIQUE' : 'OPERATING PRINCIPLE'}
-                  </div>
-                  <p className="text-xs text-[#A9ADA5] leading-relaxed">
-                    {isFr ? activeStage.physicalPrinciple.fr : activeStage.physicalPrinciple.en}
-                  </p>
-                </div>
-              </div>
-
-              {/* Main Equipment Chips */}
-              <div className="space-y-2">
-                <div className="text-[11px] font-mono font-bold text-[#A9ADA5] uppercase tracking-wider">
-                  {isFr ? 'ÉQUIPEMENTS PRINCIPAUX DE CETTE ÉTAPE :' : 'MAIN EQUIPMENT AT THIS STAGE:'}
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {activeStage.keyEquipment.map((eq) => (
-                    <span
-                      key={eq}
-                      className="px-3 py-1 rounded-lg bg-white/[0.04] border border-white/10 text-xs font-mono text-[#F4F1E8]"
-                    >
-                      ⚡ {eq}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Cameroon Real-World Example */}
-              <div className="p-3.5 rounded-xl bg-[#102A43]/60 border border-[#B8F000]/30 flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-[#B8F000] shrink-0 mt-0.5" />
-                <div className="text-xs text-[#F4F1E8] leading-relaxed">
-                  <strong className="text-[#B8F000] font-mono uppercase mr-1.5">
-                    {isFr ? 'Exemple au Cameroun :' : 'Cameroon Application:'}
-                  </strong>
-                  {isFr ? activeStage.cameroonContext.fr : activeStage.cameroonContext.en}
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
-              <button
-                type="button"
-                onClick={() => onSelectDomain(activeStage.domainCode as DomainCode)}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#B8F000] hover:bg-[#c9f826] text-[#102A43] font-black text-xs uppercase tracking-wider transition-all shadow-[0_8px_20px_rgba(184,240,0,0.3)] cursor-pointer"
-              >
-                <span>
-                  {isFr
-                    ? `Étudier le Domaine ${activeStage.domainCode} en détail`
-                    : `Explore Domain ${activeStage.domainCode} Lesson`}
-                </span>
-                <ArrowRight className="w-4 h-4 text-[#102A43]" />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  if (onNavigateJourney) onNavigateJourney(activeStage.journeyStageId);
-                  else onNavigateView('journey');
-                }}
-                className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#B8F000] hover:text-white transition-colors cursor-pointer"
-              >
-                <span>{isFr ? 'Voir sur le schéma interactif' : 'Inspect on Interactive SLD'}</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-        </DynamicSectionBackground>
-      </section>
-
-      {/* =====================================================================
-          SECTION 5: DISCOVER ELECTRICAL EQUIPMENT (VISUAL CATALOGUE PREVIEW)
-          ===================================================================== */}
-      <section className="space-y-6">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 font-mono text-xs font-bold text-[#D7A64A] uppercase tracking-wider">
-              <Wrench className="w-4 h-4" />
-              <span>{isFr ? 'DE LA THÉORIE AU MATÉRIEL RÉEL' : 'FROM THEORY TO PHYSICAL HARDWARE'}</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-[#F4F1E8] tracking-tight">
-              {isFr
-                ? 'Découvrir les Équipements Électriques (Photo, Anatomie & Symbole)'
-                : 'Discover Electrical Equipment: Photo, Internal Anatomy & Symbol'}
             </h2>
-            <p className="text-sm text-[#A9ADA5] max-w-3xl">
+            <p className="mt-6 text-[1.08rem] leading-[1.7] text-[#33474B]">
               {isFr
-                ? 'Chaque équipement possède une fiche visuelle complète expliquant son rôle, son principe de fonctionnement, ses composants internes, son symbole électrique et son installation réelle.'
-                : 'Every piece of electrical equipment has a dedicated visual learning page explaining its role, operating principle, internal construction, electrical symbol, and real installation.'}
+                ? 'Explorez les réseaux interconnectés Sud (RIS) et Nord (RIN) : centrales hydroélectriques, thermiques et solaires, corridors 225 kV / 110 kV / 90 kV, postes SONATREL/ENEO et profils hydrologiques saisonniers (Jan–Déc), avec distinction explicite entre tracés cartographiés et liaisons schématiques.'
+                : 'Explore the Southern (RIS) and Northern (RIN) interconnected grids: generation sites, transmission corridors and substations, with mapped routes clearly separated from schematic ones.'}
             </p>
-          </div>
 
-          <button
-            type="button"
-            onClick={() => onNavigateView('equipment-list')}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-[#102A43] text-white font-mono text-xs font-bold border border-white/20 hover:border-[#B8F000] transition-colors shrink-0 cursor-pointer backdrop-blur-md"
-          >
-            <span>{isFr ? 'Voir tout le Catalogue d’Équipements' : 'Browse Full Equipment Catalogue'}</span>
-            <ArrowRight className="w-4 h-4 text-[#B8F000]" />
-          </button>
-        </div>
+            {/* Fine-Rule KPI Strip */}
+            <div className="mt-8 grid grid-cols-3 border-t border-[#17282C]">
+              <div className="py-3.5 pr-3">
+                <div className="font-mono text-[22px] font-medium text-[#17282C]">RIS</div>
+                <div className="text-[13px] text-[#5C6C70] mt-0.5">
+                  {isFr ? 'Réseau Sud' : 'Southern grid'}
+                </div>
+              </div>
+              <div className="py-3.5 px-3 border-l border-[#CFCABD]">
+                <div className="font-mono text-[22px] font-medium text-[#17282C]">RIN</div>
+                <div className="text-[13px] text-[#5C6C70] mt-0.5">
+                  {isFr ? 'Réseau Nord' : 'Northern grid'}
+                </div>
+              </div>
+              <div className="py-3.5 pl-3 border-l border-[#CFCABD]">
+                <div className="font-mono text-[22px] font-medium text-[#17282C]">225 kV</div>
+                <div className="text-[13px] text-[#5C6C70] mt-0.5">
+                  {isFr ? 'Ossature HTB' : 'Backbone level'}
+                </div>
+              </div>
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {FEATURED_EQUIPMENT.map((eq) => (
-            <div
-              key={eq.id}
-              onClick={() => onSelectEquipment(eq.id)}
-              className="group rounded-2xl bg-[#102A43]/40 border border-white/10 hover:border-[#B8F000]/50 backdrop-blur-xl overflow-hidden flex flex-col justify-between transition-all duration-300 hover:shadow-[0_12px_30px_rgba(0,0,0,0.5)] cursor-pointer"
+            <p className="mt-4 font-mono text-xs leading-[1.6] text-[#5C6C70]">
+              {isFr
+                ? 'Jeu de données sourcé (SONATREL, ENEO, ARSEL, EDC, NHPC) · date des données et notes d’incertitude affichées sur la carte. Les tracés schématiques ne constituent pas des relevés topographiques.'
+                : 'Source-linked dataset · data date and uncertainty notes shown in the map view. Schematic routes are not surveyed geometry.'}
+            </p>
+
+            <button
+              type="button"
+              onClick={() => onNavigateView('cameroon-grid')}
+              className="mt-6 inline-flex items-center gap-2.5 font-bold text-[#147C78] hover:text-[#0E5E5B] bg-transparent border-0 p-0 cursor-pointer text-[15px]"
             >
-              <div>
-                <div className="relative h-44 overflow-hidden bg-gradient-to-br from-[#102A43]/70 to-[#0B192C]/90 flex items-center justify-center">
-                  {eq.imageUrl ? (
-                    <img
-                      src={eq.imageUrl}
-                      alt={isFr ? eq.nameFr : eq.nameEn}
-                      loading="lazy"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center p-4 border-b border-white/10 select-none">
-                      <Cpu className="w-8 h-8 text-[#B8F000]/40 mb-2" />
-                      <span className="text-[10px] font-mono text-white/35 tracking-widest uppercase">
-                        {isFr ? 'Photographie Équipement en attente' : 'Equipment photo pending'}
-                      </span>
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#102A43]/90 via-transparent to-transparent pointer-events-none" />
-                  <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2">
-                    <span className="px-2.5 py-1 rounded-md bg-black/40 border border-[#D7A64A]/40 font-mono text-[11px] font-bold text-[#D7A64A] backdrop-blur-sm">
-                      {eq.voltageBadge}
-                    </span>
-                    <span className="px-2.5 py-1 rounded-md bg-black/40 border border-white/20 font-mono text-[10px] font-bold text-[#F4F1E8] backdrop-blur-sm">
-                      {eq.iecSymbolLabel}
-                    </span>
-                  </div>
-                </div>
+              <span>
+                {isFr
+                  ? 'Ouvrir la carte et l’observatoire du réseau'
+                  : 'Open the grid map'}
+              </span>
+              <span>→</span>
+            </button>
+          </div>
 
-                <div className="p-5 space-y-3">
-                  <h3 className="text-base font-black text-[#F4F1E8] group-hover:text-[#B8F000] transition-colors">
-                    {isFr ? eq.nameFr : eq.nameEn}
-                  </h3>
-
-                  <p className="text-xs text-[#F4F1E8]/90 leading-relaxed">
-                    {isFr ? eq.roleFr : eq.roleEn}
-                  </p>
-
-                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10 space-y-1">
-                    <div className="text-[10px] font-mono font-bold text-[#B8F000] uppercase tracking-wider">
-                      {isFr ? 'CE QUE VOUS VERREZ À L’INTÉRIEUR :' : 'INTERNAL CONSTRUCTION & ANATOMY:'}
-                    </div>
-                    <p className="text-xs text-[#A9ADA5] leading-snug">
-                      {isFr ? eq.insideAnatomyFr : eq.insideAnatomyEn}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="px-5 py-3 bg-white/[0.03] border-t border-white/10 flex items-center justify-between text-xs font-mono font-bold text-[#B8F000] group-hover:text-white transition-colors">
-                <span>{isFr ? 'Ouvrir la leçon visuelle (10 sections)' : 'Open Visual Equipment Lesson'}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </div>
+          <div className="lg:col-span-7">
+            <div className="bg-[#10191D] border border-[#2A383C] p-3 sm:p-4">
+              <RealCameroonGeographicMap
+                locale={locale}
+                onNavigateDiagram={() => onNavigateView('cameroon-grid')}
+              />
             </div>
-          ))}
+          </div>
         </div>
       </section>
 
       {/* =====================================================================
-          SECTION 6: ENGINEERING CONCEPTS & COMPLETE SYSTEMS IN PRACTICE
-          ("HOW DIFFERENT COMPONENTS WORK TOGETHER: 3-PHASE MOTOR STARTER")
+          SCENE 07 — LEARNING PATHWAYS (1 FEATURED + COMPACT DIRECTORY)
           ===================================================================== */}
-      <section className="relative rounded-3xl border border-white/10 overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.35)]">
-        <DynamicSectionBackground
-          photos={HOMEPAGE_IMAGE_LIBRARY.installations}
-          overlayOpacityClass="bg-[#102A43]/65"
-          locale={locale}
-          showCaptionBadge={true}
-          className="p-6 sm:p-10 space-y-6"
-        >
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 font-mono text-xs font-bold text-[#B8F000] uppercase tracking-wider">
-              <Cpu className="w-4 h-4 text-[#B8F000]" />
-              <span>{isFr ? 'COMPRENDRE LES SYSTÈMES COMPLETS' : 'FROM ISOLATED PARTS TO COMPLETE SYSTEMS'}</span>
+      <section
+        id="epede-home-pathways"
+        data-screen-label="07 Pathways"
+        className="bg-[#F6F4EE] py-20 md:py-28 scroll-mt-[72px]"
+      >
+        <div className="max-w-[1280px] mx-auto px-5 sm:px-8 lg:px-12">
+          <div className="flex flex-wrap justify-between items-end gap-6">
+            <div>
+              <div className="epede-eyebrow">
+                {isFr ? 'PARCOURS D’APPRENTISSAGE' : 'LEARNING PATHWAYS'}
+              </div>
+              <h2 className="mt-4 text-[clamp(1.9rem,3.2vw,3.2rem)] leading-[1.05] tracking-[-0.035em] font-bold text-[#17282C]">
+                {isFr
+                  ? 'Huit parcours. Une pratique connectée.'
+                  : 'Eight pathways. One connected practice.'}
+              </h2>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-[#F4F1E8] tracking-tight">
-              {isFr
-                ? 'Comment les Équipements Travaillent Ensemble : Démarrage d’un Moteur Triphasé'
-                : 'How Equipment Works Together: Complete 3-Phase Motor Starter System'}
-            </h2>
-            <p className="text-sm text-[#A9ADA5] max-w-3xl">
-              {isFr
-                ? 'Connaître séparément un disjoncteur, un contacteur et un relais thermique ne suffit pas. Cliquez sur chaque appareil de la chaîne ci-dessous pour comprendre comment le circuit de puissance (400 V) et le circuit de commande (24 V / 230 V) coopèrent.'
-                : 'Knowing a circuit breaker, a contactor, and a thermal relay separately is not enough. Click each device in the chain below to understand how the 400 V power circuit and the control circuit work together as one complete installation.'}
-            </p>
-          </div>
 
-          <button
-            type="button"
-            onClick={() => onNavigateView('industrial-projects')}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-[#102A43] text-white font-mono text-xs font-bold border border-white/20 hover:border-[#B8F000] transition-colors shrink-0 cursor-pointer backdrop-blur-md"
-          >
-            <span>{isFr ? 'Explorer le Génie Industriel' : 'Explore Industrial Engineering'}</span>
-            <ArrowRight className="w-4 h-4 text-[#B8F000]" />
-          </button>
-        </div>
-
-        {/* Interactive 5-Element Complete Motor Starter Chain */}
-        <div className="grid grid-cols-1 sm:grid-cols-5 gap-2.5">
-          {MOTOR_STARTER_CHAIN.map((item, idx) => {
-            const isSelected = idx === selectedStarterIdx;
-            return (
-              <button
-                key={item.code}
-                type="button"
-                onClick={() => setSelectedStarterIdx(idx)}
-                className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
-                  isSelected
-                    ? 'bg-[#B8F000] text-[#102A43] border-[#B8F000] shadow-[0_0_15px_rgba(184,240,0,0.35)] font-black'
-                    : 'bg-white/[0.04] text-[#F7F8F5] border-white/10 hover:border-white/25 hover:bg-white/[0.08]'
-                }`}
-              >
-                <div className="flex items-center justify-between w-full mb-2">
-                  <span
-                    className={`font-mono text-xs font-black px-2 py-0.5 rounded ${
-                      isSelected ? 'bg-[#102A43] text-[#B8F000]' : 'bg-white/[0.06] text-[#B8F000]'
+            <div
+              role="group"
+              aria-label={isFr ? 'Filtrer par public' : 'Filter by audience'}
+              className="flex flex-wrap gap-1.5"
+            >
+              {(['All', 'Students', 'Technicians', 'Engineers'] as const).map((aud) => {
+                const isSelected = audienceFilter === aud;
+                const labelMap: Record<typeof aud, string> = {
+                  All: isFr ? 'Tous' : 'All',
+                  Students: isFr ? 'Étudiants' : 'Students',
+                  Technicians: isFr ? 'Techniciens' : 'Technicians',
+                  Engineers: isFr ? 'Ingénieurs' : 'Engineers',
+                };
+                return (
+                  <button
+                    key={aud}
+                    type="button"
+                    aria-pressed={isSelected}
+                    onClick={() => setAudienceFilter(aud)}
+                    className={`h-11 px-4 rounded-full border text-sm font-semibold cursor-pointer transition-colors ${
+                      isSelected
+                        ? 'bg-[#17282C] text-[#F6F4EE] border-[#17282C]'
+                        : 'bg-transparent text-[#17282C] border-[#CFCABD] hover:border-[#17282C]'
                     }`}
                   >
-                    {item.code}
-                  </span>
-                  {idx < MOTOR_STARTER_CHAIN.length - 1 && (
-                    <span className={`font-mono text-xs font-bold ${isSelected ? 'text-[#102A43]' : 'text-[#B8F000]'}`}>
-                      ──►
-                    </span>
-                  )}
-                </div>
-                <div className="text-xs font-bold leading-snug">
-                  {isFr ? item.nameFr : item.nameEn}
-                </div>
-                <div
-                  className={`text-[10px] font-mono mt-2 pt-2 border-t ${
-                    isSelected
-                      ? 'border-[#102A43]/20 text-[#102A43]/90 font-bold'
-                      : 'border-white/10 text-[#A9ADA5]'
-                  }`}
-                >
-                  {item.terminals}
-                </div>
-              </button>
-            );
-          })}
-        </div>
+                    {labelMap[aud]}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-        {/* Detailed Explanation of the Selected Element in the Motor Starter System */}
-        <div className="rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xl p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-          <div className="lg:col-span-7 space-y-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="px-2.5 py-1 rounded-md bg-white/[0.06] border border-[#B8F000]/40 font-mono text-xs font-black text-[#B8F000] backdrop-blur-sm">
-                {activeStarterItem.symbolText}
-              </span>
-              <span className="px-2.5 py-1 rounded-md bg-white/[0.06] border border-white/15 font-mono text-xs text-[#F4F1E8]">
-                {isFr ? 'Bornes :' : 'Terminals:'} {activeStarterItem.terminals}
-              </span>
+          <div className="mt-12 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+            {/* Featured Pathway 01 */}
+            <div className="lg:col-span-5">
+              <button
+                type="button"
+                onClick={() => onNavigateView('thematic-journeys')}
+                className="block w-full text-left bg-transparent border-0 p-0 cursor-pointer group"
+              >
+                <EditorialImage
+                  assetId="path-featured"
+                  locale={locale}
+                  aspectRatio="16/10"
+                />
+                <div className="mt-5 font-mono text-xs text-[#B8872D]">
+                  {isFr
+                    ? '01 · COMMENCER ICI · TOUS PUBLICS'
+                    : '01 · START HERE · ALL AUDIENCES'}
+                </div>
+                <h3 className="mt-2 text-[clamp(1.5rem,2.2vw,2.1rem)] tracking-[-0.03em] font-bold text-[#17282C] group-hover:text-[#147C78]">
+                  {isFr ? 'Fondamentaux de l’électricité' : 'Electrical fundamentals'}
+                </h3>
+                <p className="mt-2.5 text-[1.05rem] leading-[1.6] text-[#5C6C70] max-w-[480px]">
+                  {isFr
+                    ? 'Courant, tension, puissance, systèmes alternatifs triphasés et sécurité essentielle — le vocabulaire physique sur lequel repose chaque étape ultérieure.'
+                    : 'Current, voltage, power, AC systems and essential safety — the vocabulary every later stage relies on.'}
+                </p>
+                <span className="mt-4 inline-flex items-center gap-2.5 font-bold text-[#147C78]">
+                  <span>{isFr ? 'Commencer le parcours' : 'Begin the pathway'}</span>
+                  <span>→</span>
+                </span>
+              </button>
             </div>
 
-            <h3 className="text-xl font-black text-[#F4F1E8]">
-              {isFr ? activeStarterItem.nameFr : activeStarterItem.nameEn}
-            </h3>
+            {/* Compact Directory List for Pathways 02-08 */}
+            <div className="lg:col-span-7 border-t border-[#17282C]">
+              {filteredPaths.map((p) => (
+                <button
+                  key={p.n}
+                  type="button"
+                  onClick={() => {
+                    if (p.domain) onSelectDomain(p.domain);
+                    else if (p.view) onNavigateView(p.view);
+                    else onNavigateView('thematic-journeys');
+                  }}
+                  className="w-full grid grid-cols-[48px_minmax(0,1fr)_auto] gap-4 items-center py-4 px-2 border-b border-[#DEDACF] bg-transparent hover:bg-[#FFFDF9] text-left cursor-pointer transition-colors"
+                >
+                  <span className="font-mono text-[13px] text-[#5C6C70]">{p.n}</span>
+                  <span>
+                    <span className="block text-[1.1rem] font-bold text-[#17282C]">
+                      {isFr ? p.fr : p.en}
+                    </span>
+                    <span className="block text-sm text-[#5C6C70] mt-0.5">
+                      {isFr ? p.audFr : p.aud.join(' · ')} ·{' '}
+                      {isFr ? `Étape ${p.stage}` : `Stage ${p.stage}`}
+                    </span>
+                  </span>
+                  <span className="text-[#147C78] text-lg">→</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
-            <p className="text-sm text-[#F4F1E8]/90 leading-relaxed">
-              {isFr ? activeStarterItem.roleFr : activeStarterItem.roleEn}
-            </p>
-
-            <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 space-y-1">
-              <div className="text-[11px] font-mono font-bold text-[#B8F000] uppercase tracking-wider">
-                {isFr ? 'INTERACTION PUISSANCE / COMMANDE' : 'HOW IT INTERACTS WITH THE REST OF THE CIRCUIT'}
+      {/* =====================================================================
+          SCENE 08 — MOTOR STARTER / SLD TECHNICAL WORKBENCH (#10191D GRAPHITE)
+          ===================================================================== */}
+      <section
+        id="epede-home-starter"
+        data-screen-label="08 Starter"
+        className="bg-[#F6F4EE] pb-20 md:pb-28 scroll-mt-[72px]"
+      >
+        <div className="max-w-[1280px] mx-auto px-5 sm:px-8 lg:px-12">
+          <div className="bg-[#10191D] text-[#F4F1E8] p-7 sm:p-10 lg:p-14 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+            <div className="lg:col-span-6">
+              <div className="font-mono text-[13px] tracking-[0.08em] text-[#6CC3BD]">
+                {isFr
+                  ? 'ATELIER · DÉMARREUR DIRECT (DOL) & SÉLECTIVITÉ'
+                  : 'WORKBENCH · DIRECT-ON-LINE STARTER'}
               </div>
-              <p className="text-xs text-[#A9ADA5] leading-relaxed">
-                {isFr ? activeStarterItem.principleFr : activeStarterItem.principleEn}
+              <h2 className="mt-4 text-[clamp(1.6rem,2.5vw,2.6rem)] leading-[1.08] tracking-[-0.03em] font-bold text-[#F4F1E8]">
+                {isFr
+                  ? 'La logique de protection, rendue visible.'
+                  : 'Protection logic, made visible.'}
+              </h2>
+              <p className="mt-4 text-[1.05rem] leading-[1.65] text-[#B9C2C0] max-w-[460px]">
+                {isFr
+                  ? 'Démarrez, arrêtez et surchargez un départ moteur triphasé. Observez la réponse coordonnée du disjoncteur magnétique Q1, du contacteur KM1 et du relais thermique F1.'
+                  : 'Start, stop and overload a motor feeder. Watch the contactor, thermal relay and power path respond.'}
+              </p>
+
+              <div className="mt-7 flex flex-wrap gap-2.5">
+                <button
+                  type="button"
+                  onClick={handleMotorStart}
+                  className="h-12 px-5 rounded-full bg-[#147C78] hover:bg-[#0E5E5B] text-[#FFFDF9] font-bold border-0 cursor-pointer"
+                >
+                  {isFr ? 'Démarrer' : 'Start'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleMotorStop}
+                  className="h-12 px-5 rounded-full border border-[#4A5A5E] bg-transparent hover:border-[#F4F1E8] text-[#F4F1E8] font-bold cursor-pointer"
+                >
+                  {isFr ? 'Arrêter' : 'Stop'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleMotorOverload}
+                  className="h-12 px-5 rounded-full border border-[#4A5A5E] bg-transparent hover:border-[#F4F1E8] text-[#F4F1E8] font-bold cursor-pointer"
+                >
+                  {isFr ? 'Simuler surcharge' : 'Simulate overload'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleMotorFault}
+                  className="h-12 px-5 rounded-full border border-[#6B4A42] bg-transparent hover:border-[#F2A48F] text-[#F2A48F] font-bold cursor-pointer"
+                >
+                  {isFr ? 'Court-circuit moteur' : 'Short-circuit at motor'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleMotorReset}
+                  className="h-12 px-4 border-0 bg-transparent text-[#B9C2C0] hover:text-[#F4F1E8] font-semibold underline cursor-pointer"
+                >
+                  {isFr ? 'Réarmer' : 'Reset'}
+                </button>
+              </div>
+
+              <p className="mt-6 font-mono text-xs text-[#8A9694] leading-relaxed">
+                {isFr
+                  ? 'Sélectivité : F1 (thermique) élimine la surcharge, Q1 (magnétique) élimine le court-circuit. Simulation pédagogique — ne constitue pas une télémesure temps réel.'
+                  : 'Selectivity: F1 (thermal) clears overload, Q1 (magnetic) clears short-circuit. Teaching simulation — not live equipment data.'}
               </p>
             </div>
-          </div>
 
-          {/* Right Schematic Diagram Box */}
-          <div className="lg:col-span-5 rounded-xl bg-white/[0.03] border border-white/10 backdrop-blur-md p-5 space-y-3 font-mono text-xs">
-            <div className="text-[11px] font-bold text-[#B8F000] uppercase tracking-wider border-b border-white/10 pb-2">
-              {isFr ? 'ARCHITECTURE DU DÉPART MOTEUR (CEI 60947-4-1)' : 'MOTOR STARTER COORDINATION (IEC 60947-4-1)'}
-            </div>
-            <div className="space-y-2 text-[#F4F1E8]">
-              <div className="flex items-center justify-between p-2 rounded bg-black/30 border border-white/10">
-                <span className="text-[#A9ADA5]">{isFr ? '1. Circuit de Puissance :' : '1. Power Circuit:'}</span>
-                <span className="font-bold text-[#B8F000]">L1/L2/L3 → Q1 → KM1 → F1 → M1</span>
+            <div className="lg:col-span-6">
+              {/* Interactive 4-Apparatus Chain Q1 — KM1 — F1 — M1 */}
+              <div className="grid grid-cols-[auto_1fr_auto_1fr_auto_1fr_auto] items-center">
+                {/* Q1 */}
+                <div
+                  className="font-mono text-sm font-medium py-3.5 px-3 text-center min-w-[58px] border transition-colors"
+                  style={{
+                    borderColor:
+                      motorState === 'fault' ? '#E07A5F' : '#6CC3BD',
+                    color: motorState === 'fault' ? '#F2A48F' : '#F4F1E8',
+                    backgroundColor:
+                      motorState === 'fault'
+                        ? 'transparent'
+                        : 'rgba(108,195,189,0.08)',
+                  }}
+                >
+                  Q1
+                </div>
+                <div
+                  className="h-[2px] transition-colors"
+                  style={{
+                    backgroundColor:
+                      motorState !== 'fault' ? '#6CC3BD' : '#3A4A4E',
+                  }}
+                />
+                {/* KM1 */}
+                <div
+                  className="font-mono text-sm font-medium py-3.5 px-3 text-center min-w-[58px] border transition-colors"
+                  style={{
+                    borderColor: isRunning ? '#6CC3BD' : '#4A5A5E',
+                    color: isRunning ? '#F4F1E8' : '#8A9694',
+                    backgroundColor: isRunning
+                      ? 'rgba(108,195,189,0.08)'
+                      : 'transparent',
+                  }}
+                >
+                  KM1
+                </div>
+                <div
+                  className="h-[2px] transition-colors"
+                  style={{
+                    backgroundColor: isRunning ? '#6CC3BD' : '#3A4A4E',
+                  }}
+                />
+                {/* F1 */}
+                <div
+                  className="font-mono text-sm font-medium py-3.5 px-3 text-center min-w-[58px] border transition-colors"
+                  style={{
+                    borderColor:
+                      motorState === 'tripped'
+                        ? '#E07A5F'
+                        : isRunning
+                        ? '#6CC3BD'
+                        : '#4A5A5E',
+                    color:
+                      motorState === 'tripped'
+                        ? '#F2A48F'
+                        : isRunning
+                        ? '#F4F1E8'
+                        : '#8A9694',
+                    backgroundColor: isRunning
+                      ? 'rgba(108,195,189,0.08)'
+                      : 'transparent',
+                  }}
+                >
+                  F1
+                </div>
+                <div
+                  className="h-[2px] transition-colors"
+                  style={{
+                    backgroundColor: isRunning ? '#6CC3BD' : '#3A4A4E',
+                  }}
+                />
+                {/* M1 */}
+                <div
+                  className="font-mono text-sm font-medium py-3.5 px-3 text-center min-w-[58px] border transition-colors"
+                  style={{
+                    borderColor: isRunning ? '#6CC3BD' : '#4A5A5E',
+                    color: isRunning ? '#F4F1E8' : '#8A9694',
+                    backgroundColor: isRunning
+                      ? 'rgba(108,195,189,0.08)'
+                      : 'transparent',
+                  }}
+                >
+                  M1
+                </div>
               </div>
-              <div className="flex items-center justify-between p-2 rounded bg-black/30 border border-white/10">
-                <span className="text-[#A9ADA5]">{isFr ? '2. Circuit de Commande :' : '2. Control Circuit:'}</span>
-                <span className="font-bold text-[#F4F1E8]">F1(95-96) → Stop(S0) → Start(S1//13-14) → A1-A2</span>
+
+              <div className="mt-7 flex flex-wrap border-t border-[#2A383C]">
+                <div className="pt-3.5 pr-6 min-w-[160px]">
+                  <div className="font-mono text-xs text-[#8A9694]">
+                    {isFr ? 'ÉTAT MOTEUR' : 'MOTOR STATE'}
+                  </div>
+                  <div
+                    className="mt-1 text-xl font-bold"
+                    style={{
+                      color:
+                        motorState === 'running'
+                          ? '#6CC3BD'
+                          : motorState === 'stopped'
+                          ? '#F4F1E8'
+                          : '#F2A48F',
+                    }}
+                  >
+                    {
+                      {
+                        stopped: isFr ? 'Arrêté' : 'Stopped',
+                        running: isFr ? 'En marche' : 'Running',
+                        tripped: isFr ? 'Déclenché — surcharge' : 'Tripped — overload',
+                        fault: isFr ? 'Défaut éliminé par Q1' : 'Fault cleared by Q1',
+                      }[motorState]
+                    }
+                  </div>
+                </div>
+                <div className="pt-3.5 pl-6 border-l border-[#2A383C] flex-1 min-w-[200px]">
+                  <div className="font-mono text-xs text-[#8A9694]">
+                    {isFr ? 'ÉVÉNEMENT' : 'EVENT'}
+                  </div>
+                  <div className="mt-1 text-base text-[#F4F1E8]">{motorEvent}</div>
+                </div>
               </div>
-            </div>
-            <div className="pt-2 flex items-center justify-between">
-              <button
-                type="button"
-                onClick={() => onSelectEquipment(activeStarterItem.equipmentId)}
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#B8F000] hover:text-white transition-colors cursor-pointer"
-              >
-                <span>{isFr ? 'Voir la fiche de cet appareil' : 'Inspect this component'}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-              <button
-                type="button"
-                onClick={() => onNavigateView('simulation')}
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-white hover:text-[#B8F000] transition-colors cursor-pointer"
-              >
-                <span>{isFr ? 'Simuler le démarrage moteur' : 'Simulate Motor Start'}</span>
-                <Play className="w-3.5 h-3.5 text-[#B8F000]" />
-              </button>
+
+              <div className="mt-6 flex flex-wrap gap-5 pt-4 border-t border-[#2A383C]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    onNavigateDiagram ? onNavigateDiagram() : onNavigateView('diagrams')
+                  }
+                  className="font-mono text-xs text-[#6CC3BD] hover:underline bg-transparent border-0 p-0 cursor-pointer"
+                >
+                  {isFr
+                    ? 'Ouvrir les schémas unifilaires interactifs (SLD) →'
+                    : 'Open interactive SLD workbench →'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    onNavigateCalculator
+                      ? onNavigateCalculator('motor')
+                      : onNavigateView('calculators')
+                  }
+                  className="font-mono text-xs text-[#E3C17A] hover:underline bg-transparent border-0 p-0 cursor-pointer"
+                >
+                  {isFr
+                    ? 'Calculateur de démarrage moteur CEI →'
+                    : 'Open motor starter calculator →'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
-        </DynamicSectionBackground>
       </section>
 
       {/* =====================================================================
-          SECTION 7: REAL-WORLD CAMEROONIAN & INDUSTRIAL APPLICATIONS
+          SCENE 09 — CAMEROON INFRASTRUCTURE PROJECTS AS EDITORIAL ROWS
           ===================================================================== */}
-      <section className="space-y-6">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 font-mono text-xs font-bold text-[#B8F000] uppercase tracking-wider">
-              <Factory className="w-4 h-4 text-[#B8F000]" />
-              <span>{isFr ? 'L’INGÉNIERIE EN PRATIQUE AU CAMEROUN' : 'REAL-WORLD ENGINEERING IN CAMEROON & AFRICA'}</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-[#F4F1E8] tracking-tight">
-              {isFr
-                ? 'Relier les Concepts aux Infrastructures Réelles du Cameroun'
-                : 'Connecting Engineering Principles to Real Cameroonian Infrastructure'}
-            </h2>
-            <p className="text-sm text-[#A9ADA5] max-w-3xl">
-              {isFr
-                ? 'EPEDE ancre chaque domaine technique dans le contexte réel des réseaux SONATREL, Eneo, EDC et des installations industrielles camerounaises.'
-                : 'EPEDE grounds every technical concept in the real operational environment of Cameroon’s hydro plants, SONATREL transmission substations, Eneo distribution networks, and industrial facilities.'}
-            </p>
+      <section
+        id="epede-home-projects"
+        data-screen-label="09 Projects"
+        className="bg-[#F6F4EE] pb-20 md:pb-28 scroll-mt-[72px]"
+      >
+        <div className="max-w-[1280px] mx-auto px-5 sm:px-8 lg:px-12">
+          <div className="epede-eyebrow">
+            {isFr ? 'INFRASTRUCTURES DU CAMEROUN' : 'CAMEROON IN CONTEXT'}
           </div>
+          <h2 className="mt-4 text-[clamp(1.9rem,3.2vw,3.2rem)] leading-[1.05] tracking-[-0.035em] font-bold text-[#17282C] max-w-[760px]">
+            {isFr
+              ? 'De vraies infrastructures, lues comme des systèmes d’ingénierie.'
+              : 'Real infrastructure, read as engineering.'}
+          </h2>
 
-          <button
-            type="button"
-            onClick={() => onNavigateView('cameroon-grid')}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-[#102A43] text-white font-mono text-xs font-bold border border-white/20 hover:border-[#B8F000] transition-colors shrink-0 cursor-pointer backdrop-blur-md"
-          >
-            <span>{isFr ? 'Explorer le Réseau Cameroun (RIS / RIN)' : 'Explore Cameroon Power Network'}</span>
-            <ArrowRight className="w-4 h-4 text-[#B8F000]" />
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-          {[
-            {
-              tag: 'HYDRO & THERMAL GENERATION',
-              titleEn: 'Sanaga Hydro Cascade & Gas Plants',
-              titleFr: 'Cascade de la Sanaga & Centrales Gaz',
-              descEn:
-                'Study how Song Loulou (384 MW), Nachtigal (420 MW), Edéa (276 MW), Memve’ele (211 MW), Lagdo (72 MW), and Kribi (216 MW) generate Cameroon’s electricity.',
-              descFr:
-                'Comprendre comment Song Loulou (384 MW), Nachtigal (420 MW), Édéa (276 MW), Memve’ele (211 MW), Lagdo (72 MW) et Kribi (216 MW) alimentent le pays.',
-              imageUrl: '/images/homepage_uploads/batch_06_image_030.jpg',
-              action: () => onNavigateView('cameroon-grid'),
-            },
-            {
-              tag: 'SONATREL 225 kV / 90 kV GRID',
-              titleEn: 'Interconnected Transmission Substations',
-              titleFr: 'Postes d’Interconnexion SONATREL',
-              descEn:
-                'Inspect the 225 kV and 90 kV transmission corridors and substations supplying Yaoundé (Oyomabang, Nyom II, Ahala) and Douala (Bekoko, Logbaba, Koumassi).',
-              descFr:
-                'Explorer les corridors 225 kV / 90 kV et les postes sources alimentant Yaoundé (Oyomabang, Nyom II, Ahala) et Douala (Bekoko, Logbaba, Koumassi).',
-              imageUrl: '/images/homepage_uploads/batch_02_image_008.jpg',
-              action: () => onNavigateView('cameroon-grid'),
-            },
-            {
-              tag: 'ENEO 15 kV / 30 kV / 400 V',
-              titleEn: 'Urban RMUs & H61 Pole Transformers',
-              titleFr: 'Réseaux HTA/BT, RMU & Poteaux H61',
-              descEn:
-                'Understand how 15 kV and 30 kV feeders, Ring Main Units, and pole-mounted H61 transformers step power down to 400 V / 230 V in neighborhoods.',
-              descFr:
-                'Découvrir le fonctionnement des boucles HTA 15 kV / 30 kV, des cellules RMU et des transformateurs sur poteau H61 jusque chez l’abonné.',
-              imageUrl: '/images/homepage_uploads/batch_02_image_010.jpg',
-              action: () => onSelectDomain('D05'),
-            },
-            {
-              tag: 'INDUSTRIAL INSTALLATIONS',
-              titleEn: 'Factories, TGBT Panels & Standby Gensets',
-              titleFr: 'Usines, TGBT & Groupes de Secours',
-              descEn:
-                'Explore real industrial architectures: main LV switchboards (TGBT), motor control centers, automatic transfer switches (ATS), and synchronized diesel gensets.',
-              descFr:
-                'Étudier les installations industrielles réelles : TGBT, armoires moteurs, inverseurs normal/secours (ATS) et centrales électrogènes de secours.',
-              imageUrl: '/images/homepage_uploads/batch_05_image_024.jpg',
-              action: () => onNavigateView('industrial-projects'),
-            },
-          ].map((card) => (
-            <div
-              key={card.tag}
-              onClick={card.action}
-              className="group rounded-2xl bg-[#102A43]/40 border border-white/10 hover:border-[#B8F000]/50 backdrop-blur-xl overflow-hidden flex flex-col justify-between transition-all duration-300 hover:shadow-[0_12px_30px_rgba(0,0,0,0.5)] cursor-pointer"
-            >
-              <div>
-                <div className="relative h-36 overflow-hidden bg-gradient-to-br from-[#102A43]/70 to-[#0B192C]/90 flex items-center justify-center">
-                  {card.imageUrl ? (
-                    <img
-                      src={card.imageUrl}
-                      alt={isFr ? card.titleFr : card.titleEn}
-                      loading="lazy"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center p-4 border-b border-white/10 select-none">
-                      <Layers className="w-6 h-6 text-[#B8F000]/40 mb-1.5" />
-                      <span className="text-[10px] font-mono text-white/35 tracking-widest uppercase">
-                        {isFr ? 'Photographie Réseau en attente' : 'Grid photo pending'}
-                      </span>
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#102A43]/90 via-transparent to-transparent pointer-events-none" />
-                  <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-black/50 border border-[#B8F000]/40 font-mono text-[10px] font-bold text-[#B8F000] backdrop-blur-sm">
-                    {card.tag}
-                  </span>
+          <div className="mt-12 border-t border-[#17282C]">
+            {cameroonProjects.map((p) => (
+              <article
+                key={p.key}
+                className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 py-8 md:py-10 border-b border-[#DEDACF] items-center"
+              >
+                <div className="md:col-span-5">
+                  <EditorialImage
+                    assetId={p.assetId}
+                    locale={locale}
+                    aspectRatio="16/10"
+                  />
                 </div>
-                <div className="p-5 space-y-2">
-                  <h3 className="text-base font-black text-[#F4F1E8] group-hover:text-[#B8F000] transition-colors">
-                    {isFr ? card.titleFr : card.titleEn}
+                <div className="md:col-span-7">
+                  <div className="font-mono text-xs text-[#B8872D]">{p.meta}</div>
+                  <h3 className="mt-2.5 text-[clamp(1.4rem,2vw,1.9rem)] tracking-[-0.03em] font-bold text-[#17282C]">
+                    {p.title}
                   </h3>
-                  <p className="text-xs text-[#A9ADA5] leading-relaxed">
-                    {isFr ? card.descFr : card.descEn}
+                  <p className="mt-3 text-[1.05rem] leading-[1.65] text-[#5C6C70] max-w-[540px]">
+                    {p.desc}
                   </p>
+                  <button
+                    type="button"
+                    onClick={() => onSelectDomain(p.domain)}
+                    className="mt-4 inline-flex items-center gap-2.5 font-bold text-[#147C78] hover:text-[#0E5E5B] bg-transparent border-0 p-0 cursor-pointer text-[15px]"
+                  >
+                    <span>{p.cta}</span>
+                    <span>→</span>
+                  </button>
                 </div>
-              </div>
-              <div className="px-5 py-3 bg-white/[0.03] border-t border-white/10 flex items-center justify-between text-xs font-mono font-bold text-[#B8F000] group-hover:text-white transition-colors">
-                <span>{isFr ? 'Explorer sur le terrain' : 'Explore Field Context'}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </div>
-          ))}
+              </article>
+            ))}
+          </div>
+
+          <p className="mt-4 font-mono text-xs text-[#5C6C70]">
+            {isFr
+              ? 'Les puissances indiquées sont les capacités publiques de référence ; consultez la source citée dans chaque fiche d’ouvrage.'
+              : 'Capacities are indicative public figures; confirm against the cited source in each project page.'}
+          </p>
         </div>
       </section>
 
       {/* =====================================================================
-          SECTION 8: FINAL CALL TO ACTION — START EXPLORING
+          SCENE 09B — NACHTIGAL CASE STUDY (D01 → D03 → D04 → CALCULATORS)
           ===================================================================== */}
-      <section className="relative rounded-3xl border border-[#B8F000]/40 overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-        <DynamicSectionBackground
-          photos={HOMEPAGE_IMAGE_LIBRARY.automationScada}
-          overlayOpacityClass="bg-[#102A43]/70"
-          locale={locale}
-          showCaptionBadge={true}
-          className="p-8 sm:p-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6"
-        >
-          <div className="space-y-2 max-w-2xl">
-            <div className="text-xs font-mono font-bold text-[#B8F000] uppercase tracking-widest">
-              {isFr ? 'PRÊT À COMMENCER ?' : 'READY TO BEGIN YOUR JOURNEY?'}
+      <section
+        data-screen-label="09b Case study"
+        className="bg-[#FFFDF9] py-20 md:py-28"
+      >
+        <div className="max-w-[1280px] mx-auto px-5 sm:px-8 lg:px-12">
+          <div className="epede-eyebrow">
+            {isFr
+              ? 'ÉTUDE DE CAS · D01 → D03 → D04'
+              : 'CASE STUDY · D01 → D03 → D04'}
+          </div>
+          <h2 className="mt-4 text-[clamp(1.9rem,3.2vw,3.2rem)] leading-[1.05] tracking-[-0.035em] font-bold text-[#17282C] max-w-[820px]">
+            {isFr ? 'Comment Nachtigal' : 'How Nachtigal'}{' '}
+            <span className="font-serif-editorial text-[1.1em] text-[#147C78]">
+              {isFr ? 'rejoint le réseau national.' : 'reaches the grid.'}
+            </span>
+          </h2>
+
+          <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+            {/* Step 01: See */}
+            <div className="border-t border-[#17282C] pt-5">
+              <div className="flex justify-between font-mono text-xs text-[#5C6C70]">
+                <span>{isFr ? '01 · OBSERVER' : '01 · SEE'}</span>
+                <span>D01</span>
+              </div>
+              <div className="mt-4">
+                <EditorialImage
+                  assetId="proj-nachtigal"
+                  locale={locale}
+                  aspectRatio="4/3"
+                />
+              </div>
+              <p className="mt-4 text-[1.02rem] leading-[1.65] text-[#33474B]">
+                {isFr
+                  ? 'Une centrale au fil de l’eau sur la Sanaga, conçue autour de sept groupes Francis d’environ 60 MW — soit 420 MW à pleine puissance.'
+                  : 'A run-of-river plant on the Sanaga, built as seven generating units of about 60 MW — roughly 420 MW at full output.'}
+              </p>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-[#F4F1E8] tracking-tight">
-              {isFr
-                ? 'Apprenez le principe. Observez l’équipement. Visualisez le système.'
-                : 'Learn the Principle. Understand the Equipment. Visualize the System.'}
-            </h2>
-            <p className="text-sm text-[#A9ADA5] leading-relaxed">
-              {isFr
-                ? 'Démarrez par le Parcours 01 (Fondamentaux de l’Électricité), explorez la chaîne électrique complète ou ouvrez le catalogue visuel des équipements.'
-                : 'Start with Pathway 01 (Electrical Fundamentals), trace the 9-Stage Electrical Power System, or inspect real hardware in the Equipment Catalogue.'}
-            </p>
+
+            {/* Step 02: Read the One-Line */}
+            <div className="border-t border-[#17282C] pt-5">
+              <div className="flex justify-between font-mono text-xs text-[#5C6C70]">
+                <span>{isFr ? '02 · LIRE L’UNIFILAIRE' : '02 · READ THE ONE-LINE'}</span>
+                <span>D03 · D04</span>
+              </div>
+              <div className="mt-4 flex flex-col">
+                {[
+                  {
+                    t: isFr ? '7 groupes hydro-alternateurs' : '7 generating units',
+                    v: '~7 × 60 MW',
+                    fill: '#147C78',
+                  },
+                  {
+                    t: isFr ? 'Transformateurs élévateurs GSU' : 'Step-up transformers',
+                    v: '→ 225 kV',
+                    fill: '#FFFDF9',
+                  },
+                  {
+                    t: isFr ? 'Ligne d’évacuation double terne 225 kV' : '225 kV evacuation line',
+                    v: '~50 km',
+                    fill: '#FFFDF9',
+                  },
+                  {
+                    t: isFr ? 'Poste de Nyom II, Yaoundé' : 'Nyom 2 substation, Yaoundé',
+                    v: '225 / 90 kV',
+                    fill: '#FFFDF9',
+                  },
+                  {
+                    t: isFr ? 'Réseau Interconnecté Sud (RIS)' : 'Southern grid (RIS)',
+                    v: isFr ? 'centres de charge' : 'load centres',
+                    fill: '#147C78',
+                  },
+                ].map((c) => (
+                  <div
+                    key={c.t}
+                    className="grid grid-cols-[22px_minmax(0,1fr)_auto] gap-3.5 items-center py-3.5 border-b border-[#EEEAE0]"
+                  >
+                    <span
+                      className="w-3 h-3 rounded-full border-2 border-[#147C78]"
+                      style={{ backgroundColor: c.fill }}
+                    />
+                    <span className="font-bold text-[#17282C]">{c.t}</span>
+                    <span className="font-mono text-[13px] text-[#B8872D]">{c.v}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Step 03: Calculate */}
+            <div className="border-t border-[#17282C] pt-5">
+              <div className="flex justify-between font-mono text-xs text-[#5C6C70]">
+                <span>{isFr ? '03 · CALCULER' : '03 · CALCULATE'}</span>
+                <span>{isFr ? 'CALCULATEURS' : 'CALCULATORS'}</span>
+              </div>
+              <div className="mt-4 font-mono text-[15px] leading-[1.9] text-[#17282C]">
+                I = P / (√3 · U · cos φ)
+                <br />= 420 MW / (√3 × 225 kV × 0.95)
+              </div>
+              <div className="mt-2.5 flex items-baseline gap-2.5">
+                <span className="text-[clamp(3rem,4.8vw,4.3rem)] font-serif-editorial text-[#147C78] leading-none">
+                  ≈ 1.13
+                </span>
+                <span className="font-mono text-base text-[#17282C]">kA</span>
+              </div>
+              <p className="mt-3.5 text-[1.02rem] leading-[1.65] text-[#33474B]">
+                {isFr
+                  ? 'Courant total d’évacuation à pleine puissance — la grandeur qui dimensionne la section des conducteurs, les TC et le pouvoir de coupure des disjoncteurs 225 kV.'
+                  : 'Total evacuation current at full output — the figure that drives conductor, CT and breaker ratings on the 225 kV line.'}
+              </p>
+              <button
+                type="button"
+                onClick={() =>
+                  onNavigateCalculator
+                    ? onNavigateCalculator('power')
+                    : onNavigateView('calculators')
+                }
+                className="mt-3.5 inline-flex items-center gap-2.5 font-bold text-[#147C78] hover:text-[#0E5E5B] bg-transparent border-0 p-0 cursor-pointer text-[15px]"
+              >
+                <span>
+                  {isFr ? 'Ouvrir dans le calculateur' : 'Open in the calculator'}
+                </span>
+                <span>→</span>
+              </button>
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
+          <p className="mt-7 font-mono text-xs text-[#5C6C70]">
+            {isFr
+              ? 'Hypothèses : cos φ = 0,95, pleine puissance, pertes négligées. Les données d’ouvrage sont des valeurs publiques indicatives — à vérifier auprès des sources officielles.'
+              : 'Assumptions: cos φ = 0.95, full output, losses neglected. Plant and connection data are indicative public figures — confirm against the cited source.'}
+          </p>
+        </div>
+      </section>
+
+      {/* =====================================================================
+          SCENE 10 — FINAL CTA
+          ===================================================================== */}
+      <section
+        data-screen-label="10 CTA"
+        className="relative min-h-[68svh] flex items-center overflow-hidden bg-[#E9E5DA]"
+      >
+        <div className="absolute inset-0">
+          <EditorialImage
+            assetId="final-cta"
+            locale={locale}
+            decorative
+            className="w-full h-full"
+          />
+        </div>
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              'linear-gradient(180deg, rgba(246,244,238,1) 0%, rgba(246,244,238,0.88) 32%, rgba(246,244,238,0.58) 100%)',
+          }}
+        />
+        <div className="relative z-10 w-full max-w-[1280px] mx-auto py-20 md:py-28 px-5 sm:px-8 lg:px-12">
+          <h2 className="m-0 max-w-[820px] text-[clamp(2.4rem,5vw,4.9rem)] leading-none tracking-[-0.045em] font-bold text-[#17282C]">
+            {isFr ? 'Voir chaque connexion.' : 'See every connection.'}{' '}
+            <span className="font-serif-editorial text-[1.1em] text-[#147C78]">
+              {isFr ? 'Maîtriser le système.' : 'Master the system.'}
+            </span>
+          </h2>
+          <div className="flex flex-wrap items-center gap-4 mt-9">
+            <button
+              type="button"
+              onClick={() =>
+                onNavigateJourney ? onNavigateJourney() : onNavigateView('journey')
+              }
+              className="h-[52px] px-7 rounded-full bg-[#147C78] hover:bg-[#0E5E5B] text-[#FFFDF9] font-bold text-[15px] inline-flex items-center gap-2.5 border-0 cursor-pointer transition-colors"
+            >
+              <span>
+                {isFr
+                  ? 'Explorer le parcours de l’énergie →'
+                  : 'Explore the power journey →'}
+              </span>
+            </button>
             <button
               type="button"
               onClick={() => onNavigateView('thematic-journeys')}
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[#B8F000] hover:bg-[#c9f826] text-[#102A43] font-black text-sm uppercase tracking-wider transition-all shadow-[0_10px_25px_rgba(184,240,0,0.35)] cursor-pointer"
+              className="h-[52px] px-5 bg-transparent text-[#17282C] hover:text-[#147C78] font-bold text-[15px] inline-flex items-center border-0 border-b border-[#17282C] hover:border-[#147C78] rounded-none cursor-pointer transition-colors"
             >
-              <BookOpen className="w-4 h-4" />
-              <span>{isFr ? 'Commencer à Apprendre' : 'Start Learning Pathways'}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onNavigateView('journey')}
-              className="inline-flex items-center gap-2 px-5 py-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-[#F7F8F5] font-bold text-sm backdrop-blur-md transition-all cursor-pointer"
-            >
-              <Compass className="w-4 h-4 text-[#B8F000]" />
-              <span>{isFr ? 'Explorer la Chaîne Électrique' : 'Explore Electrical Systems'}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onNavigateView('equipment-list')}
-              className="inline-flex items-center gap-2 px-5 py-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-[#F7F8F5] font-bold text-sm backdrop-blur-md transition-all cursor-pointer"
-            >
-              <Wrench className="w-4 h-4 text-[#B8F000]" />
-              <span>{isFr ? 'Catalogue Équipements' : 'Browse Equipment'}</span>
+              <span>{isFr ? 'Parcourir les formations' : 'Browse learning paths'}</span>
             </button>
           </div>
-        </DynamicSectionBackground>
+        </div>
       </section>
-      </div>
     </div>
   );
 };

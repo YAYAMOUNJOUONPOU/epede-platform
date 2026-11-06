@@ -226,68 +226,91 @@ export const JourneyView: React.FC<JourneyViewProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 pb-24 font-sans">
-      {/* Top Experience Mode Switcher Bar */}
-      <div className="w-full bg-slate-950/95 border-b border-slate-800 px-4 py-3 sticky top-0 z-40 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
-            <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">
-              {locale === 'fr' ? 'LE PARCOURS DE L’ÉLECTRICITÉ • EXPÉRIENCE EPEDE' : 'THE POWER JOURNEY • EPEDE EXPERIENCE'}
+    <div className="min-h-screen bg-[#F6F4EE] text-[#17282C] pb-24 font-sans">
+      {/* Top Editorial Header & Experience Mode Switcher */}
+      <div className="border-t border-[#17282C] pt-8 pb-6 mb-4">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+          <div className="space-y-3 max-w-3xl">
+            <span className="epede-eyebrow block">
+              {locale === 'fr'
+                ? 'Systèmes Électriques — Chaîne de Puissance'
+                : 'Electrical Systems — Power Chain Explorer'}
             </span>
+            <h1 className="epede-h1">
+              {locale === 'fr' ? (
+                <>
+                  De la centrale hydroélectrique{' '}
+                  <em className="font-serif-editorial text-[#147C78]">jusqu’à la charge finale</em>.
+                </>
+              ) : (
+                <>
+                  From hydroelectric turbine{' '}
+                  <em className="font-serif-editorial text-[#147C78]">to the final load</em>.
+                </>
+              )}
+            </h1>
+            <p className="epede-lead">
+              {locale === 'fr'
+                ? 'Parcourez les 9 étapes physiques du réseau électrique, inspectez les 13 scènes immersives ou basculez dans le laboratoire schématique unifilaire CEI.'
+                : 'Step through the 9 physical stages of the power system, explore the 13-scene visual narrative, or switch into the multi-layer IEC single-line schematic lab.'}
+            </p>
           </div>
 
-          <div className="flex items-center gap-1.5 p-1 bg-slate-900 border border-slate-800 rounded-xl font-mono text-xs">
+          <div
+            role="tablist"
+            aria-label={locale === 'fr' ? 'Mode de parcours' : 'Journey view mode'}
+            className="inline-flex flex-wrap items-center gap-1 p-1 bg-[#EFECE3] border border-[#DEDACF] rounded-full font-mono text-xs self-start shrink-0"
+          >
             <button
               type="button"
+              role="tab"
+              aria-selected={journeyMode === '9stages'}
               onClick={() => setJourneyMode('9stages')}
-              className={`px-3.5 py-1.5 rounded-lg font-bold transition-all flex items-center gap-2 cursor-pointer ${
+              className={`px-4 py-2 rounded-full font-semibold transition-colors flex items-center gap-2 cursor-pointer ${
                 journeyMode === '9stages'
-                  ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/20'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-[#17282C] text-[#FFFDF9]'
+                  : 'text-[#5C6C70] hover:text-[#17282C]'
               }`}
             >
-              <Zap className="h-3.5 w-3.5" />
-              <span>{locale === 'fr' ? '9 Étapes du Réseau' : '9-Stage Grid Explorer'}</span>
-              <span className="px-1.5 py-0.2 rounded bg-slate-950/20 text-[9px] uppercase font-mono font-black">
-                EPEDE 2.0
-              </span>
+              <Zap className="h-3.5 w-3.5 text-[#B8872D]" />
+              <span>{locale === 'fr' ? '9 Étapes (01–09)' : '9 Stages (01–09)'}</span>
             </button>
 
             <button
               type="button"
-              onClick={() => setJourneyMode('13scenes')}
-              className={`px-3.5 py-1.5 rounded-lg font-bold transition-all flex items-center gap-2 cursor-pointer ${
-                journeyMode === '13scenes'
-                  ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>{locale === 'fr' ? '13 Scènes Immersives' : '13-Scene Journey'}</span>
-              <span className="px-1.5 py-0.2 rounded bg-slate-950/20 text-[9px] uppercase font-mono">
-                {locale === 'fr' ? 'CINÉMA' : 'CINEMATIC'}
-              </span>
-            </button>
-
-            <button
-              type="button"
+              role="tab"
+              aria-selected={journeyMode === 'lab'}
               onClick={() => setJourneyMode('lab')}
-              className={`px-3.5 py-1.5 rounded-lg font-bold transition-all flex items-center gap-2 cursor-pointer ${
+              className={`px-4 py-2 rounded-full font-semibold transition-colors flex items-center gap-2 cursor-pointer ${
                 journeyMode === 'lab'
-                  ? 'bg-sky-500 text-slate-950 shadow-md shadow-sky-500/20'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-[#17282C] text-[#FFFDF9]'
+                  : 'text-[#5C6C70] hover:text-[#17282C]'
               }`}
             >
-              <Layers className="h-3.5 w-3.5" />
-              <span>{locale === 'fr' ? 'Laboratoire Schématique & SLD' : 'Schematic Lab & SLD'}</span>
+              <Layers className="h-3.5 w-3.5 text-[#147C78]" />
+              <span>{locale === 'fr' ? 'Schéma & SLD Multi-Couches' : 'Multi-Layer Schematic & SLD'}</span>
+            </button>
+
+            <button
+              type="button"
+              role="tab"
+              aria-selected={journeyMode === '13scenes'}
+              onClick={() => setJourneyMode('13scenes')}
+              className={`px-4 py-2 rounded-full font-semibold transition-colors flex items-center gap-2 cursor-pointer ${
+                journeyMode === '13scenes'
+                  ? 'bg-[#17282C] text-[#FFFDF9]'
+                  : 'text-[#5C6C70] hover:text-[#17282C]'
+              }`}
+            >
+              <Sparkles className="h-3.5 w-3.5 text-[#B8872D]" />
+              <span>{locale === 'fr' ? '13 Scènes Narratives' : '13-Scene Narrative'}</span>
             </button>
           </div>
         </div>
       </div>
 
       {journeyMode === '9stages' ? (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="py-2">
           <NineStagePowerGridExplorer
             locale={locale}
             initialStageId={activeStage}
@@ -311,7 +334,7 @@ export const JourneyView: React.FC<JourneyViewProps> = ({
           />
         </div>
       ) : journeyMode === '13scenes' ? (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="py-2">
           <Epede13ScenesJourney
             locale={locale}
             onNavigateView={(view) => {
@@ -324,7 +347,7 @@ export const JourneyView: React.FC<JourneyViewProps> = ({
           />
         </div>
       ) : (
-        <div className="bg-[#F8FAFC] text-slate-900 min-h-screen">
+        <div className="bg-[#FFFDF9] border border-[#DEDACF] rounded-[12px] p-4 sm:p-6 text-[#17282C]">
           {/* 1. Header Toolbar */}
           <EcosystemHeaderToolbar
         locale={locale}

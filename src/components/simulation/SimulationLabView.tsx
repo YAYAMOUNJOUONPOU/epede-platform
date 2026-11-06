@@ -169,6 +169,8 @@ export const SimulationLabView: React.FC<SimulationLabViewProps> = ({
   onNavigateDiagram,
 }) => {
   const [activeTab, setActiveTab] = useState<SimulationTabType>(initialTab || 'oscilloscope');
+  const [simCategory, setSimCategory] = useState<'ALL' | 'WAVEFORMS' | 'PROTECTION' | 'MACHINES_LINES' | 'SUBSTATION_MICROGRID'>('ALL');
+  const [simSearch, setSimSearch] = useState('');
 
   useEffect(() => {
     if (initialTab) {
@@ -178,291 +180,162 @@ export const SimulationLabView: React.FC<SimulationLabViewProps> = ({
 
   const currentContextLink = SIMULATION_SPINE_LINKS[activeTab];
 
+  const ALL_SIMS: Array<{
+    id: SimulationTabType;
+    num: string;
+    category: 'WAVEFORMS' | 'PROTECTION' | 'MACHINES_LINES' | 'SUBSTATION_MICROGRID';
+    labelFr: string;
+    labelEn: string;
+    std: string;
+    icon: any;
+  }> = [
+    { id: 'oscilloscope', num: '01', category: 'WAVEFORMS', labelFr: 'Oscilloscope & Harmoniques (THD)', labelEn: 'Oscilloscope & Harmonics (THD)', std: 'IEC 61000-4-7', icon: Activity },
+    { id: 'power-triangle', num: '02', category: 'WAVEFORMS', labelFr: 'Triangle de Puissance & Cos φ', labelEn: 'Power Triangle & PF', std: 'IEEE 1459 / IEC 60831', icon: TrendingUp },
+    { id: 'harmonic-filter', num: '12', category: 'WAVEFORMS', labelFr: 'Filtrage Harmonique & Résonance', labelEn: 'Harmonic Filter & Resonance', std: 'IEEE 519 / IEC 61000', icon: Activity },
+    { id: 'short-circuit', num: '04', category: 'WAVEFORMS', labelFr: 'Court-Circuit Asymétrique', labelEn: 'Asymmetrical Short-Circuit', std: 'IEC 60909-0', icon: Zap },
+    { id: 'coordination', num: '05', category: 'PROTECTION', labelFr: 'Sélectivité & Courbes TCC', labelEn: 'Relay Coordination & TCC', std: 'IEC 60255-151', icon: Split },
+    { id: 'distance-protection', num: '08', category: 'PROTECTION', labelFr: 'Protection Distance ANSI 21 (Plan R-X)', labelEn: 'Distance Protection ANSI 21 (R-X Plane)', std: 'ANSI 21 / IEC 60255', icon: Target },
+    { id: 'differential-protection', num: '10', category: 'PROTECTION', labelFr: 'Protection Différentielle ANSI 87T', labelEn: 'Differential Protection ANSI 87T', std: 'ANSI 87T / IEC 60255', icon: GitMerge },
+    { id: 'directional-earth-fault', num: '11', category: 'PROTECTION', labelFr: 'Défaut Terre Directionnel ANSI 67N/59N', labelEn: 'Directional Ground Fault ANSI 67N/59N', std: 'ANSI 67N / NF C 13-200', icon: Compass },
+    { id: 'ct-saturation', num: '16', category: 'PROTECTION', labelFr: 'Saturation Transitoire TC & Coude Vk', labelEn: 'CT Saturation & Knee-Point Vk', std: 'IEC 61869-2 / IEEE C37.110', icon: Gauge },
+    { id: 'transformer', num: '03', category: 'MACHINES_LINES', labelFr: 'Transformateur & Rendement (η)', labelEn: 'Transformer & Efficiency', std: 'IEC 60076', icon: Layers },
+    { id: 'ferranti', num: '06', category: 'MACHINES_LINES', labelFr: 'Effet Ferranti & Lignes HTB', labelEn: 'Ferranti & HV Lines', std: 'IEC 60071', icon: Radio },
+    { id: 'motor-start', num: '07', category: 'MACHINES_LINES', labelFr: 'Démarrage Moteur & Creux U', labelEn: 'Motor Starting & Voltage Sag', std: 'IEC 60034 / IEEE 399', icon: Gauge },
+    { id: 'transient-stability', num: '09', category: 'MACHINES_LINES', labelFr: 'Stabilité Transitoire & Aires SMIB', labelEn: 'Transient Stability & Equal Area (SMIB)', std: 'IEEE / CIGRE', icon: Zap },
+    { id: 'generator-capability', num: '13', category: 'MACHINES_LINES', labelFr: 'Capabilité Alternateur P-Q & ANSI 40', labelEn: 'Generator P-Q Capability & ANSI 40', std: 'IEC 60034-1', icon: Compass },
+    { id: 'synchrocheck', num: '14', category: 'SUBSTATION_MICROGRID', labelFr: 'Synchronisation Réseau & ANSI 25', labelEn: 'Synchrocheck & Paralleling ANSI 25', std: 'ANSI 25 / IEC 60255', icon: Compass },
+    { id: 'substation-interlocking', num: '15', category: 'SUBSTATION_MICROGRID', labelFr: 'Manœuvres de Poste & Verrouillages', labelEn: 'Substation Switching & Interlocking', std: 'IEC 62271 / 61850', icon: GitMerge },
+    { id: 'surge-arrester', num: '17', category: 'SUBSTATION_MICROGRID', labelFr: 'Surtensions & Parafoudres ZnO', labelEn: 'Surge Arresters & Insulation', std: 'IEC 60099-4 / 60071', icon: ShieldAlert },
+    { id: 'cable-thermal', num: '18', category: 'SUBSTATION_MICROGRID', labelFr: 'Thermique Transitoire Câbles', labelEn: 'Cable Thermal Transients', std: 'IEC 60853 / 60287', icon: Thermometer },
+    { id: 'solar-bess', num: '19', category: 'SUBSTATION_MICROGRID', labelFr: 'Solaire PV & Stockage BESS', labelEn: 'Solar PV & BESS Microgrid', std: 'IEEE 2800 / IEC 62933', icon: Sun },
+  ];
+
+  const activeSimObj = ALL_SIMS.find((s) => s.id === activeTab) || ALL_SIMS[0];
+  const filteredSims = ALL_SIMS.filter((s) => {
+    const matchesCat = simCategory === 'ALL' || s.category === simCategory;
+    if (!matchesCat) return false;
+    if (!simSearch.trim()) return true;
+    const q = simSearch.toLowerCase();
+    return s.labelEn.toLowerCase().includes(q) || s.labelFr.toLowerCase().includes(q) || s.std.toLowerCase().includes(q) || s.num.includes(q);
+  });
+
   return (
-    <div className="space-y-6 text-[#F4F1E8]">
-      {/* Header */}
-      <div className="p-6 sm:p-7 rounded-2xl bg-[#151C1E] border border-[#567A87]/35 shadow-xl">
-        <div className="flex items-center gap-2 font-mono text-xs text-[#D7A64A] mb-1.5">
-          <span className="flex h-2 w-2 rounded-full bg-[#D7A64A] animate-pulse" />
-          <Activity className="h-3.5 w-3.5" />
-          <span className="uppercase tracking-widest font-bold">
-            {locale === 'fr' ? 'LABORATOIRE DE SIMULATION NUMÉRIQUE · 19 BANCS INTERACTIFS' : 'DIGITAL SIMULATION LAB · 19 INTERACTIVE WORKBENCHES'}
-          </span>
+    <div className="space-y-8 text-[#17282C]">
+      {/* Bright Editorial Header */}
+      <div className="p-6 sm:p-8 rounded-2xl bg-[#FFFDF9] border border-[#DEDACF] shadow-sm flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+        <div>
+          <div className="flex items-center gap-2 font-mono text-xs text-[#147C78] mb-2">
+            <Activity className="h-3.5 w-3.5" />
+            <span className="uppercase tracking-[0.14em] font-bold">
+              {locale === 'fr' ? 'LABORATOIRE DE SIMULATION NUMÉRIQUE · 19 BANCS INTERACTIFS' : 'DIGITAL SIMULATION LAB · 19 INTERACTIVE WORKBENCHES'}
+            </span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#17282C] tracking-tight">
+            {locale === 'fr' ? (
+              <>Laboratoire Numérique de <span className="font-serif-editorial font-normal text-[#147C78]">Simulation Électrotechnique</span></>
+            ) : (
+              <>Digital Power Engineering <span className="font-serif-editorial font-normal text-[#147C78]">Simulation Laboratory</span></>
+            )}
+          </h1>
+          <p className="text-sm sm:text-base text-[#33474B] mt-2 max-w-3xl font-sans leading-relaxed">
+            {locale === 'fr'
+              ? 'Simulateurs physiques interactifs : oscilloscopes triphasés & décomposition harmonique (THD), compensation d\'énergie réactive, circuit équivalent transformateur, courants de court-circuit CEI 60909, sélectivité TCC CEI 60255, effet Ferranti CEI 60071 et démarrage moteur dynamique IEEE 399.'
+              : 'Interactive physics simulators: 3-phase AC oscilloscope & harmonic decomposition (THD), reactive power compensation, transformer equivalent circuit, IEC 60909 short-circuit transients, IEC 60255 protection coordination, IEC 60071 Ferranti effect, and IEEE 399 motor starting transients.'}
+          </p>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-black text-[#F4F1E8] font-mono tracking-tight uppercase">
-          {locale === 'fr' 
-            ? 'Laboratoire Numérique de Simulation Électrotechnique' 
-            : 'Digital Power Engineering Simulation Laboratory'}
-        </h1>
-        <p className="text-sm text-[#A9ADA5] mt-1.5 max-w-3xl font-sans leading-relaxed">
-          {locale === 'fr'
-            ? 'Simulateurs physiques interactifs : oscilloscopes triphasés & décomposition harmonique (THD), compensation d\'énergie réactive & triangle de puissance, circuit équivalent transformateur, courants de court-circuit CEI 60909, sélectivité ampèremétrique et chronométrique CEI 60255, effet Ferranti et modélisation de lignes HTB CEI 60071, et démarrage moteur dynamique IEEE 399.'
-            : 'Interactive physics simulators: 3-phase AC oscilloscope & harmonic decomposition (THD), reactive power compensation & power triangle, transformer equivalent circuit, IEC 60909 short-circuit analysis, IEC 60255 protection coordination, IEC 60071 Ferranti effect, and IEEE 399 motor starting transients.'}
-        </p>
+
+        {/* Active Instrument Pill */}
+        <div className="p-3.5 rounded-xl bg-[#F6F4EE] border border-[#DEDACF] shrink-0">
+          <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#5C6C70]">
+            {locale === 'fr' ? `INSTRUMENT ACTIF #${activeSimObj.num}` : `ACTIVE INSTRUMENT #${activeSimObj.num}`}
+          </div>
+          <div className="text-sm font-bold text-[#17282C] mt-0.5">
+            {locale === 'fr' ? activeSimObj.labelFr : activeSimObj.labelEn}
+          </div>
+          <div className="font-mono text-[11px] font-bold text-[#147C78] mt-0.5">
+            {activeSimObj.std}
+          </div>
+        </div>
       </div>
 
-      {/* Lab Module Selector Tabs */}
-      <div className="flex gap-2 overflow-x-auto border-b border-[#567A87]/30 pb-3 pt-1 scrollbar-thin">
-        <button
-          type="button"
-          onClick={() => setActiveTab('oscilloscope')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeTab === 'oscilloscope'
-              ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A]'
-              : 'border-[#567A87]/35 bg-[#151C1E] text-[#A9ADA5] hover:text-[#F4F1E8]'
-          }`}
-        >
-          <Activity className="h-4 w-4" />
-          <span>{locale === 'fr' ? '1. Oscilloscope & Harmoniques (THD)' : '1. Oscilloscope & Harmonics (THD)'}</span>
-        </button>
+      {/* Categorized & Searchable 19-Workbench Selector */}
+      <div className="rounded-2xl border border-[#DEDACF] bg-[#FFFDF9] p-5 shadow-sm space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-1.5">
+            {[
+              { id: 'ALL' as const, labelFr: 'Tous (19)', labelEn: 'All Workbenches (19)' },
+              { id: 'WAVEFORMS' as const, labelFr: 'Ondes, THD & Court-Circuit (4)', labelEn: 'Waveforms, THD & Faults (4)' },
+              { id: 'PROTECTION' as const, labelFr: 'Relais & Sélectivité ANSI (5)', labelEn: 'ANSI Relays & TCC (5)' },
+              { id: 'MACHINES_LINES' as const, labelFr: 'Machines, Transfos & Lignes (5)', labelEn: 'Machines, Trafos & Lines (5)' },
+              { id: 'SUBSTATION_MICROGRID' as const, labelFr: 'Postes HT, Câbles & PV/BESS (5)', labelEn: 'Substations, Cables & PV/BESS (5)' },
+            ].map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => setSimCategory(cat.id)}
+                className={`px-3 py-1.5 rounded-lg font-mono text-xs font-bold transition-all cursor-pointer border ${
+                  simCategory === cat.id
+                    ? 'bg-[#17282C] text-white border-[#17282C]'
+                    : 'bg-[#F6F4EE] text-[#5C6C70] border-[#DEDACF] hover:text-[#17282C]'
+                }`}
+              >
+                {locale === 'fr' ? cat.labelFr : cat.labelEn}
+              </button>
+            ))}
+          </div>
 
-        <button
-          type="button"
-          onClick={() => setActiveTab('power-triangle')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeTab === 'power-triangle'
-              ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A]'
-              : 'border-[#567A87]/35 bg-[#151C1E] text-[#A9ADA5] hover:text-[#F4F1E8]'
-          }`}
-        >
-          <TrendingUp className="h-4 w-4" />
-          <span>{locale === 'fr' ? '2. Triangle de Puissance & Cos φ' : '2. Power Triangle & PF'}</span>
-        </button>
+          <input
+            type="text"
+            value={simSearch}
+            onChange={(e) => setSimSearch(e.target.value)}
+            placeholder={locale === 'fr' ? 'Filtrer un banc (ex. 87T, Ferranti, THD)...' : 'Filter workbench (e.g. 87T, Ferranti, THD)...'}
+            className="w-full md:w-72 px-3.5 py-2 rounded-lg bg-[#F6F4EE] border border-[#DEDACF] text-xs text-[#17282C] placeholder-[#5C6C70] focus:outline-none focus:border-[#147C78]"
+          />
+        </div>
 
-        <button
-          type="button"
-          onClick={() => setActiveTab('transformer')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeTab === 'transformer'
-              ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A]'
-              : 'border-[#567A87]/35 bg-[#151C1E] text-[#A9ADA5] hover:text-[#F4F1E8]'
-          }`}
-        >
-          <Layers className="h-4 w-4" />
-          <span>{locale === 'fr' ? '3. Transformateur & Rendement (η)' : '3. Transformer & Efficiency'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('short-circuit')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeTab === 'short-circuit'
-              ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A]'
-              : 'border-[#567A87]/35 bg-[#151C1E] text-[#A9ADA5] hover:text-[#F4F1E8]'
-          }`}
-        >
-          <Zap className="h-4 w-4" />
-          <span>{locale === 'fr' ? '4. Court-Circuit (CEI 60909)' : '4. Short-Circuit (IEC 60909)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('coordination')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeTab === 'coordination'
-              ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A]'
-              : 'border-[#567A87]/35 bg-[#151C1E] text-[#A9ADA5] hover:text-[#F4F1E8]'
-          }`}
-        >
-          <Split className="h-4 w-4 text-[#D7A64A]" />
-          <span>{locale === 'fr' ? '5. Sélectivité & Courbes TCC (CEI 60255)' : '5. Relay Coordination & TCC (IEC 60255)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('ferranti')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeTab === 'ferranti'
-              ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A]'
-              : 'border-[#567A87]/35 bg-[#151C1E] text-[#A9ADA5] hover:text-[#F4F1E8]'
-          }`}
-        >
-          <Radio className="h-4 w-4 text-[#D7A64A]" />
-          <span>{locale === 'fr' ? '6. Effet Ferranti & Lignes HTB (CEI 60071)' : '6. Ferranti & HV Lines (IEC 60071)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('motor-start')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeTab === 'motor-start'
-              ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A]'
-              : 'border-[#567A87]/35 bg-[#151C1E] text-[#A9ADA5] hover:text-[#F4F1E8]'
-          }`}
-        >
-          <Gauge className="h-4 w-4 text-[#D7A64A]" />
-          <span>{locale === 'fr' ? '7. Démarrage Moteur & Creux U (CEI 60034)' : '7. Motor Starting & Voltage Sag (IEC 60034)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('distance-protection')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeTab === 'distance-protection'
-              ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A]'
-              : 'border-[#567A87]/35 bg-[#151C1E] text-[#A9ADA5] hover:text-[#F4F1E8]'
-          }`}
-        >
-          <Target className="h-4 w-4 text-[#D7A64A]" />
-          <span>{locale === 'fr' ? '8. Protection Distance ANSI 21 (Plan R-X)' : '8. Distance Protection ANSI 21 (R-X Plane)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('transient-stability')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeTab === 'transient-stability'
-              ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A]'
-              : 'border-[#567A87]/35 bg-[#151C1E] text-[#A9ADA5] hover:text-[#F4F1E8]'
-          }`}
-        >
-          <Zap className="h-4 w-4 text-[#D7A64A]" />
-          <span>{locale === 'fr' ? '9. Stabilité Transitoire & Aires SMIB (CEI/IEEE)' : '9. Transient Stability & Equal Area (SMIB)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('differential-protection')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeTab === 'differential-protection'
-              ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A]'
-              : 'border-[#567A87]/35 bg-[#151C1E] text-[#A9ADA5] hover:text-[#F4F1E8]'
-          }`}
-        >
-          <GitMerge className="h-4 w-4 text-[#D7A64A]" />
-          <span>{locale === 'fr' ? '10. Protection Différentielle ANSI 87T (Bipente & Harm. 2/5)' : '10. Differential Protection ANSI 87T (Dual Slope & Harm. 2/5)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('directional-earth-fault')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeTab === 'directional-earth-fault'
-              ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A]'
-              : 'border-[#567A87]/35 bg-[#151C1E] text-[#A9ADA5] hover:text-[#F4F1E8]'
-          }`}
-        >
-          <Compass className="h-4 w-4 text-[#D7A64A]" />
-          <span>{locale === 'fr' ? '11. Défaut Terre Directionnel ANSI 67N / 59N (Régimes Neutre)' : '11. Directional Ground Fault ANSI 67N / 59N (Neutral Regimes)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('harmonic-filter')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeTab === 'harmonic-filter'
-              ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A]'
-              : 'border-[#567A87]/35 bg-[#151C1E] text-[#A9ADA5] hover:text-[#F4F1E8]'
-          }`}
-        >
-          <Activity className="h-4 w-4 text-[#D7A64A]" />
-          <span>{locale === 'fr' ? '12. Filtrage Harmonique & Résonance (IEEE 519 / CEI 61000)' : '12. Harmonic Filter & Resonance (IEEE 519 / IEC 61000)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('generator-capability')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeTab === 'generator-capability'
-              ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A]'
-              : 'border-[#567A87]/35 bg-[#151C1E] text-[#A9ADA5] hover:text-[#F4F1E8]'
-          }`}
-        >
-          <Compass className="h-4 w-4 text-[#D7A64A]" />
-          <span>{locale === 'fr' ? '13. Capabilité Alternateur P-Q & ANSI 40 (CEI 60034-1)' : '13. Generator P-Q Capability & ANSI 40 (IEC 60034-1)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('synchrocheck')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeTab === 'synchrocheck'
-              ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A]'
-              : 'border-[#567A87]/35 bg-[#151C1E] text-[#A9ADA5] hover:text-[#F4F1E8]'
-          }`}
-        >
-          <Compass className="h-4 w-4 text-[#D7A64A]" />
-          <span>{locale === 'fr' ? '14. Synchronisation Réseau & ANSI 25 (CEI 60255)' : '14. Synchrocheck & Paralleling ANSI 25 (IEC 60255)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('substation-interlocking')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeTab === 'substation-interlocking'
-              ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A]'
-              : 'border-[#567A87]/35 bg-[#151C1E] text-[#A9ADA5] hover:text-[#F4F1E8]'
-          }`}
-        >
-          <GitMerge className="h-4 w-4 text-[#D7A64A]" />
-          <span>{locale === 'fr' ? '15. Manœuvres de Poste & Verrouillages (CEI 62271 / 61850)' : '15. Substation Switching & Interlocking (IEC 62271 / 61850)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('ct-saturation')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeTab === 'ct-saturation'
-              ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A]'
-              : 'border-[#567A87]/35 bg-[#151C1E] text-[#A9ADA5] hover:text-[#F4F1E8]'
-          }`}
-        >
-          <Gauge className="h-4 w-4 text-[#D7A64A]" />
-          <span>{locale === 'fr' ? '16. Saturation Transitoire TC & Coude Vk (CEI 61869-2 / IEEE C37.110)' : '16. CT Saturation & Knee-Point Vk (IEC 61869-2 / IEEE C37.110)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('surge-arrester')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeTab === 'surge-arrester'
-              ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A]'
-              : 'border-[#567A87]/35 bg-[#151C1E] text-[#A9ADA5] hover:text-[#F4F1E8]'
-          }`}
-        >
-          <ShieldAlert className="h-4 w-4 text-[#D7A64A]" />
-          <span>{locale === 'fr' ? '17. Surtensions & Parafoudres ZnO (CEI 60099-4 / CEI 60071)' : '17. Surge Arresters & Insulation (IEC 60099-4 / IEC 60071)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('cable-thermal')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeTab === 'cable-thermal'
-              ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A]'
-              : 'border-[#567A87]/35 bg-[#151C1E] text-[#A9ADA5] hover:text-[#F4F1E8]'
-          }`}
-        >
-          <Thermometer className="h-4 w-4 text-[#D7A64A]" />
-          <span>{locale === 'fr' ? '18. Thermique Transitoire Câbles (CEI 60853 / CEI 60287)' : '18. Cable Thermal Transients (IEC 60853 / IEC 60287)'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('solar-bess')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border ${
-            activeTab === 'solar-bess'
-              ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A]'
-              : 'border-[#567A87]/35 bg-[#151C1E] text-[#A9ADA5] hover:text-[#F4F1E8]'
-          }`}
-        >
-          <Sun className="h-4 w-4 text-[#D7A64A]" />
-          <span>{locale === 'fr' ? '19. Solaire PV & Stockage BESS (IEEE 2800 / CEI 62933)' : '19. Solar PV & BESS Microgrid (IEEE 2800 / IEC 62933)'}</span>
-        </button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+          {filteredSims.map((sim) => {
+            const Icon = sim.icon;
+            const isActive = activeTab === sim.id;
+            return (
+              <button
+                key={sim.id}
+                type="button"
+                onClick={() => setActiveTab(sim.id)}
+                className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-left text-xs font-semibold transition-all border cursor-pointer ${
+                  isActive
+                    ? 'border-[#147C78] bg-[#E3EFEC] text-[#17282C] shadow-xs ring-1 ring-[#147C78]/30'
+                    : 'border-[#DEDACF] bg-[#F6F4EE] text-[#33474B] hover:text-[#17282C] hover:border-[#147C78]/50'
+                }`}
+              >
+                <span className={`font-mono text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${
+                  isActive ? 'bg-[#147C78] text-white' : 'bg-[#FFFDF9] text-[#5C6C70] border border-[#DEDACF]'
+                }`}>
+                  {sim.num}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-bold">{locale === 'fr' ? sim.labelFr : sim.labelEn}</div>
+                  <div className="font-mono text-[10px] text-[#5C6C70] truncate">{sim.std}</div>
+                </div>
+                <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-[#147C78]' : 'text-[#5C6C70]'}`} />
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Dynamic Context Link to Physical Spine & Certified Calculator */}
       {currentContextLink && (onNavigateContextStack || onNavigateCalculator) && (
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-[#151C1E] border border-[#567A87]/35 shadow-md">
+        <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl bg-[#FFFDF9] border border-[#DEDACF] shadow-sm">
           <div className="flex items-center gap-2.5">
-            <span className="p-1.5 rounded-lg bg-[#D7A64A]/15 text-[#D7A64A] border border-[#D7A64A]/40 shrink-0">
+            <span className="p-1.5 rounded-lg bg-[#E3EFEC] text-[#147C78] border border-[#147C78]/30 shrink-0">
               <Zap className="h-4 w-4" />
             </span>
             <div>
-              <div className="text-[10px] font-mono uppercase tracking-wider text-[#A9ADA5] font-bold">
+              <div className="text-[10px] font-mono uppercase tracking-wider text-[#5C6C70] font-bold">
                 {locale === 'fr' ? "LIEN AVEC L'ÉPINE DORSALE D'INGÉNIERIE" : 'LINKED TO PHYSICAL ENGINEERING SPINE'}
               </div>
-              <div className="text-xs font-bold text-[#F4F1E8] font-mono">
+              <div className="text-xs font-bold text-[#17282C]">
                 {currentContextLink.nodeName[locale]}
               </div>
             </div>
@@ -473,7 +346,7 @@ export const SimulationLabView: React.FC<SimulationLabViewProps> = ({
               <button
                 type="button"
                 onClick={() => onNavigateContextStack(currentContextLink.nodeId)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#D7A64A] hover:bg-[#e3b55a] text-[#0B0F12] font-mono text-xs font-bold transition-all shadow-xs"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#147C78] hover:bg-[#0E5E5B] text-white font-mono text-xs font-bold transition-all cursor-pointer"
               >
                 <Zap className="h-3.5 w-3.5" />
                 <span>{locale === 'fr' ? 'Ouvrir dans l’Épine Dorsale & TCC' : 'Open in Spine & TCC'}</span>
@@ -483,9 +356,9 @@ export const SimulationLabView: React.FC<SimulationLabViewProps> = ({
               <button
                 type="button"
                 onClick={() => onNavigateCalculator(currentContextLink.calcTab)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0B0F12] hover:bg-[#567A87]/20 text-[#F4F1E8] border border-[#567A87]/40 font-mono text-xs font-bold transition-all"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F6F4EE] hover:border-[#147C78] text-[#17282C] border border-[#DEDACF] font-mono text-xs font-bold transition-all cursor-pointer"
               >
-                <Calculator className="h-3.5 w-3.5 text-[#D7A64A]" />
+                <Calculator className="h-3.5 w-3.5 text-[#147C78]" />
                 <span>{currentContextLink.calcName ? currentContextLink.calcName[locale] : (locale === 'fr' ? 'Calculateur Associé' : 'Paired Calculator')}</span>
               </button>
             )}
@@ -493,31 +366,33 @@ export const SimulationLabView: React.FC<SimulationLabViewProps> = ({
         </div>
       )}
 
-      {/* Active Tab Modules */}
-      {activeTab === 'oscilloscope' && <OscilloscopeTab locale={locale} />}
-      {activeTab === 'power-triangle' && <PowerTriangleTab locale={locale} />}
-      {activeTab === 'transformer' && <TransformerLabTab locale={locale} />}
-      {activeTab === 'short-circuit' && <ShortCircuitLabTab locale={locale} />}
-      {activeTab === 'coordination' && <RelayCoordinationTab locale={locale} />}
-      {activeTab === 'ferranti' && <FerrantiLabTab locale={locale} />}
-      {activeTab === 'motor-start' && <MotorStartLabTab locale={locale} />}
-      {activeTab === 'distance-protection' && <DistanceProtectionTab locale={locale} />}
-      {activeTab === 'transient-stability' && <TransientStabilityTab locale={locale} />}
-      {activeTab === 'differential-protection' && <DifferentialProtectionTab locale={locale} />}
-      {activeTab === 'directional-earth-fault' && <DirectionalEarthFaultTab locale={locale} />}
-      {activeTab === 'harmonic-filter' && <HarmonicFilterLabTab locale={locale} />}
-      {activeTab === 'generator-capability' && <GeneratorCapabilityLabTab locale={locale} />}
-      {activeTab === 'synchrocheck' && <SynchrocheckLabTab locale={locale} />}
-      {activeTab === 'substation-interlocking' && (
-        <SubstationInterlockingLabTab
-          locale={locale}
-          onNavigateDiagram={() => onNavigateDiagram?.('double_bus')}
-        />
-      )}
-      {activeTab === 'ct-saturation' && <CtSaturationLabTab locale={locale} />}
-      {activeTab === 'surge-arrester' && <SurgeArresterLabTab locale={locale} />}
-      {activeTab === 'cable-thermal' && <CableThermalTransientLabTab locale={locale} />}
-      {activeTab === 'solar-bess' && <SolarBessLabTab locale={locale} />}
+      {/* Active Tab Modules inside Dedicated Dark Technical Workbench */}
+      <div className="epede-workbench rounded-2xl p-4 sm:p-6 shadow-md">
+        {activeTab === 'oscilloscope' && <OscilloscopeTab locale={locale} />}
+        {activeTab === 'power-triangle' && <PowerTriangleTab locale={locale} />}
+        {activeTab === 'transformer' && <TransformerLabTab locale={locale} />}
+        {activeTab === 'short-circuit' && <ShortCircuitLabTab locale={locale} />}
+        {activeTab === 'coordination' && <RelayCoordinationTab locale={locale} />}
+        {activeTab === 'ferranti' && <FerrantiLabTab locale={locale} />}
+        {activeTab === 'motor-start' && <MotorStartLabTab locale={locale} />}
+        {activeTab === 'distance-protection' && <DistanceProtectionTab locale={locale} />}
+        {activeTab === 'transient-stability' && <TransientStabilityTab locale={locale} />}
+        {activeTab === 'differential-protection' && <DifferentialProtectionTab locale={locale} />}
+        {activeTab === 'directional-earth-fault' && <DirectionalEarthFaultTab locale={locale} />}
+        {activeTab === 'harmonic-filter' && <HarmonicFilterLabTab locale={locale} />}
+        {activeTab === 'generator-capability' && <GeneratorCapabilityLabTab locale={locale} />}
+        {activeTab === 'synchrocheck' && <SynchrocheckLabTab locale={locale} />}
+        {activeTab === 'substation-interlocking' && (
+          <SubstationInterlockingLabTab
+            locale={locale}
+            onNavigateDiagram={() => onNavigateDiagram?.('double_bus')}
+          />
+        )}
+        {activeTab === 'ct-saturation' && <CtSaturationLabTab locale={locale} />}
+        {activeTab === 'surge-arrester' && <SurgeArresterLabTab locale={locale} />}
+        {activeTab === 'cable-thermal' && <CableThermalTransientLabTab locale={locale} />}
+        {activeTab === 'solar-bess' && <SolarBessLabTab locale={locale} />}
+      </div>
     </div>
   );
 };

@@ -225,6 +225,8 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [currentCalcParams, setCurrentCalcParams] = useState<Record<string, any>>({});
+  const [solverSearch, setSolverSearch] = useState('');
+  const [solverCategory, setSolverCategory] = useState<'ALL' | 'POWER_CABLES' | 'SUBSTATION_HV' | 'PROTECTION_SAFETY' | 'MOTORS_RENEWABLES'>('ALL');
   const { calculationNotes } = useAuth();
 
   useEffect(() => {
@@ -276,25 +278,55 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
 
   const currentContextLink = CALCULATOR_SPINE_LINKS[activeCalc];
 
+  const ALL_SOLVERS = [
+    { id: 'power' as CalculatorTabType, category: 'POWER_CABLES' as const, labelFr: 'Puissance & Courant Triphasé', labelEn: '3-Phase Power & Current', icon: Zap },
+    { id: 'voltage-drop' as CalculatorTabType, category: 'POWER_CABLES' as const, labelFr: 'Chute de Tension Câble (ΔU)', labelEn: 'Cable Voltage Drop (ΔU)', icon: Activity },
+    { id: 'cable-short-circuit' as CalculatorTabType, category: 'POWER_CABLES' as const, labelFr: 'Icc Bout de Câble (CEI 60909 / NF C 15-105)', labelEn: 'Cable End Short-Circuit (IEC 60909)', icon: ShieldCheck },
+    { id: 'load-schedule' as CalculatorTabType, category: 'POWER_CABLES' as const, labelFr: 'Bilan de Puissance & Foisonnement (NF C 14-100)', labelEn: 'Load Schedule & Power Balance', icon: Sliders },
+    { id: 'cable-ampacity' as CalculatorTabType, category: 'POWER_CABLES' as const, labelFr: 'Dimensionnement Câbles & Déclassement (CEI 60364/60287)', labelEn: 'Cable Sizing & Ampacity (IEC 60364/60287)', icon: Zap },
+    { id: 'pfc' as CalculatorTabType, category: 'POWER_CABLES' as const, labelFr: 'Compensation Réactive (Qc Condensateurs)', labelEn: 'Power Factor Correction (Capacitors)', icon: Layers },
+    { id: 'transformer' as CalculatorTabType, category: 'SUBSTATION_HV' as const, labelFr: 'Transformateur & Isc', labelEn: 'Transformer & Short-Circuit', icon: Cpu },
+    { id: 'sil' as CalculatorTabType, category: 'SUBSTATION_HV' as const, labelFr: 'Ligne HTB & SIL (Ferranti)', labelEn: 'HV Line SIL & Ferranti', icon: Globe },
+    { id: 'transmission-line' as CalculatorTabType, category: 'SUBSTATION_HV' as const, labelFr: 'Ligne THT, Faisceaux & Corona (CEI 60826)', labelEn: 'Overhead Line Bundles & Corona (IEC 60826)', icon: Globe },
+    { id: 'busbar-electrodynamic' as CalculatorTabType, category: 'SUBSTATION_HV' as const, labelFr: 'Jeu de Barres & Électrodynamique (CEI 60865-1)', labelEn: 'Busbar Electrodynamic Forces (IEC 60865-1)', icon: Layers },
+    { id: 'surge-arrester' as CalculatorTabType, category: 'SUBSTATION_HV' as const, labelFr: 'Parafoudre & Isolement (CEI 60099/60071)', labelEn: 'Surge Arrester & Insulation (IEC 60099/60071)', icon: ShieldAlert },
+    { id: 'earthing' as CalculatorTabType, category: 'PROTECTION_SAFETY' as const, labelFr: 'Mise à la Terre IEEE 80', labelEn: 'IEEE 80 Substation Grounding', icon: ShieldAlert },
+    { id: 'arc-flash' as CalculatorTabType, category: 'PROTECTION_SAFETY' as const, labelFr: 'Arc Flash (IEEE 1584 / NFPA 70E)', labelEn: 'Arc Flash (IEEE 1584 / NFPA 70E)', icon: Flame },
+    { id: 'ct-sizing' as CalculatorTabType, category: 'PROTECTION_SAFETY' as const, labelFr: 'Transformateur de Courant (TC CEI 61869)', labelEn: 'CT Sizing & Saturation', icon: Gauge },
+    { id: 'neutral-grounding' as CalculatorTabType, category: 'PROTECTION_SAFETY' as const, labelFr: 'Régimes de Neutre RPN & Petersen (CEI 60071)', labelEn: 'Neutral Earthing NGR & Petersen (IEC 60071)', icon: ShieldAlert },
+    { id: 'relay-tcc' as CalculatorTabType, category: 'PROTECTION_SAFETY' as const, labelFr: 'Sélectivité & Courbes TCC (CEI 60255 / IEEE 242)', labelEn: 'Relay Coordination & TCC Curves (IEC 60255 / IEEE 242)', icon: ShieldCheck },
+    { id: 'motor' as CalculatorTabType, category: 'MOTORS_RENEWABLES' as const, labelFr: 'Moteur & Démarrage', labelEn: 'Motor & Inrush Current', icon: Sliders },
+    { id: 'solar-sizing' as CalculatorTabType, category: 'MOTORS_RENEWABLES' as const, labelFr: 'Solaire PV & Chaînes (CEI 62548)', labelEn: 'Solar PV String Sizing (IEC 62548)', icon: Sun },
+    { id: 'bess-sizing' as CalculatorTabType, category: 'MOTORS_RENEWABLES' as const, labelFr: 'Stockage BESS & C-Rate (CEI 62933)', labelEn: 'BESS Battery Sizing (IEC 62933)', icon: Battery },
+  ];
+
+  const activeSolverObj = ALL_SOLVERS.find((s) => s.id === activeCalc) || ALL_SOLVERS[0];
+  const filteredSolvers = ALL_SOLVERS.filter((s) => {
+    const matchesCat = solverCategory === 'ALL' || s.category === solverCategory;
+    if (!matchesCat) return false;
+    if (!solverSearch.trim()) return true;
+    const q = solverSearch.toLowerCase();
+    return s.labelEn.toLowerCase().includes(q) || s.labelFr.toLowerCase().includes(q) || s.id.toLowerCase().includes(q) || (CALCULATOR_STANDARDS[s.id]?.standard || '').toLowerCase().includes(q);
+  });
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 text-[#17282C]">
       
       {/* Injected Equipment Sync Banner */}
       {injectedContext && (
-        <div className="relative flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-gradient-to-r from-cyan-950/80 via-[#061826]/90 to-cyan-950/80 border border-cyan-500/40 shadow-xl backdrop-blur-xl text-xs font-mono overflow-hidden">
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
+        <div className="relative flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl bg-[#E3EFEC] border border-[#147C78]/40 shadow-sm text-xs font-mono">
           <div className="flex items-center gap-3">
-            <span className="p-2 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.3)]">
+            <span className="p-2 rounded-lg bg-[#FFFDF9] text-[#147C78] border border-[#147C78]/30">
               <Zap className="h-4 w-4" />
             </span>
             <div>
-              <div className="text-[10px] uppercase text-cyan-400 font-tech font-bold tracking-wider">
+              <div className="text-[10px] uppercase text-[#147C78] font-bold tracking-wider">
                 {locale === 'fr' ? 'DONNÉES INJECTÉES DEPUIS LE DOSSIER ÉQUIPEMENT' : 'DATA INJECTED FROM EQUIPMENT DOSSIER'}
               </div>
-              <div className="text-white font-bold flex items-center gap-2 mt-0.5">
-                <span className="font-display text-sm">{injectedContext.equipmentName}</span>
+              <div className="text-[#17282C] font-bold flex items-center gap-2 mt-0.5">
+                <span className="text-sm">{injectedContext.equipmentName}</span>
                 {injectedContext.equipmentTag && (
-                  <span className="px-2 py-0.5 rounded-md bg-cyan-900/80 border border-cyan-700/80 text-cyan-200 text-[10px] font-mono font-bold">
+                  <span className="px-2 py-0.5 rounded bg-[#FFFDF9] border border-[#147C78]/30 text-[#147C78] text-[10px] font-mono font-bold">
                     {injectedContext.equipmentTag}
                   </span>
                 )}
@@ -305,7 +337,7 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
             <button
               type="button"
               onClick={onClearInjectedContext}
-              className="px-3 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/[0.1] text-[11px] font-mono font-bold transition-all cursor-pointer shadow-sm active:scale-[0.98]"
+              className="px-3 py-1.5 rounded-lg bg-[#FFFDF9] hover:bg-[#147C78] text-[#17282C] hover:text-white border border-[#DEDACF] text-[11px] font-mono font-bold transition-all cursor-pointer"
             >
               {locale === 'fr' ? 'Réinitialiser les paramètres' : 'Reset parameters'}
             </button>
@@ -313,148 +345,192 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
         </div>
       )}
       
-      {/* Header */}
-      <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/[0.08] pb-6 pt-1">
-        <div>
-          <div className="flex items-center gap-2 font-tech text-xs text-amber-400 mb-1.5">
-            <span className="flex h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.8)]" />
-            <Calculator className="h-3.5 w-3.5 text-amber-400" />
-            <span className="uppercase tracking-widest font-bold">CALCULATEURS SCIENTIFIQUES · ENGINEERING TOOLS</span>
+      {/* Editorial Header + Secondary Study Toolbar */}
+      <div className="rounded-2xl border border-[#DEDACF] bg-[#FFFDF9] p-6 sm:p-8 shadow-sm space-y-6">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+          <div>
+            <div className="flex items-center gap-2 font-mono text-xs text-[#147C78] mb-2">
+              <Calculator className="h-3.5 w-3.5 text-[#147C78]" />
+              <span className="uppercase tracking-[0.14em] font-bold">
+                {locale === 'fr' ? '19 SOLVEURS SCIENTIFIQUES · CEI & IEEE' : '19 SCIENTIFIC SOLVERS · IEC & IEEE'}
+              </span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-[#17282C] tracking-tight">
+              {locale === 'fr' ? (
+                <>Calculateurs d’Ingénierie <span className="font-serif-editorial font-normal text-[#147C78]">Électrotechnique</span></>
+              ) : (
+                <>Electrical Engineering <span className="font-serif-editorial font-normal text-[#147C78]">Precision Calculators</span></>
+              )}
+            </h1>
+            <p className="text-sm sm:text-base text-[#33474B] mt-2 max-w-3xl leading-relaxed">
+              {locale === 'fr'
+                ? 'Formulations analytiques rigoureuses selon normes CEI 60364, CEI 60076, CEI 60909, CEI 60831 et IEEE Std 80 avec unités scientifiques normalisées (V, A, kW, kVA, Hz, Ω, kA, rpm, cos φ).'
+                : 'Rigorous analytical formulations conforming to IEC 60364, IEC 60076, IEC 60909, IEC 60831, and IEEE Std 80 with exact SI engineering units (V, A, kW, kVA, Hz, Ω, kA, rpm, PF).'}
+            </p>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white font-display tracking-tight">
-            {locale === 'fr' 
-              ? 'Calculateurs d\'Ingénierie Électrotechnique' 
-              : 'Electrical Engineering Precision Calculators'}
-          </h1>
-          <p className="text-sm text-slate-400/90 mt-1.5 max-w-3xl font-sans leading-relaxed">
-            {locale === 'fr'
-              ? 'Formulations rigoureuses selon normes CEI 60364, CEI 60076, CEI 60909, CEI 60831 et IEEE Std 80 avec unités scientifiques précises (V, A, kW, kVA, Hz, Ω, kA, rpm, PF).'
-              : 'Scientific formulation conforming to IEC 60364, IEC 60076, IEC 60909, IEC 60831 and IEEE Std 80 with exact SI engineering units.'}
-          </p>
+
+          {/* Active Solver Summary Pill */}
+          <div className="p-3.5 rounded-xl bg-[#F6F4EE] border border-[#DEDACF] shrink-0">
+            <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#5C6C70]">
+              {locale === 'fr' ? 'SOLVEUR ACTIF' : 'ACTIVE SOLVER'}
+            </div>
+            <div className="text-sm font-bold text-[#17282C] mt-0.5">
+              {locale === 'fr' ? activeSolverObj.labelFr : activeSolverObj.labelEn}
+            </div>
+            <div className="font-mono text-[11px] font-bold text-[#147C78] mt-0.5">
+              {CALCULATOR_STANDARDS[activeCalc]?.standard || 'IEC / IEEE'}
+            </div>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2.5 self-start md:self-center shrink-0">
-          <button
-            type="button"
-            onClick={handleShareLink}
-            className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl font-tech text-xs font-bold border transition-all cursor-pointer shadow-sm active:scale-[0.98] ${
-              copiedLink
-                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                : 'bg-white/[0.03] hover:bg-white/[0.08] text-cyan-300 border-white/[0.08] hover:border-cyan-400/50'
-            }`}
-            title={locale === 'fr' ? 'Copier le lien partageable avec paramètres' : 'Copy shareable URL with parameters'}
-          >
-            {copiedLink ? <Check className="h-4 w-4 text-emerald-400" /> : <Share2 className="h-4 w-4 text-cyan-400" />}
-            <span>{copiedLink ? (locale === 'fr' ? 'Lien Copié !' : 'Link Copied !') : (locale === 'fr' ? 'Partager Calcul' : 'Share Calc')}</span>
-          </button>
+        {/* Clean Secondary Toolbar: Share, Study History, Saved Studies, Technical Note, A4 PDF */}
+        <div className="pt-4 border-t border-[#DEDACF] flex flex-wrap items-center justify-between gap-3">
+          <div className="font-mono text-[11px] font-bold uppercase tracking-wider text-[#5C6C70]">
+            {locale === 'fr' ? 'Outils d’Étude & Export :' : 'Study Workspace & Export:'}
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={handleShareLink}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg font-mono text-xs font-bold border transition-all cursor-pointer ${
+                copiedLink
+                  ? 'bg-[#E3EFEC] text-[#147C78] border-[#147C78]/40'
+                  : 'bg-[#F6F4EE] hover:border-[#147C78] text-[#17282C] border-[#DEDACF]'
+              }`}
+              title={locale === 'fr' ? 'Copier le lien partageable avec paramètres' : 'Copy shareable URL with parameters'}
+            >
+              {copiedLink ? <Check className="h-3.5 w-3.5 text-[#147C78]" /> : <Share2 className="h-3.5 w-3.5 text-[#147C78]" />}
+              <span>{copiedLink ? (locale === 'fr' ? 'Lien Copié !' : 'Link Copied!') : (locale === 'fr' ? 'Partager' : 'Share')}</span>
+            </button>
 
-          <button
-            type="button"
-            onClick={handleOpenHistory}
-            className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl font-tech text-xs font-bold bg-white/[0.03] hover:bg-white/[0.08] text-sky-300 border border-white/[0.08] hover:border-sky-400/50 transition-all cursor-pointer shadow-sm active:scale-[0.98]"
-          >
-            <History className="h-4 w-4 text-sky-400" />
-            <span>{locale === 'fr' ? 'Historique (10)' : 'Study History (10)'}</span>
-          </button>
+            <button
+              type="button"
+              onClick={handleOpenHistory}
+              className="flex items-center gap-2 px-3.5 py-2 rounded-lg font-mono text-xs font-bold bg-[#F6F4EE] hover:border-[#147C78] text-[#17282C] border border-[#DEDACF] transition-all cursor-pointer"
+            >
+              <History className="h-3.5 w-3.5 text-[#147C78]" />
+              <span>{locale === 'fr' ? 'Historique (10)' : 'Study History (10)'}</span>
+            </button>
 
-          <button
-            type="button"
-            onClick={handleOpenSavedStudies}
-            className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl font-tech text-xs font-bold bg-white/[0.03] hover:bg-white/[0.08] text-amber-300 border border-white/[0.08] hover:border-amber-400/50 transition-all cursor-pointer shadow-sm active:scale-[0.98]"
-          >
-            <FolderOpen className="h-4 w-4 text-amber-400" />
-            <span>{locale === 'fr' ? 'Mes Études Sauvegardées' : 'Saved Studies'}</span>
-            {calculationNotes.length > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold border border-amber-500/40">
-                {calculationNotes.length}
-              </span>
-            )}
-          </button>
+            <button
+              type="button"
+              onClick={handleOpenSavedStudies}
+              className="flex items-center gap-2 px-3.5 py-2 rounded-lg font-mono text-xs font-bold bg-[#F6F4EE] hover:border-[#B8872D] text-[#17282C] border border-[#DEDACF] transition-all cursor-pointer"
+            >
+              <FolderOpen className="h-3.5 w-3.5 text-[#B8872D]" />
+              <span>{locale === 'fr' ? 'Études Sauvegardées' : 'Saved Studies'}</span>
+              {calculationNotes.length > 0 && (
+                <span className="px-1.5 py-0.2 rounded-full bg-[#B8872D]/15 text-[#B8872D] text-[10px] font-bold border border-[#B8872D]/30">
+                  {calculationNotes.length}
+                </span>
+              )}
+            </button>
 
-          <button
-            type="button"
-            onClick={handleOpenReport}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-tech text-xs font-bold bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 border border-amber-300 transition-all shadow-[0_2px_14px_rgba(245,158,11,0.3)] cursor-pointer active:scale-[0.98]"
-          >
-            <FileText className="h-4 w-4 text-slate-950" />
-            <span className="font-bold">{locale === 'fr' ? 'Générer Note de Calcul' : 'Technical Calculation Note'}</span>
-          </button>
+            <button
+              type="button"
+              onClick={handleOpenReport}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg font-mono text-xs font-bold bg-[#17282C] hover:bg-[#147C78] text-white transition-all cursor-pointer"
+            >
+              <FileText className="h-3.5 w-3.5" />
+              <span>{locale === 'fr' ? 'Note de Calcul' : 'Technical Note'}</span>
+            </button>
 
-          <button
-            type="button"
-            onClick={() => {
-              const report = generateCalculationReport(activeCalc, locale, injectedContext);
-              EngineeringCalculationPdfExportService.exportCalculationPdf(report, locale);
-            }}
-            className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl font-tech text-xs font-bold bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white border border-cyan-400/40 transition-all shadow-[0_2px_14px_rgba(6,182,212,0.3)] cursor-pointer active:scale-[0.98]"
-            title={locale === 'fr' ? 'Télécharger la Note Technique PDF A4 Officielle (CEI / NF C / IEEE)' : 'Download Official A4 PDF Design Sheet (IEC / NF C / IEEE)'}
-          >
-            <Download className="h-4 w-4 text-white" />
-            <span className="font-bold">{locale === 'fr' ? 'PDF A4' : 'A4 PDF'}</span>
-          </button>
+            <button
+              type="button"
+              onClick={() => {
+                const report = generateCalculationReport(activeCalc, locale, injectedContext);
+                EngineeringCalculationPdfExportService.exportCalculationPdf(report, locale);
+              }}
+              className="flex items-center gap-2 px-3.5 py-2 rounded-lg font-mono text-xs font-bold bg-[#147C78] hover:bg-[#0E5E5B] text-white transition-all cursor-pointer"
+              title={locale === 'fr' ? 'Télécharger la Note Technique PDF A4 Officielle (CEI / NF C / IEEE)' : 'Download Official A4 PDF Design Sheet (IEC / NF C / IEEE)'}
+            >
+              <Download className="h-3.5 w-3.5 text-white" />
+              <span>{locale === 'fr' ? 'PDF A4' : 'A4 PDF'}</span>
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Semantic Crawlable Tabs */}
-      <div className="flex gap-2 overflow-x-auto border-b border-white/[0.07] pb-3.5 pt-1 scrollbar-thin">
-        {[
-          { id: 'power' as CalculatorTabType, labelFr: 'Puissance & Courant Triphasé', labelEn: '3-Phase Power & Current', icon: Zap },
-          { id: 'voltage-drop' as CalculatorTabType, labelFr: 'Chute de Tension Câble (ΔU)', labelEn: 'Cable Voltage Drop (ΔU)', icon: Activity },
-          { id: 'cable-short-circuit' as CalculatorTabType, labelFr: 'Icc Bout de Câble (CEI 60909 / NF C 15-105)', labelEn: 'Cable End Short-Circuit (IEC 60909)', icon: ShieldCheck },
-          { id: 'load-schedule' as CalculatorTabType, labelFr: 'Bilan de Puissance & Foisonnement (NF C 14-100)', labelEn: 'Load Schedule & Power Balance', icon: Sliders },
-          { id: 'transformer' as CalculatorTabType, labelFr: 'Transformateur & Isc', labelEn: 'Transformer & Short-Circuit', icon: Cpu },
-          { id: 'motor' as CalculatorTabType, labelFr: 'Moteur & Démarrage', labelEn: 'Motor & Inrush Current', icon: Sliders },
-          { id: 'sil' as CalculatorTabType, labelFr: 'Ligne HTB & SIL (Ferranti)', labelEn: 'HV Line SIL & Ferranti', icon: Globe },
-          { id: 'earthing' as CalculatorTabType, labelFr: 'Mise à la Terre IEEE 80', labelEn: 'IEEE 80 Substation Grounding', icon: ShieldAlert },
-          { id: 'arc-flash' as CalculatorTabType, labelFr: 'Arc Flash (IEEE 1584 / NFPA 70E)', labelEn: 'Arc Flash (IEEE 1584 / NFPA 70E)', icon: Flame },
-          { id: 'ct-sizing' as CalculatorTabType, labelFr: 'Transformateur de Courant (TC CEI 61869)', labelEn: 'CT Sizing & Saturation', icon: Gauge },
-          { id: 'pfc' as CalculatorTabType, labelFr: 'Compensation Réactive (Qc Condensateurs)', labelEn: 'Power Factor Correction (Capacitors)', icon: Layers },
-          { id: 'solar-sizing' as CalculatorTabType, labelFr: 'Solaire PV & Chaînes (CEI 62548)', labelEn: 'Solar PV String Sizing (IEC 62548)', icon: Sun },
-          { id: 'bess-sizing' as CalculatorTabType, labelFr: 'Stockage BESS & C-Rate (CEI 62933)', labelEn: 'BESS Battery Sizing (IEC 62933)', icon: Battery },
-          { id: 'surge-arrester' as CalculatorTabType, labelFr: 'Parafoudre & Isolement (CEI 60099/60071)', labelEn: 'Surge Arrester & Insulation (IEC 60099/60071)', icon: ShieldAlert },
-          { id: 'busbar-electrodynamic' as CalculatorTabType, labelFr: 'Jeu de Barres & Électrodynamique (CEI 60865-1)', labelEn: 'Busbar Electrodynamic Forces (IEC 60865-1)', icon: Layers },
-          { id: 'cable-ampacity' as CalculatorTabType, labelFr: 'Dimensionnement Câbles & Déclassement (CEI 60364/60287)', labelEn: 'Cable Sizing & Ampacity (IEC 60364/60287)', icon: Zap },
-          { id: 'transmission-line' as CalculatorTabType, labelFr: 'Ligne THT, Faisceaux & Corona (CEI 60826)', labelEn: 'Overhead Line Bundles & Corona (IEC 60826)', icon: Globe },
-          { id: 'neutral-grounding' as CalculatorTabType, labelFr: 'Régimes de Neutre RPN & Petersen (CEI 60071)', labelEn: 'Neutral Earthing NGR & Petersen (IEC 60071)', icon: ShieldAlert },
-          { id: 'relay-tcc' as CalculatorTabType, labelFr: 'Sélectivité & Courbes TCC (CEI 60255 / IEEE 242)', labelEn: 'Relay Coordination & TCC Curves (IEC 60255 / IEEE 242)', icon: ShieldCheck },
-        ].map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeCalc === tab.id;
-          return (
-            <a
-              key={tab.id}
-              href={`#/calculators/${tab.id}`}
-              onClick={(e) => {
-                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
-                  e.preventDefault();
-                  handleSelectCalc(tab.id);
-                }
-              }}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border shadow-sm select-none ${
-                isActive
-                  ? 'border-amber-400 bg-amber-500/15 text-amber-300 font-bold shadow-md shadow-amber-500/10 ring-1 ring-amber-400/30'
-                  : 'border-slate-800 bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800/80 hover:border-slate-700'
-              }`}
-            >
-              <Icon className={`h-4 w-4 ${isActive ? 'text-amber-400' : 'text-slate-400'}`} />
-              <span>{locale === 'fr' ? tab.labelFr : tab.labelEn}</span>
-            </a>
-          );
-        })}
+      {/* Searchable, Categorized Solver Picker */}
+      <div className="rounded-2xl border border-[#DEDACF] bg-[#FFFDF9] p-5 shadow-sm space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-1.5">
+            {[
+              { id: 'ALL' as const, labelFr: 'Tous (19)', labelEn: 'All Solvers (19)' },
+              { id: 'POWER_CABLES' as const, labelFr: 'Câbles & Distribution (6)', labelEn: 'Cables & Distribution (6)' },
+              { id: 'SUBSTATION_HV' as const, labelFr: 'Postes HTB & Lignes (5)', labelEn: 'Substations & HV Lines (5)' },
+              { id: 'PROTECTION_SAFETY' as const, labelFr: 'Protection, Terre & TCC (5)', labelEn: 'Protection, Grounding & TCC (5)' },
+              { id: 'MOTORS_RENEWABLES' as const, labelFr: 'Moteurs, PV & BESS (3)', labelEn: 'Motors, PV & BESS (3)' },
+            ].map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => setSolverCategory(cat.id)}
+                className={`px-3 py-1.5 rounded-lg font-mono text-xs font-bold transition-all cursor-pointer border ${
+                  solverCategory === cat.id
+                    ? 'bg-[#17282C] text-white border-[#17282C]'
+                    : 'bg-[#F6F4EE] text-[#5C6C70] border-[#DEDACF] hover:text-[#17282C]'
+                }`}
+              >
+                {locale === 'fr' ? cat.labelFr : cat.labelEn}
+              </button>
+            ))}
+          </div>
+
+          <input
+            type="text"
+            value={solverSearch}
+            onChange={(e) => setSolverSearch(e.target.value)}
+            placeholder={locale === 'fr' ? 'Filtrer un solveur (ex. CEI 60909, câble, TCC)...' : 'Filter solver (e.g. IEC 60909, cable, TCC)...'}
+            className="w-full md:w-72 px-3.5 py-2 rounded-lg bg-[#F6F4EE] border border-[#DEDACF] text-xs text-[#17282C] placeholder-[#5C6C70] focus:outline-none focus:border-[#147C78]"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+          {filteredSolvers.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeCalc === tab.id;
+            return (
+              <a
+                key={tab.id}
+                href={`#/calculators/${tab.id}`}
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                    e.preventDefault();
+                    handleSelectCalc(tab.id);
+                  }
+                }}
+                className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all border select-none ${
+                  isActive
+                    ? 'border-[#147C78] bg-[#E3EFEC] text-[#17282C] shadow-xs ring-1 ring-[#147C78]/30'
+                    : 'border-[#DEDACF] bg-[#F6F4EE] text-[#33474B] hover:text-[#17282C] hover:border-[#147C78]/50'
+                }`}
+              >
+                <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-[#147C78]' : 'text-[#5C6C70]'}`} />
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-bold">{locale === 'fr' ? tab.labelFr : tab.labelEn}</div>
+                  <div className="font-mono text-[10px] text-[#5C6C70] truncate">
+                    {CALCULATOR_STANDARDS[tab.id]?.standard || 'CEI / IEEE'}
+                  </div>
+                </div>
+              </a>
+            );
+          })}
+        </div>
       </div>
 
       {/* Dynamic Context Link to Physical Spine & Simulation Lab */}
       {currentContextLink && (onNavigateContextStack || onNavigateSimulation) && (
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-slate-900 border border-slate-700 shadow-md">
+        <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl bg-[#FFFDF9] border border-[#DEDACF] shadow-sm">
           <div className="flex items-center gap-2.5">
-            <span className="p-1.5 rounded-lg bg-sky-500/20 text-sky-400 border border-sky-500/30 shrink-0">
+            <span className="p-1.5 rounded-lg bg-[#E3EFEC] text-[#147C78] border border-[#147C78]/30 shrink-0">
               <Zap className="h-4 w-4" />
             </span>
             <div>
-              <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold">
+              <div className="text-[10px] font-mono uppercase tracking-wider text-[#5C6C70] font-bold">
                 {locale === 'fr' ? "LIEN AVEC L'ÉPINE DORSALE D'INGÉNIERIE" : 'LINKED TO PHYSICAL ENGINEERING SPINE'}
               </div>
-              <div className="text-xs font-bold text-white font-mono">
+              <div className="text-xs font-bold text-[#17282C]">
                 {currentContextLink.nodeName[locale]}
               </div>
             </div>
@@ -465,7 +541,7 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
               <button
                 type="button"
                 onClick={() => onNavigateContextStack(currentContextLink.nodeId)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-mono text-xs font-bold transition-all shadow-xs"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#147C78] hover:bg-[#0E5E5B] text-white font-mono text-xs font-bold transition-all cursor-pointer"
               >
                 <Zap className="h-3.5 w-3.5" />
                 <span>{locale === 'fr' ? 'Ouvrir dans l’Épine Dorsale & TCC' : 'Open in Spine & TCC'}</span>
@@ -475,9 +551,9 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
               <button
                 type="button"
                 onClick={() => onNavigateSimulation(currentContextLink.simTab)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-600 font-mono text-xs font-bold transition-all"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F6F4EE] hover:border-[#147C78] text-[#17282C] border border-[#DEDACF] font-mono text-xs font-bold transition-all cursor-pointer"
               >
-                <Activity className="h-3.5 w-3.5 text-cyan-400" />
+                <Activity className="h-3.5 w-3.5 text-[#147C78]" />
                 <span>{currentContextLink.simName ? currentContextLink.simName[locale] : (locale === 'fr' ? 'Banc de Simulation' : 'Simulation Lab')}</span>
               </button>
             )}
@@ -486,9 +562,9 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
       )}
 
       {/* Trust & Scientific Foundation Badge */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-slate-950/80 border border-slate-800 font-mono text-xs">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-[#FFFDF9] border border-[#DEDACF] font-mono text-xs">
         <div className="flex items-center gap-2">
-          <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
+          <span className="text-[11px] text-[#5C6C70] font-bold uppercase tracking-wider">
             {locale === 'fr' ? 'Cadre Normatif & Preuve :' : 'Normative Framework & Trust:'}
           </span>
           <EvidenceTrustBadge
@@ -498,12 +574,15 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
             governingStandard={CALCULATOR_STANDARDS[activeCalc]?.standard || 'CEI / IEEE'}
           />
         </div>
-        <div className="text-[10px] text-slate-400 font-mono">
+        <div className="text-[11px] text-[#5C6C70] font-mono">
           {locale === 'fr' 
             ? 'Équations analytiques conformes aux référentiels CEI & IEEE — Dérivations détaillées ci-dessous' 
             : 'Analytical equations conforming to IEC & IEEE standards — Detailed derivations below'}
         </div>
       </div>
+
+      {/* Dedicated Dark Technical Workbench Frame for the Active Solver */}
+      <div className="epede-workbench rounded-2xl p-4 sm:p-6 shadow-md">
 
       {/* 1. 3-PHASE POWER CALCULATOR */}
       {activeCalc === 'power' && <PowerCalculator locale={locale} />}
@@ -646,7 +725,10 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
       )}
 
       {/* Formula Derivation, Step-by-Step Proof & Sensitivity Analysis */}
-      <FormulaDerivationPanel calcTab={activeCalc} locale={locale} />
+      <div className="mt-6">
+        <FormulaDerivationPanel calcTab={activeCalc} locale={locale} />
+      </div>
+      </div>
 
       {/* Standard Assumptions & Model Limitations Manifest */}
       <div className="pt-4">

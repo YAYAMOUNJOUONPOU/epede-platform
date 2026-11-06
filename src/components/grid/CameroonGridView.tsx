@@ -221,28 +221,29 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
   };
 
   return (
-    <div className="space-y-6 pb-16 font-sans text-[#F4F1E8]">
+    <div className="space-y-8 pb-16 font-sans text-[#17282C]">
       
       {/* Top Banner with National Grid Metrics & Research Provenance */}
-      <div className="bg-[#151C1E] border border-[#567A87]/35 rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-xl">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#D7A64A]/5 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-10 -left-10 w-72 h-72 bg-[#567A87]/10 rounded-full blur-3xl pointer-events-none" />
-
+      <div className="bg-[#FFFDF9] border border-[#DEDACF] rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-sm">
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div className="space-y-2.5">
             <div className="flex flex-wrap items-center gap-2.5">
-              <span className="font-mono text-xs font-black uppercase px-2.5 py-1 rounded bg-[#D7A64A]/15 text-[#D7A64A] border border-[#D7A64A]/40 flex items-center gap-1.5">
+              <span className="font-mono text-xs font-bold uppercase px-2.5 py-1 rounded bg-[#E3EFEC] text-[#147C78] border border-[#147C78]/30 flex items-center gap-1.5">
                 <Globe className="h-3.5 w-3.5" />
                 <span>{locale === 'fr' ? 'L05 · RÉSEAU NATIONAL DU CAMEROUN' : 'L05 · CAMEROON POWER NETWORK EXPLORER'}</span>
               </span>
-              <span className="font-mono text-xs px-2.5 py-1 rounded bg-[#0B0F12] text-[#A9ADA5] border border-[#567A87]/30">
+              <span className="font-mono text-xs px-2.5 py-1 rounded bg-[#F6F4EE] text-[#5C6C70] border border-[#DEDACF]">
                 SONATREL · Eneo · EDC · ARSEL · NHPC
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-mono font-black tracking-tight text-[#F4F1E8] uppercase">
-              {locale === 'fr' ? 'Observatoire du Réseau Électrique Camerounais' : 'Cameroon Power Network Explorer'}
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#17282C]">
+              {locale === 'fr' ? (
+                <>Observatoire du Réseau <span className="font-serif-editorial font-normal text-[#147C78]">Électrique Camerounais</span></>
+              ) : (
+                <>Cameroon Power <span className="font-serif-editorial font-normal text-[#147C78]">Network Explorer</span></>
+              )}
             </h1>
-            <p className="text-sm text-[#A9ADA5] max-w-3xl leading-relaxed">
+            <p className="text-sm sm:text-base text-[#33474B] max-w-3xl leading-relaxed">
               {locale === 'fr'
                 ? 'Cartographie technique approfondie des réseaux interconnectés Sud (RIS 225/90 kV) et Nord (RIN 110/90 kV), des grands aménagements hydroélectriques (Nachtigal 420 MW, Songloulou 384 MW, Édéa 276 MW, Memve\'ele 211 MW, Lom Pangar 30 MW), des postes sources et des artères de transport HTB.'
                 : 'Research-based engineering exploration of Cameroon\'s Southern Interconnected Grid (RIS 225/90 kV) and Northern Interconnected Grid (RIN 110/90 kV), major hydropower & thermal plants (Nachtigal 420 MW, Songloulou 384 MW, Edéa 276 MW, Memve\'ele 211 MW, Kribi 216 MW), strategic substations, and transmission corridors.'}
@@ -250,14 +251,14 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
           </div>
 
           {/* Quick Actions */}
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
+          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
             {onNavigateContextStack && (
               <button
                 type="button"
                 onClick={() => onNavigateContextStack('node-line-225-bekoko')}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#0B0F12] hover:bg-[#567A87]/20 text-[#F4F1E8] border border-[#567A87]/40 text-xs font-mono font-bold transition-all"
+                className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#F6F4EE] hover:border-[#147C78] text-[#17282C] border border-[#DEDACF] text-xs font-mono font-bold transition-all cursor-pointer"
               >
-                <Zap className="h-4 w-4 text-[#D7A64A]" />
+                <Zap className="h-4 w-4 text-[#B8872D]" />
                 <span>{locale === 'fr' ? 'Épine Dorsale & TCC' : 'Spine & TCC Stack'}</span>
               </button>
             )}
@@ -266,9 +267,9 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
               <button
                 type="button"
                 onClick={onNavigateRegulatory}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#D7A64A]/15 hover:bg-[#D7A64A]/25 text-[#D7A64A] border border-[#D7A64A]/40 text-xs font-mono font-bold transition-all"
+                className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#F6F4EE] hover:border-[#B8872D] text-[#17282C] border border-[#DEDACF] text-xs font-mono font-bold transition-all cursor-pointer"
               >
-                <Scale className="h-4 w-4 text-[#D7A64A]" />
+                <Scale className="h-4 w-4 text-[#B8872D]" />
                 <span>{locale === 'fr' ? 'Cadre Réglementaire L06' : 'Regulatory Framework L06'}</span>
               </button>
             )}
@@ -276,81 +277,81 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
             <button
               type="button"
               onClick={() => CameroonGridBriefingPdfService.generateExecutiveBriefingPdf()}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#D7A64A] hover:bg-[#e3b55a] text-[#0B0F12] text-xs font-mono font-black transition-all shadow-md cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#147C78] hover:bg-[#0E5E5B] text-white text-xs font-mono font-bold transition-all shadow-sm cursor-pointer"
               title={locale === 'fr' ? 'Générer & Télécharger le Dossier Exécutif A4 Officiel du Réseau Camerounais (PDF Vectoriel)' : 'Generate & Download Official Cameroon Grid Executive Briefing A4 Dossier (Vector PDF)'}
             >
-              <FileText className="h-4 w-4 text-[#0B0F12]" />
+              <FileText className="h-4 w-4 text-white" />
               <span>{locale === 'fr' ? 'Dossier Exécutif PDF (A4)' : 'Executive Dossier PDF (A4)'}</span>
             </button>
 
             <button
               type="button"
               onClick={handleExportGridData}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#0B0F12] hover:bg-[#567A87]/20 text-[#F4F1E8] border border-[#567A87]/40 text-xs font-mono font-bold transition-all"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#17282C] hover:bg-[#147C78] text-white text-xs font-mono font-bold transition-all cursor-pointer"
             >
-              <Download className="h-4 w-4 text-[#567A87]" />
+              <Download className="h-4 w-4" />
               <span>{locale === 'fr' ? 'Exporter JSON' : 'Export Grid JSON'}</span>
             </button>
           </div>
         </div>
 
-        {/* 4 Key Grid Indicator Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-[#567A87]/25">
-          <div className="p-3.5 rounded-xl bg-[#0B0F12] border border-[#567A87]/30">
-            <div className="text-[10px] font-mono uppercase text-[#A9ADA5]">
-              {locale === 'fr' ? 'Puissance Installée' : 'Installed Capacity'}
+        {/* 4 Key Grid Indicator Cards linked to source/date */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-[#DEDACF]">
+          <div className="p-3.5 rounded-xl bg-[#F6F4EE] border border-[#DEDACF]">
+            <div className="text-[10px] font-mono uppercase text-[#5C6C70] font-bold">
+              {locale === 'fr' ? 'Puissance Installée (2024–2025)' : 'Installed Capacity (2024–2025)'}
             </div>
-            <div className="text-xl font-mono font-black text-[#D7A64A] mt-1">
+            <div className="text-xl font-mono font-extrabold text-[#147C78] mt-1">
               {CAMEROON_GRID_SUMMARY.national_installed_capacity_mw} MW
             </div>
-            <div className="text-[11px] font-mono text-[#A9ADA5] mt-0.5">
+            <div className="text-[11px] font-mono text-[#5C6C70] mt-0.5">
               {CAMEROON_GRID_SUMMARY.hydro_share_percent}% Hydro · {CAMEROON_GRID_SUMMARY.thermal_gas_share_percent}% {locale === 'fr' ? 'Gaz' : 'Gas'}
             </div>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-[#0B0F12] border border-[#567A87]/30">
-            <div className="text-[10px] font-mono uppercase text-[#A9ADA5]">
-              {locale === 'fr' ? 'Pointe Maximale' : 'Peak Demand'}
+          <div className="p-3.5 rounded-xl bg-[#F6F4EE] border border-[#DEDACF]">
+            <div className="text-[10px] font-mono uppercase text-[#5C6C70] font-bold">
+              {locale === 'fr' ? 'Pointe Maximale (ARSEL/Eneo)' : 'Peak Demand (ARSEL/Eneo)'}
             </div>
-            <div className="text-xl font-mono font-black text-[#F4F1E8] mt-1">
+            <div className="text-xl font-mono font-extrabold text-[#17282C] mt-1">
               {CAMEROON_GRID_SUMMARY.peak_demand_mw} MW
             </div>
-            <div className="text-[11px] font-mono text-[#A9ADA5] mt-0.5">
+            <div className="text-[11px] font-mono text-[#5C6C70] mt-0.5">
               {locale === 'fr' ? 'Marge de réserve : ~30%' : 'Reserve margin: ~30%'}
             </div>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-[#0B0F12] border border-[#567A87]/30">
-            <div className="text-[10px] font-mono uppercase text-[#A9ADA5]">
+          <div className="p-3.5 rounded-xl bg-[#F6F4EE] border border-[#DEDACF]">
+            <div className="text-[10px] font-mono uppercase text-[#5C6C70] font-bold">
               {locale === 'fr' ? 'Réseau Transport 225 kV' : '225 kV Transmission'}
             </div>
-            <div className="text-xl font-mono font-black text-[#D7A64A] mt-1">
+            <div className="text-xl font-mono font-extrabold text-[#B8872D] mt-1">
               {CAMEROON_GRID_SUMMARY.transmission_line_km_225kv} km
             </div>
-            <div className="text-[11px] font-mono text-[#A9ADA5] mt-0.5">
+            <div className="text-[11px] font-mono text-[#5C6C70] mt-0.5">
               + {CAMEROON_GRID_SUMMARY.transmission_line_km_90kv} km (90/110 kV)
             </div>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-[#0B0F12] border border-[#567A87]/30">
-            <div className="text-[10px] font-mono uppercase text-[#A9ADA5]">
+          <div className="p-3.5 rounded-xl bg-[#F6F4EE] border border-[#DEDACF]">
+            <div className="text-[10px] font-mono uppercase text-[#5C6C70] font-bold">
               {locale === 'fr' ? 'Opérateur Système TSO' : 'Transmission Operator (TSO)'}
             </div>
-            <div className="text-xl font-mono font-black text-[#F4F1E8] mt-1 truncate">
+            <div className="text-xl font-mono font-extrabold text-[#17282C] mt-1 truncate">
               SONATREL
             </div>
-            <div className="text-[11px] font-mono text-[#A9ADA5] mt-0.5 truncate">
+            <div className="text-[11px] font-mono text-[#5C6C70] mt-0.5 truncate">
               {locale === 'fr' ? 'Dispatching National (Édéa/Ydé)' : 'National Dispatch (Edéa/Yaoundé)'}
             </div>
           </div>
         </div>
 
         {/* Research Integrity & Provenance Notice */}
-        <div className="mt-5 p-3.5 rounded-xl bg-[#0B0F12]/90 border border-[#D7A64A]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-start sm:items-center gap-2.5 text-xs text-[#A9ADA5]">
-            <ShieldCheck className="h-4 w-4 text-[#D7A64A] shrink-0 mt-0.5 sm:mt-0" />
+        <div className="mt-5 p-3.5 rounded-xl bg-[#F6F4EE] border border-[#DEDACF] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-start sm:items-center gap-2.5 text-xs text-[#33474B]">
+            <ShieldCheck className="h-4 w-4 text-[#147C78] shrink-0 mt-0.5 sm:mt-0" />
             <span>
-              <strong className="text-[#F4F1E8] font-mono uppercase">
+              <strong className="text-[#17282C] font-mono uppercase">
                 {locale === 'fr' ? 'Intégrité des Données & Provenance : ' : 'Research Integrity & Source Provenance: '}
               </strong>
               {locale === 'fr'
@@ -358,191 +359,65 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
                 : 'Installed capacities, voltage levels, and operators are verified from public institutional records (ARSEL, SONATREL, Eneo, EDC, NHPC, World Bank). Detailed busbar short-circuit values and internal bay diagrams are explicitly labeled as engineering reference models where public utility records are restricted.'}
             </span>
           </div>
-          <span className="font-mono text-[10px] uppercase tracking-wider px-2.5 py-1 rounded bg-[#151C1E] text-[#D7A64A] border border-[#D7A64A]/30 shrink-0">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded bg-[#E3EFEC] text-[#147C78] border border-[#147C78]/30 shrink-0">
             {locale === 'fr' ? 'VÉRIFIÉ 2024–2025' : 'VERIFIED 2024–2025'}
           </span>
         </div>
       </div>
 
       {/* Cockpit Strategic Navigation Tabs */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-3 shadow-xl backdrop-blur-md space-y-3">
+      <div className="bg-[#FFFDF9] border border-[#DEDACF] rounded-2xl p-4 shadow-sm space-y-3">
         {/* Row 1: Advanced Operational Workbenches (9 Strategic Pillars) */}
-        <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
+        <div className="flex items-center justify-between pb-2 border-b border-[#DEDACF]">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-emerald-400" />
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300">
+            <Sparkles className="w-4 h-4 text-[#147C78]" />
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#17282C]">
               {locale === 'fr' ? 'Modules Stratégiques de l\'Observatoire National' : 'National Power System Strategic Workbenches'}
             </span>
           </div>
-          <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/30">
-            9 Piliers Déployés
+          <span className="text-[10px] font-mono font-bold text-[#147C78] bg-[#E3EFEC] px-2 py-0.5 rounded border border-[#147C78]/30">
+            {locale === 'fr' ? '10 Piliers Déployés' : '10 Strategic Workbenches'}
           </span>
         </div>
 
         <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
-          {/* 1. Map */}
-          <button
-            type="button"
-            onClick={() => setActiveCategory('map')}
-            className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer ${
-              activeCategory === 'map'
-                ? 'bg-sky-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800'
-            }`}
-          >
-            <Compass className="w-3.5 h-3.5 text-sky-300" />
-            <span>{locale === 'fr' ? 'Carte WGS84 SIG' : 'GIS Map WGS84'}</span>
-          </button>
-
-          {/* 2. SCADA Dispatching (Step 2) */}
-          <button
-            type="button"
-            onClick={() => setActiveCategory('scada_dispatching')}
-            className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer ${
-              activeCategory === 'scada_dispatching'
-                ? 'bg-emerald-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800'
-            }`}
-          >
-            <Gauge className="w-3.5 h-3.5 text-emerald-300" />
-            <span>{locale === 'fr' ? 'Dispatching Mangombé 50Hz' : 'Mangombé Dispatching 50Hz'}</span>
-          </button>
-
-          {/* 3. Sanaga Cascade (Step 1) */}
-          <button
-            type="button"
-            onClick={() => setActiveCategory('sanaga_cascade')}
-            className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer ${
-              activeCategory === 'sanaga_cascade'
-                ? 'bg-cyan-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800'
-            }`}
-          >
-            <Waves className="w-3.5 h-3.5 text-cyan-300" />
-            <span>{locale === 'fr' ? 'Cascade Sanaga & Lom Pangar' : 'Sanaga Cascade & Lom Pangar'}</span>
-          </button>
-
-          {/* 3B. Seasonal Generation & Grid Reliability Monitor */}
-          <button
-            type="button"
-            onClick={() => setActiveCategory('seasonal_reliability')}
-            className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer ${
-              activeCategory === 'seasonal_reliability'
-                ? 'bg-teal-600 text-white shadow-md ring-1 ring-teal-300'
-                : 'text-teal-300 hover:text-white hover:bg-slate-800 border border-teal-500/30'
-            }`}
-          >
-            <Droplets className="w-3.5 h-3.5 text-teal-300" />
-            <span>
-              {locale === 'fr'
-                ? 'Production Saisonnière & Fiabilité (Jan–Déc)'
-                : 'Seasonal Generation & Grid Reliability'}
-            </span>
-          </button>
-
-          {/* 4. Contingency N-1 (Step 3) */}
-          <button
-            type="button"
-            onClick={() => setActiveCategory('contingency_n1')}
-            className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer ${
-              activeCategory === 'contingency_n1'
-                ? 'bg-red-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800'
-            }`}
-          >
-            <ShieldCheck className="w-3.5 h-3.5 text-red-300" />
-            <span>{locale === 'fr' ? 'Simulateur N-1 & Incidents' : 'N-1 Contingency Lab'}</span>
-          </button>
-
-          {/* 5. Interconnection RIS-RIN & Chad (Step 4) */}
-          <button
-            type="button"
-            onClick={() => setActiveCategory('pirect_interconnexion')}
-            className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer ${
-              activeCategory === 'pirect_interconnexion'
-                ? 'bg-indigo-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800'
-            }`}
-          >
-            <Globe className="w-3.5 h-3.5 text-indigo-300" />
-            <span>{locale === 'fr' ? 'Interconnexion & PIRECT Tchad' : 'Interconnection & Chad PIRECT'}</span>
-          </button>
-
-          {/* 6. Industrial Offtakers (Step 5) */}
-          <button
-            type="button"
-            onClick={() => setActiveCategory('industrial_offtakers')}
-            className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer ${
-              activeCategory === 'industrial_offtakers'
-                ? 'bg-amber-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800'
-            }`}
-          >
-            <Factory className="w-3.5 h-3.5 text-amber-300" />
-            <span>{locale === 'fr' ? 'Grands Comptes HT-B & PPA' : 'Industrial Offtakers & PPA'}</span>
-          </button>
-
-          {/* 7. Substation 3D BIM (Step 6) */}
-          <button
-            type="button"
-            onClick={() => setActiveCategory('substation_3d_bim')}
-            className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer ${
-              activeCategory === 'substation_3d_bim'
-                ? 'bg-teal-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800'
-            }`}
-          >
-            <Box className="w-3.5 h-3.5 text-teal-300" />
-            <span>{locale === 'fr' ? 'Jumeaux 3D Postes HT' : '3D Substation Digital Twins'}</span>
-          </button>
-
-          {/* 8. Contractual Governance Loi 2011 (Step 7) */}
-          <button
-            type="button"
-            onClick={() => setActiveCategory('governance_loi2011')}
-            className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer ${
-              activeCategory === 'governance_loi2011'
-                ? 'bg-purple-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800'
-            }`}
-          >
-            <Scale className="w-3.5 h-3.5 text-purple-300" />
-            <span>{locale === 'fr' ? 'Loi 2011 & Flux Financiers' : 'Law 2011 & Financial Flows'}</span>
-          </button>
-
-          {/* 9. Master Plan 2035 (Step 8) */}
-          <button
-            type="button"
-            onClick={() => setActiveCategory('masterplan_2035')}
-            className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer ${
-              activeCategory === 'masterplan_2035'
-                ? 'bg-emerald-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800'
-            }`}
-          >
-            <Sparkles className="w-3.5 h-3.5 text-emerald-300" />
-            <span>{locale === 'fr' ? 'Master Plan 2035 (Kikot, Eweng)' : 'Master Plan 2035'}</span>
-          </button>
-
-          {/* 10. Demarcation */}
-          <button
-            type="button"
-            onClick={() => setActiveCategory('demarcation')}
-            className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer ${
-              activeCategory === 'demarcation'
-                ? 'bg-amber-600 text-white shadow-md'
-                : 'text-amber-400 hover:text-white hover:bg-slate-800'
-            }`}
-          >
-            <Scale className="w-3.5 h-3.5 text-amber-300" />
-            <span>{locale === 'fr' ? 'Frontières Porte 3' : 'Gate 3 Demarcation'}</span>
-          </button>
+          {[
+            { id: 'map', icon: Compass, labelFr: 'Carte WGS84 SIG', labelEn: 'GIS Map WGS84' },
+            { id: 'seasonal_reliability', icon: Droplets, labelFr: 'Production Saisonnière & Fiabilité (Jan–Déc)', labelEn: 'Seasonal Generation & Grid Reliability' },
+            { id: 'scada_dispatching', icon: Gauge, labelFr: 'Dispatching Mangombé 50Hz', labelEn: 'Mangombé Dispatching 50Hz' },
+            { id: 'sanaga_cascade', icon: Waves, labelFr: 'Cascade Sanaga & Lom Pangar', labelEn: 'Sanaga Cascade & Lom Pangar' },
+            { id: 'contingency_n1', icon: ShieldCheck, labelFr: 'Simulateur N-1 & Incidents', labelEn: 'N-1 Contingency Lab' },
+            { id: 'pirect_interconnexion', icon: Globe, labelFr: 'Interconnexion & PIRECT Tchad', labelEn: 'Interconnection & Chad PIRECT' },
+            { id: 'industrial_offtakers', icon: Factory, labelFr: 'Grands Comptes HT-B & PPA', labelEn: 'Industrial Offtakers & PPA' },
+            { id: 'substation_3d_bim', icon: Box, labelFr: 'Jumeaux 3D Postes HT', labelEn: '3D Substation Digital Twins' },
+            { id: 'governance_loi2011', icon: Scale, labelFr: 'Loi 2011 & Flux Financiers', labelEn: 'Law 2011 & Financial Flows' },
+            { id: 'masterplan_2035', icon: Sparkles, labelFr: 'Master Plan 2035 (Kikot, Eweng)', labelEn: 'Master Plan 2035' },
+            { id: 'demarcation', icon: Scale, labelFr: 'Frontières Porte 3', labelEn: 'Gate 3 Demarcation' },
+          ].map((item) => {
+            const Icon = item.icon;
+            const isActive = activeCategory === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setActiveCategory(item.id as FilterCategory)}
+                className={`px-3 py-1.5 rounded-xl transition-all font-bold flex items-center gap-1.5 cursor-pointer border ${
+                  isActive
+                    ? 'bg-[#147C78] text-white border-[#147C78] shadow-sm'
+                    : 'bg-[#F6F4EE] text-[#33474B] border-[#DEDACF] hover:text-[#17282C] hover:border-[#147C78]/50'
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>{locale === 'fr' ? item.labelFr : item.labelEn}</span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Row 2: 12-Section Reference Centre Navigation & Search Filter */}
-        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 pt-2 border-t border-slate-800/80">
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 pt-3 border-t border-[#DEDACF]">
           <div className="flex flex-wrap items-center gap-1.5 font-mono text-[11px]">
-            <span className="text-slate-500 mr-1 uppercase">{locale === 'fr' ? 'Centre de Référence :' : 'Reference Centre:'}</span>
+            <span className="text-[#5C6C70] mr-1 uppercase font-bold">{locale === 'fr' ? 'Centre de Référence :' : 'Reference Centre:'}</span>
             {[
               { id: 'overview_journey', label: locale === 'fr' ? 'Parcours 7 Étapes' : '7-Stage Power Flow' },
               { id: 'all', label: locale === 'fr' ? 'Tout le Parc' : 'All Grid' },
@@ -562,10 +437,10 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
                 key={subTab.id}
                 type="button"
                 onClick={() => setActiveCategory(subTab.id as any)}
-                className={`px-2.5 py-1 rounded-lg transition-all font-bold cursor-pointer ${
+                className={`px-2.5 py-1 rounded-lg transition-all font-bold cursor-pointer border ${
                   activeCategory === subTab.id
-                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-xs'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                    ? 'bg-[#17282C] text-white border-[#17282C] shadow-xs'
+                    : 'bg-[#F6F4EE] text-[#5C6C70] border-[#DEDACF] hover:text-[#17282C]'
                 }`}
               >
                 {subTab.label}
@@ -574,17 +449,20 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
           </div>
 
           <div className="relative w-full sm:w-64">
-            <Search className="h-3.5 w-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="h-3.5 w-3.5 text-[#5C6C70] absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={locale === 'fr' ? 'Rechercher centrale, poste...' : 'Search plant, station...'}
-              className="w-full bg-slate-950 text-xs font-mono text-slate-100 pl-9 pr-3 py-1.5 rounded-lg border border-slate-800 focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[#F6F4EE] text-xs font-mono text-[#17282C] placeholder-[#5C6C70] pl-9 pr-3 py-1.5 rounded-lg border border-[#DEDACF] focus:outline-none focus:border-[#147C78]"
             />
           </div>
         </div>
       </div>
+
+      {/* Dedicated Dark Technical Workbench Container for Active GIS / Engineering Views */}
+      <div className="epede-workbench rounded-2xl p-4 sm:p-6 shadow-md space-y-6">
 
       {/* SECTION: Interactive GIS / SLD Hybrid Map */}
       {activeCategory === 'map' && (
@@ -1298,6 +1176,7 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
           </div>
         </div>
       )}
+      </div>
 
       {/* Automated Consolidated Substation Batch Compliance Dossier Modal */}
       {complianceModalData && (

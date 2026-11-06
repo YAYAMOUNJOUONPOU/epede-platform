@@ -296,14 +296,14 @@ export const HydropowerMasterWorkbench: React.FC<HydropowerMasterWorkbenchProps>
   ];
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-8 pb-12 text-[#17282C]">
       {/* Top Header / Return Bar */}
       <div className="flex items-center justify-between">
         {onBack && (
           <button
             type="button"
             onClick={onBack}
-            className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-neutral-400 hover:text-cyan-400 transition-colors"
+            className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-[#5C6C70] hover:text-[#147C78] transition-colors cursor-pointer"
           >
             <ArrowLeft className="h-4 w-4" />
             <span>{locale === 'fr' ? 'RETOUR À LA VUE GLOBALE' : 'BACK TO GLOBAL VIEW'}</span>
@@ -311,66 +311,70 @@ export const HydropowerMasterWorkbench: React.FC<HydropowerMasterWorkbenchProps>
         )}
 
         <div className="flex items-center gap-2">
-          <span className="font-mono text-xs font-bold text-neutral-500">
+          <span className="font-mono text-xs font-bold text-[#5C6C70]">
             {locale === 'fr' ? 'ÉLECTROTECHNIQUE & HYDRAULIQUE INDUSTRIELLE' : 'POWER & HYDRAULIC ENGINEERING'}
           </span>
-          <span className="font-mono text-xs font-bold text-cyan-400 bg-[#080B10] px-2.5 py-1 rounded-lg border border-[#252E38]">
+          <span className="font-mono text-xs font-bold text-[#147C78] bg-[#E3EFEC] px-2.5 py-1 rounded-lg border border-[#147C78]/30">
             HYDRO-TWIN v2.0
           </span>
         </div>
       </div>
 
-      {/* Hero Banner */}
-      <div className="rounded-2xl border border-[#252E38] bg-linear-to-r from-[#07131F] via-[#091A2B] to-[#0A1017] p-6 sm:p-8 relative overflow-hidden shadow-2xl cad-grid-dense">
+      {/* Bright Editorial Hero Banner */}
+      <div className="rounded-2xl border border-[#DEDACF] bg-[#FFFDF9] p-6 sm:p-8 relative overflow-hidden shadow-sm">
         <div className="relative z-10">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-            <span className="font-mono text-xs font-bold tracking-widest text-sky-400 uppercase">
+            <span className="font-mono text-xs font-bold tracking-[0.14em] text-[#147C78] uppercase">
               {locale === 'fr'
                 ? 'JUMEAU NUMÉRIQUE & ÉTABLI D\'INGÉNIERIE HYDROÉLECTRIQUE'
                 : 'HYDROPOWER DIGITAL TWIN & ENGINEERING WORKBENCH'}
             </span>
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs text-sky-200 bg-sky-950/90 border border-sky-800 px-3 py-1 rounded font-bold uppercase flex items-center gap-1.5">
-                <Activity className="w-3.5 h-3.5 text-sky-400 animate-pulse" />
+              <span className="font-mono text-xs text-[#147C78] bg-[#E3EFEC] border border-[#147C78]/30 px-3 py-1 rounded font-bold uppercase flex items-center gap-1.5">
+                <Activity className="w-3.5 h-3.5 text-[#147C78]" />
                 <span>CANONICAL GRAPH · WATER-TO-WIRE · CAMEROON FLEET</span>
               </span>
             </div>
           </div>
 
-          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-white font-mono">
-            {locale === 'fr' ? 'Ingénierie Hydroélectrique Fondamentale' : 'Hydroelectric Power Engineering Master Suite'}
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#17282C]">
+            {locale === 'fr' ? (
+              <>Ingénierie Hydroélectrique <span className="font-serif-editorial font-normal text-[#147C78]">Fondamentale</span></>
+            ) : (
+              <>Hydroelectric Power <span className="font-serif-editorial font-normal text-[#147C78]">Engineering Suite</span></>
+            )}
           </h1>
 
-          <p className="mt-2 text-sm sm:text-base text-neutral-300 max-w-4xl leading-relaxed font-medium">
+          <p className="mt-2.5 text-sm sm:text-base text-[#33474B] max-w-4xl leading-relaxed">
             {locale === 'fr'
               ? 'Plateforme intégrée d\'ingénierie hydroélectrique : chaîne complète de conversion eau-électricité (rendements étagés, perte de charge, calculatrice dynamique), graphe ontologique à traçabilité bidirectionnelle, architecture des 31 sous-systèmes normalisés, aménagement en cascade de la Sanaga (Songloulou, Edéa, Lom Pangar) et corpus normatif CEI/IEEE/ISO.'
               : 'Unified hydro engineering suite: comprehensive water-to-wire energy transformation pipeline with staged efficiencies and head losses, bidirectional causal knowledge graph, 31-subsystem modular hierarchy, Sanaga cascade fleet topology, and IEC/IEEE/ISO prescriptive standards ontology.'}
           </p>
 
           {/* Quick Stats Strip */}
-          <div className="mt-6 pt-5 border-t border-[#252E38] grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono text-xs">
-            <div>
-              <div className="text-neutral-500 uppercase">{locale === 'fr' ? 'Sous-systèmes' : 'Subsystems'}</div>
-              <div className="text-base font-bold text-white mt-0.5">31 Composants (H01-H31)</div>
+          <div className="mt-6 pt-5 border-t border-[#DEDACF] grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono text-xs">
+            <div className="p-3 rounded-xl bg-[#F6F4EE] border border-[#DEDACF]">
+              <div className="text-[#5C6C70] uppercase font-bold">{locale === 'fr' ? 'Sous-systèmes' : 'Subsystems'}</div>
+              <div className="text-base font-extrabold text-[#17282C] mt-0.5">31 Composants (H01-H31)</div>
             </div>
-            <div>
-              <div className="text-neutral-500 uppercase">{locale === 'fr' ? 'Graphe Causal' : 'Knowledge Graph'}</div>
-              <div className="text-base font-bold text-sky-400 mt-0.5">23 Nœuds · 29 Liaisons</div>
+            <div className="p-3 rounded-xl bg-[#F6F4EE] border border-[#DEDACF]">
+              <div className="text-[#5C6C70] uppercase font-bold">{locale === 'fr' ? 'Graphe Causal' : 'Knowledge Graph'}</div>
+              <div className="text-base font-extrabold text-[#147C78] mt-0.5">23 Nœuds · 29 Liaisons</div>
             </div>
-            <div>
-              <div className="text-neutral-500 uppercase">{locale === 'fr' ? 'Parc Camerounais' : 'Cameroon Fleet'}</div>
-              <div className="text-base font-bold text-emerald-400 mt-0.5">1 393.4 MW Référencés</div>
+            <div className="p-3 rounded-xl bg-[#F6F4EE] border border-[#DEDACF]">
+              <div className="text-[#5C6C70] uppercase font-bold">{locale === 'fr' ? 'Parc Camerounais' : 'Cameroon Fleet'}</div>
+              <div className="text-base font-extrabold text-[#147C78] mt-0.5">1 393.4 MW Référencés</div>
             </div>
-            <div>
-              <div className="text-neutral-500 uppercase">{locale === 'fr' ? 'Normes Dédiées' : 'Standards'}</div>
-              <div className="text-base font-bold text-amber-400 mt-0.5">16 Codes CEI/IEEE/ISO</div>
+            <div className="p-3 rounded-xl bg-[#F6F4EE] border border-[#DEDACF]">
+              <div className="text-[#5C6C70] uppercase font-bold">{locale === 'fr' ? 'Normes Dédiées' : 'Standards'}</div>
+              <div className="text-base font-extrabold text-[#B8872D] mt-0.5">16 Codes CEI/IEEE/ISO</div>
             </div>
           </div>
         </div>
       </div>
 
       {/* WORKBENCH MODULE TABS NAVIGATION */}
-      <div className="rounded-2xl border border-[#252E38] bg-[#0D1117] overflow-hidden shadow-xl">
+      <div className="epede-workbench rounded-2xl border border-[#252E38] bg-[#10191D] overflow-hidden shadow-md">
         <div className="border-b border-[#252E38] bg-[#080B10] px-3 flex items-center gap-1 overflow-x-auto">
           {tabs.map((tab) => {
             const isTabActive = activeTab === tab.id;

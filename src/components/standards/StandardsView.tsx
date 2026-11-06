@@ -436,35 +436,35 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-[#A9ADA5] hover:text-[#D7A64A] transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-[#5C6C70] hover:text-[#147C78] transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           <span>{locale === 'fr' ? 'RETOUR AU TABLEAU DE BORD' : 'BACK TO HOME'}</span>
         </button>
 
         <div className="flex items-center gap-2 font-mono text-xs">
-          <span className="text-[#A9ADA5] font-bold uppercase tracking-wider">
+          <span className="text-[#5C6C70] font-bold uppercase tracking-wider">
             {locale === 'fr' ? 'FONDATION L01' : 'FOUNDATION L01'}
           </span>
-          <span className="font-bold text-[#D7A64A] bg-[#151C1E] px-2.5 py-1 rounded-md border border-[#567A87]/35 uppercase tracking-wider flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#D7A64A] animate-pulse" />
+          <span className="font-bold text-[#147C78] bg-[#E3EFEC] px-2.5 py-1 rounded-sm border border-[#147C78]/30 uppercase tracking-wider flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#147C78]" />
             {locale === 'fr' ? 'Référentiel Normatif & Essais' : 'Standards & Compliance Registry'}
           </span>
         </div>
       </div>
 
       {/* Engineering Header */}
-      <header className="rounded-2xl border border-[#567A87]/35 bg-[#151C1E] p-6 sm:p-8 shadow-xl cad-grid-dense">
+      <header className="rounded-sm border border-[#17282C]/15 bg-[#FFFDF9] p-6 sm:p-8 shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-start gap-4">
-            <div className="p-3 bg-[#0B0F12] border border-[#D7A64A]/40 rounded-xl text-[#D7A64A] shrink-0 shadow-xs">
+            <div className="p-3 bg-[#E3EFEC] border border-[#147C78]/30 rounded-sm text-[#147C78] shrink-0">
               <ShieldCheck className="h-8 w-8" />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#F4F1E8] font-mono flex items-center gap-3">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#17282C] flex items-center gap-3">
                 <span>{locale === 'fr' ? 'Référentiel des Normes & Essais FAT / SAT' : 'Standards, FAT / SAT & Compliance Registry'}</span>
               </h1>
-              <p className="mt-1 text-xs sm:text-sm text-[#A9ADA5] max-w-3xl leading-relaxed font-medium">
+              <p className="mt-1 text-xs sm:text-sm text-[#33474B] max-w-3xl leading-relaxed">
                 {locale === 'fr'
                   ? 'Exigences normatives internationales CEI / IEEE, réglementations sectorielles ARSEL / NF C et protocole interactif de vérification des essais en usine (FAT) et sur site (SAT).'
                   : 'International IEC / IEEE standards, regional Cameroon ARSEL / NF C regulations, and interactive factory (FAT) and site (SAT) acceptance verification guide.'}
@@ -472,17 +472,17 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
             </div>
           </div>
           <div className="flex items-center gap-2 shrink-0 font-mono text-xs">
-            <span className="px-3 py-1.5 rounded-lg border border-[#567A87]/40 bg-[#0B0F12] text-[#F4F1E8] font-bold shadow-xs">
+            <span className="px-3 py-1.5 rounded-sm border border-[#DEDACF] bg-[#F6F4EE] text-[#17282C] font-bold">
               {STANDARDS.length} {locale === 'fr' ? 'NORMES RÉFÉRENCÉES' : 'STANDARDS LOGGED'}
             </span>
           </div>
         </div>
 
         {/* Search & Filter Toolbar */}
-        <div className="mt-6 pt-5 border-t border-[#567A87]/25 flex flex-wrap items-center justify-between gap-4">
+        <div className="mt-6 pt-5 border-t border-[#DEDACF] flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-mono font-bold text-[#A9ADA5] flex items-center gap-1 mr-1 uppercase tracking-wider">
-              <Filter className="h-3.5 w-3.5 text-[#D7A64A]" />
+            <span className="text-xs font-mono font-bold text-[#5C6C70] flex items-center gap-1 mr-1 uppercase tracking-wider">
+              <Filter className="h-3.5 w-3.5 text-[#147C78]" />
               <span>{locale === 'fr' ? 'ORGANISME :' : 'ISSUER:'}</span>
             </span>
             {issuers.map((iss) => (
@@ -490,10 +490,10 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
                 key={iss}
                 type="button"
                 onClick={() => setSelectedIssuer(iss)}
-                className={`px-3 py-1 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all border ${
+                className={`px-3 py-1 rounded-sm text-xs font-mono font-bold uppercase tracking-wider transition-all border ${
                   selectedIssuer === iss
-                    ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A] shadow-xs'
-                    : 'border-[#567A87]/30 bg-[#0B0F12] text-[#A9ADA5] hover:text-[#F4F1E8] hover:border-[#567A87] shadow-xs'
+                    ? 'border-[#147C78] bg-[#E3EFEC] text-[#147C78]'
+                    : 'border-[#DEDACF] bg-[#F6F4EE] text-[#5C6C70] hover:text-[#17282C] hover:border-[#147C78]/40'
                 }`}
               >
                 {iss}
@@ -502,20 +502,20 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
           </div>
 
           <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#A9ADA5]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#5C6C70]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={locale === 'fr' ? 'Filtrer (ex: 60076, arc, terre, clause...)' : 'Search (e.g. 60076, arc, ground, clause...)'}
-              className="w-full bg-[#0B0F12] border border-[#567A87]/35 focus:border-[#D7A64A] rounded-lg pl-9 pr-3 py-1.5 text-xs text-[#F4F1E8] font-mono placeholder:text-[#A9ADA5]/60 outline-none transition-colors"
+              className="w-full bg-[#F6F4EE] border border-[#DEDACF] focus:border-[#147C78] rounded-sm pl-9 pr-3 py-1.5 text-xs text-[#17282C] font-mono placeholder:text-[#5C6C70]/70 outline-none transition-colors"
             />
           </div>
         </div>
 
         {/* Domain Filter Toolbar */}
-        <div className="mt-3 pt-3 border-t border-[#567A87]/25 flex flex-wrap items-center gap-1.5">
-          <span className="text-[11px] font-mono font-bold text-[#A9ADA5] uppercase tracking-wider mr-1">
+        <div className="mt-3 pt-3 border-t border-[#DEDACF] flex flex-wrap items-center gap-1.5">
+          <span className="text-[11px] font-mono font-bold text-[#5C6C70] uppercase tracking-wider mr-1">
             {locale === 'fr' ? 'DOMAINE :' : 'DOMAIN:'}
           </span>
           {[
@@ -535,10 +535,10 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
               key={d.code}
               type="button"
               onClick={() => setSelectedDomain(d.code)}
-              className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-all border ${
+              className={`px-2.5 py-1 rounded-sm text-[10px] font-mono font-bold uppercase tracking-wider transition-all border ${
                 selectedDomain === d.code
-                  ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A] shadow-xs'
-                  : 'border-[#567A87]/30 bg-[#0B0F12] text-[#A9ADA5] hover:text-[#F4F1E8] hover:border-[#567A87]'
+                  ? 'border-[#147C78] bg-[#E3EFEC] text-[#147C78]'
+                  : 'border-[#DEDACF] bg-[#F6F4EE] text-[#5C6C70] hover:text-[#17282C] hover:border-[#147C78]/40'
               }`}
             >
               {d.label}
@@ -556,15 +556,15 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
                 key={s.reference}
                 type="button"
                 onClick={() => setSelectedRef(s.reference)}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider whitespace-nowrap transition-all border shrink-0 flex items-center gap-1.5 ${
+                className={`px-3.5 py-1.5 rounded-sm text-xs font-mono font-bold uppercase tracking-wider whitespace-nowrap transition-all border shrink-0 flex items-center gap-1.5 ${
                   isSelected
-                    ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A] shadow-xs ring-1 ring-[#D7A64A]/30'
-                    : 'border-[#567A87]/30 bg-[#0B0F12] text-[#A9ADA5] hover:text-[#F4F1E8] hover:border-[#567A87] shadow-xs'
+                    ? 'border-[#147C78] bg-[#147C78] text-[#FFFDF9] shadow-xs'
+                    : 'border-[#DEDACF] bg-[#F6F4EE] text-[#33474B] hover:text-[#17282C] hover:border-[#147C78]/40'
                 }`}
               >
                 <span>{s.reference}</span>
                 {hasClauses && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#D7A64A]" title={locale === 'fr' ? 'Clauses FAT/SAT activées' : 'FAT/SAT clauses available'} />
+                  <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-[#FFFDF9]' : 'bg-[#B8872D]'}`} title={locale === 'fr' ? 'Clauses FAT/SAT activées' : 'FAT/SAT clauses available'} />
                 )}
               </button>
             );
@@ -573,21 +573,21 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
       </header>
 
       {/* Cameroon National Grid Context & Tropical Specifications */}
-      <div className="rounded-xl border border-[#567A87]/35 bg-[#151C1E] p-4 sm:p-5 text-xs font-mono shadow-md">
+      <div className="rounded-sm border border-[#17282C]/15 bg-[#FFFDF9] p-4 sm:p-5 text-xs font-mono shadow-xs">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
           <div className="flex items-center gap-2">
-            <span className="text-[#D7A64A] font-bold text-sm">🇨🇲</span>
-            <span className="font-bold text-[#F4F1E8] uppercase tracking-wider">
+            <span className="text-[#147C78] font-bold text-sm">🇨🇲</span>
+            <span className="font-bold text-[#17282C] uppercase tracking-wider">
               {locale === 'fr' ? 'Contexte Réseau National Cameroun (ARSEL / SONATREL / ENEO)' : 'Cameroon National Grid & Tropical Operating Envelope (ARSEL / SONATREL / ENEO)'}
             </span>
           </div>
-          <span className="bg-[#0B0F12] border border-[#D7A64A]/40 text-[#D7A64A] px-2 py-0.5 rounded text-[10px] font-bold uppercase">
+          <span className="bg-[#E3EFEC] border border-[#147C78]/30 text-[#147C78] px-2 py-0.5 rounded-sm text-[10px] font-bold uppercase">
             {locale === 'fr' ? 'Code Réseau & Climat Tropical' : 'Grid Code & Tropical Climate'}
           </span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-[#A9ADA5] font-sans text-xs">
-          <div className="p-2.5 rounded-lg bg-[#0B0F12] border border-[#567A87]/30">
-            <span className="text-[10px] font-mono font-bold text-[#D7A64A] block uppercase mb-1">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-[#33474B] font-sans text-xs">
+          <div className="p-3 rounded-sm bg-[#F6F4EE] border border-[#DEDACF]">
+            <span className="text-[10px] font-mono font-bold text-[#147C78] block uppercase mb-1">
               {locale === 'fr' ? 'Fréquence & Tolérance' : 'Frequency & Tolerance'}
             </span>
             <p className="leading-snug">
@@ -598,8 +598,8 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
               )}
             </p>
           </div>
-          <div className="p-2.5 rounded-lg bg-[#0B0F12] border border-[#567A87]/30">
-            <span className="text-[10px] font-mono font-bold text-[#D7A64A] block uppercase mb-1">
+          <div className="p-3 rounded-sm bg-[#F6F4EE] border border-[#DEDACF]">
+            <span className="text-[10px] font-mono font-bold text-[#147C78] block uppercase mb-1">
               {locale === 'fr' ? 'Déclassement Thermique Tropical' : 'Tropical Thermal Derating'}
             </span>
             <p className="leading-snug">
@@ -610,8 +610,8 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
               )}
             </p>
           </div>
-          <div className="p-2.5 rounded-lg bg-[#0B0F12] border border-[#567A87]/30">
-            <span className="text-[10px] font-mono font-bold text-[#D7A64A] block uppercase mb-1">
+          <div className="p-3 rounded-sm bg-[#F6F4EE] border border-[#DEDACF]">
+            <span className="text-[10px] font-mono font-bold text-[#147C78] block uppercase mb-1">
               {locale === 'fr' ? 'Densité Kéraunique & Foudre' : 'Isokeraunic Level & Lightning'}
             </span>
             <p className="leading-snug">
@@ -626,35 +626,35 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
       </div>
 
       {/* Selected Standard Detail Card */}
-      <div className="rounded-2xl border border-[#567A87]/35 bg-[#151C1E] overflow-hidden shadow-xl">
+      <div className="rounded-sm border border-[#17282C]/15 bg-[#FFFDF9] overflow-hidden shadow-xs">
         
         {/* Card Technical Header */}
-        <div className="border-b border-[#567A87]/25 bg-[#0B0F12] p-6 sm:p-7">
+        <div className="border-b border-[#DEDACF] bg-[#F6F4EE] p-6 sm:p-7">
           <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
             <div className="flex items-center gap-3">
-              <span className="font-mono text-xl sm:text-2xl font-black text-[#D7A64A] tracking-wide select-all">
+              <span className="font-mono text-xl sm:text-2xl font-black text-[#147C78] tracking-wide select-all">
                 {selectedStandard.reference}
               </span>
-              <span className="font-mono text-[10px] text-[#F4F1E8] bg-[#151C1E] px-2 py-0.5 rounded border border-[#567A87]/40 font-bold uppercase tracking-wider">
+              <span className="font-mono text-[10px] text-[#17282C] bg-[#FFFDF9] px-2 py-0.5 rounded-sm border border-[#DEDACF] font-bold uppercase tracking-wider">
                 {locale === 'fr' ? 'RÉFÉRENCE TECHNIQUE CEI / IEEE / NF C' : 'TECHNICAL STANDARD IEC / IEEE / NF C'}
               </span>
             </div>
 
             <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
-              <span className="text-[#A9ADA5] bg-[#151C1E] px-2.5 py-1 rounded border border-[#567A87]/35 font-bold uppercase tracking-wider text-[11px] shadow-xs">
-                {locale === 'fr' ? 'ORGANISME:' : 'ISSUER:'} <span className="text-[#F4F1E8]">{selectedStandard.issuer || 'N/A'}</span>
+              <span className="text-[#5C6C70] bg-[#FFFDF9] px-2.5 py-1 rounded-sm border border-[#DEDACF] font-bold uppercase tracking-wider text-[11px]">
+                {locale === 'fr' ? 'ORGANISME:' : 'ISSUER:'} <span className="text-[#17282C]">{selectedStandard.issuer || 'N/A'}</span>
               </span>
-              <span className="text-[#A9ADA5] bg-[#151C1E] px-2.5 py-1 rounded border border-[#567A87]/35 font-bold uppercase tracking-wider text-[11px] shadow-xs">
-                {locale === 'fr' ? 'ÉDITION:' : 'EDITION:'} <span className="text-[#F4F1E8]">{selectedStandard.edition || 'N/A'}</span>
+              <span className="text-[#5C6C70] bg-[#FFFDF9] px-2.5 py-1 rounded-sm border border-[#DEDACF] font-bold uppercase tracking-wider text-[11px]">
+                {locale === 'fr' ? 'ÉDITION:' : 'EDITION:'} <span className="text-[#17282C]">{selectedStandard.edition || 'N/A'}</span>
               </span>
-              <span className="text-emerald-400 bg-emerald-950/40 px-2.5 py-1 rounded border border-emerald-800/60 font-bold uppercase tracking-wider text-[11px] flex items-center gap-1">
+              <span className="text-[#147C78] bg-[#E3EFEC] px-2.5 py-1 rounded-sm border border-[#147C78]/30 font-bold uppercase tracking-wider text-[11px] flex items-center gap-1">
                 <CheckCircle2 className="h-3 w-3" />
                 {selectedStandard.status.toUpperCase()}
               </span>
             </div>
           </div>
 
-          <h2 className="text-lg sm:text-xl font-black uppercase tracking-tight text-[#F4F1E8] font-mono">
+          <h2 className="text-lg sm:text-xl font-bold tracking-tight text-[#17282C]">
             {locale === 'fr' ? selectedStandard.title_fr : selectedStandard.title_en}
           </h2>
         </div>
@@ -664,23 +664,23 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
           
           {/* PÉRIMÈTRE / SCOPE */}
           <div>
-            <h3 className="text-xs font-mono font-bold text-[#D7A64A] uppercase tracking-widest mb-2 flex items-center gap-1.5">
+            <h3 className="text-xs font-mono font-bold text-[#147C78] uppercase tracking-widest mb-2 flex items-center gap-1.5">
               <span>📋</span> {locale === 'fr' ? 'PÉRIMÈTRE TECHNIQUE & OBJET DE LA NORME' : 'TECHNICAL SCOPE & MANDATE'}
             </h3>
-            <div className="bg-[#0B0F12] p-5 rounded-xl border border-[#567A87]/30 font-medium text-sm text-[#F4F1E8] leading-relaxed">
+            <div className="bg-[#F6F4EE] p-5 rounded-sm border border-[#DEDACF] font-medium text-sm text-[#17282C] leading-relaxed">
               {locale === 'fr' ? selectedStandard.scope_fr : selectedStandard.scope_en}
             </div>
           </div>
 
           {/* ASSOCIATED COMPUTATIONAL ENGINES & SIMULATION LABS */}
           {(linkedCalc || linkedSim) && (
-            <div className="rounded-xl border border-[#D7A64A]/35 bg-[#0B0F12] p-5">
+            <div className="rounded-sm border border-[#147C78]/30 bg-[#F6F4EE] p-5">
               <div className="flex items-center justify-between gap-2 mb-3">
-                <h4 className="font-mono text-xs font-bold text-[#D7A64A] uppercase tracking-wider flex items-center gap-2">
-                  <Zap className="h-4 w-4 text-[#D7A64A]" />
+                <h4 className="font-mono text-xs font-bold text-[#147C78] uppercase tracking-wider flex items-center gap-2">
+                  <Zap className="h-4 w-4 text-[#147C78]" />
                   <span>{locale === 'fr' ? 'Moteurs de Calcul & Simulateurs Directement Associés' : 'Directly Linked Calculators & Simulation Labs'}</span>
                 </h4>
-                <span className="text-[10px] font-mono text-[#D7A64A] bg-[#151C1E] border border-[#D7A64A]/40 px-2 py-0.5 rounded font-bold uppercase">
+                <span className="text-[10px] font-mono text-[#147C78] bg-[#E3EFEC] border border-[#147C78]/30 px-2 py-0.5 rounded-sm font-bold uppercase">
                   EPEDE COMPUTATIONAL SUITE
                 </span>
               </div>
@@ -690,19 +690,19 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
                   <button
                     type="button"
                     onClick={() => onNavigateCalculator(linkedCalc.tab)}
-                    className="flex items-start gap-3 p-3.5 rounded-xl bg-[#151C1E] hover:bg-[#151C1E]/80 border border-[#567A87]/35 hover:border-[#D7A64A] text-left transition-all group"
+                    className="flex items-start gap-3 p-3.5 rounded-sm bg-[#FFFDF9] hover:bg-[#E3EFEC]/40 border border-[#DEDACF] hover:border-[#147C78] text-left transition-all group"
                   >
-                    <div className="p-2 rounded-lg bg-[#0B0F12] border border-[#D7A64A]/40 text-[#D7A64A] shrink-0 group-hover:scale-105 transition-transform">
+                    <div className="p-2 rounded-sm bg-[#E3EFEC] border border-[#147C78]/30 text-[#147C78] shrink-0">
                       <Calculator className="h-5 w-5" />
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5">
-                        <span className="font-mono text-xs font-bold text-[#F4F1E8] group-hover:text-[#D7A64A] transition-colors">
+                        <span className="font-mono text-xs font-bold text-[#17282C] group-hover:text-[#147C78] transition-colors">
                           {linkedCalc.title}
                         </span>
-                        <ExternalLink className="h-3 w-3 text-[#D7A64A] opacity-60 group-hover:opacity-100" />
+                        <ExternalLink className="h-3 w-3 text-[#147C78] opacity-60 group-hover:opacity-100" />
                       </div>
-                      <p className="text-[11px] text-[#A9ADA5] font-sans mt-0.5 line-clamp-2">
+                      <p className="text-[11px] text-[#5C6C70] font-sans mt-0.5 line-clamp-2">
                         {linkedCalc.desc}
                       </p>
                     </div>
@@ -713,19 +713,19 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
                   <button
                     type="button"
                     onClick={() => onNavigateSimulation(linkedSim.tab)}
-                    className="flex items-start gap-3 p-3.5 rounded-xl bg-[#151C1E] hover:bg-[#151C1E]/80 border border-[#567A87]/35 hover:border-[#D7A64A] text-left transition-all group"
+                    className="flex items-start gap-3 p-3.5 rounded-sm bg-[#FFFDF9] hover:bg-[#E3EFEC]/40 border border-[#DEDACF] hover:border-[#147C78] text-left transition-all group"
                   >
-                    <div className="p-2 rounded-lg bg-[#0B0F12] border border-[#567A87]/40 text-[#F4F1E8] shrink-0 group-hover:scale-105 transition-transform">
+                    <div className="p-2 rounded-sm bg-[#E3EFEC] border border-[#147C78]/30 text-[#147C78] shrink-0">
                       <Activity className="h-5 w-5" />
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5">
-                        <span className="font-mono text-xs font-bold text-[#F4F1E8] group-hover:text-[#D7A64A] transition-colors">
+                        <span className="font-mono text-xs font-bold text-[#17282C] group-hover:text-[#147C78] transition-colors">
                           {linkedSim.title}
                         </span>
-                        <ExternalLink className="h-3 w-3 text-[#D7A64A] opacity-60 group-hover:opacity-100" />
+                        <ExternalLink className="h-3 w-3 text-[#147C78] opacity-60 group-hover:opacity-100" />
                       </div>
-                      <p className="text-[11px] text-[#A9ADA5] font-sans mt-0.5 line-clamp-2">
+                      <p className="text-[11px] text-[#5C6C70] font-sans mt-0.5 line-clamp-2">
                         {linkedSim.desc}
                       </p>
                     </div>
@@ -739,15 +739,15 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
             
             {/* APPLICABLE À L'APPAREILLAGE */}
-            <div className="bg-[#0B0F12] p-5 rounded-xl border border-[#567A87]/30 space-y-3">
-              <h4 className="font-bold text-xs text-[#F4F1E8] uppercase tracking-wider flex items-center gap-1.5 border-b border-[#567A87]/25 pb-2">
-                <span className="text-[#D7A64A]">⚡</span>
+            <div className="bg-[#F6F4EE] p-5 rounded-sm border border-[#DEDACF] space-y-3">
+              <h4 className="font-bold text-xs text-[#17282C] uppercase tracking-wider flex items-center gap-1.5 border-b border-[#DEDACF] pb-2">
+                <span className="text-[#147C78]">⚡</span>
                 <span>{locale === 'fr' ? 'APPAREILLAGES ASSOCIÉS' : 'EQUIPMENT FOCUS'}</span>
               </h4>
-              <ul className="space-y-2 text-[#A9ADA5] font-sans">
+              <ul className="space-y-2 text-[#33474B] font-sans">
                 {selectedStandard.applicable_equipment.map((item) => (
                   <li key={item} className="flex items-start gap-2">
-                    <span className="text-[#D7A64A] font-mono font-bold">▪</span>
+                    <span className="text-[#147C78] font-mono font-bold">▪</span>
                     <span>{item}</span>
                   </li>
                 ))}
@@ -755,15 +755,15 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
             </div>
 
             {/* UTILISÉ PAR LES MÉTIERS */}
-            <div className="bg-[#0B0F12] p-5 rounded-xl border border-[#567A87]/30 space-y-3">
-              <h4 className="font-bold text-xs text-[#F4F1E8] uppercase tracking-wider flex items-center gap-1.5 border-b border-[#567A87]/25 pb-2">
-                <span className="text-[#D7A64A]">👷</span>
+            <div className="bg-[#F6F4EE] p-5 rounded-sm border border-[#DEDACF] space-y-3">
+              <h4 className="font-bold text-xs text-[#17282C] uppercase tracking-wider flex items-center gap-1.5 border-b border-[#DEDACF] pb-2">
+                <span className="text-[#147C78]">👷</span>
                 <span>{locale === 'fr' ? 'UTILISÉ PAR LES INGÉNIEURS' : 'USER DISCIPLINES'}</span>
               </h4>
-              <ul className="space-y-2 text-[#A9ADA5] font-sans">
+              <ul className="space-y-2 text-[#33474B] font-sans">
                 {selectedStandard.used_by_roles.map((role) => (
                   <li key={role} className="flex items-start gap-2">
-                    <span className="text-[#D7A64A] font-mono font-bold">▪</span>
+                    <span className="text-[#147C78] font-mono font-bold">▪</span>
                     <span>{role}</span>
                   </li>
                 ))}
@@ -771,17 +771,17 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
             </div>
 
             {/* JURIDICTION & DOMAINES EPEDE */}
-            <div className="bg-[#0B0F12] p-5 rounded-xl border border-[#567A87]/30 space-y-3">
-              <h4 className="font-bold text-xs text-[#F4F1E8] uppercase tracking-wider flex items-center gap-1.5 border-b border-[#567A87]/25 pb-2">
-                <span className="text-[#D7A64A]">⚖️</span>
+            <div className="bg-[#F6F4EE] p-5 rounded-sm border border-[#DEDACF] space-y-3">
+              <h4 className="font-bold text-xs text-[#17282C] uppercase tracking-wider flex items-center gap-1.5 border-b border-[#DEDACF] pb-2">
+                <span className="text-[#147C78]">⚖️</span>
                 <span>{locale === 'fr' ? 'JURIDICTION & DOMAINES' : 'JURISDICTION & CODES'}</span>
               </h4>
-              <p className="text-[#A9ADA5] font-sans leading-relaxed text-xs">
+              <p className="text-[#33474B] font-sans leading-relaxed text-xs">
                 {selectedStandard.jurisdiction}
               </p>
               
               <div className="pt-2">
-                <span className="text-[11px] text-[#A9ADA5] font-bold block mb-1.5 uppercase">
+                <span className="text-[11px] text-[#5C6C70] font-bold block mb-1.5 uppercase">
                   {locale === 'fr' ? 'Domaines EPEDE couverts :' : 'Covered EPEDE Domains:'}
                 </span>
                 <div className="flex flex-wrap gap-1.5">
@@ -790,7 +790,7 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
                       key={code}
                       type="button"
                       onClick={() => onNavigateDomain(code)}
-                      className="font-mono text-xs font-bold bg-[#151C1E] text-[#D7A64A] hover:text-[#F4F1E8] hover:border-[#D7A64A] px-2.5 py-1 rounded-md border border-[#567A87]/35 transition-colors"
+                      className="font-mono text-xs font-bold bg-[#FFFDF9] text-[#147C78] hover:text-[#FFFDF9] hover:bg-[#147C78] px-2.5 py-1 rounded-sm border border-[#DEDACF] transition-colors"
                     >
                       {code}
                     </button>
@@ -802,7 +802,7 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
           </div>
 
           {/* INTERACTIVE FAT / SAT TESTING & AUDIT VERIFICATION PROTOCOL */}
-          <div className="rounded-xl border border-[#567A87]/35 bg-[#0B0F12] overflow-hidden">
+          <div className="epede-workbench rounded-sm border border-[#17282C] bg-[#10191D] overflow-hidden">
             
             {/* Audit Toolbar & Compliance Gauge */}
             <div className="border-b border-[#567A87]/25 p-5 bg-[#151C1E] flex flex-col md:flex-row md:items-center justify-between gap-4">

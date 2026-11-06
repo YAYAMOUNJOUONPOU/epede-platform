@@ -75,7 +75,7 @@ export const NINE_GRID_STAGES: GridStageDefinition[] = [
       { fr: 'Systèmes d’excitation statique AVR', en: 'AVR Static Excitation Cubicles' },
       { fr: 'Gaines à barres blindées IPB (4 000 A)', en: 'Isolated Phase Busducts (IPB 4,000 A)' },
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1574689231350-d5a085203362?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/images/homepage_uploads/2.jpg',
     cameroonContext: {
       fr: 'Centrale hydroélectrique de Nachtigal (7 x 60 MW = 420 MW sur la Sanaga), Song Loulou (384 MW), Édéa (276 MW), centrale thermique à gaz de Kribi (216 MW) et fermes solaires PV de Maroua et Guider (30 MWc).',
       en: 'Nachtigal Hydro (420 MW on Sanaga river), Song Loulou (384 MW), Edea (276 MW), Kribi Gas Thermal (216 MW), and Maroua/Guider Solar PV (30 MWp).',
@@ -118,7 +118,7 @@ export const NINE_GRID_STAGES: GridStageDefinition[] = [
       { fr: 'Traversées haute tension RIP en résine', en: 'Resin-Impregnated Paper (RIP) Condenser Bushings' },
       { fr: 'Relais de protection Buchholz & dégazage DGA', en: 'Buchholz Relay & Online DGA Oil Monitors', equipmentId: 'photo-dga-monitor-field' },
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/images/homepage_uploads/4.jpeg',
     cameroonContext: {
       fr: 'Postes d’évacuation de Nachtigal et Song Loulou équipés de bancs de transformateurs 70 MVA à 90 MVA sous huile minérale avec système d’extinction incendie à déluge d’eau.',
       en: 'Step-up switchyards at Nachtigal and Song Loulou utilizing 70 MVA to 90 MVA oil-immersed transformers with deluge fire suppression systems.',
@@ -161,7 +161,7 @@ export const NINE_GRID_STAGES: GridStageDefinition[] = [
       { fr: 'Chaînes d’isolateurs en verre trempé et composite', en: 'Toughened Glass & Composite Insulator Strings', equipmentId: 'photo-tower-insulator-glass-composite' },
       { fr: 'Câbles de garde OPGW avec fibres optiques SCADA', en: 'OPGW Earth Shield Wires with Fiber Optic Cores' },
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/images/homepage_uploads/3.jpg',
     cameroonContext: {
       fr: 'Dorsale nationale SONATREL : Lignes 225 kV Song Loulou - Mangombé (Douala), Nachtigal - Bafoussam, et la ligne 225 kV vers Yaoundé (Oyomabang).',
       en: 'SONATREL national backbone: 225 kV Song Loulou - Mangombe (Douala), Nachtigal - Bafoussam, and the 225 kV line to Yaounde (Oyomabang).',
@@ -205,7 +205,7 @@ export const NINE_GRID_STAGES: GridStageDefinition[] = [
       { fr: 'Parafoudres à oxyde de zinc (ZnO)', en: 'Metal-Oxide Zinc Surge Arresters (ZnO)', equipmentId: 'photo-arrester-225k-field' },
       { fr: 'Relais numériques de protection SIPROTEC / Micom', en: 'Digital Numerical IED Protection Relays', equipmentId: 'photo-ied-relay-panel' },
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/images/homepage_uploads/4.jpeg',
     cameroonContext: {
       fr: 'Postes sources stratégiques de Mangombé (Édéa/Douala), Bekoko (nœud Ouest/Littoral), Oyomabang et Ahala (Yaoundé), supervisés par le Dispatching National.',
       en: 'Strategic nodes at Mangombe, Bekoko, Oyomabang, and Ahala, monitored in real time by SONATREL National Load Dispatch Center.',
@@ -248,7 +248,7 @@ export const NINE_GRID_STAGES: GridStageDefinition[] = [
       { fr: 'Bobine de point neutre ou résistance de mise à la terre', en: 'Neutral Earthing Resistor (NER) or Arc Suppression Coil' },
       { fr: 'Aéroréfrigérants et motopompes de circulation d’huile', en: 'Forced Oil / Forced Air Radiator Cooling Banks' },
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/images/homepage_uploads/6.jpg',
     cameroonContext: {
       fr: 'Postes sources de transformation Eneo / SONATREL à Logbaba, Bonabéri, Koumassi et Ngousso, équipés de transformateurs 225/15 kV et 90/30 kV.',
       en: 'Substation transformation units at Logbaba, Bonaberi, Koumassi, and Ngousso feeding metropolitan distribution networks.',
@@ -291,7 +291,7 @@ export const NINE_GRID_STAGES: GridStageDefinition[] = [
       { fr: 'Interrupteurs aériens télécommandés (IAT / IACM)', en: 'Pole-Mounted Overhead Motorized Disconnectors' },
       { fr: 'Détecteurs de défauts de passage HTA communicants', en: 'Directional Fault Passage Indicators (FPI)' },
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/images/homepage_uploads/5.jpeg',
     cameroonContext: {
       fr: 'Réseau de distribution Eneo : artères 15 kV et 30 kV à Douala (Akwa, Bonanjo, Bassa) et Yaoundé (Centre-ville, Bastos, Nsam), souvent sujettes aux chutes d’arbres et coupures en saison des pluies.',
       en: 'Eneo MV feeders: 15 kV and 30 kV distribution across Douala and Yaounde, prone to vegetation contact and rainstorm outages.',
@@ -335,7 +335,7 @@ export const NINE_GRID_STAGES: GridStageDefinition[] = [
       { fr: 'Parafoudres HTA à étincelles ou ZnO', en: 'MV Surge Arresters on Transformer Bushings' },
       { fr: 'Prise de terre du neutre (R <= 10 Ohms)', en: 'Substation Neutral Grounding Rod Assembly' },
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/images/homepage_uploads/5.jpeg',
     cameroonContext: {
       fr: 'Des milliers de transformateurs H61 suspendus sur poteaux béton à travers les villes camerounaises, et des postes cabines pour les hôtels, banques et usines.',
       en: 'Thousands of pole-mounted H61 transformers deployed on utility poles across Cameroon neighborhoods, with indoor substations serving commercial towers and factories.',
@@ -378,7 +378,7 @@ export const NINE_GRID_STAGES: GridStageDefinition[] = [
       { fr: 'Compteurs communicants prépayés (STS / smart meters)', en: 'STS Prepayment & Smart Electronic Energy Meters', equipmentId: 'photo-smart-meter-field' },
       { fr: 'Disjoncteurs de branchement d’abonné (calibre 10/30 A ou 30/60 A)', en: 'Utility Service Entrance Main Circuit Breakers' },
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/images/homepage_uploads/8.jpg',
     cameroonContext: {
       fr: 'Réseau BT aérien urbain et périurbain d’Eneo avec compteurs prépayés communicants pour la facturation de l’énergie au kWh.',
       en: 'Eneo urban and peri-urban low-voltage network deploying STS prepayment meters with token keypad interfaces.',
@@ -422,7 +422,7 @@ export const NINE_GRID_STAGES: GridStageDefinition[] = [
       { fr: 'Inverseurs Normal / Secours (ATS) et Groupes Électrogènes', en: 'Automatic Transfer Switches (ATS) & Backup Gensets' },
       { fr: 'Disjoncteurs différentiels haute sensibilité 30 mA', en: 'High-Sensitivity 30 mA Residual Current Breakers' },
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/images/homepage_uploads/9.jpg',
     cameroonContext: {
       fr: 'Brasseries de Douala, cimenteries de Limbe et Figuil, scieries de l’Est, complexes hospitaliers de Yaoundé et installations portuaires de Kribi.',
       en: 'Douala breweries, Limbe and Figuil cement plants, timber mills, Yaounde referral hospitals, and Kribi deep-sea port terminals.',
@@ -468,60 +468,81 @@ export const NineStagePowerGridExplorer: React.FC<NineStagePowerGridExplorerProp
     }
   };
 
+  const isFr = locale === 'fr';
+  const currentIdx = NINE_GRID_STAGES.findIndex((s) => s.id === selectedStage.id);
+
   return (
-    <div className="space-y-6 font-sans text-[#F4F1E8]">
-      
-      {/* ── Top Visual Journey Ribbon (9 Stages) ──────────────── */}
-      <div className="bg-[#151C1E] border border-white/10 rounded-2xl p-4 sm:p-5 shadow-xl">
-        <div className="flex items-center justify-between gap-3 mb-3 pb-3 border-b border-white/10">
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-[#D7A64A] animate-pulse" />
-            <span className="font-mono text-xs font-bold uppercase tracking-wider text-white">
-              {locale === 'fr'
-                ? 'La Chaîne Électrique en 9 Étapes Clés (De la Production au Consommateur)'
-                : 'The 9-Stage Electrical Power System (From Generation to Consumer)'}
+    <div className="space-y-10 font-sans text-[#17282C]">
+      {/* 1. Connected 9-Stage Horizontal Stepper */}
+      <div className="space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <span className="epede-eyebrow block">
+              {isFr ? 'Chaîne Physique de Puissance (01–09)' : 'Physical Power Chain (Stages 01–09)'}
             </span>
+            <p className="text-sm text-[#5C6C70] mt-1">
+              {isFr
+                ? 'Sélectionnez une étape pour lire son rôle, sa physique, son appareillage et son ancrage sur le réseau camerounais.'
+                : 'Select any stage to read its engineering role, physical law, core apparatus, and Cameroon grid grounding.'}
+            </p>
           </div>
-          <span className="font-mono text-xs text-[#A9ADA5]">
-            {locale === 'fr' ? 'Cliquez sur une étape pour explorer' : 'Click any stage to inspect'}
-          </span>
+
+          <div className="flex items-center gap-2 font-mono text-xs">
+            <button
+              type="button"
+              disabled={currentIdx <= 0}
+              onClick={() => currentIdx > 0 && handleStageClick(NINE_GRID_STAGES[currentIdx - 1])}
+              className="px-3.5 py-2 rounded-full bg-[#FFFDF9] border border-[#DEDACF] text-[#17282C] hover:border-[#147C78] disabled:opacity-35"
+            >
+              ← {isFr ? 'Précédent' : 'Previous'}
+            </button>
+            <button
+              type="button"
+              disabled={currentIdx >= NINE_GRID_STAGES.length - 1}
+              onClick={() =>
+                currentIdx < NINE_GRID_STAGES.length - 1 &&
+                handleStageClick(NINE_GRID_STAGES[currentIdx + 1])
+              }
+              className="px-3.5 py-2 rounded-full bg-[#147C78] text-[#FFFDF9] hover:bg-[#0E5E5B] disabled:opacity-35 font-semibold"
+            >
+              {isFr ? 'Suivant' : 'Next'} →
+            </button>
+          </div>
         </div>
 
-        {/* Horizontal Scrollable Stages Timeline */}
-        <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-2">
-          {NINE_GRID_STAGES.map((st, idx) => {
+        <div
+          role="tablist"
+          aria-label={isFr ? 'Étapes 01 à 09 du réseau électrique' : 'Power system stages 01 to 09'}
+          className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 border-y border-[#17282C] bg-[#FFFDF9] divide-y sm:divide-y-0 sm:divide-x divide-[#DEDACF]"
+        >
+          {NINE_GRID_STAGES.map((st) => {
             const isSelected = selectedStage.id === st.id;
             return (
               <button
                 key={st.id}
                 type="button"
+                role="tab"
+                aria-selected={isSelected}
                 onClick={() => handleStageClick(st)}
-                className={`p-2.5 rounded-xl border text-left transition-all relative overflow-hidden group ${
+                className={`p-3.5 text-left transition-colors relative ${
                   isSelected
-                    ? 'bg-[#0B0F12] border-[#D7A64A] shadow-lg ring-1 ring-[#D7A64A]/50'
-                    : 'bg-[#0B0F12]/60 border-white/10 hover:border-white/20 hover:bg-[#0B0F12]'
+                    ? 'bg-[#E3EFEC] border-b-2 border-b-[#147C78]'
+                    : 'hover:bg-[#F6F4EE]'
                 }`}
               >
-                {/* Active indicator bar */}
-                {isSelected && (
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-[#D7A64A]" />
-                )}
-
-                <div className="flex items-center justify-between mb-1">
-                  <span
-                    className={`font-mono text-[11px] font-black ${
-                      isSelected ? 'text-[#D7A64A]' : 'text-[#A9ADA5]'
-                    }`}
-                  >
+                <div className="flex items-center justify-between font-mono text-[11px]">
+                  <span className={isSelected ? 'text-[#147C78] font-bold' : 'text-[#5C6C70]'}>
                     {st.num}
                   </span>
-                  <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-white/5 text-[#A9ADA5] truncate max-w-[70px]">
-                    {st.voltage.split('→')[0].trim()}
+                  <span className="text-[#B8872D] font-semibold">
+                    {st.domainCode}
                   </span>
                 </div>
-
-                <div className="font-mono text-xs font-bold text-white truncate leading-tight group-hover:text-[#D7A64A] transition-colors">
+                <div className="font-bold text-xs text-[#17282C] mt-1.5 truncate">
                   {st.shortName[locale]}
+                </div>
+                <div className="font-mono text-[10px] text-[#5C6C70] mt-0.5 truncate">
+                  {st.voltage.split('→')[0].trim()}
                 </div>
               </button>
             );
@@ -529,181 +550,218 @@ export const NineStagePowerGridExplorer: React.FC<NineStagePowerGridExplorerProp
         </div>
       </div>
 
-      {/* ── Active Stage Focus Card (Deep Detail) ──────────────── */}
+      {/* 2. Active Stage Open Reading Layout */}
       <AnimatePresence mode="wait">
-        <motion.div
+        <motion.article
           key={selectedStage.id}
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.25 }}
-          className="bg-[#151C1E] border border-white/10 rounded-2xl overflow-hidden shadow-2xl"
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.22 }}
+          className="bg-[#FFFDF9] border border-[#DEDACF] rounded-[10px] overflow-hidden"
         >
-          {/* Hero Banner with Photo */}
-          <div className="relative h-64 sm:h-80 w-full overflow-hidden">
-            <img
-              src={selectedStage.imageUrl}
-              alt={selectedStage.title[locale]}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#151C1E] via-[#151C1E]/60 to-transparent" />
-
-            <div className="absolute bottom-4 left-4 right-4 sm:left-6 sm:right-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-              <div className="space-y-1.5">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-mono text-xs font-black px-2.5 py-1 rounded bg-[#D7A64A] text-[#0B0F12]">
-                    ÉTAPE {selectedStage.num} / 09
+          {/* Stage Focal Header + Technical Strip */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 border-b border-[#DEDACF]">
+            <div className="lg:col-span-7 p-6 sm:p-10 flex flex-col justify-between space-y-6">
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center gap-2.5 font-mono text-xs">
+                  <span className="px-2.5 py-1 rounded bg-[#17282C] text-[#FFFDF9] font-semibold">
+                    {isFr ? `ÉTAPE ${selectedStage.num} / 09` : `STAGE ${selectedStage.num} / 09`}
                   </span>
-                  <span className="font-mono text-xs font-bold px-2.5 py-1 rounded bg-[#0B0F12]/80 text-[#D7A64A] border border-[#D7A64A]/30">
+                  <span className="px-2.5 py-1 rounded bg-[#F6F4EE] text-[#B8872D] border border-[#DEDACF] font-semibold">
                     {selectedStage.voltage}
                   </span>
-                  <span className="font-mono text-xs px-2.5 py-1 rounded bg-[#0B0F12]/80 text-[#A9ADA5] border border-white/10">
-                    Domaine {selectedStage.domainCode}
-                  </span>
+                  <button
+                    type="button"
+                    onClick={() => onNavigateView && onNavigateView(`domain/${selectedStage.domainCode}`)}
+                    className="px-2.5 py-1 rounded bg-[#E3EFEC] text-[#147C78] font-semibold hover:bg-[#147C78] hover:text-[#FFFDF9] transition-colors"
+                  >
+                    {isFr ? `Domaine ${selectedStage.domainCode}` : `Domain ${selectedStage.domainCode}`} →
+                  </button>
                 </div>
-                <h2 className="text-2xl sm:text-3xl font-mono font-black text-white">
+
+                <h2 className="epede-h2">
                   {selectedStage.title[locale]}
                 </h2>
+
+                <p className="epede-lead">
+                  {selectedStage.summary[locale]}
+                </p>
               </div>
 
-              {/* Quick stats badge */}
-              <div className="bg-[#0B0F12]/90 border border-white/10 rounded-xl p-3 font-mono text-xs space-y-1 shrink-0">
-                <div className="text-[#A9ADA5] text-[10px] uppercase">Rendement de l’étape</div>
-                <div className="text-emerald-400 font-bold">{selectedStage.keyMetrics.efficiency}</div>
+              {/* Concise Technical Strip */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-6 border-t border-[#DEDACF] font-mono text-xs">
+                <div>
+                  <span className="text-[#5C6C70] uppercase text-[10px] block">
+                    {isFr ? 'Plage de Tension' : 'Voltage Envelope'}
+                  </span>
+                  <span className="text-[#17282C] font-semibold mt-0.5 block">
+                    {selectedStage.keyMetrics.voltageRange}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[#5C6C70] uppercase text-[10px] block">
+                    {isFr ? 'Rendement Typique' : 'Typical Efficiency'}
+                  </span>
+                  <span className="text-[#147C78] font-semibold mt-0.5 block">
+                    {selectedStage.keyMetrics.efficiency}
+                  </span>
+                </div>
+                <div className="col-span-2 sm:col-span-1">
+                  <span className="text-[#5C6C70] uppercase text-[10px] block">
+                    {isFr ? 'Domaine Principal' : 'Primary Domain'}
+                  </span>
+                  <span className="text-[#B8872D] font-semibold mt-0.5 block">
+                    {selectedStage.domainCode}
+                  </span>
+                </div>
               </div>
             </div>
+
+            {/* Stage Photograph */}
+            <figure className="lg:col-span-5 relative min-h-[260px] lg:min-h-full bg-[#10191D] overflow-hidden border-t lg:border-t-0 lg:border-l border-[#DEDACF]">
+              <img
+                src={selectedStage.imageUrl}
+                alt={selectedStage.title[locale]}
+                className="w-full h-full object-cover epede-photo-grade"
+                loading="lazy"
+              />
+              <figcaption className="absolute bottom-3 left-3 right-3 px-3 py-2 rounded bg-[#10191D]/88 text-[#F4F1E8] font-mono text-[11px] flex items-center justify-between">
+                <span>{selectedStage.shortName[locale]}</span>
+                <span className="text-[#6CC3BD]">{selectedStage.voltage}</span>
+              </figcaption>
+            </figure>
           </div>
 
-          {/* Card Body Grid (8 Cols Left, 4 Cols Right) */}
-          <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            
-            {/* Left 8 Cols: Purpose, Physical Principle & Cameroon Context */}
-            <div className="lg:col-span-8 space-y-6">
-              
-              {/* Summary */}
-              <div className="p-4 rounded-xl bg-[#0B0F12] border border-white/10 text-sm text-[#F4F1E8] leading-relaxed">
-                {selectedStage.summary[locale]}
-              </div>
-
-              {/* 1. Purpose */}
+          {/* Open Two-Column Engineering Body */}
+          <div className="p-6 sm:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+            {/* Left 7 Cols: Purpose, Governing Physics, Cameroon Context, Critical Risk */}
+            <div className="lg:col-span-7 space-y-6">
               <div className="space-y-2">
-                <h3 className="text-xs font-mono font-bold text-[#D7A64A] uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4 text-[#D7A64A]" />
-                  <span>{locale === 'fr' ? 'Rôle & Utilité dans le Système Global' : 'System Purpose & Essential Role'}</span>
+                <h3 className="font-mono text-xs font-semibold text-[#147C78] uppercase tracking-[0.08em] flex items-center gap-2">
+                  <Sparkles className="w-4 h-4" />
+                  <span>
+                    {isFr ? '01 · Rôle dans la Chaîne Électrique' : '01 · System Purpose & Role'}
+                  </span>
                 </h3>
-                <p className="text-sm text-[#A9ADA5] leading-relaxed font-sans">
+                <p className="text-base text-[#33474B] leading-relaxed">
                   {selectedStage.purpose[locale]}
                 </p>
               </div>
 
-              {/* 2. Physical Principle */}
-              <div className="space-y-2">
-                <h3 className="text-xs font-mono font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <BookOpen className="w-4 h-4 text-sky-400" />
-                  <span>{locale === 'fr' ? 'Principe de Fonctionnement & Physique' : 'Operating Principle & Physical Laws'}</span>
+              <div className="space-y-2 pt-4 border-t border-[#DEDACF]">
+                <h3 className="font-mono text-xs font-semibold text-[#147C78] uppercase tracking-[0.08em] flex items-center gap-2">
+                  <BookOpen className="w-4 h-4" />
+                  <span>
+                    {isFr ? '02 · Principe Physique & Électrotechnique' : '02 · Operating Principle & Physics'}
+                  </span>
                 </h3>
-                <div className="p-4 rounded-xl bg-[#0B0F12] border border-white/10 text-sm text-[#A9ADA5] leading-relaxed font-sans">
+                <p className="text-sm text-[#33474B] bg-[#F6F4EE] p-4 rounded-lg border border-[#DEDACF] leading-relaxed">
                   {selectedStage.physicalPrinciple[locale]}
-                </div>
+                </p>
               </div>
 
-              {/* 3. Cameroon Field Real-World Context */}
-              <div className="p-4 sm:p-5 rounded-xl bg-emerald-950/20 border border-emerald-500/30 space-y-2">
-                <div className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-400 uppercase">
-                  <MapPin className="w-4 h-4 text-emerald-400" />
-                  <span>{locale === 'fr' ? 'Exemples Concrets au Cameroun & Afrique' : 'Cameroon & African Grid Realities'}</span>
+              <div className="p-5 rounded-lg bg-[#E3EFEC]/60 border border-[#147C78]/35 space-y-2">
+                <div className="flex items-center gap-2 font-mono text-xs font-semibold text-[#147C78] uppercase">
+                  <MapPin className="w-4 h-4" />
+                  <span>
+                    {isFr ? '03 · Réalité Terrain au Cameroun (RIS / RIN)' : '03 · Cameroon Grid Infrastructure (RIS / RIN)'}
+                  </span>
                 </div>
-                <p className="text-sm text-emerald-200/90 leading-relaxed font-sans">
+                <p className="text-sm text-[#17282C] leading-relaxed">
                   {selectedStage.cameroonContext[locale]}
                 </p>
               </div>
 
-              {/* Hazard note */}
-              <div className="p-4 rounded-xl bg-rose-950/20 border border-rose-500/30 flex items-start gap-3 text-xs">
-                <Shield className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
-                <div className="space-y-0.5">
-                  <span className="font-mono font-bold text-rose-300 uppercase block">
-                    {locale === 'fr' ? 'Danger & Risque Critique Associé :' : 'Critical Hazard & Engineering Risk:'}
+              <div className="p-4 rounded-lg bg-[#FFFDF9] border border-[#DEDACF] border-l-4 border-l-[#B91C1C] flex items-start gap-3">
+                <Shield className="w-4 h-4 text-[#B91C1C] shrink-0 mt-0.5" />
+                <div className="space-y-0.5 text-xs">
+                  <span className="font-mono font-semibold text-[#B91C1C] uppercase block">
+                    {isFr ? 'Risque Critique & Mode de Défaillance' : 'Critical Hazard & Failure Mode'}
                   </span>
-                  <span className="text-rose-200/80 font-sans">
+                  <span className="text-[#33474B]">
                     {selectedStage.keyMetrics.criticalHazard[locale]}
                   </span>
                 </div>
               </div>
-
             </div>
 
-            {/* Right 4 Cols: Main Equipment List & Actions */}
-            <div className="lg:col-span-4 space-y-5">
-              
-              <div className="p-5 rounded-xl bg-[#0B0F12] border border-white/10 space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                  <span className="font-mono text-xs font-bold uppercase text-white flex items-center gap-1.5">
-                    <Cpu className="w-4 h-4 text-[#D7A64A]" />
-                    <span>{locale === 'fr' ? 'Équipements Majeurs' : 'Core Apparatuses'}</span>
+            {/* Right 5 Cols: Apparatus List & Connected Workbenches */}
+            <div className="lg:col-span-5 space-y-6">
+              <div className="p-5 rounded-lg bg-[#F6F4EE] border border-[#DEDACF] space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-[#DEDACF]">
+                  <span className="font-mono text-xs font-semibold uppercase text-[#17282C] flex items-center gap-2">
+                    <Cpu className="w-4 h-4 text-[#147C78]" />
+                    <span>{isFr ? 'Appareillage Associé' : 'Associated Apparatus'}</span>
                   </span>
-                  <span className="font-mono text-xs text-[#D7A64A]">
+                  <span className="font-mono text-xs text-[#147C78] font-semibold">
                     {selectedStage.mainEquipment.length}
                   </span>
                 </div>
 
-                <div className="space-y-2">
+                <div className="divide-y divide-[#DEDACF] border-y border-[#DEDACF] bg-[#FFFDF9]">
                   {selectedStage.mainEquipment.map((eq, i) => (
                     <div
                       key={i}
-                      className="p-3 rounded-lg bg-[#151C1E] border border-white/5 flex items-center justify-between gap-2 group hover:border-[#D7A64A]/40 transition-colors"
+                      className="p-3 flex items-center justify-between gap-3"
                     >
-                      <span className="text-xs font-sans text-[#F4F1E8] group-hover:text-white">
+                      <span className="text-xs font-medium text-[#17282C]">
                         {eq[locale]}
                       </span>
                       {eq.equipmentId && onSelectEquipment ? (
                         <button
                           type="button"
                           onClick={() => onSelectEquipment(eq.equipmentId!)}
-                          className="p-1 rounded text-[#D7A64A] hover:bg-[#D7A64A]/20 transition-colors"
-                          title={locale === 'fr' ? 'Voir la fiche équipement' : 'View equipment sheet'}
+                          className="inline-flex items-center gap-1 font-mono text-[11px] font-semibold text-[#147C78] hover:underline shrink-0"
                         >
-                          <ChevronRight className="w-4 h-4" />
+                          <span>{isFr ? 'Fiche' : 'Sheet'}</span>
+                          <ChevronRight className="w-3.5 h-3.5" />
                         </button>
                       ) : (
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400/60 shrink-0" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#147C78] shrink-0" />
                       )}
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Navigation Action Buttons */}
-              <div className="p-4 rounded-xl bg-[#0B0F12] border border-white/10 space-y-3">
-                <span className="font-mono text-xs font-bold uppercase text-[#A9ADA5] block">
-                  {locale === 'fr' ? 'Approfondir cette étape' : 'Deep Dive Exploration'}
+              {/* Next Actions */}
+              <div className="p-5 rounded-lg bg-[#F6F4EE] border border-[#DEDACF] space-y-3">
+                <span className="font-mono text-xs font-semibold uppercase text-[#5C6C70] block">
+                  {isFr ? 'Passerelles Directes' : 'Connected Workbenches'}
                 </span>
 
                 <button
                   type="button"
                   onClick={() => onNavigateView && onNavigateView('equipment')}
-                  className="w-full flex items-center justify-between p-3 rounded-lg bg-[#151C1E] hover:bg-[#567A87]/30 border border-white/10 text-xs font-mono font-bold text-white transition-all"
+                  className="w-full flex items-center justify-between p-3 rounded-lg bg-[#FFFDF9] hover:border-[#147C78] border border-[#DEDACF] text-xs font-mono font-semibold text-[#17282C] transition-colors"
                 >
-                  <span>{locale === 'fr' ? 'Catalogue Équipements' : 'Browse Equipment Catalog'}</span>
-                  <ExternalLink className="w-3.5 h-3.5 text-[#567A87]" />
+                  <span>{isFr ? 'Catalogue des 39 Équipements' : '39-Asset Equipment Catalogue'}</span>
+                  <ExternalLink className="w-3.5 h-3.5 text-[#147C78]" />
                 </button>
 
                 <button
                   type="button"
                   onClick={() => onNavigateView && onNavigateView('cameroon-grid')}
-                  className="w-full flex items-center justify-between p-3 rounded-lg bg-[#151C1E] hover:bg-emerald-500/20 border border-white/10 text-xs font-mono font-bold text-white transition-all"
+                  className="w-full flex items-center justify-between p-3 rounded-lg bg-[#FFFDF9] hover:border-[#147C78] border border-[#DEDACF] text-xs font-mono font-semibold text-[#17282C] transition-colors"
                 >
-                  <span>{locale === 'fr' ? 'Carte du Réseau Camerounais' : 'View Cameroon Grid Map'}</span>
-                  <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>{isFr ? 'Observatoire Réseau Cameroun (RIS / RIN)' : 'Cameroon Grid Observatory (RIS / RIN)'}</span>
+                  <MapPin className="w-3.5 h-3.5 text-[#B8872D]" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => onNavigateView && onNavigateView('calculators')}
+                  className="w-full flex items-center justify-between p-3 rounded-lg bg-[#FFFDF9] hover:border-[#147C78] border border-[#DEDACF] text-xs font-mono font-semibold text-[#17282C] transition-colors"
+                >
+                  <span>{isFr ? 'Solveurs CEI / IEEE' : 'IEC / IEEE Calculators'}</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#147C78]" />
                 </button>
               </div>
-
             </div>
-
           </div>
-        </motion.div>
+        </motion.article>
       </AnimatePresence>
-
     </div>
   );
 };

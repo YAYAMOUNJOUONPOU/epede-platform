@@ -230,24 +230,23 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-slate-900/90 p-6 lg:p-8 border border-slate-800 shadow-xl cad-grid-dense">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative overflow-hidden rounded-sm bg-[#FFFDF9] p-6 lg:p-8 border border-[#17282C]/15 shadow-xs">
         <div className="relative z-10">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center text-amber-400 shadow-xs">
+              <div className="h-12 w-12 rounded-sm bg-[#E3EFEC] border border-[#147C78]/30 flex items-center justify-center text-[#147C78]">
                 <Scale className="h-6 w-6" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-xs font-bold text-amber-300 tracking-wider uppercase bg-amber-500/15 px-2 py-0.5 rounded border border-amber-400/40">
+                  <span className="font-mono text-xs font-bold text-[#147C78] tracking-wider uppercase bg-[#E3EFEC] px-2 py-0.5 rounded-sm border border-[#147C78]/30">
                     LAYER L06 · CADRE RÉGLEMENTAIRE & ÉCOSYSTÈME
                   </span>
-                  <span className="font-mono text-[10px] text-slate-400 bg-slate-950 border border-slate-800 px-2 py-0.5 rounded">
+                  <span className="font-mono text-[10px] text-[#5C6C70] bg-[#F6F4EE] border border-[#DEDACF] px-2 py-0.5 rounded-sm">
                     Loi 2011/022 · ARSEL · SONATREL
                   </span>
                 </div>
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight mt-1 font-mono uppercase">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#17282C] tracking-tight mt-1">
                   {locale === 'fr'
                     ? 'Gouvernance, Code de Réseau & Écosystème Institutionnel'
                     : 'Governance, Grid Code & Regulatory Ecosystem'}
@@ -255,30 +254,30 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {onNavigateContextStack && (
                 <button
                   type="button"
                   onClick={() => onNavigateContextStack('node-line-225-bekoko')}
-                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-xs font-mono font-bold text-white transition-all shadow-xs"
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-sm bg-[#147C78] hover:bg-[#0E5E5B] text-xs font-mono font-bold text-[#FFFDF9] transition-all"
                 >
-                  <Zap className="h-3.5 w-3.5 text-sky-200" />
+                  <Zap className="h-3.5 w-3.5 text-[#FFFDF9]" />
                   <span>{locale === 'fr' ? 'Épine Dorsale & TCC' : 'Spine & TCC'}</span>
                 </button>
               )}
               <button
                 type="button"
                 onClick={handleExportRegulatoryDossier}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-950 hover:bg-slate-800 text-xs font-mono font-bold text-amber-300 border border-slate-800 hover:border-amber-400 transition-all shadow-xs"
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-sm bg-[#F6F4EE] hover:bg-[#E3EFEC] text-xs font-mono font-bold text-[#17282C] border border-[#DEDACF] hover:border-[#147C78]/40 transition-all"
               >
-                <Download className="h-3.5 w-3.5 text-amber-400" />
+                <Download className="h-3.5 w-3.5 text-[#147C78]" />
                 <span>{locale === 'fr' ? 'Exporter Dossier Réglementaire (JSON)' : 'Export Regulatory Dossier (JSON)'}</span>
               </button>
               {onNavigateCameroonGrid && (
                 <button
                   type="button"
                   onClick={onNavigateCameroonGrid}
-                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-950 hover:bg-slate-800 text-xs font-mono font-bold text-emerald-400 border border-slate-800 hover:border-emerald-500/50 transition-all shadow-xs"
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-sm bg-[#F6F4EE] hover:bg-[#E3EFEC] text-xs font-mono font-bold text-[#147C78] border border-[#DEDACF] hover:border-[#147C78]/40 transition-all"
                 >
                   <Globe className="h-3.5 w-3.5" />
                   <span>{locale === 'fr' ? 'Observatoire Réseau RIS/RIN' : 'RIS/RIN Grid Observatory'}</span>
@@ -287,36 +286,36 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
             </div>
           </div>
 
-          <p className="mt-3 text-xs sm:text-sm text-slate-400 max-w-4xl leading-relaxed font-medium">
+          <p className="mt-3 text-xs sm:text-sm text-[#33474B] max-w-4xl leading-relaxed">
             {locale === 'fr'
               ? "Cadre juridique et technique officiel du secteur électrique camerounais : Loi N° 2011/022, attributions institutionnelles (ARSEL, SONATREL, Eneo, EDC, AER, MINEE), Code de Réseau technique, plan de délestage UFLS, grilles tarifaires approuvées et corridors régionaux du PEAC."
               : 'Official legal and technical framework of the Cameroon power sector: Law No. 2011/022, statutory institutional mandates (ARSEL, SONATREL, Eneo, EDC, AER, MINEE), National Grid Code, UFLS defense scheme, approved electricity tariffs and regional PEAC interconnectors.'}
           </p>
 
           {/* Quick Metrics Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 pt-4 border-t border-slate-800 text-xs font-mono">
-            <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-800 shadow-xs">
-              <span className="text-slate-500 text-[10px] block font-bold uppercase">{locale === 'fr' ? 'TEXTE FONDAMENTAL' : 'PRIMARY STATUTE'}</span>
-              <span className="text-amber-400 font-bold text-sm">Loi N° 2011/022</span>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 pt-4 border-t border-[#DEDACF] text-xs font-mono">
+            <div className="bg-[#F6F4EE] p-3 rounded-sm border border-[#DEDACF]">
+              <span className="text-[#5C6C70] text-[10px] block font-bold uppercase">{locale === 'fr' ? 'TEXTE FONDAMENTAL' : 'PRIMARY STATUTE'}</span>
+              <span className="text-[#17282C] font-bold text-sm">Loi N° 2011/022</span>
             </div>
-            <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-800 shadow-xs">
-              <span className="text-slate-500 text-[10px] block font-bold uppercase">{locale === 'fr' ? 'GESTIONNAIRE TRANSPORT (GRT)' : 'TRANSMISSION OPERATOR'}</span>
-              <span className="text-sky-400 font-bold text-sm">SONATREL (Décret 2015/442)</span>
+            <div className="bg-[#F6F4EE] p-3 rounded-sm border border-[#DEDACF]">
+              <span className="text-[#5C6C70] text-[10px] block font-bold uppercase">{locale === 'fr' ? 'GESTIONNAIRE TRANSPORT (GRT)' : 'TRANSMISSION OPERATOR'}</span>
+              <span className="text-[#147C78] font-bold text-sm">SONATREL (Décret 2015/442)</span>
             </div>
-            <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-800 shadow-xs">
-              <span className="text-slate-500 text-[10px] block font-bold uppercase">{locale === 'fr' ? 'RÉGULATEUR ÉCONOMIQUE' : 'ECONOMIC REGULATOR'}</span>
-              <span className="text-purple-400 font-bold text-sm">ARSEL (Tarifs & Licences)</span>
+            <div className="bg-[#F6F4EE] p-3 rounded-sm border border-[#DEDACF]">
+              <span className="text-[#5C6C70] text-[10px] block font-bold uppercase">{locale === 'fr' ? 'RÉGULATEUR ÉCONOMIQUE' : 'ECONOMIC REGULATOR'}</span>
+              <span className="text-[#B8872D] font-bold text-sm">ARSEL (Tarifs & Licences)</span>
             </div>
-            <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-800 shadow-xs">
-              <span className="text-slate-500 text-[10px] block font-bold uppercase">{locale === 'fr' ? 'INTÉGRATION RÉGIONALE' : 'REGIONAL POOL'}</span>
-              <span className="text-emerald-400 font-bold text-sm">PEAC / CEEAC (PIMERT 225 kV)</span>
+            <div className="bg-[#F6F4EE] p-3 rounded-sm border border-[#DEDACF]">
+              <span className="text-[#5C6C70] text-[10px] block font-bold uppercase">{locale === 'fr' ? 'INTÉGRATION RÉGIONALE' : 'REGIONAL POOL'}</span>
+              <span className="text-[#147C78] font-bold text-sm">PEAC / CEEAC (PIMERT 225 kV)</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Tabs Navigation */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-slate-800 scrollbar-thin">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-[#DEDACF] scrollbar-thin">
         {[
           { id: 'overview' as const, label: locale === 'fr' ? 'Vue d\'Ensemble & Loi 2011' : 'Overview & Legal Framework', icon: FileText },
           { id: 'institutions' as const, label: locale === 'fr' ? 'Acteurs Institutionnels (7)' : 'Sector Entities (7)', icon: Building2 },
@@ -332,13 +331,13 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-mono font-bold transition-all whitespace-nowrap border ${
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-sm text-xs font-mono font-bold transition-all whitespace-nowrap border ${
                 isActive
-                  ? 'bg-amber-500/15 text-amber-300 border-amber-400 shadow-xs ring-1 ring-amber-400/30'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/80 border-slate-800 bg-slate-950'
+                  ? 'bg-[#147C78] text-[#FFFDF9] border-[#147C78] shadow-xs'
+                  : 'text-[#33474B] hover:text-[#17282C] hover:bg-[#E3EFEC]/50 border-[#DEDACF] bg-[#FFFDF9]'
               }`}
             >
-              <Icon className={`h-3.5 w-3.5 ${isActive ? 'text-amber-400' : 'text-slate-400'}`} />
+              <Icon className={`h-3.5 w-3.5 ${isActive ? 'text-[#FFFDF9]' : 'text-[#147C78]'}`} />
               <span>{tab.label}</span>
             </button>
           );
@@ -349,52 +348,52 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
       {activeTab === 'overview' && (
         <div className="space-y-6">
           {/* Law 2011/022 Structure */}
-          <div className="p-6 rounded-2xl bg-[#0E131A] border border-[#252E38]">
+          <div className="p-6 rounded-sm bg-[#FFFDF9] border border-[#17282C]/15 shadow-xs">
             <div className="flex items-center justify-between gap-4 mb-4">
               <div className="flex items-center gap-2.5">
-                <FileText className="h-5 w-5 text-amber-400" />
-                <h2 className="text-base font-bold text-white font-mono">
+                <FileText className="h-5 w-5 text-[#147C78]" />
+                <h2 className="text-base font-bold text-[#17282C] font-mono">
                   {locale === 'fr'
                     ? "Loi N° 2011/022 du 14 décembre 2011 régissant le secteur de l'électricité"
                     : 'Law No. 2011/022 of December 14, 2011 Governing the Electricity Sector'}
                 </h2>
               </div>
-              <span className="font-mono text-xs text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
+              <span className="font-mono text-xs text-[#147C78] bg-[#E3EFEC] px-2 py-0.5 rounded-sm border border-[#147C78]/30 font-bold">
                 STATUTE LAW
               </span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-              <div className="p-4 rounded-xl bg-[#11161D] border border-[#252E38]">
-                <div className="font-mono font-bold text-cyan-400 mb-1 flex items-center gap-1.5">
+              <div className="p-4 rounded-sm bg-[#F6F4EE] border border-[#DEDACF]">
+                <div className="font-mono font-bold text-[#147C78] mb-1 flex items-center gap-1.5">
                   <Layers className="h-3.5 w-3.5" />
                   <span>{locale === 'fr' ? 'DÉGROUPAGE DES ACTIVITÉS' : 'UNBUNDLING PRINCIPLE'}</span>
                 </div>
-                <p className="text-neutral-300 leading-relaxed">
+                <p className="text-[#33474B] leading-relaxed">
                   {locale === 'fr'
                     ? "Séparation juridique et comptable des segments : Production (concession ou licence), Transport (monopole public confié à la SONATREL), Distribution et Commercialisation (concession Eneo)."
                     : 'Legal and accounting unbundling across segments: Generation (concessions and licenses), Transmission (public monopoly assigned to SONATREL), Distribution and Retail (Eneo concession).'}
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-[#11161D] border border-[#252E38]">
-                <div className="font-mono font-bold text-emerald-400 mb-1 flex items-center gap-1.5">
+              <div className="p-4 rounded-sm bg-[#F6F4EE] border border-[#DEDACF]">
+                <div className="font-mono font-bold text-[#147C78] mb-1 flex items-center gap-1.5">
                   <Zap className="h-3.5 w-3.5" />
                   <span>{locale === 'fr' ? 'LIBRE ACCÈS DES TIERS (TPA)' : 'THIRD-PARTY ACCESS (TPA)'}</span>
                 </div>
-                <p className="text-neutral-300 leading-relaxed">
+                <p className="text-[#33474B] leading-relaxed">
                   {locale === 'fr'
                     ? "Droit d'accès transparent, objectif et non-discriminatoire aux réseaux publics de transport et de distribution pour tout producteur indépendant (IPP) et client éligible, contre acquittement du péage approuvé par l'ARSEL."
                     : 'Transparent, objective and non-discriminatory right of access to transmission and distribution grids for any IPP and eligible customer against payment of the ARSEL-approved wheeling fee.'}
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-[#11161D] border border-[#252E38]">
-                <div className="font-mono font-bold text-purple-400 mb-1 flex items-center gap-1.5">
+              <div className="p-4 rounded-sm bg-[#F6F4EE] border border-[#DEDACF]">
+                <div className="font-mono font-bold text-[#B8872D] mb-1 flex items-center gap-1.5">
                   <Scale className="h-3.5 w-3.5" />
                   <span>{locale === 'fr' ? 'RÉGULATION & TARIFS' : 'REGULATORY PRICING'}</span>
                 </div>
-                <p className="text-neutral-300 leading-relaxed">
+                <p className="text-[#33474B] leading-relaxed">
                   {locale === 'fr'
                     ? "Pouvoir réglementaire confié à l'ARSEL pour fixer les méthodologies tarifaires, contrôler les charges d'exploitation, pénaliser les interruptions non-programmées (SAIDI/SAIFI) et protéger les abonnés."
                     : 'Statutory powers vested in ARSEL to set tariff indexing formulas, audit utility opex/capex, penalize unplanned outages (SAIDI/SAIFI) and protect consumer rights.'}
@@ -403,44 +402,44 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
             </div>
 
             {/* Regulatory Regimes Table */}
-            <div className="mt-6 border-t border-[#252E38] pt-5">
-              <h3 className="font-mono text-xs font-bold text-neutral-300 uppercase tracking-wider mb-3">
+            <div className="mt-6 border-t border-[#DEDACF] pt-5">
+              <h3 className="font-mono text-xs font-bold text-[#17282C] uppercase tracking-wider mb-3">
                 {locale === 'fr' ? 'RÉGIMES JURIDIQUES D\'EXPLOITATION (LOI 2011/022)' : 'LEGAL REGIMES OF OPERATION'}
               </h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs font-sans">
                   <thead>
-                    <tr className="border-b border-[#252E38] text-neutral-400 font-mono text-[11px]">
+                    <tr className="border-b border-[#DEDACF] text-[#5C6C70] font-mono text-[11px]">
                       <th className="pb-2">{locale === 'fr' ? 'Régime' : 'Regime'}</th>
                       <th className="pb-2">{locale === 'fr' ? 'Champs d\'Application' : 'Scope'}</th>
                       <th className="pb-2">{locale === 'fr' ? 'Acteur / Titulaire Type' : 'Typical Operator'}</th>
                       <th className="pb-2">{locale === 'fr' ? 'Autorité Compétente' : 'Granting Authority'}</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#252E38]/60 text-neutral-300">
+                  <tbody className="divide-y divide-[#DEDACF] text-[#33474B]">
                     <tr>
-                      <td className="py-2.5 font-mono font-bold text-amber-400">CONCESSION</td>
+                      <td className="py-2.5 font-mono font-bold text-[#B8872D]">CONCESSION</td>
                       <td className="py-2.5">Ouvrages hydroélectriques &gt; 5 MW, Réseau public de transport HTB, Distribution publique</td>
                       <td className="py-2.5">SONATREL (Transport), Eneo (Distribution), NHPC (Nachtigal 420 MW)</td>
-                      <td className="py-2.5 font-mono text-neutral-400">Gouvernement (Décret PM / MINEE)</td>
+                      <td className="py-2.5 font-mono text-[#5C6C70]">Gouvernement (Décret PM / MINEE)</td>
                     </tr>
                     <tr>
-                      <td className="py-2.5 font-mono font-bold text-cyan-400">LICENCE</td>
+                      <td className="py-2.5 font-mono font-bold text-[#147C78]">LICENCE</td>
                       <td className="py-2.5">Production thermique &gt; 1 MW, centrales EnR privées (solaire, biomasse) de vente au réseau</td>
                       <td className="py-2.5">Producteurs Indépendants (IPPs), KPDC (Gaz Kribi), DPDC (Dibamba)</td>
-                      <td className="py-2.5 font-mono text-neutral-400">MINEE après avis conforme ARSEL</td>
+                      <td className="py-2.5 font-mono text-[#5C6C70]">MINEE après avis conforme ARSEL</td>
                     </tr>
                     <tr>
-                      <td className="py-2.5 font-mono font-bold text-emerald-400">AUTORISATION</td>
+                      <td className="py-2.5 font-mono font-bold text-[#147C78]">AUTORISATION</td>
                       <td className="py-2.5">Production d'énergie de 100 kW à 1 MW, mini-réseaux ruraux décentralisés</td>
                       <td className="py-2.5">Collectivités territoriales, AER, opérateurs privés de mini-grids</td>
-                      <td className="py-2.5 font-mono text-neutral-400">ARSEL</td>
+                      <td className="py-2.5 font-mono text-[#5C6C70]">ARSEL</td>
                     </tr>
                     <tr>
-                      <td className="py-2.5 font-mono font-bold text-purple-400">DÉCLARATION / LIBRE</td>
+                      <td className="py-2.5 font-mono font-bold text-[#17282C]">DÉCLARATION / LIBRE</td>
                       <td className="py-2.5">Autoproduction de secours ou d'appoint &le; 100 kW (groupes électrogènes résidentiels, solaire en toiture)</td>
                       <td className="py-2.5">Particuliers, hôpitaux, centres commerciaux</td>
-                      <td className="py-2.5 font-mono text-neutral-400">Simple déclaration MINEE / ARSEL</td>
+                      <td className="py-2.5 font-mono text-[#5C6C70]">Simple déclaration MINEE / ARSEL</td>
                     </tr>
                   </tbody>
                 </table>
@@ -449,43 +448,43 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
           </div>
 
           {/* Sector Governance Org Chart Visualizer */}
-          <div className="p-6 rounded-2xl bg-[#0E131A] border border-[#252E38]">
+          <div className="p-6 rounded-sm bg-[#FFFDF9] border border-[#17282C]/15 shadow-xs">
             <div className="flex items-center gap-2 mb-4">
-              <Compass className="h-5 w-5 text-cyan-400" />
-              <h2 className="text-base font-bold text-white font-mono">
+              <Compass className="h-5 w-5 text-[#147C78]" />
+              <h2 className="text-base font-bold text-[#17282C] font-mono">
                 {locale === 'fr' ? 'Architecture Institutionnelle du Secteur' : 'Sector Institutional Architecture'}
               </h2>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
-              <div className="p-3.5 rounded-xl bg-purple-950/20 border border-purple-800/40">
-                <span className="font-mono text-[10px] font-bold text-purple-400 block mb-1">TUTELLE GOUVERNEMENTALE</span>
-                <span className="font-bold text-sm text-white block">MINEE</span>
-                <p className="text-neutral-400 text-[11px] mt-1">
+              <div className="p-3.5 rounded-sm bg-[#F6F4EE] border border-[#DEDACF]">
+                <span className="font-mono text-[10px] font-bold text-[#147C78] block mb-1">TUTELLE GOUVERNEMENTALE</span>
+                <span className="font-bold text-sm text-[#17282C] block">MINEE</span>
+                <p className="text-[#5C6C70] text-[11px] mt-1">
                   {locale === 'fr' ? 'Politique énergétique, PDSE 2035, signatures de conventions de concession.' : 'National energy policy, masterplans (PDSE 2035), concession agreements.'}
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-amber-950/20 border border-amber-800/40">
-                <span className="font-mono text-[10px] font-bold text-amber-400 block mb-1">RÉGULATION & TARIFS</span>
-                <span className="font-bold text-sm text-white block">ARSEL</span>
-                <p className="text-neutral-400 text-[11px] mt-1">
+              <div className="p-3.5 rounded-sm bg-[#F6F4EE] border border-[#DEDACF]">
+                <span className="font-mono text-[10px] font-bold text-[#B8872D] block mb-1">RÉGULATION & TARIFS</span>
+                <span className="font-bold text-sm text-[#17282C] block">ARSEL</span>
+                <p className="text-[#5C6C70] text-[11px] mt-1">
                   {locale === 'fr' ? 'Fixation des grilles tarifaires, respect des cahiers des charges, conciliation.' : 'Tariff setting, contractual compliance, consumer protection & arbitration.'}
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-cyan-950/20 border border-cyan-800/40">
-                <span className="font-mono text-[10px] font-bold text-cyan-400 block mb-1">GESTION TRANSPORT (GRT)</span>
-                <span className="font-bold text-sm text-white block">SONATREL</span>
-                <p className="text-neutral-400 text-[11px] mt-1">
+              <div className="p-3.5 rounded-sm bg-[#F6F4EE] border border-[#DEDACF]">
+                <span className="font-mono text-[10px] font-bold text-[#147C78] block mb-1">GESTION TRANSPORT (GRT)</span>
+                <span className="font-bold text-sm text-[#17282C] block">SONATREL</span>
+                <p className="text-[#5C6C70] text-[11px] mt-1">
                   {locale === 'fr' ? 'Réseau 225/90 kV, CNO Dispatching national, équilibre 50 Hz, interconnexions.' : '225/90 kV grid, National Dispatch CNO, 50 Hz balance, regional links.'}
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-orange-950/20 border border-orange-800/40">
-                <span className="font-mono text-[10px] font-bold text-orange-400 block mb-1">DISTRIBUTION & CLIENTÈLE</span>
-                <span className="font-bold text-sm text-white block">Eneo Cameroon</span>
-                <p className="text-neutral-400 text-[11px] mt-1">
+              <div className="p-3.5 rounded-sm bg-[#F6F4EE] border border-[#DEDACF]">
+                <span className="font-mono text-[10px] font-bold text-[#B8872D] block mb-1">DISTRIBUTION & CLIENTÈLE</span>
+                <span className="font-bold text-sm text-[#17282C] block">Eneo Cameroon</span>
+                <p className="text-[#5C6C70] text-[11px] mt-1">
                   {locale === 'fr' ? 'Réseaux MT 30 kV / BT 400V, compteurs prépayés STS, commercialisation.' : '30 kV MV / 400V LV networks, STS prepayment, metering & billing.'}
                 </p>
               </div>
@@ -499,7 +498,7 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Institutions List Sidebar */}
           <div className="lg:col-span-4 space-y-2">
-            <span className="font-mono text-[11px] font-bold text-neutral-400 uppercase tracking-wider block mb-2 px-1">
+            <span className="font-mono text-[11px] font-bold text-[#5C6C70] uppercase tracking-wider block mb-2 px-1">
               {locale === 'fr' ? 'ORGANISMES RÉGLEMENTAIRES & OPÉRATEURS' : 'SECTOR ENTITIES'}
             </span>
             {REGULATORY_INSTITUTIONS.map((inst) => {
@@ -509,34 +508,22 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
                   key={inst.id}
                   type="button"
                   onClick={() => setSelectedInstCode(inst.code)}
-                  className={`w-full text-left p-3 rounded-xl border transition-all ${
+                  className={`w-full text-left p-3 rounded-sm border transition-all ${
                     isSelected
-                      ? 'bg-[#161C24] border-amber-400/80 shadow-md translate-x-1'
-                      : 'bg-[#0E131A] border-[#252E38] hover:border-neutral-600 hover:bg-[#11161D]'
+                      ? 'bg-[#E3EFEC] border-[#147C78] shadow-xs translate-x-1'
+                      : 'bg-[#FFFDF9] border-[#DEDACF] hover:border-[#147C78]/40 hover:bg-[#F6F4EE]'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-mono font-black text-sm text-white">{inst.code}</span>
-                    <span className={`text-[10px] font-mono font-bold px-1.5 py-0.2 rounded border ${
-                      inst.category === 'REGULATOR'
-                        ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
-                        : inst.category === 'TSO'
-                        ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30'
-                        : inst.category === 'ASSET_HOLDER'
-                        ? 'bg-blue-500/10 text-blue-400 border-blue-500/30'
-                        : inst.category === 'DSO'
-                        ? 'bg-orange-500/10 text-orange-400 border-orange-500/30'
-                        : inst.category === 'RURAL_AGENCY'
-                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                        : 'bg-purple-500/10 text-purple-400 border-purple-500/30'
-                    }`}>
+                    <span className="font-mono font-black text-sm text-[#17282C]">{inst.code}</span>
+                    <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-sm border bg-[#F6F4EE] text-[#147C78] border-[#DEDACF]">
                       {inst.category}
                     </span>
                   </div>
-                  <div className="text-xs text-neutral-300 font-medium truncate">
+                  <div className="text-xs text-[#33474B] font-medium truncate">
                     {locale === 'fr' ? inst.name_fr : inst.name_en}
                   </div>
-                  <div className="text-[11px] text-neutral-400 mt-1 flex items-center gap-1 font-mono">
+                  <div className="text-[11px] text-[#5C6C70] mt-1 flex items-center gap-1 font-mono">
                     <MapPin className="h-3 w-3" />
                     <span>{inst.headquarters}</span>
                   </div>
@@ -546,44 +533,44 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
           </div>
 
           {/* Active Institution Detail Panel */}
-          <div className="lg:col-span-8 p-6 rounded-2xl bg-[#0E131A] border border-[#252E38] space-y-5">
-            <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[#252E38] pb-4">
+          <div className="lg:col-span-8 p-6 rounded-sm bg-[#FFFDF9] border border-[#17282C]/15 space-y-5 shadow-xs">
+            <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[#DEDACF] pb-4">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-lg font-black text-amber-400">{activeInstitution.code}</span>
-                  <span className="font-mono text-xs px-2 py-0.5 rounded bg-[#161C24] text-neutral-300 border border-[#252E38]">
+                  <span className="font-mono text-lg font-black text-[#147C78]">{activeInstitution.code}</span>
+                  <span className="font-mono text-xs px-2 py-0.5 rounded-sm bg-[#F6F4EE] text-[#33474B] border border-[#DEDACF]">
                     {activeInstitution.creation_legal_basis}
                   </span>
                 </div>
-                <h3 className="text-base font-bold text-white mt-1">
+                <h3 className="text-base font-bold text-[#17282C] mt-1">
                   {locale === 'fr' ? activeInstitution.full_title_fr : activeInstitution.full_title_en}
                 </h3>
               </div>
-              <div className="text-right font-mono text-xs text-neutral-400">
-                <span className="block font-bold text-neutral-200">{activeInstitution.headquarters}</span>
-                <span className="text-cyan-400">{activeInstitution.website_or_contact}</span>
+              <div className="text-right font-mono text-xs text-[#5C6C70]">
+                <span className="block font-bold text-[#17282C]">{activeInstitution.headquarters}</span>
+                <span className="text-[#147C78]">{activeInstitution.website_or_contact}</span>
               </div>
             </div>
 
             {/* Mandate Summary */}
             <div>
-              <h4 className="font-mono text-xs font-bold text-amber-400 uppercase tracking-wider mb-1">
+              <h4 className="font-mono text-xs font-bold text-[#147C78] uppercase tracking-wider mb-1">
                 {locale === 'fr' ? 'MANDAT LÉGAL & ATTRIBUTIONS' : 'STATUTORY MANDATE'}
               </h4>
-              <p className="text-xs text-neutral-200 leading-relaxed bg-[#11161D] p-3.5 rounded-xl border border-[#252E38]">
+              <p className="text-xs text-[#17282C] leading-relaxed bg-[#F6F4EE] p-3.5 rounded-sm border border-[#DEDACF]">
                 {locale === 'fr' ? activeInstitution.mandate_summary_fr : activeInstitution.mandate_summary_en}
               </p>
             </div>
 
             {/* Core Missions */}
             <div>
-              <h4 className="font-mono text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2">
+              <h4 className="font-mono text-xs font-bold text-[#147C78] uppercase tracking-wider mb-2">
                 {locale === 'fr' ? 'MISSIONS FONDAMENTALES' : 'CORE STRATEGIC MISSIONS'}
               </h4>
               <ul className="space-y-2">
                 {(locale === 'fr' ? activeInstitution.core_missions_fr : activeInstitution.core_missions_en).map((mission, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-xs text-neutral-300">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <li key={idx} className="flex items-start gap-2 text-xs text-[#33474B]">
+                    <CheckCircle2 className="h-4 w-4 text-[#147C78] shrink-0 mt-0.5" />
                     <span>{mission}</span>
                   </li>
                 ))}
@@ -591,15 +578,15 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
             </div>
 
             {/* Administered Regulations & Interfaces */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-[#252E38] text-xs">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-[#DEDACF] text-xs">
               <div>
-                <span className="font-mono font-bold text-neutral-400 text-[11px] block mb-1">
+                <span className="font-mono font-bold text-[#5C6C70] text-[11px] block mb-1">
                   {locale === 'fr' ? 'RÈGLEMENTS ADMINISTRÉS' : 'ADMINISTERED REGULATIONS'}
                 </span>
                 <ul className="space-y-1">
                   {activeInstitution.key_regulations_administered.map((reg, idx) => (
-                    <li key={idx} className="text-neutral-300 font-mono text-[11px] flex items-center gap-1.5">
-                      <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+                    <li key={idx} className="text-[#33474B] font-mono text-[11px] flex items-center gap-1.5">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#B8872D]" />
                       <span>{reg}</span>
                     </li>
                   ))}
@@ -607,12 +594,12 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
               </div>
 
               <div>
-                <span className="font-mono font-bold text-neutral-400 text-[11px] block mb-1">
+                <span className="font-mono font-bold text-[#5C6C70] text-[11px] block mb-1">
                   {locale === 'fr' ? 'INTERFACES OPÉRATIONNELLES' : 'OPERATIONAL INTERFACES'}
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {activeInstitution.interfaces_with.map((inter, idx) => (
-                    <span key={idx} className="font-mono text-[11px] bg-[#161C24] text-neutral-300 px-2 py-0.5 rounded border border-[#252E38]">
+                    <span key={idx} className="font-mono text-[11px] bg-[#F6F4EE] text-[#17282C] px-2 py-0.5 rounded-sm border border-[#DEDACF]">
                       {inter}
                     </span>
                   ))}
@@ -627,7 +614,7 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
       {activeTab === 'grid-code' && (
         <div className="space-y-6">
           {/* Interactive Compliance Diagnostic Simulator */}
-          <div className="p-6 rounded-2xl bg-[#0E131A] border border-[#252E38] shadow-lg">
+          <div className="epede-workbench p-6 rounded-sm bg-[#10191D] border border-[#17282C] shadow-xs">
             <div className="flex flex-wrap items-center justify-between gap-2 mb-4 border-b border-[#252E38] pb-3">
               <div className="flex items-center gap-2">
                 <Activity className="h-5 w-5 text-amber-400" />
@@ -799,36 +786,36 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
           </div>
 
           {/* Under-Frequency Load Shedding (UFLS) Defense Plan */}
-          <div className="p-6 rounded-2xl bg-[#0E131A] border border-[#252E38]">
+          <div className="p-6 rounded-sm bg-[#FFFDF9] border border-[#17282C]/15 shadow-xs">
             <div className="flex items-center justify-between gap-2 mb-4">
               <div className="flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-amber-400" />
-                <h3 className="text-base font-bold text-white font-mono">
+                <AlertTriangle className="h-5 w-5 text-[#B8872D]" />
+                <h3 className="text-base font-bold text-[#17282C] font-mono">
                   {locale === 'fr'
                     ? "Plan de Défense du Réseau : Délestage Fréquencemétrique Automatique (UFLS)"
                     : 'System Defense Plan: Under-Frequency Load Shedding (UFLS)'}
                 </h3>
               </div>
-              <span className="font-mono text-xs text-neutral-400">SONATREL · CNO Mangombé</span>
+              <span className="font-mono text-xs text-[#5C6C70]">SONATREL · CNO Mangombé</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {CAMEROON_UFLS_STAGES.map((stage) => (
-                <div key={stage.stage} className="p-4 rounded-xl bg-[#11161D] border border-[#252E38] text-xs">
+                <div key={stage.stage} className="p-4 rounded-sm bg-[#F6F4EE] border border-[#DEDACF] text-xs">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-mono font-bold text-amber-400">ÉTAGE {stage.stage}</span>
-                    <span className="font-mono font-black text-white text-sm bg-neutral-800 px-2 py-0.5 rounded">
+                    <span className="font-mono font-bold text-[#147C78]">ÉTAGE {stage.stage}</span>
+                    <span className="font-mono font-black text-[#17282C] text-sm bg-[#FFFDF9] border border-[#DEDACF] px-2 py-0.5 rounded-sm">
                       {stage.frequency_threshold_hz.toFixed(2)} Hz
                     </span>
                   </div>
-                  <div className="space-y-1 font-mono text-[11px] mb-2 text-neutral-300">
-                    <div>{locale === 'fr' ? 'Temporisation' : 'Delay'} : <span className="text-white font-bold">{stage.time_delay_ms} ms</span></div>
-                    <div>{locale === 'fr' ? 'Délestage' : 'Shedding'} : <span className="text-amber-400 font-bold">-{stage.load_shedding_percentage}%</span> ({locale === 'fr' ? 'Cumul' : 'Total'} : -{stage.cumulative_percentage}%)</div>
+                  <div className="space-y-1 font-mono text-[11px] mb-2 text-[#33474B]">
+                    <div>{locale === 'fr' ? 'Temporisation' : 'Delay'} : <span className="text-[#17282C] font-bold">{stage.time_delay_ms} ms</span></div>
+                    <div>{locale === 'fr' ? 'Délestage' : 'Shedding'} : <span className="text-[#B8872D] font-bold">-{stage.load_shedding_percentage}%</span> ({locale === 'fr' ? 'Cumul' : 'Total'} : -{stage.cumulative_percentage}%)</div>
                   </div>
-                  <p className="text-neutral-400 text-[11px] leading-relaxed">
+                  <p className="text-[#5C6C70] text-[11px] leading-relaxed">
                     {locale === 'fr' ? stage.description_fr : stage.description_en}
                   </p>
-                  <div className="mt-3 pt-2 border-t border-[#252E38] text-[10px] text-cyan-400 font-mono">
+                  <div className="mt-3 pt-2 border-t border-[#DEDACF] text-[10px] text-[#147C78] font-mono font-bold">
                     {stage.targeted_substations.join(', ')}
                   </div>
                 </div>
@@ -837,17 +824,17 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
           </div>
 
           {/* Grid Code Rules Table */}
-          <div className="p-6 rounded-2xl bg-[#0E131A] border border-[#252E38]">
+          <div className="p-6 rounded-sm bg-[#FFFDF9] border border-[#17282C]/15 shadow-xs">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-              <h3 className="text-base font-bold text-white font-mono">
+              <h3 className="text-base font-bold text-[#17282C] font-mono">
                 {locale === 'fr' ? 'Règles Techniques du Code de Réseau' : 'Grid Code Operating Standards'}
               </h3>
               <div className="flex items-center gap-2">
-                <Filter className="h-3.5 w-3.5 text-neutral-400" />
+                <Filter className="h-3.5 w-3.5 text-[#147C78]" />
                 <select
                   value={selectedDomainFilter}
                   onChange={(e) => setSelectedDomainFilter(e.target.value)}
-                  className="bg-[#161C24] border border-[#252E38] rounded-lg px-2.5 py-1 text-xs font-mono text-neutral-200"
+                  className="bg-[#F6F4EE] border border-[#DEDACF] rounded-sm px-2.5 py-1 text-xs font-mono text-[#17282C]"
                 >
                   <option value="ALL">{locale === 'fr' ? 'Toutes les catégories' : 'All categories'}</option>
                   <option value="VOLTAGE">{locale === 'fr' ? 'Tension (Voltage)' : 'Voltage'}</option>
@@ -861,41 +848,41 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
 
             <div className="space-y-3">
               {filteredGridCodeRules.map((rule) => (
-                <div key={rule.id} className="p-4 rounded-xl bg-[#11161D] border border-[#252E38] text-xs space-y-2">
+                <div key={rule.id} className="p-4 rounded-sm bg-[#F6F4EE] border border-[#DEDACF] text-xs space-y-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <span className="font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
+                      <span className="font-mono font-bold text-[#147C78] bg-[#E3EFEC] px-2 py-0.5 rounded-sm border border-[#147C78]/30">
                         {rule.code}
                       </span>
-                      <span className="font-bold text-sm text-white">
+                      <span className="font-bold text-sm text-[#17282C]">
                         {locale === 'fr' ? rule.title_fr : rule.title_en}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 font-mono text-[11px]">
-                      <span className="text-neutral-400">{rule.standard_reference}</span>
-                      <span className="px-2 py-0.5 rounded bg-[#161C24] text-cyan-400 font-bold border border-[#252E38]">
+                      <span className="text-[#5C6C70]">{rule.standard_reference}</span>
+                      <span className="px-2 py-0.5 rounded-sm bg-[#FFFDF9] text-[#147C78] font-bold border border-[#DEDACF]">
                         {rule.voltage_level}
                       </span>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px] font-mono bg-[#161C24]/60 p-2.5 rounded-lg border border-[#252E38]">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px] font-mono bg-[#FFFDF9] p-2.5 rounded-sm border border-[#DEDACF]">
                     <div>
-                      <span className="text-neutral-400 block">{locale === 'fr' ? 'Plage Normale Continue :' : 'Normal Operating Band :'}</span>
-                      <span className="text-emerald-400 font-bold">{rule.normal_range}</span>
+                      <span className="text-[#5C6C70] block">{locale === 'fr' ? 'Plage Normale Continue :' : 'Normal Operating Band :'}</span>
+                      <span className="text-[#147C78] font-bold">{rule.normal_range}</span>
                     </div>
                     <div>
-                      <span className="text-neutral-400 block">{locale === 'fr' ? 'Plage Exceptionnelle / Tolérance :' : 'Exceptional Band :'}</span>
-                      <span className="text-amber-400 font-bold">{rule.exceptional_range} ({rule.time_tolerance})</span>
+                      <span className="text-[#5C6C70] block">{locale === 'fr' ? 'Plage Exceptionnelle / Tolérance :' : 'Exceptional Band :'}</span>
+                      <span className="text-[#B8872D] font-bold">{rule.exceptional_range} ({rule.time_tolerance})</span>
                     </div>
                   </div>
 
-                  <p className="text-neutral-300 leading-relaxed text-xs">
+                  <p className="text-[#33474B] leading-relaxed text-xs">
                     {locale === 'fr' ? rule.compliance_condition_fr : rule.compliance_condition_en}
                   </p>
 
-                  <div className="text-[11px] text-neutral-400 pt-1 border-t border-[#252E38] flex items-center gap-1.5 font-mono">
-                    <span className="text-red-400 font-bold">{locale === 'fr' ? 'Action / Pénalité :' : 'Action / Penalty :'}</span>
+                  <div className="text-[11px] text-[#5C6C70] pt-1 border-t border-[#DEDACF] flex items-center gap-1.5 font-mono">
+                    <span className="text-[#C84B31] font-bold">{locale === 'fr' ? 'Action / Pénalité :' : 'Action / Penalty :'}</span>
                     <span>{locale === 'fr' ? rule.penalty_or_action_fr : rule.penalty_or_action_en}</span>
                   </div>
                 </div>
@@ -909,7 +896,7 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
       {activeTab === 'tariffs' && (
         <div className="space-y-6">
           {/* Interactive Industrial Electricity Bill & Reactive Surcharge Calculator */}
-          <div className="p-6 rounded-2xl bg-[#0E131A] border border-[#252E38]">
+          <div className="epede-workbench p-6 rounded-sm bg-[#10191D] border border-[#17282C]">
             <div className="flex items-center gap-2 mb-4 border-b border-[#252E38] pb-3">
               <Calculator className="h-5 w-5 text-amber-400" />
               <div>
@@ -1079,41 +1066,41 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
 
           {/* Official ARSEL Tariff Categories */}
           <div className="space-y-4">
-            <h3 className="text-base font-bold text-white font-mono">
+            <h3 className="text-base font-bold text-[#17282C] font-mono">
               {locale === 'fr' ? 'Grilles Tarifaires Officielles en Vigueur (Décisions ARSEL)' : 'Official Electricity Tariff Schedules (ARSEL Decisions)'}
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {ARSEL_TARIFF_FRAMEWORK.map((tar) => (
-                <div key={tar.id} className="p-5 rounded-2xl bg-[#0E131A] border border-[#252E38] text-xs flex flex-col justify-between">
+                <div key={tar.id} className="p-5 rounded-sm bg-[#FFFDF9] border border-[#17282C]/15 text-xs flex flex-col justify-between shadow-xs">
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
+                      <span className="font-mono font-bold text-[#147C78] bg-[#E3EFEC] px-2 py-0.5 rounded-sm border border-[#147C78]/30">
                         {tar.code}
                       </span>
-                      <span className="font-mono text-neutral-400 font-bold">{tar.voltage_class}</span>
+                      <span className="font-mono text-[#5C6C70] font-bold">{tar.voltage_class}</span>
                     </div>
-                    <h4 className="font-bold text-white text-sm mb-2">
+                    <h4 className="font-bold text-[#17282C] text-sm mb-2">
                       {locale === 'fr' ? tar.name_fr : tar.name_en}
                     </h4>
-                    <p className="text-neutral-400 text-[11px] leading-relaxed mb-3">
+                    <p className="text-[#5C6C70] text-[11px] leading-relaxed mb-3">
                       {locale === 'fr' ? tar.description_fr : tar.description_en}
                     </p>
 
-                    <div className="font-mono text-[11px] mb-3 text-cyan-400 bg-[#11161D] p-2 rounded border border-[#252E38]">
+                    <div className="font-mono text-[11px] mb-3 text-[#147C78] bg-[#F6F4EE] p-2 rounded-sm border border-[#DEDACF] font-bold">
                       {tar.fixed_charge_fcfa}
                     </div>
 
                     <div className="space-y-2">
-                      <span className="font-mono text-[10px] text-neutral-500 uppercase block font-bold">
+                      <span className="font-mono text-[10px] text-[#5C6C70] uppercase block font-bold">
                         {locale === 'fr' ? 'TRANCHES DE PRIX (FCFA/kWh)' : 'PRICE BRACKETS'}
                       </span>
                       {tar.rates.map((r, i) => (
-                        <div key={i} className="p-2 rounded bg-[#11161D] border border-[#252E38]/80 flex items-center justify-between font-mono">
-                          <span className="text-neutral-300 text-[11px] truncate pr-2">
+                        <div key={i} className="p-2 rounded-sm bg-[#F6F4EE] border border-[#DEDACF] flex items-center justify-between font-mono">
+                          <span className="text-[#33474B] text-[11px] truncate pr-2">
                             {locale === 'fr' ? r.bracket_name_fr : r.bracket_name_en}
                           </span>
-                          <span className="text-amber-400 font-bold shrink-0">
+                          <span className="text-[#B8872D] font-bold shrink-0">
                             {r.rate_fcfa_per_kwh} F
                           </span>
                         </div>
@@ -1121,8 +1108,8 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-[#252E38] text-[10px] text-neutral-400 font-mono">
-                    <span className="text-neutral-300 font-bold block">{locale === 'fr' ? 'Règle Réactive :' : 'Reactive Rule :'}</span>
+                  <div className="mt-4 pt-3 border-t border-[#DEDACF] text-[10px] text-[#5C6C70] font-mono">
+                    <span className="text-[#17282C] font-bold block">{locale === 'fr' ? 'Règle Réactive :' : 'Reactive Rule :'}</span>
                     {tar.power_factor_penalty_condition}
                   </div>
                 </div>
@@ -1135,17 +1122,17 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
       {/* TAB 5: REGIONAL INTERCONNECTIONS (PEAC) */}
       {activeTab === 'regional' && (
         <div className="space-y-6">
-          <div className="p-6 rounded-2xl bg-[#0E131A] border border-[#252E38]">
+          <div className="p-6 rounded-sm bg-[#FFFDF9] border border-[#17282C]/15 shadow-xs">
             <div className="flex items-center justify-between gap-2 mb-4">
               <div className="flex items-center gap-2">
-                <Globe className="h-5 w-5 text-emerald-400" />
+                <Globe className="h-5 w-5 text-[#147C78]" />
                 <div>
-                  <h3 className="text-base font-bold text-white font-mono">
+                  <h3 className="text-base font-bold text-[#17282C] font-mono">
                     {locale === 'fr'
                       ? 'Pool Énergétique d\'Afrique Centrale (PEAC) & Corridors Régionaux'
                       : 'Central Africa Power Pool (PEAC) & Regional Interconnectors'}
                   </h3>
-                  <span className="text-xs text-neutral-400">
+                  <span className="text-xs text-[#5C6C70]">
                     {locale === 'fr' ? 'Intégration énergétique de la zone CEEAC et valorisation des excédents hydroélectriques nationaux' : 'ECCAS regional energy integration and export of clean national hydro capacity'}
                   </span>
                 </div>
@@ -1154,56 +1141,50 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
 
             <div className="space-y-4">
               {REGIONAL_INTERCONNECTION_PROJECTS.map((proj) => (
-                <div key={proj.id} className="p-5 rounded-2xl bg-[#11161D] border border-[#252E38] text-xs space-y-3">
+                <div key={proj.id} className="p-5 rounded-sm bg-[#F6F4EE] border border-[#DEDACF] text-xs space-y-3">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2.5">
-                      <span className="font-mono font-black text-sm text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded border border-emerald-500/30">
+                      <span className="font-mono font-black text-sm text-[#147C78] bg-[#E3EFEC] px-2.5 py-0.5 rounded-sm border border-[#147C78]/30">
                         {proj.voltage_kv} kV
                       </span>
-                      <h4 className="font-bold text-white text-sm sm:text-base">
+                      <h4 className="font-bold text-[#17282C] text-sm sm:text-base">
                         {locale === 'fr' ? proj.name_fr : proj.name_en}
                       </h4>
                     </div>
                     <div className="flex items-center gap-2 font-mono text-xs">
-                      <span className="text-neutral-400">{proj.regional_pool}</span>
-                      <span className={`px-2 py-0.5 rounded font-bold border ${
-                        proj.current_status === 'UNDER_CONSTRUCTION'
-                          ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
-                          : proj.current_status === 'STUDIES_COMPLETED'
-                          ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30'
-                          : 'bg-neutral-800 text-neutral-400 border-neutral-700'
-                      }`}>
+                      <span className="text-[#5C6C70]">{proj.regional_pool}</span>
+                      <span className="px-2 py-0.5 rounded-sm font-bold border bg-[#FFFDF9] text-[#147C78] border-[#DEDACF]">
                         {proj.current_status}
                       </span>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono bg-[#161C24] p-3 rounded-xl border border-[#252E38]">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono bg-[#FFFDF9] p-3 rounded-sm border border-[#DEDACF]">
                     <div>
-                      <span className="text-neutral-400 block text-[10px]">{locale === 'fr' ? 'Tracé & Longueur :' : 'Route & Length :'}</span>
-                      <span className="text-white font-semibold">{proj.route_and_length}</span>
+                      <span className="text-[#5C6C70] block text-[10px]">{locale === 'fr' ? 'Tracé & Longueur :' : 'Route & Length :'}</span>
+                      <span className="text-[#17282C] font-semibold">{proj.route_and_length}</span>
                     </div>
                     <div>
-                      <span className="text-neutral-400 block text-[10px]">{locale === 'fr' ? 'Capacité de Transit :' : 'Transmission Capacity :'}</span>
-                      <span className="text-emerald-400 font-bold">{proj.transmission_capacity_mw} MW</span>
+                      <span className="text-[#5C6C70] block text-[10px]">{locale === 'fr' ? 'Capacité de Transit :' : 'Transmission Capacity :'}</span>
+                      <span className="text-[#147C78] font-bold">{proj.transmission_capacity_mw} MW</span>
                     </div>
                     <div>
-                      <span className="text-neutral-400 block text-[10px]">{locale === 'fr' ? 'Mise en Service Cible :' : 'Target Commissioning :'}</span>
-                      <span className="text-amber-400 font-bold">{proj.commissioning_target}</span>
+                      <span className="text-[#5C6C70] block text-[10px]">{locale === 'fr' ? 'Mise en Service Cible :' : 'Target Commissioning :'}</span>
+                      <span className="text-[#B8872D] font-bold">{proj.commissioning_target}</span>
                     </div>
                   </div>
 
-                  <p className="text-neutral-300 leading-relaxed text-xs">
+                  <p className="text-[#33474B] leading-relaxed text-xs">
                     {locale === 'fr' ? proj.strategic_objective_fr : proj.strategic_objective_en}
                   </p>
 
-                  <div className="pt-2 border-t border-[#252E38] flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-neutral-400">
+                  <div className="pt-2 border-t border-[#DEDACF] flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-[#5C6C70]">
                     <div>
-                      <span className="text-neutral-300 font-bold">{locale === 'fr' ? 'Partenaires Financiers :' : 'Financiers :'} </span>
+                      <span className="text-[#17282C] font-bold">{locale === 'fr' ? 'Partenaires Financiers :' : 'Financiers :'} </span>
                       <span>{proj.financing_partners.join(', ')}</span>
                     </div>
                     <div>
-                      <span className="text-neutral-300 font-bold">{locale === 'fr' ? 'Pays :' : 'Countries :'} </span>
+                      <span className="text-[#17282C] font-bold">{locale === 'fr' ? 'Pays :' : 'Countries :'} </span>
                       <span>{proj.participating_countries.join(' · ')}</span>
                     </div>
                   </div>
@@ -1217,16 +1198,16 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
       {/* TAB 6: RIGHT-OF-WAY & ENVIRONMENTAL SERVITUDES */}
       {activeTab === 'environment' && (
         <div className="space-y-6">
-          <div className="p-6 rounded-2xl bg-[#0E131A] border border-[#252E38]">
+          <div className="p-6 rounded-sm bg-[#FFFDF9] border border-[#17282C]/15 shadow-xs">
             <div className="flex items-center gap-2 mb-4">
-              <ShieldCheck className="h-5 w-5 text-amber-400" />
+              <ShieldCheck className="h-5 w-5 text-[#147C78]" />
               <div>
-                <h3 className="text-base font-bold text-white font-mono">
+                <h3 className="text-base font-bold text-[#17282C] font-mono">
                   {locale === 'fr'
                     ? 'Servitudes de Passage & Couloirs de Sécurité Foncière (Lignes Aériennes)'
                     : 'Right-of-Way (ROW) Safety Corridors & Land Clearance Regulations'}
                 </h3>
-                <span className="text-xs text-neutral-400">
+                <span className="text-xs text-[#5C6C70]">
                   {locale === 'fr' ? 'Loi 2011/022 et Décret N° 2013/0171/PM régissant les distances de sécurité et les zones non-aedificandi' : 'Statutory clearances, ground sags and non-building strips along overhead high-voltage lines'}
                 </span>
               </div>
@@ -1234,33 +1215,33 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               {ENVIRONMENTAL_RIGHT_OF_WAYS.map((row) => (
-                <div key={row.voltage_level} className="p-5 rounded-2xl bg-[#11161D] border border-[#252E38] text-xs space-y-3">
-                  <div className="flex items-center justify-between border-b border-[#252E38] pb-2">
-                    <span className="font-mono font-black text-sm text-amber-400">{row.voltage_level}</span>
-                    <span className="font-mono text-[10px] text-neutral-400">{row.legal_reference}</span>
+                <div key={row.voltage_level} className="p-5 rounded-sm bg-[#F6F4EE] border border-[#DEDACF] text-xs space-y-3">
+                  <div className="flex items-center justify-between border-b border-[#DEDACF] pb-2">
+                    <span className="font-mono font-black text-sm text-[#147C78]">{row.voltage_level}</span>
+                    <span className="font-mono text-[10px] text-[#5C6C70]">{row.legal_reference}</span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2 text-center font-mono">
-                    <div className="bg-[#161C24] p-2.5 rounded-lg border border-[#252E38]">
-                      <span className="text-[10px] text-neutral-400 block">{locale === 'fr' ? 'Largeur Couloir' : 'Corridor Width'}</span>
-                      <span className="text-white font-bold text-base">{row.right_of_way_width_m} m</span>
-                      <span className="text-[9px] text-neutral-500 block">(±{row.half_corridor_m} m {locale === 'fr' ? 'axe' : 'axis'})</span>
+                    <div className="bg-[#FFFDF9] p-2.5 rounded-sm border border-[#DEDACF]">
+                      <span className="text-[10px] text-[#5C6C70] block">{locale === 'fr' ? 'Largeur Couloir' : 'Corridor Width'}</span>
+                      <span className="text-[#17282C] font-bold text-base">{row.right_of_way_width_m} m</span>
+                      <span className="text-[9px] text-[#5C6C70] block">(±{row.half_corridor_m} m {locale === 'fr' ? 'axe' : 'axis'})</span>
                     </div>
 
-                    <div className="bg-[#161C24] p-2.5 rounded-lg border border-[#252E38]">
-                      <span className="text-[10px] text-neutral-400 block">{locale === 'fr' ? 'Garde au Sol Min.' : 'Min. Ground Sag'}</span>
-                      <span className="text-cyan-400 font-bold text-base">{row.clearance_ground_m} m</span>
-                      <span className="text-[9px] text-neutral-500 block">{locale === 'fr' ? 'à 75°C max' : 'at 75°C max'}</span>
+                    <div className="bg-[#FFFDF9] p-2.5 rounded-sm border border-[#DEDACF]">
+                      <span className="text-[10px] text-[#5C6C70] block">{locale === 'fr' ? 'Garde au Sol Min.' : 'Min. Ground Sag'}</span>
+                      <span className="text-[#147C78] font-bold text-base">{row.clearance_ground_m} m</span>
+                      <span className="text-[9px] text-[#5C6C70] block">{locale === 'fr' ? 'à 75°C max' : 'at 75°C max'}</span>
                     </div>
                   </div>
 
                   <div className="space-y-1.5 pt-2">
-                    <span className="font-mono text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">
+                    <span className="font-mono text-[10px] font-bold text-[#5C6C70] uppercase tracking-wider block">
                       {locale === 'fr' ? 'PRESCRIPTIONS STRICTES' : 'STATUTORY RULES'}
                     </span>
                     {(locale === 'fr' ? row.rules_fr : row.rules_en).map((rule, idx) => (
-                      <div key={idx} className="flex items-start gap-1.5 text-[11px] text-neutral-300">
-                        <span className="h-1.5 w-1.5 rounded-full bg-amber-400 shrink-0 mt-1.5" />
+                      <div key={idx} className="flex items-start gap-1.5 text-[11px] text-[#33474B]">
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#B8872D] shrink-0 mt-1.5" />
                         <span>{rule}</span>
                       </div>
                     ))}

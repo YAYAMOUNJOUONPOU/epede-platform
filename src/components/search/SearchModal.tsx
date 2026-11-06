@@ -1062,7 +1062,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-label={locale === 'fr' ? 'Recherche globale EPEDE' : 'EPEDE Global Search'}
-      className="fixed inset-0 z-50 flex items-start justify-center p-4 sm:p-6 md:p-12 overflow-y-auto font-mono"
+      className="fixed inset-0 z-50 flex items-start justify-center p-4 sm:p-6 md:pt-16 overflow-y-auto font-sans"
     >
       {/* Backdrop */}
       <motion.div
@@ -1070,78 +1070,96 @@ export const SearchModal: React.FC<SearchModalProps> = ({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.15 }}
-        className="fixed inset-0 bg-black/80 backdrop-blur-sm"
+        className="fixed inset-0 bg-[#10191D]/62 backdrop-blur-[4px]"
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* Modal Dialog */}
+      {/* Modal Dialog — Bright Editorial Search Surface (#FFFDF9) */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.96, y: -6 }}
+        initial={{ opacity: 0, scale: 0.98, y: -6 }}
         animate={{ opacity: 1, scale: 1.0, y: 0 }}
-        exit={{ opacity: 0, scale: 0.96, y: -6 }}
+        exit={{ opacity: 0, scale: 0.98, y: -6 }}
         transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
         data-testid="search-modal"
-        className="relative z-10 w-full max-w-3xl rounded-2xl border border-[#252E38] bg-[#0D1117] shadow-2xl overflow-hidden"
+        className="relative z-10 w-full max-w-[760px] rounded-[12px] border border-[#DEDACF] bg-[#FFFDF9] text-[#17282C] shadow-[0_24px_60px_rgba(16,25,29,0.22)] overflow-hidden"
       >
-        {/* Input Header */}
-        <div className="flex items-center gap-3 border-b border-[#252E38] px-4 py-3.5 bg-[#080B10]">
-          <Search className="h-5 w-5 text-cyan-400 shrink-0" />
-          <input
-            ref={inputRef}
-            type="text"
-            data-testid="search-input"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={
-              locale === 'fr'
-                ? 'Rechercher : calculateur, simulation, norme, poste 225 kV, arc flash, ferranti...'
-                : 'Search: calculator, simulation, standard, 225 kV substation, arc flash, ferranti...'
-            }
-            className="w-full bg-transparent text-sm text-white placeholder-neutral-500 focus:outline-none font-mono caret-cyan-400"
-          />
-          {query && (
-            <button
-              type="button"
-              onClick={() => setQuery('')}
-              className="text-neutral-500 hover:text-white p-1"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          )}
-          <kbd className="hidden sm:inline-block font-mono text-[10px] text-neutral-400 bg-[#0D1117] px-2 py-0.5 rounded border border-[#252E38]">
-            ESC
-          </kbd>
+        {/* Editorial Search Header */}
+        <div className="px-6 pt-5 pb-3 bg-[#FFFDF9] border-b border-[#DEDACF]">
+          <div className="flex items-center justify-between gap-3 mb-2.5">
+            <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#147C78]">
+              {locale === 'fr' ? 'Recherche Globale EPEDE' : 'Search EPEDE'}
+            </span>
+            <div className="flex items-center gap-2">
+              <kbd className="hidden sm:inline-block font-mono text-[10px] text-[#5C6C70] bg-[#F6F4EE] px-2 py-0.5 rounded border border-[#DEDACF]">
+                ESC
+              </kbd>
+              <button
+                type="button"
+                onClick={onClose}
+                className="font-mono text-xs text-[#5C6C70] hover:text-[#17282C] px-2 py-1"
+              >
+                {locale === 'fr' ? 'Fermer' : 'Close'}
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 rounded-[8px] border border-[#17282C] bg-[#FFFFFF] px-3.5 py-3">
+            <Search className="h-5 w-5 text-[#147C78] shrink-0" />
+            <input
+              ref={inputRef}
+              type="text"
+              data-testid="search-input"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={
+                locale === 'fr'
+                  ? 'Nachtigal, SF6, chute de tension, IEC 60909, D04, relais 87T...'
+                  : 'Nachtigal, SF6, voltage drop, IEC 60909, D04, relay 87T...'
+              }
+              className="w-full bg-transparent text-[15px] text-[#17282C] placeholder-[#5C6C70] focus:outline-none font-sans caret-[#147C78]"
+            />
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery('')}
+                className="text-[#5C6C70] hover:text-[#17282C] p-1"
+                aria-label={locale === 'fr' ? 'Effacer la requête' : 'Clear search query'}
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Category Filters Bar */}
-        <div className="px-4 py-2 border-b border-[#252E38] bg-[#0A0E14] flex gap-2 overflow-x-auto text-[11px]">
+        <div className="px-6 py-2.5 border-b border-[#DEDACF] bg-[#F6F4EE] flex gap-1.5 overflow-x-auto text-[11px] font-mono">
           {[
-            { id: 'ALL', label: locale === 'fr' ? 'TOUT' : 'ALL' },
-            { id: 'EQUIPMENT', label: locale === 'fr' ? '⚡ FICHES ÉQUIPEMENTS' : '⚡ EQUIPMENT FICHES' },
-            { id: 'STANDARD', label: locale === 'fr' ? '📜 NORMES (CEI/IEEE)' : '📜 STANDARDS (IEC/IEEE)' },
-            { id: 'GRID', label: locale === 'fr' ? '🇨🇲 CAS RÉEL CAMEROUN' : '🇨🇲 CAMEROON GRID' },
-            { id: 'SCENARIO', label: locale === 'fr' ? '⏱️ SCÉNARIOS & REPLAY SCADA' : '⏱️ SCENARIOS & REPLAY' },
-            { id: 'PROVENANCE', label: locale === 'fr' ? '🛡️ DONNÉES FIABLES (AUDIT)' : '🛡️ DATA PROVENANCE' },
-            { id: 'CALCULATOR', label: locale === 'fr' ? '🧮 CALCULATEURS' : '🧮 CALCULATORS' },
-            { id: 'SIMULATION', label: locale === 'fr' ? '🔬 SIMULATEURS' : '🔬 SIMULATIONS' },
-            { id: 'SPINE', label: locale === 'fr' ? '🔗 ÉPINE DORSALE (TCC)' : '🔗 PHYSICAL SPINE (TCC)' },
-            { id: 'JOURNEY', label: locale === 'fr' ? '🌟 PARCOURS ÉLECTRICITÉ' : '🌟 ELECTRICITY JOURNEY' },
-            { id: 'REGULATORY', label: locale === 'fr' ? '⚖️ RÉGLEMENTATION' : '⚖️ REGULATORY' },
-            { id: 'LIFECYCLE', label: locale === 'fr' ? '🔄 CYCLE EPC (DG1-7)' : '🔄 EPC LIFECYCLE' },
-            { id: 'DOMAIN', label: locale === 'fr' ? 'DOMAINES' : 'DOMAINS' },
-            { id: 'ROLE', label: locale === 'fr' ? 'MÉTIERS' : 'ROLES' },
-            { id: 'DISCIPLINE', label: locale === 'fr' ? '🌐 DISCIPLINES & INTERFACES' : '🌐 DISCIPLINES & BOUNDARIES' },
-            { id: 'COMMISSIONING', label: locale === 'fr' ? '📋 ESSAIS COMMISSIONING' : '📋 COMMISSIONING PROTOCOLS' },
+            { id: 'ALL', label: locale === 'fr' ? 'Tout' : 'All' },
+            { id: 'EQUIPMENT', label: locale === 'fr' ? 'Équipements (39)' : 'Equipment (39)' },
+            { id: 'DOMAIN', label: locale === 'fr' ? 'Domaines (D01–D16)' : 'Domains (D01–D16)' },
+            { id: 'CALCULATOR', label: locale === 'fr' ? 'Solveurs (19)' : 'Calculators (19)' },
+            { id: 'SIMULATION', label: locale === 'fr' ? 'Simulateurs (19)' : 'Simulations (19)' },
+            { id: 'GRID', label: locale === 'fr' ? 'Réseau Cameroun' : 'Cameroon Grid' },
+            { id: 'STANDARD', label: locale === 'fr' ? 'Normes CEI/IEEE' : 'Standards IEC/IEEE' },
+            { id: 'JOURNEY', label: locale === 'fr' ? 'Chaîne 01–09' : 'Power Chain 01–09' },
+            { id: 'REGULATORY', label: locale === 'fr' ? 'Réglementation' : 'Regulatory' },
+            { id: 'SCENARIO', label: locale === 'fr' ? 'Scénarios SCADA' : 'SCADA Scenarios' },
+            { id: 'PROVENANCE', label: locale === 'fr' ? 'Sources Auditées' : 'Provenance' },
+            { id: 'SPINE', label: locale === 'fr' ? 'Sélectivité TCC' : 'Physical Spine' },
+            { id: 'LIFECYCLE', label: locale === 'fr' ? 'Cycle EPC' : 'EPC Lifecycle' },
+            { id: 'ROLE', label: locale === 'fr' ? 'Métiers' : 'Roles' },
+            { id: 'DISCIPLINE', label: locale === 'fr' ? 'Interfaces' : 'Boundaries' },
+            { id: 'COMMISSIONING', label: locale === 'fr' ? 'Essais FAT/SAT' : 'FAT/SAT' },
           ].map((cat) => (
             <button
               key={cat.id}
               type="button"
               onClick={() => setFilterCategory(cat.id as any)}
-              className={`px-2.5 py-1 rounded font-bold uppercase transition-colors border whitespace-nowrap ${
+              className={`px-3 py-1.5 rounded-full font-medium transition-colors border whitespace-nowrap ${
                 filterCategory === cat.id
-                  ? 'border-cyan-400 bg-cyan-400/10 text-cyan-300'
-                  : 'border-transparent text-neutral-400 hover:text-white'
+                  ? 'border-[#147C78] bg-[#147C78] text-[#FFFDF9]'
+                  : 'border-[#DEDACF] bg-[#FFFDF9] text-[#5C6C70] hover:text-[#17282C] hover:border-[#17282C]'
               }`}
             >
               {cat.label}
@@ -1149,8 +1167,8 @@ export const SearchModal: React.FC<SearchModalProps> = ({
           ))}
         </div>
 
-        {/* Results Container */}
-        <div className="max-h-[65vh] overflow-y-auto p-4 space-y-4 divide-y divide-[#252E38]/60">
+        {/* Results Container — Dark Technical List Framed cleanly inside Bright Editorial Modal */}
+        <div className="max-h-[62vh] overflow-y-auto p-4 sm:p-5 space-y-4 divide-y divide-[#2A383C] bg-[#10191D] text-[#F4F1E8]">
           {totalResultsCount === 0 ? (
             <div className="py-12 text-center text-sm text-neutral-500 font-medium">
               <p>{locale === 'fr' ? 'Aucun résultat trouvé pour cette requête.' : 'No results found.'}</p>
@@ -1982,15 +2000,15 @@ export const SearchModal: React.FC<SearchModalProps> = ({
         </div>
 
         {/* Footer info */}
-        <div className="border-t border-[#252E38] px-4 py-2.5 bg-[#080B10] flex items-center justify-between text-[11px] font-mono text-neutral-500">
+        <div className="border-t border-[#DEDACF] px-6 py-3 bg-[#FFFDF9] flex items-center justify-between text-[11px] font-mono text-[#5C6C70]">
           <div className="flex items-center gap-3">
-            <span>Navigation rapide</span>
-            <span className="flex items-center gap-1">
-              <CornerDownLeft className="h-3 w-3 text-cyan-400" />
-              <span>Ouvrir</span>
+            <span>{locale === 'fr' ? 'Navigation rapide' : 'Quick navigation'}</span>
+            <span className="flex items-center gap-1 text-[#147C78]">
+              <CornerDownLeft className="h-3 w-3" />
+              <span>{locale === 'fr' ? 'Ouvrir' : 'Open'}</span>
             </span>
           </div>
-          <span>EPEDE v1.2 Engineering Ecosystem</span>
+          <span>EPEDE · Power Systems Reference</span>
         </div>
       </motion.div>
     </div>
