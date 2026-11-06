@@ -215,3 +215,4 @@ Do not consider the redesign complete until all of the following are true:
 Implement in small, coherent changes. First establish tokens and shared shell; then redesign representative routes; then apply the domain template to D01–D16; finally validate every route and preserve the original functional baseline. Do not stop after polishing only the homepage.
 
 ## END PROMPT
+
