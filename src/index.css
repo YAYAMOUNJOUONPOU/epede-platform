@@ -3,46 +3,46 @@
 @layer base {
   :root {
     /* ======================================================================
-       EPEDE ProCode Bright Editorial & Technical Workbench Design System
+       EPEDE Porcelain & Navy Design System per SITEWIDE-REDESIGN.md
        ====================================================================== */
-    --bg-primary: #F6F4EE;          /* Main page background: Warm Paper */
-    --bg-narrative: #FFFDF9;        /* Alternate narrative surface */
-    --bg-surface-1: #FFFDF9;        /* Primary elevated surface */
-    --bg-surface-2: #EFECE3;        /* Subtle warm stone surface */
-    --bg-surface-3: #E4E0D5;        /* Control / secondary surface */
-    --surface-card: #FFFDF9;
+    --bg-primary: #FBFCFD;          /* Porcelain White */
+    --bg-narrative: #FBFCFD;        /* Alternate narrative surface */
+    --bg-surface-1: #FBFCFD;        /* Primary elevated surface */
+    --bg-surface-2: #EEF4F8;        /* Ice Blue */
+    --bg-surface-3: #E3ECF2;        /* Control / secondary surface */
+    --surface-card: #FBFCFD;
     --surface-card-hover: #FFFFFF;
-    --surface-border: #DEDACF;      /* Fine editorial rule */
-    --surface-border-strong: #17282C;
-    --surface-border-subtle: #EEEAE0;
+    --surface-border: #D5E0E8;      /* Fine editorial rule */
+    --surface-border-strong: #0B1B2B;
+    --surface-border-subtle: #E8F0F5;
 
-    --text-primary: #17282C;        /* Deep ink primary text */
-    --text-body: #33474B;           /* Editorial body copy */
-    --text-secondary: #5C6C70;      /* Slate secondary text */
-    --text-muted: #6E7D80;          /* Muted metadata text */
+    --text-primary: #0B1B2B;        /* Ink primary text */
+    --text-body: #3A4B5C;           /* Editorial body copy */
+    --text-secondary: #5B6B7B;      /* Slate secondary text */
+    --text-muted: #5B6B7B;          /* Muted metadata text */
 
     /* Core Brand & Engineering Accents */
-    --accent-teal: #147C78;         /* Brand / active engineering teal */
-    --accent-teal-hover: #0E5E5B;   /* Hover engineering teal */
-    --accent-teal-soft: #E3EFEC;    /* Soft teal wash */
-    --accent-amber: #B8872D;        /* Energy / selected-stage amber */
-    --accent-amber-glow: rgba(184, 135, 45, 0.16);
-    --accent-cyan: #147C78;
-    --accent-cyan-dim: rgba(20, 124, 120, 0.12);
-    --accent-sky: #147C78;
+    --accent-teal: #1F5FAE;         /* Cobalt */
+    --accent-teal-hover: #174A88;   /* Hover cobalt */
+    --accent-teal-soft: #EEF4F8;    /* Ice soft wash */
+    --accent-amber: #F2A541;        /* Amber accent */
+    --accent-amber-glow: rgba(242, 165, 65, 0.16);
+    --accent-cyan: #1F5FAE;
+    --accent-cyan-dim: rgba(31, 95, 174, 0.12);
+    --accent-sky: #1F5FAE;
     --accent-emerald: #15803D;      /* Status green (only for genuine status) */
     --accent-rose: #B91C1C;         /* Risk red (only for genuine safety/fault) */
     --accent-violet: #6D28D9;
 
-    /* Technical Workbench Tokens (Graphite #10191D) */
-    --workbench-bg: #10191D;
-    --workbench-surface: #162227;
-    --workbench-fg: #F4F1E8;
-    --workbench-muted: #B9C2C0;
-    --workbench-dim: #8A9694;
-    --workbench-line: #2A383C;
-    --workbench-border: #4A5A5E;
-    --workbench-energized: #6CC3BD;
+    /* Technical Workbench Tokens (Navy #0B1B2B) */
+    --workbench-bg: #0B1B2B;
+    --workbench-surface: #10263A;
+    --workbench-fg: #F3F7FA;
+    --workbench-muted: #C3CFDA;
+    --workbench-dim: #93A4B4;
+    --workbench-line: #1E3347;
+    --workbench-border: #28445E;
+    --workbench-energized: #F2A541;
     --workbench-trip: #E07A5F;
     --workbench-trip-fg: #F2A48F;
 
@@ -212,11 +212,11 @@
   border-bottom-color: #147C78;
 }
 
-/* Focused Technical Workbench Surface (#10191D Graphite) */
+/* Focused Technical Workbench Surface (#0B1B2B Navy per SITEWIDE-REDESIGN.md) */
 .epede-workbench {
-  background-color: #10191D;
-  color: #F4F1E8;
-  border: 1px solid #2A383C;
+  background-color: #0B1B2B;
+  color: #F3F7FA;
+  border: 1px solid #1E3347;
 }
 .epede-workbench h1,
 .epede-workbench h2,
@@ -224,21 +224,21 @@
 .epede-workbench h4,
 .epede-workbench h5,
 .epede-workbench h6 {
-  color: #F4F1E8;
+  color: #F3F7FA;
 }
 
-/* Harmonize legacy neon-lime (#B8F000 / lime-*) inside ProCode workbenches to Technical Teal & Brass */
+/* Harmonize legacy neon-lime inside workbenches to amber/cobalt */
 .epede-workbench [class*="text-[#B8F000]"],
 .epede-workbench [class*="text-lime-"] {
-  color: #6CC3BD !important;
+  color: #F2A541 !important;
 }
 .epede-workbench [class*="bg-[#B8F000]"] {
-  background-color: #147C78 !important;
-  color: #FFFDF9 !important;
+  background-color: #F2A541 !important;
+  color: #0B1B2B !important;
 }
 .epede-workbench [class*="border-[#B8F000]"],
 .epede-workbench [class*="border-lime-"] {
-  border-color: rgba(108, 195, 189, 0.45) !important;
+  border-color: rgba(242, 165, 65, 0.45) !important;
 }
 
 /* ============================================================================

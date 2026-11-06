@@ -54,6 +54,7 @@ import type { InjectedCalculatorContext } from '../../services/routerService';
 import { AssumptionsLimitationsCard } from '../context/AssumptionsLimitationsCard';
 import { EvidenceTrustBadge } from '../trust/EvidenceTrustBadge';
 import { EvidenceBadgeType } from '../../types/contextStack';
+import { PageHeader, DataStrip, FinalCTA } from '../common';
 
 const CALCULATOR_STANDARDS: Record<string, { standard: string; badgeType: EvidenceBadgeType }> = {
   power: { standard: 'CEI 60038 / IEEE 1459', badgeType: 'VERIFIED_STANDARD' },
@@ -310,117 +311,134 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
   });
 
   return (
-    <div className="space-y-8 text-[#17282C]">
-      
-      {/* Injected Equipment Sync Banner */}
-      {injectedContext && (
-        <div className="relative flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl bg-[#E3EFEC] border border-[#147C78]/40 shadow-sm text-xs font-mono">
-          <div className="flex items-center gap-3">
-            <span className="p-2 rounded-lg bg-[#FFFDF9] text-[#147C78] border border-[#147C78]/30">
-              <Zap className="h-4 w-4" />
-            </span>
-            <div>
-              <div className="text-[10px] uppercase text-[#147C78] font-bold tracking-wider">
-                {locale === 'fr' ? 'DONNÉES INJECTÉES DEPUIS LE DOSSIER ÉQUIPEMENT' : 'DATA INJECTED FROM EQUIPMENT DOSSIER'}
-              </div>
-              <div className="text-[#17282C] font-bold flex items-center gap-2 mt-0.5">
-                <span className="text-sm">{injectedContext.equipmentName}</span>
-                {injectedContext.equipmentTag && (
-                  <span className="px-2 py-0.5 rounded bg-[#FFFDF9] border border-[#147C78]/30 text-[#147C78] text-[10px] font-mono font-bold">
-                    {injectedContext.equipmentTag}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-          {onClearInjectedContext && (
-            <button
-              type="button"
-              onClick={onClearInjectedContext}
-              className="px-3 py-1.5 rounded-lg bg-[#FFFDF9] hover:bg-[#147C78] text-[#17282C] hover:text-white border border-[#DEDACF] text-[11px] font-mono font-bold transition-all cursor-pointer"
-            >
-              {locale === 'fr' ? 'Réinitialiser les paramètres' : 'Reset parameters'}
-            </button>
-          )}
-        </div>
-      )}
-      
-      {/* Editorial Header + Secondary Study Toolbar */}
-      <div className="rounded-2xl border border-[#DEDACF] bg-[#FFFDF9] p-6 sm:p-8 shadow-sm space-y-6">
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-          <div>
-            <div className="flex items-center gap-2 font-mono text-xs text-[#147C78] mb-2">
-              <Calculator className="h-3.5 w-3.5 text-[#147C78]" />
-              <span className="uppercase tracking-[0.14em] font-bold">
-                {locale === 'fr' ? '19 SOLVEURS SCIENTIFIQUES · CEI & IEEE' : '19 SCIENTIFIC SOLVERS · IEC & IEEE'}
+    <div className="space-y-12 pb-20 font-['Space_Grotesk',sans-serif] text-[#0B1B2B] bg-[#FBFCFD]">
+      {/* 1. Page Header (SITEWIDE-REDESIGN.md Section 2) */}
+      <PageHeader
+        breadcrumb={[
+          { label: locale === 'fr' ? 'Accueil' : 'Home', href: '#/' },
+          { label: locale === 'fr' ? 'Calculateurs' : 'Calculators', href: '#/calculators' },
+          { label: locale === 'fr' ? activeSolverObj.labelFr : activeSolverObj.labelEn },
+        ]}
+        eyebrow={locale === 'fr' ? '19 SOLVEURS SCIENTIFIQUES · CEI & IEEE' : '19 SCIENTIFIC SOLVERS · IEC & IEEE'}
+        title={
+          locale === 'fr'
+            ? 'Calculateurs d’Ingénierie Électrotechnique'
+            : 'Electrical Engineering Precision Calculators'
+        }
+        intro={
+          locale === 'fr'
+            ? 'Formulations analytiques rigoureuses selon normes CEI 60364, CEI 60076, CEI 60909, CEI 60831 et IEEE Std 80 avec unités scientifiques normalisées (V, A, kW, kVA, Hz, Ω, kA, rpm, cos φ).'
+            : 'Rigorous analytical formulations conforming to IEC 60364, IEC 60076, IEC 60909, IEC 60831, and IEEE Std 80 with exact SI engineering units (V, A, kW, kVA, Hz, Ω, kA, rpm, PF).'
+        }
+      >
+        <DataStrip
+          items={[
+            {
+              label: locale === 'fr' ? 'Solveurs Actifs' : 'Active Solvers',
+              value: '19',
+              subtext: 'CEI & IEEE standard suites',
+            },
+            {
+              label: locale === 'fr' ? 'Normes Clés' : 'Core Standards',
+              value: 'CEI / IEEE',
+              subtext: '60909 · 60287 · 60076 · Std 80',
+            },
+            {
+              label: locale === 'fr' ? 'Précision Solver' : 'Solver Rigor',
+              value: 'Phasor AC',
+              subtext: locale === 'fr' ? 'Formulations vectorielles' : 'Vector complex math',
+            },
+            {
+              label: locale === 'fr' ? 'Dossier Technique' : 'Technical Dossier',
+              value: 'PDF A4',
+              subtext: locale === 'fr' ? 'Export rapport d’ingénierie' : 'Engineering study export',
+            },
+          ]}
+        />
+      </PageHeader>
+
+      <div className="max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12 space-y-8">
+        {/* Injected Equipment Sync Banner */}
+        {injectedContext && (
+          <div className="relative flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl bg-[#EEF4F8] border border-[#1F5FAE]/30 text-xs font-mono">
+            <div className="flex items-center gap-3">
+              <span className="p-2 rounded-lg bg-[#FBFCFD] text-[#1F5FAE] border border-[#1F5FAE]/20">
+                <Zap className="h-4 w-4" />
               </span>
+              <div>
+                <div className="text-[10px] uppercase text-[#1F5FAE] font-bold tracking-wider">
+                  {locale === 'fr' ? 'DONNÉES INJECTÉES DEPUIS LE DOSSIER ÉQUIPEMENT' : 'DATA INJECTED FROM EQUIPMENT DOSSIER'}
+                </div>
+                <div className="text-[#0B1B2B] font-bold flex items-center gap-2 mt-0.5">
+                  <span className="text-sm">{injectedContext.equipmentName}</span>
+                  {injectedContext.equipmentTag && (
+                    <span className="px-2 py-0.5 rounded bg-[#FBFCFD] border border-[#1F5FAE]/30 text-[#1F5FAE] text-[10px] font-mono font-bold">
+                      {injectedContext.equipmentTag}
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-[#17282C] tracking-tight">
-              {locale === 'fr' ? (
-                <>Calculateurs d’Ingénierie <span className="font-serif-editorial font-normal text-[#147C78]">Électrotechnique</span></>
-              ) : (
-                <>Electrical Engineering <span className="font-serif-editorial font-normal text-[#147C78]">Precision Calculators</span></>
-              )}
-            </h1>
-            <p className="text-sm sm:text-base text-[#33474B] mt-2 max-w-3xl leading-relaxed">
-              {locale === 'fr'
-                ? 'Formulations analytiques rigoureuses selon normes CEI 60364, CEI 60076, CEI 60909, CEI 60831 et IEEE Std 80 avec unités scientifiques normalisées (V, A, kW, kVA, Hz, Ω, kA, rpm, cos φ).'
-                : 'Rigorous analytical formulations conforming to IEC 60364, IEC 60076, IEC 60909, IEC 60831, and IEEE Std 80 with exact SI engineering units (V, A, kW, kVA, Hz, Ω, kA, rpm, PF).'}
-            </p>
+            {onClearInjectedContext && (
+              <button
+                type="button"
+                onClick={onClearInjectedContext}
+                className="px-3 py-1.5 rounded-lg bg-[#FBFCFD] hover:bg-[#1F5FAE] text-[#0B1B2B] hover:text-white border border-[#D5E0E8] text-[11px] font-mono font-bold transition-all cursor-pointer"
+              >
+                {locale === 'fr' ? 'Réinitialiser les paramètres' : 'Reset parameters'}
+              </button>
+            )}
           </div>
+        )}
 
-          {/* Active Solver Summary Pill */}
-          <div className="p-3.5 rounded-xl bg-[#F6F4EE] border border-[#DEDACF] shrink-0">
-            <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#5C6C70]">
-              {locale === 'fr' ? 'SOLVEUR ACTIF' : 'ACTIVE SOLVER'}
-            </div>
-            <div className="text-sm font-bold text-[#17282C] mt-0.5">
+        {/* Secondary Study Toolbar: Share, Study History, Saved Studies, Technical Note, A4 PDF */}
+        <div className="rounded-xl border border-[#D5E0E8] bg-[#FBFCFD] p-4 flex flex-wrap items-center justify-between gap-4 shadow-xs">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-[#1F5FAE]" />
+            <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#5B6B7B]">
+              {locale === 'fr' ? 'Outils d’Étude & Export :' : 'Study Workspace & Export:'}
+            </span>
+            <span className="font-mono text-xs font-bold text-[#0B1B2B]">
               {locale === 'fr' ? activeSolverObj.labelFr : activeSolverObj.labelEn}
-            </div>
-            <div className="font-mono text-[11px] font-bold text-[#147C78] mt-0.5">
-              {CALCULATOR_STANDARDS[activeCalc]?.standard || 'IEC / IEEE'}
-            </div>
+            </span>
+            <span className="font-mono text-[11px] text-[#1F5FAE] font-bold">
+              ({CALCULATOR_STANDARDS[activeCalc]?.standard || 'IEC / IEEE'})
+            </span>
           </div>
-        </div>
 
-        {/* Clean Secondary Toolbar: Share, Study History, Saved Studies, Technical Note, A4 PDF */}
-        <div className="pt-4 border-t border-[#DEDACF] flex flex-wrap items-center justify-between gap-3">
-          <div className="font-mono text-[11px] font-bold uppercase tracking-wider text-[#5C6C70]">
-            {locale === 'fr' ? 'Outils d’Étude & Export :' : 'Study Workspace & Export:'}
-          </div>
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={handleShareLink}
               className={`flex items-center gap-2 px-3.5 py-2 rounded-lg font-mono text-xs font-bold border transition-all cursor-pointer ${
                 copiedLink
-                  ? 'bg-[#E3EFEC] text-[#147C78] border-[#147C78]/40'
-                  : 'bg-[#F6F4EE] hover:border-[#147C78] text-[#17282C] border-[#DEDACF]'
+                  ? 'bg-[#EEF4F8] text-[#1F5FAE] border-[#1F5FAE]/40'
+                  : 'bg-[#FBFCFD] hover:border-[#1F5FAE] text-[#0B1B2B] border-[#D5E0E8]'
               }`}
               title={locale === 'fr' ? 'Copier le lien partageable avec paramètres' : 'Copy shareable URL with parameters'}
             >
-              {copiedLink ? <Check className="h-3.5 w-3.5 text-[#147C78]" /> : <Share2 className="h-3.5 w-3.5 text-[#147C78]" />}
+              {copiedLink ? <Check className="h-3.5 w-3.5 text-[#1F5FAE]" /> : <Share2 className="h-3.5 w-3.5 text-[#1F5FAE]" />}
               <span>{copiedLink ? (locale === 'fr' ? 'Lien Copié !' : 'Link Copied!') : (locale === 'fr' ? 'Partager' : 'Share')}</span>
             </button>
 
             <button
               type="button"
               onClick={handleOpenHistory}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-lg font-mono text-xs font-bold bg-[#F6F4EE] hover:border-[#147C78] text-[#17282C] border border-[#DEDACF] transition-all cursor-pointer"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-lg font-mono text-xs font-bold bg-[#FBFCFD] hover:border-[#1F5FAE] text-[#0B1B2B] border border-[#D5E0E8] transition-all cursor-pointer"
             >
-              <History className="h-3.5 w-3.5 text-[#147C78]" />
+              <History className="h-3.5 w-3.5 text-[#1F5FAE]" />
               <span>{locale === 'fr' ? 'Historique (10)' : 'Study History (10)'}</span>
             </button>
 
             <button
               type="button"
               onClick={handleOpenSavedStudies}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-lg font-mono text-xs font-bold bg-[#F6F4EE] hover:border-[#B8872D] text-[#17282C] border border-[#DEDACF] transition-all cursor-pointer"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-lg font-mono text-xs font-bold bg-[#FBFCFD] hover:border-[#F2A541] text-[#0B1B2B] border border-[#D5E0E8] transition-all cursor-pointer"
             >
-              <FolderOpen className="h-3.5 w-3.5 text-[#B8872D]" />
+              <FolderOpen className="h-3.5 w-3.5 text-[#F2A541]" />
               <span>{locale === 'fr' ? 'Études Sauvegardées' : 'Saved Studies'}</span>
               {calculationNotes.length > 0 && (
-                <span className="px-1.5 py-0.2 rounded-full bg-[#B8872D]/15 text-[#B8872D] text-[10px] font-bold border border-[#B8872D]/30">
+                <span className="px-1.5 py-0.2 rounded-full bg-[#F2A541]/15 text-[#F2A541] text-[10px] font-bold border border-[#F2A541]/30">
                   {calculationNotes.length}
                 </span>
               )}
@@ -429,7 +447,7 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
             <button
               type="button"
               onClick={handleOpenReport}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg font-mono text-xs font-bold bg-[#17282C] hover:bg-[#147C78] text-white transition-all cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg font-mono text-xs font-bold bg-[#0B1B2B] hover:bg-[#1F5FAE] text-white transition-all cursor-pointer"
             >
               <FileText className="h-3.5 w-3.5" />
               <span>{locale === 'fr' ? 'Note de Calcul' : 'Technical Note'}</span>
@@ -441,7 +459,7 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
                 const report = generateCalculationReport(activeCalc, locale, injectedContext);
                 EngineeringCalculationPdfExportService.exportCalculationPdf(report, locale);
               }}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-lg font-mono text-xs font-bold bg-[#147C78] hover:bg-[#0E5E5B] text-white transition-all cursor-pointer"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-lg font-mono text-xs font-bold bg-[#1F5FAE] hover:bg-[#174A88] text-white transition-all cursor-pointer shadow-xs"
               title={locale === 'fr' ? 'Télécharger la Note Technique PDF A4 Officielle (CEI / NF C / IEEE)' : 'Download Official A4 PDF Design Sheet (IEC / NF C / IEEE)'}
             >
               <Download className="h-3.5 w-3.5 text-white" />
@@ -449,140 +467,139 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
             </button>
           </div>
         </div>
-      </div>
 
-      {/* Searchable, Categorized Solver Picker */}
-      <div className="rounded-2xl border border-[#DEDACF] bg-[#FFFDF9] p-5 shadow-sm space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-1.5">
-            {[
-              { id: 'ALL' as const, labelFr: 'Tous (19)', labelEn: 'All Solvers (19)' },
-              { id: 'POWER_CABLES' as const, labelFr: 'Câbles & Distribution (6)', labelEn: 'Cables & Distribution (6)' },
-              { id: 'SUBSTATION_HV' as const, labelFr: 'Postes HTB & Lignes (5)', labelEn: 'Substations & HV Lines (5)' },
-              { id: 'PROTECTION_SAFETY' as const, labelFr: 'Protection, Terre & TCC (5)', labelEn: 'Protection, Grounding & TCC (5)' },
-              { id: 'MOTORS_RENEWABLES' as const, labelFr: 'Moteurs, PV & BESS (3)', labelEn: 'Motors, PV & BESS (3)' },
-            ].map((cat) => (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => setSolverCategory(cat.id)}
-                className={`px-3 py-1.5 rounded-lg font-mono text-xs font-bold transition-all cursor-pointer border ${
-                  solverCategory === cat.id
-                    ? 'bg-[#17282C] text-white border-[#17282C]'
-                    : 'bg-[#F6F4EE] text-[#5C6C70] border-[#DEDACF] hover:text-[#17282C]'
-                }`}
-              >
-                {locale === 'fr' ? cat.labelFr : cat.labelEn}
-              </button>
-            ))}
+        {/* Searchable, Categorized Solver Picker */}
+        <div className="rounded-xl border border-[#D5E0E8] bg-[#FBFCFD] p-5 shadow-xs space-y-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-1.5">
+              {[
+                { id: 'ALL' as const, labelFr: 'Tous (19)', labelEn: 'All Solvers (19)' },
+                { id: 'POWER_CABLES' as const, labelFr: 'Câbles & Distribution (6)', labelEn: 'Cables & Distribution (6)' },
+                { id: 'SUBSTATION_HV' as const, labelFr: 'Postes HTB & Lignes (5)', labelEn: 'Substations & HV Lines (5)' },
+                { id: 'PROTECTION_SAFETY' as const, labelFr: 'Protection, Terre & TCC (5)', labelEn: 'Protection, Grounding & TCC (5)' },
+                { id: 'MOTORS_RENEWABLES' as const, labelFr: 'Moteurs, PV & BESS (3)', labelEn: 'Motors, PV & BESS (3)' },
+              ].map((cat) => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setSolverCategory(cat.id)}
+                  className={`px-3 py-1.5 rounded-full font-mono text-xs font-bold transition-all cursor-pointer border ${
+                    solverCategory === cat.id
+                      ? 'bg-[#0B1B2B] text-[#F3F7FA] border-[#0B1B2B]'
+                      : 'bg-[#FBFCFD] text-[#5B6B7B] border-[#D5E0E8] hover:text-[#0B1B2B] hover:border-[#1F5FAE]'
+                  }`}
+                >
+                  {locale === 'fr' ? cat.labelFr : cat.labelEn}
+                </button>
+              ))}
+            </div>
+
+            <input
+              type="text"
+              value={solverSearch}
+              onChange={(e) => setSolverSearch(e.target.value)}
+              placeholder={locale === 'fr' ? 'Filtrer un solveur (ex. CEI 60909, câble, TCC)...' : 'Filter solver (e.g. IEC 60909, cable, TCC)...'}
+              className="w-full md:w-72 px-3.5 py-2 rounded-lg bg-[#FBFCFD] border border-[#D5E0E8] text-xs text-[#0B1B2B] placeholder-[#5B6B7B] focus:outline-none focus:border-[#1F5FAE]"
+            />
           </div>
 
-          <input
-            type="text"
-            value={solverSearch}
-            onChange={(e) => setSolverSearch(e.target.value)}
-            placeholder={locale === 'fr' ? 'Filtrer un solveur (ex. CEI 60909, câble, TCC)...' : 'Filter solver (e.g. IEC 60909, cable, TCC)...'}
-            className="w-full md:w-72 px-3.5 py-2 rounded-lg bg-[#F6F4EE] border border-[#DEDACF] text-xs text-[#17282C] placeholder-[#5C6C70] focus:outline-none focus:border-[#147C78]"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-          {filteredSolvers.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeCalc === tab.id;
-            return (
-              <a
-                key={tab.id}
-                href={`#/calculators/${tab.id}`}
-                onClick={(e) => {
-                  if (!e.ctrlKey && !e.metaKey && e.button === 0) {
-                    e.preventDefault();
-                    handleSelectCalc(tab.id);
-                  }
-                }}
-                className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all border select-none ${
-                  isActive
-                    ? 'border-[#147C78] bg-[#E3EFEC] text-[#17282C] shadow-xs ring-1 ring-[#147C78]/30'
-                    : 'border-[#DEDACF] bg-[#F6F4EE] text-[#33474B] hover:text-[#17282C] hover:border-[#147C78]/50'
-                }`}
-              >
-                <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-[#147C78]' : 'text-[#5C6C70]'}`} />
-                <div className="min-w-0 flex-1">
-                  <div className="truncate font-bold">{locale === 'fr' ? tab.labelFr : tab.labelEn}</div>
-                  <div className="font-mono text-[10px] text-[#5C6C70] truncate">
-                    {CALCULATOR_STANDARDS[tab.id]?.standard || 'CEI / IEEE'}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {filteredSolvers.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeCalc === tab.id;
+              return (
+                <a
+                  key={tab.id}
+                  href={`#/calculators/${tab.id}`}
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      handleSelectCalc(tab.id);
+                    }
+                  }}
+                  className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-xs font-semibold transition-all border select-none ${
+                    isActive
+                      ? 'border-[#1F5FAE] bg-[#EEF4F8] text-[#0B1B2B] shadow-xs'
+                      : 'border-[#D5E0E8] bg-[#FBFCFD] text-[#3A4B5C] hover:text-[#0B1B2B] hover:border-[#1F5FAE]/60'
+                  }`}
+                >
+                  <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-[#1F5FAE]' : 'text-[#5B6B7B]'}`} />
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate font-bold">{locale === 'fr' ? tab.labelFr : tab.labelEn}</div>
+                    <div className="font-mono text-[10px] text-[#5B6B7B] truncate">
+                      {CALCULATOR_STANDARDS[tab.id]?.standard || 'CEI / IEEE'}
+                    </div>
                   </div>
-                </div>
-              </a>
-            );
-          })}
+                </a>
+              );
+            })}
+          </div>
         </div>
-      </div>
 
-      {/* Dynamic Context Link to Physical Spine & Simulation Lab */}
-      {currentContextLink && (onNavigateContextStack || onNavigateSimulation) && (
-        <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl bg-[#FFFDF9] border border-[#DEDACF] shadow-sm">
-          <div className="flex items-center gap-2.5">
-            <span className="p-1.5 rounded-lg bg-[#E3EFEC] text-[#147C78] border border-[#147C78]/30 shrink-0">
-              <Zap className="h-4 w-4" />
-            </span>
-            <div>
-              <div className="text-[10px] font-mono uppercase tracking-wider text-[#5C6C70] font-bold">
-                {locale === 'fr' ? "LIEN AVEC L'ÉPINE DORSALE D'INGÉNIERIE" : 'LINKED TO PHYSICAL ENGINEERING SPINE'}
-              </div>
-              <div className="text-xs font-bold text-[#17282C]">
-                {currentContextLink.nodeName[locale]}
+        {/* Dynamic Context Link to Physical Spine & Simulation Lab */}
+        {currentContextLink && (onNavigateContextStack || onNavigateSimulation) && (
+          <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl bg-[#FBFCFD] border border-[#D5E0E8] shadow-xs">
+            <div className="flex items-center gap-2.5">
+              <span className="p-1.5 rounded-lg bg-[#EEF4F8] text-[#1F5FAE] border border-[#1F5FAE]/20 shrink-0">
+                <Zap className="h-4 w-4" />
+              </span>
+              <div>
+                <div className="text-[10px] font-mono uppercase tracking-wider text-[#5B6B7B] font-bold">
+                  {locale === 'fr' ? "LIEN AVEC L'ÉPINE DORSALE D'INGÉNIERIE" : 'LINKED TO PHYSICAL ENGINEERING SPINE'}
+                </div>
+                <div className="text-xs font-bold text-[#0B1B2B]">
+                  {currentContextLink.nodeName[locale]}
+                </div>
               </div>
             </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              {onNavigateContextStack && (
+                <button
+                  type="button"
+                  onClick={() => onNavigateContextStack(currentContextLink.nodeId)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1F5FAE] hover:bg-[#174A88] text-white font-mono text-xs font-bold transition-all cursor-pointer"
+                >
+                  <Zap className="h-3.5 w-3.5" />
+                  <span>{locale === 'fr' ? 'Ouvrir dans l’Épine Dorsale & TCC' : 'Open in Spine & TCC'}</span>
+                </button>
+              )}
+              {onNavigateSimulation && currentContextLink.simTab && (
+                <button
+                  type="button"
+                  onClick={() => onNavigateSimulation(currentContextLink.simTab)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FBFCFD] hover:border-[#1F5FAE] text-[#0B1B2B] border border-[#D5E0E8] font-mono text-xs font-bold transition-all cursor-pointer"
+                >
+                  <Activity className="h-3.5 w-3.5 text-[#1F5FAE]" />
+                  <span>{currentContextLink.simName ? currentContextLink.simName[locale] : (locale === 'fr' ? 'Banc de Simulation' : 'Simulation Lab')}</span>
+                </button>
+              )}
+            </div>
           </div>
+        )}
 
-          <div className="flex items-center gap-2 shrink-0">
-            {onNavigateContextStack && (
-              <button
-                type="button"
-                onClick={() => onNavigateContextStack(currentContextLink.nodeId)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#147C78] hover:bg-[#0E5E5B] text-white font-mono text-xs font-bold transition-all cursor-pointer"
-              >
-                <Zap className="h-3.5 w-3.5" />
-                <span>{locale === 'fr' ? 'Ouvrir dans l’Épine Dorsale & TCC' : 'Open in Spine & TCC'}</span>
-              </button>
-            )}
-            {onNavigateSimulation && currentContextLink.simTab && (
-              <button
-                type="button"
-                onClick={() => onNavigateSimulation(currentContextLink.simTab)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F6F4EE] hover:border-[#147C78] text-[#17282C] border border-[#DEDACF] font-mono text-xs font-bold transition-all cursor-pointer"
-              >
-                <Activity className="h-3.5 w-3.5 text-[#147C78]" />
-                <span>{currentContextLink.simName ? currentContextLink.simName[locale] : (locale === 'fr' ? 'Banc de Simulation' : 'Simulation Lab')}</span>
-              </button>
-            )}
+        {/* Trust & Scientific Foundation Badge */}
+        <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-[#FBFCFD] border border-[#D5E0E8] font-mono text-xs">
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-[#5B6B7B] font-bold uppercase tracking-wider">
+              {locale === 'fr' ? 'Cadre Normatif & Preuve :' : 'Normative Framework & Trust:'}
+            </span>
+            <EvidenceTrustBadge
+              type={CALCULATOR_STANDARDS[activeCalc]?.badgeType || 'VERIFIED_STANDARD'}
+              locale={locale}
+              size="sm"
+              governingStandard={CALCULATOR_STANDARDS[activeCalc]?.standard || 'CEI / IEEE'}
+            />
+          </div>
+          <div className="text-[11px] text-[#5B6B7B] font-mono">
+            {locale === 'fr' 
+              ? 'Équations analytiques conformes aux référentiels CEI & IEEE — Dérivations détaillées ci-dessous' 
+              : 'Analytical equations conforming to IEC & IEEE standards — Detailed derivations below'}
           </div>
         </div>
-      )}
 
-      {/* Trust & Scientific Foundation Badge */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-[#FFFDF9] border border-[#DEDACF] font-mono text-xs">
-        <div className="flex items-center gap-2">
-          <span className="text-[11px] text-[#5C6C70] font-bold uppercase tracking-wider">
-            {locale === 'fr' ? 'Cadre Normatif & Preuve :' : 'Normative Framework & Trust:'}
-          </span>
-          <EvidenceTrustBadge
-            type={CALCULATOR_STANDARDS[activeCalc]?.badgeType || 'VERIFIED_STANDARD'}
-            locale={locale}
-            size="sm"
-            governingStandard={CALCULATOR_STANDARDS[activeCalc]?.standard || 'CEI / IEEE'}
-          />
-        </div>
-        <div className="text-[11px] text-[#5C6C70] font-mono">
-          {locale === 'fr' 
-            ? 'Équations analytiques conformes aux référentiels CEI & IEEE — Dérivations détaillées ci-dessous' 
-            : 'Analytical equations conforming to IEC & IEEE standards — Detailed derivations below'}
-        </div>
-      </div>
-
-      {/* Dedicated Dark Technical Workbench Frame for the Active Solver */}
-      <div className="epede-workbench rounded-2xl p-4 sm:p-6 shadow-md">
+        {/* Dedicated Dark Technical Workbench Frame for the Active Solver */}
+        <div className="epede-workbench rounded-2xl p-4 sm:p-6 shadow-sm border border-[#1E3347] bg-[#0B1B2B]">
 
       {/* 1. 3-PHASE POWER CALCULATOR */}
       {activeCalc === 'power' && <PowerCalculator locale={locale} />}
@@ -731,7 +748,7 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
       </div>
 
       {/* Standard Assumptions & Model Limitations Manifest */}
-      <div className="pt-4">
+      <div className="pt-2">
         <AssumptionsLimitationsCard
           locale={locale}
           isCalculator={true}
@@ -739,30 +756,61 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
           titleEn="Calculation Scope & Electrotechnical Model Assumptions"
         />
       </div>
-
-      {/* Engineering Calculation Note Modal */}
-      <CalculationReportModal
-        isOpen={isReportOpen}
-        onClose={() => setIsReportOpen(false)}
-        locale={locale}
-        data={generateCalculationReport(activeCalc, locale, injectedContext)}
-      />
-
-      {/* Cloud-Saved Engineering Studies Workspace Drawer */}
-      <SavedStudiesDrawer
-        isOpen={isSavedStudiesOpen}
-        onClose={() => setIsSavedStudiesOpen(false)}
-        locale={locale}
-      />
-
-      {/* Session Calculation Study History Drawer */}
-      <CalculationStudyHistoryDrawer
-        isOpen={isHistoryOpen}
-        onClose={() => setIsHistoryOpen(false)}
-        locale={locale}
-        onNavigate={(tab) => handleSelectCalc(tab as CalculatorTabType)}
-      />
-
     </div>
-  );
+
+    {/* Final Call to Action */}
+    <FinalCTA
+      title={
+        locale === 'fr'
+          ? 'Passez du calcul analytique à la simulation transitoire'
+          : 'Bridge analytical calculations into transient simulation'
+      }
+      description={
+        locale === 'fr'
+          ? 'Observez la réponse dynamique de votre dimensionnement sur le réseau RIS/RIN : transitoire de démarrage moteur, saturation TC sous Icc maximal, ou dispatching hybride PV/BESS.'
+          : 'Observe dynamic grid response of your calculated ratings on Cameroon RIN/RIS: motor starting voltage dip, CT transient saturation under peak short-circuit, or hybrid PV/BESS dispatch.'
+      }
+      primaryAction={{
+        label: locale === 'fr' ? 'Ouvrir le Simulation Lab' : 'Enter Simulation Lab',
+        onClick: () => {
+          if (onNavigateSimulation) {
+            onNavigateSimulation();
+          } else {
+            window.location.hash = '#/simulation';
+          }
+        },
+      }}
+      secondaryAction={{
+        label: locale === 'fr' ? 'Explorer la Grille Camerounaise' : 'Explore Cameroon Grid',
+        onClick: () => {
+          window.location.hash = '#/cameroon-grid';
+        },
+      }}
+    />
+
+    {/* Engineering Calculation Note Modal */}
+    <CalculationReportModal
+      isOpen={isReportOpen}
+      onClose={() => setIsReportOpen(false)}
+      locale={locale}
+      data={generateCalculationReport(activeCalc, locale, injectedContext)}
+    />
+
+    {/* Cloud-Saved Engineering Studies Workspace Drawer */}
+    <SavedStudiesDrawer
+      isOpen={isSavedStudiesOpen}
+      onClose={() => setIsSavedStudiesOpen(false)}
+      locale={locale}
+    />
+
+    {/* Session Calculation Study History Drawer */}
+    <CalculationStudyHistoryDrawer
+      isOpen={isHistoryOpen}
+      onClose={() => setIsHistoryOpen(false)}
+      locale={locale}
+      onNavigate={(tab) => handleSelectCalc(tab as CalculatorTabType)}
+    />
+
+  </div>
+);
 };
