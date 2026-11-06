@@ -27,6 +27,7 @@ import {
 import type { DomainCode, StandardClause } from '../../types/epede';
 import type { CalculatorTabType } from '../calculators/services/calculationReportService';
 import type { SimulationTabType } from '../simulation/SimulationLabView';
+import { PageHeader, DataStrip, FinalCTA } from '../common';
 
 interface StandardsViewProps {
   initialRef?: string | null;
@@ -429,60 +430,58 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
   const linkedSim = selectedStandard.associated_simulation ? getLinkedSimulationMeta(selectedStandard.associated_simulation) : null;
 
   return (
-    <div className="space-y-6">
-      
-      {/* Top Breadcrumbs / Action Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <button
-          type="button"
-          onClick={onBack}
-          className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-[#5C6C70] hover:text-[#147C78] transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          <span>{locale === 'fr' ? 'RETOUR AU TABLEAU DE BORD' : 'BACK TO HOME'}</span>
-        </button>
+    <div className="space-y-10 pb-24 text-[#0B1B2B] font-sans">
+      {/* 1. Standard Page Header */}
+      <PageHeader
+        eyebrow={
+          locale === 'fr'
+            ? 'RÉFÉRENTIEL NORMATIF & ESSAIS FAT / SAT'
+            : 'STANDARDS & COMPLIANCE REGISTRY'
+        }
+        title={
+          locale === 'fr'
+            ? 'Référentiel des Normes & Essais FAT / SAT'
+            : 'Standards, FAT / SAT & Compliance Registry'
+        }
+        intro={
+          locale === 'fr'
+            ? 'Exigences normatives internationales CEI / IEEE, réglementations sectorielles ARSEL / NF C et protocole interactif de vérification des essais en usine (FAT) et sur site (SAT).'
+            : 'International IEC / IEEE standards, regional Cameroon ARSEL / NF C regulations, and interactive factory (FAT) and site (SAT) acceptance verification guide.'
+        }
+      />
 
-        <div className="flex items-center gap-2 font-mono text-xs">
-          <span className="text-[#5C6C70] font-bold uppercase tracking-wider">
-            {locale === 'fr' ? 'FONDATION L01' : 'FOUNDATION L01'}
-          </span>
-          <span className="font-bold text-[#147C78] bg-[#E3EFEC] px-2.5 py-1 rounded-sm border border-[#147C78]/30 uppercase tracking-wider flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#147C78]" />
-            {locale === 'fr' ? 'Référentiel Normatif & Essais' : 'Standards & Compliance Registry'}
-          </span>
-        </div>
-      </div>
+      {/* 2. Normative Standards Data Strip */}
+      <DataStrip
+        items={[
+          {
+            label: locale === 'fr' ? 'Normes Référencées' : 'Logged Standards',
+            value: `${STANDARDS.length}`,
+            subtext: 'CEI · IEEE · NF C · ARSEL',
+          },
+          {
+            label: locale === 'fr' ? 'Organismes Émetteurs' : 'Standard Issuers',
+            value: `${issuers.length - 1} Organismes`,
+            subtext: 'IEC, IEEE, CENELEC, NF',
+          },
+          {
+            label: locale === 'fr' ? 'Domaines Couverts' : 'Covered Domains',
+            value: '16 Domaines',
+            subtext: 'D01 à D16 Intégrés',
+          },
+          {
+            label: locale === 'fr' ? 'Statut Juridiction' : 'Jurisdiction Scope',
+            value: 'International & 🇨🇲',
+            subtext: locale === 'fr' ? 'Conforme Code Réseau ARSEL' : 'ARSEL Grid Code compliant',
+          },
+        ]}
+      />
 
-      {/* Engineering Header */}
-      <header className="rounded-sm border border-[#17282C]/15 bg-[#FFFDF9] p-6 sm:p-8 shadow-xs">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-start gap-4">
-            <div className="p-3 bg-[#E3EFEC] border border-[#147C78]/30 rounded-sm text-[#147C78] shrink-0">
-              <ShieldCheck className="h-8 w-8" />
-            </div>
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#17282C] flex items-center gap-3">
-                <span>{locale === 'fr' ? 'Référentiel des Normes & Essais FAT / SAT' : 'Standards, FAT / SAT & Compliance Registry'}</span>
-              </h1>
-              <p className="mt-1 text-xs sm:text-sm text-[#33474B] max-w-3xl leading-relaxed">
-                {locale === 'fr'
-                  ? 'Exigences normatives internationales CEI / IEEE, réglementations sectorielles ARSEL / NF C et protocole interactif de vérification des essais en usine (FAT) et sur site (SAT).'
-                  : 'International IEC / IEEE standards, regional Cameroon ARSEL / NF C regulations, and interactive factory (FAT) and site (SAT) acceptance verification guide.'}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 shrink-0 font-mono text-xs">
-            <span className="px-3 py-1.5 rounded-sm border border-[#DEDACF] bg-[#F6F4EE] text-[#17282C] font-bold">
-              {STANDARDS.length} {locale === 'fr' ? 'NORMES RÉFÉRENCÉES' : 'STANDARDS LOGGED'}
-            </span>
-          </div>
-        </div>
-
-        {/* Search & Filter Toolbar */}
-        <div className="mt-6 pt-5 border-t border-[#DEDACF] flex flex-wrap items-center justify-between gap-4">
+      {/* 3. Search & Filter Bar */}
+      <div className="rounded-[6px] border border-[#D5E0E8] bg-[#FBFCFD] p-5 sm:p-6 shadow-sm space-y-4 font-mono text-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-mono font-bold text-[#5C6C70] flex items-center gap-1 mr-1 uppercase tracking-wider">
-              <Filter className="h-3.5 w-3.5 text-[#147C78]" />
+            <span className="text-xs font-mono font-bold text-[#5B6B7B] flex items-center gap-1 mr-1 uppercase tracking-wider">
+              <Filter className="h-3.5 w-3.5 text-[#1F5FAE]" />
               <span>{locale === 'fr' ? 'ORGANISME :' : 'ISSUER:'}</span>
             </span>
             {issuers.map((iss) => (
@@ -490,10 +489,10 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
                 key={iss}
                 type="button"
                 onClick={() => setSelectedIssuer(iss)}
-                className={`px-3 py-1 rounded-sm text-xs font-mono font-bold uppercase tracking-wider transition-all border ${
+                className={`px-3 py-1 rounded-[4px] text-xs font-mono font-semibold uppercase tracking-wider transition-all border ${
                   selectedIssuer === iss
-                    ? 'border-[#147C78] bg-[#E3EFEC] text-[#147C78]'
-                    : 'border-[#DEDACF] bg-[#F6F4EE] text-[#5C6C70] hover:text-[#17282C] hover:border-[#147C78]/40'
+                    ? 'border-[#0B1B2B] bg-[#0B1B2B] text-[#FBFCFD]'
+                    : 'border-[#D5E0E8] bg-[#EEF4F8] text-[#5B6B7B] hover:text-[#0B1B2B] hover:border-[#1F5FAE]'
                 }`}
               >
                 {iss}
@@ -502,20 +501,24 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
           </div>
 
           <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#5C6C70]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#5B6B7B]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={locale === 'fr' ? 'Filtrer (ex: 60076, arc, terre, clause...)' : 'Search (e.g. 60076, arc, ground, clause...)'}
-              className="w-full bg-[#F6F4EE] border border-[#DEDACF] focus:border-[#147C78] rounded-sm pl-9 pr-3 py-1.5 text-xs text-[#17282C] font-mono placeholder:text-[#5C6C70]/70 outline-none transition-colors"
+              placeholder={
+                locale === 'fr'
+                  ? 'Filtrer (ex: 60076, arc, terre, clause...)'
+                  : 'Search (e.g. 60076, arc, ground, clause...)'
+              }
+              className="w-full bg-[#FBFCFD] border border-[#D5E0E8] focus:border-[#1F5FAE] rounded-[4px] pl-9 pr-3 py-2 text-xs text-[#0B1B2B] font-mono placeholder:text-[#5B6B7B] outline-none transition-colors"
             />
           </div>
         </div>
 
         {/* Domain Filter Toolbar */}
-        <div className="mt-3 pt-3 border-t border-[#DEDACF] flex flex-wrap items-center gap-1.5">
-          <span className="text-[11px] font-mono font-bold text-[#5C6C70] uppercase tracking-wider mr-1">
+        <div className="pt-3 border-t border-[#D5E0E8] flex flex-wrap items-center gap-1.5">
+          <span className="text-[11px] font-mono font-bold text-[#5B6B7B] uppercase tracking-wider mr-1">
             {locale === 'fr' ? 'DOMAINE :' : 'DOMAIN:'}
           </span>
           {[
@@ -530,15 +533,15 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
             { code: 'D08', label: 'D08 SCADA' },
             { code: 'D09', label: 'D09 SMART GRIDS' },
             { code: 'D10', label: 'D10 MAINTENANCE' },
-          ].map(d => (
+          ].map((d) => (
             <button
               key={d.code}
               type="button"
               onClick={() => setSelectedDomain(d.code)}
-              className={`px-2.5 py-1 rounded-sm text-[10px] font-mono font-bold uppercase tracking-wider transition-all border ${
+              className={`px-2.5 py-1 rounded-[4px] text-[10px] font-mono font-semibold uppercase tracking-wider transition-all border ${
                 selectedDomain === d.code
-                  ? 'border-[#147C78] bg-[#E3EFEC] text-[#147C78]'
-                  : 'border-[#DEDACF] bg-[#F6F4EE] text-[#5C6C70] hover:text-[#17282C] hover:border-[#147C78]/40'
+                  ? 'border-[#1F5FAE] bg-[#1F5FAE] text-[#FBFCFD]'
+                  : 'border-[#D5E0E8] bg-[#EEF4F8] text-[#5B6B7B] hover:text-[#0B1B2B] hover:border-[#1F5FAE]'
               }`}
             >
               {d.label}
@@ -547,7 +550,7 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
         </div>
 
         {/* Standards Navigation Chips */}
-        <div className="mt-4 flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
+        <div className="pt-3 border-t border-[#D5E0E8] flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
           {filteredStandards.map((s) => {
             const isSelected = selectedStandard.reference === s.reference;
             const hasClauses = (s.clauses || []).length > 0;
@@ -556,21 +559,30 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
                 key={s.reference}
                 type="button"
                 onClick={() => setSelectedRef(s.reference)}
-                className={`px-3.5 py-1.5 rounded-sm text-xs font-mono font-bold uppercase tracking-wider whitespace-nowrap transition-all border shrink-0 flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-[4px] text-xs font-mono font-semibold uppercase tracking-wider whitespace-nowrap transition-all border shrink-0 flex items-center gap-1.5 ${
                   isSelected
-                    ? 'border-[#147C78] bg-[#147C78] text-[#FFFDF9] shadow-xs'
-                    : 'border-[#DEDACF] bg-[#F6F4EE] text-[#33474B] hover:text-[#17282C] hover:border-[#147C78]/40'
+                    ? 'border-[#0B1B2B] bg-[#0B1B2B] text-[#FBFCFD] shadow-xs'
+                    : 'border-[#D5E0E8] bg-[#EEF4F8] text-[#3A4B5C] hover:text-[#0B1B2B] hover:border-[#1F5FAE]'
                 }`}
               >
                 <span>{s.reference}</span>
                 {hasClauses && (
-                  <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-[#FFFDF9]' : 'bg-[#B8872D]'}`} title={locale === 'fr' ? 'Clauses FAT/SAT activées' : 'FAT/SAT clauses available'} />
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full ${
+                      isSelected ? 'bg-[#F2A541]' : 'bg-[#1F5FAE]'
+                    }`}
+                    title={
+                      locale === 'fr'
+                        ? 'Clauses FAT/SAT activées'
+                        : 'FAT/SAT clauses available'
+                    }
+                  />
                 )}
               </button>
             );
           })}
         </div>
-      </header>
+      </div>
 
       {/* Cameroon National Grid Context & Tropical Specifications */}
       <div className="rounded-sm border border-[#17282C]/15 bg-[#FFFDF9] p-4 sm:p-5 text-xs font-mono shadow-xs">
@@ -1057,6 +1069,37 @@ export const StandardsView: React.FC<StandardsViewProps> = ({
         </div>
 
       </div>
+
+      {/* 4. Final CTA */}
+      <FinalCTA
+        eyebrow={
+          locale === 'fr'
+            ? 'Ingénierie & Conformité Normative'
+            : 'Engineering & Normative Compliance'
+        }
+        title={
+          locale === 'fr'
+            ? 'Validez vos hypothèses avec les calculateurs dédiés.'
+            : 'Validate your assumptions with dedicated engineering solvers.'
+        }
+        description={
+          locale === 'fr'
+            ? 'Chaque norme CEI / IEEE dispose d’un calculateur certifié ou d’un banc de simulation interactif associé pour passer de la clause à la vérification chiffrée.'
+            : 'Every IEC / IEEE standard is backed by a certified engineering calculator or interactive simulation lab to turn clause requirements into verified numbers.'
+        }
+        primaryAction={{
+          label: locale === 'fr' ? 'Ouvrir les calculateurs' : 'Open Calculators',
+          onClick: () => {
+            window.location.hash = '#/calculators';
+          },
+        }}
+        secondaryAction={{
+          label: locale === 'fr' ? 'Explorer la simulation' : 'Explore Simulation Lab',
+          onClick: () => {
+            window.location.hash = '#/simulation';
+          },
+        }}
+      />
 
     </div>
   );
