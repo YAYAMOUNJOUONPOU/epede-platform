@@ -549,8 +549,8 @@ export default function App() {
         </div>
       )}
 
-      {/* Main App Navigation Header */}
-      {currentView !== 'ecosystem' && (
+      {/* Main App Navigation Header (Rendered on all views except full-bleed Home and 3D Ecosystem) */}
+      {currentView !== 'ecosystem' && currentView !== 'home' && (
         <Header
           locale={locale}
           onLocaleChange={setLocale}

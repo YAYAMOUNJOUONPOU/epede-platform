@@ -9,11 +9,11 @@
     "test": "tsx scripts/runTests.ts",
     "validate:content": "tsx scripts/generate-meta.ts",
     "verify": "npm run doctor && npm test && npm run lint && npm run build",
-    "build": "npm run validate:content && tsc --noEmit && vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
+    "build": "npm run validate:content && node --max-old-space-size=4096 node_modules/typescript/bin/tsc --noEmit && vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
     "start": "node dist/server.cjs",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
-    "lint": "npm run validate:content && tsc --noEmit"
+    "lint": "npm run validate:content && node --max-old-space-size=4096 node_modules/typescript/bin/tsc --noEmit"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
