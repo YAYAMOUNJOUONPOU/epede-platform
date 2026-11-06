@@ -2,7 +2,7 @@
 // EPEDE D06 - Master Orchestrator for Electrical Installations & Utilization
 // Upgraded 5-Stage Progressive Architecture & First View Ecosystem
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import {
   Zap,
   Activity,
@@ -32,40 +32,38 @@ import {
   ChevronRight,
   Building2
 } from 'lucide-react';
-import { OperatorFabricStream } from '../digitaltwin/OperatorFabricStream';
-import { AasDrawer } from '../digitaltwin/AasDrawer';
 import type { Equipment } from '../../types/epede';
 import { InstallationCommandHeader } from './InstallationCommandHeader';
 import { InstallationEcosystemHero } from './InstallationEcosystemHero';
 import { MasterInstallationJourney } from './MasterInstallationJourney';
-import { InteractiveBuildingSldCanvas } from './InteractiveBuildingSldCanvas';
-import { TgbtSwitchboardExplorer } from './TgbtSwitchboardExplorer';
-import { DistributionBoardsAndCircuitsExplorer } from './DistributionBoardsAndCircuitsExplorer';
-import { EarthingAndNeutralExplorer } from './EarthingAndNeutralExplorer';
-import { UsefulEnergyAndLoadsExplorer } from './UsefulEnergyAndLoadsExplorer';
-import { InstallationScenariosAndSafetyExplorer } from './InstallationScenariosAndSafetyExplorer';
-import { InstallationEngineeringDrawer } from './InstallationEngineeringDrawer';
-import { InstallationEngineeringKnowledgeExplorer } from './InstallationEngineeringKnowledgeExplorer';
-import { ConceptualProjectDesignWorkbench } from './ConceptualProjectDesignWorkbench';
 
-// Advanced Engineering Modules
-import { MasterInstallationChainExplorer } from '../common/MasterInstallationChainExplorer';
-import { FacilityArchetypesExplorer } from './FacilityArchetypesExplorer';
-import { InteractiveTgbtBuilder } from './InteractiveTgbtBuilder';
-import { InteractivePanelBuilder } from './InteractivePanelBuilder';
-import { DifferentialProtectionLab } from './DifferentialProtectionLab';
-import { SurgeProtectionDeviceLab } from './SurgeProtectionDeviceLab';
-import { StructuredLoadLibrary } from './StructuredLoadLibrary';
-import { InstallationFormulasExplainer } from './InstallationFormulasExplainer';
-
-// 6 Pro Engineering Modules
-import { SelectiveCoordinationTccStudio } from './SelectiveCoordinationTccStudio';
-import { ArcFlashHazardCalculator } from './ArcFlashHazardCalculator';
-import { HarmonicsAndPowerQualityAnalyzer } from './HarmonicsAndPowerQualityAnalyzer';
-import { CableSizingDeratingMatrix } from './CableSizingDeratingMatrix';
-import { TgbtThermalDissipationCalculator } from './TgbtThermalDissipationCalculator';
-import { PanelCadAndDeliverablesExportEngine } from './PanelCadAndDeliverablesExportEngine';
-import { CameroonInstallationGridRealityEngine } from './CameroonInstallationGridRealityEngine';
+// Lazy-loaded Stage Sub-Modules & Drawers to minimize initial chunk size
+const OperatorFabricStream = lazy(() => import('../digitaltwin/OperatorFabricStream').then(m => ({ default: m.OperatorFabricStream })));
+const AasDrawer = lazy(() => import('../digitaltwin/AasDrawer').then(m => ({ default: m.AasDrawer })));
+const InteractiveBuildingSldCanvas = lazy(() => import('./InteractiveBuildingSldCanvas').then(m => ({ default: m.InteractiveBuildingSldCanvas })));
+const TgbtSwitchboardExplorer = lazy(() => import('./TgbtSwitchboardExplorer').then(m => ({ default: m.TgbtSwitchboardExplorer })));
+const DistributionBoardsAndCircuitsExplorer = lazy(() => import('./DistributionBoardsAndCircuitsExplorer').then(m => ({ default: m.DistributionBoardsAndCircuitsExplorer })));
+const EarthingAndNeutralExplorer = lazy(() => import('./EarthingAndNeutralExplorer').then(m => ({ default: m.EarthingAndNeutralExplorer })));
+const UsefulEnergyAndLoadsExplorer = lazy(() => import('./UsefulEnergyAndLoadsExplorer').then(m => ({ default: m.UsefulEnergyAndLoadsExplorer })));
+const InstallationScenariosAndSafetyExplorer = lazy(() => import('./InstallationScenariosAndSafetyExplorer').then(m => ({ default: m.InstallationScenariosAndSafetyExplorer })));
+const InstallationEngineeringDrawer = lazy(() => import('./InstallationEngineeringDrawer').then(m => ({ default: m.InstallationEngineeringDrawer })));
+const InstallationEngineeringKnowledgeExplorer = lazy(() => import('./InstallationEngineeringKnowledgeExplorer').then(m => ({ default: m.InstallationEngineeringKnowledgeExplorer })));
+const ConceptualProjectDesignWorkbench = lazy(() => import('./ConceptualProjectDesignWorkbench').then(m => ({ default: m.ConceptualProjectDesignWorkbench })));
+const MasterInstallationChainExplorer = lazy(() => import('../common/MasterInstallationChainExplorer').then(m => ({ default: m.MasterInstallationChainExplorer })));
+const FacilityArchetypesExplorer = lazy(() => import('./FacilityArchetypesExplorer').then(m => ({ default: m.FacilityArchetypesExplorer })));
+const InteractiveTgbtBuilder = lazy(() => import('./InteractiveTgbtBuilder').then(m => ({ default: m.InteractiveTgbtBuilder })));
+const InteractivePanelBuilder = lazy(() => import('./InteractivePanelBuilder').then(m => ({ default: m.InteractivePanelBuilder })));
+const DifferentialProtectionLab = lazy(() => import('./DifferentialProtectionLab').then(m => ({ default: m.DifferentialProtectionLab })));
+const SurgeProtectionDeviceLab = lazy(() => import('./SurgeProtectionDeviceLab').then(m => ({ default: m.SurgeProtectionDeviceLab })));
+const StructuredLoadLibrary = lazy(() => import('./StructuredLoadLibrary').then(m => ({ default: m.StructuredLoadLibrary })));
+const InstallationFormulasExplainer = lazy(() => import('./InstallationFormulasExplainer').then(m => ({ default: m.InstallationFormulasExplainer })));
+const SelectiveCoordinationTccStudio = lazy(() => import('./SelectiveCoordinationTccStudio').then(m => ({ default: m.SelectiveCoordinationTccStudio })));
+const ArcFlashHazardCalculator = lazy(() => import('./ArcFlashHazardCalculator').then(m => ({ default: m.ArcFlashHazardCalculator })));
+const HarmonicsAndPowerQualityAnalyzer = lazy(() => import('./HarmonicsAndPowerQualityAnalyzer').then(m => ({ default: m.HarmonicsAndPowerQualityAnalyzer })));
+const CableSizingDeratingMatrix = lazy(() => import('./CableSizingDeratingMatrix').then(m => ({ default: m.CableSizingDeratingMatrix })));
+const TgbtThermalDissipationCalculator = lazy(() => import('./TgbtThermalDissipationCalculator').then(m => ({ default: m.TgbtThermalDissipationCalculator })));
+const PanelCadAndDeliverablesExportEngine = lazy(() => import('./PanelCadAndDeliverablesExportEngine').then(m => ({ default: m.PanelCadAndDeliverablesExportEngine })));
+const CameroonInstallationGridRealityEngine = lazy(() => import('./CameroonInstallationGridRealityEngine').then(m => ({ default: m.CameroonInstallationGridRealityEngine })));
 import { useInstallationProjectStore } from './services/useInstallationProjectStore';
 import { PowerChain } from '../common/PowerChain';
 import { WorkedExampleViewer } from '../common/WorkedExampleViewer';
@@ -423,6 +421,14 @@ export const InstallationsWorkbench: React.FC<InstallationsWorkbenchProps> = ({
 
       {/* 4. Main Stage Content Area */}
       <main className="transition-all duration-150">
+        <Suspense
+          fallback={
+            <div className="p-16 text-center font-mono text-xs text-[#5C6C70] flex flex-col items-center justify-center gap-3">
+              <div className="w-6 h-6 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
+              <span>{isFr ? 'Chargement du module d\'ingénierie BT...' : 'Loading electrical installations workbench module...'}</span>
+            </div>
+          }
+        >
         {/* ========================================================================= */}
         {/* STAGE 1: ECOSYSTEM & FACILITY ARCHETYPES                                 */}
         {/* ========================================================================= */}
@@ -712,22 +718,31 @@ export const InstallationsWorkbench: React.FC<InstallationsWorkbenchProps> = ({
             )}
           </div>
         )}
+        </Suspense>
       </main>
 
       {/* 5. Persistent Engineering Drawer */}
-      <InstallationEngineeringDrawer
-        isOpen={isEngineeringDrawerOpen}
-        onClose={() => setIsEngineeringDrawerOpen(false)}
-        locale={locale}
-      />
+      <Suspense fallback={null}>
+        {isEngineeringDrawerOpen && (
+          <InstallationEngineeringDrawer
+            isOpen={isEngineeringDrawerOpen}
+            onClose={() => setIsEngineeringDrawerOpen(false)}
+            locale={locale}
+          />
+        )}
+      </Suspense>
 
       {/* 6. Asset Administration Shell (AAS) Drawer */}
-      <AasDrawer
-        isOpen={isAasOpen}
-        onClose={() => setIsAasOpen(false)}
-        locale={locale}
-        equipment={inspectedComponent as any}
-      />
+      <Suspense fallback={null}>
+        {isAasOpen && (
+          <AasDrawer
+            isOpen={isAasOpen}
+            onClose={() => setIsAasOpen(false)}
+            locale={locale}
+            equipment={inspectedComponent as any}
+          />
+        )}
+      </Suspense>
     </div>
   );
 };

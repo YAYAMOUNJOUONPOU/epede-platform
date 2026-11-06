@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import {
   Waves,
   Network,
@@ -28,29 +28,30 @@ import {
   Leaf,
 } from 'lucide-react';
 import { EnergyJourneyView } from './EnergyJourneyView';
-import { HydropowerGraphView } from './HydropowerGraphView';
-import { HydropowerSubsystemsView } from './HydropowerSubsystemsView';
-import { HydropowerFleetView } from './HydropowerFleetView';
-import { HydropowerStandardsView } from './HydropowerStandardsView';
-import { HydropowerTransientsView } from './HydropowerTransientsView';
-import { HydropowerDesignLabView } from './HydropowerDesignLabView';
-import { HydropowerProtectionGridView } from './HydropowerProtectionGridView';
-import { HydropowerDamSafetyCascadeView } from './HydropowerDamSafetyCascadeView';
-import { HydropowerMasterOperationsView } from './HydropowerMasterOperationsView';
-import { HydropowerCyberOtView } from './HydropowerCyberOtView';
-import { HydropowerClimateSedimentView } from './HydropowerClimateSedimentView';
-import { HydropowerBlackStartView } from './HydropowerBlackStartView';
-import { HydropowerRegionalGridView } from './HydropowerRegionalGridView';
-import { HydropowerSpatialTwinView } from './HydropowerSpatialTwinView';
-import { HydropowerAiAutonomousView } from './HydropowerAiAutonomousView';
-import { HydropowerHybridHydrogenView } from './HydropowerHybridHydrogenView';
-import { HydropowerPshStorageView } from './HydropowerPshStorageView';
-import { HydropowerDamBreakView } from './HydropowerDamBreakView';
-import { HydropowerEnergyTradingView } from './HydropowerEnergyTradingView';
-import { HydropowerAssetHealthView } from './HydropowerAssetHealthView';
-import { HydropowerOtsView } from './HydropowerOtsView';
-import { HydropowerWamsInertiaView } from './HydropowerWamsInertiaView';
-import { HydropowerEsgBioView } from './HydropowerEsgBioView';
+
+const HydropowerGraphView = lazy(() => import('./HydropowerGraphView').then((m) => ({ default: m.HydropowerGraphView })));
+const HydropowerSubsystemsView = lazy(() => import('./HydropowerSubsystemsView').then((m) => ({ default: m.HydropowerSubsystemsView })));
+const HydropowerFleetView = lazy(() => import('./HydropowerFleetView').then((m) => ({ default: m.HydropowerFleetView })));
+const HydropowerStandardsView = lazy(() => import('./HydropowerStandardsView').then((m) => ({ default: m.HydropowerStandardsView })));
+const HydropowerTransientsView = lazy(() => import('./HydropowerTransientsView').then((m) => ({ default: m.HydropowerTransientsView })));
+const HydropowerDesignLabView = lazy(() => import('./HydropowerDesignLabView').then((m) => ({ default: m.HydropowerDesignLabView })));
+const HydropowerProtectionGridView = lazy(() => import('./HydropowerProtectionGridView').then((m) => ({ default: m.HydropowerProtectionGridView })));
+const HydropowerDamSafetyCascadeView = lazy(() => import('./HydropowerDamSafetyCascadeView').then((m) => ({ default: m.HydropowerDamSafetyCascadeView })));
+const HydropowerMasterOperationsView = lazy(() => import('./HydropowerMasterOperationsView').then((m) => ({ default: m.HydropowerMasterOperationsView })));
+const HydropowerCyberOtView = lazy(() => import('./HydropowerCyberOtView').then((m) => ({ default: m.HydropowerCyberOtView })));
+const HydropowerClimateSedimentView = lazy(() => import('./HydropowerClimateSedimentView').then((m) => ({ default: m.HydropowerClimateSedimentView })));
+const HydropowerBlackStartView = lazy(() => import('./HydropowerBlackStartView').then((m) => ({ default: m.HydropowerBlackStartView })));
+const HydropowerRegionalGridView = lazy(() => import('./HydropowerRegionalGridView').then((m) => ({ default: m.HydropowerRegionalGridView })));
+const HydropowerSpatialTwinView = lazy(() => import('./HydropowerSpatialTwinView').then((m) => ({ default: m.HydropowerSpatialTwinView })));
+const HydropowerAiAutonomousView = lazy(() => import('./HydropowerAiAutonomousView').then((m) => ({ default: m.HydropowerAiAutonomousView })));
+const HydropowerHybridHydrogenView = lazy(() => import('./HydropowerHybridHydrogenView').then((m) => ({ default: m.HydropowerHybridHydrogenView })));
+const HydropowerPshStorageView = lazy(() => import('./HydropowerPshStorageView').then((m) => ({ default: m.HydropowerPshStorageView })));
+const HydropowerDamBreakView = lazy(() => import('./HydropowerDamBreakView').then((m) => ({ default: m.HydropowerDamBreakView })));
+const HydropowerEnergyTradingView = lazy(() => import('./HydropowerEnergyTradingView').then((m) => ({ default: m.HydropowerEnergyTradingView })));
+const HydropowerAssetHealthView = lazy(() => import('./HydropowerAssetHealthView').then((m) => ({ default: m.HydropowerAssetHealthView })));
+const HydropowerOtsView = lazy(() => import('./HydropowerOtsView').then((m) => ({ default: m.HydropowerOtsView })));
+const HydropowerWamsInertiaView = lazy(() => import('./HydropowerWamsInertiaView').then((m) => ({ default: m.HydropowerWamsInertiaView })));
+const HydropowerEsgBioView = lazy(() => import('./HydropowerEsgBioView').then((m) => ({ default: m.HydropowerEsgBioView })));
 import type { HydroSubsystemId } from '../../types/hydropower';
 import type { CalculatorTabType } from '../calculators/services/calculationReportService';
 import type { InjectedCalculatorContext } from '../../services/routerService';
@@ -410,7 +411,15 @@ export const HydropowerMasterWorkbench: React.FC<HydropowerMasterWorkbenchProps>
 
         {/* WORKBENCH PANE RENDER */}
         <div className="p-6">
-          {activeTab === 'journey' && <EnergyJourneyView locale={locale} />}
+          <Suspense
+            fallback={
+              <div className="p-12 text-center font-mono text-xs text-[#5C6C70] flex flex-col items-center justify-center gap-3">
+                <div className="w-6 h-6 border-2 border-sky-400 border-t-transparent rounded-full animate-spin" />
+                <span>{locale === 'fr' ? 'Chargement du module hydroélectrique...' : 'Loading hydro engineering module...'}</span>
+              </div>
+            }
+          >
+            {activeTab === 'journey' && <EnergyJourneyView locale={locale} />}
           {activeTab === 'graph' && (
             <HydropowerGraphView
               locale={locale}
@@ -572,6 +581,7 @@ export const HydropowerMasterWorkbench: React.FC<HydropowerMasterWorkbenchProps>
               onSelectSubsystem={handleSelectSubsystem}
             />
           )}
+          </Suspense>
         </div>
       </div>
     </div>
