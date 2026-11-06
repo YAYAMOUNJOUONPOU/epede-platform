@@ -40,6 +40,7 @@ import {
 } from '../../data/regulatoryData';
 import type { CalculatorTabType } from '../calculators/services/calculationReportService';
 import type { SimulationTabType } from '../simulation/SimulationLabView';
+import { PageHeader, DataStrip, FinalCTA } from '../common';
 
 interface RegulatoryViewProps {
   locale: 'fr' | 'en';
@@ -228,101 +229,137 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header Banner */}
-      <div className="relative overflow-hidden rounded-sm bg-[#FFFDF9] p-6 lg:p-8 border border-[#17282C]/15 shadow-xs">
-        <div className="relative z-10">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-sm bg-[#E3EFEC] border border-[#147C78]/30 flex items-center justify-center text-[#147C78]">
-                <Scale className="h-6 w-6" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="font-mono text-xs font-bold text-[#147C78] tracking-wider uppercase bg-[#E3EFEC] px-2 py-0.5 rounded-sm border border-[#147C78]/30">
-                    LAYER L06 · CADRE RÉGLEMENTAIRE & ÉCOSYSTÈME
-                  </span>
-                  <span className="font-mono text-[10px] text-[#5C6C70] bg-[#F6F4EE] border border-[#DEDACF] px-2 py-0.5 rounded-sm">
-                    Loi 2011/022 · ARSEL · SONATREL
-                  </span>
-                </div>
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#17282C] tracking-tight mt-1">
-                  {locale === 'fr'
-                    ? 'Gouvernance, Code de Réseau & Écosystème Institutionnel'
-                    : 'Governance, Grid Code & Regulatory Ecosystem'}
-                </h1>
-              </div>
-            </div>
+    <div className="space-y-10 pb-24 text-[#0B1B2B] font-sans">
+      {/* 1. Page Header */}
+      <PageHeader
+        eyebrow={
+          locale === 'fr'
+            ? 'LAYER L06 · CADRE RÉGLEMENTAIRE & ÉCOSYSTÈME'
+            : 'LAYER L06 · REGULATORY & GOVERNANCE ECOSYSTEM'
+        }
+        title={
+          locale === 'fr'
+            ? 'Gouvernance, Code de Réseau & Écosystème Institutionnel'
+            : 'Governance, Grid Code & Regulatory Ecosystem'
+        }
+        intro={
+          locale === 'fr'
+            ? "Cadre juridique et technique officiel du secteur électrique camerounais : Loi N° 2011/022, attributions institutionnelles (ARSEL, SONATREL, Eneo, EDC, AER, MINEE), Code de Réseau technique, plan de délestage UFLS, grilles tarifaires approuvées et corridors régionaux du PEAC."
+            : 'Official legal and technical framework of the Cameroon power sector: Law No. 2011/022, statutory institutional mandates (ARSEL, SONATREL, Eneo, EDC, AER, MINEE), National Grid Code, UFLS defense scheme, approved electricity tariffs and regional PEAC interconnectors.'
+        }
+      />
 
-            <div className="flex flex-wrap items-center gap-2">
-              {onNavigateContextStack && (
-                <button
-                  type="button"
-                  onClick={() => onNavigateContextStack('node-line-225-bekoko')}
-                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-sm bg-[#147C78] hover:bg-[#0E5E5B] text-xs font-mono font-bold text-[#FFFDF9] transition-all"
-                >
-                  <Zap className="h-3.5 w-3.5 text-[#FFFDF9]" />
-                  <span>{locale === 'fr' ? 'Épine Dorsale & TCC' : 'Spine & TCC'}</span>
-                </button>
-              )}
-              <button
-                type="button"
-                onClick={handleExportRegulatoryDossier}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-sm bg-[#F6F4EE] hover:bg-[#E3EFEC] text-xs font-mono font-bold text-[#17282C] border border-[#DEDACF] hover:border-[#147C78]/40 transition-all"
-              >
-                <Download className="h-3.5 w-3.5 text-[#147C78]" />
-                <span>{locale === 'fr' ? 'Exporter Dossier Réglementaire (JSON)' : 'Export Regulatory Dossier (JSON)'}</span>
-              </button>
-              {onNavigateCameroonGrid && (
-                <button
-                  type="button"
-                  onClick={onNavigateCameroonGrid}
-                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-sm bg-[#F6F4EE] hover:bg-[#E3EFEC] text-xs font-mono font-bold text-[#147C78] border border-[#DEDACF] hover:border-[#147C78]/40 transition-all"
-                >
-                  <Globe className="h-3.5 w-3.5" />
-                  <span>{locale === 'fr' ? 'Observatoire Réseau RIS/RIN' : 'RIS/RIN Grid Observatory'}</span>
-                </button>
-              )}
-            </div>
-          </div>
+      {/* 2. Normative Regulatory Data Strip */}
+      <DataStrip
+        items={[
+          {
+            label: locale === 'fr' ? 'Texte Fondamental' : 'Primary Statute',
+            value: 'Loi N° 2011/022',
+            subtext: locale === 'fr' ? 'Secteur de l’électricité' : 'Power sector governance',
+          },
+          {
+            label: locale === 'fr' ? 'Gestionnaire Transport' : 'Transmission Operator',
+            value: 'SONATREL',
+            subtext: locale === 'fr' ? 'Décret 2015/442 (GRT)' : 'Decree 2015/442 (TSO)',
+          },
+          {
+            label: locale === 'fr' ? 'Régulateur Sectoriel' : 'Economic Regulator',
+            value: 'ARSEL',
+            subtext: locale === 'fr' ? 'Tarifs, licences & conformité' : 'Tariffs, licensing & codes',
+          },
+          {
+            label: locale === 'fr' ? 'Pool Énergétique Régional' : 'Regional Power Pool',
+            value: 'PEAC / CEEAC',
+            subtext: 'PIMERT 225 kV · Tchad',
+          },
+        ]}
+      />
 
-          <p className="mt-3 text-xs sm:text-sm text-[#33474B] max-w-4xl leading-relaxed">
-            {locale === 'fr'
-              ? "Cadre juridique et technique officiel du secteur électrique camerounais : Loi N° 2011/022, attributions institutionnelles (ARSEL, SONATREL, Eneo, EDC, AER, MINEE), Code de Réseau technique, plan de délestage UFLS, grilles tarifaires approuvées et corridors régionaux du PEAC."
-              : 'Official legal and technical framework of the Cameroon power sector: Law No. 2011/022, statutory institutional mandates (ARSEL, SONATREL, Eneo, EDC, AER, MINEE), National Grid Code, UFLS defense scheme, approved electricity tariffs and regional PEAC interconnectors.'}
-          </p>
+      {/* 3. Action Toolbar */}
+      <div className="rounded-[6px] border border-[#D5E0E8] bg-[#FBFCFD] p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-mono text-xs">
+        <div className="flex items-center gap-2">
+          <span className="font-semibold text-[#0B1B2B]">
+            {locale === 'fr' ? 'Cadre Camerounais' : 'Cameroon Framework'} :
+          </span>
+          <span className="px-2.5 py-0.5 rounded-[3px] bg-[#EEF4F8] text-[#5B6B7B] border border-[#D5E0E8]">
+            ARSEL · SONATREL · EDC · MINEE
+          </span>
+        </div>
 
-          {/* Quick Metrics Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 pt-4 border-t border-[#DEDACF] text-xs font-mono">
-            <div className="bg-[#F6F4EE] p-3 rounded-sm border border-[#DEDACF]">
-              <span className="text-[#5C6C70] text-[10px] block font-bold uppercase">{locale === 'fr' ? 'TEXTE FONDAMENTAL' : 'PRIMARY STATUTE'}</span>
-              <span className="text-[#17282C] font-bold text-sm">Loi N° 2011/022</span>
-            </div>
-            <div className="bg-[#F6F4EE] p-3 rounded-sm border border-[#DEDACF]">
-              <span className="text-[#5C6C70] text-[10px] block font-bold uppercase">{locale === 'fr' ? 'GESTIONNAIRE TRANSPORT (GRT)' : 'TRANSMISSION OPERATOR'}</span>
-              <span className="text-[#147C78] font-bold text-sm">SONATREL (Décret 2015/442)</span>
-            </div>
-            <div className="bg-[#F6F4EE] p-3 rounded-sm border border-[#DEDACF]">
-              <span className="text-[#5C6C70] text-[10px] block font-bold uppercase">{locale === 'fr' ? 'RÉGULATEUR ÉCONOMIQUE' : 'ECONOMIC REGULATOR'}</span>
-              <span className="text-[#B8872D] font-bold text-sm">ARSEL (Tarifs & Licences)</span>
-            </div>
-            <div className="bg-[#F6F4EE] p-3 rounded-sm border border-[#DEDACF]">
-              <span className="text-[#5C6C70] text-[10px] block font-bold uppercase">{locale === 'fr' ? 'INTÉGRATION RÉGIONALE' : 'REGIONAL POOL'}</span>
-              <span className="text-[#147C78] font-bold text-sm">PEAC / CEEAC (PIMERT 225 kV)</span>
-            </div>
-          </div>
+        <div className="flex flex-wrap items-center gap-2">
+          {onNavigateContextStack && (
+            <button
+              type="button"
+              onClick={() => onNavigateContextStack('node-line-225-bekoko')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] bg-[#1F5FAE] hover:bg-[#174A88] text-xs font-mono font-semibold text-[#FBFCFD] transition-all cursor-pointer"
+            >
+              <Zap className="h-3.5 w-3.5 text-[#FBFCFD]" />
+              <span>{locale === 'fr' ? 'Épine Dorsale & TCC' : 'Spine & TCC'}</span>
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={handleExportRegulatoryDossier}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] bg-[#FBFCFD] hover:bg-[#EEF4F8] text-xs font-mono font-semibold text-[#0B1B2B] border border-[#D5E0E8] hover:border-[#1F5FAE] transition-all cursor-pointer"
+          >
+            <Download className="h-3.5 w-3.5 text-[#1F5FAE]" />
+            <span>
+              {locale === 'fr'
+                ? 'Exporter Dossier Réglementaire (JSON)'
+                : 'Export Regulatory Dossier (JSON)'}
+            </span>
+          </button>
+          {onNavigateCameroonGrid && (
+            <button
+              type="button"
+              onClick={onNavigateCameroonGrid}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] bg-[#FBFCFD] hover:bg-[#EEF4F8] text-xs font-mono font-semibold text-[#1F5FAE] border border-[#D5E0E8] hover:border-[#1F5FAE] transition-all cursor-pointer"
+            >
+              <Globe className="h-3.5 w-3.5" />
+              <span>
+                {locale === 'fr' ? 'Observatoire Réseau RIS/RIN' : 'RIS/RIN Grid Observatory'}
+              </span>
+            </button>
+          )}
         </div>
       </div>
 
       {/* Tabs Navigation */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-[#DEDACF] scrollbar-thin">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-[#D5E0E8] scrollbar-thin">
         {[
-          { id: 'overview' as const, label: locale === 'fr' ? 'Vue d\'Ensemble & Loi 2011' : 'Overview & Legal Framework', icon: FileText },
-          { id: 'institutions' as const, label: locale === 'fr' ? 'Acteurs Institutionnels (7)' : 'Sector Entities (7)', icon: Building2 },
-          { id: 'grid-code' as const, label: locale === 'fr' ? 'Code de Réseau & Conformité' : 'Grid Code & Compliance', icon: Zap },
-          { id: 'tariffs' as const, label: locale === 'fr' ? 'Tarifs & Péage SONATREL' : 'Tariffs & Wheeling', icon: Calculator },
-          { id: 'regional' as const, label: locale === 'fr' ? 'Interconnexions PEAC / PIMERT' : 'PEAC Interconnectors', icon: Globe },
-          { id: 'environment' as const, label: locale === 'fr' ? 'Servitudes & Sécurité Foncière' : 'Right-of-Way & Environment', icon: ShieldCheck }
+          {
+            id: 'overview' as const,
+            label: locale === 'fr' ? "Vue d'Ensemble & Loi 2011" : 'Overview & Legal Framework',
+            icon: FileText,
+          },
+          {
+            id: 'institutions' as const,
+            label: locale === 'fr' ? 'Acteurs Institutionnels (7)' : 'Sector Entities (7)',
+            icon: Building2,
+          },
+          {
+            id: 'grid-code' as const,
+            label: locale === 'fr' ? 'Code de Réseau & Conformité' : 'Grid Code & Compliance',
+            icon: Zap,
+          },
+          {
+            id: 'tariffs' as const,
+            label: locale === 'fr' ? 'Tarifs & Péage SONATREL' : 'Tariffs & Wheeling',
+            icon: Calculator,
+          },
+          {
+            id: 'regional' as const,
+            label: locale === 'fr' ? 'Interconnexions PEAC / PIMERT' : 'PEAC Interconnectors',
+            icon: Globe,
+          },
+          {
+            id: 'environment' as const,
+            label:
+              locale === 'fr'
+                ? 'Servitudes & Sécurité Foncière'
+                : 'Right-of-Way & Environment',
+            icon: ShieldCheck,
+          },
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -331,13 +368,15 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-sm text-xs font-mono font-bold transition-all whitespace-nowrap border ${
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-[4px] text-xs font-mono font-semibold transition-all whitespace-nowrap border cursor-pointer ${
                 isActive
-                  ? 'bg-[#147C78] text-[#FFFDF9] border-[#147C78] shadow-xs'
-                  : 'text-[#33474B] hover:text-[#17282C] hover:bg-[#E3EFEC]/50 border-[#DEDACF] bg-[#FFFDF9]'
+                  ? 'bg-[#0B1B2B] text-[#FBFCFD] border-[#0B1B2B] shadow-xs'
+                  : 'text-[#5B6B7B] hover:text-[#0B1B2B] hover:bg-[#EEF4F8] border-[#D5E0E8] bg-[#FBFCFD]'
               }`}
             >
-              <Icon className={`h-3.5 w-3.5 ${isActive ? 'text-[#FFFDF9]' : 'text-[#147C78]'}`} />
+              <Icon
+                className={`h-3.5 w-3.5 ${isActive ? 'text-[#F2A541]' : 'text-[#1F5FAE]'}`}
+              />
               <span>{tab.label}</span>
             </button>
           );
@@ -1252,6 +1291,37 @@ export const RegulatoryView: React.FC<RegulatoryViewProps> = ({
           </div>
         </div>
       )}
+
+      {/* 4. Final CTA */}
+      <FinalCTA
+        eyebrow={
+          locale === 'fr'
+            ? 'Gouvernance & Conformité Réseau'
+            : 'Governance & Grid Code Compliance'
+        }
+        title={
+          locale === 'fr'
+            ? 'Passez des textes réglementaires aux simulations d’impact.'
+            : 'From statutory rules to grid impact simulations.'
+        }
+        description={
+          locale === 'fr'
+            ? 'Évaluez les seuils de tension, de fréquence et de délestage UFLS sur le simulateur du réseau camerounais.'
+            : 'Benchmark voltage, frequency, and UFLS defense scheme thresholds on Cameroon grid simulators.'
+        }
+        primaryAction={{
+          label: locale === 'fr' ? 'Ouvrir l’Observatoire Réseau' : 'Open Grid Observatory',
+          onClick: () => {
+            window.location.hash = '#/cameroon-grid';
+          },
+        }}
+        secondaryAction={{
+          label: locale === 'fr' ? 'Calculateurs d’ingénierie' : 'Engineering Calculators',
+          onClick: () => {
+            window.location.hash = '#/calculators';
+          },
+        }}
+      />
     </div>
   );
 };
