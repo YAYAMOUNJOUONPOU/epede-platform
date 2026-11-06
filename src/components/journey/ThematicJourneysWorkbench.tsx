@@ -40,6 +40,7 @@ import {
   JourneyStep,
 } from '../../data/thematicJourneysData';
 import type { AppViewType } from '../../services/routerService';
+import { PageHeader, DataStrip, FinalCTA } from '../common';
 
 interface ThematicJourneysWorkbenchProps {
   locale: 'fr' | 'en';
@@ -205,128 +206,138 @@ export const ThematicJourneysWorkbench: React.FC<ThematicJourneysWorkbenchProps>
   const recommendedFirstPathway = PROGRESSIVE_LEARNING_PATHWAYS[0];
 
   return (
-    <div className="space-y-14 pb-20 font-sans text-[#17282C]">
-      {/* 1. Editorial Header & Recommended Starting Point */}
-      <section className="border-t border-[#17282C] pt-8 sm:pt-10 space-y-10">
-        <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-6 lg:gap-12">
-          <div>
-            <span className="epede-eyebrow block">
-              {isFr ? 'Apprendre — Cursus Guidé' : 'Learn — Guided Curriculum'}
-            </span>
-            <p className="mt-2 font-mono text-xs text-[#5C6C70]">
-              {isFr ? '8 Parcours · 7 Études de Cas' : '8 Pathways · 7 Masterclasses'}
+    <div className="space-y-12 pb-20 font-['Space_Grotesk',sans-serif] text-[#0B1B2B] bg-[#FBFCFD]">
+      {/* 1. Page Header (SITEWIDE-REDESIGN.md Section 2) */}
+      <PageHeader
+        breadcrumb={[
+          { label: isFr ? 'Accueil' : 'Home', onClick: () => onNavigate?.('home') },
+          { label: isFr ? 'Apprendre' : 'Learn' },
+          { label: isFr ? '8 Parcours Progressifs' : '8 Guided Pathways' },
+        ]}
+        eyebrow={isFr ? 'CURSUS GUIDÉ · 8 PARCOURS SYSTÈME' : 'GUIDED CURRICULUM · 8 SYSTEM PATHWAYS'}
+        title={
+          isFr
+            ? 'Apprendre le système électrique dans l’ordre physique'
+            : 'Learn the power system in physical sequence'
+        }
+        intro={
+          isFr
+            ? 'Comprenez d’abord le phénomène physique avec une analogie concrète, observez l’intérieur de l’appareillage réel, lisez son symbole CEI 60617, puis appliquez le calcul sur le réseau camerounais.'
+            : 'First grasp the physical phenomenon through a concrete analogy, inspect real internal switchgear cutaways, read the IEC 60617 symbol, and apply the calculation to Cameroon grid cases.'
+        }
+      >
+        <DataStrip
+          items={[
+            {
+              label: isFr ? 'Parcours Système' : 'System Pathways',
+              value: '08',
+              subtext: isFr ? 'De la production aux charges' : 'Generation to end-users',
+            },
+            {
+              label: isFr ? 'Masterclasses' : 'Case Studies',
+              value: '07',
+              subtext: isFr ? 'Études d’ingénierie appliquée' : 'Applied engineering studies',
+            },
+            {
+              label: isFr ? 'Niveaux Techniques' : 'Audience Levels',
+              value: '4',
+              unit: 'tiers',
+              subtext: 'Student · Tech · Engineer · Expert',
+            },
+            {
+              label: isFr ? 'Ancrage Terrain' : 'Field Context',
+              value: 'RIS / RIN',
+              subtext: 'SONATREL / Eneo Network',
+            },
+          ]}
+        />
+      </PageHeader>
+
+      <div className="max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12 space-y-12">
+        {/* Mode Switcher: 8 Pathways vs 7 Applied Masterclasses */}
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div
+            role="tablist"
+            aria-label={isFr ? 'Mode d’apprentissage' : 'Learning curriculum mode'}
+            className="inline-flex items-center p-1 rounded-full bg-[#EEF4F8] border border-[#D5E0E8]"
+          >
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === 'PATHWAYS'}
+              onClick={() => setActiveTab('PATHWAYS')}
+              className={`flex items-center gap-2 px-4 py-1.5 rounded-full font-mono text-xs font-semibold transition-colors cursor-pointer border-0 ${
+                activeTab === 'PATHWAYS'
+                  ? 'bg-[#0B1B2B] text-[#FBFCFD] shadow-xs'
+                  : 'bg-transparent text-[#5B6B7B] hover:text-[#0B1B2B]'
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span>{isFr ? '8 Parcours (01–08)' : '8 Pathways (01–08)'}</span>
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === 'MASTERCLASSES'}
+              onClick={() => setActiveTab('MASTERCLASSES')}
+              className={`flex items-center gap-2 px-4 py-1.5 rounded-full font-mono text-xs font-semibold transition-colors cursor-pointer border-0 ${
+                activeTab === 'MASTERCLASSES'
+                  ? 'bg-[#0B1B2B] text-[#FBFCFD] shadow-xs'
+                  : 'bg-transparent text-[#5B6B7B] hover:text-[#0B1B2B]'
+              }`}
+            >
+              <Compass className="w-3.5 h-3.5" />
+              <span>{isFr ? '7 Masterclass Appliquées' : '7 Applied Masterclasses'}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Recommended Entry Point Banner for First-Time Learners */}
+        <div className="bg-[#FBFCFD] border border-[#D5E0E8] border-l-[3px] border-l-[#1F5FAE] rounded-[6px] p-5 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-[0_2px_12px_rgba(11,27,43,0.04)]">
+          <div className="space-y-1.5 max-w-2xl">
+            <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
+              <span className="text-[#1F5FAE] font-bold uppercase tracking-wider">
+                {isFr ? 'Point de départ recommandé' : 'Recommended starting point'}
+              </span>
+              <span className="text-[#D5E0E8]">·</span>
+              <span className="text-[#5B6B7B] font-semibold">
+                {isFr ? 'Parcours 01 · ~25 min' : 'Pathway 01 · ~25 min'}
+              </span>
+            </div>
+            <h2 className="text-lg sm:text-xl font-bold text-[#0B1B2B] m-0 font-['Space_Grotesk']">
+              {recommendedFirstPathway.title[locale]}
+            </h2>
+            <p className="text-sm text-[#3A4B5C] leading-relaxed m-0 font-['Space_Grotesk']">
+              {recommendedFirstPathway.tagline[locale]}
             </p>
           </div>
 
-          <div className="space-y-6">
-            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-              <div className="space-y-4 max-w-3xl">
-                <h1 className="epede-h1">
-                  {isFr ? (
-                    <>
-                      Apprendre le système électrique{' '}
-                      <em className="font-serif-editorial text-[#147C78]">dans l’ordre physique</em>.
-                    </>
-                  ) : (
-                    <>
-                      Learn the power system{' '}
-                      <em className="font-serif-editorial text-[#147C78]">in physical sequence</em>.
-                    </>
-                  )}
-                </h1>
-                <p className="epede-lead">
-                  {isFr
-                    ? "Comprenez d'abord le phénomène physique avec une analogie concrète, observez l'intérieur de l'appareillage réel, lisez son symbole CEI 60617, puis appliquez le calcul sur le réseau camerounais."
-                    : 'First grasp the physical phenomenon through a concrete analogy, inspect real internal switchgear cutaways, read the IEC 60617 symbol, and apply the calculation to Cameroon grid cases.'}
-                </p>
-              </div>
-
-              {/* Mode Switcher: 8 Pathways vs 7 Applied Masterclasses */}
-              <div
-                role="tablist"
-                aria-label={isFr ? 'Mode d’apprentissage' : 'Learning curriculum mode'}
-                className="inline-flex items-center p-1 rounded-full bg-[#EFECE3] border border-[#DEDACF] shrink-0 self-start"
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                setActiveTab('PATHWAYS');
+                setSelectedPathway(recommendedFirstPathway);
+                setActiveLessonIndex(0);
+                const el = document.getElementById('learn-active-workbench');
+                el?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="h-10 px-5 rounded-full bg-[#0B1B2B] hover:bg-[#1F5FAE] text-[#FBFCFD] font-semibold text-xs transition-colors flex items-center gap-2 cursor-pointer border-0"
+            >
+              <span>{isFr ? 'Commencer le Parcours 01' : 'Start Pathway 01'}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+            {onNavigate && (
+              <button
+                type="button"
+                onClick={() => onNavigate('journey')}
+                className="h-10 px-4 rounded-full bg-transparent hover:bg-[#EEF4F8] text-[#0B1B2B] border border-[#D5E0E8] font-semibold text-xs transition-colors cursor-pointer"
               >
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={activeTab === 'PATHWAYS'}
-                  onClick={() => setActiveTab('PATHWAYS')}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full font-mono text-xs font-semibold transition-colors ${
-                    activeTab === 'PATHWAYS'
-                      ? 'bg-[#17282C] text-[#FFFDF9]'
-                      : 'text-[#5C6C70] hover:text-[#17282C]'
-                  }`}
-                >
-                  <Layers className="w-3.5 h-3.5" />
-                  <span>{isFr ? '8 Parcours (01–08)' : '8 Pathways (01–08)'}</span>
-                </button>
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={activeTab === 'MASTERCLASSES'}
-                  onClick={() => setActiveTab('MASTERCLASSES')}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full font-mono text-xs font-semibold transition-colors ${
-                    activeTab === 'MASTERCLASSES'
-                      ? 'bg-[#17282C] text-[#FFFDF9]'
-                      : 'text-[#5C6C70] hover:text-[#17282C]'
-                  }`}
-                >
-                  <Compass className="w-3.5 h-3.5" />
-                  <span>{isFr ? '7 Masterclass Appliquées' : '7 Applied Masterclasses'}</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Recommended Entry Point Banner for First-Time Learners */}
-            <div className="bg-[#FFFDF9] border border-[#DEDACF] border-l-4 border-l-[#147C78] rounded-[10px] p-5 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div className="space-y-1.5 max-w-2xl">
-                <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
-                  <span className="text-[#147C78] font-semibold uppercase tracking-[0.08em]">
-                    {isFr ? 'Point de départ recommandé' : 'Recommended starting point'}
-                  </span>
-                  <span className="text-[#5C6C70]">·</span>
-                  <span className="text-[#B8872D] font-semibold">
-                    {isFr ? 'Parcours 01 · ~25 min' : 'Pathway 01 · ~25 min'}
-                  </span>
-                </div>
-                <h2 className="text-lg sm:text-xl font-bold text-[#17282C]">
-                  {recommendedFirstPathway.title[locale]}
-                </h2>
-                <p className="text-sm text-[#33474B] leading-relaxed">
-                  {recommendedFirstPathway.tagline[locale]}
-                </p>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-3 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveTab('PATHWAYS');
-                    setSelectedPathway(recommendedFirstPathway);
-                    setActiveLessonIndex(0);
-                    const el = document.getElementById('learn-active-workbench');
-                    el?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="epede-btn-primary"
-                >
-                  <span>{isFr ? 'Commencer le Parcours 01' : 'Start Pathway 01'}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-                {onNavigate && (
-                  <button
-                    type="button"
-                    onClick={() => onNavigate('journey')}
-                    className="epede-btn-secondary"
-                  >
-                    <span>{isFr ? 'Voir la chaîne 01–09' : 'View 01–09 Power Chain'}</span>
-                  </button>
-                )}
-              </div>
-            </div>
+                <span>{isFr ? 'Voir la chaîne 01–09' : 'View 01–09 Power Chain'}</span>
+              </button>
+            )}
           </div>
         </div>
-      </section>
 
       {/* 2. Power-System Sequence Visual — Where Each Pathway Fits on Stages 01–09 */}
       <section className="border-t border-[#DEDACF] pt-8">
@@ -1159,6 +1170,26 @@ export const ThematicJourneysWorkbench: React.FC<ThematicJourneysWorkbenchProps>
           </div>
         </section>
       )}
+      </div>
+
+      {/* Bottom Final CTA (SITEWIDE-REDESIGN.md Section 3) */}
+      <FinalCTA
+        eyebrow={isFr ? 'CURSUS D’INGÉNIERIE ÉLECTRIQUE' : 'POWER ENGINEERING CURRICULUM'}
+        title={isFr ? 'Approfondissez chaque domaine. Résolvez les études de cas.' : 'Deepen each domain. Solve the masterclasses.'}
+        description={
+          isFr
+            ? 'Passez de la théorie électrotechnique aux schémas réels, aux calculateurs normatifs et à l’analyse du réseau camerounais.'
+            : 'Bridge electrotechnical theory with real equipment cutaways, normative calculators, and Cameroon grid operations.'
+        }
+        primaryAction={{
+          label: isFr ? 'Ouvrir les Calculateurs CEI' : 'Open IEC Solvers',
+          onClick: () => onNavigate?.('calculators'),
+        }}
+        secondaryAction={{
+          label: isFr ? 'Explorer la Chaîne 9 Étapes' : 'Explore 9-Stage Power Chain',
+          onClick: () => onNavigate?.('journey'),
+        }}
+      />
     </div>
   );
 };
