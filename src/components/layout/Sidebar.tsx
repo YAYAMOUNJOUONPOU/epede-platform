@@ -84,13 +84,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const disciplineDomains = DOMAINS.filter((d) => d.domain_group === 'discipline');
 
   const content = (
-    <div className="h-full flex flex-col justify-between bg-gradient-to-b from-[#060A14] via-[#040710] to-[#02040A] backdrop-blur-xl text-slate-100 w-72 border-r border-white/[0.08] overflow-y-auto font-mono text-xs shadow-2xl">
+    <div className="h-full flex flex-col justify-between bg-[#10191D] text-[#F4F1E8] w-72 border-r border-[#2A383C] overflow-y-auto font-mono text-xs shadow-2xl epede-workbench">
       <div className="p-4 space-y-6">
         
         {/* Section 0: Interactive Exploration & Discovery Tools */}
         <div>
-          <div className="px-2 pb-2 flex items-center justify-between border-b border-slate-800">
-            <span className="font-mono text-[11px] font-black uppercase tracking-widest text-amber-400 flex items-center gap-1.5">
+          <div className="px-2 pb-2 flex items-center justify-between border-b border-[#2A383C]">
+            <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[#B8862D] flex items-center gap-1.5">
               <Compass className="h-3 w-3" />
               <span>{locale === 'fr' ? 'OUTILS & EXPLORATION INTERACTIVE' : 'INTERACTIVE TOOLS & EXPLORATION'}</span>
             </span>
@@ -886,17 +886,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Footer Info in Sidebar */}
-      <div className="p-4 border-t border-white/[0.08] bg-[#02040A] text-[11px] text-slate-400 space-y-1.5">
+      <div className="p-4 border-t border-[#2A383C] bg-[#0D1518] text-[11px] text-[#90A4A9] space-y-1.5">
         <div className="flex items-center justify-between font-mono">
-          <span className="text-amber-400 font-bold tracking-wider flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-[#B8862D] font-bold tracking-wider flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#1F7A54]" />
             SONATREL · Eneo
           </span>
-          <span className="font-semibold text-slate-500">225 kV / 30 kV</span>
+          <span className="font-semibold text-[#90A4A9]">225 kV / 30 kV</span>
         </div>
-        <div className="flex items-center justify-between text-[10px] font-mono text-slate-500">
-          <span>EPEDE v3.2 Engine</span>
-          <span className="text-cyan-400">IEC / IEEE Online</span>
+        <div className="flex items-center justify-between text-[10px] font-mono text-[#687A7E]">
+          <span>EPEDE ProCode v3.2</span>
+          <span className="text-[#6CC3BD]">IEC / IEEE / NF C</span>
         </div>
       </div>
     </div>
@@ -906,7 +906,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <>
       {/* Desktop Collapsible Sidebar */}
       <aside
-        className={`hidden lg:block shrink-0 sticky top-14 sm:top-15 h-[calc(100vh-3.75rem)] z-30 transition-all duration-300 ease-in-out ${
+        className={`hidden lg:block shrink-0 sticky top-[72px] h-[calc(100vh-72px)] z-30 transition-all duration-300 ease-in-out ${
           isOpen ? 'w-72 opacity-100' : 'w-0 opacity-0 overflow-hidden pointer-events-none'
         }`}
       >

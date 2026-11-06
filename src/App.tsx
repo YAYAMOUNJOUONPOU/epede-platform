@@ -539,7 +539,9 @@ export default function App() {
 
       {/* Top SCADA Telemetry Bar (Shown only when Engineering Context HUD is explicitly toggled) */}
       {currentView !== 'ecosystem' && isContextHUDOpen && (
-        <ScadaTelemetryBar locale={locale} />
+        <div className="epede-workbench border-x-0 border-t-0">
+          <ScadaTelemetryBar locale={locale} />
+        </div>
       )}
 
       {/* Main App Navigation Header */}
@@ -595,40 +597,44 @@ export default function App() {
 
       {/* Persistent Engineering Context Bar & Energy Chain Flow (Toggleable via HUD button / Ctrl+B) */}
       {currentView !== 'ecosystem' && isContextHUDOpen && (
-        <PersistentEngineeringContextBar
-          locale={locale}
-          currentView={currentView}
-          onNavigateDomain={(d) => handleNavigateDomain(d as DomainCode)}
-          onNavigateEquipment={handleNavigateEquipment}
-          onNavigateCalculator={handleNavigateCalculator}
-          onNavigateSimulation={handleNavigateSimulation}
-          onNavigateContextStack={handleNavigateContextStack}
-          onOpenHistory={() => setIsHistoryDrawerOpen(true)}
-        />
+        <div className="epede-workbench border-x-0">
+          <PersistentEngineeringContextBar
+            locale={locale}
+            currentView={currentView}
+            onNavigateDomain={(d) => handleNavigateDomain(d as DomainCode)}
+            onNavigateEquipment={handleNavigateEquipment}
+            onNavigateCalculator={handleNavigateCalculator}
+            onNavigateSimulation={handleNavigateSimulation}
+            onNavigateContextStack={handleNavigateContextStack}
+            onOpenHistory={() => setIsHistoryDrawerOpen(true)}
+          />
+        </div>
       )}
 
       {/* Persistent Engineering Context Stack Dock (Shown when HUD is active) */}
       {currentView !== 'ecosystem' && currentView !== 'home' && isContextHUDOpen && (
-        <PersistentEngineeringContextDock
-          locale={locale}
-          onNavigateToTarget={(target) => {
-            if (target.view === 'domain' && target.domainCode) {
-              handleNavigateDomain(target.domainCode as DomainCode);
-            } else if (target.view === 'equipment' && target.equipmentId) {
-              handleNavigateEquipment(target.equipmentId);
-            } else if (target.view === 'context-stack') {
-              handleNavigateContextStack(target.nodeId);
-            } else {
-              navigate({
-                view: target.view as AppViewType,
-                domainCode: target.domainCode as DomainCode,
-                equipmentId: target.equipmentId,
-                contextNodeId: target.nodeId
-              });
-            }
-          }}
-          onReturnToSystemMap={() => navigate({ view: 'domains' })}
-        />
+        <div className="epede-workbench border-x-0">
+          <PersistentEngineeringContextDock
+            locale={locale}
+            onNavigateToTarget={(target) => {
+              if (target.view === 'domain' && target.domainCode) {
+                handleNavigateDomain(target.domainCode as DomainCode);
+              } else if (target.view === 'equipment' && target.equipmentId) {
+                handleNavigateEquipment(target.equipmentId);
+              } else if (target.view === 'context-stack') {
+                handleNavigateContextStack(target.nodeId);
+              } else {
+                navigate({
+                  view: target.view as AppViewType,
+                  domainCode: target.domainCode as DomainCode,
+                  equipmentId: target.equipmentId,
+                  contextNodeId: target.nodeId
+                });
+              }
+            }}
+            onReturnToSystemMap={() => navigate({ view: 'domains' })}
+          />
+        </div>
       )}
 
       {/* Main Content Layout with responsive drawer / sidebar */}
@@ -764,7 +770,11 @@ export default function App() {
       )}
 
         {/* Right Main Content Stream */}
-        <main className={`flex-1 min-w-0 w-full ${currentView === 'home' || currentView === 'ecosystem' ? 'p-0 max-w-none' : 'pt-[88px] px-5 sm:px-8 lg:px-12 pb-16 max-w-[1280px] mx-auto space-y-8'}`}>
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className={`flex-1 min-w-0 w-full outline-none ${currentView === 'home' || currentView === 'ecosystem' ? 'p-0 max-w-none' : 'pt-[88px] px-5 sm:px-8 lg:px-12 pb-16 max-w-[1280px] mx-auto space-y-8'}`}
+        >
           {/* View Routing with Smooth Page Transition */}
           <AnimatePresence mode="wait">
             <motion.div
@@ -918,17 +928,29 @@ export default function App() {
               )}
 
               {currentView === 'equipment-reference' && (
-                <ElectricalEquipmentReferenceView
-                  locale={locale}
-                  initialEquipmentId={activeEquipmentId}
-                  onSelectEquipment={(id) => {
-                    setActiveEquipmentId(id);
-                  }}
-                  onNavigateDomain={handleNavigateDomain}
-                  onNavigateCalculator={handleNavigateCalculator}
-                  onNavigateDiagrams={() => handleNavigateDiagram()}
-                  onNavigateStandard={handleNavigateStandard}
-                />
+                <div className="space-y-6">
+                  <header className="rounded-[6px] border border-[#D8D2C5] bg-[#FFFDF9] p-6 sm:p-8">
+                    <div className="epede-eyebrow">
+                      {locale === 'fr' ? 'RÉFÉRENTIEL MATÉRIEL & PLAQUES SIGNALÉTIQUES' : 'EQUIPMENT TECHNICAL REFERENCE & NAMEPLATES'}
+                    </div>
+                    <h1 className="mt-2 font-serif-editorial text-3xl sm:text-4xl text-[#17282C]">
+                      {locale === 'fr' ? 'Fiches Techniques & Coupes Constructives' : 'Apparatus Datasheets & Constructive Cross-Sections'}
+                    </h1>
+                  </header>
+                  <div className="epede-workbench rounded-[6px] p-4 sm:p-6">
+                    <ElectricalEquipmentReferenceView
+                      locale={locale}
+                      initialEquipmentId={activeEquipmentId}
+                      onSelectEquipment={(id) => {
+                        setActiveEquipmentId(id);
+                      }}
+                      onNavigateDomain={handleNavigateDomain}
+                      onNavigateCalculator={handleNavigateCalculator}
+                      onNavigateDiagrams={() => handleNavigateDiagram()}
+                      onNavigateStandard={handleNavigateStandard}
+                    />
+                  </div>
+                </div>
               )}
 
               {currentView === 'roles' && (
@@ -954,25 +976,49 @@ export default function App() {
               )}
 
               {currentView === 'phase2' && (
-                <Phase2MasterView
-                  locale={locale}
-                  onNavigateDomain={handleNavigateDomain}
-                  onNavigateStandard={handleNavigateStandard}
-                  onNavigateRole={handleNavigateRole}
-                />
+                <div className="space-y-6">
+                  <header className="rounded-[6px] border border-[#D8D2C5] bg-[#FFFDF9] p-6 sm:p-8">
+                    <div className="epede-eyebrow">
+                      {locale === 'fr' ? 'ARCHITECTURE AVANCÉE · PHASE 2' : 'ADVANCED ARCHITECTURE · PHASE 2'}
+                    </div>
+                    <h1 className="mt-2 font-serif-editorial text-3xl sm:text-4xl text-[#17282C]">
+                      {locale === 'fr' ? 'Ingénierie Système & Intégration Multi-Domaines' : 'Systems Engineering & Cross-Domain Integration'}
+                    </h1>
+                  </header>
+                  <div className="epede-workbench rounded-[6px] p-4 sm:p-6">
+                    <Phase2MasterView
+                      locale={locale}
+                      onNavigateDomain={handleNavigateDomain}
+                      onNavigateStandard={handleNavigateStandard}
+                      onNavigateRole={handleNavigateRole}
+                    />
+                  </div>
+                </div>
               )}
 
               {currentView === 'lifecycle' && (
-                <LifecycleView
-                  locale={locale}
-                  onNavigateCalculator={handleNavigateCalculator}
-                  onNavigateSimulation={handleNavigateSimulation}
-                  onNavigatePhase2={() => navigate({ view: 'phase2' })}
-                  onNavigateStandards={() => navigate({ view: 'standards' })}
-                  onNavigateCameroonGrid={() => navigate({ view: 'cameroon-grid' })}
-                  onNavigateRegulatory={() => navigate({ view: 'regulatory' })}
-                  onNavigateContextStack={handleNavigateContextStack}
-                />
+                <div className="space-y-6">
+                  <header className="rounded-[6px] border border-[#D8D2C5] bg-[#FFFDF9] p-6 sm:p-8">
+                    <div className="epede-eyebrow">
+                      {locale === 'fr' ? 'COUCHE L03 · CYCLE DE VIE PROJET EPC' : 'LAYER L03 · EPC PROJECT LIFECYCLE & GATE REVIEWS'}
+                    </div>
+                    <h1 className="mt-2 font-serif-editorial text-3xl sm:text-4xl text-[#17282C]">
+                      {locale === 'fr' ? 'Cycle de Vie d’Ingénierie & Jalons de Revue (FID → PAC)' : 'Engineering Project Lifecycle & Gate Review Engine (FID → PAC)'}
+                    </h1>
+                  </header>
+                  <div className="epede-workbench rounded-[6px] p-4 sm:p-6">
+                    <LifecycleView
+                      locale={locale}
+                      onNavigateCalculator={handleNavigateCalculator}
+                      onNavigateSimulation={handleNavigateSimulation}
+                      onNavigatePhase2={() => navigate({ view: 'phase2' })}
+                      onNavigateStandards={() => navigate({ view: 'standards' })}
+                      onNavigateCameroonGrid={() => navigate({ view: 'cameroon-grid' })}
+                      onNavigateRegulatory={() => navigate({ view: 'regulatory' })}
+                      onNavigateContextStack={handleNavigateContextStack}
+                    />
+                  </div>
+                </div>
               )}
 
               {currentView === 'cameroon-grid' && (
@@ -1009,36 +1055,72 @@ export default function App() {
               )}
 
               {currentView === 'context-stack' && (
-                <EngineeringContextStack
-                  locale={locale}
-                  initialNodeId={activeContextNodeId}
-                  onNavigateDomain={handleNavigateDomain}
-                  onNavigateEquipment={handleNavigateEquipment}
-                  onNavigateCalculator={handleNavigateCalculator}
-                  onNavigateSimulation={handleNavigateSimulation}
-                  onNavigateDiagram={handleNavigateDiagram}
-                  onNavigateCommissioning={() => navigate({ view: 'commissioning' })}
-                  onNavigateAssetManagement={handleNavigateAssetManagement}
-                />
+                <div className="space-y-6">
+                  <header className="rounded-[6px] border border-[#D8D2C5] bg-[#FFFDF9] p-6 sm:p-8">
+                    <div className="epede-eyebrow">
+                      {locale === 'fr' ? 'COUCHE L04 · MATRICE D’INTERDÉPENDANCE' : 'LAYER L04 · SYSTEM INTERDEPENDENCY STACK'}
+                    </div>
+                    <h1 className="mt-2 font-serif-editorial text-3xl sm:text-4xl text-[#17282C]">
+                      {locale === 'fr' ? 'Pile Contextuelle & Chaîne de Causalité Électrique' : 'Engineering Context Stack & Causal Chain'}
+                    </h1>
+                  </header>
+                  <div className="epede-workbench rounded-[6px] p-4 sm:p-6">
+                    <EngineeringContextStack
+                      locale={locale}
+                      initialNodeId={activeContextNodeId}
+                      onNavigateDomain={handleNavigateDomain}
+                      onNavigateEquipment={handleNavigateEquipment}
+                      onNavigateCalculator={handleNavigateCalculator}
+                      onNavigateSimulation={handleNavigateSimulation}
+                      onNavigateDiagram={handleNavigateDiagram}
+                      onNavigateCommissioning={() => navigate({ view: 'commissioning' })}
+                      onNavigateAssetManagement={handleNavigateAssetManagement}
+                    />
+                  </div>
+                </div>
               )}
 
               {currentView === 'industrial-projects' && (
-                <IndustrialProjectsView
-                  locale={locale}
-                  onNavigateCalculator={handleNavigateCalculator}
-                  onNavigateSimulation={handleNavigateSimulation}
-                  onNavigateDiagram={handleNavigateDiagram}
-                  onBackToHome={() => navigate({ view: 'home' })}
-                />
+                <div className="space-y-6">
+                  <header className="rounded-[6px] border border-[#D8D2C5] bg-[#FFFDF9] p-6 sm:p-8">
+                    <div className="epede-eyebrow">
+                      {locale === 'fr' ? 'ÉTUDES DE CAS INDUSTRIELS & TERTIAIRES' : 'INDUSTRIAL & COMMERCIAL FACILITY CASE STUDIES'}
+                    </div>
+                    <h1 className="mt-2 font-serif-editorial text-3xl sm:text-4xl text-[#17282C]">
+                      {locale === 'fr' ? 'Projets Industriels & Architectures d’Alimentation' : 'Industrial Power Projects & Supply Architectures'}
+                    </h1>
+                  </header>
+                  <div className="epede-workbench rounded-[6px] p-4 sm:p-6">
+                    <IndustrialProjectsView
+                      locale={locale}
+                      onNavigateCalculator={handleNavigateCalculator}
+                      onNavigateSimulation={handleNavigateSimulation}
+                      onNavigateDiagram={handleNavigateDiagram}
+                      onBackToHome={() => navigate({ view: 'home' })}
+                    />
+                  </div>
+                </div>
               )}
 
               {currentView === 'engineers-chain' && (
-                <EngineersChainView
-                  locale={locale}
-                  onNavigateDomain={handleNavigateDomain}
-                  onNavigateRole={handleNavigateRole}
-                  onNavigateStandard={handleNavigateStandard}
-                />
+                <div className="space-y-6">
+                  <header className="rounded-[6px] border border-[#D8D2C5] bg-[#FFFDF9] p-6 sm:p-8">
+                    <div className="epede-eyebrow">
+                      {locale === 'fr' ? 'CHAÎNE DES MÉTIERS DE L’ÉNERGIE' : 'POWER ENGINEERING ROLES ACROSS THE CHAIN'}
+                    </div>
+                    <h1 className="mt-2 font-serif-editorial text-3xl sm:text-4xl text-[#17282C]">
+                      {locale === 'fr' ? 'Les Ingénieurs le long de la Chaîne Électrique' : 'Engineers Across the Physical Power Chain'}
+                    </h1>
+                  </header>
+                  <div className="epede-workbench rounded-[6px] p-4 sm:p-6">
+                    <EngineersChainView
+                      locale={locale}
+                      onNavigateDomain={handleNavigateDomain}
+                      onNavigateRole={handleNavigateRole}
+                      onNavigateStandard={handleNavigateStandard}
+                    />
+                  </div>
+                </div>
               )}
 
               {currentView === 'ecosystem' && (
@@ -1049,85 +1131,169 @@ export default function App() {
               )}
 
               {currentView === 'architectures' && (
-                <ArchitectureComparisonWorkbench
-                  locale={locale}
-                  onNavigateDiagram={handleNavigateDiagram}
-                  onNavigateCalculator={handleNavigateCalculator}
-                />
+                <div className="space-y-6">
+                  <header className="rounded-[6px] border border-[#D8D2C5] bg-[#FFFDF9] p-6 sm:p-8">
+                    <div className="epede-eyebrow">
+                      {locale === 'fr' ? 'COMPARAISON D’ARCHITECTURES DE POSTES' : 'SUBSTATION & BUSBAR ARCHITECTURE COMPARISON'}
+                    </div>
+                    <h1 className="mt-2 font-serif-editorial text-3xl sm:text-4xl text-[#17282C]">
+                      {locale === 'fr' ? 'Comparateur d’Architectures (Simple Barre, Double Barre, 1.5 Disjoncteur, Boucle HTA)' : 'Busbar & Network Topology Trade-Off Matrix'}
+                    </h1>
+                  </header>
+                  <div className="epede-workbench rounded-[6px] p-4 sm:p-6">
+                    <ArchitectureComparisonWorkbench
+                      locale={locale}
+                      onNavigateDiagram={handleNavigateDiagram}
+                      onNavigateCalculator={handleNavigateCalculator}
+                    />
+                  </div>
+                </div>
               )}
 
               {currentView === 'protection' && (
-                <ProtectionEngineeringWorkbench
-                  locale={locale}
-                  onNavigate={(view) => navigate({ view: view as AppViewType })}
-                  onSelectEquipment={handleNavigateEquipment}
-                />
+                <div className="space-y-6">
+                  <header className="rounded-[6px] border border-[#D8D2C5] bg-[#FFFDF9] p-6 sm:p-8">
+                    <div className="epede-eyebrow">
+                      {locale === 'fr' ? 'DOMAINE D11 · PROTECTION & SÉLECTIVITÉ ANSI / CEI' : 'DOMAIN D11 · ANSI / IEC PROTECTION RELAYING & COORDINATION'}
+                    </div>
+                    <h1 className="mt-2 font-serif-editorial text-3xl sm:text-4xl text-[#17282C]">
+                      {locale === 'fr' ? 'Banc de Coordination des Protections & Courbes TCC' : 'Protection Relaying, TCC Selectivity & Fault Clearing Workbench'}
+                    </h1>
+                  </header>
+                  <div className="epede-workbench rounded-[6px] p-4 sm:p-6">
+                    <ProtectionEngineeringWorkbench
+                      locale={locale}
+                      onNavigate={(view) => navigate({ view: view as AppViewType })}
+                      onSelectEquipment={handleNavigateEquipment}
+                    />
+                  </div>
+                </div>
               )}
 
               {currentView === 'commissioning' && (
-                <CommissioningDashboardView
-                  locale={locale}
-                  onNavigate={(view) => navigate({ view: view as AppViewType })}
-                />
+                <div className="space-y-6">
+                  <header className="rounded-[6px] border border-[#D8D2C5] bg-[#FFFDF9] p-6 sm:p-8">
+                    <div className="epede-eyebrow">
+                      {locale === 'fr' ? 'ESSAIS FAT / SAT & MISE EN SERVICE HTB / HTA' : 'FAT / SAT TESTING & SUBSTATION COMMISSIONING'}
+                    </div>
+                    <h1 className="mt-2 font-serif-editorial text-3xl sm:text-4xl text-[#17282C]">
+                      {locale === 'fr' ? 'Tableau de Bord d’Essais et Mise en Service (CEI 62271 / CEI 60076)' : 'Substation Commissioning & Acceptance Testing Workbench'}
+                    </h1>
+                  </header>
+                  <div className="epede-workbench rounded-[6px] p-4 sm:p-6">
+                    <CommissioningDashboardView
+                      locale={locale}
+                      onNavigate={(view) => navigate({ view: view as AppViewType })}
+                    />
+                  </div>
+                </div>
               )}
 
               {currentView === 'knowledge-graph' && (
-                <KnowledgeGraphExplorer
-                  locale={locale}
-                  initialEntityId={activeContextNodeId}
-                  onNavigate={(view, ctx) => {
-                    if (view === 'simulation') {
-                      navigate({ view: 'simulation', simulationTab: ctx?.simulationTab });
-                    } else if (view === 'cameroon-grid') {
-                      navigate({ view: 'cameroon-grid' });
-                    } else {
-                      navigate({ view: view as AppViewType });
-                    }
-                  }}
-                />
+                <div className="space-y-6">
+                  <header className="rounded-[6px] border border-[#D8D2C5] bg-[#FFFDF9] p-6 sm:p-8">
+                    <div className="epede-eyebrow">
+                      {locale === 'fr' ? 'GRAPHE DE CONNAISSANCES ÉLECTROTECHNIQUES' : 'INTERCONNECTED ENGINEERING KNOWLEDGE GRAPH'}
+                    </div>
+                    <h1 className="mt-2 font-serif-editorial text-3xl sm:text-4xl text-[#17282C]">
+                      {locale === 'fr' ? 'Explorateur de Graphe (Domaines, Équipements, Normes & Formules)' : 'Knowledge Graph Explorer (Domains, Apparatus, Standards & Solvers)'}
+                    </h1>
+                  </header>
+                  <div className="epede-workbench rounded-[6px] p-4 sm:p-6">
+                    <KnowledgeGraphExplorer
+                      locale={locale}
+                      initialEntityId={activeContextNodeId}
+                      onNavigate={(view, ctx) => {
+                        if (view === 'simulation') {
+                          navigate({ view: 'simulation', simulationTab: ctx?.simulationTab });
+                        } else if (view === 'cameroon-grid') {
+                          navigate({ view: 'cameroon-grid' });
+                        } else {
+                          navigate({ view: view as AppViewType });
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
               )}
 
               {currentView === 'follow-the-energy' && (
-                <FollowTheEnergyView
-                  locale={locale}
-                  onNavigate={(view, ctx) => {
-                    if (view === 'simulation') {
-                      navigate({ view: 'simulation', simulationTab: ctx?.simulationTab as any });
-                    } else if (view === 'knowledge-graph') {
-                      navigate({ view: 'knowledge-graph', contextNodeId: ctx?.entityId });
-                    } else {
-                      navigate({ view: view as AppViewType });
-                    }
-                  }}
-                  onOpenKnowledgeGraphNode={(id) => {
-                    navigate({ view: 'knowledge-graph', contextNodeId: id });
-                  }}
-                />
+                <div className="space-y-6">
+                  <header className="rounded-[6px] border border-[#D8D2C5] bg-[#FFFDF9] p-6 sm:p-8">
+                    <div className="epede-eyebrow">
+                      {locale === 'fr' ? 'PARCOURS ÉNERGÉTIQUE BOUT-EN-BOUT' : 'END-TO-END ENERGY FLOW TRACE'}
+                    </div>
+                    <h1 className="mt-2 font-serif-editorial text-3xl sm:text-4xl text-[#17282C]">
+                      {locale === 'fr' ? 'Suivre l’Énergie : De la Turbine Hydraulique à la Charge Industrielle' : 'Follow the Energy: From Turbine Runner to Terminal Load'}
+                    </h1>
+                  </header>
+                  <div className="epede-workbench rounded-[6px] p-4 sm:p-6">
+                    <FollowTheEnergyView
+                      locale={locale}
+                      onNavigate={(view, ctx) => {
+                        if (view === 'simulation') {
+                          navigate({ view: 'simulation', simulationTab: ctx?.simulationTab as any });
+                        } else if (view === 'knowledge-graph') {
+                          navigate({ view: 'knowledge-graph', contextNodeId: ctx?.entityId });
+                        } else {
+                          navigate({ view: view as AppViewType });
+                        }
+                      }}
+                      onOpenKnowledgeGraphNode={(id) => {
+                        navigate({ view: 'knowledge-graph', contextNodeId: id });
+                      }}
+                    />
+                  </div>
+                </div>
               )}
 
               {currentView === 'scenarios' && (
-                <PedagogicalScenariosWorkbench
-                  locale={locale}
-                  initialScenarioId={activeContextNodeId}
-                  onNavigate={(view, ctx) => {
-                    if (view === 'simulation') {
-                      navigate({ view: 'simulation', simulationTab: ctx?.simulationTab as any });
-                    } else if (view === 'knowledge-graph') {
-                      navigate({ view: 'knowledge-graph', contextNodeId: ctx?.entityId });
-                    } else {
-                      navigate({ view: view as AppViewType });
-                    }
-                  }}
-                />
+                <div className="space-y-6">
+                  <header className="rounded-[6px] border border-[#D8D2C5] bg-[#FFFDF9] p-6 sm:p-8">
+                    <div className="epede-eyebrow">
+                      {locale === 'fr' ? 'SCÉNARIOS D’INCIDENTS & DIAGNOSTIC' : 'ENGINEERING INCIDENT & FAULT SCENARIOS'}
+                    </div>
+                    <h1 className="mt-2 font-serif-editorial text-3xl sm:text-4xl text-[#17282C]">
+                      {locale === 'fr' ? 'Scénarios Pédagogiques d’Exploitation et Défauts Réseau' : 'Operational Fault Scenarios & Diagnostic Walkthroughs'}
+                    </h1>
+                  </header>
+                  <div className="epede-workbench rounded-[6px] p-4 sm:p-6">
+                    <PedagogicalScenariosWorkbench
+                      locale={locale}
+                      initialScenarioId={activeContextNodeId}
+                      onNavigate={(view, ctx) => {
+                        if (view === 'simulation') {
+                          navigate({ view: 'simulation', simulationTab: ctx?.simulationTab as any });
+                        } else if (view === 'knowledge-graph') {
+                          navigate({ view: 'knowledge-graph', contextNodeId: ctx?.entityId });
+                        } else {
+                          navigate({ view: view as AppViewType });
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
               )}
 
               {currentView === 'traceability' && (
-                <DataProvenanceRegistryView
-                  locale={locale}
-                  onNavigateEquipment={handleNavigateEquipment}
-                  onNavigateCalculator={handleNavigateCalculator}
-                  onNavigateCameroonGrid={() => navigate({ view: 'cameroon-grid' })}
-                />
+                <div className="space-y-6">
+                  <header className="rounded-[6px] border border-[#D8D2C5] bg-[#FFFDF9] p-6 sm:p-8">
+                    <div className="epede-eyebrow">
+                      {locale === 'fr' ? 'REGISTRE DE PROVENANCE & SOURCES PRIMAIRES' : 'DATA PROVENANCE & PRIMARY SOURCE REGISTRY'}
+                    </div>
+                    <h1 className="mt-2 font-serif-editorial text-3xl sm:text-4xl text-[#17282C]">
+                      {locale === 'fr' ? 'Traçabilité des Données, Clauses Normatives & Sources SONATREL/ENEO' : 'Data Traceability, Normative Clauses & Utility Source Ledger'}
+                    </h1>
+                  </header>
+                  <div className="epede-workbench rounded-[6px] p-4 sm:p-6">
+                    <DataProvenanceRegistryView
+                      locale={locale}
+                      onNavigateEquipment={handleNavigateEquipment}
+                      onNavigateCalculator={handleNavigateCalculator}
+                      onNavigateCameroonGrid={() => navigate({ view: 'cameroon-grid' })}
+                    />
+                  </div>
+                </div>
               )}
 
               {currentView === 'thematic-journeys' && (
@@ -1151,21 +1317,33 @@ export default function App() {
               )}
 
               {currentView === 'asset-management' && (
-                <AssetManagementDiagnosticsWorkbench
-                  locale={locale}
-                  initialPillar={activeAssetPillar as any}
-                  onBack={() => navigate({ view: 'home' })}
-                  onNavigate={(view, dCode) => {
-                    if (view === 'domain' && dCode) {
-                      handleNavigateDomain(dCode as DomainCode);
-                    } else if (view.startsWith('domain:')) {
-                      handleNavigateDomain(view.split(':')[1] as DomainCode);
-                    } else {
-                      navigate({ view: view as AppViewType });
-                    }
-                  }}
-                  onSelectEquipment={handleNavigateEquipment}
-                />
+                <div className="space-y-6">
+                  <header className="rounded-[6px] border border-[#D8D2C5] bg-[#FFFDF9] p-6 sm:p-8">
+                    <div className="epede-eyebrow">
+                      {locale === 'fr' ? 'DIAGNOSTIC DGA & GESTION D’ACTIFS HTB (CEI 60599)' : 'ASSET HEALTH & DGA DIAGNOSTICS (IEC 60599 / IEEE C57.104)'}
+                    </div>
+                    <h1 className="mt-2 font-serif-editorial text-3xl sm:text-4xl text-[#17282C]">
+                      {locale === 'fr' ? 'Gestion d’Actifs, Triangles de Duval & Indice de Santé Transformateurs' : 'Substation Asset Management, Duval Triangles & Transformer Health Index'}
+                    </h1>
+                  </header>
+                  <div className="epede-workbench rounded-[6px] p-4 sm:p-6">
+                    <AssetManagementDiagnosticsWorkbench
+                      locale={locale}
+                      initialPillar={activeAssetPillar as any}
+                      onBack={() => navigate({ view: 'home' })}
+                      onNavigate={(view, dCode) => {
+                        if (view === 'domain' && dCode) {
+                          handleNavigateDomain(dCode as DomainCode);
+                        } else if (view.startsWith('domain:')) {
+                          handleNavigateDomain(view.split(':')[1] as DomainCode);
+                        } else {
+                          navigate({ view: view as AppViewType });
+                        }
+                      }}
+                      onSelectEquipment={handleNavigateEquipment}
+                    />
+                  </div>
+                </div>
               )}
 
               {currentView === 'laboratory' && (
@@ -1190,20 +1368,32 @@ export default function App() {
               )}
 
               {currentView === 'reference-hub' && (
-                <TechnicalReferenceHubView
-                  locale={locale}
-                  onNavigate={(view, params) => {
-                    navigate({
-                      view: view as AppViewType,
-                      calculatorTab: params?.calculatorTab,
-                      simulationTab: params?.simulationTab,
-                      topology: params?.topology,
-                      equipmentId: params?.equipmentId,
-                    });
-                  }}
-                  onNavigateCalculator={handleNavigateCalculator}
-                  onNavigateSimulation={handleNavigateSimulation}
-                />
+                <div className="space-y-6">
+                  <header className="rounded-[6px] border border-[#D8D2C5] bg-[#FFFDF9] p-6 sm:p-8">
+                    <div className="epede-eyebrow">
+                      {locale === 'fr' ? 'CENTRE DE RÉFÉRENCE TECHNIQUE & GRANDEURS ASSIGNÉES' : 'TECHNICAL REFERENCE HUB & RATED QUANTITIES'}
+                    </div>
+                    <h1 className="mt-2 font-serif-editorial text-3xl sm:text-4xl text-[#17282C]">
+                      {locale === 'fr' ? 'Grandeurs Électrotechniques, Plaques Signalétiques & Abaques' : 'Electrotechnical Quantities, Nameplate Ratings & Reference Tables'}
+                    </h1>
+                  </header>
+                  <div className="epede-workbench rounded-[6px] p-4 sm:p-6">
+                    <TechnicalReferenceHubView
+                      locale={locale}
+                      onNavigate={(view, params) => {
+                        navigate({
+                          view: view as AppViewType,
+                          calculatorTab: params?.calculatorTab,
+                          simulationTab: params?.simulationTab,
+                          topology: params?.topology,
+                          equipmentId: params?.equipmentId,
+                        });
+                      }}
+                      onNavigateCalculator={handleNavigateCalculator}
+                      onNavigateSimulation={handleNavigateSimulation}
+                    />
+                  </div>
+                </div>
               )}
 
               {currentView === 'about' && (
@@ -1242,180 +1432,182 @@ export default function App() {
         />
       )}
 
-      {/* Global Modals (Lazy Loaded on Demand) */}
-      {isSearchOpen && (
-        <Suspense fallback={null}>
-          <SearchModal
-            isOpen={isSearchOpen}
-            onClose={() => setIsSearchOpen(false)}
-            locale={locale}
-            initialQuery={searchInitialQuery}
-            onNavigateDomain={handleNavigateDomain}
-            onNavigateEquipment={handleNavigateEquipment}
-            onNavigateRole={handleNavigateRole}
-            onNavigateStandard={handleNavigateStandard}
-            onNavigateCalculator={handleNavigateCalculator}
-            onNavigateSimulation={handleNavigateSimulation}
-            onNavigateDiagram={handleNavigateDiagram}
-            onNavigateLifecycle={() => {
-              navigate({ view: 'lifecycle' });
-              setIsSearchOpen(false);
-            }}
-            onNavigateCameroonGrid={(cat) => {
-              navigate({ view: 'cameroon-grid', gridCategory: (cat as any) || 'demarcation' });
-              setIsSearchOpen(false);
-            }}
-            onNavigateRegulatory={() => {
-              navigate({ view: 'regulatory' });
-              setIsSearchOpen(false);
-            }}
-            onNavigateJourney={(stage) => {
-              handleNavigateJourney(stage);
-              setIsSearchOpen(false);
-            }}
-            onNavigateContextStack={(nodeId) => {
-              handleNavigateContextStack(nodeId);
-              setIsSearchOpen(false);
-            }}
-            onNavigateScenarios={(scenarioId) => {
-              navigate({ view: 'scenarios', contextNodeId: scenarioId });
-              setIsSearchOpen(false);
-            }}
-            onNavigateTraceability={() => {
-              navigate({ view: 'traceability' });
-              setIsSearchOpen(false);
-            }}
-            onNavigateCommissioning={() => {
-              navigate({ view: 'commissioning' });
-              setIsSearchOpen(false);
-            }}
-            onNavigateAssetManagement={(pillar) => {
-              handleNavigateAssetManagement(pillar);
-              setIsSearchOpen(false);
-            }}
-          />
-        </Suspense>
-      )}
+      {/* Global Modals (Lazy Loaded on Demand, scoped to ProCode Workbench tokens) */}
+      <div className="epede-workbench border-0 bg-transparent">
+        {isSearchOpen && (
+          <Suspense fallback={null}>
+            <SearchModal
+              isOpen={isSearchOpen}
+              onClose={() => setIsSearchOpen(false)}
+              locale={locale}
+              initialQuery={searchInitialQuery}
+              onNavigateDomain={handleNavigateDomain}
+              onNavigateEquipment={handleNavigateEquipment}
+              onNavigateRole={handleNavigateRole}
+              onNavigateStandard={handleNavigateStandard}
+              onNavigateCalculator={handleNavigateCalculator}
+              onNavigateSimulation={handleNavigateSimulation}
+              onNavigateDiagram={handleNavigateDiagram}
+              onNavigateLifecycle={() => {
+                navigate({ view: 'lifecycle' });
+                setIsSearchOpen(false);
+              }}
+              onNavigateCameroonGrid={(cat) => {
+                navigate({ view: 'cameroon-grid', gridCategory: (cat as any) || 'demarcation' });
+                setIsSearchOpen(false);
+              }}
+              onNavigateRegulatory={() => {
+                navigate({ view: 'regulatory' });
+                setIsSearchOpen(false);
+              }}
+              onNavigateJourney={(stage) => {
+                handleNavigateJourney(stage);
+                setIsSearchOpen(false);
+              }}
+              onNavigateContextStack={(nodeId) => {
+                handleNavigateContextStack(nodeId);
+                setIsSearchOpen(false);
+              }}
+              onNavigateScenarios={(scenarioId) => {
+                navigate({ view: 'scenarios', contextNodeId: scenarioId });
+                setIsSearchOpen(false);
+              }}
+              onNavigateTraceability={() => {
+                navigate({ view: 'traceability' });
+                setIsSearchOpen(false);
+              }}
+              onNavigateCommissioning={() => {
+                navigate({ view: 'commissioning' });
+                setIsSearchOpen(false);
+              }}
+              onNavigateAssetManagement={(pillar) => {
+                handleNavigateAssetManagement(pillar);
+                setIsSearchOpen(false);
+              }}
+            />
+          </Suspense>
+        )}
 
-      {isAssistantOpen && (
-        <Suspense fallback={null}>
-          <AIAssistantModal
-            isOpen={isAssistantOpen}
-            onClose={() => setIsAssistantOpen(false)}
-            locale={locale}
-            activeEquipmentId={activeEquipmentId}
-            activeDomainId={activeDomainCode}
-            onNavigateDomain={handleNavigateDomain}
-            onNavigateEquipment={handleNavigateEquipment}
-            onNavigateStandard={handleNavigateStandard}
-            onNavigateCalculator={handleNavigateCalculator}
-            onNavigateSimulation={handleNavigateSimulation}
-            onNavigateCameroonGrid={() => {
-              navigate({ view: 'cameroon-grid' });
-              setIsAssistantOpen(false);
-            }}
-            onNavigateRegulatory={() => {
-              navigate({ view: 'regulatory' });
-              setIsAssistantOpen(false);
-            }}
-            onNavigateLifecycle={() => {
-              navigate({ view: 'lifecycle' });
-              setIsAssistantOpen(false);
-            }}
-            onNavigateDiagram={() => {
-              handleNavigateDiagram();
-              setIsAssistantOpen(false);
-            }}
-            onNavigateJourney={() => {
-              handleNavigateJourney();
-              setIsAssistantOpen(false);
-            }}
-            onNavigateContextStack={(nodeId) => {
-              handleNavigateContextStack(nodeId);
-              setIsAssistantOpen(false);
-            }}
-            onNavigateProtection={() => {
-              navigate({ view: 'protection' });
-              setIsAssistantOpen(false);
-            }}
-            onNavigateCommissioning={() => {
-              navigate({ view: 'commissioning' });
-              setIsAssistantOpen(false);
-            }}
-          />
-        </Suspense>
-      )}
+        {isAssistantOpen && (
+          <Suspense fallback={null}>
+            <AIAssistantModal
+              isOpen={isAssistantOpen}
+              onClose={() => setIsAssistantOpen(false)}
+              locale={locale}
+              activeEquipmentId={activeEquipmentId}
+              activeDomainId={activeDomainCode}
+              onNavigateDomain={handleNavigateDomain}
+              onNavigateEquipment={handleNavigateEquipment}
+              onNavigateStandard={handleNavigateStandard}
+              onNavigateCalculator={handleNavigateCalculator}
+              onNavigateSimulation={handleNavigateSimulation}
+              onNavigateCameroonGrid={() => {
+                navigate({ view: 'cameroon-grid' });
+                setIsAssistantOpen(false);
+              }}
+              onNavigateRegulatory={() => {
+                navigate({ view: 'regulatory' });
+                setIsAssistantOpen(false);
+              }}
+              onNavigateLifecycle={() => {
+                navigate({ view: 'lifecycle' });
+                setIsAssistantOpen(false);
+              }}
+              onNavigateDiagram={() => {
+                handleNavigateDiagram();
+                setIsAssistantOpen(false);
+              }}
+              onNavigateJourney={() => {
+                handleNavigateJourney();
+                setIsAssistantOpen(false);
+              }}
+              onNavigateContextStack={(nodeId) => {
+                handleNavigateContextStack(nodeId);
+                setIsAssistantOpen(false);
+              }}
+              onNavigateProtection={() => {
+                navigate({ view: 'protection' });
+                setIsAssistantOpen(false);
+              }}
+              onNavigateCommissioning={() => {
+                navigate({ view: 'commissioning' });
+                setIsAssistantOpen(false);
+              }}
+            />
+          </Suspense>
+        )}
 
-      {/* Global Platform Quality & Maturity Modal (16/16 L5 Domains) */}
-      {isAuditOpen && (
-        <Suspense fallback={null}>
-          <PlatformMaturityModal
-            isOpen={isAuditOpen}
-            onClose={() => setIsAuditOpen(false)}
-            locale={locale}
-            onNavigateDomain={(code) => {
-              handleNavigateDomain(code);
-              setIsAuditOpen(false);
-            }}
-          />
-        </Suspense>
-      )}
+        {/* Global Platform Quality & Maturity Modal (16/16 L5 Domains) */}
+        {isAuditOpen && (
+          <Suspense fallback={null}>
+            <PlatformMaturityModal
+              isOpen={isAuditOpen}
+              onClose={() => setIsAuditOpen(false)}
+              locale={locale}
+              onNavigateDomain={(code) => {
+                handleNavigateDomain(code);
+                setIsAuditOpen(false);
+              }}
+            />
+          </Suspense>
+        )}
 
-      {/* Field Equipment & Nameplate AI Vision Inspector */}
-      {isVisionInspectorOpen && (
-        <Suspense fallback={null}>
-          <FieldEquipmentVisionInspectorModal
-            isOpen={isVisionInspectorOpen}
-            onClose={() => setIsVisionInspectorOpen(false)}
-            locale={locale}
-            onNavigateCalculator={(calcTab) => {
-              handleNavigateCalculator(calcTab as any);
-              setIsVisionInspectorOpen(false);
-            }}
-          />
-        </Suspense>
-      )}
+        {/* Field Equipment & Nameplate AI Vision Inspector */}
+        {isVisionInspectorOpen && (
+          <Suspense fallback={null}>
+            <FieldEquipmentVisionInspectorModal
+              isOpen={isVisionInspectorOpen}
+              onClose={() => setIsVisionInspectorOpen(false)}
+              locale={locale}
+              onNavigateCalculator={(calcTab) => {
+                handleNavigateCalculator(calcTab as any);
+                setIsVisionInspectorOpen(false);
+              }}
+            />
+          </Suspense>
+        )}
 
-      {/* Field Mobile Bottom Navigation Quick Dock */}
-      <MobileFieldQuickDock
-        locale={locale}
-        currentView={currentView}
-        onNavigateView={(v) => navigate({ view: v as AppViewType })}
-        onOpenAssistant={() => setIsAssistantOpen(true)}
-        onOpenVisionInspector={() => setIsVisionInspectorOpen(true)}
-        onOpenQrScanner={() => setIsQrScannerOpen(true)}
-      />
+        {/* Field Mobile Bottom Navigation Quick Dock */}
+        <MobileFieldQuickDock
+          locale={locale}
+          currentView={currentView}
+          onNavigateView={(v) => navigate({ view: v as AppViewType })}
+          onOpenAssistant={() => setIsAssistantOpen(true)}
+          onOpenVisionInspector={() => setIsVisionInspectorOpen(true)}
+          onOpenQrScanner={() => setIsQrScannerOpen(true)}
+        />
 
-      {/* Mobile QR & Barcode Nameplate Scanner Modal */}
-      {isQrScannerOpen && (
-        <Suspense fallback={null}>
-          <MobileQrScannerModal
-            isOpen={isQrScannerOpen}
-            onClose={() => setIsQrScannerOpen(false)}
-            locale={locale}
-            onNavigateEquipment={(id) => {
-              handleNavigateEquipment(id);
-              setIsQrScannerOpen(false);
-            }}
-            onNavigateReference={(id) => {
-              handleNavigateReference(id);
-              setIsQrScannerOpen(false);
-            }}
-          />
-        </Suspense>
-      )}
+        {/* Mobile QR & Barcode Nameplate Scanner Modal */}
+        {isQrScannerOpen && (
+          <Suspense fallback={null}>
+            <MobileQrScannerModal
+              isOpen={isQrScannerOpen}
+              onClose={() => setIsQrScannerOpen(false)}
+              locale={locale}
+              onNavigateEquipment={(id) => {
+                handleNavigateEquipment(id);
+                setIsQrScannerOpen(false);
+              }}
+              onNavigateReference={(id) => {
+                handleNavigateReference(id);
+                setIsQrScannerOpen(false);
+              }}
+            />
+          </Suspense>
+        )}
 
-      {/* Recently Explored Context & Saved Engineering Study Paths Drawer */}
-      <RecentlyExploredDrawer
-        isOpen={isHistoryDrawerOpen}
-        onClose={() => setIsHistoryDrawerOpen(false)}
-        locale={locale}
-        onNavigateDomain={(code) => handleNavigateDomain(code as DomainCode)}
-        onNavigateEquipment={handleNavigateEquipment}
-        onNavigateCalculator={handleNavigateCalculator}
-        onNavigateSimulation={handleNavigateSimulation}
-        onNavigateContextStack={handleNavigateContextStack}
-      />
+        {/* Recently Explored Context & Saved Engineering Study Paths Drawer */}
+        <RecentlyExploredDrawer
+          isOpen={isHistoryDrawerOpen}
+          onClose={() => setIsHistoryDrawerOpen(false)}
+          locale={locale}
+          onNavigateDomain={(code) => handleNavigateDomain(code as DomainCode)}
+          onNavigateEquipment={handleNavigateEquipment}
+          onNavigateCalculator={handleNavigateCalculator}
+          onNavigateSimulation={handleNavigateSimulation}
+          onNavigateContextStack={handleNavigateContextStack}
+        />
+      </div>
     </div>
     </UsageLevelProvider>
   );

@@ -8,7 +8,17 @@
 - [Sitemap](https://epede-platform.vercel.app/sitemap.xml): Machine-readable index of platform routes and modules.
 - [Canonical Entrypoint](https://epede-platform.vercel.app/): Interactive Application built on React 19, TypeScript 5.8, Tailwind CSS, Vite, Lucide Icons, and Three.js.
 
-## The Canonical Physical Energy Chain & 16 Core Domains
+## The Canonical 9-Stage Physical Energy Chain & 16 Core Domains
+- [9-Stage Physical Energy Journey](https://epede-platform.vercel.app/#/journey):
+  1. Stage 01 — Generation (`0.7–20 kV`, synchronous alternators, hydro/thermal/solar)
+  2. Stage 02 — Step-Up Substation (`11–20 kV -> 90 / 225 / 400 kV`, GSU transformers)
+  3. Stage 03 — High-Voltage Transmission (`90 kV / 225 kV / 400 kV`, SONATREL overhead corridors, SIL, Ferranti effect)
+  4. Stage 04 — HV/MV Primary Substation (`225/90 kV -> 30/15 kV`, AIS/GIS bays, OLTC transformers)
+  5. Stage 05 — Medium-Voltage Distribution (`15 kV / 30 kV`, urban open-loop RMU rings & rural radial feeders)
+  6. Stage 06 — MV/LV Secondary Substation (`15/30 kV -> 400/230 V`, H61 pole-mounted & H59 cabin transformers)
+  7. Stage 07 — Low-Voltage Installation (`400 V / 230 V`, TGBT Form 1-4b, TT/TN-S/IT earthing per NF C 15-100 / IEC 60364)
+  8. Stage 08 — Industrial & Commercial Loads (`400 V – 6.6 kV`, induction motors, VFDs, MCCs, PFC banks)
+  9. Stage 09 — Protection, SCADA & Automation (`110 V DC / IEC 61850`, ANSI 50/51/21/87 relays, GOOSE, EMS)
 - [0. Foundations](https://epede-platform.vercel.app/#/journey): Electrotechnical fundamentals, AC circuit theory, electrical symbols, engineering documentation, and safety (LOTO).
 - [D01 — Energy Resources & Generation](https://epede-platform.vercel.app/#/domain/D01): Hydroelectric plants (Francis, Pelton, Kaplan turbines), thermal gas turbine cycles, solar PV parks, synchronous alternators, excitation systems, and plant auxiliaries.
 - [D02 — Power-System Architecture & Grid Planning](https://epede-platform.vercel.app/#/domain/D02): Grid topology, long-term transmission planning, generation-load balance, N-1 contingency, and dynamic stability.
@@ -36,7 +46,11 @@
   - Memve’ele Hydroelectric Dam (211 MW, Ntem River, evacuated via 225 kV Nyabizan–Ebolowa–Ahala line)
   - Lagdo Hydroelectric Dam (72 MW, Benue River, RIN)
   - Kribi Gas Power Plant (216 MW, Wärtsilä dual-fuel engines fired by Sanaga South gas)
-  - Lom Pangar Reservoir Dam (6 billion m³ regulating reservoir holding Sanaga flow at ~1,000 m³/s)
+  - Lom Pangar Reservoir Dam (6 billion m³ regulating reservoir holding Sanaga dry-season flow at ~900–1,050 m³/s + 30 MW toe-of-dam plant feeding the Eastern Network via Bertoua/Abong-Mbang)
+- Seasonal Hydrological & Dry-Season Reliability Observatory:
+  - 6 Hydrological Zones: Equatorial Bimodal South (Ntem/Nyong), Sanaga Basin (133,000 km²), Adamawa Water Tower (Djerem/Lom), Western Highlands, Sudano-Sahelian North (Benue/Lagdo), and Coastal Hyper-Humid Littoral (Douala vs Sanaga catchment paradox).
+  - Hydraulic Power Equation Solver ($P = \rho \cdot g \cdot Q \cdot H \cdot \eta$) and 12-month plant dispatch profiles for Nachtigal, Song Loulou, Edéa, Memve'ele, Lagdo, Lom Pangar, and Mekin.
+  - 9-Step Dry-Season Shortage Causal Chain & Diagnostic Classifier distinguishing hydrological deficit from transmission congestion, transformer overload, MV/LV feeder faults, and planned maintenance.
 - Key Transmission Corridors (SONATREL 225 kV & 90 kV):
   - 225 kV Song Loulou – Bekoko (Douala hub)
   - 225 kV Song Loulou – Mangombe – Oyomabang (Yaoundé hub)

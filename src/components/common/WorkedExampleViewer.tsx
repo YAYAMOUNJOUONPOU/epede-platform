@@ -15,7 +15,6 @@ import {
   Download,
 } from 'lucide-react';
 import type { WorkedExample } from '../../types/contentSchemas';
-import { EngineeringCalculationPdfExportService } from '../calculators/services/EngineeringCalculationPdfExportService';
 
 export interface WorkedExampleViewerProps {
   example: WorkedExample;
@@ -61,7 +60,12 @@ export const WorkedExampleViewer: React.FC<WorkedExampleViewerProps> = ({
         <div className="shrink-0 flex flex-wrap sm:flex-nowrap items-center gap-2.5">
           <button
             type="button"
-            onClick={() => EngineeringCalculationPdfExportService.exportWorkedExamplePdf(example, locale)}
+            onClick={async () => {
+              const { EngineeringCalculationPdfExportService } = await import(
+                '../calculators/services/EngineeringCalculationPdfExportService'
+              );
+              EngineeringCalculationPdfExportService.exportWorkedExamplePdf(example, locale);
+            }}
             className="p-3 rounded-xl bg-[#B8F000]/15 hover:bg-[#B8F000]/25 text-[#B8F000] border border-[#B8F000]/30 flex items-center gap-2 font-mono text-xs font-bold transition-all shadow-sm hover:scale-[1.02] cursor-pointer"
             title={isFr ? 'Télécharger la note technique de calcul au format PDF A4' : 'Download technical calculation sheet as A4 PDF'}
           >

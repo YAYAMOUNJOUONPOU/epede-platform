@@ -327,6 +327,21 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <>
       {/* Top 2px Continuous Scroll Progress Indicator */}
+      <a
+        href="#main-content"
+        onClick={(e) => {
+          e.preventDefault();
+          const mainEl = document.getElementById('main-content');
+          if (mainEl) {
+            mainEl.focus();
+            mainEl.scrollIntoView({ behavior: 'smooth' });
+          }
+        }}
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-4 focus:z-[70] focus:px-4 focus:py-2 focus:bg-[#17282C] focus:text-[#F6F4EE] focus:font-mono focus:text-xs focus:font-semibold focus:rounded-[4px] focus:shadow-lg"
+      >
+        {isFr ? 'Aller au contenu principal' : 'Skip to main content'}
+      </a>
+
       <div
         aria-hidden="true"
         className="fixed top-0 left-0 h-[2px] z-[60] bg-[#147C78] transition-[width] duration-150 pointer-events-none"

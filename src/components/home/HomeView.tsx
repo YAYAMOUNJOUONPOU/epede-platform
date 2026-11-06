@@ -2,13 +2,18 @@
 // EPEDE ProCode Bright Editorial & Technical Workbench Homepage
 // Implements the 10-scene narrative sequence from design-reference/EPEDE Master.dc.html & procode-spec.md
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import type { DomainCode } from '../../types/epede';
 import type { CalculatorTabType } from '../calculators/services/calculationReportService';
 import type { SimulationTabType } from '../simulation/SimulationLabView';
 import type { StageId } from '../journey/types';
 import { EditorialImage } from '../common/EditorialImage';
-import { RealCameroonGeographicMap } from '../grid/RealCameroonGeographicMap';
+
+const RealCameroonGeographicMap = React.lazy(() =>
+  import('../grid/RealCameroonGeographicMap').then((m) => ({
+    default: m.RealCameroonGeographicMap,
+  }))
+);
 
 export interface HomeViewProps {
   locale: 'fr' | 'en';
@@ -1363,74 +1368,86 @@ export const HomeView: React.FC<HomeViewProps> = ({
         data-screen-label="06 Cameroon grid"
         className="bg-gradient-to-b from-[#FFFDF9] to-[#EEF0EA] py-20 md:py-28 scroll-mt-[72px]"
       >
-        <div className="max-w-[1280px] mx-auto px-5 sm:px-8 lg:px-12 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-          <div className="lg:col-span-5">
-            <div className="epede-eyebrow">
-              {isFr ? 'RÉSEAU ÉLECTRIQUE DU CAMEROUN' : 'CAMEROON GRID'}
-            </div>
-            <h2 className="mt-4 text-[clamp(1.9rem,3.2vw,3.2rem)] leading-[1.05] tracking-[-0.035em] font-bold text-[#17282C]">
-              {isFr ? 'Deux réseaux interconnectés,' : 'Two interconnected networks,'}{' '}
-              <span className="font-serif-editorial text-[1.1em] text-[#147C78]">
+        <div className="max-w-[1280px] mx-auto px-5 sm:px-8 lg:px-12 space-y-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end">
+            <div className="lg:col-span-7">
+              <div className="epede-eyebrow">
+                {isFr ? 'RÉSEAU ÉLECTRIQUE DU CAMEROUN' : 'CAMEROON GRID'}
+              </div>
+              <h2 className="mt-4 text-[clamp(1.9rem,3.2vw,3.2rem)] leading-[1.05] tracking-[-0.035em] font-bold text-[#17282C]">
+                {isFr ? 'Deux réseaux interconnectés,' : 'Two interconnected networks,'}{' '}
+                <span className="font-serif-editorial text-[1.1em] text-[#147C78]">
+                  {isFr
+                    ? 'un système national en construction.'
+                    : 'one national system in the making.'}
+                </span>
+              </h2>
+              <p className="mt-5 text-[1.05rem] leading-[1.7] text-[#33474B] max-w-[68ch]">
                 {isFr
-                  ? 'un système national en construction.'
-                  : 'one national system in the making.'}
-              </span>
-            </h2>
-            <p className="mt-6 text-[1.08rem] leading-[1.7] text-[#33474B]">
-              {isFr
-                ? 'Explorez les réseaux interconnectés Sud (RIS) et Nord (RIN) : centrales hydroélectriques, thermiques et solaires, corridors 225 kV / 110 kV / 90 kV, postes SONATREL/ENEO et profils hydrologiques saisonniers (Jan–Déc), avec distinction explicite entre tracés cartographiés et liaisons schématiques.'
-                : 'Explore the Southern (RIS) and Northern (RIN) interconnected grids: generation sites, transmission corridors and substations, with mapped routes clearly separated from schematic ones.'}
-            </p>
-
-            {/* Fine-Rule KPI Strip */}
-            <div className="mt-8 grid grid-cols-3 border-t border-[#17282C]">
-              <div className="py-3.5 pr-3">
-                <div className="font-mono text-[22px] font-medium text-[#17282C]">RIS</div>
-                <div className="text-[13px] text-[#5C6C70] mt-0.5">
-                  {isFr ? 'Réseau Sud' : 'Southern grid'}
-                </div>
-              </div>
-              <div className="py-3.5 px-3 border-l border-[#CFCABD]">
-                <div className="font-mono text-[22px] font-medium text-[#17282C]">RIN</div>
-                <div className="text-[13px] text-[#5C6C70] mt-0.5">
-                  {isFr ? 'Réseau Nord' : 'Northern grid'}
-                </div>
-              </div>
-              <div className="py-3.5 pl-3 border-l border-[#CFCABD]">
-                <div className="font-mono text-[22px] font-medium text-[#17282C]">225 kV</div>
-                <div className="text-[13px] text-[#5C6C70] mt-0.5">
-                  {isFr ? 'Ossature HTB' : 'Backbone level'}
-                </div>
-              </div>
+                  ? 'Explorez les réseaux interconnectés Sud (RIS) et Nord (RIN) : centrales hydroélectriques, thermiques et solaires, corridors 225 kV / 110 kV / 90 kV, postes SONATREL/ENEO et profils hydrologiques saisonniers (Jan–Déc), avec distinction explicite entre tracés cartographiés et liaisons schématiques.'
+                  : 'Explore the Southern (RIS) and Northern (RIN) interconnected grids: generation sites, transmission corridors and substations, with mapped routes clearly separated from schematic ones.'}
+              </p>
             </div>
 
-            <p className="mt-4 font-mono text-xs leading-[1.6] text-[#5C6C70]">
-              {isFr
-                ? 'Jeu de données sourcé (SONATREL, ENEO, ARSEL, EDC, NHPC) · date des données et notes d’incertitude affichées sur la carte. Les tracés schématiques ne constituent pas des relevés topographiques.'
-                : 'Source-linked dataset · data date and uncertainty notes shown in the map view. Schematic routes are not surveyed geometry.'}
-            </p>
+            <div className="lg:col-span-5">
+              {/* Fine-Rule KPI Strip */}
+              <div className="grid grid-cols-3 border-t border-[#17282C]">
+                <div className="py-3.5 pr-3">
+                  <div className="font-mono text-[22px] font-medium text-[#17282C]">RIS</div>
+                  <div className="text-[13px] text-[#5C6C70] mt-0.5">
+                    {isFr ? 'Réseau Sud' : 'Southern grid'}
+                  </div>
+                </div>
+                <div className="py-3.5 px-3 border-l border-[#CFCABD]">
+                  <div className="font-mono text-[22px] font-medium text-[#17282C]">RIN</div>
+                  <div className="text-[13px] text-[#5C6C70] mt-0.5">
+                    {isFr ? 'Réseau Nord' : 'Northern grid'}
+                  </div>
+                </div>
+                <div className="py-3.5 pl-3 border-l border-[#CFCABD]">
+                  <div className="font-mono text-[22px] font-medium text-[#17282C]">225 kV</div>
+                  <div className="text-[13px] text-[#5C6C70] mt-0.5">
+                    {isFr ? 'Ossature HTB' : 'Backbone level'}
+                  </div>
+                </div>
+              </div>
 
-            <button
-              type="button"
-              onClick={() => onNavigateView('cameroon-grid')}
-              className="mt-6 inline-flex items-center gap-2.5 font-bold text-[#147C78] hover:text-[#0E5E5B] bg-transparent border-0 p-0 cursor-pointer text-[15px]"
-            >
-              <span>
+              <p className="mt-3 font-mono text-xs leading-[1.6] text-[#5C6C70]">
                 {isFr
-                  ? 'Ouvrir la carte et l’observatoire du réseau'
-                  : 'Open the grid map'}
-              </span>
-              <span>→</span>
-            </button>
+                  ? 'Jeu de données sourcé (SONATREL, ENEO, ARSEL, EDC, NHPC) · date des données et notes d’incertitude affichées sur la carte. Les tracés schématiques ne constituent pas des relevés topographiques.'
+                  : 'Source-linked dataset · data date and uncertainty notes shown in the map view. Schematic routes are not surveyed geometry.'}
+              </p>
+
+              <button
+                type="button"
+                onClick={() => onNavigateView('cameroon-grid')}
+                className="mt-4 inline-flex items-center gap-2.5 font-bold text-[#147C78] hover:text-[#0E5E5B] bg-transparent border-0 p-0 cursor-pointer text-[15px]"
+              >
+                <span>
+                  {isFr
+                    ? 'Ouvrir la carte et l’observatoire du réseau'
+                    : 'Open the grid map'}
+                </span>
+                <span>→</span>
+              </button>
+            </div>
           </div>
 
-          <div className="lg:col-span-7">
-            <div className="bg-[#10191D] border border-[#2A383C] p-3 sm:p-4">
+          <div className="bg-[#10191D] border border-[#2A383C] rounded-[6px] p-3 sm:p-5 epede-workbench">
+            <Suspense
+              fallback={
+                <div className="h-[460px] flex items-center justify-center font-mono text-xs text-[#90A4A9]">
+                  {isFr
+                    ? 'Chargement de la cartographie nationale SONATREL / ENEO...'
+                    : 'Loading SONATREL / ENEO national grid cartography...'}
+                </div>
+              }
+            >
               <RealCameroonGeographicMap
                 locale={locale}
                 onNavigateDiagram={() => onNavigateView('cameroon-grid')}
               />
-            </div>
+            </Suspense>
           </div>
         </div>
       </section>

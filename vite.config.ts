@@ -56,6 +56,18 @@ export default defineConfig(() => {
             ) {
               return 'data-domain-pedagogy';
             }
+            if (
+              id.includes('src/components/domain/modules/domainWorkbenchData') ||
+              id.includes('src/components/domain/modules/DomainEngineeringWorkbench')
+            ) {
+              return 'domain-workbench-data';
+            }
+            if (
+              id.includes('src/components/domain/modules/FiveLevelArchitectureTab') ||
+              id.includes('src/components/domain/modules/DomainVisualEngineeringAsset')
+            ) {
+              return 'domain-visual-architecture';
+            }
             if (id.includes('src/components/domain/modules/')) {
               return 'domain-modules';
             }

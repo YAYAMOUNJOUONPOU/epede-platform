@@ -172,22 +172,21 @@ export const LaboratoryView: React.FC<LaboratoryViewProps> = ({
   );
 
   return (
-    <div className="space-y-6 text-[#F4F1E8]">
+    <div className="space-y-8 text-[#17282C]">
       {/* Header Banner */}
-      <div className="p-6 sm:p-8 rounded-2xl bg-[#151C1E] border border-[#567A87]/35 shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#D7A64A]/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="p-6 sm:p-8 rounded-[6px] bg-[#FFFDF9] border border-[#D8D2C5] relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 font-mono text-xs text-[#D7A64A] mb-1.5">
-              <Cpu className="h-4 w-4 text-[#D7A64A]" />
-              <span className="uppercase tracking-widest font-bold">
+            <div className="flex items-center gap-2 font-mono text-[11px] text-[#0F6A6B] mb-2">
+              <Cpu className="h-4 w-4 text-[#0F6A6B]" />
+              <span className="uppercase tracking-[0.14em] font-semibold">
                 {locale === 'fr' ? 'LABORATOIRE VIRTUEL D\'INGÉNIERIE RÉSEAU' : 'VIRTUAL POWER SYSTEM LAB'}
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-[#F4F1E8] font-mono tracking-tight uppercase">
+            <h1 className="font-serif-editorial text-3xl sm:text-4xl lg:text-5xl text-[#17282C] tracking-tight">
               {locale === 'fr' ? 'Laboratoire & Ateliers de Simulation' : 'Engineering Laboratory & Interactive Workbenches'}
             </h1>
-            <p className="text-sm text-[#A9ADA5] mt-1.5 max-w-3xl leading-relaxed">
+            <p className="text-sm sm:text-base text-[#3E565B] mt-2 max-w-3xl leading-relaxed">
               {locale === 'fr'
                 ? 'Portail centralisé regroupant l\'ensemble des bancs de simulation dynamique, studios de schémas unifilaires, analyseurs de protection et outils de diagnostic prédictif de la plateforme EPEDE.'
                 : 'Centralized portal gathering all dynamic simulation workbenches, single-line diagram (SLD) studios, protection coordination analyzers, and DGA diagnostic engines across the EPEDE platform.'}
@@ -195,14 +194,14 @@ export const LaboratoryView: React.FC<LaboratoryViewProps> = ({
           </div>
 
           <div className="flex items-center gap-2 self-start md:self-center shrink-0">
-            <span className="px-3.5 py-1.5 rounded-xl bg-[#0B0F12] border border-[#D7A64A]/40 font-mono text-xs text-[#D7A64A] font-bold">
+            <span className="px-3.5 py-1.5 rounded-[4px] bg-[#F6F4EE] border border-[#D8D2C5] font-mono text-xs text-[#17282C] font-semibold">
               {modules.length} {locale === 'fr' ? 'Ateliers Disponibles' : 'Active Workbenches'}
             </span>
           </div>
         </div>
 
         {/* Category Tabs */}
-        <div className="flex gap-2 overflow-x-auto mt-6 pt-5 border-t border-[#567A87]/30 scrollbar-none">
+        <div className="flex flex-wrap gap-2 mt-6 pt-5 border-t border-[#E6E1D6]">
           {[
             { id: 'all', labelFr: 'Tous les Ateliers', labelEn: 'All Workbenches' },
             { id: 'grid', labelFr: 'Stabilité & Réseau HTB', labelEn: 'Grid & Stability' },
@@ -215,10 +214,10 @@ export const LaboratoryView: React.FC<LaboratoryViewProps> = ({
               key={cat.id}
               type="button"
               onClick={() => setActiveCategory(cat.id as any)}
-              className={`px-3.5 py-2 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all border cursor-pointer select-none ${
+              className={`px-3.5 py-2 rounded-[4px] font-mono text-xs font-semibold whitespace-nowrap transition-colors border cursor-pointer select-none ${
                 activeCategory === cat.id
-                  ? 'border-[#D7A64A] bg-[#D7A64A]/15 text-[#D7A64A] shadow-sm'
-                  : 'border-[#567A87]/35 bg-[#0B0F12] text-[#A9ADA5] hover:text-[#F4F1E8] hover:border-[#D7A64A]/40'
+                  ? 'border-[#0F6A6B] bg-[#0F6A6B] text-[#FFFDF9]'
+                  : 'border-[#D8D2C5] bg-[#F6F4EE] text-[#3E565B] hover:text-[#17282C] hover:border-[#0F6A6B]'
               }`}
             >
               {locale === 'fr' ? cat.labelFr : cat.labelEn}
@@ -234,42 +233,42 @@ export const LaboratoryView: React.FC<LaboratoryViewProps> = ({
           return (
             <div
               key={mod.id}
-              className="p-5 rounded-2xl bg-[#151C1E] border border-[#567A87]/35 hover:border-[#D7A64A]/60 transition-all flex flex-col justify-between group shadow-sm hover:shadow-lg"
+              className="p-5 rounded-[6px] bg-[#FFFDF9] border border-[#D8D2C5] hover:border-[#0F6A6B] transition-colors flex flex-col justify-between group"
             >
               <div>
                 <div className="flex items-center justify-between gap-2 mb-3">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-black bg-[#D7A64A]/15 text-[#D7A64A] border border-[#D7A64A]/40">
+                  <span className="px-2 py-0.5 rounded-[4px] text-[10px] font-mono font-semibold bg-[#E5F2F0] text-[#0F6A6B] border border-[#0F6A6B]/30">
                     {mod.badge}
                   </span>
-                  <span className="text-[10px] font-mono text-[#A9ADA5]">
+                  <span className="text-[11px] font-mono text-[#687A7E]">
                     {mod.standardRef}
                   </span>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="p-2.5 rounded-xl bg-[#0B0F12] border border-[#567A87]/35 text-[#D7A64A] group-hover:border-[#D7A64A]/50 transition-colors shrink-0">
+                  <div className="p-2.5 rounded-[4px] bg-[#F6F4EE] border border-[#D8D2C5] text-[#0F6A6B] group-hover:border-[#0F6A6B] transition-colors shrink-0">
                     <Icon className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-mono text-sm font-black text-[#F4F1E8] group-hover:text-[#D7A64A] transition-colors leading-snug">
+                    <h3 className="text-base font-bold text-[#17282C] group-hover:text-[#0F6A6B] transition-colors leading-snug">
                       {locale === 'fr' ? mod.titleFr : mod.titleEn}
                     </h3>
                   </div>
                 </div>
 
-                <p className="text-xs text-[#A9ADA5] leading-relaxed font-sans mt-3">
+                <p className="text-sm text-[#3E565B] leading-relaxed font-sans mt-3">
                   {locale === 'fr' ? mod.descFr : mod.descEn}
                 </p>
               </div>
 
-              <div className="pt-4 mt-4 border-t border-[#567A87]/25 flex items-center justify-between">
-                <span className="text-[11px] font-mono text-[#A9ADA5]">
+              <div className="pt-4 mt-4 border-t border-[#E6E1D6] flex items-center justify-between">
+                <span className="text-[11px] font-mono text-[#687A7E]">
                   {locale === 'fr' ? 'Prêt à l\'emploi' : 'Interactive Lab'}
                 </span>
                 <button
                   type="button"
                   onClick={mod.action}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#D7A64A]/15 hover:bg-[#D7A64A] text-[#D7A64A] hover:text-[#0B0F12] font-mono text-xs font-bold border border-[#D7A64A]/40 transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] bg-[#0F6A6B] hover:bg-[#0B5253] text-[#FFFDF9] font-mono text-xs font-semibold transition-colors cursor-pointer"
                 >
                   <span>{locale === 'fr' ? 'Lancer l\'Atelier' : 'Open Lab'}</span>
                   <ChevronRight className="w-3.5 h-3.5" />

@@ -56,6 +56,61 @@
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
+  <url>
+    <loc>https://epede-platform.vercel.app/#/substations</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://epede-platform.vercel.app/#/installations</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://epede-platform.vercel.app/#/protection</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://epede-platform.vercel.app/#/commissioning</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://epede-platform.vercel.app/#/asset-management</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://epede-platform.vercel.app/#/laboratory</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://epede-platform.vercel.app/#/roles</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://epede-platform.vercel.app/#/glossary</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://epede-platform.vercel.app/#/lifecycle</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://epede-platform.vercel.app/#/knowledge-graph</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://epede-platform.vercel.app/#/traceability</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
 
   <!-- 16 Engineering Domains (D01-D16) -->
   <url><loc>https://epede-platform.vercel.app/#/domain/D01</loc><changefreq>weekly</changefreq><priority>0.80</priority></url>

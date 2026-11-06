@@ -221,8 +221,24 @@
 .epede-workbench h1,
 .epede-workbench h2,
 .epede-workbench h3,
-.epede-workbench h4 {
+.epede-workbench h4,
+.epede-workbench h5,
+.epede-workbench h6 {
   color: #F4F1E8;
+}
+
+/* Harmonize legacy neon-lime (#B8F000 / lime-*) inside ProCode workbenches to Technical Teal & Brass */
+.epede-workbench [class*="text-[#B8F000]"],
+.epede-workbench [class*="text-lime-"] {
+  color: #6CC3BD !important;
+}
+.epede-workbench [class*="bg-[#B8F000]"] {
+  background-color: #147C78 !important;
+  color: #FFFDF9 !important;
+}
+.epede-workbench [class*="border-[#B8F000]"],
+.epede-workbench [class*="border-lime-"] {
+  border-color: rgba(108, 195, 189, 0.45) !important;
 }
 
 /* ============================================================================

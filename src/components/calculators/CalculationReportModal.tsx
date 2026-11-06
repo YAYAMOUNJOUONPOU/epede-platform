@@ -18,7 +18,6 @@ import {
   CloudCheck
 } from 'lucide-react';
 import { useAuth } from '../../services/AuthContext';
-import { EngineeringCalculationPdfExportService } from './services/EngineeringCalculationPdfExportService';
 
 export interface ReportItem {
   label: string;
@@ -336,7 +335,12 @@ export const CalculationReportModal: React.FC<CalculationReportModalProps> = ({
 
             <button
               type="button"
-              onClick={() => EngineeringCalculationPdfExportService.exportCalculationPdf(data, locale)}
+              onClick={async () => {
+                const { EngineeringCalculationPdfExportService } = await import(
+                  './services/EngineeringCalculationPdfExportService'
+                );
+                EngineeringCalculationPdfExportService.exportCalculationPdf(data, locale);
+              }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-xs font-bold bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-md transition-all cursor-pointer border border-cyan-400/40"
               title={locale === 'fr' ? 'Télécharger la Note Technique PDF A4 Officielle (CEI / NF C)' : 'Download Official A4 PDF Design Sheet (IEC / NF C)'}
             >
@@ -571,7 +575,12 @@ export const CalculationReportModal: React.FC<CalculationReportModalProps> = ({
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => EngineeringCalculationPdfExportService.exportCalculationPdf(data, locale)}
+              onClick={async () => {
+                const { EngineeringCalculationPdfExportService } = await import(
+                  './services/EngineeringCalculationPdfExportService'
+                );
+                EngineeringCalculationPdfExportService.exportCalculationPdf(data, locale);
+              }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-mono text-xs font-bold transition-all cursor-pointer shadow-sm border border-cyan-400/30"
               title={locale === 'fr' ? 'Télécharger la Note Technique PDF A4 Officielle' : 'Download Official A4 PDF Design Note'}
             >
