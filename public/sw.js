@@ -1,7 +1,7 @@
 // public/sw.js
 // EPEDE - Service Worker for Remote Substation Offline Field Operation
-// Revision v2.4 - Auto-invalidating chunk protection (P0-1)
-const CACHE_NAME = 'epede-field-cache-v2.4';
+// Revision v2.5 - Post-Redesign chunk cache refresh
+const CACHE_NAME = 'epede-field-cache-v2.5';
 
 const PRECACHE_URLS = [
   '/',
