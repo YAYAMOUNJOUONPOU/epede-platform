@@ -36,6 +36,7 @@ import { CtSaturationLabTab } from './modules/CtSaturationLabTab';
 import { SurgeArresterLabTab } from './modules/SurgeArresterLabTab';
 import { CableThermalTransientLabTab } from './modules/CableThermalTransientLabTab';
 import { SolarBessLabTab } from './modules/SolarBessLabTab';
+import { PageHeader, DataStrip, FinalCTA } from '../common';
 
 interface SimulationLabViewProps {
   locale: 'fr' | 'en';
@@ -220,63 +221,87 @@ export const SimulationLabView: React.FC<SimulationLabViewProps> = ({
   });
 
   return (
-    <div className="space-y-8 text-[#17282C]">
-      {/* Bright Editorial Header */}
-      <div className="p-6 sm:p-8 rounded-2xl bg-[#FFFDF9] border border-[#DEDACF] shadow-sm flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-        <div>
-          <div className="flex items-center gap-2 font-mono text-xs text-[#147C78] mb-2">
-            <Activity className="h-3.5 w-3.5" />
-            <span className="uppercase tracking-[0.14em] font-bold">
-              {locale === 'fr' ? 'LABORATOIRE DE SIMULATION NUMÉRIQUE · 19 BANCS INTERACTIFS' : 'DIGITAL SIMULATION LAB · 19 INTERACTIVE WORKBENCHES'}
-            </span>
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#17282C] tracking-tight">
-            {locale === 'fr' ? (
-              <>Laboratoire Numérique de <span className="font-serif-editorial font-normal text-[#147C78]">Simulation Électrotechnique</span></>
-            ) : (
-              <>Digital Power Engineering <span className="font-serif-editorial font-normal text-[#147C78]">Simulation Laboratory</span></>
-            )}
-          </h1>
-          <p className="text-sm sm:text-base text-[#33474B] mt-2 max-w-3xl font-sans leading-relaxed">
-            {locale === 'fr'
-              ? 'Simulateurs physiques interactifs : oscilloscopes triphasés & décomposition harmonique (THD), compensation d\'énergie réactive, circuit équivalent transformateur, courants de court-circuit CEI 60909, sélectivité TCC CEI 60255, effet Ferranti CEI 60071 et démarrage moteur dynamique IEEE 399.'
-              : 'Interactive physics simulators: 3-phase AC oscilloscope & harmonic decomposition (THD), reactive power compensation, transformer equivalent circuit, IEC 60909 short-circuit transients, IEC 60255 protection coordination, IEC 60071 Ferranti effect, and IEEE 399 motor starting transients.'}
-          </p>
-        </div>
+    <div className="space-y-10 pb-24 text-[#0B1B2B] font-sans">
+      {/* 1. Page Header */}
+      <PageHeader
+        eyebrow={
+          locale === 'fr'
+            ? 'LABORATOIRE DE SIMULATION NUMÉRIQUE'
+            : 'DIGITAL SIMULATION LAB'
+        }
+        title={
+          locale === 'fr'
+            ? 'Laboratoire Numérique de Simulation Électrotechnique'
+            : 'Digital Power Engineering Simulation Laboratory'
+        }
+        intro={
+          locale === 'fr'
+            ? "19 simulateurs physiques interactifs : oscilloscopes triphasés & décomposition harmonique (THD), compensation d'énergie réactive, circuit équivalent transformateur, courants de court-circuit CEI 60909, sélectivité TCC CEI 60255, effet Ferranti CEI 60071 et démarrage moteur dynamique IEEE 399."
+            : '19 interactive physics simulators: 3-phase AC oscilloscope & harmonic decomposition (THD), reactive power compensation, transformer equivalent circuit, IEC 60909 short-circuit transients, IEC 60255 protection coordination, IEC 60071 Ferranti effect, and IEEE 399 motor starting transients.'
+        }
+      />
 
-        {/* Active Instrument Pill */}
-        <div className="p-3.5 rounded-xl bg-[#F6F4EE] border border-[#DEDACF] shrink-0">
-          <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#5C6C70]">
-            {locale === 'fr' ? `INSTRUMENT ACTIF #${activeSimObj.num}` : `ACTIVE INSTRUMENT #${activeSimObj.num}`}
-          </div>
-          <div className="text-sm font-bold text-[#17282C] mt-0.5">
-            {locale === 'fr' ? activeSimObj.labelFr : activeSimObj.labelEn}
-          </div>
-          <div className="font-mono text-[11px] font-bold text-[#147C78] mt-0.5">
-            {activeSimObj.std}
-          </div>
-        </div>
-      </div>
+      {/* 2. Normative Simulation Data Strip */}
+      <DataStrip
+        items={[
+          {
+            label: locale === 'fr' ? 'Bancs Interactifs' : 'Interactive Labs',
+            value: '19 Bancs',
+            subtext: locale === 'fr' ? 'Temps réel Canvas/SVG' : 'Real-time Canvas/SVG',
+          },
+          {
+            label: locale === 'fr' ? 'Domaines Physiques' : 'Physics Domains',
+            value: '4 Catégories',
+            subtext: 'Ondes · Relais · Lignes · Postes',
+          },
+          {
+            label: locale === 'fr' ? 'Normes Régulatoires' : 'Standards Governed',
+            value: 'CEI & IEEE',
+            subtext: 'IEC 60909 / 60255 / IEEE 399',
+          },
+          {
+            label: locale === 'fr' ? 'Moteur Mathématique' : 'Solver Engine',
+            value: 'ODE Runge-Kutta',
+            subtext: locale === 'fr' ? 'Intégration numérique pure' : 'Pure numerical integration',
+          },
+        ]}
+      />
 
-      {/* Categorized & Searchable 19-Workbench Selector */}
-      <div className="rounded-2xl border border-[#DEDACF] bg-[#FFFDF9] p-5 shadow-sm space-y-4">
+      {/* 3. Categorized & Searchable 19-Workbench Selector */}
+      <div className="rounded-[6px] border border-[#D5E0E8] bg-[#FBFCFD] p-5 sm:p-6 shadow-sm space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-1.5">
             {[
               { id: 'ALL' as const, labelFr: 'Tous (19)', labelEn: 'All Workbenches (19)' },
-              { id: 'WAVEFORMS' as const, labelFr: 'Ondes, THD & Court-Circuit (4)', labelEn: 'Waveforms, THD & Faults (4)' },
-              { id: 'PROTECTION' as const, labelFr: 'Relais & Sélectivité ANSI (5)', labelEn: 'ANSI Relays & TCC (5)' },
-              { id: 'MACHINES_LINES' as const, labelFr: 'Machines, Transfos & Lignes (5)', labelEn: 'Machines, Trafos & Lines (5)' },
-              { id: 'SUBSTATION_MICROGRID' as const, labelFr: 'Postes HT, Câbles & PV/BESS (5)', labelEn: 'Substations, Cables & PV/BESS (5)' },
+              {
+                id: 'WAVEFORMS' as const,
+                labelFr: 'Ondes, THD & Court-Circuit (4)',
+                labelEn: 'Waveforms, THD & Faults (4)',
+              },
+              {
+                id: 'PROTECTION' as const,
+                labelFr: 'Relais & Sélectivité ANSI (5)',
+                labelEn: 'ANSI Relays & TCC (5)',
+              },
+              {
+                id: 'MACHINES_LINES' as const,
+                labelFr: 'Machines, Transfos & Lignes (5)',
+                labelEn: 'Machines, Trafos & Lines (5)',
+              },
+              {
+                id: 'SUBSTATION_MICROGRID' as const,
+                labelFr: 'Postes HT, Câbles & PV/BESS (5)',
+                labelEn: 'Substations, Cables & PV/BESS (5)',
+              },
             ].map((cat) => (
               <button
                 key={cat.id}
                 type="button"
                 onClick={() => setSimCategory(cat.id)}
-                className={`px-3 py-1.5 rounded-lg font-mono text-xs font-bold transition-all cursor-pointer border ${
+                className={`px-3 py-1.5 rounded-[4px] font-mono text-xs font-bold transition-all cursor-pointer border ${
                   simCategory === cat.id
-                    ? 'bg-[#17282C] text-white border-[#17282C]'
-                    : 'bg-[#F6F4EE] text-[#5C6C70] border-[#DEDACF] hover:text-[#17282C]'
+                    ? 'bg-[#0B1B2B] text-[#FBFCFD] border-[#0B1B2B]'
+                    : 'bg-[#EEF4F8] text-[#5B6B7B] border-[#D5E0E8] hover:text-[#0B1B2B] hover:border-[#1F5FAE]'
                 }`}
               >
                 {locale === 'fr' ? cat.labelFr : cat.labelEn}
@@ -288,12 +313,16 @@ export const SimulationLabView: React.FC<SimulationLabViewProps> = ({
             type="text"
             value={simSearch}
             onChange={(e) => setSimSearch(e.target.value)}
-            placeholder={locale === 'fr' ? 'Filtrer un banc (ex. 87T, Ferranti, THD)...' : 'Filter workbench (e.g. 87T, Ferranti, THD)...'}
-            className="w-full md:w-72 px-3.5 py-2 rounded-lg bg-[#F6F4EE] border border-[#DEDACF] text-xs text-[#17282C] placeholder-[#5C6C70] focus:outline-none focus:border-[#147C78]"
+            placeholder={
+              locale === 'fr'
+                ? 'Filtrer un banc (ex. 87T, Ferranti, THD)...'
+                : 'Filter workbench (e.g. 87T, Ferranti, THD)...'
+            }
+            className="w-full md:w-72 px-3.5 py-2 rounded-[4px] bg-[#FBFCFD] border border-[#D5E0E8] text-xs text-[#0B1B2B] placeholder-[#5B6B7B] focus:outline-none focus:border-[#1F5FAE]"
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
           {filteredSims.map((sim) => {
             const Icon = sim.icon;
             const isActive = activeTab === sim.id;
@@ -302,40 +331,52 @@ export const SimulationLabView: React.FC<SimulationLabViewProps> = ({
                 key={sim.id}
                 type="button"
                 onClick={() => setActiveTab(sim.id)}
-                className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-left text-xs font-semibold transition-all border cursor-pointer ${
+                className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-[4px] text-left text-xs font-semibold transition-all border cursor-pointer ${
                   isActive
-                    ? 'border-[#147C78] bg-[#E3EFEC] text-[#17282C] shadow-xs ring-1 ring-[#147C78]/30'
-                    : 'border-[#DEDACF] bg-[#F6F4EE] text-[#33474B] hover:text-[#17282C] hover:border-[#147C78]/50'
+                    ? 'border-[#1F5FAE] bg-[#EEF4F8] text-[#0B1B2B] shadow-xs ring-1 ring-[#1F5FAE]/30'
+                    : 'border-[#D5E0E8] bg-[#FBFCFD] text-[#3A4B5C] hover:text-[#0B1B2B] hover:border-[#1F5FAE]'
                 }`}
               >
-                <span className={`font-mono text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${
-                  isActive ? 'bg-[#147C78] text-white' : 'bg-[#FFFDF9] text-[#5C6C70] border border-[#DEDACF]'
-                }`}>
+                <span
+                  className={`font-mono text-[10px] font-bold px-1.5 py-0.5 rounded-[3px] shrink-0 ${
+                    isActive
+                      ? 'bg-[#1F5FAE] text-white'
+                      : 'bg-[#EEF4F8] text-[#5B6B7B] border border-[#D5E0E8]'
+                  }`}
+                >
                   {sim.num}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <div className="truncate font-bold">{locale === 'fr' ? sim.labelFr : sim.labelEn}</div>
-                  <div className="font-mono text-[10px] text-[#5C6C70] truncate">{sim.std}</div>
+                  <div className="truncate font-bold text-[#0B1B2B]">
+                    {locale === 'fr' ? sim.labelFr : sim.labelEn}
+                  </div>
+                  <div className="font-mono text-[10px] text-[#5B6B7B] truncate">{sim.std}</div>
                 </div>
-                <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-[#147C78]' : 'text-[#5C6C70]'}`} />
+                <Icon
+                  className={`h-4 w-4 shrink-0 ${
+                    isActive ? 'text-[#1F5FAE]' : 'text-[#5B6B7B]'
+                  }`}
+                />
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* Dynamic Context Link to Physical Spine & Certified Calculator */}
+      {/* 4. Dynamic Context Link to Physical Spine & Certified Calculator */}
       {currentContextLink && (onNavigateContextStack || onNavigateCalculator) && (
-        <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl bg-[#FFFDF9] border border-[#DEDACF] shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-[6px] bg-[#EEF4F8] border border-[#D5E0E8] shadow-sm">
           <div className="flex items-center gap-2.5">
-            <span className="p-1.5 rounded-lg bg-[#E3EFEC] text-[#147C78] border border-[#147C78]/30 shrink-0">
+            <span className="p-1.5 rounded-[4px] bg-[#1F5FAE]/10 text-[#1F5FAE] border border-[#1F5FAE]/30 shrink-0">
               <Zap className="h-4 w-4" />
             </span>
             <div>
-              <div className="text-[10px] font-mono uppercase tracking-wider text-[#5C6C70] font-bold">
-                {locale === 'fr' ? "LIEN AVEC L'ÉPINE DORSALE D'INGÉNIERIE" : 'LINKED TO PHYSICAL ENGINEERING SPINE'}
+              <div className="text-[10px] font-mono uppercase tracking-wider text-[#5B6B7B] font-bold">
+                {locale === 'fr'
+                  ? "LIEN AVEC L'ÉPINE DORSALE D'INGÉNIERIE"
+                  : 'LINKED TO PHYSICAL ENGINEERING SPINE'}
               </div>
-              <div className="text-xs font-bold text-[#17282C]">
+              <div className="text-xs font-bold text-[#0B1B2B]">
                 {currentContextLink.nodeName[locale]}
               </div>
             </div>
@@ -346,28 +387,36 @@ export const SimulationLabView: React.FC<SimulationLabViewProps> = ({
               <button
                 type="button"
                 onClick={() => onNavigateContextStack(currentContextLink.nodeId)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#147C78] hover:bg-[#0E5E5B] text-white font-mono text-xs font-bold transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] bg-[#1F5FAE] hover:bg-[#174A88] text-white font-mono text-xs font-semibold transition-all cursor-pointer"
               >
                 <Zap className="h-3.5 w-3.5" />
-                <span>{locale === 'fr' ? 'Ouvrir dans l’Épine Dorsale & TCC' : 'Open in Spine & TCC'}</span>
+                <span>
+                  {locale === 'fr' ? 'Ouvrir dans l’Épine Dorsale & TCC' : 'Open in Spine & TCC'}
+                </span>
               </button>
             )}
             {onNavigateCalculator && currentContextLink.calcTab && (
               <button
                 type="button"
                 onClick={() => onNavigateCalculator(currentContextLink.calcTab)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F6F4EE] hover:border-[#147C78] text-[#17282C] border border-[#DEDACF] font-mono text-xs font-bold transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] bg-[#FBFCFD] hover:border-[#1F5FAE] text-[#0B1B2B] border border-[#D5E0E8] font-mono text-xs font-semibold transition-all cursor-pointer"
               >
-                <Calculator className="h-3.5 w-3.5 text-[#147C78]" />
-                <span>{currentContextLink.calcName ? currentContextLink.calcName[locale] : (locale === 'fr' ? 'Calculateur Associé' : 'Paired Calculator')}</span>
+                <Calculator className="h-3.5 w-3.5 text-[#1F5FAE]" />
+                <span>
+                  {currentContextLink.calcName
+                    ? currentContextLink.calcName[locale]
+                    : locale === 'fr'
+                    ? 'Calculateur Associé'
+                    : 'Paired Calculator'}
+                </span>
               </button>
             )}
           </div>
         </div>
       )}
 
-      {/* Active Tab Modules inside Dedicated Dark Technical Workbench */}
-      <div className="epede-workbench rounded-2xl p-4 sm:p-6 shadow-md">
+      {/* 5. Active Tab Modules inside Dedicated Dark Technical Workbench */}
+      <div className="epede-workbench rounded-[6px] p-4 sm:p-6 shadow-sm border border-[#1E3347] bg-[#0B1B2B]">
         {activeTab === 'oscilloscope' && <OscilloscopeTab locale={locale} />}
         {activeTab === 'power-triangle' && <PowerTriangleTab locale={locale} />}
         {activeTab === 'transformer' && <TransformerLabTab locale={locale} />}
@@ -393,6 +442,34 @@ export const SimulationLabView: React.FC<SimulationLabViewProps> = ({
         {activeTab === 'cable-thermal' && <CableThermalTransientLabTab locale={locale} />}
         {activeTab === 'solar-bess' && <SolarBessLabTab locale={locale} />}
       </div>
+
+      {/* 6. Standard Final Call-to-Action */}
+      <FinalCTA
+        eyebrow={locale === 'fr' ? 'Études de Dimensionnement' : 'Sizing Studies'}
+        title={
+          locale === 'fr'
+            ? 'Validez vos simulations avec les calculateurs d’ingénierie.'
+            : 'Validate your simulations with engineering calculators.'
+        }
+        description={
+          locale === 'fr'
+            ? 'Exportez vos fiches de calcul normées CEI et comparez les résultats du simulateur dynamique aux valeurs limites standard.'
+            : 'Export your IEC-compliant calculation dossiers and benchmark dynamic simulation results against normative limits.'
+        }
+        primaryAction={{
+          label: locale === 'fr' ? 'Ouvrir les calculateurs' : 'Open Calculators',
+          onClick: () => {
+            window.location.hash = '#/calculators';
+          },
+        }}
+        secondaryAction={{
+          label: locale === 'fr' ? 'Explorer la grille' : 'Explore Grid Map',
+          onClick: () => {
+            window.location.hash = '#/cameroon-grid';
+          },
+        }}
+      />
     </div>
   );
+};
 };
