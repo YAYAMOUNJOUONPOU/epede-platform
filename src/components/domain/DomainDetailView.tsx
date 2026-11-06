@@ -467,24 +467,24 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
       </div>
 
       {/* Collapsible Diagnostics, Traceability & NCR Tray */}
-      <div className="rounded-[10px] border border-[#DEDACF] bg-[#FFFDF9] overflow-hidden">
+      <div className="rounded-xl border border-[#D5E0E8] bg-[#FBFCFD] overflow-hidden shadow-xs">
         <button
           type="button"
           onClick={() => setShowD06Metrics(!showD06Metrics)}
-          className="w-full flex items-center justify-between p-3.5 px-5 text-xs font-mono font-semibold text-[#17282C] hover:bg-[#F6F4EE] transition-colors cursor-pointer"
+          className="w-full flex items-center justify-between p-3.5 px-5 text-xs font-mono font-semibold text-[#0B1B2B] hover:bg-[#EEF4F8] transition-colors cursor-pointer"
         >
           <div className="flex items-center gap-2">
-            <Activity className="w-4 h-4 text-[#147C78]" />
+            <Activity className="w-4 h-4 text-[#1F5FAE]" />
             <span>
               {locale === 'fr'
                 ? 'Traçabilité Système, Métriques KPI & Registre NCR'
                 : 'System Traceability, KPI Metrics & NCR Registry'}
             </span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#F6F4EE] text-[#5C6C70] border border-[#DEDACF]">
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#EEF4F8] text-[#5B6B7B] border border-[#D5E0E8]">
               {domainEquipments.length} {locale === 'fr' ? 'appareils' : 'assets'}
             </span>
           </div>
-          <div className="flex items-center gap-2 text-[#5C6C70] text-[11px]">
+          <div className="flex items-center gap-2 text-[#5B6B7B] text-[11px]">
             <span>
               {showD06Metrics
                 ? locale === 'fr'
@@ -502,7 +502,7 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           </div>
         </button>
         {showD06Metrics && (
-          <div className="p-5 space-y-4 border-t border-[#DEDACF] bg-[#10191D] text-[#F4F1E8]">
+          <div className="p-5 space-y-4 border-t border-[#1E3347] bg-[#0B1B2B] text-[#F3F7FA]">
             <ObjectRelationshipActionBar
               nodeId={DOMAIN_SPINE_MAPPING[domainCode] || 'node-trafo-main-30'}
               locale={locale}
@@ -1198,7 +1198,7 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
               <h3 className="text-base font-bold text-[#17282C] mt-2">
                 {locale === 'fr' ? 'Interconnexions & Domaines Complémentaires' : 'Interconnections & Complementary Domains'}
               </h3>
-              <p className="text-xs text-[#5C6C70] mt-1 max-w-2xl">
+              <p className="text-xs text-[#5B6B7B] mt-1 max-w-2xl">
                 {locale === 'fr'
                   ? 'Une installation électrique ne s\'analyse pas isolément : faites le lien avec les domaines amont/aval, les calculs normalisés et le cadre réglementaire.'
                   : 'An electrical installation cannot be analyzed in isolation: link with upstream/downstream domains, standardized calculations, and regulatory frameworks.'}
@@ -1213,7 +1213,7 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
                   window.location.hash = '#/centre-reference';
                 }
               }}
-              className="px-4 py-2.5 rounded-xl bg-[#147C78] hover:bg-[#0E5E5B] text-white font-mono text-xs font-bold transition-all shadow-sm shrink-0 flex items-center gap-2 cursor-pointer"
+              className="px-4 py-2.5 rounded-xl bg-[#1F5FAE] hover:bg-[#174A88] text-white font-mono text-xs font-bold transition-all shadow-xs shrink-0 flex items-center gap-2 cursor-pointer"
             >
               <Zap className="w-3.5 h-3.5" />
               <span>{locale === 'fr' ? 'Centre de Référence Technique →' : 'Technical Reference Hub →'}</span>
@@ -1230,15 +1230,15 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
                   window.location.hash = '#/standards';
                 }
               }}
-              className="p-3.5 rounded-xl border border-[#DEDACF] bg-[#F6F4EE] hover:border-[#B8872D] transition-all text-left group cursor-pointer"
+              className="p-3.5 rounded-xl border border-[#D5E0E8] bg-[#EEF4F8] hover:border-[#F2A541] transition-all text-left group cursor-pointer"
             >
-              <div className="font-mono text-[10px] font-bold text-[#B8872D] uppercase">
+              <div className="font-mono text-[10px] font-bold text-[#F2A541] uppercase">
                 {locale === 'fr' ? 'RÉFÉRENTIELS' : 'STANDARDS'}
               </div>
-              <div className="text-xs font-bold text-[#17282C] mt-1 group-hover:text-[#B8872D] transition-colors">
+              <div className="text-xs font-bold text-[#0B1B2B] mt-1 group-hover:text-[#1F5FAE] transition-colors">
                 {locale === 'fr' ? 'Normes & Contextes Cameroun' : 'Standards & Cameroon Grid'}
               </div>
-              <div className="text-[11px] text-[#5C6C70] mt-0.5">
+              <div className="text-[11px] text-[#5B6B7B] mt-0.5">
                 {locale === 'fr' ? 'IEC, NF C, ARSEL & déclassements thermiques' : 'IEC, NF C, ARSEL & thermal derating'}
               </div>
             </button>
@@ -1252,15 +1252,15 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
                   window.location.hash = '#/calculators';
                 }
               }}
-              className="p-3.5 rounded-xl border border-[#DEDACF] bg-[#F6F4EE] hover:border-[#147C78] transition-all text-left group cursor-pointer"
+              className="p-3.5 rounded-xl border border-[#D5E0E8] bg-[#EEF4F8] hover:border-[#1F5FAE] transition-all text-left group cursor-pointer"
             >
-              <div className="font-mono text-[10px] font-bold text-[#147C78] uppercase">
+              <div className="font-mono text-[10px] font-bold text-[#1F5FAE] uppercase">
                 {locale === 'fr' ? 'CALCUL' : 'CALCULATION'}
               </div>
-              <div className="text-xs font-bold text-[#17282C] mt-1 group-hover:text-[#147C78] transition-colors">
+              <div className="text-xs font-bold text-[#0B1B2B] mt-1 group-hover:text-[#1F5FAE] transition-colors">
                 {locale === 'fr' ? 'Calculateurs & Dimensionnement' : 'Calculators & Sizing'}
               </div>
-              <div className="text-[11px] text-[#5C6C70] mt-0.5">
+              <div className="text-[11px] text-[#5B6B7B] mt-0.5">
                 {locale === 'fr' ? '19 calculateurs IEC avec hypothèses et limites' : '19 IEC calculators with validity ranges'}
               </div>
             </button>
@@ -1274,12 +1274,12 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
                   window.location.hash = '#/laboratory';
                 }
               }}
-              className="p-3.5 rounded-xl border border-[#DEDACF] bg-[#F6F4EE] hover:border-[#147C78] transition-all text-left group cursor-pointer"
+              className="p-3.5 rounded-xl border border-[#D5E0E8] bg-[#EEF4F8] hover:border-[#1F5FAE] transition-all text-left group cursor-pointer"
             >
-              <div className="font-mono text-[10px] font-bold text-[#147C78] uppercase">
+              <div className="font-mono text-[10px] font-bold text-[#1F5FAE] uppercase">
                 {locale === 'fr' ? 'EXPÉRIMENTATION' : 'EXPERIMENTATION'}
               </div>
-              <div className="text-xs font-bold text-[#17282C] mt-1 group-hover:text-[#147C78] transition-colors">
+              <div className="text-xs font-bold text-[#0B1B2B] mt-1 group-hover:text-[#1F5FAE] transition-colors">
                 {locale === 'fr' ? 'Laboratoire Virtuel & SLD' : 'Virtual Lab & SLD Explorer'}
               </div>
               <div className="text-[11px] text-[#5B6B7B] mt-0.5">
