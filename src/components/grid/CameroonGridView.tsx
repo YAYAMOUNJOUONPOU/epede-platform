@@ -24,6 +24,7 @@ import { InteractiveCameroonGridMap } from './InteractiveCameroonGridMap';
 import { RealCameroonGeographicMap } from './RealCameroonGeographicMap';
 import { SubstationBatchComplianceModal } from '../diagrams/modules/SubstationBatchComplianceModal';
 import type { SubstationSimulationSnapshot } from '../../services/substationBatchComplianceService';
+import { PageHeader, DataStrip, FinalCTA } from '../common';
 import { 
   Globe, 
   Zap, 
@@ -221,44 +222,69 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
   };
 
   return (
-    <div className="space-y-8 pb-16 font-sans text-[#17282C]">
-      
-      {/* Top Banner with National Grid Metrics & Research Provenance */}
-      <div className="bg-[#FFFDF9] border border-[#DEDACF] rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-sm">
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-          <div className="space-y-2.5">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className="font-mono text-xs font-bold uppercase px-2.5 py-1 rounded bg-[#E3EFEC] text-[#147C78] border border-[#147C78]/30 flex items-center gap-1.5">
-                <Globe className="h-3.5 w-3.5" />
-                <span>{locale === 'fr' ? 'L05 · RÉSEAU NATIONAL DU CAMEROUN' : 'L05 · CAMEROON POWER NETWORK EXPLORER'}</span>
-              </span>
-              <span className="font-mono text-xs px-2.5 py-1 rounded bg-[#F6F4EE] text-[#5C6C70] border border-[#DEDACF]">
-                SONATREL · Eneo · EDC · ARSEL · NHPC
-              </span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#17282C]">
-              {locale === 'fr' ? (
-                <>Observatoire du Réseau <span className="font-serif-editorial font-normal text-[#147C78]">Électrique Camerounais</span></>
-              ) : (
-                <>Cameroon Power <span className="font-serif-editorial font-normal text-[#147C78]">Network Explorer</span></>
-              )}
-            </h1>
-            <p className="text-sm sm:text-base text-[#33474B] max-w-3xl leading-relaxed">
-              {locale === 'fr'
-                ? 'Cartographie technique approfondie des réseaux interconnectés Sud (RIS 225/90 kV) et Nord (RIN 110/90 kV), des grands aménagements hydroélectriques (Nachtigal 420 MW, Songloulou 384 MW, Édéa 276 MW, Memve\'ele 211 MW, Lom Pangar 30 MW), des postes sources et des artères de transport HTB.'
-                : 'Research-based engineering exploration of Cameroon\'s Southern Interconnected Grid (RIS 225/90 kV) and Northern Interconnected Grid (RIN 110/90 kV), major hydropower & thermal plants (Nachtigal 420 MW, Songloulou 384 MW, Edéa 276 MW, Memve\'ele 211 MW, Kribi 216 MW), strategic substations, and transmission corridors.'}
-            </p>
+    <div className="space-y-10 pb-24 font-sans text-[#0B1B2B]">
+      {/* 1. Page Header */}
+      <PageHeader
+        eyebrow={
+          locale === 'fr'
+            ? 'L05 · RÉSEAU NATIONAL DU CAMEROUN'
+            : 'L05 · CAMEROON POWER NETWORK EXPLORER'
+        }
+        title={
+          locale === 'fr'
+            ? 'Observatoire du Réseau Électrique Camerounais'
+            : 'Cameroon Power Network Explorer'
+        }
+        intro={
+          locale === 'fr'
+            ? "Cartographie technique approfondie des réseaux interconnectés Sud (RIS 225/90 kV) et Nord (RIN 110/90 kV), des grands aménagements hydroélectriques (Nachtigal 420 MW, Songloulou 384 MW, Édéa 276 MW, Memve'ele 211 MW, Lom Pangar 30 MW), des postes sources et des artères de transport HTB."
+            : "Research-based engineering exploration of Cameroon's Southern Interconnected Grid (RIS 225/90 kV) and Northern Interconnected Grid (RIN 110/90 kV), major hydropower & thermal plants (Nachtigal 420 MW, Songloulou 384 MW, Edéa 276 MW, Memve'ele 211 MW, Kribi 216 MW), strategic substations, and transmission corridors."
+        }
+      />
+
+      {/* 2. Normative Grid Metrics Data Strip */}
+      <DataStrip
+        items={[
+          {
+            label: locale === 'fr' ? 'Puissance Installée (2024–2025)' : 'Installed Capacity (2024–2025)',
+            value: `${CAMEROON_GRID_SUMMARY.national_installed_capacity_mw} MW`,
+            subtext: `${CAMEROON_GRID_SUMMARY.hydro_share_percent}% Hydro · ${CAMEROON_GRID_SUMMARY.thermal_gas_share_percent}% ${locale === 'fr' ? 'Gaz' : 'Gas'}`,
+          },
+          {
+            label: locale === 'fr' ? 'Pointe Maximale' : 'Peak Demand',
+            value: `${CAMEROON_GRID_SUMMARY.peak_demand_mw} MW`,
+            subtext: locale === 'fr' ? 'Marge de réserve : ~30%' : 'Reserve margin: ~30%',
+          },
+          {
+            label: locale === 'fr' ? 'Réseau Transport 225 kV' : '225 kV Transmission',
+            value: `${CAMEROON_GRID_SUMMARY.transmission_line_km_225kv} km`,
+            subtext: `+ ${CAMEROON_GRID_SUMMARY.transmission_line_km_90kv} km (90/110 kV)`,
+          },
+          {
+            label: locale === 'fr' ? 'Opérateur Système TSO' : 'Transmission Operator',
+            value: 'SONATREL',
+            subtext: locale === 'fr' ? 'Dispatching Mangombé' : 'Mangombé Dispatch',
+          },
+        ]}
+      />
+
+      {/* 3. Actions & Research Integrity Toolbar */}
+      <div className="bg-[#FBFCFD] border border-[#D5E0E8] rounded-[6px] p-5 space-y-4 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-xs px-2.5 py-1 rounded-[3px] bg-[#EEF4F8] text-[#5B6B7B] border border-[#D5E0E8]">
+              SONATREL · Eneo · EDC · ARSEL · NHPC
+            </span>
           </div>
 
-          {/* Quick Actions */}
-          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+          <div className="flex flex-wrap items-center gap-2.5">
             {onNavigateContextStack && (
               <button
                 type="button"
                 onClick={() => onNavigateContextStack('node-line-225-bekoko')}
-                className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#F6F4EE] hover:border-[#147C78] text-[#17282C] border border-[#DEDACF] text-xs font-mono font-bold transition-all cursor-pointer"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-[4px] bg-[#FBFCFD] hover:border-[#1F5FAE] text-[#0B1B2B] border border-[#D5E0E8] text-xs font-mono font-semibold transition-all cursor-pointer"
               >
-                <Zap className="h-4 w-4 text-[#B8872D]" />
+                <Zap className="h-3.5 w-3.5 text-[#F2A541]" />
                 <span>{locale === 'fr' ? 'Épine Dorsale & TCC' : 'Spine & TCC Stack'}</span>
               </button>
             )}
@@ -267,9 +293,9 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
               <button
                 type="button"
                 onClick={onNavigateRegulatory}
-                className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#F6F4EE] hover:border-[#B8872D] text-[#17282C] border border-[#DEDACF] text-xs font-mono font-bold transition-all cursor-pointer"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-[4px] bg-[#FBFCFD] hover:border-[#1F5FAE] text-[#0B1B2B] border border-[#D5E0E8] text-xs font-mono font-semibold transition-all cursor-pointer"
               >
-                <Scale className="h-4 w-4 text-[#B8872D]" />
+                <Scale className="h-3.5 w-3.5 text-[#1F5FAE]" />
                 <span>{locale === 'fr' ? 'Cadre Réglementaire L06' : 'Regulatory Framework L06'}</span>
               </button>
             )}
@@ -277,89 +303,42 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
             <button
               type="button"
               onClick={() => CameroonGridBriefingPdfService.generateExecutiveBriefingPdf()}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#147C78] hover:bg-[#0E5E5B] text-white text-xs font-mono font-bold transition-all shadow-sm cursor-pointer"
-              title={locale === 'fr' ? 'Générer & Télécharger le Dossier Exécutif A4 Officiel du Réseau Camerounais (PDF Vectoriel)' : 'Generate & Download Official Cameroon Grid Executive Briefing A4 Dossier (Vector PDF)'}
+              className="flex items-center gap-2 px-3.5 py-1.5 rounded-[4px] bg-[#1F5FAE] hover:bg-[#174A88] text-white text-xs font-mono font-semibold transition-all shadow-xs cursor-pointer"
+              title={
+                locale === 'fr'
+                  ? 'Générer & Télécharger le Dossier Exécutif A4 Officiel du Réseau Camerounais (PDF Vectoriel)'
+                  : 'Generate & Download Official Cameroon Grid Executive Briefing A4 Dossier (Vector PDF)'
+              }
             >
-              <FileText className="h-4 w-4 text-white" />
+              <FileText className="h-3.5 w-3.5 text-white" />
               <span>{locale === 'fr' ? 'Dossier Exécutif PDF (A4)' : 'Executive Dossier PDF (A4)'}</span>
             </button>
 
             <button
               type="button"
               onClick={handleExportGridData}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#17282C] hover:bg-[#147C78] text-white text-xs font-mono font-bold transition-all cursor-pointer"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-[4px] bg-[#0B1B2B] hover:bg-[#1F5FAE] text-[#FBFCFD] text-xs font-mono font-semibold transition-all cursor-pointer"
             >
-              <Download className="h-4 w-4" />
+              <Download className="h-3.5 w-3.5" />
               <span>{locale === 'fr' ? 'Exporter JSON' : 'Export Grid JSON'}</span>
             </button>
           </div>
         </div>
 
-        {/* 4 Key Grid Indicator Cards linked to source/date */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-[#DEDACF]">
-          <div className="p-3.5 rounded-xl bg-[#F6F4EE] border border-[#DEDACF]">
-            <div className="text-[10px] font-mono uppercase text-[#5C6C70] font-bold">
-              {locale === 'fr' ? 'Puissance Installée (2024–2025)' : 'Installed Capacity (2024–2025)'}
-            </div>
-            <div className="text-xl font-mono font-extrabold text-[#147C78] mt-1">
-              {CAMEROON_GRID_SUMMARY.national_installed_capacity_mw} MW
-            </div>
-            <div className="text-[11px] font-mono text-[#5C6C70] mt-0.5">
-              {CAMEROON_GRID_SUMMARY.hydro_share_percent}% Hydro · {CAMEROON_GRID_SUMMARY.thermal_gas_share_percent}% {locale === 'fr' ? 'Gaz' : 'Gas'}
-            </div>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-[#F6F4EE] border border-[#DEDACF]">
-            <div className="text-[10px] font-mono uppercase text-[#5C6C70] font-bold">
-              {locale === 'fr' ? 'Pointe Maximale (ARSEL/Eneo)' : 'Peak Demand (ARSEL/Eneo)'}
-            </div>
-            <div className="text-xl font-mono font-extrabold text-[#17282C] mt-1">
-              {CAMEROON_GRID_SUMMARY.peak_demand_mw} MW
-            </div>
-            <div className="text-[11px] font-mono text-[#5C6C70] mt-0.5">
-              {locale === 'fr' ? 'Marge de réserve : ~30%' : 'Reserve margin: ~30%'}
-            </div>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-[#F6F4EE] border border-[#DEDACF]">
-            <div className="text-[10px] font-mono uppercase text-[#5C6C70] font-bold">
-              {locale === 'fr' ? 'Réseau Transport 225 kV' : '225 kV Transmission'}
-            </div>
-            <div className="text-xl font-mono font-extrabold text-[#B8872D] mt-1">
-              {CAMEROON_GRID_SUMMARY.transmission_line_km_225kv} km
-            </div>
-            <div className="text-[11px] font-mono text-[#5C6C70] mt-0.5">
-              + {CAMEROON_GRID_SUMMARY.transmission_line_km_90kv} km (90/110 kV)
-            </div>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-[#F6F4EE] border border-[#DEDACF]">
-            <div className="text-[10px] font-mono uppercase text-[#5C6C70] font-bold">
-              {locale === 'fr' ? 'Opérateur Système TSO' : 'Transmission Operator (TSO)'}
-            </div>
-            <div className="text-xl font-mono font-extrabold text-[#17282C] mt-1 truncate">
-              SONATREL
-            </div>
-            <div className="text-[11px] font-mono text-[#5C6C70] mt-0.5 truncate">
-              {locale === 'fr' ? 'Dispatching National (Édéa/Ydé)' : 'National Dispatch (Edéa/Yaoundé)'}
-            </div>
-          </div>
-        </div>
-
         {/* Research Integrity & Provenance Notice */}
-        <div className="mt-5 p-3.5 rounded-xl bg-[#F6F4EE] border border-[#DEDACF] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-start sm:items-center gap-2.5 text-xs text-[#33474B]">
-            <ShieldCheck className="h-4 w-4 text-[#147C78] shrink-0 mt-0.5 sm:mt-0" />
+        <div className="p-3 rounded-[4px] bg-[#EEF4F8] border border-[#D5E0E8] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-start sm:items-center gap-2 text-xs text-[#3A4B5C]">
+            <ShieldCheck className="h-4 w-4 text-[#1F5FAE] shrink-0 mt-0.5 sm:mt-0" />
             <span>
-              <strong className="text-[#17282C] font-mono uppercase">
+              <strong className="text-[#0B1B2B] font-mono uppercase">
                 {locale === 'fr' ? 'Intégrité des Données & Provenance : ' : 'Research Integrity & Source Provenance: '}
               </strong>
               {locale === 'fr'
-                ? 'Les puissances installées, niveaux de tension et exploitants proviennent des publications officielles publiques (ARSEL, SONATREL, Eneo, EDC, NHPC, Banque Mondiale). Les paramètres de court-circuit et schémas unifilaires détaillés sont signalés comme modèles pédagogiques de référence.'
-                : 'Installed capacities, voltage levels, and operators are verified from public institutional records (ARSEL, SONATREL, Eneo, EDC, NHPC, World Bank). Detailed busbar short-circuit values and internal bay diagrams are explicitly labeled as engineering reference models where public utility records are restricted.'}
+                ? 'Les puissances installées, niveaux de tension et exploitants proviennent des publications officielles publiques (ARSEL, SONATREL, Eneo, EDC, NHPC, Banque Mondiale).'
+                : 'Installed capacities, voltage levels, and operators are verified from public institutional records (ARSEL, SONATREL, Eneo, EDC, NHPC, World Bank).'}
             </span>
           </div>
-          <span className="font-mono text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded bg-[#E3EFEC] text-[#147C78] border border-[#147C78]/30 shrink-0">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-[3px] bg-[#1F5FAE]/10 text-[#1F5FAE] border border-[#1F5FAE]/30 shrink-0">
             {locale === 'fr' ? 'VÉRIFIÉ 2024–2025' : 'VERIFIED 2024–2025'}
           </span>
         </div>
@@ -1177,6 +1156,37 @@ export const CameroonGridView: React.FC<CameroonGridViewProps> = ({
         </div>
       )}
       </div>
+
+      {/* Final Call to Action */}
+      <FinalCTA
+        eyebrow={
+          locale === 'fr'
+            ? 'Ingénierie des Réseaux Nationaux'
+            : 'National Grid Engineering'
+        }
+        title={
+          locale === 'fr'
+            ? 'Analysez les transitoires et calculez les chutes de tension du réseau.'
+            : 'Analyze grid transients and calculate transmission line drops.'
+        }
+        description={
+          locale === 'fr'
+            ? 'Simulez les contingences N-1 des lignes 225 kV et vérifiez les plans de protection avec les calculateurs normatifs.'
+            : 'Simulate 225 kV line N-1 contingencies and verify protection schemes with normative calculation tools.'
+        }
+        primaryAction={{
+          label: locale === 'fr' ? 'Ouvrir les calculateurs' : 'Open Calculators',
+          onClick: () => {
+            window.location.hash = '#/calculators';
+          },
+        }}
+        secondaryAction={{
+          label: locale === 'fr' ? 'Laboratoire de simulation' : 'Simulation Lab',
+          onClick: () => {
+            window.location.hash = '#/simulation';
+          },
+        }}
+      />
 
       {/* Automated Consolidated Substation Batch Compliance Dossier Modal */}
       {complianceModalData && (
