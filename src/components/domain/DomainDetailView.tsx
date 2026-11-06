@@ -11,6 +11,7 @@ import {
   ENGINEERING_ROLES
 } from '../../data/epedeData';
 import { FormulaBlock } from '../ui/FormulaBlock';
+import { PageHeader, DataStrip, FinalCTA } from '../common';
 import { StandardBadge } from '../ui/StandardBadge';
 import { VoltageIndicator } from '../ui/VoltageIndicator';
 import { ArrowLeft, ExternalLink, Zap, Globe, FileCode, ClipboardList, Award, CheckCircle2, Layers, ChevronDown, Activity } from 'lucide-react';
@@ -308,240 +309,159 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
   const domainEditorialAsset = DOMAIN_EDITORIAL_ASSETS[domainCode] || DOMAIN_EDITORIAL_ASSETS.D04;
 
   return (
-    <div className="space-y-10 pb-20 text-[#17282C] font-sans">
-      {/* 1. Back-to-Directory & Domain Context Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[#17282C] pt-6">
-        <button
-          type="button"
-          onClick={onBack}
-          className="inline-flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-[#17282C] hover:text-[#147C78] transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4 text-[#147C78]" />
-          <span>{locale === 'fr' ? 'Retour au Répertoire des Domaines' : 'Back to Domains Directory'}</span>
-        </button>
-
-        <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
-          {onNavigateContextStack && (
-            <button
-              type="button"
-              onClick={() => onNavigateContextStack(DOMAIN_SPINE_MAPPING[domainCode] || 'node-trafo-main-30')}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#17282C] hover:bg-[#147C78] text-[#FFFDF9] font-semibold transition-colors"
-            >
-              <Zap className="h-3.5 w-3.5 text-[#B8872D]" />
-              <span>{locale === 'fr' ? 'Épine Dorsale & TCC' : 'Spine & TCC Stack'}</span>
-            </button>
-          )}
-          <span className="text-[#5C6C70] font-semibold uppercase">
-            {domain.domain_group === 'chain'
-              ? locale === 'fr'
-                ? 'Chaîne Physique'
-                : 'Physical Chain'
-              : locale === 'fr'
-              ? 'Discipline Transversale'
-              : 'Transversal Discipline'}
-          </span>
-          <span className="font-bold text-[#147C78] bg-[#E3EFEC] px-2.5 py-1 rounded-full border border-[#147C78]/30">
-            {domain.code}
-          </span>
-        </div>
-      </div>
-
-      {/* Physical Chain Stepper Navigator (D01–D06) */}
-      {isChainDomain && (
-        <PowerSystemChainNavigator
-          currentStageId={currentChainStageId}
-          locale={locale}
-          onNavigateStage={handleNavigateChainStage}
+    <div className="space-y-10 pb-20 text-[#0B1B2B] font-['Space_Grotesk',sans-serif] bg-[#FBFCFD]">
+      {/* 1. Page Header (SITEWIDE-REDESIGN.md Section 2) */}
+      <PageHeader
+        breadcrumb={[
+          { label: locale === 'fr' ? 'Accueil' : 'Home', onClick: () => onNavigateView?.('home') },
+          { label: locale === 'fr' ? 'Répertoire des Domaines' : 'Domains Directory', onClick: onBack },
+          { label: domain.code },
+        ]}
+        eyebrow={`${locale === 'fr' ? 'DOMAINE' : 'DOMAIN'} ${domain.code} · ${
+          domain.domain_group === 'chain'
+            ? locale === 'fr' ? 'CHAÎNE PHYSIQUE DE PUISSANCE' : 'PHYSICAL POWER CHAIN'
+            : locale === 'fr' ? 'DISCIPLINE TRANSVERSALE' : 'TRANSVERSAL DISCIPLINE'
+        }`}
+        title={locale === 'fr' ? domain.name_fr : domain.name_en}
+        intro={locale === 'fr' ? domain.description_fr : domain.description_en}
+        heroImage={domainEditorialAsset?.src ? {
+          src: domainEditorialAsset.src,
+          alt: locale === 'fr' ? domainEditorialAsset.alt.fr : domainEditorialAsset.alt.en,
+          caption: `${domain.code} · ${locale === 'fr' ? domain.short_fr : domain.short_en} · ${pedagogicalGuide.voltageLevel}`
+        } : undefined}
+      >
+        <DataStrip
+          items={[
+            {
+              label: locale === 'fr' ? 'Plage de Tension' : 'Voltage Envelope',
+              value: pedagogicalGuide.voltageLevel || '15 kV',
+              subtext: locale === 'fr' ? 'Niveau assigné' : 'Rated voltage',
+            },
+            {
+              label: locale === 'fr' ? 'Norme Directrice' : 'Primary Standard',
+              value: pedagogicalGuide.primaryStandard || 'IEC 60034',
+              subtext: 'CEI / IEEE / NF C',
+            },
+            {
+              label: locale === 'fr' ? 'Appareils Documentés' : 'Documented Assets',
+              value: `${domainEquipments.length}`,
+              unit: locale === 'fr' ? 'fiches' : 'sheets',
+              subtext: 'IEC Specifications',
+            },
+            {
+              label: locale === 'fr' ? 'Rôle dans le Réseau' : 'Role in Grid',
+              value: domain.code === 'D01' ? '420 MW Sanaga' : domain.code,
+              subtext: locale === 'fr' ? pedagogicalGuide.roleInGrid.fr : pedagogicalGuide.roleInGrid.en,
+            },
+          ]}
         />
-      )}
+      </PageHeader>
 
-      {/* 2. Bright Editorial Domain Header + Domain-Specific Visual */}
-      <header className="rounded-[12px] border border-[#DEDACF] bg-[#FFFDF9] overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-12">
-          <div className="lg:col-span-7 p-6 sm:p-10 flex flex-col justify-between space-y-6">
-            <div className="space-y-4">
-              <div className="flex flex-wrap items-center gap-2.5">
-                <span className="epede-eyebrow">
-                  {locale === 'fr' ? `Domaine ${domain.code}` : `Domain ${domain.code}`}
-                </span>
-                <EvidenceTrustBadge
-                  type="VERIFIED_STANDARD"
-                  locale={locale}
-                  size="sm"
-                  governingStandard={pedagogicalGuide.primaryStandard || `IEC / IEEE · ${domain.code}`}
-                />
-                {(isD11 || isD16) && (
-                  <span className="font-mono text-[11px] text-[#B91C1C] bg-[#FEE2E2] px-2.5 py-0.5 rounded-full font-semibold">
-                    {locale === 'fr' ? 'Protection & Sécurité Critique' : 'Safety & Protection Critical'}
-                  </span>
-                )}
-              </div>
-
-              <h1 className="epede-h1">
-                {locale === 'fr' ? domain.name_fr : domain.name_en}
-              </h1>
-
-              <p className="epede-lead">
-                {locale === 'fr' ? domain.description_fr : domain.description_en}
-              </p>
-            </div>
-
-            {/* Domain Metadata Strip */}
-            <div className="pt-6 border-t border-[#DEDACF] grid grid-cols-2 sm:grid-cols-3 gap-4 font-mono text-xs">
-              <div>
-                <span className="text-[10px] text-[#5C6C70] uppercase block">
-                  {locale === 'fr' ? 'Plage de Tension' : 'Voltage Envelope'}
-                </span>
-                <span className="text-[#17282C] font-semibold mt-0.5 block">
-                  {pedagogicalGuide.voltageLevel}
-                </span>
-              </div>
-              <div>
-                <span className="text-[10px] text-[#5C6C70] uppercase block">
-                  {locale === 'fr' ? 'Norme Directrice' : 'Primary Standard'}
-                </span>
-                <span className="text-[#147C78] font-semibold mt-0.5 block">
-                  {pedagogicalGuide.primaryStandard}
-                </span>
-              </div>
-              <div className="col-span-2 sm:col-span-1">
-                <span className="text-[10px] text-[#5C6C70] uppercase block">
-                  {locale === 'fr' ? 'Appareils Documentés' : 'Documented Assets'}
-                </span>
-                <span className="text-[#B8872D] font-semibold mt-0.5 block">
-                  {domainEquipments.length} {locale === 'fr' ? 'fiches CEI' : 'IEC sheets'}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Domain-Specific Photograph / Schematic Frame */}
-          <figure className="lg:col-span-5 relative min-h-[240px] lg:min-h-full bg-[#10191D] overflow-hidden border-t lg:border-t-0 lg:border-l border-[#DEDACF]">
-            <img
-              src={domainEditorialAsset.src}
-              alt={locale === 'fr' ? domainEditorialAsset.alt.fr : domainEditorialAsset.alt.en}
-              className="w-full h-full object-cover epede-photo-grade"
-              loading="lazy"
-            />
-            <figcaption className="absolute bottom-3 left-3 right-3 px-3.5 py-2 rounded bg-[#10191D]/90 text-[#F4F1E8] font-mono text-[11px] flex items-center justify-between gap-2">
-              <span className="truncate">
-                {domain.code} · {locale === 'fr' ? domain.short_fr : domain.short_en}
-              </span>
-              <span className="text-[#6CC3BD] shrink-0">{pedagogicalGuide.voltageLevel}</span>
-            </figcaption>
-          </figure>
-        </div>
-
-        {/* Three Key Questions Index Row */}
-        <div className="border-t border-[#DEDACF] bg-[#F6F4EE] p-6 sm:px-10 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <span className="font-mono text-[11px] font-semibold text-[#147C78] uppercase block">
-              {locale === 'fr' ? '01 · Rôle dans le Réseau' : '01 · Role in the Grid'}
-            </span>
-            <p className="text-xs text-[#33474B] mt-1 leading-relaxed">
-              {locale === 'fr' ? pedagogicalGuide.roleInGrid.fr : pedagogicalGuide.roleInGrid.en}
-            </p>
-          </div>
-          <div>
-            <span className="font-mono text-[11px] font-semibold text-[#147C78] uppercase block">
-              {locale === 'fr' ? '02 · Objectif d’Ingénierie' : '02 · Key Learning Objective'}
-            </span>
-            <p className="text-xs text-[#33474B] mt-1 leading-relaxed">
-              {(locale === 'fr'
-                ? pedagogicalGuide.learningObjectives.fr[0]
-                : pedagogicalGuide.learningObjectives.en[0]) ||
-                (locale === 'fr' ? domain.description_fr : domain.description_en)}
-            </p>
-          </div>
-          <div>
-            <span className="font-mono text-[11px] font-semibold text-[#B8872D] uppercase block">
-              {locale === 'fr' ? '03 · Passerelle de Calcul & Norme' : '03 · Linked Solver & Code'}
-            </span>
-            <div className="mt-1.5 flex flex-wrap items-center gap-2 font-mono text-xs">
-              <button
-                type="button"
-                onClick={() => onNavigateView?.('calculators')}
-                className="text-[#17282C] font-semibold underline hover:text-[#147C78]"
-              >
-                {pedagogicalGuide.keyCalculators[0]
-                  ? locale === 'fr'
-                    ? pedagogicalGuide.keyCalculators[0].labelFr
-                    : pedagogicalGuide.keyCalculators[0].labelEn
-                  : locale === 'fr'
-                  ? 'Solveurs CEI'
-                  : 'IEC Solvers'}
-              </button>
-              <span className="text-[#5C6C70]">·</span>
-              <button
-                type="button"
-                onClick={() => onNavigateView?.('standards')}
-                className="text-[#147C78] font-semibold hover:underline"
-              >
-                {pedagogicalGuide.primaryStandard}
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* 3. Unified Exploration Mode Switcher (D01–D16) */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-[10px] bg-[#FFFDF9] border border-[#DEDACF]">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[#147C78]" />
-          <span className="text-xs font-mono font-semibold text-[#17282C] uppercase tracking-wider">
-            {locale === 'fr'
-              ? `Mode d'étude ${domain.code} :`
-              : `Study Mode ${domain.code}:`}
-          </span>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {hasPedagogicalData && (
-            <button
-              type="button"
-              onClick={() => setModeForCurrentDomain('pedagogical_pilot')}
-              className={`px-4 py-2 rounded-full text-xs font-semibold font-mono transition-colors cursor-pointer ${
-                currentDomainMode === 'pedagogical_pilot'
-                  ? 'bg-[#17282C] text-[#FFFDF9]'
-                  : 'bg-[#F6F4EE] text-[#5C6C70] hover:text-[#17282C] border border-[#DEDACF]'
-              }`}
-            >
-              {locale === 'fr' ? '01 · Parcours Pédagogique (A–F)' : '01 · Pedagogical Guide (A–F)'}
-            </button>
-          )}
+      <div className="max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12 space-y-10">
+        {/* Back-to-Directory & Domain Context Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#D5E0E8] pb-5">
           <button
             type="button"
-            onClick={() => setModeForCurrentDomain('visual_journey')}
-            className={`px-4 py-2 rounded-full text-xs font-semibold font-mono transition-colors cursor-pointer ${
-              currentDomainMode === 'visual_journey'
-                ? 'bg-[#17282C] text-[#FFFDF9]'
-                : 'bg-[#F6F4EE] text-[#5C6C70] hover:text-[#17282C] border border-[#DEDACF]'
-            }`}
+            onClick={onBack}
+            className="inline-flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-[#0B1B2B] hover:text-[#1F5FAE] transition-colors cursor-pointer bg-transparent border-0 p-0"
           >
-            {locale === 'fr' ? '02 · Banc d’Ingénierie Interactif' : '02 · Interactive Workbench'}
+            <ArrowLeft className="h-4 w-4 text-[#1F5FAE]" />
+            <span>{locale === 'fr' ? 'Retour au Répertoire des Domaines' : 'Back to Domains Directory'}</span>
           </button>
-          {isD15 && (
+
+          <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
+            {onNavigateContextStack && (
+              <button
+                type="button"
+                onClick={() => onNavigateContextStack(DOMAIN_SPINE_MAPPING[domainCode] || 'node-trafo-main-30')}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0B1B2B] hover:bg-[#1F5FAE] text-[#FBFCFD] font-semibold transition-colors cursor-pointer border-0"
+              >
+                <Zap className="h-3.5 w-3.5 text-[#F2A541]" />
+                <span>{locale === 'fr' ? 'Épine Dorsale & TCC' : 'Spine & TCC Stack'}</span>
+              </button>
+            )}
+            <span className="text-[#5B6B7B] font-semibold uppercase">
+              {domain.domain_group === 'chain'
+                ? locale === 'fr'
+                  ? 'Chaîne Physique'
+                  : 'Physical Chain'
+                : locale === 'fr'
+                ? 'Discipline Transversale'
+                : 'Transversal Discipline'}
+            </span>
+            <span className="font-bold text-[#1F5FAE] bg-[#EEF4F8] px-2.5 py-1 rounded-full border border-[#D5E0E8]">
+              {domain.code}
+            </span>
+          </div>
+        </div>
+
+        {/* Physical Chain Stepper Navigator (D01–D06) */}
+        {isChainDomain && (
+          <PowerSystemChainNavigator
+            currentStageId={currentChainStageId}
+            locale={locale}
+            onNavigateStage={handleNavigateChainStage}
+          />
+        )}
+
+        {/* 3. Unified Exploration Mode Switcher (D01–D16) */}
+        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-[6px] bg-[#FBFCFD] border border-[#D5E0E8]">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#1F5FAE]" />
+            <span className="text-xs font-mono font-semibold text-[#0B1B2B] uppercase tracking-wider">
+              {locale === 'fr'
+                ? `Mode d'étude ${domain.code} :`
+                : `Study Mode ${domain.code}:`}
+            </span>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {hasPedagogicalData && (
+              <button
+                type="button"
+                onClick={() => setModeForCurrentDomain('pedagogical_pilot')}
+                className={`px-4 py-1.5 rounded-full text-xs font-semibold font-mono transition-colors cursor-pointer ${
+                  currentDomainMode === 'pedagogical_pilot'
+                    ? 'bg-[#0B1B2B] text-[#FBFCFD] shadow-xs'
+                    : 'bg-[#EEF4F8] text-[#5B6B7B] hover:text-[#0B1B2B] border border-[#D5E0E8]'
+                }`}
+              >
+                {locale === 'fr' ? '01 · Parcours Pédagogique (A–F)' : '01 · Pedagogical Guide (A–F)'}
+              </button>
+            )}
             <button
               type="button"
-              onClick={() => setModeForCurrentDomain('asset_management')}
-              className={`px-4 py-2 rounded-full text-xs font-semibold font-mono transition-colors cursor-pointer ${
-                currentDomainMode === 'asset_management'
-                  ? 'bg-[#17282C] text-[#FFFDF9]'
-                  : 'bg-[#F6F4EE] text-[#5C6C70] hover:text-[#17282C] border border-[#DEDACF]'
+              onClick={() => setModeForCurrentDomain('visual_journey')}
+              className={`px-4 py-1.5 rounded-full text-xs font-semibold font-mono transition-colors cursor-pointer ${
+                currentDomainMode === 'visual_journey'
+                  ? 'bg-[#0B1B2B] text-[#FBFCFD] shadow-xs'
+                  : 'bg-[#EEF4F8] text-[#5B6B7B] hover:text-[#0B1B2B] border border-[#D5E0E8]'
               }`}
             >
-              {locale === 'fr' ? '03 · Diagnostic DGA & Santé' : '03 · DGA & Health Index'}
+              {locale === 'fr' ? '02 · Banc d’Ingénierie Interactif' : '02 · Interactive Workbench'}
             </button>
-          )}
-          <button
-            type="button"
-            onClick={() => setModeForCurrentDomain('spec_catalog')}
-            className={`px-4 py-2 rounded-full text-xs font-semibold font-mono transition-colors cursor-pointer ${
-              currentDomainMode === 'spec_catalog'
-                ? 'bg-[#17282C] text-[#FFFDF9]'
-                : 'bg-[#F6F4EE] text-[#5C6C70] hover:text-[#17282C] border border-[#DEDACF]'
-            }`}
-          >
-            {locale === 'fr' ? '04 · Sous-Domaines & Spécifications' : '04 · Subdomains & Specs'}
+            {isD15 && (
+              <button
+                type="button"
+                onClick={() => setModeForCurrentDomain('asset_management')}
+                className={`px-4 py-1.5 rounded-full text-xs font-semibold font-mono transition-colors cursor-pointer ${
+                  currentDomainMode === 'asset_management'
+                    ? 'bg-[#0B1B2B] text-[#FBFCFD] shadow-xs'
+                    : 'bg-[#EEF4F8] text-[#5B6B7B] hover:text-[#0B1B2B] border border-[#D5E0E8]'
+                }`}
+              >
+                {locale === 'fr' ? '03 · Diagnostic DGA & Santé' : '03 · DGA & Health Index'}
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => setModeForCurrentDomain('spec_catalog')}
+              className={`px-4 py-1.5 rounded-full text-xs font-semibold font-mono transition-colors cursor-pointer ${
+                currentDomainMode === 'spec_catalog'
+                  ? 'bg-[#0B1B2B] text-[#FBFCFD] shadow-xs'
+                  : 'bg-[#EEF4F8] text-[#5B6B7B] hover:text-[#0B1B2B] border border-[#D5E0E8]'
+              }`}
+            >
+              {locale === 'fr' ? '04 · Sous-Domaines & Spécifications' : '04 · Subdomains & Specs'}
           </button>
         </div>
       </div>
@@ -1362,14 +1282,33 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
               <div className="text-xs font-bold text-[#17282C] mt-1 group-hover:text-[#147C78] transition-colors">
                 {locale === 'fr' ? 'Laboratoire Virtuel & SLD' : 'Virtual Lab & SLD Explorer'}
               </div>
-              <div className="text-[11px] text-[#5C6C70] mt-0.5">
+              <div className="text-[11px] text-[#5B6B7B] mt-0.5">
                 {locale === 'fr' ? 'Simulations de régimes et transitoires' : 'Regime and transient simulations'}
               </div>
             </button>
           </div>
         </div>
       </section>
+      </div>
 
+      {/* Bottom Final CTA (SITEWIDE-REDESIGN.md Section 3) */}
+      <FinalCTA
+        eyebrow={`${locale === 'fr' ? 'DOMAINE' : 'DOMAIN'} ${domain.code} · ${pedagogicalGuide.primaryStandard || 'IEC / IEEE'}`}
+        title={locale === 'fr' ? 'Poursuivez l’exploration du système électrique.' : 'Continue exploring the interconnected grid.'}
+        description={
+          locale === 'fr'
+            ? `Analysez les interactions entre ${domain.code} et les 15 autres domaines, lancez les solveurs électrotechniques ou observez le réseau camerounais.`
+            : `Analyze cross-domain interactions between ${domain.code} and all 15 domains, run normative solvers, or monitor Cameroon grid telemetry.`
+        }
+        primaryAction={{
+          label: locale === 'fr' ? 'Ouvrir les Calculateurs CEI' : 'Open IEC Solvers',
+          onClick: () => onNavigateView?.('calculators'),
+        }}
+        secondaryAction={{
+          label: locale === 'fr' ? 'Répertoire Complet D01–D16' : 'Full D01–D16 Directory',
+          onClick: onBack,
+        }}
+      />
     </div>
   );
 };
