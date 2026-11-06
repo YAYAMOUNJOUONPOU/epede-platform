@@ -1,6 +1,7 @@
 // src/components/layout/Footer.tsx
-// EPEDE Sitewide Dark Footer (Porcelain & Navy Specification)
-// Follows SITEWIDE-REDESIGN.md and HOMEPAGE-EXACT-MATCH.md
+// EPEDE Merged Sitewide Dark Footer
+// Combines the rich columns, branding and verified link registry of Image 1
+// with the canonical layout, bottom synthesis notice, and metadata bar of Image 2 (Master v2)
 
 import React from 'react';
 
@@ -33,22 +34,22 @@ export const Footer: React.FC<FooterProps> = ({
       heading: isFr ? 'EXPLORER' : 'EXPLORE',
       links: [
         {
-          label: isFr ? 'Systèmes électriques (9 étapes)' : 'Electrical systems',
+          label: isFr ? 'Systèmes électriques (9 étapes)' : 'Electrical systems (9 stages)',
           view: 'journey',
           href: isFr ? '#/systemes-electriques' : '#/en/electrical-systems',
         },
         {
-          label: isFr ? 'Catalogue des équipements (39)' : 'Equipment',
+          label: isFr ? 'Catalogue des équipements (39)' : 'Equipment catalogue (39)',
           view: 'equipment-list',
           href: isFr ? '#/materiel' : '#/en/equipment',
         },
         {
-          label: isFr ? 'Réseau électrique du Cameroun' : 'Cameroon grid',
+          label: isFr ? 'Réseau électrique du Cameroun' : 'Cameroon power grid',
           view: 'cameroon-grid',
           href: isFr ? '#/reseau-cameroun' : '#/en/cameroon-grid',
         },
         {
-          label: isFr ? 'Génie électrique industriel' : 'Industrial engineering',
+          label: isFr ? 'Génie électrique industriel' : 'Industrial power engineering',
           view: 'industrial-projects',
           href: isFr ? '#/genie-industriel' : '#/en/industrial-engineering',
         },
@@ -58,7 +59,7 @@ export const Footer: React.FC<FooterProps> = ({
       heading: isFr ? 'APPRENDRE' : 'LEARN',
       links: [
         {
-          label: isFr ? 'Parcours d’apprentissage (8)' : 'Learning pathways',
+          label: isFr ? 'Parcours d’apprentissage (8)' : 'Learning pathways (8)',
           view: 'thematic-journeys',
           href: isFr ? '#/apprendre' : '#/en/learn',
         },
@@ -68,42 +69,42 @@ export const Footer: React.FC<FooterProps> = ({
           href: isFr ? '#/domaines' : '#/en/domains',
         },
         {
-          label: isFr ? 'Normes internationales (CEI/IEEE)' : 'Standards',
+          label: isFr ? 'Normes internationales (CEI/IEEE)' : 'International standards (IEC/IEEE)',
           view: 'standards',
           href: isFr ? '#/normes' : '#/en/standards',
         },
         {
-          label: isFr ? 'Cadre réglementaire & Code réseau' : 'Regulatory',
+          label: isFr ? 'Cadre réglementaire & Code réseau' : 'Regulatory framework & Grid code',
           view: 'regulatory',
           href: '#/regulatory',
         },
       ],
     },
     {
-      heading: isFr ? 'OUTILS & RÉFÉRENCES' : 'TOOLS',
+      heading: isFr ? 'OUTILS & RÉFÉRENCES' : 'TOOLS & REFERENCES',
       links: [
         {
-          label: isFr ? 'Calculateurs électrotechniques (19)' : 'Calculators',
+          label: isFr ? 'Calculateurs électrotechniques (19)' : 'Electrical calculators (19)',
           view: 'calculators',
           href: isFr ? '#/calculateurs' : '#/en/calculators',
         },
         {
-          label: isFr ? 'Laboratoire de simulation (19)' : 'Simulation lab',
+          label: isFr ? 'Laboratoire de simulation (19)' : 'Simulation laboratory (19)',
           view: 'simulation',
           href: '#/simulation',
         },
         {
-          label: isFr ? 'Schémas unifilaires & postes' : 'SLD & substations',
+          label: isFr ? 'Schémas unifilaires & postes' : 'Single-line diagrams & substations',
           view: 'diagrams',
           href: '#/diagrams',
         },
         {
-          label: isFr ? 'Complexe hydroélectrique' : 'Hydropower suite',
+          label: isFr ? 'Complexe hydroélectrique' : 'Hydropower complex',
           view: 'hydropower',
           href: '#/hydropower',
         },
         {
-          label: isFr ? 'Sources & provenance des données' : 'Sources & provenance',
+          label: isFr ? 'Sources & provenance des données' : 'Sources & data provenance',
           view: 'traceability',
           href: '#/traceability',
         },
@@ -121,28 +122,27 @@ export const Footer: React.FC<FooterProps> = ({
       id="epede-shared-footer"
       role="contentinfo"
       aria-label={isFr ? 'Pied de page EPEDE' : 'EPEDE site footer'}
-      className="bg-[#07131F] text-[#F3F7FA] pt-14 md:pt-20 pb-24 md:pb-12 mt-0 border-t border-[#1A2D40]"
+      className="bg-[#07131F] text-[#F3F7FA] border-t border-[#1A2D40] mt-0 select-none"
+      style={{
+        padding: 'clamp(56px, 7vw, 88px) 0 clamp(32px, 4vw, 48px)',
+      }}
     >
       <div className="max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12">
-        <p className="m-0 mb-10 max-w-[800px] font-mono text-xs leading-[1.7] text-[#93A4B4]">
-          {isFr
-            ? "Note de synthèse d’ingénierie — Le contenu d’EPEDE est une synthèse pédagogique et technique fondée sur les normes publiques (CEI, IEEE, CIGRE, NF C) et les données opérateurs. Il ne remplace pas les textes normatifs officiels, la documentation constructeur ou l’étude d’un ingénieur qualifié."
-            : "Engineering synthesis notice — EPEDE content is an educational synthesis of public standards and sources. It does not replace official standards text, manufacturer data or a qualified engineer's study."}
-        </p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 pt-10 border-t border-[#1A2D40]">
+        {/* 1. Main Navigation Grid (Columns) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10">
+          {/* Brand & Attribution Column */}
           <div className="sm:col-span-2 max-w-[380px]">
             <a
               href={isFr ? '#/' : '#/en/'}
               onClick={(e) => handleNav(e, 'home', isFr ? '#/' : '#/en/')}
-              className="inline-flex items-center gap-2.5 font-bold text-[22px] text-[#FFFFFF] no-underline tracking-[-0.03em] font-['Space_Grotesk']"
+              className="inline-flex items-center gap-2.5 font-bold text-[24px] text-[#FFFFFF] no-underline tracking-[-0.03em]"
             >
-              <span className="w-7 h-7 rounded-[6px] bg-[#FFFFFF] text-[#07131F] grid place-items-center text-sm font-bold">
+              <span className="w-7 h-7 rounded-[5px] bg-[#FFFFFF] text-[#07131F] grid place-items-center text-sm font-bold">
                 E
               </span>
               <span>EPEDE</span>
             </a>
-            <p className="mt-4 text-[14px] leading-[1.65] text-[#93A4B4] font-['Space_Grotesk']">
+            <p className="mt-4 text-[14px] leading-[1.65] text-[#93A4B4]">
               {isFr
                 ? 'Un environnement numérique bilingue pour comprendre, analyser et simuler le génie électrique et les réseaux d’énergie — de la centrale de production jusqu’à la charge finale.'
                 : 'A bilingual digital environment for understanding, analysing and simulating electrical power engineering — from generation to the final load.'}
@@ -154,9 +154,10 @@ export const Footer: React.FC<FooterProps> = ({
             </p>
           </div>
 
+          {/* Nav Columns: EXPLORER, APPRENDRE, OUTILS & RÉFÉRENCES */}
           {columns.map((col) => (
             <div key={col.heading} className="flex flex-col gap-3">
-              <div className="font-mono text-xs tracking-[0.12em] uppercase text-[#93A4B4]">
+              <div className="font-mono text-[11px] tracking-[0.12em] uppercase text-[#93A4B4] font-semibold">
                 {col.heading}
               </div>
               <ul className="list-none m-0 p-0 flex flex-col gap-2.5">
@@ -165,7 +166,7 @@ export const Footer: React.FC<FooterProps> = ({
                     <a
                       href={link.href}
                       onClick={(e) => handleNav(e, link.view, link.href)}
-                      className="text-[#C3CFDA] hover:text-[#F2A541] text-[14px] no-underline transition-colors inline-block py-0.5 font-['Space_Grotesk']"
+                      className="text-[#F3F7FA] hover:text-[#F2A541] text-[14px] no-underline transition-colors inline-block py-0.5"
                     >
                       {link.label}
                     </a>
@@ -176,21 +177,33 @@ export const Footer: React.FC<FooterProps> = ({
           ))}
         </div>
 
-        <div className="mt-12 pt-6 border-t border-[#1A2D40] flex flex-wrap items-center justify-between gap-4 font-mono text-xs text-[#93A4B4]">
-          <span>© 2026 EPEDE · Electrical Power Engineering Digital Environment</span>
-          <div className="flex items-center gap-4">
-            {onLocaleChange ? (
+        {/* 2. Unified Synthesis Notice (Merged from upper notice / disclaimer) */}
+        <div className="mt-14 pt-6 border-t border-[#1A2D40]">
+          <p className="m-0 max-w-[960px] font-mono text-[12px] leading-[1.7] text-[#93A4B4]">
+            {isFr
+              ? 'Avertissement de synthèse — le contenu d’EPEDE est une synthèse pédagogique et technique fondée sur les normes publiques (CEI, IEEE, CIGRE, NF C) et les données opérateurs. Il ne remplace pas les textes normatifs officiels, la documentation constructeur ou l’étude d’un ingénieur qualifié.'
+              : 'Engineering synthesis notice — EPEDE content is an educational synthesis of public standards and sources. It does not replace official standards text, manufacturer data or a qualified engineer’s study.'}
+          </p>
+        </div>
+
+        {/* 3. Bottom Metadata, Copyright & Language Switcher */}
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 font-mono text-[11px] text-[#93A4B4]">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <span>© 2026 EPEDE · Electrical Power Engineering Digital Environment</span>
+            <span>Version 2.0 · Updated November 2026</span>
+            <span>Photos: Wikimedia Commons contributors, credited on each image.</span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {onLocaleChange && (
               <button
                 type="button"
                 onClick={() => onLocaleChange(locale === 'en' ? 'fr' : 'en')}
-                className="font-mono text-xs text-[#F3F7FA] hover:text-[#F2A541] bg-transparent border border-[#1E3347] rounded-full px-3.5 py-1.5 min-h-[34px] cursor-pointer transition-colors hover:border-[#F2A541]"
+                className="font-mono text-xs text-[#F3F7FA] hover:text-[#F2A541] bg-transparent border border-[#1E3347] rounded-full px-3 py-1 cursor-pointer transition-colors hover:border-[#F2A541]"
               >
                 {locale === 'en' ? 'EN · Switch to FR' : 'FR · Passer en EN'}
               </button>
-            ) : (
-              <span>EN / FR</span>
             )}
-            <span className="text-[#5B6B7B]">Synthesis v2</span>
           </div>
         </div>
       </div>

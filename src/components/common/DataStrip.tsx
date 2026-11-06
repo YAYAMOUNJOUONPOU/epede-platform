@@ -75,3 +75,4 @@ export const DataStrip: React.FC<DataStripProps> = ({
     </div>
   );
 };
+

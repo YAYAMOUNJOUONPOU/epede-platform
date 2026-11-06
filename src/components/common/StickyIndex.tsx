@@ -132,3 +132,4 @@ export const StickyIndex: React.FC<StickyIndexProps> = ({
     </>
   );
 };
+

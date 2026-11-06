@@ -53,3 +53,4 @@ export const FilterPills = <T extends string = string>({
     </div>
   );
 };
+

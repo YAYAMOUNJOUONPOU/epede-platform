@@ -69,3 +69,4 @@ export const FormulaBlock: React.FC<FormulaBlockProps> = ({
     </div>
   );
 };
+

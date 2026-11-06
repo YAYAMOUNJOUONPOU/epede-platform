@@ -87,3 +87,4 @@ export const CatalogueCard: React.FC<CatalogueCardProps> = ({
     </div>
   );
 };
+

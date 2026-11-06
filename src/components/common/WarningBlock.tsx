@@ -38,3 +38,4 @@ export const WarningBlock: React.FC<WarningBlockProps> = ({
     </aside>
   );
 };
+

@@ -70,3 +70,4 @@ export const EditorialSplit: React.FC<EditorialSplitProps> = ({
     </div>
   );
 };
+

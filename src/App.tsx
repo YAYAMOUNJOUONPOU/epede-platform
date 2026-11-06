@@ -3,7 +3,6 @@ import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Header } from './components/layout/Header';
 import { Sidebar } from './components/layout/Sidebar';
-import { Disclaimer } from './components/layout/Disclaimer';
 import { Footer } from './components/layout/Footer';
 import { MobileFieldQuickDock } from './components/layout/MobileFieldQuickDock';
 import { ScadaTelemetryBar } from './components/layout/ScadaTelemetryBar';
@@ -1422,9 +1421,6 @@ export default function App() {
           </ErrorBoundary>
           </motion.div>
         </AnimatePresence>
-
-        {/* Route-Specific Engineering Synthesis Notice before Shared Footer */}
-        {currentView !== 'ecosystem' && currentView !== 'home' && <Disclaimer locale={locale} />}
         </main>
       </div>
 
