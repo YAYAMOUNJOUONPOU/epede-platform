@@ -472,4 +472,3 @@ export const SimulationLabView: React.FC<SimulationLabViewProps> = ({
     </div>
   );
 };
-};

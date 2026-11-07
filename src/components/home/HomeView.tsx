@@ -1873,6 +1873,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                       : 'Thermal relay F1 protects against continuous overload (I > Ir). Molded case breaker Q1 clears high fault currents (Isc 10 kA) in under 15 ms with no contact welding on KM1.'}
                   </p>
                 </div>
+              </div>
             </div>
           </div>
         </section>
