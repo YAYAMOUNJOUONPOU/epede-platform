@@ -512,3 +512,27 @@
     padding: 6px 8px !important;
   }
 }
+
+/* ======================================================================
+   Journey Section & Global Reduced Motion Overrides
+   ====================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  #journey [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+    transition: none !important;
+  }
+  #journey [data-words] span {
+    transform: none !important;
+    transition: none !important;
+  }
+  #journey [data-read] span {
+    opacity: 1 !important;
+    transition: none !important;
+  }
+  #journey article img {
+    transform: none !important;
+    transition: none !important;
+  }
+}

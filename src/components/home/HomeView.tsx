@@ -424,6 +424,27 @@ export const HomeView: React.FC<HomeViewProps> = ({
             }
           });
           setActiveStageIndex(bestIdx);
+
+          // data-read progressive word illumination on scroll
+          if (!reducedMotion) {
+            const vh = window.innerHeight;
+            document.querySelectorAll<HTMLElement>('#journey [data-read]').forEach((el) => {
+              const r = el.getBoundingClientRect();
+              const p = Math.min(1, Math.max(0, (vh * 0.88 - r.top) / (vh * 0.42)));
+              const words = (el as any).__w as HTMLElement[] | undefined;
+              if (words) {
+                const k = p * words.length;
+                words.forEach((s, idx) => {
+                  const targetOp = idx < k ? 1 : 0.18;
+                  if ((s as any).__o !== targetOp) {
+                    (s as any).__o = targetOp;
+                    s.style.opacity = String(targetOp);
+                  }
+                });
+              }
+            });
+          }
+
           ticking = false;
         });
         ticking = true;
@@ -433,7 +454,133 @@ export const HomeView: React.FC<HomeViewProps> = ({
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [reducedMotion]);
+
+  // 3b. Setup Journey Scroll Animations: data-words, data-read, and data-reveal
+  useEffect(() => {
+    // 1. Setup data-words
+    const wordObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement;
+            (el as any).__shown = true;
+            const words = (el as any).__w as HTMLElement[] | undefined;
+            if (words) {
+              words.forEach((s, i) => {
+                s.style.transition = `transform 1.1s cubic-bezier(.16,1,.3,1) ${i * 55}ms`;
+                s.style.transform = 'none';
+              });
+            }
+            wordObserver.unobserve(el);
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+
+    document.querySelectorAll<HTMLElement>('#journey [data-words]').forEach((el) => {
+      const text = el.textContent?.trim() || '';
+      if (!text) return;
+      el.textContent = '';
+      const spans: HTMLElement[] = [];
+      const parts = text.split(/\s+/);
+      parts.forEach((w, i) => {
+        if (i > 0) el.appendChild(document.createTextNode(' '));
+        const outer = document.createElement('span');
+        outer.style.cssText =
+          'display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.12em;margin-bottom:-.12em';
+        const inner = document.createElement('span');
+        inner.textContent = w;
+        inner.style.cssText = 'display:inline-block;will-change:transform';
+        if (!reducedMotion) {
+          inner.style.transform = 'translateY(110%) rotate(4deg)';
+        }
+        outer.appendChild(inner);
+        el.appendChild(outer);
+        spans.push(inner);
+      });
+      (el as any).__w = spans;
+      if (reducedMotion) {
+        (el as any).__shown = true;
+      } else {
+        wordObserver.observe(el);
+      }
+    });
+
+    // 2. Setup data-read
+    document.querySelectorAll<HTMLElement>('#journey [data-read]').forEach((el) => {
+      const text = el.textContent?.trim() || '';
+      if (!text) return;
+      el.textContent = '';
+      const spans: HTMLElement[] = [];
+      const parts = text.split(/\s+/);
+      parts.forEach((w, i) => {
+        if (i > 0) el.appendChild(document.createTextNode(' '));
+        const s = document.createElement('span');
+        s.textContent = w;
+        s.style.transition = 'opacity .35s linear';
+        s.style.opacity = reducedMotion ? '1' : '0.18';
+        el.appendChild(s);
+        spans.push(s);
+      });
+      (el as any).__w = spans;
+    });
+
+    // 3. Setup data-reveal
+    if (!reducedMotion) {
+      const INIT: Record<string, [string, string, string]> = {
+        up: ['0', 'translateY(32px)', 'none'],
+        left: ['0', 'translateX(-24px)', 'none'],
+        clip: ['1', 'scale(1.08)', 'inset(12% 8% 12% 8%)'],
+      };
+
+      const showReveal = (el: HTMLElement) => {
+        const d = Number(el.dataset.rvd || 0);
+        el.style.transition = `opacity .9s cubic-bezier(.16,1,.3,1) ${d}ms, transform 1.2s cubic-bezier(.16,1,.3,1) ${d}ms, clip-path 1.3s cubic-bezier(.16,1,.3,1) ${d}ms`;
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+        el.style.clipPath = 'inset(0% 0% 0% 0%)';
+      };
+
+      const revealObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              showReveal(e.target as HTMLElement);
+              revealObserver.unobserve(e.target);
+            }
+          });
+        },
+        { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
+      );
+
+      let lastParent: HTMLElement | null = null;
+      let siblingCount = 0;
+      document.querySelectorAll<HTMLElement>('#journey [data-reveal]').forEach((el) => {
+        const kind = el.dataset.reveal || 'up';
+        const t = INIT[kind] || INIT.up;
+        if (el.parentElement !== lastParent) {
+          lastParent = el.parentElement;
+          siblingCount = 0;
+        }
+        el.dataset.rvd = String(Math.min(siblingCount++, 6) * 80);
+        el.style.opacity = t[0];
+        el.style.transform = t[1];
+        if (t[2] !== 'none') el.style.clipPath = t[2];
+        revealObserver.observe(el);
+      });
+
+      return () => {
+        wordObserver.disconnect();
+        revealObserver.disconnect();
+      };
+    } else {
+      return () => {
+        wordObserver.disconnect();
+      };
+    }
+  }, [reducedMotion, isFR]);
 
   // 4. Hero Slideshow State
   const [heroIndex, setHeroIndex] = useState(0);
@@ -1231,15 +1378,15 @@ export const HomeView: React.FC<HomeViewProps> = ({
           <div style={{ maxWidth: 1360, margin: '0 auto', padding: '0 clamp(20px, 4vw, 48px)' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 440px), 1fr))', gap: '24px 64px', alignItems: 'end' }}>
               <div>
-                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, letterSpacing: '0.12em', color: '#1F5FAE' }}>
+                <div data-reveal="up" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, letterSpacing: '0.12em', color: '#1F5FAE' }}>
                   {isFR ? 'LE PARCOURS DU SYSTÈME · 9 ÉTAPES' : 'THE SYSTEM JOURNEY · 9 STAGES'}
                 </div>
                 <h2 style={{ margin: '18px 0 0', fontSize: 'clamp(2.4rem, 5vw, 4.6rem)', lineHeight: 0.98, letterSpacing: '-0.045em', fontWeight: 700 }}>
-                  <span style={{ display: 'block' }}>{isFR ? 'Neuf étapes.' : 'Nine stages.'}</span>
-                  <span style={{ display: 'block', color: '#5B6B7B' }}>{isFR ? 'Un seul chemin continu.' : 'One continuous path.'}</span>
+                  <span data-words style={{ display: 'block' }}>{isFR ? 'Neuf étapes.' : 'Nine stages.'}</span>
+                  <span data-words style={{ display: 'block', color: '#5B6B7B' }}>{isFR ? 'Un seul chemin continu.' : 'One continuous path.'}</span>
                 </h2>
               </div>
-              <p style={{ margin: 0, maxWidth: 520, fontSize: '1.15rem', lineHeight: 1.6, color: '#3A4B5C' }}>
+              <p data-read style={{ margin: 0, maxWidth: 520, fontSize: '1.15rem', lineHeight: 1.6, color: '#3A4B5C', textWrap: 'pretty' }}>
                 {isFR
                   ? 'Faites défiler la chaîne. Chaque étape montre l’équipement tel qu’il est sur le terrain, sa tension de service et où l’étudier ensuite.'
                   : 'Scroll the chain. Each stage shows the equipment as it stands in the field, the voltage it runs at, and where to study it next.'}
@@ -1261,7 +1408,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                       key={s.num}
                       onClick={() => scrollToStage(idx)}
                       aria-label={isFR ? s.shortFR : s.shortEN}
-                      style={{ flex: 1, height: 20, border: 0, padding: '8px 0', background: 'transparent' }}
+                      style={{ flex: 1, height: 20, border: 0, padding: '8px 0', background: 'transparent', cursor: 'pointer' }}
                     >
                       <span
                         style={{
@@ -1292,7 +1439,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                         left: 6,
                         top: 8,
                         width: 2,
-                        height: `${(activeStageIndex / (STAGES.length - 1)) * 100}%`,
+                        height: `${(activeStageIndex / 8) * 100}%`,
                         maxHeight: 'calc(100% - 16px)',
                         background: '#F2A541',
                         transition: 'height 0.5s cubic-bezier(.2,.8,.2,1)'
@@ -1316,7 +1463,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
                             padding: '6px 0',
                             border: 0,
                             background: 'transparent',
-                            textAlign: 'left'
+                            textAlign: 'left',
+                            cursor: 'pointer'
                           }}
                         >
                           <span
@@ -1360,7 +1508,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
                         transition: 'opacity 0.6s ease'
                       }}
                     >
-                      <div style={{ position: 'relative', aspectRatio: '16/9', overflow: 'hidden', borderRadius: 4, background: '#E3ECF2' }}>
+                      <div
+                        data-reveal="clip"
+                        style={{ position: 'relative', aspectRatio: '16/9', overflow: 'hidden', borderRadius: 4, background: '#E3ECF2' }}
+                      >
                         <img
                           src={stage.img}
                           alt={stage.cap}
@@ -1370,7 +1521,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                             height: '100%',
                             objectFit: 'cover',
                             filter: isActive ? 'grayscale(0.1) contrast(1.05)' : 'grayscale(1) brightness(1.05) opacity(0.8)',
-                            transform: isActive ? 'scale(1.04)' : 'scale(1)',
+                            transform: isActive && !reducedMotion ? 'scale(1.04)' : 'scale(1)',
                             transition: 'filter 1s ease, transform 6s ease'
                           }}
                         />
@@ -1395,13 +1546,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
                       <div style={{ marginTop: 32, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '28px 48px' }}>
                         <div>
-                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 500, color: '#1F5FAE', letterSpacing: '-0.02em' }}>
+                          <div data-reveal="up" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 500, color: '#1F5FAE', letterSpacing: '-0.02em' }}>
                             {stage.volt}
                           </div>
-                          <h3 style={{ margin: '10px 0 0', fontSize: 'clamp(1.9rem, 3.2vw, 3rem)', lineHeight: 1, letterSpacing: '-0.04em', fontWeight: 700 }}>
+                          <h3 data-reveal="up" style={{ margin: '10px 0 0', fontSize: 'clamp(1.9rem, 3.2vw, 3rem)', lineHeight: 1, letterSpacing: '-0.04em', fontWeight: 700 }}>
                             {isFR ? stage.titleFR : stage.titleEN}
                           </h3>
-                          <p style={{ margin: '18px 0 0', fontSize: '1.08rem', lineHeight: 1.6, color: '#3A4B5C' }}>
+                          <p data-reveal="up" style={{ margin: '18px 0 0', fontSize: '1.08rem', lineHeight: 1.6, color: '#3A4B5C', textWrap: 'pretty' }}>
                             {isFR ? stage.purposeFR : stage.purposeEN}
                           </p>
                           <button
@@ -1424,6 +1575,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                             {(isFR ? stage.appFR : stage.appEN).map((appItem, appIdx) => (
                               <li
                                 key={appIdx}
+                                data-reveal="left"
                                 style={{
                                   display: 'flex',
                                   gap: 16,

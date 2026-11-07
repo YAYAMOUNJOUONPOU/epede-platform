@@ -3,7 +3,6 @@ import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Header } from './components/layout/Header';
 import { Sidebar } from './components/layout/Sidebar';
-import { Footer } from './components/layout/Footer';
 import { MobileFieldQuickDock } from './components/layout/MobileFieldQuickDock';
 import { ScadaTelemetryBar } from './components/layout/ScadaTelemetryBar';
 import { PersistentEngineeringContextDock } from './components/layout/PersistentEngineeringContextDock';
@@ -1424,14 +1423,6 @@ export default function App() {
         </main>
       </div>
 
-      {/* Shared Sitewide Footer on Every Route */}
-      {currentView !== 'ecosystem' && (
-        <Footer
-          locale={locale}
-          onLocaleChange={setLocale}
-          onNavigate={(v) => navigate({ view: v as AppViewType })}
-        />
-      )}
 
       {/* Global Modals (Lazy Loaded on Demand, scoped to ProCode Workbench tokens) */}
       <div className="epede-workbench border-0 bg-transparent">
