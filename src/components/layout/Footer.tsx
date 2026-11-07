@@ -128,7 +128,16 @@ export const Footer: React.FC<FooterProps> = ({
       }}
     >
       <div className="max-w-[1360px] mx-auto px-5 sm:px-8 lg:px-12">
-        {/* 1. Main Navigation Grid (Columns) */}
+        {/* 1. Engineering Synthesis Top Note (from Image 1) */}
+        <div className="pb-8 mb-10 border-b border-[#1A2D40]/60">
+          <p className="m-0 max-w-[1080px] font-mono text-[12px] leading-[1.75] text-[#93A4B4]">
+            {isFr
+              ? 'Note de synthèse d’ingénierie — Le contenu d’EPEDE est une synthèse pédagogique et technique fondée sur les normes publiques (CEI, IEEE, CIGRE, NF C) et les données opérateurs. Il ne remplace pas les textes normatifs officiels, la documentation constructeur ou l’étude d’un ingénieur qualifié.'
+              : 'Engineering synthesis note — EPEDE content is an educational and technical synthesis based on public standards (IEC, IEEE, CIGRE, NF C) and operator data. It does not replace official normative texts, manufacturer documentation or a qualified engineer’s study.'}
+          </p>
+        </div>
+
+        {/* 2. Main Navigation Grid (Columns from Image 1) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10">
           {/* Brand & Attribution Column */}
           <div className="sm:col-span-2 max-w-[380px]">
@@ -177,17 +186,8 @@ export const Footer: React.FC<FooterProps> = ({
           ))}
         </div>
 
-        {/* 2. Unified Synthesis Notice (Merged from upper notice / disclaimer) */}
-        <div className="mt-14 pt-6 border-t border-[#1A2D40]">
-          <p className="m-0 max-w-[960px] font-mono text-[12px] leading-[1.7] text-[#93A4B4]">
-            {isFr
-              ? 'Avertissement de synthèse — le contenu d’EPEDE est une synthèse pédagogique et technique fondée sur les normes publiques (CEI, IEEE, CIGRE, NF C) et les données opérateurs. Il ne remplace pas les textes normatifs officiels, la documentation constructeur ou l’étude d’un ingénieur qualifié.'
-              : 'Engineering synthesis notice — EPEDE content is an educational synthesis of public standards and sources. It does not replace official standards text, manufacturer data or a qualified engineer’s study.'}
-          </p>
-        </div>
-
-        {/* 3. Bottom Metadata, Copyright & Language Switcher */}
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 font-mono text-[11px] text-[#93A4B4]">
+        {/* 3. Bottom Metadata, Copyright & Language Switcher (from Image 2) */}
+        <div className="mt-14 pt-6 border-t border-[#1A2D40] flex flex-wrap items-center justify-between gap-4 font-mono text-[11px] text-[#93A4B4]">
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
             <span>© 2026 EPEDE · Electrical Power Engineering Digital Environment</span>
             <span>Version 2.0 · Updated November 2026</span>
