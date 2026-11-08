@@ -3495,6 +3495,421 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         descEn: 'International benchmark for analog 4–20 mA loop health monitoring: nominal range 3.8 to 20.5 mA, low failure flag (< 3.6 mA), and high failure flag (> 21.0 mA) detecting broken wire or short.'
       }
     ]
+  },
+
+  // D08: Courants Faibles (CFA) & Systèmes Spéciaux (ELV)
+  D08: {
+    domainCode: 'D08',
+    sectionA: {
+      roleFr: "Conception, intégration et exploitation des infrastructures à très basse tension (TBTS ≤ 50 V AC / ≤ 120 V DC), de sécurité incendie (SSI Catégorie A), de contrôle d'accès sécurisé, de vidéoprotection IP HD, de sonorisation d'évacuation (EN 54-16) et de gestion technique du bâtiment (GTB/GTC BACnet/IP).",
+      roleEn: 'Engineering, deployment, and supervision of Extra-Low Voltage (SELV ≤ 50 V AC / ≤ 120 V DC) building subsystems: Category A Fire Alarm Systems (EN 54 / NF S 61-931), IP video surveillance, biometric access control, voice alarm evacuation (EN 54-16), and smart Building Management Systems (BMS BACnet/IP).',
+      inputsFr: {
+        title: 'Alimentation Électrique Secourue & Sources Normales',
+        desc: 'Arrivée TGBT 230/400 V AC ondulée (ASI/UPS double conversion online, autonomie 10–30 min) et coffrets chargeurs-redresseurs 24/48 V DC avec parcs batteries stationnaires Pb-étanche VRLA / Ni-Cd.',
+        voltage: '230 V AC / 24–48 V DC Ondulé & Secouru'
+      },
+      inputsEn: {
+        title: 'Emergency Backed Supply & Primary Mains',
+        desc: 'Dual-feed 230/400 V AC backed by online double-conversion UPS and industrial 24/48 V DC rectifiers with stationary sealed VRLA/Ni-Cd battery banks ensuring autonomous standby operation.',
+        voltage: '230 V AC / 24–48 V DC Backed & Isolated'
+      },
+      processFr: {
+        title: 'Distribution Dédiée, Boucles Adressables & Câblage VDI',
+        desc: 'Réseaux de boucles adressables rebouclées isolées (isolateurs de court-circuit NF S 61-970), câbles résistants au feu CR1/C1 pour fonctions de sécurité, câblage cuivre Cat 6A/7A blindé F/FTP et rocade fibre optique monomode OS2.',
+        note: 'Ségrégation galvanique stricte des courants forts (CFO) et courants faibles (CFA) : distance minimale 300 mm sur chemins de câbles métalliques continûment reliés à la terre.'
+      },
+      processEn: {
+        title: 'Dedicated Distribution, Addressable Loops & VDI Cabling',
+        desc: 'Class A addressable fault-tolerant return loops with integral short-circuit isolators, fire-resistant CR1/C1 cabling for life safety, Cat 6A/7A shielded copper cabling, and OS2 single-mode optical fiber backbones.',
+        note: 'Strict galvanic physical separation between power (HV/LV) and ELV circuits: minimum 300 mm clearance on metallic cable trays with continuous equipotential bonding.'
+      },
+      outputsFr: {
+        title: 'Actionneurs de Sécurité, Supervision & Terminaux Métier',
+        desc: 'Déclencheurs d\'évacuation sonore (NF S 32-001 / EN 54-3), clapets coupe-feu motorisés, volets de désenfumage, ventouses électromagnétiques de verrouillage (DAS), caméras IP 4K PoE+, et automates DDC de régulation CVC.',
+        earthing: 'Régime TBTS (Très Basse Tension de Sécurité) avec isolation galvanique totale et boucle de terre équipotentielle maillée télécom (R < 1 Ω)'
+      },
+      outputsEn: {
+        title: 'Safety Actuators, Supervisory Servers & Field Endpoints',
+        desc: 'EN 54-3 evacuation sounders, motorized fire dampers, smoke extraction vents, fail-secure magnetic locks, 4K PoE+ PTZ cameras, and BACnet/IP Direct Digital Controllers (DDC) for HVAC optimization.',
+        earthing: 'SELV (Safety Extra-Low Voltage) scheme with full galvanic barrier and dedicated telecom equipotential mesh earthing grid (R < 1 Ω)'
+      }
+    },
+    sectionB: {
+      summaryFr: "Panorama architectural des 5 sous-systèmes critiques de courants faibles et de sécurité technique des bâtiments, illustrant les topologies de boucle incendie rebouclée, le câblage VDI haute densité PoE++, le contrôle d'accès Grade 4, la vidéosurveillance IP 4K avec VMS unifié et la GTB/GTC multi-protocoles.",
+      summaryEn: 'Architectural overview of the 5 critical extra-low voltage and building management subsystems, spanning Class A fire alarm loops, high-density PoE++ VDI networks, Grade 4 physical access control, 4K IP video with unified VMS, and multi-protocol smart BMS.',
+      architectures: [
+        {
+          nameFr: "Système de Sécurité Incendie SSI Catégorie A avec Évacuation Sonore EN 54-16 (Centrale Hydroélectrique de Nachtigal & Tour Tertiaire)",
+          nameEn: 'Category A Fire Safety System with Voice Alarm EN 54-16 (Nachtigal Hydro Powerhouse & High-Rise Tower)',
+          techFr: "Boucles rebouclées adressables classe A, détecteurs optiques et thermo-vélocimétriques de fumée, déclencheurs manuels, centralisateur de mise en sécurité incendie (CMSI) et extinction automatique par gaz propre Novec 1230.",
+          techEn: 'Class A addressable fault-tolerant return loops, optical and rate-of-rise smoke detectors, manual call points, integrated Fire Alarm & Safety Control Panel (FACP/CMSI), and Novec 1230 total flooding clean agent fire suppression.',
+          descFr: "Architecture de sécurité absolue conçue pour les infrastructures critiques : l'apparition d'une coupure ou d'un court-circuit sur une boucle est immédiatement isolée par les isolateurs intégrés sans interruption de surveillance.",
+          descEn: 'Fail-safe safety architecture designed for mission-critical infrastructure: a cable cut or short-circuit is instantaneously isolated by adjacent bidirectional isolators without losing single sensor communication.',
+          standard: 'NF S 61-931, NF S 61-970, EN 54-2, EN 54-4, EN 54-16',
+          metricFr: 'Temps de détection < 15 s • Jusqu\'à 128 points adressables/boucle • Autonomie batterie 72 h veille + 1 h alarme',
+          metricEn: 'Detection latency < 15 s • Up to 128 addressable points/loop • Battery backup 72 h standby + 1 h full alarm'
+        },
+        {
+          nameFr: "Infrastructure de Câblage Structuré VDI & Réseau Haute Densité PoE++ 802.3bt (Data Center & Siège Social)",
+          nameEn: 'High-Density VDI Structured Cabling & PoE++ 802.3bt Infrastructure (Data Center & Corporate HQ)',
+          techFr: "Rocades optiques redondées 40/100 GbE en fibre monomode OS2 / multimode OM4, distribution horizontale cuivre Cat 6A blindée S/FTP, répartiteurs 42U et commutateurs PoE++ Type 4 (jusqu'à 90 W par port).",
+          techEn: 'Redundant 40/100 GbE optical backbones with OS2 single-mode and OM4 multi-mode fiber, Cat 6A S/FTP shielded horizontal copper cabling, 42U distribution racks, and IEEE 802.3bt Type 4 PoE++ switches (up to 90 W/port).',
+          descFr: "Topologie hiérarchique en étoile normalisée ISO/IEC 11801 garantissant le transport simultané des données informatiques, de la téléphonie VoIP, de la vidéosurveillance et de l'alimentation électrique à distance des points d'accès Wi-Fi 6E.",
+          descEn: 'Standardized hierarchical star topology per ISO/IEC 11801 delivering high-speed IT data, VoIP telephony, IP surveillance, and remote power delivery for high-draw Wi-Fi 6E access points and LED fixtures.',
+          standard: 'ISO/IEC 11801-1/2, ANSI/TIA-568.2-D, IEEE 802.3bt, EN 50173',
+          metricFr: 'Bande passante 500 MHz • NEXT > 42 dB à 250 MHz • Budget PoE commutateur 1 440 W (90 W/port)',
+          metricEn: 'Bandwidth 500 MHz • NEXT > 42 dB at 250 MHz • Switch PoE budget 1,440 W (90 W/port)'
+        },
+        {
+          nameFr: "Système de Contrôle d'Accès Sécurisé & Détection d'Intrusion Périphérique (Poste HTB 225 kV de Mangombé & SCDP)",
+          nameEn: 'Secure Physical Access Control & Perimeter Intrusion Detection (Mangombé 225 kV Substation & SCDP Terminal)',
+          techFr: "Lecteurs de badges RFID sécurisés Mifare DESFire EV3 avec chiffrement AES-128, biométrie morphologique faciale/veineuse, contrôleurs IP autonomes avec mémoire locale, barrières hyperfréquences et câble microphonique sur clôture.",
+          techEn: 'Mifare DESFire EV3 smart card readers with end-to-end AES-128 encryption, facial/vein biometric terminals, autonomous IP door controllers with local cache, microwave barriers, and fence-mounted sensor cables.',
+          descFr: "Sécurisation physique multi-niveaux protégeant les postes sources et dépôts pétroliers : gestion des sas anti-passback, sas d'accès camions citernes, et télé-surveillance des tentatives de franchissement avec levée de doute automatique.",
+          descEn: 'Multi-tiered physical security guarding high-voltage grid substations and fuel depots: anti-passback airlocks, tanker truck access control, and real-time fence breach detection with automated PTZ video tracking.',
+          standard: 'CEI 60839-11-1 Grade 4, EN 50131 Grade 3/4, SIA OSDP v2.2',
+          metricFr: 'Temps d\'authentification < 300 ms • Résistance Grade 4 • Journal de 500 000 événements hors ligne',
+          metricEn: 'Authentication time < 300 ms • Grade 4 high security • 500,000 events stored in offline local memory'
+        },
+        {
+          nameFr: "Vidéoprotection IP Intelligente HD & Supervision VMS Centralisée (Complexe Portuaire de Kribi & Réseau Urbain)",
+          nameEn: 'Intelligent 4K IP Video Surveillance & Centralized VMS Platform (Kribi Port Complex & Urban Perimeter)',
+          techFr: "Caméras dômes et thermiques 4K Ultra-HD, encodage haute efficacité H.265/AV1, analytique vidéo embarquée (franchissement virtuel, reconnaissance plaques LPR), stockage SAN/NAS RAID 6 et plateforme VMS unifiée.",
+          techEn: '4K Ultra-HD fixed and thermal PTZ cameras, high-efficiency H.265/AV1 encoding, edge AI video analytics (line crossing, unattended baggage, LPR license plate recognition), enterprise RAID 6 SAN storage, and unified VMS.',
+          descFr: "Surveillance périmétrique continue et traçabilité logistique : détection thermique longue portée (> 1 500 m) des intrusions maritimes et terrestres, avec transmission temps réel vers le centre d'opérations de sécurité (SOC).",
+          descEn: 'Continuous maritime and terrestrial perimeter monitoring: long-range thermal camera detection (> 1,500 m) with low-latency streaming to the Security Operations Center (SOC) and 30-day continuous evidentiary recording.',
+          standard: 'EN 62676-1-1 / EN 62676-4, ISO/IEC 23008-2 (HEVC), ONVIF Profile S/G/T',
+          metricFr: 'Flux VBR 4–8 Mb/s à 30 fps • Rétention légale 30 jours continus • Disponibilité SAN 99.999%',
+          metricEn: 'VBR stream 4–8 Mb/s at 30 fps • 30-day statutory video retention • SAN storage 99.999% availability'
+        },
+        {
+          nameFr: "Gestion Technique du Bâtiment (GTB/GTC) Multi-Protocoles & Efficacité Énergétique (Hôpital Général & Siège ENEO)",
+          nameEn: 'Multi-Protocol Building Management System (BMS/BAS) & Energy Efficiency (General Hospital & Corporate HQ)',
+          techFr: "Architecture 3 niveaux (Capteurs/Actionneurs, Automates DDC BACnet/IP, Supervision SCADA GTB), passerelles multi-protocoles Modbus TCP, KNX et DALI-2 pour la régulation CVC multizone, le comptage d'énergie et l'éclairage.",
+          techEn: '3-tier architecture (Field Sensors/Actuators, BACnet/IP Direct Digital Controllers, BMS SCADA Web Supervision), multi-protocol gateways for Modbus TCP, KNX, and DALI-2 controlling multizone HVAC, sub-metering, and dynamic lighting.',
+          descFr: "Plateforme d'efficacité énergétique et d'optimisation thermique : asservissement en fonction de l'occupation, délestage de pointe électrique, relève automatisée des index de compteurs et alertes de dérive énergétique.",
+          descEn: 'Energy optimization and climate management platform: occupancy-based cooling setbacks, peak load shedding, automated sub-metering data collection, and ISO 52120 Class A automated energy efficiency certification.',
+          standard: 'ISO 16484-5 (BACnet), NF EN ISO 52120-1 Classe A, CEI 62386 (DALI-2)',
+          metricFr: 'Économie d\'énergie 25–35% • Rafraîchissement télémesures < 1 s • 10 000+ points de données gérés',
+          metricEn: 'Energy reduction 25–35% • Telemetry refresh < 1 s • 10,000+ supervised building data points'
+        }
+      ]
+    },
+    sectionC: [
+      {
+        id: 'eq-exp-ssi-cat-a',
+        nameFr: "Centrale Électronique de Détection Incendie & CMSI Adressable (ECS/CMSI)",
+        nameEn: 'Addressable Fire Alarm Control Panel & Safety System (FACP/CMSI EN 54)',
+        voltage: '24 V DC (Alimentation Secourue EAE EN 54-4)',
+        roleFr: "Détection précoce des foyers d'incendie par boucles adressables rebouclées, gestion automatisée des asservissements de mise en sécurité (désenfumage, clapets coupe-feu, compartimentage) et diffusion de l'évacuation générale sonore.",
+        roleEn: 'Early fire hazard detection via addressable Class A loops, automated management of life safety actuators (smoke venting, motorized dampers, door holders), and synchronized acoustic evacuation alarm broadcasting.',
+        symbol: 'FACP / CMSI',
+        standard: 'EN 54-2, EN 54-4, NF S 61-931, NF S 61-936',
+        imgUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&q=80',
+        calcTab: 'relay-tcc'
+      },
+      {
+        id: 'eq-exp-vdi-rack-42u',
+        nameFr: "Baie de Brassage Réseau VDI & Répartiteur Général 42U Haute Densité",
+        nameEn: '42U High-Density VDI Structured Cabling & Optical Distribution Rack',
+        voltage: '230 V AC / 48 V DC (PDU Intelligent Monobloc 32 A)',
+        roleFr: "Concentration et brassage des liaisons optiques monomodes OS2 et multimodes OM4, des panneaux de distribution cuivre Cat 6A blindés S/FTP, des commutateurs d'accès PoE++ 90 W et des serveurs d'enregistrement NVR.",
+        roleEn: 'Central cross-connect aggregation housing OS2/OM4 optical fiber patch panels, Cat 6A S/FTP copper distribution fields, high-capacity IEEE 802.3bt 90 W PoE++ core switches, and enterprise NVR servers.',
+        symbol: 'RACK 42U',
+        standard: 'ISO/IEC 11801, ANSI/TIA-568.2-D, EIA/TIA-310-E, IEEE 802.3bt',
+        imgUrl: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1600&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-camera-ip-ptz',
+        nameFr: "Caméra Dôme IP 4K PTZ Intelligente avec IA & Vision Nocturne Infrarouge",
+        nameEn: '4K Ultra-HD Intelligent PTZ IP Surveillance Camera with Edge AI & IR',
+        voltage: 'PoE+ (IEEE 802.3at / 30 W, 48 V DC)',
+        roleFr: "Surveillance périmétrique haute résolution avec zoom optique 30x, éclairage infrarouge adaptatif 150 m, et algorithmes d'analyse vidéo temps réel (classification de cibles humains/véhicules, détection d'intrusion).",
+        roleEn: 'High-resolution perimeter visual tracking with 30x optical zoom, 150 m adaptive infrared illumination, and edge AI video analytics classifying human/vehicle intruders with automated pan-tilt-zoom pursuit.',
+        symbol: 'CAM-PTZ',
+        standard: 'EN 62676-1/4, ONVIF Profile S/T/M, IP66 / IK10',
+        imgUrl: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&w=1600&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-access-controller',
+        nameFr: "Centrale Contrôleur d'Accès IP Sécurisée Multi-Lecteurs OSDP v2",
+        nameEn: 'Secure Multi-Door IP Access Controller with OSDP v2 / DESFire EV3',
+        voltage: '12–24 V DC (Batterie Tampon Pb 12 V / 7 Ah)',
+        roleFr: "Gestion temps réel des droits de franchissement physique, décodage cryptographique AES-128 des badges RFID Mifare DESFire EV3, asservissement des ventouses électromagnétiques DAS et gestion des sas anti-retour.",
+        roleEn: 'Real-time physical access rights authorization, hardware-level AES-128 cryptographic decoding for DESFire EV3 credentials, lock actuator driving, and anti-passback security airlock sequencing.',
+        symbol: 'ACU-IP',
+        standard: 'CEI 60839-11-1 Grade 4, SIA OSDP v2.2',
+        imgUrl: 'https://images.unsplash.com/photo-1585060544812-6b45742d762f?auto=format&fit=crop&w=1600&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-bms-ddc-controller',
+        nameFr: "Automate de Régulation Numérique Directe GTB (DDC BACnet/IP & Modbus)",
+        nameEn: 'BACnet/IP & Modbus Direct Digital Controller (DDC) for Smart BMS',
+        voltage: '24 V AC / 24 V DC (TBTS)',
+        roleFr: "Régulation dynamique multizone du génie climatique CVC (CTA, groupes frigorifiques, ventilo-convecteurs), optimisation prédictive du confort thermique et centralisation des comptages divisionnaires d'eau et d'électricité.",
+        roleEn: 'Direct digital closed-loop control of HVAC air handling units, chillers, and fan coil units, predictive comfort regulation, and automated sub-metering data aggregation over BACnet/IP and Modbus.',
+        symbol: 'DDC-BMS',
+        standard: 'ISO 16484-5 (BACnet), NF EN ISO 52120-1 Classe A',
+        imgUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1600&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-novec-extinguishing',
+        nameFr: "Système d'Extinction Automatique à Gaz Propre Novec 1230 / FK-5-1-12",
+        nameEn: 'Novec 1230 / FK-5-1-12 Clean Agent Total Flooding Fire Suppression System',
+        voltage: '24 V DC (Ligne de Déclenchement Pyrotechnique Surveillée)',
+        roleFr: "Extinction instantanée par noyage total des salles serveurs informatiques, centres de données et locaux électriques HTB/BT sans projection d'eau ni dépôt résiduel corrosif, préservant l'intégrité du matériel sous tension.",
+        roleEn: 'Rapid total flooding fire suppression for mission-critical data halls, control rooms, and electrical switchgear vaults without water discharge or corrosive residue, safely extinguishing energized fires.',
+        symbol: 'EXT-NOVEC',
+        standard: 'NF EN 15004-1/2, NFPA 2001, APSAD R13',
+        imgUrl: 'https://images.unsplash.com/photo-1618042164219-62c820f10723?auto=format&fit=crop&w=1600&q=80',
+        calcTab: 'relay-tcc'
+      }
+    ],
+    sectionD: [
+      {
+        phase: 'Phase 1',
+        titleFr: 'Analyse des Risques, Typologie du Bâtiment & Notice de Sécurité SSI',
+        titleEn: 'Risk Analysis, Building Typology & Fire Safety Design Basis',
+        descFr: "Classification réglementaire du site (ERP de 1ère à 5ème catégorie, IGH, Code du Travail ou ICPE), définition du niveau de SSI requis (Catégorie A à E per NF S 61-931) et rédaction de la notice technique de mise en sécurité.",
+        descEn: 'Regulatory classification of the facility (Public Assembly Building, High-Rise Tower, Industrial Site per labor codes), determination of mandatory Fire Safety System category (Category A to E), and safety concept basis formulation.'
+      },
+      {
+        phase: 'Phase 2',
+        titleFr: 'Zonage Détection/Mise en Sécurité (ZD/ZS) & Bilans de Puissance PoE / Secouru',
+        titleEn: 'Detection & Safety Zoning (ZD/ZS) & PoE / Standby Power Budgets',
+        descFr: "Découpage architectural en Zones de Détection (ZD) et Zones de Sécurité (ZS), calcul des bilans de puissance PoE++ par commutateur et dimensionnement des sources d'alimentation secourues (EAE 24 Vcc per EN 54-4 et ASI).",
+        descEn: 'Architectural partitioning into Fire Detection Zones (ZD) and Compartment Safety Zones (ZS), calculations of PoE++ switch power budgets, and engineering sizing of 24 Vdc standby battery power supplies per EN 54-4.'
+      },
+      {
+        phase: 'Phase 3',
+        titleFr: 'Études d\'Exécution, Synoptiques de Câblage & Plans d\'Implantation CFA',
+        titleEn: 'Detailed Execution Engineering, Wiring Synoptics & ELV Layouts',
+        descFr: "Modélisation BIM des réseaux courants faibles, schémas synoptiques des boucles adressables, plans de repérage des détecteurs, caméras, lecteurs de badges et automates GTB avec cheminements dédiés.",
+        descEn: 'BIM modeling of all extra-low-voltage pathways, single-line wiring synoptics of Class A loops, device location floor plans for detectors, IP cameras, card readers, and BMS controllers with dedicated cable routes.'
+      },
+      {
+        phase: 'Phase 4',
+        titleFr: 'Câblage Physique, Ségrégation CFO/CFA & Équipotentialité Télécom',
+        titleEn: 'Physical Installation, Power/ELV Separation & Telecom Equipotential Bonding',
+        descFr: "Tirage des câbles résistants au feu CR1/C1 (incendie) et paires torsadées Cat 6A blindées F/FTP avec respect scrupuleux de l'écartement minimal de 300 mm vis-à-vis des câbles de puissance 400 V / 20 kV et mise à la terre maillée.",
+        descEn: 'Installation of fire-resistant CR1/C1 cables (life safety) and Cat 6A F/FTP shielded twisted-pair runs strictly maintaining the 300 mm clearance from 400 V / 20 kV power trays, connected to the telecom mesh earthing bar.'
+      },
+      {
+        phase: 'Phase 5',
+        titleFr: 'Recettage Réseau Cuivre/Fibre (OTDR) & Essais d\'Autonomie Batteries',
+        titleEn: 'Copper/Fiber Network Certification (OTDR) & Battery Autonomy Testing',
+        descFr: "Certification au réflectomètre optique (OTDR) des rocades fibre OS2, tests de diaphonie (NEXT) et perte d'insertion sur les liens cuivre Cat 6A, et décharge réelle des parcs batteries 24/48 Vcc sous courant nominal.",
+        descEn: 'OTDR optical time-domain reflectometry certification of OS2 fiber links, NEXT crosstalk and return loss certification of Cat 6A copper channels, and full-load battery bank discharge autonomy verification.'
+      },
+      {
+        phase: 'Phase 6',
+        titleFr: 'Essais Fonctionnels Globaux, Scénarios de Mise en Sécurité & Commissioning',
+        titleEn: 'Integrated Functional Testing, Fire Scenarios & SSI Commissioning',
+        descFr: "Vérification in situ de l'arbre des causes et effets : déclenchement d'un détecteur entraînant l'alarme sonore d'évacuation temporisée, le désenfumage, la fermeture des clapets coupe-feu et le déverrouillage des issues de secours.",
+        descEn: 'Full on-site commissioning of the Cause & Effect matrix: triggering a fire detector activates zoned voice evacuation sounders, starts smoke extraction fans, closes fire dampers, and releases exit access doors.'
+      },
+      {
+        phase: 'Phase 7',
+        titleFr: 'Maintenance Réglementaire Périodique, Audits Cybersécurité & Registre de Sécurité',
+        titleEn: 'Periodic Regulatory Maintenance, Cybersecurity Audits & Safety Logbook',
+        descFr: "Contrôles réglementaires semestriels et annuels (remplacement des batteries tous les 3–4 ans, nettoyage des chambres optiques, tests de concentration gaz Novec 1230 per NF EN 15004) et tenue à jour du registre de sécurité.",
+        descEn: 'Statutory bi-annual and annual inspections (battery renewals every 3–4 years, optical detector cleaning, door-fan enclosure integrity tests for Novec 1230 gas per NF EN 15004), and audit trail maintenance.'
+      }
+    ],
+    sectionE: [
+      {
+        id: 'elv_battery_sizing',
+        tabLabelFr: '1. Autonomie Batteries EN 54-4',
+        tabLabelEn: '1. Battery Sizing EN 54-4',
+        titleFr: "Dimensionnement de la Capacité des Batteries Secourues EAE / SSI (EN 54-4 / NF S 61-936)",
+        titleEn: 'Battery Bank Sizing for Fire Alarm Power Supplies (EN 54-4 / NF S 61-936)',
+        descFr: "Calcul normatif de la capacité nominale minimale en ampères-heures (Ah) requise pour alimenter une centrale de détection incendie pendant la durée de veille réglementaire (ex. 72 heures sans secteur) suivie de la phase d'alarme générale maximale (ex. 1 heure per NF S 61-936).",
+        descEn: 'Normative calculation of the minimum battery capacity in Ampere-hours (Ah) required to sustain a fire alarm control panel through statutory standby autonomy (e.g. 72 hours without mains) followed by maximum full alarm evacuation (e.g. 1 hour per NF S 61-936).',
+        formula: 'C_{min} = 1.25 \\cdot \\left( I_{veille} \\cdot t_{veille} + I_{alarme} \\cdot t_{alarme} \\right)',
+        formulaDescFr: "Où C_min est la capacité minimale requise (Ah), I_veille le courant total consommé par les boucles et la centrale au repos (A), t_veille la durée de veille obligatoire (h), I_alarme le courant maximal en diffusion d'alarme et asservissements (A), t_alarme la durée d'alarme (h), et 1.25 le coefficient de sécurité compensant le vieillissement batterie et la température.",
+        formulaDescEn: 'Where C_min is minimum required battery capacity (Ah), I_veille is quiescent standby current (A), t_veille is standby duration (h), I_alarme is maximum alarm current with sounders and actuators active (A), t_alarme is alarm duration (h), and 1.25 is safety aging factor compensating for temperature derating.',
+        assumptionsFr: [
+          'Facteur de vieillissement et perte de capacité terminale : 1.25 (marge de 25% imposée par l\'EN 54-4).',
+          'Autonomie réglementaire courante en ERP sans groupe électrogène secouru : t_veille = 72 h, t_alarme = 1 h.',
+          'Tension de fin de décharge minimale admissible : 1.75 V par élément (soit 21.0 V pour un parc nominal 24 Vcc).'
+        ],
+        assumptionsEn: [
+          'Aging and end-of-life derating coefficient: 1.25 (25% mandatory margin per EN 54-4).',
+          'Standard regulatory autonomy in commercial buildings without standby genset: t_standby = 72 h, t_alarm = 1 h.',
+          'Permissible end-of-discharge cut-off voltage: 1.75 V/cell (yielding 21.0 V for a 24 Vdc battery bank).'
+        ],
+        calcTab: 'power'
+      },
+      {
+        id: 'elv_loop_voltage_drop',
+        tabLabelFr: '2. Chute Tension Boucle TBTS',
+        tabLabelEn: '2. Loop Voltage Drop SELV',
+        titleFr: "Calcul de la Chute de Tension en Ligne sur Boucle Adressable TBTS 24 V DC (NF S 61-970)",
+        titleEn: 'Conductor Voltage Drop on Class A SELV 24 V DC Addressable Loop (NF S 61-970)',
+        descFr: "Vérification que la tension résiduelle au point le plus défavorable de la boucle rebouclée reste strictement supérieure au seuil minimal de fonctionnement des détecteurs et isolateurs (typiquement 18.0 V DC pour une alimentation 24 V DC).",
+        descEn: 'Ensures that voltage at the most electrically distant addressable detector on the Class A return loop remains strictly above the manufacturer cut-off threshold (typically 18.0 V DC on a 24 V DC system).',
+        formula: '\\Delta U = 2 \\cdot \\rho \\cdot \\frac{L}{S} \\cdot I_{boucle} \\le \\Delta U_{max} = 0.10 \\cdot U_n',
+        formulaDescFr: "Où ΔU est la chute de tension en ligne (V), ρ la résistivité du cuivre à température maximale de service (0.0225 Ω·mm²/m à 50°C), L la longueur développée de la boucle aller (m), S la section des conducteurs (mm²), et I_boucle le courant maximal absorbé par l'ensemble des modules et détecteurs en alarme (A).",
+        formulaDescEn: 'Where ΔU is loop conductor voltage drop (V), ρ is copper resistivity at maximum operating temperature (0.0225 Ω·mm²/m at 50°C), L is physical one-way conductor route length (m), S is conductor cross-section (mm²), and I_boucle is peak loop current under full alarm state (A).',
+        assumptionsFr: [
+          'Résistivité du cuivre ajustée à 50°C en ambiance technique : ρ = 0.0225 Ω·mm²/m.',
+          'Section standard des câbles de boucle incendie : 1.5 mm² ou 2.5 mm² en câble blindé résistant au feu.',
+          'Chute de tension maximale tolérée : 10% de la tension nominale (soit ΔU ≤ 2.40 V sous 24 V DC).'
+        ],
+        assumptionsEn: [
+          'Copper conductor resistivity adjusted to 50°C: ρ = 0.0225 Ω·mm²/m.',
+          'Standard fire loop cable gauge: 1.5 mm² or 2.5 mm² shielded fire-rated twisted pair.',
+          'Maximum permissible loop voltage drop: 10% of nominal voltage (ΔU ≤ 2.40 V on a 24 V DC system).'
+        ],
+        calcTab: 'voltage-drop'
+      },
+      {
+        id: 'elv_sounder_spl_attenuation',
+        tabLabelFr: '3. Acoustique Évacuation EN 54-3',
+        tabLabelEn: '3. Voice Evacuation SPL EN 54-3',
+        titleFr: "Pression Acoustique d'Évacuation et Atténuation avec la Distance (NF S 32-001 / EN 54-3)",
+        titleEn: 'Evacuation Acoustic Sound Pressure Level & Spatial Attenuation (EN 54-3 / NF S 32-001)',
+        descFr: "Calcul de la pression acoustique délivrée par les diffuseurs sonores d'alarme dans les locaux à protéger pour garantir l'intelligibilité et l'éveil : le niveau sonore doit dépasser de 15 dB(A) le bruit de fond ambiant ou atteindre au moins 65 dB(A).",
+        descEn: 'Determination of acoustic sound pressure delivered by evacuation sirens and voice alarm speakers, guaranteeing speech intelligibility and awakeness: SPL must exceed ambient background noise by 15 dB(A) or reach at least 65 dB(A).',
+        formula: 'L_p(d) = L_{w0} - 20 \\log_{10}(d) - A_{env} \\ge \\max\\left(65\\text{ dB(A)}, \\; L_{bruit\\_fond} + 15\\text{ dB(A)}\\right)',
+        formulaDescFr: "Où L_p(d) est la pression acoustique perçue à la distance d (dB(A)), L_w0 la puissance acoustique de référence mesurée à 1 mètre (typiquement 90 à 105 dB(A) à 1 m), d la distance directe en mètres, et A_env l'atténuation due aux parois, cloisons et absorption d'air (typiquement 15 à 20 dB pour une porte fermée).",
+        formulaDescEn: 'Where L_p(d) is perceived sound pressure level at distance d (dB(A)), L_w0 is rated acoustic output at 1 meter (typically 90 to 105 dB(A) at 1 m), d is distance in meters, and A_env is structural partition attenuation (typically 15 to 20 dB for a closed standard door).',
+        assumptionsFr: [
+          'Atténuation géométrique en champ libre sphérique : 6 dB(A) par doublement de distance (20 log10 d).',
+          'Intelligibilité vocale minimale selon CEI 60268-16 : Indice de Transmission de la Parole STI ≥ 0.50.',
+          'Pression acoustique maximale pour éviter les lésions auditives : L_p ≤ 115 dB(A) à tout point d\'écoute.'
+        ],
+        assumptionsEn: [
+          'Free-field spherical geometric dispersion: 6 dB(A) attenuation per distance doubling (20 log10 d).',
+          'Minimum mandatory speech intelligibility per IEC 60268-16: Speech Transmission Index STI ≥ 0.50.',
+          'Maximum permissible sound pressure avoiding hearing trauma: L_p ≤ 115 dB(A) at any occupied point.'
+        ],
+        calcTab: 'power'
+      },
+      {
+        id: 'elv_novec_gas_flooding',
+        tabLabelFr: '4. Extinction Gaz Novec 1230',
+        tabLabelEn: '4. Novec 1230 Gas Volume',
+        titleFr: "Dimensionnement de la Masse d'Agent Extincteur Gaz Propre Novec 1230 (NF EN 15004 / NFPA 2001)",
+        titleEn: 'Clean Agent Extinguishing Mass Calculation for Novec 1230 (NF EN 15004 / NFPA 2001)',
+        descFr: "Détermination de la quantité d'agent extincteur chimique FK-5-1-12 (Novec 1230) requise pour éteindre un feu de classe A/B/électrique par noyage total d'un volume fermé (salle serveurs, local disjoncteurs) à température minimale de conception.",
+        descEn: 'Formulation of total FK-5-1-12 (Novec 1230) chemical agent mass required to extinguish Class A/B/electrical fires via total flooding of an enclosed room (data center, switchgear room) at lowest expected temperature.',
+        formula: 'W = \\frac{V}{S_v} \\cdot \\left( \\frac{C}{100 - C} \\right) \\quad \\text{avec} \\quad S_v = k_1 + k_2 \\cdot T',
+        formulaDescFr: "Où W est la masse totale d'agent extincteur requise (kg), V le volume net du local à protéger (m³), C la concentration volumique de conception (typiquement 5.3% à 5.8% vol. pour feux électriques classe A), S_v le volume massique spécifique de la vapeur à la température T en °C (pour le Novec 1230, k_1 = 0.0664 et k_2 = 0.000274).",
+        formulaDescEn: 'Where W is required clean agent mass (kg), V is net protected volume (m³), C is volumetric design concentration (typically 5.3% to 5.8% for Class A electrical risks), S_v is specific vapor volume at temperature T in °C (for Novec 1230, k_1 = 0.0664 and k_2 = 0.000274).',
+        assumptionsFr: [
+          'Concentration de sécurité pour risques électriques et informatiques : C = 5.6% vol.',
+          'Température minimale de service de la salle informatique : T = 20°C (S_v = 0.0719 m³/kg).',
+          'Temps maximal d\'évacuation de la charge totale dans le local : t_decharge ≤ 10 secondes.'
+        ],
+        assumptionsEn: [
+          'Design concentration for electrical equipment spaces: C = 5.6% by volume.',
+          'Minimum room temperature design baseline: T = 20°C (S_v = 0.0719 m³/kg).',
+          'Maximum discharge time through calibrated nozzles into the space: t_discharge ≤ 10 seconds.'
+        ],
+        calcTab: 'relay-tcc'
+      },
+      {
+        id: 'elv_cctv_storage_bandwidth',
+        tabLabelFr: '5. Stockage VMS & Débit Vidéo',
+        tabLabelEn: '5. CCTV Storage & Bitrate',
+        titleFr: "Calcul de Bande Passante Réseau Vidéo et Capacité de Stockage NVR (EN 62676-4)",
+        titleEn: 'Video Stream Network Bandwidth & NVR Storage Array Sizing (EN 62676-4)',
+        descFr: "Dimensionnement du débit réseau total agrégé et de la capacité brute de stockage des disques durs en téraoctets (To) pour un parc de caméras IP HD/4K sous encodage H.265 avec rétention légale continue de 30 jours et redondance RAID 6.",
+        descEn: 'Calculates total network throughput and raw hard drive capacity in Terabytes (TB) for an IP camera fleet under H.265 compression, ensuring 30-day statutory continuous recording with enterprise RAID 6 parity overhead.',
+        formula: 'Storage_{TB} = \\frac{N_{cam} \\cdot \\text{Bitrate}_{\\text{Mbps}} \\cdot 3600 \\cdot 24 \\cdot D_{\\text{jours}}}{8 \\cdot 10^6 \\cdot (1 - \\text{RAID}_{overhead})}',
+        formulaDescFr: "Où Storage_TB est la capacité brute de stockage requise (To), N_cam le nombre de caméras IP connectées, Bitrate_Mbps le débit moyen par flux (ex. 4.0 Mb/s en 4K H.265 à 25 fps), D_jours la durée de rétention légale (ex. 30 jours), et RAID_overhead la réserve de disques de parité RAID 6 (typiquement 20% à 25%).",
+        formulaDescEn: 'Where Storage_TB is raw disk storage (TB), N_cam is camera count, Bitrate_Mbps is average video bitrate per camera (e.g. 4.0 Mbps for 4K H.265 at 25 fps), D_jours is statutory retention period (e.g. 30 days), and RAID_overhead accounts for parity disks (typically 20% to 25%).',
+        assumptionsFr: [
+          'Facteur de compression vidéo H.265 / HEVC à débit binaire variable VBR : 4 Mb/s par caméra 4K.',
+          'Durée légale de conservation des enregistrements de sécurité : 30 jours continus (24h/24).',
+          'Pénalité de parité double disque RAID 6 et réserve d\'usure : 25% de capacité brute additionnelle.'
+        ],
+        assumptionsEn: [
+          'H.265 / HEVC compression factor under variable bitrate VBR: 4 Mbps per 4K camera stream.',
+          'Statutory surveillance video retention duration: 30 continuous days (24/7 recording).',
+          'RAID 6 dual-disk parity overhead and formatting margin: 25% additional raw storage.'
+        ],
+        calcTab: 'power'
+      },
+      {
+        id: 'elv_poe_power_budget',
+        tabLabelFr: '6. Bilan Puissance PoE++ 802.3bt',
+        tabLabelEn: '6. PoE++ Power Budget 802.3bt',
+        titleFr: "Bilan de Puissance Alimentation par Câble Ethernet PoE++ (IEEE 802.3bt Type 3/4)",
+        titleEn: 'Power over Ethernet PoE++ Switch Power Supply Sizing (IEEE 802.3bt Type 3/4)',
+        descFr: "Calcul de la puissance totale requise pour l'alimentation électrique d'un commutateur réseau PoE injectant la puissance continue nécessaire aux terminaux déportés (caméras PTZ, bornes Wi-Fi 6E, écrans tactiles, serrures biométriques) en intégrant les pertes joule en ligne.",
+        descEn: 'Sizes the total DC/AC power capacity of a PoE network switch feeding powered devices (PTZ cameras, Wi-Fi 6E access points, biometric access terminals) while accounting for I²R thermal dissipation in Cat 6A copper channels.',
+        formula: 'P_{PSE\\_total} = \\sum_{i=1}^{N_{ports}} \\left( \\frac{P_{PD\\_i}}{\\eta_{câble}} \\right) \\cdot k_{foisonnement}',
+        formulaDescFr: "Où P_PSE_total est la puissance totale fournie par l'équipement source (PSE en Watts), P_PD_i la puissance consommée par le terminal récepteur i (PD), η_câble le rendement de transmission du câble à 90 m (typiquement 82% à 88% en Cat 6A sous 90 W), et k_foisonnement le coefficient de foisonnement d'utilisation simultanée (typiquement 0.80 à 0.90).",
+        formulaDescEn: 'Where P_PSE_total is total switch PoE budget (W), P_PD_i is powered device demand, η_câble is copper transmission efficiency over 90 m channel (typically 82% to 88% on Cat 6A delivering 90 W), and k_foisonnement is simultaneity factor (typically 0.80 to 0.90).',
+        assumptionsFr: [
+          'Pertes thermiques maximales sur lien Cat 6A de 90 mètres per IEEE 802.3bt : jusqu\'à 19 W dissipés sous 90 W.',
+          'Coefficient de foisonnement moyen sur commutateur 48 ports PoE+ : k_foisonnement = 0.85.',
+          'Facteur de réserve d\'extension future sur alimentation de baie : 20% de marge minimale.'
+        ],
+        assumptionsEn: [
+          'Maximum thermal I²R dissipation on 90 m Cat 6A link per IEEE 802.3bt: up to 19 W lost at 90 W delivered.',
+          'Simultaneity factor across a 48-port PoE+ switch: k_foisonnement = 0.85.',
+          'Future expansion design margin on switch power supply: minimum 20% reserve.'
+        ],
+        calcTab: 'power'
+      }
+    ],
+    sectionF: [
+      {
+        code: 'EN 54 / NF S 61-931',
+        tag: 'SÉCURITÉ INCENDIE SSI',
+        titleFr: 'Systèmes de Détection et d\'Alarme Incendie & Centralisateurs de Mise en Sécurité (SSI Catégorie A)',
+        titleEn: 'Fire Detection & Alarm Systems — Part 2 (FACP), Part 4 (Power Supplies), Part 16 (Voice Alarm)',
+        descFr: 'Norme européenne et française régissant la conception, les performances de détection, les alimentations secourues EAE et l\'évacuation sonore des personnes en cas de sinistre.',
+        descEn: 'European and French standard governing the design, detection performance, emergency power supplies (PSE), and voice alarm evacuation systems in occupied buildings.'
+      },
+      {
+        code: 'ISO/IEC 11801 / TIA-568.2-D',
+        tag: 'CÂBLAGE STRUCTURÉ VDI',
+        titleFr: 'Technologies de l\'Information — Câblage Générique des Locaux d\'Utilisateurs (Cat 6A / 7A / Fibre OS2)',
+        titleEn: 'Information Technology — Generic Cabling for Customer Premises (Cat 6A / 7A / OS2 Optical Fiber)',
+        descFr: 'Prescriptions d\'architecture en étoile, bandes passantes jusqu\'à 500 MHz, atténuation diaphonique NEXT et règles de pose pour les rocades et la distribution horizontale.',
+        descEn: 'Defines hierarchical star topology, bandwidth ratings up to 500 MHz, NEXT crosstalk thresholds, and installation guidelines for backbone and horizontal data channels.'
+      },
+      {
+        code: 'EN 62676 / CEI 62676',
+        tag: 'VIDÉOPROTECTION IP',
+        titleFr: 'Systèmes de Vidéosurveillance Électronique pour Applications de Sécurité',
+        titleEn: 'Video Surveillance Systems for Use in Security Applications (IP Video & VMS)',
+        descFr: 'Exigences relatives aux performances optiques (critères DORI : Détecter, Observer, Reconnaître, Identifier), aux flux de compression H.265 et à la transmission réseau sans latence.',
+        descEn: 'Specifies optical system performance (DORI criteria: Detect, Observe, Recognize, Identify), H.265 compression streaming, and latency-bounded network transmission.'
+      },
+      {
+        code: 'CEI 60839-11-1',
+        tag: 'CONTRÔLE D\'ACCÈS',
+        titleFr: 'Systèmes d\'Alarme et de Sécurité Électronique — Contrôle d\'Accès Électronique (Grades 1 à 4)',
+        titleEn: 'Alarm and Electronic Security Systems — Electronic Access Control Systems (Grades 1 to 4)',
+        descFr: 'Définit les niveaux de sécurité physique et logique (Grade 4 pour les sites haute sécurité), les protocoles de communication sécurisés OSDP v2 et le cryptage des identifiants.',
+        descEn: 'Defines physical and cryptographic security levels (Grade 4 for critical high-security sites), OSDP v2 secure channel protocols, and credential tampering resistance.'
+      },
+      {
+        code: 'ISO 16484-5 / BACnet',
+        tag: 'GESTION TECHNIQUE DU BÂTIMENT',
+        titleFr: 'Systèmes d\'Automatisation et de Gestion Technique du Bâtiment (GTB/GTC) — Protocole BACnet',
+        titleEn: 'Building Automation and Control Systems (BACS) — BACnet Communication Protocol',
+        descFr: 'Standard international d\'interopérabilité pour les réseaux d\'automates DDC, la régulation thermique CVC, la gestion de l\'éclairage et l\'optimisation énergétique ISO 52120-1 Classe A.',
+        descEn: 'International open protocol standard enabling seamless interoperability between DDC controllers, HVAC equipment, lighting systems, and ISO 52120-1 Class A building efficiency engines.'
+      },
+      {
+        code: 'NF EN 15004-1 / NFPA 2001',
+        tag: 'EXTINCTION GAZ PROPRES',
+        titleFr: 'Systèmes d\'Extinction Fixes par Gaz — Conception, Installation et Maintenance (Novec 1230)',
+        titleEn: 'Fixed Firefighting Systems — Gas Extinguishing Systems (Physical Properties & System Design)',
+        descFr: 'Règles de dimensionnement volumique, calcul des buses d\'éjection, tenue à la surpression par évents de décharge et étanchéité de la salle par essai d\'infiltrométrie (Door-Fan Test).',
+        descEn: 'Specifies clean agent volumetric sizing, discharge nozzle hydrodynamics, overpressure relief venting, and room enclosure integrity verification via calibrated Door-Fan Testing.'
+      }
+    ]
   }
 };
 

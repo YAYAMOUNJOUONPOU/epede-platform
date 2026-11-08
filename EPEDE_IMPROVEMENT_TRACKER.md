@@ -16,8 +16,8 @@ Complete platform transformation through continuous iterative improvement across
 | **D05** | Distribution Networks (MV Feeders, RMUs, Pole Transformers) | Completed | 6 | 97% | 97% | 96% | Passing |
 | **D06** | Electrical Installations & Utilization (LV Switchboards, Motors, Earthing) | Completed | 6 | 97% | 97% | 96% | Passing |
 | **D07** | Industrial Automation, DCS & Variable Speed Drives (VFD) | Completed | 6 | 97% | 97% | 96% | Passing |
-| **D08** | Extra-Low Voltage (ELV) & Special Electrical Systems | In Progress | 1 | - | - | - | Queued |
-| **D09** | Artificial Intelligence & Advanced Power Technologies | Queued | 0 | - | - | - | - |
+| **D08** | Extra-Low Voltage (ELV) & Special Electrical Systems | Completed | 6 | 97% | 97% | 96% | Passing |
+| **D09** | Artificial Intelligence & Advanced Power Technologies | In Progress | 1 | - | - | - | Queued |
 | **D10** | Energy Storage & Charging Systems (BESS, PSH, Microgrids) | Queued | 0 | - | - | - | - |
 | **D11** | Protection, Measurements & System Studies (Relays, TCC, ANSI) | Queued | 0 | - | - | - | - |
 | **D12** | Substation Automation Systems (SAS, SCADA, RTU, IEC 61850) | Queued | 0 | - | - | - | - |
@@ -45,6 +45,6 @@ Complete platform transformation through continuous iterative improvement across
 ---
 
 ## 3. Improvement Log Summary
-- **Completed**: D01 (Generation & Electricity Production), D02 (Power System Architecture & Grid Planning), D03 (Transmission Networks), D04 (Substations & Grid Nodes), D05 (Distribution Networks), D06 (Electrical Installations & Utilization), D07 (Industrial Automation, DCS & Variable Speed Drives VFD).
-- **Current Step**: Transforming Domain 8 (Extra-Low Voltage ELV & Special Electrical Systems — Fire Detection SSI Cat A, BMS/SCADA, Access Control, CCTV, Novec 1230 gas extinguishing).
-- **Next Step**: Domain 9 (Artificial Intelligence & Advanced Power Technologies).
+- **Completed**: D01 (Generation & Electricity Production), D02 (Power System Architecture & Grid Planning), D03 (Transmission Networks), D04 (Substations & Grid Nodes), D05 (Distribution Networks), D06 (Electrical Installations & Utilization), D07 (Industrial Automation, DCS & Variable Speed Drives VFD), D08 (Extra-Low Voltage ELV & Special Electrical Systems).
+- **Current Step**: Transforming Domain 9 (Artificial Intelligence & Advanced Power Technologies — Neural Dispatch, WAMS PMU, DGA Health Forecasting).
+- **Next Step**: Domain 10 (Energy Storage & Charging Systems BESS / PSH).

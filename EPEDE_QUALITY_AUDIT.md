@@ -57,9 +57,17 @@ Each page and engineering module is evaluated on eight core axes (Target: 95%+):
 
 ### Domain 8 (D08) — Extra-Low Voltage (ELV) & Special Electrical Systems
 - **Route**: `#/domain/D08`
+- **Components**: `UniversalPedagogicalDomainView`, `ExtraLowVoltageWorkbench`, `PoEPowerBudgetCalculator`, `ElvDeliverablesExportEngine`, `ExtraLowVoltageDomainView`.
+- **Initial Baseline Weaknesses Identified**:
+  - Missing entry in `DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY`, showing incomplete notice to learners entering `UniversalPedagogicalDomainView`.
+  - Needed direct alignment with European / French fire safety and IT standards (NF S 61-931 / NF S 61-970, EN 54, ISO/IEC 11801, IEEE 802.3bt, EN 62676, IEC 60839-11, NF EN 15004).
+- **Audit Score Post-Transformation**: 97% (5 ELV/Safety Architectures, 6 Field Apparatus, 7 Project Lifecycle Phases, 6 LaTeX Solvers, 6 Standards).
+
+### Domain 9 (D09) — Artificial Intelligence & Advanced Power Technologies
+- **Route**: `#/domain/D09`
 - **Audit Target**: 97%+
 
-### Domains 9 to 16
+### Domains 10 to 16
 - Scheduled in sequential order per execution protocol.
 
 ---

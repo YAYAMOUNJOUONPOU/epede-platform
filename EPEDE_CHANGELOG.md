@@ -145,3 +145,42 @@ All notable changes, engineering refactors, and technical enhancements across th
     5. Transient Busbar Voltage Dip During Induction Motor Starting ($\Delta U_{\text{start}}\% = \frac{S_{\text{start}}}{S_{cc} + S_{\text{start}}} \cdot 100 \le 10\%$).
     6. Capacitor Bank Sizing & Detuned Harmonic Filter Tuning ($Q_c = P (\tan\varphi_1 - \tan\varphi_2)$, $f_r = f_1 \sqrt{1/p} = 189\text{ Hz}$).
   - **Section F**: Sourced 6 normative standards: NF C 15-100, CEI 60364-4-41, CEI 61439-1 / CEI 61439-2, NF C 15-105, CEI 60947-2 / CEI 60947-4-1, and CEI 60364-6.
+
+### Domain 8 (D08) - Extra-Low Voltage (ELV) & Special Electrical Systems Transformation
+- Completely overhauled pedagogical framework in `domainPedagogicalContentRegistry.ts`:
+  - **Section A**: Formulated ELV electrotechnical boundaries (SELV/TBTS $\le 50\text{ V AC} / \le 120\text{ V DC}$), dual-supply emergency backed UPS/rectifier sources, 300 mm physical segregation from power trays, and telecom equipotential earthing mesh ($R < 1\,\Omega$).
+  - **Section B**: Documented 5 canonical ELV architectures:
+    1. **Système de Sécurité Incendie SSI Catégorie A avec Évacuation Sonore EN 54-16 (Centrale Hydroélectrique de Nachtigal & Tour Tertiaire)** (Class A fault-tolerant return loops, CMSI, Novec 1230 total flooding).
+    2. **Infrastructure de Câblage Structuré VDI & Réseau Haute Densité PoE++ 802.3bt (Data Center & Siège Social)** (OS2/OM4 40/100 GbE backbones, Cat 6A S/FTP, 90 W Type 4 PoE++ switches).
+    3. **Système de Contrôle d'Accès Sécurisé & Détection d'Intrusion Périphérique (Poste HTB 225 kV de Mangombé & SCDP)** (Mifare DESFire EV3 AES-128, Grade 4 controllers, microwave fence barriers).
+    4. **Vidéoprotection IP Intelligente HD & Supervision VMS Centralisée (Complexe Portuaire de Kribi & Réseau Urbain)** (4K Ultra-HD fixed and thermal PTZ, H.265/AV1 edge AI, 30-day RAID 6 SAN storage).
+    5. **Gestion Technique du Bâtiment (GTB/GTC) Multi-Protocoles & Efficacité Énergétique (Hôpital Général & Siège ENEO)** (3-tier BACnet/IP, Modbus TCP, KNX, DALI-2, ISO 52120 Class A).
+  - **Section C**: Added 6 core ELV and building safety apparatus with authentic equipment registry citations:
+    - Addressable Fire Alarm Control Panel & Safety System ECS/CMSI (`eq-exp-ssi-cat-a`).
+    - 42U High-Density VDI Structured Cabling & Optical Distribution Rack (`eq-exp-vdi-rack-42u`).
+    - 4K Ultra-HD Intelligent PTZ IP Surveillance Camera with Edge AI & IR (`eq-exp-camera-ip-ptz`).
+    - Secure Multi-Door IP Access Controller with OSDP v2 / DESFire EV3 (`eq-exp-access-controller`).
+    - BACnet/IP & Modbus Direct Digital Controller DDC for Smart BMS (`eq-exp-bms-ddc-controller`).
+    - Novec 1230 / FK-5-1-12 Clean Agent Total Flooding Fire Suppression System (`eq-exp-novec-extinguishing`).
+  - **Section D**: Expanded methodology to 7 sequential engineering lifecycle phases:
+    1. Risk Analysis, Building Typology & Fire Safety Design Basis.
+    2. Detection & Safety Zoning (ZD/ZS) & PoE / Standby Power Budgets.
+    3. Detailed Execution Engineering, Wiring Synoptics & ELV Layouts.
+    4. Physical Installation, Power/ELV Separation & Telecom Equipotential Bonding.
+    5. Copper/Fiber Network Certification (OTDR) & Battery Autonomy Testing.
+    6. Integrated Functional Testing, Fire Scenarios & SSI Commissioning.
+    7. Periodic Regulatory Maintenance, Cybersecurity Audits & Safety Logbook.
+  - **Section E**: Integrated 6 LaTeX mathematical formulations:
+    - Battery Bank Sizing for Fire Alarm Power Supplies ($C_{min} = 1.25 \cdot (I_{veille} \cdot t_{veille} + I_{alarme} \cdot t_{alarme})$ per EN 54-4 / NF S 61-936).
+    - Conductor Voltage Drop on Class A SELV 24 V DC Addressable Loop ($\Delta U = 2 \rho \frac{L}{S} I_{boucle} \le 0.10 U_n$ per NF S 61-970).
+    - Evacuation Acoustic Sound Pressure Level & Spatial Attenuation ($L_p(d) = L_{w0} - 20 \log_{10}(d) - A_{env}$ per EN 54-3 / NF S 32-001).
+    - Clean Agent Extinguishing Mass Calculation for Novec 1230 ($W = \frac{V}{S_v} \cdot \frac{C}{100 - C}$ per NF EN 15004 / NFPA 2001).
+    - Video Stream Network Bandwidth & NVR Storage Array Sizing ($Storage_{TB}$ per EN 62676-4).
+    - Power over Ethernet PoE++ Switch Power Supply Sizing ($P_{PSE\_total}$ per IEEE 802.3bt).
+  - **Section F**: Sourced 6 international and European standards:
+    - EN 54 / NF S 61-931 (Fire detection and fire alarm systems / SSI).
+    - ISO/IEC 11801 / TIA-568.2-D (Generic cabling for customer premises).
+    - EN 62676 / IEC 62676 (Video surveillance systems for use in security applications).
+    - IEC 60839-11-1 (Electronic access control systems).
+    - ISO 16484-5 / BACnet (Building automation and control systems).
+    - NF EN 15004-1 / NFPA 2001 (Fixed firefighting systems - Gas extinguishing systems).

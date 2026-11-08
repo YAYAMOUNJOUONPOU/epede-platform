@@ -1,10 +1,10 @@
 # EPEDE CONTINUATION STATE CHECKPOINT
 
 ## Active Status
-- **Current Phase**: Phase 2 — Domain 8 Transformation & Verification
-- **Current Domain**: D08 (Extra-Low Voltage ELV & Special Electrical Systems — Fire Detection SSI Cat A, BMS/SCADA, Access Control, CCTV, Novec 1230 gas extinguishing per NF S 61-970 / EN 54)
-- **Active Task**: Elevating D08 pedagogical content registry with 5 ELV architectures, 6 apparatus, 7 project lifecycle phases, and 6 normative mathematical solvers (Battery backup standby/alarm autonomy, loop voltage drop, sounder dBA attenuation, gas concentration volume, video bandwidth/storage, MTBF reliability).
-- **Next Domain in Queue**: D09 (Artificial Intelligence & Advanced Power Technologies)
+- **Current Phase**: Phase 2 — Domain 9 Transformation & Verification
+- **Current Domain**: D09 (Artificial Intelligence & Advanced Power Technologies — Neural Dispatch, Phasor Measurement WAMS PMU, DGA Health Forecasting, Reinforcement Learning Grid Control)
+- **Active Task**: Elevating D09 pedagogical content registry with 5 AI/power grid architectures, 6 apparatus, 7 project lifecycle phases, and 6 normative mathematical solvers (Physics-Informed Neural Network PINN load flow, WAMS RoCoF angle stability, Transformer DGA Duval triangle gas ratios, LSTM wind/solar forecast error RMSE, Reinforcement Learning active power dispatch, Bayesian asset remaining useful life RUL).
+- **Next Domain in Queue**: D10 (Energy Storage & Charging Systems — BESS, PSH, Grid-Forming Inverters)
 - **Execution Mode**: Autonomous continuous improvement loop (Analyze -> Improve -> Reanalyze -> Reimprove -> Validate -> Quality Gate).
 
 ## Unresolved Issues / Blockers
