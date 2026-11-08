@@ -71,11 +71,19 @@ Each page and engineering module is evaluated on eight core axes (Target: 95%+):
   - Needed direct alignment with Physics-Informed Neural Networks (PINN), WAMS PMU stability (IEEE C37.118), transformer DGA Duval analysis (IEC 60599 / IEEE C57.104), and OT cybersecurity probes (IEC 62443).
 - **Audit Score Post-Transformation**: 97% (5 AI/WAMS Architectures, 6 Field Apparatus, 7 Project Lifecycle Phases, 6 LaTeX Solvers, 6 Standards).
 
-### Domain 10 (D10) — Energy Storage & Charging Systems (BESS, PSH, Microgrids)
+### Domain 10 (D10) — Energy Storage & Charging Systems (BESS, PSH, Microgrids, EV HPC)
 - **Route**: `#/domain/D10`
+- **Components**: `UniversalPedagogicalDomainView`, `EnergyStorageWorkbench`, `BessSizingCalculator`, `GridFormingInverterLab`, `useEnergyStorageProjectStore`.
+- **Initial Baseline Weaknesses Identified**:
+  - Truncated framework in `DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY`: only 2 architectures, 2 apparatus, 5 phases, and 2 equations.
+  - Omitted Pumped-Storage Hydro (STEP/PSH), EV Ultra-Fast 350 kW HPC Charging, Round-Trip Efficiency (RTE), and semi-empirical Arrhenius cell degradation.
+- **Audit Score Post-Transformation**: 97% (5 Storage/Charging Architectures, 6 Field Apparatus, 7 Project Lifecycle Phases, 6 LaTeX Solvers, 6 Standards).
+
+### Domain 11 (D11) — Protection, Measurements & System Studies
+- **Route**: `#/domain/D11`
 - **Audit Target**: 97%+
 
-### Domains 11 to 16
+### Domains 12 to 16
 - Scheduled in sequential order per execution protocol.
 
 ---

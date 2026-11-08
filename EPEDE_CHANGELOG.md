@@ -223,3 +223,42 @@ All notable changes, engineering refactors, and technical enhancements across th
     - IEC 62443 / MITRE ATT&CK for ICS (Security for industrial automation and control systems).
     - ISO 10816-3 / ISO 20816-2 (Mechanical vibration evaluation on non-rotating parts).
     - IEC 61724-1 / IEEE Std 2800-2022 (PV system performance monitoring and grid interconnection).
+
+### Domain 10 (D10) - Energy Storage & Charging Systems Transformation
+- Completely overhauled pedagogical framework in `domainPedagogicalContentRegistry.ts`:
+  - **Section A**: Formulated energy storage electrotechnical boundaries (1 500 V DC bus, 30 kV MV / 400 V LV grid coupling), 4-quadrant bidirectional PCS conversion, cell-level BMS telemetry, and IT / TN-S earthing isolation.
+  - **Section B**: Documented 5 canonical storage and charging architectures:
+    1. **Système de Stockage BESS Conteneurisé Haute Tension 1 500 V DC avec Convertisseur Grid-Forming (Centrale de Maroua/Guider 15 MWc / 20 MWh)** (Prismatic LFP, liquid cooling, VSM synthetic inertia, Novec 1230 fire suppression).
+    2. **Station de Transfert d'Énergie par Pompage STEP Hydraulique Réversible (Complexe de Retenue Sanaga / Nachtigal)** (Reversible Francis pump-turbines, DFIG motor-generators, 100–300 MW peaking capacity).
+    3. **Micro-Réseau Hybride Solaire PV + Stockage BESS + Groupes Diesel (Site Isolé du Grand Nord Cameroun)** (30 kV AC bus, microgrid EMS, master Grid-Forming inverters, 95% solar penetration).
+    4. **Hub de Recharge Ultra-Rapide Haute Puissance IRVE 350 kW HPC avec Stockage Tampon BESS (Corridor Autoroutier Douala–Yaoundé)** (Liquid-cooled 500 A dispensers, 500 kWh stationary buffer shaving peak grid demand).
+    5. **Système de Stockage Distribué Commercial & Industriel (C&I) en Autoconsommation Optimisée (Usine Brassico / Agroalimentaire Douala)** (400 V TGBT coupling, automated peak shaving, sub-16 ms UPS transfer).
+  - **Section C**: Added 6 core storage and charging apparatus with authentic equipment registry citations:
+    - Utility-Scale Containerized BESS 5 MW / 10 MWh 1,500 V DC LiFePO4 (`eq-exp-bess-container-5mw`).
+    - Bidirectional Grid-Forming Power Conversion System PCS 2,500 kVA (`eq-exp-grid-forming-inv`).
+    - High-Power EV Charging Dispenser 350 kW Liquid-Cooled CCS Combo 2 (`eq-exp-ev-hpc-350kw`).
+    - Reversible Francis Pump-Turbine & Motor-Generator 150 MW / 225 kV (`eq-exp-psh-pump-turbine`).
+    - Master Battery Management System & Cluster Energy Management System (`eq-exp-bms-master-controller`).
+    - Containerized Liquid Cooling Chiller & Battery Thermal Management Unit (`eq-exp-bess-liquid-chiller`).
+  - **Section D**: Expanded methodology to 7 sequential engineering lifecycle phases:
+    1. Feasibility Study, Hourly Load Profiling & Storage Technology Selection (LCOS).
+    2. Energy/Power Sizing (MWh/MW), C-Rate Optimization & Dynamic Simulation.
+    3. Detailed Electrical Engineering, Single-Line Diagrams & Thermal Runaway Mitigation (NFPA 855).
+    4. Factory Container Assembly, 1,500 V DC Rack Wiring & BMS/PCS Factory Acceptance Testing.
+    5. Civil Works, Container Foundation Slabs, MV Substation Connection & Earthing Grid.
+    6. Site Commissioning, Grid-Forming Droop Validation, Fault Ride-Through & Black Start.
+    7. Commercial Operation, Predictive EMS Dispatch, SOH Degradation Tracking & Second-Life.
+  - **Section E**: Integrated 6 LaTeX mathematical formulations:
+    - Utility BESS Nominal Energy Capacity Sizing Formulation ($E_{\text{nom}} = \frac{P_{\text{charge}} \cdot t_{\text{autonomie}}}{\text{DoD} \cdot \eta_{\text{PCS}} \cdot \eta_{\text{bat}} \cdot (1 - \text{Deg}_{\text{EOL}})}$ per IEC 62933-2-1).
+    - Pumped-Storage Hydropower (PSH) Generating Power & Stored Energy Capacity ($P_{\text{turb}} = \rho g Q H_{\text{net}} \eta_{\text{turb}}$, $E_{\text{hyd}}$).
+    - Active Power-Frequency Droop & Virtual Synchronous Machine Inertia ($f - f_0 = -k_p (P - P_0) - \frac{2 H_{\text{synth}}}{f_0} \frac{df}{dt}$ per IEEE Std 2800 / VSM).
+    - Comprehensive BESS Round-Trip Efficiency Model ($\text{RTE} = \frac{E_{\text{décharge}}}{E_{\text{charge}}}$ per IEC 62933-2-1).
+    - Semi-Empirical Capacity Fade & Cyclic Aging Model for LFP Cells ($Q_{\text{perte}}\% = A \cdot \exp(-\frac{E_a}{R T}) \cdot (\text{C-rate})^\alpha \cdot (\text{DoD})^\beta \cdot N_{\text{cycles}}^\gamma$).
+    - Power Demand Sizing & Simultaneity Factor for Multi-Bay HPC EV Hub ($P_{\text{réseau}} = (\sum P_{\text{nom}}) \cdot k_s \cdot \frac{1}{\eta} - P_{\text{BESS}}$ per IEC 61851-23).
+  - **Section F**: Sourced 6 international and normative standards:
+    - IEC 62933-2-1 / IEC 62933-5-2 (Electrical energy storage systems).
+    - IEEE Std 2800-2022 / IEEE 1547 (Grid interconnection of inverter-based resources & grid-forming).
+    - IEC 61851-1 / IEC 61851-23 (Electric vehicle conductive charging system - DC HPC).
+    - NFPA 855 / UL 9540A (Standard for the installation of stationary energy storage systems & fire safety).
+    - IEC 62898-1 / IEC 62898-2 (Microgrids planning, specification and stability control).
+    - NF C 15-100 Part 7-722 / ISO 15118 (EV charging installations & Vehicle-to-Grid V2G).

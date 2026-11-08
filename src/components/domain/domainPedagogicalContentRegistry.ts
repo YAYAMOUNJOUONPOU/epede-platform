@@ -2692,196 +2692,417 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
   },
 
   // D10: Stockage d'Énergie BESS & Recharge IRVE
+  // D10: Systèmes de Stockage d'Énergie, STEP & Recharge IRVE
   D10: {
     domainCode: 'D10',
     sectionA: {
-      roleFr: "Stockage stationnaire d'énergie par batteries (BESS), intégration des énergies renouvelables intermittentes, soutien dynamique tension/fréquence et recharge haute puissance des véhicules électriques (IRVE).",
-      roleEn: 'Utility-scale battery energy storage (BESS), high-penetration renewable integration, dynamic Volt/Var grid support, and high-power EV charging infrastructure.',
+      roleFr: "Conception, intégration et exploitation des systèmes de stockage stationnaire d'énergie (BESS LiFePO4 conteneurisé), des stations de transfert d'énergie par pompage (STEP/PSH), des micro-réseaux hybrides avec onduleurs formateurs de réseau (Grid-Forming / VSM), et des infrastructures de recharge ultra-rapide pour véhicules électriques (IRVE 150–350 kW HPC).",
+      roleEn: 'Engineering, deployment, and operation of utility-scale Battery Energy Storage Systems (BESS LiFePO4 containerized), Pumped-Storage Hydropower (PSH), hybrid microgrids with Grid-Forming Virtual Synchronous Machines (VSM), and ultra-fast High-Power EV Charging (HPC 150–350 kW).',
       inputsFr: {
-        title: 'Production EnR Intermittente & Réseau HTA',
-        desc: 'Centrales solaires photovoltaïques, parcs éoliens, excédents de production heures creuses et postes HTA.',
-        voltage: 'Onduleurs réversibles 400 V / 800 Vcc / 30 kV'
+        title: 'Production Renouvelable Intermittente & Réseau MT/HT',
+        desc: 'Raccordement au jeu de barres 15/30 kV de poste source ou centrale solaire, arrivées 400 V triphasé pour IRVE, et retenues hydrauliques amont/aval pour STEP.',
+        voltage: '30 kV MT / 400 V BT • 800–1 500 V DC Bus Continu'
       },
       inputsEn: {
-        title: 'Intermittent Renewable Generation & MV Grid',
-        desc: 'Solar PV plants, wind farms, off-peak grid energy surplus, and MV distribution substations.',
-        voltage: 'Bidirectional PCS 400 V / 800 Vdc / 30 kV'
+        title: 'Intermittent Renewable Generation & MV/HV Grid',
+        desc: 'Interconnection to 15/30 kV substation or solar plant busbar, 400 V 3-phase mains for EV charging hubs, and upper/lower water reservoirs for pumped hydro storage.',
+        voltage: '30 kV MV / 400 V LV • 800–1,500 V DC DC-Bus'
       },
       processFr: {
-        title: 'Conteneurs Batteries LiFePO4, BMS & Onduleurs Grid-Forming',
-        desc: 'Régulation de fréquence (P-f) et de tension (Q-V) par convertisseurs PCS formateurs de réseau (Grid-Forming) et surveillance thermique cellulaire BMS.',
-        note: 'Stabilité insulaire : Réserve primaire instantanée (< 20 ms) fournie par BESS'
+        title: 'Stockage Électrochimique/Hydraulique & Conversion 4-Quadrants',
+        desc: 'Conversion d\'énergie bidirectionnelle AC/DC par onduleurs réversibles PCS à technologie SiC/IGBT, gestion thermique liquide des racks LFP, équilibrage actif des cellules par BMS esclave/maître, et pompage-turbinage réversible Francis.',
+        note: 'Inertie synthétique instantanée (FFR < 50 ms) et contrôle de statisme P-f / Q-V stabilisant les réseaux faibles insulaires et interconnectés.'
       },
       processEn: {
-        title: 'LiFePO4 Battery Containers, BMS & Grid-Forming PCS',
-        desc: 'Active power-frequency (P-f) and reactive power-voltage (Q-V) droop regulation via grid-forming inverters and cell-level BMS protection.',
-        note: 'Islanded stability: Synthetic inertia and fast frequency response (< 20 ms) delivered by BESS'
+        title: 'Electrochemical/Hydraulic Storage & 4-Quadrant Power Conversion',
+        desc: 'Bidirectional AC/DC conversion via SiC/IGBT PCS inverters, liquid thermal conditioning of LFP battery racks, cell-level active balancing by master/slave BMS, and reversible Francis pump-turbines.',
+        note: 'Instantaneous Fast Frequency Response (FFR < 50 ms) and synthetic inertia with P-f / Q-V droop stabilizing weak and isolated grids.'
       },
       outputsFr: {
-        title: 'Écrêtement de Pointe, Îlotage & Superchargeurs IRVE',
-        desc: 'Restitution lors de la pointe du soir, alimentation continue en micro-réseau îloté et bornes de recharge rapide DC (150–350 kW).',
-        earthing: 'Surveillance permanente d\'isolement DC (CPI) et mise à la terre des conteneurs'
+        title: 'Services Système, Écrêtement de Pointe & Superchargeurs HPC',
+        desc: 'Réserve primaire de fréquence, régulation de tension Volt-VAr, lissage de rampe solaire/éolienne, alimentation d\'urgence en mode îloté (Black Start), et recharge rapide CCS Combo 2 jusqu\'à 500 A.',
+        earthing: 'Régime IT côté DC batterie avec contrôleur permanent d\'isolement (CPI) et TN-S / TT côté distribution AC avec liaisons équipotentielles terre R < 1 Ω'
       },
       outputsEn: {
-        title: 'Peak Shaving, Seamless Islanding & DC Fast Chargers',
-        desc: 'Evening peak power dispatch, seamless microgrid islanding, and ultra-fast DC EV charging stations (150–350 kW).',
-        earthing: 'Continuous DC insulation monitoring (IMD) and container equipotential bonding'
+        title: 'Grid Ancillary Services, Peak Shaving & HPC Fast Charging',
+        desc: 'Fast frequency response reserve, Volt-VAr dynamic voltage support, renewable ramp smoothing, black start islanded capability, and CCS Combo 2 EV charging up to 500 A.',
+        earthing: 'Isolated IT earthing scheme on DC battery bus with continuous IMD monitoring and TN-S / TT on AC side with telecom-grade grounding (R < 1 Ω)'
       }
     },
     sectionB: {
-      summaryFr: 'Architectures de stockage stationnaire BESS et micro-réseaux hybrides : soutien réseau vs îlotage autonome.',
-      summaryEn: 'Stationary BESS storage and hybrid microgrid layouts: grid-tied support vs autonomous islanded operation.',
+      summaryFr: "Panorama architectural des 5 technologies majeures de stockage et de recharge électrique, illustrant le BESS conteneurisé haute tension 1 500 V DC, la station de transfert d'énergie par pompage (STEP), le micro-réseau hybride autonome, les hubs autoroutiers de superchargeurs IRVE 350 kW et le stockage industriel C&I en autoconsommation.",
+      summaryEn: 'Architectural overview of the 5 major energy storage and charging technologies, spanning 1,500 V DC utility-scale BESS, reversible pumped-storage hydro (PSH), autonomous hybrid microgrids, highway HPC 350 kW charging hubs, and commercial & industrial behind-the-meter peak shaving.',
       architectures: [
         {
-          nameFr: 'Micro-Réseau Hybride Solaire + Stockage BESS + Diesel',
-          nameEn: 'Hybrid Solar PV + BESS Storage + Diesel Microgrid',
-          techFr: 'Architecture AC couplée au niveau HTA avec contrôleur centralisé EMS',
-          techEn: 'AC-coupled MV architecture coordinated by central microgrid energy controller',
-          descFr: 'Permet d\'éteindre complètement les groupes électrogènes diesel durant les heures ensoleillées (taux de pénétration solaire > 80%).',
-          descEn: 'Enables complete shutdown of fossil generators during daylight hours (solar penetration > 80%).',
-          standard: 'CEI 62898-1/2',
-          metricFr: 'Économie de carburant : jusqu\'à 60%',
-          metricEn: 'Fuel savings: up to 60%'
+          nameFr: "Système de Stockage BESS Conteneurisé Haute Tension 1 500 V DC avec Convertisseur Grid-Forming (Centrale de Maroua/Guider 15 MWc / 20 MWh)",
+          nameEn: '1,500 V DC Containerized BESS with Grid-Forming Inverter (Maroua/Guider 15 MWp / 20 MWh Solar-Storage Plant)',
+          techFr: "Racks batteries prismatiques LiFePO4 1 500 V DC, refroidissement liquide haute efficacité, convertisseurs PCS réversibles 4-quadrants avec loi de contrôle en machine synchrone virtuelle (VSM) et système d'extinction précoce Novec 1230.",
+          techEn: '1,500 V DC prismatic LiFePO4 battery racks, closed-loop liquid thermal conditioning, 4-quadrant bidirectional PCS inverters with Virtual Synchronous Machine (VSM) droop control, and automated Novec 1230 fire suppression.',
+          descFr: "Stabilisation dynamique du réseau interconnecté Nord (RIN) du Cameroun : injection instantanée de puissance active pour contrer les chutes brutales de fréquence lors des passages nuageux sur le champ solaire de Maroua.",
+          descEn: 'Dynamic stabilization of Cameroon\'s isolated Northern Interconnected Grid (RIN): injects instantaneous active power to arrest steep frequency drops when heavy clouds shade the Maroua solar fields.',
+          standard: 'IEC 62933-2-1, IEEE Std 2800-2022, NFPA 855 / UL 9540A',
+          metricFr: 'Capacité 20 MWh / 10 MW • Réponse FFR < 50 ms • Rendement de cycle RTE > 87%',
+          metricEn: 'Capacity 20 MWh / 10 MW • FFR response < 50 ms • Round-trip efficiency RTE > 87%'
         },
         {
-          nameFr: 'Système BESS avec Convertisseur Grid-Forming (PCS)',
-          nameEn: 'BESS with Grid-Forming Power Conversion System (PCS)',
-          techFr: 'Onduleurs de batterie agissant comme sources de tension parfaites avec inertie synthétique',
-          techEn: 'Battery energy storage inverters operating as true voltage sources delivering synthetic inertia',
-          descFr: 'Maintient la fréquence et la tension du réseau sans nécessiter la présence d\'alternateurs synchrones thermiques.',
-          descEn: 'Stabilizes grid frequency and voltage autonomously without requiring conventional spinning generators.',
-          standard: 'IEEE 1547 / CEI 62933',
-          metricFr: 'Temps de réponse inertielle : < 20 ms',
-          metricEn: 'Inertial response: < 20 ms'
+          nameFr: "Station de Transfert d'Énergie par Pompage STEP Hydraulique Réversible (Complexe de Retenue Sanaga / Nachtigal)",
+          nameEn: 'Reversible Pumped-Storage Hydropower (PSH / STEP) Facility (Sanaga / Nachtigal Basin Complex)',
+          techFr: "Deux réservoirs hydrauliques étagés avec dénivelé altimétrique, conduite forcée blindée, groupes turbo-pompes réversibles Francis ou DFIG à vitesse variable, alternateur/moteur synchrone raccordé au réseau HTB 225 kV.",
+          techEn: 'Upper and lower hydraulic reservoirs separated by topographic head, steel-lined penstock, reversible Francis pump-turbines or variable-speed DFIG motor-generators, connected to 225 kV transmission grid.',
+          descFr: "Stockage massif d'énergie inter-saisonnier et régulation de pointe nationale : pompage d'eau pendant les heures creuses nocturnes et restitution immédiate de 100 à 300 MW lors de la pointe de consommation du soir.",
+          descEn: 'Gigawatt-hour scale inter-seasonal storage and peak grid balancing: pumps water during overnight low-demand hours and discharges 100 to 300 MW on demand during the critical evening system peak.',
+          standard: 'IEC 60034-1, IEC 61362, Cigré TB 779',
+          metricFr: 'Puissance 100–300 MW • Démarrage turbine < 90 s • Rendement aller-retour hydraulique 75–82%',
+          metricEn: 'Rating 100–300 MW • Turbine start time < 90 s • Hydraulic round-trip efficiency 75–82%'
+        },
+        {
+          nameFr: "Micro-Réseau Hybride Solaire PV + Stockage BESS + Groupes Diesel (Site Isolé du Grand Nord Cameroun)",
+          nameEn: 'Hybrid Solar PV + BESS Storage + Diesel Genset Microgrid (Far North Off-Grid Community)',
+          techFr: "Bus AC couplé en moyenne tension 30 kV, régulation coordonnée par Microgrid Energy Management System (EMS), onduleurs Grid-Forming maîtres imposant la référence 50.0 Hz et délestant 100% de la consommation de gasoil en journée.",
+          techEn: 'AC-coupled 30 kV medium-voltage bus, centralized Microgrid Energy Management System (EMS), and master Grid-Forming inverters synthesizing 50.0 Hz reference while shutting off diesel fuel generators completely.',
+          descFr: "Électrification rurale décentralisée fiable et décarbonée : alimentation continue 24h/24 des localités isolées avec basculement automatique sans coupure (< 4 ms) entre modes îloté et secouru.",
+          descEn: 'Reliable, low-carbon decentralized rural electrification: continuous 24/7 supply for isolated populations with seamless uninterrupted transfer (< 4 ms) between battery-only and genset-assisted modes.',
+          standard: 'IEC 62898-1 / IEC 62898-2, IEEE Std 1547.4, IEEE Std 2030.7',
+          metricFr: 'Pénétration solaire jusqu\'à 95% • Économie gasoil > 65% • Coupure de transfert < 4 ms',
+          metricEn: 'Solar penetration up to 95% • Diesel fuel savings > 65% • Seamless transfer interruption < 4 ms'
+        },
+        {
+          nameFr: "Hub de Recharge Ultra-Rapide Haute Puissance IRVE 350 kW HPC avec Stockage Tampon BESS (Corridor Autoroutier Douala–Yaoundé)",
+          nameEn: 'High-Power EV Charging (HPC 350 kW) Hub with BESS Buffer Storage (Douala–Yaoundé Highway Corridor)',
+          techFr: "Bornes de recharge DC CCS Combo 2 / CHAdeMO 350 kW à câbles refroidis par liquide (500 A sous 200–1 000 V), adossées à un stockage BESS 500 kWh évitant les surcharges du réseau de distribution 15/30 kV aux heures de pointe.",
+          techEn: '350 kW liquid-cooled CCS Combo 2 / CHAdeMO DC fast dispensers (500 A up to 1,000 V), backed by a 500 kWh stationary BESS buffer to shave distribution transformer peak loads.',
+          descFr: "Recharge ultra-rapide des véhicules électriques interurbains : délivre jusqu'à 300 km d'autonomie en 15 minutes sans perturber le réseau local grâce à la décharge tampon de la batterie stationnaire.",
+          descEn: 'Ultra-fast intercity electric fleet charging: adds 300 km of range in 15 minutes without grid substation overload by drawing instant peak demand from the local stationary battery buffer.',
+          standard: 'IEC 61851-1 / IEC 61851-23, ISO 15118 (Plug & Charge / V2G), NF C 15-100 Part 7-722',
+          metricFr: 'Puissance 350 kW/point de charge • Recharge 10%–80% en 15 min • Appel réseau lissé à 150 kVA',
+          metricEn: 'Power 350 kW/charge point • 10%–80% recharge in 15 min • Grid demand capped at 150 kVA'
+        },
+        {
+          nameFr: "Système de Stockage Distribué Commercial & Industriel (C&I) en Autoconsommation Optimisée (Usine Brassico / Agroalimentaire Douala)",
+          nameEn: 'Commercial & Industrial (C&I) Behind-the-Meter Storage & Peak Shaving (Douala Industrial Complex)',
+          techFr: "Conteneurs BESS 250 kW / 500 kWh couplés au TGBT 400 V de l'usine, gestion automatique de l'effacement de la pointe tarifaire (Peak Shaving) et secours instantané des charges critiques en cas de délestage réseau ENEO.",
+          techEn: 'Behind-the-meter 250 kW / 500 kWh BESS containers coupled to 400 V main switchboard (TGBT), automated peak-tariff shaving, and sub-16 ms seamless UPS transfer for sensitive processing lines during outages.',
+          descFr: "Sécurisation de la continuité de fabrication et réduction des factures de puissance souscrite : effacement automatique des pointes de demande lors des démarrages de compresseurs et fours industriels.",
+          descEn: 'Guarantees industrial batch continuity and slashes utility peak demand penalties: automatically injects stored energy when heavy industrial compressors and crushers start up.',
+          standard: 'CEI 62619, CEI 61439-2, NF C 15-100',
+          metricFr: 'Écrêtement de pointe 200 kW • Basculement secours UPS < 16 ms • Amortissement investissement 4.5 ans',
+          metricEn: 'Peak demand shaving 200 kW • UPS transfer time < 16 ms • Payback period 4.5 years'
         }
       ]
     },
     sectionC: [
       {
-        id: 'eq-exp-grid-forming-inv',
-        nameFr: 'Onduleur Réversible Grid-Forming (500 kVA)',
-        nameEn: 'Grid-Forming Bidirectional Inverter (500 kVA)',
-        voltage: '400 Vca / 800 Vcc • 50 Hz',
-        roleFr: 'Création autonome du vecteur tension-fréquence et compensation instantanée des creux de tension.',
-        roleEn: 'Autonomous voltage-frequency reference creation and instantaneous reactive grid support.',
-        symbol: 'INV-GF',
-        standard: 'IEEE 1547-2018',
-        imgUrl: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?auto=format&fit=crop&w=800&q=80',
-        calcTab: 'solar-sizing'
+        id: 'eq-exp-bess-container-5mw',
+        nameFr: "Conteneur Batterie Stationnaire BESS 5 MW / 10 MWh (LiFePO4 1 500 V DC)",
+        nameEn: 'Utility-Scale Containerized BESS 5 MW / 10 MWh (1,500 V DC LiFePO4)',
+        voltage: '1 500 V DC Racks • 30 kV Raccordement MT',
+        roleFr: "Stockage massif de l'énergie photovoltaïque excédentaire, régulation primaire instantanée de fréquence et soutien dynamique de tension.",
+        roleEn: 'Large-scale storage of surplus solar generation, instantaneous primary frequency regulation, and dynamic grid voltage support.',
+        symbol: 'BESS-5MW',
+        standard: 'IEC 62933-2-1, NFPA 855 / UL 9540A, IEC 62619',
+        imgUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1600&q=80',
+        calcTab: 'bess-sizing'
       },
       {
-        id: 'eq-exp-bess-container',
-        nameFr: 'Système de Stockage d\'Énergie BESS Conteneurisé (1 MWh LFP)',
-        nameEn: 'Containerized Battery Energy Storage System (1 MWh LFP)',
-        voltage: '1 000 Vcc • Chimie LiFePO4 • Climatisation HVAC',
-        roleFr: 'Stockage de l\'excédent solaire diurne et restitution lors de la pointe du soir.',
-        roleEn: 'Capturing midday solar surplus and dispatching energy during evening peak consumption.',
-        symbol: 'BESS',
-        standard: 'CEI 62933-2-1',
-        imgUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
-        calcTab: 'solar-sizing'
+        id: 'eq-exp-grid-forming-inv',
+        nameFr: "Convertisseur de Puissance Réversible Bidirectionnel PCS Grid-Forming (2 500 kVA)",
+        nameEn: 'Bidirectional Grid-Forming Power Conversion System (PCS 2,500 kVA)',
+        voltage: '690 V AC / 1 500 V DC (Transfo élévateur 30 kV dédié)',
+        roleFr: "Fonctionnement en source de tension autonome créant le vecteur d'onde 50 Hz avec inertie virtuelle (VSM) et capacité de Black Start.",
+        roleEn: 'Operates as autonomous voltage source synthesizing 50 Hz waveform with virtual inertia (VSM) and full black start capability.',
+        symbol: 'PCS-GF',
+        standard: 'IEEE Std 2800-2022, IEEE 1547-2018, IEC 62477-1',
+        imgUrl: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?auto=format&fit=crop&w=1600&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-ev-hpc-350kw',
+        nameFr: "Borne de Recharge Ultra-Rapide IRVE Haute Puissance 350 kW (Liquid-Cooled 500 A)",
+        nameEn: 'High-Power EV Charging Dispenser 350 kW (Liquid-Cooled 500 A CCS Combo 2)',
+        voltage: '400 V AC Entrée • 200–1 000 V DC Sortie Véhicule',
+        roleFr: "Recharge ultra-rapide des véhicules électriques légers et poids lourds avec connecteur CCS Combo 2 refroidi par circulation de fluide caloporteur.",
+        roleEn: 'Ultra-fast electric vehicle and heavy-duty bus charging with liquid-cooled CCS Combo 2 cable delivering continuous 500 A.',
+        symbol: 'EV-HPC',
+        standard: 'IEC 61851-23, ISO 15118-20, NF C 15-100 Part 7-722',
+        imgUrl: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1600&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-psh-pump-turbine',
+        nameFr: "Groupe Réversible Francis de Pompage-Turbinage STEP (150 MW / 225 kV)",
+        nameEn: 'Reversible Francis Pump-Turbine & Motor-Generator (150 MW / 225 kV)',
+        voltage: '15.5 kV Générateur • 225 kV Évacuation HTB',
+        roleFr: "Pompage de l'eau du bassin inférieur vers le bassin supérieur en heures creuses, et turbinage à pleine charge en heures de pointe nationale.",
+        roleEn: 'Pumping water from lower to upper reservoir during off-peak hours, and generating 150 MW peaking power on national grid command.',
+        symbol: 'PSH-TURB',
+        standard: 'IEC 60034-1, IEC 61362, Cigré TB 779',
+        imgUrl: 'https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?auto=format&fit=crop&w=1600&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-bms-master-controller',
+        nameFr: "Système de Gestion de Batterie Centralisé (BMS Maître / EMS de Cluster)",
+        nameEn: 'Master Battery Management System & Cluster Energy Management System',
+        voltage: '24 V DC Sécurisé (Alimentation ASI Redondée)',
+        roleFr: "Surveillance télémétrique de la tension de chaque cellule (résolution 1 mV), température multipoint, estimation SOC/SOH et commande des contacteurs DC.",
+        roleEn: 'Cell-level telemetry monitoring (1 mV resolution), multi-point temperature sensing, SOC/SOH estimation, and DC contactor protection trip.',
+        symbol: 'BMS-MTR',
+        standard: 'IEC 62619, IEC 61508 SIL 2, ISO 26262',
+        imgUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1600&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-bess-liquid-chiller',
+        nameFr: "Centrale de Climatisation & Refroidissement Liquide des Racks Batteries (HVAC / Chiller)",
+        nameEn: 'Containerized Liquid Cooling Chiller & Battery Thermal Management Unit',
+        voltage: '400 V Triphasé 50 Hz (Puissance frigorifique 80 kW)',
+        roleFr: "Maintien de la température cellulaire entre 22°C et 28°C avec gradient thermique < 3°C sur l'ensemble du conteneur, prévenant l'emballement thermique.",
+        roleEn: 'Maintains battery cell temperatures strictly between 22°C and 28°C with thermal gradient < 3°C across the container, preventing thermal runaway.',
+        symbol: 'BESS-CHILL',
+        standard: 'IEC 62933-5-2, NFPA 855, ASHRAE Handbook',
+        imgUrl: 'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=1600&q=80',
+        calcTab: 'power'
       }
     ],
     sectionD: [
       {
-        phase: '01',
-        titleFr: 'Étude de Gisement Solaire & Profil de Consommation',
-        titleEn: 'Solar Resource & Hourly Load Profiling',
-        descFr: 'Mesure de l\'irradiation globale horizontale (GHI) et enregistrement de la courbe de charge quart-horaire.',
-        descEn: 'Global Horizontal Irradiance (GHI) assessment and 15-minute resolution load logging.'
+        phase: 'Phase 1',
+        titleFr: 'Étude de Faisabilité, Modélisation de la Courbe de Charge & Choix Technologique',
+        titleEn: 'Feasibility Study, Hourly Load Profiling & Storage Technology Selection',
+        descFr: "Analyse des profils de consommation, quantification du gisement d'énergie renouvelable excédentaire, arbitrage technologique entre BESS LiFePO4 et STEP hydraulique, et rentabilité LCOS.",
+        descEn: 'Analyzing daily load profiles, quantifying surplus renewable energy generation, evaluating LFP electrochemical vs hydraulic pumped storage, and Levelized Cost of Storage (LCOS) optimization.'
       },
       {
-        phase: '02',
-        titleFr: 'Dimensionnement Techno-Économique PV / BESS',
-        titleEn: 'Techno-Economic Sizing Optimization',
-        descFr: 'Calcul de la puissance PV crête et de la capacité batterie pour minimiser le coût nivelé de l\'électricité (LCOE).',
-        descEn: 'Determining optimal PV peak capacity and battery kWh rating to minimize Levelized Cost of Energy.'
+        phase: 'Phase 2',
+        titleFr: 'Dimensionnement Capacité / Puissance (MWh/MW), Ratios C-Rate & Simulation',
+        titleEn: 'Energy/Power Sizing (MWh/MW), C-Rate Optimization & Dynamic Simulation',
+        descFr: "Calcul de la capacité utile en fonction de la profondeur de décharge (DoD 80%), du facteur de vieillissement EOL, du taux de charge/décharge (C-rate 0.5C à 2C) et modélisation MATLAB/Simulink.",
+        descEn: 'Sizing usable capacity accounting for Depth of Discharge (80% DoD), end-of-life fade factor, continuous C-rate rating (0.5C to 2C), and dynamic power simulation in MATLAB/Simulink.'
       },
       {
-        phase: '03',
-        titleFr: 'Étude de Stabilité Dynamique en Mode Îloté',
-        titleEn: 'Islanded Transient Stability Analysis',
-        descFr: 'Vérification du gradient de fréquence ROCOF lors du démarrage de gros moteurs en absence de réseau amont.',
-        descEn: 'Evaluating Rate of Change of Frequency (ROCOF) under direct motor starting transients.'
+        phase: 'Phase 3',
+        titleFr: 'Ingénierie Électrotechnique, Schémas Unifilaires MT/BT & Sécurité Emballement (NFPA 855)',
+        titleEn: 'Detailed Electrical Engineering, Single-Line Diagrams & Thermal Runaway Mitigation',
+        descFr: "Conception des tableaux DC 1 500 V, dimensionnement des câbles solaires/batterie, sélection des transformateurs élévateurs MT et conception du confinement incendie per NFPA 855 / UL 9540A.",
+        descEn: 'Engineering 1,500 V DC switchgear, sizing battery power cables, step-up MV transformers, and designing multi-tiered deflagration venting and fire suppression per NFPA 855 / UL 9540A.'
       },
       {
-        phase: '04',
-        titleFr: 'Programmation des Courbes Volt-VAr et Watt-Fréquence',
-        titleEn: 'Volt-Var & Frequency-Watt Configuration',
-        descFr: 'Paramétrage des fonctions avancées IEEE 1547 dans les firmwares des onduleurs solaires.',
-        descEn: 'Fine-tuning autonomous voltage support and overfrequency curtailment curves.'
+        phase: 'Phase 4',
+        titleFr: 'Intégration en Usine, Câblage des Racks 1 500 V DC & Essais FAT du Système BMS/PCS',
+        titleEn: 'Factory Container Assembly, 1,500 V DC Rack Wiring & BMS/PCS Factory Acceptance Testing',
+        descFr: "Montage des modules LiFePO4 dans les racks étanches, raccordement du busbar cuivre, calibration du BMS et tests FAT complets de communication Modbus TCP / CEI 61850 avec le convertisseur PCS.",
+        descEn: 'Mounting LiFePO4 prismatic modules into sealed racks, copper busbar torqueing, BMS voltage/temperature sensor calibration, and full FAT communication testing with PCS inverters.'
       },
       {
-        phase: '05',
-        titleFr: 'Essais de Transition Îlotée / Raccordée Sans Coupure',
-        titleEn: 'Seamless Islanding & Reconnection Testing',
-        descFr: 'Test d\'ouverture du disjoncteur de couplage réseau et resynchronisation automatique avec la grille.',
-        descEn: 'Live opening of point of common coupling breaker and automated zero-interruption resynchronization.'
+        phase: 'Phase 5',
+        titleFr: 'Génie Civil, Pose des Dalles Conteneurs, Raccordement Réseau MT & Terre Maillée',
+        titleEn: 'Civil Works, Container Foundation Slabs, MV Substation Connection & Earthing Grid',
+        descFr: "Coulage des radiers béton armé étanches avec bacs de rétention, raccordement sur le réseau 30 kV via cellule départ RMU et réalisation d'une boucle de terre maillée cuivre à très basse impédance (R < 1 Ω).",
+        descEn: 'Pouring reinforced concrete foundation slabs with retention basins, cabling 30 kV medium-voltage interconnection via RMU bay, and installing dedicated low-impedance copper earthing mesh (R < 1 Ω).'
+      },
+      {
+        phase: 'Phase 6',
+        titleFr: 'Commissioning sur Site, Tests de Statisme Grid-Forming, Traversée de Creux & Black Start',
+        titleEn: 'Site Commissioning, Grid-Forming Droop Validation, Fault Ride-Through & Black Start',
+        descFr: "Essais en charge réelle : réponse en fréquence FFR < 50 ms, vérification de la traversée des creux de tension (LVRT/FRT per IEEE 2800) et essai de reconstitution de réseau îloté (Black Start).",
+        descEn: 'Live commissioning: verifying sub-50 ms Fast Frequency Response, Low-Voltage Ride-Through (LVRT per IEEE 2800), and islanded grid restoration from dead bus (Black Start capability).'
+      },
+      {
+        phase: 'Phase 7',
+        titleFr: 'Exploitation Connectée, Dispatching Prédictif EMS, Suivi du Vieillissement SOH & Recyclage',
+        titleEn: 'Commercial Operation, Predictive EMS Dispatch, SOH Degradation Tracking & Second-Life',
+        descFr: "Supervision SCADA continue, optimisation journalière des cycles charge/décharge selon les tarifs d'électricité, suivi de l'état de santé SOH et valorisation en seconde vie / recyclage.",
+        descEn: 'Continuous cloud/SCADA monitoring, day-ahead economic dispatch optimization, battery State of Health (SOH) tracking, and second-life repurposing or circular recycling.'
       }
     ],
     sectionE: [
       {
-        id: 'droop_control_eq',
-        tabLabelFr: 'Loi de Statisme Fréquence-Puissance (Droop)',
-        tabLabelEn: 'Active Power-Frequency Droop Control',
-        titleFr: 'Équation de Statisme Proportionnel pour Onduleurs en Parallèle',
-        titleEn: 'Proportional Droop Equation for Parallel Inverter Operation',
-        descFr: 'Permet le partage autonome de la puissance active entre plusieurs sources sans communication filaire entre elles.',
-        descEn: 'Enables autonomous active power sharing across distributed generators without inter-unit communications.',
-        formula: 'f - f_0 = -k_p · (P - P_0)',
-        formulaDescFr: 'Avec f la fréquence instantanée, f0 la fréquence nominale (50.0 Hz), kp le coefficient de statisme (typique 2% à 4%), et P la puissance active injectée.',
-        formulaDescEn: 'With f instantaneous grid frequency, f0 nominal frequency (50 Hz), kp droop slope (typically 2-4%), and P generated active power.',
+        id: 'bess_capacity_sizing_formula',
+        tabLabelFr: '1. Capacité Énergétique BESS',
+        tabLabelEn: '1. BESS Capacity Sizing',
+        titleFr: "Dimensionnement de la Capacité Énergétique Nominale d'un Système BESS (CEI 62933-2-1)",
+        titleEn: 'Utility BESS Nominal Energy Capacity Sizing Formulation (IEC 62933-2-1)',
+        descFr: "Formulation rigoureuse déterminant la capacité nominale brute de la batterie en mégawattheures (MWh) en intégrant la profondeur de décharge maximale recommandée (DoD), les rendements du convertisseur PCS et des cellules, ainsi que le facteur de dégradation en fin de vie (EOL).",
+        descEn: 'Rigorous formulation determining gross nominal battery capacity in Megawatt-hours (MWh) accounting for maximum allowable Depth of Discharge (DoD), PCS inverter and cell efficiencies, and End-of-Life (EOL) degradation margin.',
+        formula: 'E_{\\text{nom}} = \\frac{P_{\\text{charge}} \\cdot t_{\\text{autonomie}}}{\\text{DoD} \\cdot \\eta_{\\text{PCS}} \\cdot \\eta_{\\text{bat}} \\cdot (1 - \\text{Deg}_{\\text{EOL}})}',
+        formulaDescFr: "Où E_nom est la capacité brute requise (MWh), P_charge la puissance continue à fournir pendant la décharge (MW), t_autonomie la durée de décharge requise à pleine charge (h), DoD la profondeur de décharge maximale admissible (typiquement 80% à 90% pour LFP), η_PCS le rendement du convertisseur (97%), η_bat le rendement faradique de la cellule (95%), et Deg_EOL la réserve de dégradation admissible (typiquement 20% en fin de garantie).",
+        formulaDescEn: 'Where E_nom is gross required capacity (MWh), P_charge is continuous discharge power (MW), t_autonomie is discharge duration at full load (h), DoD is maximum depth of discharge (typically 80% to 90% for LFP), η_PCS is power conversion efficiency (97%), η_bat is battery electrochemical efficiency (95%), and Deg_EOL is allowable capacity loss at end-of-life (typically 20%).',
         assumptionsFr: [
-          'Impédance du réseau à dominante inductive (X/R >> 1) au point de raccordement.',
-          'Bande morte de fréquence paramétrée (ex: ±0.05 Hz) pour éviter les oscillations permanentes.',
-          'Capacité de réserve en puissance active disponible dans la batterie ou marge d\'écrêtement solaire.'
+          'Chimie Lithium-Fer-Phosphate (LiFePO4) offrant 6 000 cycles à 80% DoD sous climat tropical climatisé.',
+          'Facteur de réserve de fin de vie contractuel garanti : Deg_EOL = 0.20 (soit 80% de SOH après 10 ans).',
+          'Rendement global combiné de la chaîne de décharge : η_PCS · η_bat ≈ 92.1%.'
         ],
         assumptionsEn: [
-          'Predominantly inductive grid coupling (X/R >> 1) at inverter terminal.',
-          'Deadband filtering applied (e.g., ±0.05 Hz) to suppress idle oscillation hunting.',
-          'Available active power headroom in BESS or solar curtailment margin.'
-        ]
+          'Lithium Iron Phosphate (LiFePO4) chemistry providing 6,000 cycles at 80% DoD under climate-controlled container.',
+          'Contractual end-of-life degradation reserve: Deg_EOL = 0.20 (80% SOH guaranteed after 10 years).',
+          'Overall combined discharge chain efficiency: η_PCS · η_bat ≈ 92.1%.'
+        ],
+        calcTab: 'bess-sizing'
       },
       {
-        id: 'bess_sizing_calc',
-        tabLabelFr: 'Dimensionnement Capacité Batterie (kWh)',
-        tabLabelEn: 'Battery Sizing Equation',
-        titleFr: 'Calcul de la Capacité Utile d\'un Système BESS',
-        titleEn: 'Usable Battery Storage Capacity Sizing Formula',
-        descFr: 'Détermine la capacité nominale en tenant compte de la profondeur de décharge (DoD) et du rendement aller-retour.',
-        descEn: 'Computes required battery bank size considering Depth of Discharge (DoD) and round-trip efficiency.',
-        formula: 'E_nom = (P_charge · t_autonomie) / (DoD · η_onduleur · η_batterie)',
-        formulaDescFr: 'Avec Pcharge puissance moyenne à secourir (kW), t temps d\'autonomie requis (h), DoD profondeur de décharge maximale recommandée (0.80 pour LFP), et η rendements de conversion.',
-        formulaDescEn: 'With Pload average backed-up load (kW), t target autonomy duration (h), DoD maximum depth of discharge (0.80 for LFP), and η conversion efficiencies.',
+        id: 'psh_hydro_storage_power',
+        tabLabelFr: '2. Puissance Hydraulique STEP',
+        tabLabelEn: '2. PSH Hydraulic Power',
+        titleFr: "Puissance et Énergie d'une Station de Transfert d'Énergie par Pompage STEP (Hydraulique PSH)",
+        titleEn: 'Pumped-Storage Hydropower (PSH) Generating Power & Stored Energy Capacity',
+        descFr: "Calcul de la puissance électrique générée en turbinage et de l'énergie totale stockée dans la retenue supérieure d'une STEP en fonction du débit volumique, de la hauteur de chute nette et du rendement global de l'installation.",
+        descEn: 'Formulates generating electrical power and total stored potential energy within upper reservoir of a pumped-storage hydro facility based on volumetric flow rate, net hydraulic head, and combined turbine-generator efficiency.',
+        formula: 'P_{\\text{turb}} = \\rho \\cdot g \\cdot Q \\cdot H_{\\text{net}} \\cdot \\eta_{\\text{turb}}, \\quad E_{\\text{hyd}} = \\frac{\\rho \\cdot g \\cdot V_{\\text{retenue}} \\cdot H_{\\text{net}} \\cdot \\eta_{\\text{cycle}}}{3.6 \\cdot 10^9}',
+        formulaDescFr: "Où P_turb est la puissance électrique produite (Watts), ρ la masse volumique de l'eau (1 000 kg/m³), g l'accélération de la pesanteur (9.81 m/s²), Q le débit turbiné (m³/s), H_net la hauteur de chute nette déduction faite des pertes de charge (m), η_turb le rendement global turbine-alternateur (88%–92%), V_retenue le volume utile du bassin supérieur (m³), et E_hyd l'énergie électrique récupérable (MWh).",
+        formulaDescEn: 'Where P_turb is generated electrical power (Watts), ρ is water density (1,000 kg/m³), g is gravitational acceleration (9.81 m/s²), Q is discharge flow (m³/s), H_net is net head after friction losses (m), η_turb is combined turbine-generator efficiency (88%–92%), V_retenue is usable upper reservoir volume (m³), and E_hyd is recoverable energy in MWh.',
         assumptionsFr: [
-          'Chimie Lithium-Fer-Phosphate (LFP) avec DoD maximale recommandée de 80% pour préserver 6000 cycles.',
-          'Rendement global de chaîne onduleur + batterie estimé à 88-92%.',
-          'Facteur de déclassement en température ambiante tropicale (au-dessus de 35°C).'
+          'Rendement de cycle complet pompage-turbinage eau-à-eau : η_cycle ≈ 75% à 80%.',
+          'Pertes de charge singulières et linéaires dans la conduite forcée : déduction de 3% à 5% de la hauteur brute.',
+          'Temps de basculement du mode pompage au mode turbinage : moins de 120 secondes avec groupe Francis.'
         ],
         assumptionsEn: [
-          'Lithium Iron Phosphate (LFP) chemistry with 80% recommended DoD to reach 6,000 cycles.',
-          'Overall round-trip efficiency rated at 88-92%.',
-          'Ambient thermal derating factor applied for tropical operation exceeding 35°C.'
+          'Full water-to-water round-trip efficiency of the PSH facility: η_cycle ≈ 75% to 80%.',
+          'Linear and singular friction head losses in penstock: 3% to 5% reduction from gross head.',
+          'Full mode transition time from pumping to generating: under 120 seconds with reversible Francis unit.'
         ],
-        calcTab: 'solar-sizing'
+        calcTab: 'power'
+      },
+      {
+        id: 'grid_forming_virtual_inertia',
+        tabLabelFr: '3. Inertie Virtuelle Grid-Forming',
+        tabLabelEn: '3. Grid-Forming Virtual Inertia',
+        titleFr: "Loi de Statisme Fréquence-Puissance & Inertie Virtuelle Grid-Forming (IEEE Std 2800 / VSM)",
+        titleEn: 'Active Power-Frequency Droop & Virtual Synchronous Machine Inertia (IEEE 2800 / VSM)',
+        descFr: "Équation régissant le comportement d'un onduleur formateur de réseau (Grid-Forming PCS) émulant l'équation d'oscillation du rotor d'un alternateur synchrone réel (Virtual Synchronous Machine) pour injecter une réponse inertielle ultrarapide.",
+        descEn: 'Governing equation of a Grid-Forming power conversion inverter emulating synchronous generator rotor swing dynamics (Virtual Synchronous Machine), delivering instantaneous synthetic inertia and frequency droop.',
+        formula: 'f - f_0 = -k_p \\cdot (P - P_0) - \\frac{2 H_{\\text{synth}}}{f_0} \\cdot \\frac{df}{dt}',
+        formulaDescFr: "Où f est la fréquence instantanée mesurée (Hz), f_0 la fréquence de consigne (50.0 Hz), k_p le coefficient de statisme de puissance (Hz/MW, typiquement 2% à 4%), P la puissance active instantanée injectée (MW), P_0 la puissance de base de consigne, H_synth la constante d'inertie synthétique programmée (secondes, typiquement 3.0 à 6.0 s), et df/dt le taux de variation de fréquence (RoCoF).",
+        formulaDescEn: 'Where f is instantaneous frequency (Hz), f_0 is nominal reference (50.0 Hz), k_p is droop slope (Hz/MW, typically 2% to 4%), P is injected active power (MW), P_0 is baseline dispatch setpoint, H_synth is programmed synthetic inertia constant (seconds, typically 3.0 to 6.0 s), and df/dt is grid RoCoF.',
+        assumptionsFr: [
+          'Temps de réponse de la boucle d\'inertie synthétique : inférieur à 20 millisecondes.',
+          'Capacité de surcharge transitoire de l\'onduleur PCS : 150% de la puissance nominale pendant 10 secondes.',
+          'Conformité stricte aux exigences de stabilité de réseau de l\'IEEE Std 2800-2022 et du Code SONATREL.'
+        ],
+        assumptionsEn: [
+          'Synthetic inertia loop response latency: under 20 milliseconds.',
+          'PCS inverter transient overload capability: 150% of rated capacity for 10 seconds.',
+          'Strict compliance with IEEE Std 2800-2022 inverter-based resource interconnection standards.'
+        ],
+        calcTab: 'power'
+      },
+      {
+        id: 'bess_round_trip_efficiency',
+        tabLabelFr: '4. Rendement Aller-Retour RTE',
+        tabLabelEn: '4. Round-Trip Efficiency RTE',
+        titleFr: "Calcul du Rendement Global Aller-Retour BESS (Round-Trip Efficiency RTE per CEI 62933)",
+        titleEn: 'Comprehensive BESS Round-Trip Efficiency (RTE) Model (IEC 62933-2-1)',
+        descFr: "Quantification du rendement énergétique global sur un cycle complet de charge et décharge en tenant compte des pertes électrochimiques internes des cellules, des pertes de commutation des convertisseurs PCS, des pertes fer/cuivre des transformateurs élévateurs et de la consommation des auxiliaires de climatisation.",
+        descEn: 'Formulates overall AC-to-AC round-trip energy efficiency across a full charge-discharge cycle, incorporating cell internal electrochemical losses, PCS semiconductor switching losses, MV transformer losses, and HVAC chiller consumption.',
+        formula: '\\text{RTE} = \\frac{E_{\\text{décharge}}}{E_{\\text{charge}}} = \\eta_{\\text{coulomb}} \\cdot \\eta_{\\text{tension}} \\cdot \\eta_{\\text{PCS\\_charge}} \\cdot \\eta_{\\text{PCS\\_décharge}} \\cdot \\eta_{\\text{transfo}}^2 \\cdot \\left( 1 - \\frac{E_{\\text{auxiliaires}}}{E_{\\text{charge}}} \\right)',
+        formulaDescFr: "Où RTE est le rendement de cycle global AC-à-AC, η_coulomb le rendement faradique (environ 99% pour LiFePO4), η_tension le ratio de tension moyenne décharge/charge (environ 94%), η_PCS le rendement des onduleurs réversibles (97.5%), η_transfo le rendement du transformateur 0.69/30 kV (99%), et E_auxiliaires l'énergie consommée par le groupe froid de climatisation et le contrôle-commande (typiquement 2% à 4% de l'énergie stockée).",
+        formulaDescEn: 'Where RTE is AC-to-AC round-trip efficiency, η_coulomb is coulombic efficiency (~99% for LFP), η_tension is voltage ratio discharge/charge (~94%), η_PCS is PCS conversion efficiency (97.5%), η_transfo is transformer efficiency (99%), and E_auxiliaires is parasitic energy consumed by chillers and BMS (typically 2% to 4% of stored energy).',
+        assumptionsFr: [
+          'Régime de charge/décharge symétrique à 0.5C sous température régulée de 25°C.',
+          'Consommation des auxiliaires de climatisation plus élevée en climat tropical sahélien (ex. Maroua).',
+          'RTE moyen mesuré aux bornes MT 30 kV du conteneur BESS : 85% à 88% en exploitation nominale.'
+        ],
+        assumptionsEn: [
+          'Symmetrical 0.5C charge/discharge cycle under controlled 25°C ambient temperature.',
+          'Thermal HVAC parasitic load increases under hot Sahelian climates (e.g. Maroua, Cameroon).',
+          'Average AC-to-AC measured RTE at 30 kV terminals: 85% to 88% during normal commercial operations.'
+        ],
+        calcTab: 'bess-sizing'
+      },
+      {
+        id: 'battery_arrhenius_degradation_model',
+        tabLabelFr: '5. Vieillissement Cellule Arrhenius',
+        tabLabelEn: '5. Battery Aging Arrhenius Model',
+        titleFr: "Modèle Semi-Empirique de Dégradation Cyclique & Thermique d'une Batterie LFP (Arrhenius Aging)",
+        titleEn: 'Semi-Empirical Capacity Fade & Cyclic Aging Model for LFP Cells (Arrhenius Kinetics)',
+        descFr: "Prédiction de la perte de capacité irréversible (Capacity Fade) d'une cellule lithium-ion LiFePO4 en fonction de la température de fonctionnement de la cellule, du courant de cyclage (C-rate), de la profondeur de décharge (DoD) et du nombre de cycles cumulés.",
+        descEn: 'Predicts irreversible capacity loss of a LiFePO4 lithium-ion cell as a function of operating temperature, charge/discharge C-rate, Depth of Discharge (DoD), and cumulative equivalent cycle count.',
+        formula: 'Q_{\\text{perte}}\\% = A \\cdot \\exp\\left( -\\frac{E_a}{R \\cdot T_{\\text{cell}}} \\right) \\cdot (\\text{C-rate})^\\alpha \\cdot (\\text{DoD})^\\beta \\cdot N_{\\text{cycles}}^\\gamma',
+        formulaDescFr: "Où Q_perte% est le pourcentage de perte de capacité par rapport à la valeur nominale, A un facteur pré-exponentiel d'ajustement, E_a l'énergie d'activation de la dégradation de l'interface SEI (environ 22 à 30 kJ/mol), R la constante universelle des gaz parfaits (8.314 J/(mol·K)), T_cell la température absolue de la cellule (K), et α, β, γ les exposants empiriques (avec γ ≈ 0.5 indiquant une croissance de la couche SEI proportionnelle à la racine du temps).",
+        formulaDescEn: 'Where Q_perte% is percentage capacity fade from nominal, A is pre-exponential factor, E_a is activation energy of Solid Electrolyte Interphase (SEI) growth (~22 to 30 kJ/mol), R is ideal gas constant (8.314 J/(mol·K)), T_cell is absolute cell temperature (K), and α, β, γ are empirical exponents (with γ ≈ 0.5 reflecting parabolic diffusion-limited SEI thickening).',
+        assumptionsFr: [
+          'Doublement de la vitesse de dégradation calendaire pour chaque élévation de température de 10°C au-dessus de 25°C.',
+          'Critère de fin de vie industrielle (End-of-Life) : atteinte de 80% de capacité résiduelle (Q_perte = 20%).',
+          'Cellules LiFePO4 avec électrolyte stabilisé et additifs limitant la formation de dendrites de lithium.'
+        ],
+        assumptionsEn: [
+          'Calendar aging rate doubles for every 10°C temperature elevation above 25°C baseline.',
+          'Industrial End-of-Life (EOL) criterion: retention drops to 80% of rated capacity (20% capacity fade).',
+          'LiFePO4 prismatic cells with advanced electrolytes suppressing lithium plating at 1C rates.'
+        ],
+        calcTab: 'bess-sizing'
+      },
+      {
+        id: 'ev_hpc_charging_hub_power_budget',
+        tabLabelFr: '6. Foisonnement Hub IRVE 350 kW',
+        tabLabelEn: '6. EV HPC Hub Power Budget',
+        titleFr: "Bilan de Puissance et Foisonnement d'un Hub de Recharge Rapide IRVE (NF C 15-100 / CEI 61851-23)",
+        titleEn: 'Power Demand Sizing & Simultaneity Factor for Multi-Bay HPC EV Hub (IEC 61851-23)',
+        descFr: "Dimensionnement du raccordement au réseau électrique moyenne tension d'une station de superchargeurs 350 kW pour véhicules électriques en appliquant les coefficients de foisonnement d'utilisation simultanée et l'effacement par batterie tampon BESS.",
+        descEn: 'Sizes the medium-voltage grid connection capacity of a multi-bay 350 kW electric vehicle charging plaza, applying diversity factors and incorporating a dedicated BESS buffer to shave instantaneous peak demand.',
+        formula: 'P_{\\text{réseau}} = \\left( \\sum_{k=1}^{N_{\\text{bornes}}} P_{\\text{nom\\_k}} \\right) \\cdot k_s \\cdot \\frac{1}{\\eta_{\\text{chargeur}}} - P_{\\text{BESS\\_tampon}}',
+        formulaDescFr: "Où P_réseau est la puissance souscrite auprès du gestionnaire de réseau (kVA), N_bornes le nombre de points de charge haute puissance (ex. 8 bornes de 350 kW), P_nom_k la puissance nominale maximale de chaque borne, k_s le coefficient de foisonnement de simultanéité (typiquement 0.60 à 0.75 pour 8 bornes HPC), η_chargeur le rendement de conversion AC/DC des redresseurs (96%), et P_BESS_tampon la puissance d'écrêtement injectée par la batterie de stockage locale.",
+        formulaDescEn: 'Where P_réseau is subscribed grid interconnection capacity (kVA), N_bornes is charging bay count (e.g. 8 dispensers at 350 kW), P_nom_k is dispenser peak rating, k_s is diversity/simultaneity factor (typically 0.60 to 0.75 for 8 HPC dispensers), η_chargeur is AC/DC converter efficiency (96%), and P_BESS_tampon is peak shaving power discharged by the local stationary BESS buffer.',
+        assumptionsFr: [
+          'Profil de charge typique d\'un véhicule moderne : puissance de crête 350 kW maintenue seulement de 10% à 50% de SOC.',
+          'Facteur de foisonnement pour 8 points de charge HPC : k_s = 0.65 selon les retours d\'expérience autoroutiers.',
+          'Batterie tampon BESS de 500 kWh réduisant la puissance de pointe appelée sur le réseau MT de plus de 40%.'
+        ],
+        assumptionsEn: [
+          'Typical modern EV charging curve: 350 kW peak power accepted only from 10% to 50% SOC before tapering.',
+          'Diversity factor across 8 HPC charging bays: k_s = 0.65 based on highway corridor operational data.',
+          'Co-located 500 kWh stationary BESS buffer slashes required MV utility connection capacity by over 40%.'
+        ],
+        calcTab: 'power'
       }
     ],
     sectionF: [
       {
-        code: 'CEI 62898-1/2',
-        tag: 'MICRO-RÉSEAUX',
-        titleFr: 'Lignes Directrices pour la Planification & Spécification des Micro-Réseaux',
-        titleEn: 'Microgrids - Guidelines for Planning and Technical Specifications',
-        descFr: 'Norme cadre définissant l\'architecture, le contrôle de stabilité et la sécurité des micro-réseaux insulaires et connectés.',
-        descEn: 'Comprehensive standard defining microgrid architecture, control strategies, and safety requirements.'
+        code: 'CEI 62933-2-1 / CEI 62933-5-2',
+        tag: 'STOCKAGE STATIONNAIRE BESS',
+        titleFr: 'Systèmes de Stockage d\'Énergie Électrique — Paramètres Unitaires & Exigences de Sécurité',
+        titleEn: 'Electrical Energy Storage (EES) Systems — Part 2-1 (Unit Parameters) & Part 5-2 (Safety of Grid-Integrated BESS)',
+        descFr: 'Norme cadre internationale fixant les méthodes de mesure de la capacité, du rendement de cycle (RTE), du temps de réponse et les règles de confinement des emballements thermiques.',
+        descEn: 'Comprehensive international standard defining capacity measurement, round-trip efficiency (RTE), response time metrics, and thermal runaway containment for grid-scale BESS.'
       },
       {
-        code: 'IEEE 1547-2018',
-        tag: 'INTERCONNEXION EnR',
-        titleFr: 'Norme d\'Interconnexion & d\'Interopérabilité des Ressources Énergétiques Réparties avec le Réseau Électrique',
-        titleEn: 'Standard for Interconnection and Interoperability of Distributed Energy Resources',
-        descFr: 'Standard de référence international imposant les fonctions de soutien dynamique de tension et traversée de creux (FRT).',
-        descEn: 'Benchmark grid interconnection standard mandating Volt/Var autonomous support and fault ride-through (FRT).'
+        code: 'IEEE Std 2800-2022 / IEEE 1547',
+        tag: 'INTERCONNEXION & GRID-FORMING',
+        titleFr: 'Norme pour l\'Interconnexion et l\'Interopérabilité des Ressources Énergétiques à Onduleurs au Réseau de Transport',
+        titleEn: 'Standard for Interconnection and Interoperability of Inverter-Based Resources (IBRs) Interconnecting with Associated Transmission Systems',
+        descFr: 'Impose les exigences de traversée de creux de tension (LVRT/HVRT), de réponse en fréquence rapide (FFR < 100 ms) et de contrôle formateur de réseau (Grid-Forming / VSM).',
+        descEn: 'Mandates fault ride-through (LVRT/HVRT), fast frequency response (FFR < 100 ms), and grid-forming virtual synchronous machine control for inverter-based storage resources.'
+      },
+      {
+        code: 'CEI 61851-1 / CEI 61851-23',
+        tag: 'INFRASTRUCTURE RECHARGE IRVE',
+        titleFr: 'Système de Charge Conductive pour Véhicules Électriques — Bornes de Recharge DC Haute Puissance',
+        titleEn: 'Electric Vehicle Conductive Charging System — Part 23: DC Electric Vehicle Supply Equipment (HPC up to 1000 V)',
+        descFr: 'Régit la sécurité électrique, l\'isolement galvanique, les connecteurs refroidis par liquide (CCS Combo 2) et le contrôle de terre des stations de recharge ultra-rapide jusqu\'à 500 A.',
+        descEn: 'Specifies electrical safety, galvanic insulation, liquid-cooled dispensers (CCS Combo 2), and continuous protective earth monitoring for DC fast charging stations delivering up to 500 A.'
+      },
+      {
+        code: 'NFPA 855 / UL 9540A',
+        tag: 'SÉCURITÉ INCENDIE BESS',
+        titleFr: 'Norme pour l\'Installation de Systèmes Stationnaires de Stockage d\'Énergie & Essais d\'Emballement Thermique',
+        titleEn: 'Standard for the Installation of Stationary Energy Storage Systems & Test Method for Evaluating Thermal Runaway Fire Propagation',
+        descFr: 'Exigences strictes de séparation physique entre conteneurs (3 mètres), de ventilation anti-déflagration d\'hydrocarbures gazeux et d\'extinction automatique par gaz propre Novec 1230.',
+        descEn: 'Mandates strict physical separation distances (3 meters between enclosures), deflagration venting for off-gas buildup, and automated Novec 1230 total flooding suppression systems.'
+      },
+      {
+        code: 'CEI 62898-1 / CEI 62898-2',
+        tag: 'MICRO-RÉSEAUX HYBRIDES',
+        titleFr: 'Micro-réseaux Électriques — Lignes Directrices pour la Planification, la Spécification et le Contrôle de Stabilité',
+        titleEn: 'Microgrids — Part 1 (Guidelines for Planning and Specification) & Part 2 (Guidelines for Operation)',
+        descFr: 'Définit les stratégies de contrôle de stabilité dynamique, le basculement sans coupure îloté/raccordé et la coordination énergétique solaire-batterie-diesel via EMS.',
+        descEn: 'Defines dynamic stability control strategies, seamless islanded-to-grid transfers, and hierarchical solar-battery-diesel optimization via microgrid energy management systems.'
+      },
+      {
+        code: 'NF C 15-100 Partie 7-722 / ISO 15118',
+        tag: 'INSTALLATIONS IRVE & V2G',
+        titleFr: 'Installations Électriques à Basse Tension — Alimentation des Véhicules Électriques & Communication V2G',
+        titleEn: 'Low-Voltage Electrical Installations — Electric Vehicle Charging & ISO 15118 Vehicle-to-Grid (V2G) Interface',
+        descFr: 'Prescriptions d\'installation en France et zone francophone : dispositifs différentiels dédiés type B / type F EV, protection contre les surtensions et communication bidirectionnelle V2G.',
+        descEn: 'Mandates dedicated Type B / Type F EV residual current protection, surge arresters, and ISO 15118 bidirectional digital communications for smart charging and Vehicle-to-Grid (V2G).'
       }
     ]
   },
