@@ -102,9 +102,12 @@ Each page and engineering module is evaluated on eight core axes (Target: 95%+):
 ### Domain 15 (D15) — Smart Metering, Grid Digitalization & AMI (Smart Meters, MDM, Losses, Asset Management)
 - **Route**: `#/domain/D15`
 - **Audit Target**: 97%+
+- **Audit Score Post-Transformation**: 97% (5 Canonical Smart Grid Architectures: AMI Smart Metering & MDM DLMS/COSEM, Automated NTL Non-Technical Loss Fraud Detection AI, Online DGA Transformer Monitoring & Duval Triangle 1, Enterprise Asset Performance Management APM & Health Indexing ISO 55000, Wide-Area Monitoring System WAMS PMU IEEE C37.118; 6 Field Apparatus: AMI smart meter, Data Concentrator DC, DGA Transfix/Calisto online sensor, Buchholz dual-float relay, WAMS PMU device, Dielectric oil breakdown tester; 7 Project Lifecycle Phases; 6 LaTeX Solvers: Energy balance & commercial NTL fraud detection, Duval Triangle 1 coordinate normalization, Arrhenius paper insulation thermal aging, WAMS dynamic angular stability margin, Composite Asset Health Index AHI per ISO 55000, G3-PLC AMI batch collection cycle throughput; 6 Standards: IEC 62056 DLMS/COSEM, IEC 60599 DGA, ISO 55000 APM, IEEE C37.118 WAMS, IEC 60076-7, IEEE C57.104).
 
 ### Domain 16 (D16) — Electrical Safety, Earthing & Lightning Protection (Mesh Grids, GPR, Step/Touch potentials IEEE 80, Surge Arresters IEC 60099)
-- Scheduled immediately following Domain 15 per continuous execution protocol.
+- **Route**: `#/domain/D16`
+- **Audit Target**: 97%+
+- **Current Status**: In Progress per continuous execution protocol.
 
 ---
 

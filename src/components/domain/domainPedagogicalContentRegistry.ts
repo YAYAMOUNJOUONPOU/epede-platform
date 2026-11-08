@@ -4401,146 +4401,264 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
     ]
   },
 
-  // D15: Gestion d'Actifs, Diagnostic DGA & Comptage Intelligent
+  // D15: Comptage Intelligent AMI, Digitalisation de Réseau & Gestion d'Actifs (Asset Management)
   D15: {
     domainCode: 'D15',
     sectionA: {
-      roleFr: "Suivi continu de l'état de santé des actifs haute tension, détection précoce des dégradations thermiques/diélectriques par analyse DGA, comptage communicant AMI et maintenance prédictive.",
-      roleEn: 'Continuous health monitoring of high-voltage assets, early thermal/dielectric fault diagnosis via DGA, smart metering AMI, and predictive asset management.',
+      roleFr: "Digitalisation intégrale des réseaux de distribution et de transport d'électricité : déploiement de l'infrastructure de comptage avancé (AMI) avec compteurs communicants DLMS/COSEM, éradication des pertes non-techniques (fraudes et branchements illicites) par bilans énergétiques de grappes, gestion patrimoniale et surveillance continue de l'état de santé des actifs haute tension (Asset Health Index AHI selon ISO 55000), diagnostic physico-chimique par analyse des gaz dissous (DGA selon CEI 60599), et surveillance dynamique synchrophasorielle WAMS (IEEE C37.118).",
+      roleEn: 'End-to-end grid digitalization and asset lifecycle management across transmission and distribution utilities: deployment of Advanced Metering Infrastructure (AMI) with DLMS/COSEM smart meters, non-technical commercial loss eradication via automated nodal energy balancing, enterprise asset health indexing (AHI per ISO 55000), dissolved gas analysis (DGA per IEC 60599), and Wide-Area Monitoring Systems (WAMS PMU synchrophasors per IEEE C37.118).',
       inputsFr: {
-        title: 'Prélèvements d\'Huile & Mesures Physiques',
-        desc: 'Échantillons d\'huile diélectrique prélevés selon CEI 60475, thermographies infrarouges, mesures de décharges partielles UHF et résistance d\'isolement.',
-        voltage: 'Surveillance transformateurs 225 kV & 30 kV'
+        title: 'Courbes de Charge AMI, Prélèvements d\'Huile & Flux WAMS',
+        desc: 'Index de consommation quart-horaires des compteurs abonnés BT et industriels MT (trames DLMS/COSEM via G3-PLC / NB-IoT / 4G), données de télémesure des concentrateurs de postes HTA/BT, échantillons d\'huile diélectrique prélevés selon CEI 60475 (gaz dissous, humidité, furaniques 2-FAL, rigidité), et flux de phaseurs synchronisés PMU (50 phaseurs/seconde).',
+        voltage: 'Comptage BT 230/400 V & MT 15/30 kV • Transformateurs HTB 225 kV • Échantillonnage WAMS 50 Hz'
       },
       inputsEn: {
-        title: 'Dielectric Oil Samples & Physical Sensors',
-        desc: 'Hermetic oil sampling per IEC 60475, infrared thermography, UHF partial discharge monitoring, and insulation testing.',
-        voltage: '225 kV & 30 kV Power Transformer Monitoring'
+        title: 'AMI Load Profiles, Dielectric Oil Metrics & WAMS Streams',
+        desc: '15-minute interval energy billing profiles from smart meters (DLMS/COSEM over G3-PLC / NB-IoT / 4G), feeder substation data concentrator telemetry, insulating oil samples per IEC 60475 (dissolved gases, moisture, 2-FAL furans, breakdown voltage), and IEEE C37.118 synchrophasor streams (50 frames/second).',
+        voltage: 'LV 230/400 V & MV 15/30 kV Metering • 225 kV Power Transformers • WAMS 50 Hz sampling'
       },
       processFr: {
-        title: 'Analyse des Gaz Dissous DGA & Ratios de Duval',
-        desc: 'Chromatographie en phase gazeuse identifiant les gaz dissous (H2, CH4, C2H2, C2H4, C2H6, CO, CO2) et localisation du défaut par le Triangle de Duval.',
-        note: 'Diagnostic normalisé : Séparation stricte des décharges d\'arc vs surchauffes thermiques'
+        title: 'Traitement MDM, Détection de Fraude, Triangle de Duval & AHI',
+        desc: 'Consolidation massive dans le système de gestion des données de comptage (MDM), calcul d\'équilibre énergétique instantané par départ HTA et poste de distribution H61, détection statistique des anomalies et fraudes par apprentissage automatique, modélisation de dégradation thermique selon Arrhenius (CEI 60076-7), classification des défauts internes par le Triangle de Duval N°1, et synthèse de l\'Indice de Santé Global (AHI de 0 à 100).',
+        note: 'Précision de diagnostic DGA sans zone indéterminée et détection des pertes non-techniques en temps quasi-réel (< 24 h)'
       },
       processEn: {
-        title: 'Dissolved Gas Analysis (DGA) & Duval Triangle Diagnosis',
-        desc: 'Gas chromatography tracking key fault gases (H2, CH4, C2H2, C2H4, C2H6, CO, CO2) and pinpointing failure modes on the Duval Triangle.',
-        note: 'Standardized diagnosis: Strict discrimination between high-energy arcing and localized thermal overheating'
+        title: 'MDM Processing, Anti-Theft AI, Duval Triangle & Health Indexing',
+        desc: 'High-volume data ingestion into the Meter Data Management (MDM) engine, dynamic feeder energy balance computation isolating cluster non-technical losses, machine learning commercial anomaly detection, Arrhenius paper insulation thermal aging modeling (IEC 60076-7), Duval Triangle 1 fault pattern classification, and fleetwide Asset Health Index (AHI 0-100) scoring.',
+        note: 'Definitive DGA fault classification with zero undetermined zones and near-real-time commercial loss localization (< 24 h)'
       },
       outputsFr: {
-        title: 'Indice de Santé (AHI) & Plan d\'Intervention',
-        desc: 'Calcul de l\'Asset Health Index (AHI 0-100), recommandation immédiate (dégazage, filtration, révision en atelier) et prévention d\'explosion de cuve.',
-        earthing: 'Mise à la terre de sécurité équipotentielle lors de toute intervention humaine'
+        title: 'Facturation Automatisée, Téléaction Disjoncteur & CBM',
+        desc: 'Facturation commerciale automatisée sans relevé physique, ordres de coupure/rétablissement à distance par relais interne du compteur, cartographie des pertes commerciales et techniques, planification de maintenance prédictive conditionnelle (CBM), alertes immédiates d\'emballement thermique de transformateur, et prolongation de la durée de vie des actifs électriques.',
+        earthing: 'Mise à la terre sécuritaire des coffrets de comptage et protection contre les fraudes par contournement de neutre avec tore de sommation de courant phase-neutre'
       },
       outputsEn: {
-        title: 'Asset Health Index (AHI) & Maintenance Plan',
-        desc: 'Scoring asset condition (AHI 0-100), corrective action scheduling (degassing, workshop overhaul), and catastrophic tank failure prevention.',
-        earthing: 'Mandatory equipotential temporary earthing applied prior to any maintenance entry'
+        title: 'Automated Billing, Remote Latch Control & Predictive CBM',
+        desc: 'Automated physical-less billing, remote disconnect/reconnect commands via smart meter internal latching relays, spatial loss mapping, condition-based maintenance (CBM) work order dispatching, real-time transformer thermal runaway alarms, and substation fleet life extension.',
+        earthing: 'Secure meter box grounding and anti-tamper neutral bypass protection via phase-neutral residual summation toroid'
       }
     },
     sectionB: {
-      summaryFr: 'Méthodes de diagnostic diélectrique et thermique des transformateurs de puissance selon CEI 60599 et IEEE C57.104.',
-      summaryEn: 'Power transformer dielectric and thermal diagnostic frameworks per IEC 60599 and IEEE C57.104.',
+      summaryFr: 'Architectures de comptage communicant et de gestion d\'actifs : infrastructure AMI avec concentrateurs CPL G3 et MDM, système automatisé de détection des pertes non-techniques, surveillance continue DGA par Triangle de Duval, plateforme d\'indice de santé patrimoniale ISO 55000 et réseau synchrophasoriel WAMS.',
+      summaryEn: 'Smart metering and asset performance management architectures: AMI infrastructure with G3-PLC concentrators and MDM, automated non-technical loss (NTL) detection, continuous DGA monitoring via Duval Triangle, ISO 55000 asset health indexing, and WAMS synchrophasor networks.',
       architectures: [
         {
-          nameFr: 'Méthode du Triangle de Duval N°1 (CEI 60599)',
-          nameEn: 'Duval Triangle 1 Diagnostic Method (IEC 60599)',
-          techFr: 'Coordination triangulaire des pourcentages relatifs de CH4, C2H4 et C2H2',
-          techEn: 'Triangular coordinate plotting of relative CH4, C2H4, and C2H2 gas percentages',
-          descFr: 'Méthode universelle sans zone indéterminée, classant le défaut en Décharge Partielle (PD), Décharge Disruptive (D1/D2) ou Défaut Thermique (T1/T2/T3).',
-          descEn: 'Universal method with zero undetermined zones, classifying faults into Partial Discharge (PD), Arcing (D1/D2), or Overheating (T1/T2/T3).',
-          standard: 'CEI 60599',
-          metricFr: 'Fiabilité de diagnostic : > 95%',
-          metricEn: 'Diagnostic reliability: > 95%'
+          nameFr: 'Infrastructure de Comptage Avancé AMI & Système de Gestion MDM (DLMS/COSEM & CPL G3 / 4G)',
+          nameEn: 'Advanced Metering Infrastructure (AMI) & Meter Data Management (MDM)',
+          techFr: 'Compteurs communicants électroniques DLMS/COSEM transmettant via CPL G3 et concentrateurs H61 vers le MDM',
+          techEn: 'Electronic DLMS/COSEM smart meters transmitting via G3-PLC and H61 pole-mounted concentrators to central MDM',
+          descFr: 'Déploiement massif de compteurs communicants électroniques résidentiels et industriels (ex. réseau de distribution ENEO Douala et Yaoundé). Les compteurs transmettent leurs courbes de charge quart-horaires aux concentrateurs de poste H61 via courants porteurs en ligne CPL G3 (G3-PLC) ou modems cellulaires 4G/NB-IoT. Le serveur central MDM assure la validation, l\'estimation et l\'édition des factures (VEE - Validation, Estimation, Editing) et pilote à distance les disjoncteurs internes.',
+          descEn: 'Mass rollout of residential and commercial smart meters across urban distribution networks (e.g., ENEO Douala and Yaoundé grids). Meters upload 15-minute load profiles to H61 substation data concentrators using G3-PLC power line carrier or dedicated 4G/NB-IoT cellular modems. The central MDM server executes automated Validation, Estimation, and Editing (VEE) pipelines and issues remote connect/disconnect switching commands.',
+          standard: 'CEI 62056 (DLMS/COSEM) / G3-PLC Alliance',
+          metricFr: 'Taux de collecte journalier : > 99.2% • Télérelevé : profil 15 minutes • Télécommande disjoncteur : < 3 s',
+          metricEn: 'Daily collection rate: > 99.2% • Interval read: 15-minute load profile • Remote disconnect: < 3 s'
         },
         {
-          nameFr: 'Surveillance en Ligne Continue (Online Multigas Monitor)',
-          nameEn: 'Continuous Online Multi-Gas Monitoring',
-          techFr: 'Sonde à photo-acoustique ou chromatographie intégrée sur la vanne de vidange du transformateur',
-          techEn: 'Photoacoustic or micro-gas chromatography sensor mounted directly on transformer drain valve',
-          descFr: 'Mesure automatique toutes les 4 heures avec alerte instantanée sur le SCADA en cas de cinétique d\'évolution anormale (Δppm/jour élevé).',
-          descEn: 'Automated 4-hour cycle measurement with real-time SCADA alarms on dangerous gas generation rates (Δppm/day).',
-          standard: 'CEI 60599 / CIGRE 409',
-          metricFr: 'Fréquence de mesure : 4 à 6 fois/jour',
-          metricEn: 'Measurement cadence: 4-6 times/day'
+          nameFr: 'Système de Détection des Pertes Non-Techniques & Lutte Contre la Fraude Électrique',
+          nameEn: 'Automated Non-Technical Loss (NTL) Detection & Revenue Protection System',
+          techFr: 'Bilan d\'énergie dynamique entre macro-compteur de tête de poste H61 et somme des compteurs abonnés en aval',
+          techEn: 'Dynamic feeder energy balancing comparing substation macro-meter to sum of downstream customer meters',
+          descFr: 'Dispositif algorithmique de détection des fraudes et branchements pirates sur le réseau de distribution basse tension. Un macro-compteur haute précision (classe 0.5S) installé au secondaire du transformateur H61 compare en permanence l\'énergie globale injectée avec la somme des consommations relevées par les compteurs abonnés de la grappe. Tout écart supérieur aux pertes Joule modélisées alerte instantanément les équipes d\'intervention ENEO avec localisation géographique de la dérivation clandestine.',
+          descEn: 'Algorithmic revenue protection system pinpointing electricity theft and unauthorized line taps along low-voltage distribution feeders. A high-precision feeder head macro-meter (Class 0.5S) continuously balances total injected energy against the sum of energy consumed across all cluster customer meters. Any divergence exceeding calculated physical conductor $I^2 R$ losses immediately triggers field inspection alerts with precise geospatial branch localization.',
+          standard: 'IEEE Std 1459 / Guide CIGRE WG C4.40',
+          metricFr: 'Seuil de détection de fraude : écart > 3% de l\'énergie grappe • Temps de localisation : < 24 h',
+          metricEn: 'Fraud detection threshold: discrepancy > 3% cluster energy • Localization response: < 24 h'
+        },
+        {
+          nameFr: 'Surveillance Continue des Transformateurs par Analyse des Gaz Dissous DGA en Ligne',
+          nameEn: 'Online Transformer Dissolved Gas Analysis (DGA) & Multi-Gas Monitoring',
+          techFr: 'Capteur multigaz photoacoustique monté en dérivation sur la vanne de cuve du transformateur 225 kV',
+          techEn: 'Photoacoustic / micro-gas chromatography sensor mounted directly on 225 kV transformer tank valve',
+          descFr: 'Surveillance diélectrique en temps réel des transformateurs de grande puissance (ex. groupes 60 MW Nachtigal et 48 MW Songloulou). L\'analyseur en ligne extrait et dose automatiquement toutes les 4 heures les concentrations en ppm des 9 gaz de dégradation (H2, CH4, C2H2, C2H4, C2H6, CO, CO2, O2, N2). Les coordonnées sont projetées automatiquement sur le Triangle de Duval N°1 pour diagnostiquer instantanément les arcs électriques destructeurs (D1/D2) ou surchauffes thermiques (T1/T2/T3).',
+          descEn: 'Continuous real-time dielectric health monitoring for high-voltage power transformers (e.g., 60 MW Nachtigal and 48 MW Songloulou generator step-ups). The online analyzer automatically extracts and measures ppm concentrations for all 9 key fault gases (H2, CH4, C2H2, C2H4, C2H6, CO, CO2, O2, N2) every 4 hours. Measured gas ratios are mapped onto Duval Triangle 1 to immediately alert operators to high-energy arcing (D1/D2) or localized thermal overheating (T1/T2/T3).',
+          standard: 'CEI 60599 / IEEE C57.104',
+          metricFr: 'Cadence de mesure DGA : toutes les 4 heures • Seuil de détection acétylène C2H2 : 0.5 ppm',
+          metricEn: 'DGA sampling rate: every 4 hours • Acetylene C2H2 detection sensitivity: 0.5 ppm'
+        },
+        {
+          nameFr: 'Plateforme de Gestion Patrimoniale d\'Actifs & Indice de Santé (Asset Health Index - ISO 55000)',
+          nameEn: 'Enterprise Asset Performance Management (APM) & Health Indexing Framework',
+          techFr: 'Moteur d\'agrégation pondérée des données physico-chimiques, électriques et thermiques calculant l\'AHI (0-100)',
+          techEn: 'Weighted aggregation engine synthesizing physicochemical, electrical, and thermal telemetry into AHI (0-100)',
+          descFr: 'Système logiciel d\'entreprise pour la gestion du cycle de vie des parcs de transformateurs, disjoncteurs et jeux de barres haute tension. Il consolide les analyses DGA, la teneur en eau de l\'huile, la dégradation des furaniques (degré de polymérisation du papier isolant), l\'historique des courts-circuits traversants et les thermographies infrarouges pour attribuer un Indice de Santé (AHI de 0 à 100) et planifier les investissements de renouvellement selon ISO 55000.',
+          descEn: 'Enterprise software platform managing substation fleet lifecycle across transformers, circuit breakers, and GIS bays. It integrates DGA gas trending, oil moisture saturation, furan content (2-FAL paper degree of polymerization), through-fault short-circuit history, and infrared thermography into a composite Asset Health Index (AHI 0-100), prioritizing capital replacement expenditures in compliance with ISO 55000 asset management principles.',
+          standard: 'ISO 55000 / CEI 60076-7 / CIGRE TB 761',
+          metricFr: 'Précision d\'estimation de vie restante : < 2 ans • Réduction des pannes majeures : > 40%',
+          metricEn: 'Remaining life estimation accuracy: < 2 years • Unplanned catastrophic failure reduction: > 40%'
+        },
+        {
+          nameFr: 'Système de Mesure Phasorielle Synchrone Étendue (WAMS / PMU IEEE C37.118)',
+          nameEn: 'Wide-Area Monitoring System (WAMS) with Phasor Measurement Units (PMU)',
+          techFr: 'Réseau de PMUs synchronisés par GPS émettant 50 phaseurs/seconde vers le concentrateur PDC national',
+          techEn: 'GPS-synchronized PMU sensor grid streaming 50 phasors/second to national Phasor Data Concentrator (PDC)',
+          descFr: 'Système de surveillance dynamique en temps réel du réseau interconnecté de transport 225 kV camerounais (postes de Mangombé, Oyomabang, Nomayos, Bekoko et Nachtigal). Les unités PMU mesurent la grandeur vectorielle complexe exacte (amplitude et angle de phase absolu horodaté par satellite GPS à la microseconde près). Permet de calculer en continu l\'écart angulaire rotorique (δ), de détecter les oscillations de puissance non amorties et d\'éviter l\'écroulement de réseau.',
+          descEn: 'Dynamic Wide-Area Monitoring System covering Cameroon\'s 225 kV interconnected transmission grid (Mangombé, Oyomabang, Nomayos, Bekoko, and Nachtigal substations). GPS-disciplined PMUs sample voltage and current phasors (magnitude and absolute phase angle timestamped to sub-microsecond UTC standards) at 50 frames/second. Enables transmission operators to track rotor angle divergence (δ), detect undamped inter-area electromechanical oscillations, and prevent voltage collapse.',
+          standard: 'IEEE C37.118.1 / IEEE C37.118.2 / CEI 61850-90-5',
+          metricFr: 'Cadence de transmission : 50 phaseurs/seconde • Erreur vectorielle totale (TVE) : < 1.0%',
+          metricEn: 'Streaming rate: 50 phasors/second • Total Vector Error (TVE): < 1.0%'
         }
       ]
     },
     sectionC: [
       {
-        id: 'eq-exp-dga-transfix',
-        nameFr: 'Moniteur DGA Multigaz en Ligne (Transfix / Calisto 9)',
-        nameEn: 'Online Multi-Gas DGA Analyzer (Transfix / Calisto 9)',
-        voltage: 'Alimentation 110/230 V • Sortie Ethernet CEI 61850',
-        roleFr: 'Mesure en continu des 9 gaz dissous et de l\'humidité dans l\'huile sans intervention humaine.',
-        roleEn: 'Continuous automated measurement of 9 fault gases and oil moisture content without manual intervention.',
-        symbol: 'DGA-MON',
-        standard: 'CEI 60599',
+        id: 'eq-exp-ami-smart-meter',
+        nameFr: 'Compteur Électrique Communicant Triphasé DLMS/COSEM (Landis+Gyr E650 / Sagemcom S210)',
+        nameEn: '3-Phase Electronic Commercial Smart Meter DLMS/COSEM (Landis+Gyr E650 / Sagemcom)',
+        voltage: 'Tension 3 x 230/400 V • Courant direct 5(100) A ou TC • Classe de précision 0.5S / 0.2S',
+        roleFr: 'Comptage bidirectionnel 4-quadrants de l\'énergie active et réactive, enregistrement des courbes de charge quart-horaires, interface de communication CPL G3 et modem cellulaire 4G, relais interne de coupure/réarmement 100 A, et détection de fraude physique.',
+        roleEn: 'Bidirectional 4-quadrant active and reactive energy metering, 15-minute load profiling, integrated G3-PLC and 4G cellular modem, internal 100 A latching disconnect relay, and physical tamper detection.',
+        symbol: 'AMI-METER',
+        standard: 'CEI 62053-22 / CEI 62056 (DLMS/COSEM)',
+        imgUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-data-concentrator-dc',
+        nameFr: 'Concentrateur de Données de Poste HTA/BT & Passerelle G3-PLC (Schneider Electric / Sagemcom)',
+        nameEn: 'Substation LV Data Concentrator (DC) & G3-PLC Gateway (Schneider / Sagemcom)',
+        voltage: 'Alimentation 230/400 Vca • Raccordement CPL triphasé • Modem 4G LTE-M / Ethernet',
+        roleFr: 'Collecte automatique cyclique des index et profils de charge de plusieurs centaines de compteurs communicants abonnés via le réseau électrique basse tension par CPL G3, et télétransmission sécurisée IPsec vers le serveur central MDM.',
+        roleEn: 'Automated cyclic polling of energy registers and load profiles from hundreds of customer smart meters over low-voltage power lines via G3-PLC, and encrypted IPsec forwarding to the central utility MDM server.',
+        symbol: 'DC-GW',
+        standard: 'CEI 62056 / G3-PLC Alliance',
         imgUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-dga-transfix-calisto',
+        nameFr: 'Analyseur Multigaz DGA en Ligne Continu (Serveron / Qualitrol Calisto 9 / GE Transfix)',
+        nameEn: 'Online Multi-Gas DGA Transformer Monitor (Serveron / Qualitrol Calisto 9 / GE Transfix)',
+        voltage: 'Alimentation secourue 110/230 V • Montage en dérivation sur vanne de cuve huile',
+        roleFr: 'Mesure automatique continue en ligne des 9 gaz de dégradation dissous dans l\'huile et de l\'humidité sans intervention humaine, calcul instantané des ratios de Duval et transmission d\'alertes au SCADA en cas d\'emballement de cinétique gazeuse.',
+        roleEn: 'Continuous automated online measurement of 9 dissolved fault gases and moisture in transformer oil, real-time Duval triangle ratio computation, and SCADA alarm dispatching upon detecting hazardous gas generation rates.',
+        symbol: 'DGA-MON',
+        standard: 'CEI 60599 / IEEE C57.104',
+        imgUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80',
         calcTab: 'transformer'
       },
       {
-        id: 'eq-exp-buchholz-relay',
-        nameFr: 'Relais Buchholz à Deux Seuils (Alarme & Déclenchement)',
-        nameEn: 'Two-Stage Buchholz Gas & Oil Surge Relay',
-        voltage: 'Contacts secs 110/220 Vcc • Tube de liaison conservateur',
-        roleFr: 'Détection mécanique immédiate du dégazage lent (seuil 1 alarme) et des coups de bélier d\'huile lors d\'un arc interne (seuil 2 déclenchement).',
-        roleEn: 'Mechanical detection of slow gas accumulation (Stage 1 alarm) and rapid oil surge upon violent internal arc (Stage 2 trip).',
+        id: 'eq-exp-buchholz-double-float',
+        nameFr: 'Relais de Protection Buchholz à Deux Flotteurs (EMB / Comem)',
+        nameEn: 'Two-Float Gas and Oil Surge Buchholz Relay (EMB / Comem)',
+        voltage: 'Contacts secs 110/220 Vcc • Tube de liaison conservateur DN50 / DN80',
+        roleFr: 'Protection mécanique primaire de cuve transformateur : détection du dégazage lent (seuil 1 alarme à 250 cm³) et détection des coups de bélier d\'huile lors d\'un arc interne franc (seuil 2 déclenchement disjoncteur pour vitesse d\'huile > 1.0 m/s).',
+        roleEn: 'Primary mechanical transformer tank protection: detection of slow gas accumulation (Stage 1 alarm at 250 cm³) and detection of violent oil surges during severe internal winding flashover (Stage 2 breaker trip for oil velocity > 1.0 m/s).',
         symbol: 'F-BUCH',
-        standard: 'CEI 60076-22-1',
+        standard: 'CEI 60076-22-1 / EN 50216-2',
         imgUrl: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'transformer'
+      },
+      {
+        id: 'eq-exp-wams-pmu-device',
+        nameFr: 'Unité de Mesure Phasorielle Synchrone PMU (Arbiter Systems 1133A / SEL-487E)',
+        nameEn: 'Phasor Measurement Unit PMU IEEE C37.118 (Arbiter 1133A / SEL-487E)',
+        voltage: 'Entrées analogiques 1 A / 100 V • Horloge GPS interne synchronisée < 100 ns',
+        roleFr: 'Mesure synchrophasorielle haute fréquence (50 trames/s) de l\'amplitude et de l\'angle de phase absolu de tension et courant sur le réseau 225 kV, calcul du RoCoF et transmission en temps réel vers le concentrateur PDC du Dispatching National.',
+        roleEn: 'High-speed synchrophasor streaming (50 frames/s) of voltage/current magnitude and absolute GPS-timestamped phase angle at 225 kV grid substations, computing RoCoF and streaming data to the national Phasor Data Concentrator (PDC).',
+        symbol: 'PMU-WAMS',
+        standard: 'IEEE C37.118.1 / IEEE C37.118.2',
+        imgUrl: 'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'transmission-line'
+      },
+      {
+        id: 'eq-exp-dielectric-oil-tester',
+        nameFr: 'Banc Portatif d\'Essai de Rigidité Diélectrique de l\'Huile (Megger OTS80PB / BAUR DPA 75)',
+        nameEn: 'Automated Portable Oil Breakdown Voltage Tester (Megger OTS80PB / BAUR DPA 75)',
+        voltage: 'Tension d\'essai 0 à 80 kV RMS • Rampe de montée 2.0 kV/s • Électrodes CEI 60156',
+        roleFr: 'Mesure de précision sur site de la tension disruptive de claquage des échantillons d\'huile minérale prélevés sur les transformateurs de puissance, permettant de valider l\'état de dessiccation de l\'isolant liquide.',
+        roleEn: 'Precision on-site measurement of dielectric breakdown voltage across mineral oil samples collected from power transformers, confirming liquid insulation purity and moisture dryness levels.',
+        symbol: 'TEST-OIL',
+        standard: 'CEI 60156 / CEI 60475',
+        imgUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80',
         calcTab: 'transformer'
       }
     ],
     sectionD: [
       {
         phase: '01',
-        titleFr: 'Prélèvement d\'Huile Normalisé en Seringue Verre',
-        titleEn: 'Standardized Oil Sampling via Glass Syringe',
-        descFr: 'Prélèvement sous atmosphère étanche selon CEI 60475 sans formation de bulles d\'air parasites.',
-        descEn: 'Hermetic syringe sampling per IEC 60475 ensuring zero air contamination.'
+        titleFr: 'Audit Patrimonial des Actifs & Schéma Directeur AMI',
+        titleEn: 'Asset Fleet Audit & AMI Strategic Master Plan',
+        descFr: 'Recensement exhaustif du parc d\'équipements haute tension et des points de comptage de distribution, cartographie des pertes non-techniques historiques et sélection des technologies de communication (CPL G3 vs cellulaires).',
+        descEn: 'Comprehensive cataloging of substation high-voltage fleets and distribution revenue metering points, mapping historical commercial non-technical loss hot spots, and selecting communication technology backbones.'
       },
       {
         phase: '02',
-        titleFr: 'Analyse Chromatographique en Laboratoire Certifié',
-        titleEn: 'Laboratory Gas Chromatography Analysis',
-        descFr: 'Mesure de la concentration individuelle en ppm de chaque hydrocarbure et calcul du taux de gaz combustible total (TDCG).',
-        descEn: 'Individual ppm concentration measurement of hydrocarbons and Total Dissolved Combustible Gas (TDCG).'
+        titleFr: 'Déploiement de l\'Infrastructure de Comptage AMI & Concentrateurs CPL',
+        titleEn: 'Field AMI Meter Rollout & Substation G3-PLC Data Concentrators',
+        descFr: 'Installation sur le terrain des compteurs communicants abonnés et des macro-compteurs de poste de distribution H61, vérification de la propagation du signal CPL G3 et appairage avec le réseau BT.',
+        descEn: 'Physical deployment of customer smart meters and feeder-head macro-meters at H61 distribution substations, auditing G3-PLC signal attenuation across LV circuits, and automated network discovery.'
       },
       {
         phase: '03',
-        titleFr: 'Application du Triangle de Duval & Ratios CEI 60599',
-        titleEn: 'Duval Triangle Plotting & Ratio Verification',
-        descFr: 'Positionnement du point de coordonnées %CH4, %C2H4, %C2H2 pour déterminer avec certitude la nature du défaut.',
-        descEn: 'Plotting coordinate percentages to unmistakably categorize electrical vs thermal fault roots.'
+        titleFr: 'Intégration du Système MDM, Télé-Relevé & Moteur Anti-Fraude',
+        titleEn: 'MDM Platform Integration, Daily Tele-Reading & Anti-Theft AI',
+        descFr: 'Déploiement de la plateforme centrale MDM (Meter Data Management), automatisation du cycle quotidien de relève, calcul des bilans d\'énergie par cellule et détection statistique des anomalies de consommation.',
+        descEn: 'Commissioning the central Meter Data Management (MDM) server, automating daily batch interval reads, executing automated cluster energy balances, and triggering AI alerts upon anomalous usage drops.'
       },
       {
         phase: '04',
-        titleFr: 'Calcul de l\'Indice de Santé (AHI) & Estimation de Vie',
-        titleEn: 'Asset Health Index (AHI) & Remanent Life Check',
-        descFr: 'Corrélation entre DGA, teneur en eau, rigidité diélectrique et dégradation des furanes (DP papier).',
-        descEn: 'Correlating DGA, moisture, breakdown voltage, and furan contents for paper degree of polymerization.'
+        titleFr: 'Campagne d\'Analyse Physico-Chimique & DGA des Transformateurs',
+        titleEn: 'Transformer Physicochemical Sampling & Laboratory DGA Campaign',
+        descFr: 'Prélèvements normalisés sous atmosphère étanche en seringues de verre selon CEI 60475, chromatographie en phase gazeuse, mesure de rigidité diélectrique, furaniques et acidité.',
+        descEn: 'Standardized hermetic glass syringe oil sampling per IEC 60475, certified laboratory gas chromatography, dielectric breakdown testing, furan HPLC quantification, and acidity measurement.'
       },
       {
         phase: '05',
-        titleFr: 'Traitement d\'Huile ou Décuvage en Atelier',
-        titleEn: 'Oil Degassing Treatment or Workshop Overhaul',
-        descFr: 'Passage sur groupe mobile de dégazage/déshydratation sous vide ou planification du remplacement de l\'actif.',
-        descEn: 'Mobile vacuum dehydration/degassing oil treatment or scheduling asset de-tanking and rewind.'
+        titleFr: 'Calcul de l\'Indice de Santé (AHI) & Hiérarchisation des Risques',
+        titleEn: 'Asset Health Index (AHI) Computation & Fleet Risk Scoring',
+        descFr: 'Agrégation des résultats d\'essais dans la matrice de santé ISO 55000, calcul de l\'Asset Health Index (0-100) pour chaque transformateur du parc et priorisation des décuvages ou filtrations d\'huile.',
+        descEn: 'Synthesizing diagnostic parameters into an ISO 55000 health index matrix, generating individual Asset Health Index scores (0-100) across all utility transformers, and prioritizing oil reclamation or unit replacement.'
+      },
+      {
+        phase: '06',
+        titleFr: 'Déploiement du Réseau de PMU WAMS sur le Réseau de Transport 225 kV',
+        titleEn: '225 kV Transmission Grid WAMS PMU Network Commissioning',
+        descFr: 'Raccordement des unités PMU aux réducteurs de mesure de poste, synchronisation par antenne GPS de précision et interfaçage avec le concentrateur de données de phaseurs (PDC) du dispatching national.',
+        descEn: 'Interfacing PMU terminals with switchyard instrument transformers, locking GPS antenna timing synchronization, and establishing IEEE C37.118 streaming to the national Phasor Data Concentrator (PDC).'
+      },
+      {
+        phase: '07',
+        titleFr: 'Exploitation Industrielle Continue & Maintenance Centrée sur la Fiabilité (RCM)',
+        titleEn: 'Commercial Operation, Automated Billing & Reliability-Centered Maintenance (RCM)',
+        descFr: 'Basculement en maintenance prédictive conditionnelle (CBM), suivi en temps réel des alertes de gaz dissous, facturation commerciale automatisée et extension de la durée de vie des actifs.',
+        descEn: 'Transitioning to predictive condition-based maintenance (CBM), automated billing operations with remote disconnect capabilities, real-time DGA rate-of-change alerts, and fleet asset life extension.'
       }
     ],
     sectionE: [
       {
+        id: 'non_technical_loss_energy_balance',
+        tabLabelFr: 'Bilan d\'Énergie & Fraude NTL',
+        tabLabelEn: 'Energy Balance & Non-Technical Loss',
+        titleFr: 'Équation Fondamentale d\'Équilibre Énergétique et Détection des Pertes Non-Techniques',
+        titleEn: 'Fundamental Energy Balance Equation for Automated Non-Technical Loss (NTL) Detection',
+        descFr: 'Formulation permettant d\'isoler avec certitude les fraudes et dérivations clandestines sur un départ de distribution en soustrayant de l\'énergie injectée en tête la somme des consommations relevées et les pertes Joule normales.',
+        descEn: 'Analytical energy balancing formulation isolating illegal power theft along distribution feeders by subtracting metered customer consumption and modeled conductor Joule losses from total substation injected energy.',
+        formula: 'E_{\\text{pertes\\_NTL}} = E_{\\text{injectée}} - \\left( \\sum_{k=1}^{N_{\\text{clients}}} E_{\\text{facturée},k} + \\sum_{m=1}^{M_{\\text{sections}}} 3 \\cdot R_m \\cdot I_m^2 \\cdot \\Delta t \\right) \\quad ; \\quad \\text{Taux}_{\\text{NTL}}\\% = \\frac{E_{\\text{pertes\\_NTL}}}{E_{\\text{injectée}}} \\times 100\\%',
+        formulaDescFr: 'Avec Einjectée l\'énergie totale mesurée par le macro-compteur de tête de poste H61, Efacturée,k l\'énergie relevée par le compteur communicant du client k, Rm la résistance du tronçon de ligne m, Im le courant efficace moyen de transit, et Epertes_NTL l\'énergie volée ou non comptabilisée.',
+        formulaDescEn: 'Where Einjectée is total energy recorded by the H61 substation macro-meter, Efacturée,k is consumption recorded by customer smart meter k, Rm is conductor resistance of line section m, Im is mean section load current, and Epertes_NTL is stolen or unmetered commercial loss energy.',
+        assumptionsFr: [
+          'Macro-compteur de tête de poste de classe de précision supérieure (Classe 0.5S ou 0.2S).',
+          'Synchronisation temporelle stricte des fenêtres d\'intégration quart-horaires de l\'ensemble des compteurs de la grappe.',
+          'Prise en compte des pertes physiques normales (pertes fer du transformateur H61 et pertes Joule dans les conducteurs).'
+        ],
+        assumptionsEn: [
+          'Substation feeder head macro-meter rated for superior revenue accuracy (Class 0.5S or 0.2S).',
+          'Strict clock synchronization of 15-minute integration billing intervals across all cluster meters via G3-PLC.',
+          'Physical technical losses (transformer core losses and conductor $I^2 R$ heat) rigorously modeled and subtracted.'
+        ],
+        calcTab: 'power'
+      },
+      {
         id: 'duval_coords_calc',
-        tabLabelFr: 'Coordonnées du Triangle de Duval',
-        tabLabelEn: 'Duval Triangle Coordinates',
-        titleFr: 'Calcul des Pourcentages Relatifs des Gaz selon CEI 60599',
-        titleEn: 'Relative Gas Percentage Calculation per IEC 60599',
-        descFr: 'Normalise les concentrations en ppm de méthane, éthylène et acétylène pour obtenir des coordonnées sur 100%.',
-        descEn: 'Normalizes methane, ethylene, and acetylene ppm concentrations onto a 100% scale.',
-        formula: '%C₂H₂ = [C₂H₂] / ([CH₄] + [C₂H₄] + [C₂H₂]) × 100',
-        formulaDescFr: 'Calcul identique pour %CH4 et %C2H4. La présence d\'acétylène C2H2 même en faible quantité (> 2 ppm) indique un arc électrique à haute énergie.',
-        formulaDescEn: 'Identical normalization for %CH4 and %C2H4. Any trace of acetylene C2H2 (> 2 ppm) alerts to high-energy arcing.',
+        tabLabelFr: 'Triangle de Duval N°1 (CEI 60599)',
+        tabLabelEn: 'Duval Triangle 1 Coordinates (IEC 60599)',
+        titleFr: 'Calcul des Coordonnées Relatives des Gaz de Défaut selon CEI 60599',
+        titleEn: 'Relative Hydrocarbon Gas Coordinate Normalization per IEC 60599',
+        descFr: 'Normalise les concentrations en ppm de méthane, éthylène et acétylène pour obtenir des coordonnées sur 100% projetées sur le Triangle de Duval N°1. La présence d\'acétylène même en faible quantité (> 2 ppm) indique un arc électrique à haute énergie.',
+        descEn: 'Normalizes ppm concentrations of methane, ethylene, and acetylene into a 100% triangular coordinate system. Any trace of acetylene C2H2 (> 2 ppm) alerts immediately to destructive high-energy arcing (zones D1 or D2).',
+        formula: '\\%\\text{C}_2\\text{H}_2 = \\frac{[\\text{C}_2\\text{H}_2]}{[\\text{CH}_4] + [\\text{C}_2\\text{H}_4] + [\\text{C}_2\\text{H}_2]} \\times 100\\% \\quad ; \\quad \\%\\text{CH}_4 = \\frac{[\\text{CH}_4]}{\\sum} \\times 100\\% \\quad ; \\quad \\%\\text{C}_2\\text{H}_4 = \\frac{[\\text{C}_2\\text{H}_4]}{\\sum} \\times 100\\%',
+        formulaDescFr: 'Avec [CH4], [C2H4] et [C2H2] les teneurs individuelles en parties par million (ppm). Les zones diagnostiques normalisées séparent strictement les décharges partielles (PD), les étincellements de faible énergie (D1), les arcs francs (D2) et les surchauffes thermiques (T1 < 300°C, T2 300-700°C, T3 > 700°C).',
+        formulaDescEn: 'Where [CH4], [C2H4], and [C2H2] are measured concentrations in parts per million (ppm). Standardized diagnostic zones distinctly categorize Partial Discharges (PD), low-energy sparking (D1), high-energy arcing (D2), and thermal overheating (T1 < 300°C, T2 300-700°C, T3 > 700°C).',
         assumptionsFr: [
           'La somme des trois gaz hydrocarbures doit être significative (au moins 10 fois le seuil de détection du chromatographe).',
           'Applicable aux transformateurs immergés dans l\'huile minérale standard.',
@@ -4559,11 +4677,11 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         tabLabelEn: 'Paper Insulation Aging Rate',
         titleFr: 'Facteur de Vieillissement Thermique Relatif de l\'Isolant Solide (CEI 60076-7)',
         titleEn: 'Relative Thermal Aging Factor of Solid Insulation per IEC 60076-7',
-        descFr: 'Quantifie l\'accélération de la dégradation des fibres de cellulose du papier en fonction de la température de point chaud.',
-        descEn: 'Quantifies the accelerated degradation rate of paper cellulose fibers versus winding hot-spot temperature.',
-        formula: 'V = 2^((θ_h - 98) / 6)',
-        formulaDescFr: 'Avec θh température de point chaud en °C. À 98°C, le vieillissement est normal (V = 1.0). Chaque élévation de 6°C double le taux de vieillissement !',
-        formulaDescEn: 'With θh winding hot-spot temperature in °C. At 98°C, aging is baseline (V = 1.0). Every 6°C rise doubles degradation rate!',
+        descFr: 'Quantifie l\'accélération de la dégradation des fibres de cellulose du papier en fonction de la température de point chaud. À 98°C, le vieillissement est unitaire (V = 1.0). Chaque élévation de 6°C double le taux de dégradation !',
+        descEn: 'Quantifies the accelerated degradation rate of paper cellulose fibers versus winding hot-spot temperature. At 98°C, aging is baseline (V = 1.0). Every 6°C rise doubles degradation rate!',
+        formula: 'V = 2^{\\frac{\\theta_h - 98}{6}} \\quad ; \\quad L_{\\text{consommé}}\\% = \\frac{1}{L_{\\text{nom}}} \\int_0^T V(t) \\, dt \\times 100\\%',
+        formulaDescFr: 'Avec θh la température de point chaud en °C. Lconsommé représente la perte de vie utile cumulée par rapport à la durée de vie nominale de conception (Lnom = 180 000 heures soit environ 20.5 ans d\'exploitation à 98 °C constants).',
+        formulaDescEn: 'Where θh is winding hot-spot temperature in °C. Lconsommé represents cumulative loss of asset operating life relative to nominal design life (Lnom = 180,000 hours or approximately 20.5 years at constant 98 °C).',
         assumptionsFr: [
           'Isolant en papier kraft non thermiquement amélioré standard.',
           'Température de point chaud calculée selon le modèle thermique dynamique CEI 60076-7.',
@@ -4575,24 +4693,125 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
           'Moisture content above 2% in solid insulation accelerates the aging factor by another 2x to 4x.'
         ],
         calcTab: 'transformer'
+      },
+      {
+        id: 'wams_power_transfer_margin',
+        tabLabelFr: 'Marge Stabilité WAMS (PMU)',
+        tabLabelEn: 'WAMS Angular Stability Margin',
+        titleFr: 'Calcul de la Marge de Stabilité Angulaire en Temps Réel par Synchrophasors',
+        titleEn: 'Real-Time Dynamic Angular Stability Margin via Wide-Area PMU Synchrophasors',
+        descFr: 'Surveillance continue par les unités PMU de l\'écart angulaire rotorique Δδ entre générateurs distants du réseau interconnecté (ex. Songloulou vs Nachtigal). Permet de détecter l\'approche de la limite de stabilité transitoire.',
+        descEn: 'Continuous real-time tracking by PMU sensor arrays of the rotor phase angle difference Δδ between distant generation centers (e.g., Songloulou vs Nachtigal). Warns operators as transmission corridors approach transient stability limits.',
+        formula: 'P_{\\text{trans}} = \\frac{E_1 \\cdot E_2}{X_{\\text{ligne}}} \\cdot \\sin(\\delta_1 - \\delta_2) \\quad ; \\quad \\text{Marge}_{\\text{stab}}\\% = \\left( 1 - \\sin(\\Delta \\delta) \\right) \\times 100\\%',
+        formulaDescFr: 'Avec Ptrans la puissance active transmise sur le corridor 225 kV, E1 et E2 les tensions efficaces aux extrémités, Xligne la réactance totale de liaison, et Δδ = (δ1 - δ2) l\'écart angulaire mesuré par PMU. Au-delà de Δδ = 45°, la marge de sécurité devient critique.',
+        formulaDescEn: 'Where Ptrans is active power transferred across the 225 kV corridor, E1 and E2 are terminal bus voltages, Xligne is total transmission reactance, and Δδ = (δ1 - δ2) is real-time angular displacement measured by PMUs. Beyond Δδ = 45°, operational stability margin falls into alert territory.',
+        assumptionsFr: [
+          'Synchronisation GPS absolue des unités PMU garantissant une incertitude temporelle inférieure à 1 µs.',
+          'Fréquence de calcul et de diffusion du phaseur fixée à 50 trames par seconde (CEI 61850-90-5).',
+          'Déclenchement automatique d\'alertes si le taux de dérive angulaire d(Δδ)/dt dépasse 5°/seconde.'
+        ],
+        assumptionsEn: [
+          'Sub-microsecond absolute GPS time alignment across all PMU nodes ensuring near-zero phase angle skew.',
+          'Synchrophasor transmission streaming rate configured at 50 frames per second per IEC 61850-90-5.',
+          'Automated control center alerts triggered if angular drift rate d(Δδ)/dt exceeds 5°/second.'
+        ],
+        calcTab: 'transmission-line'
+      },
+      {
+        id: 'asset_health_index_synthesis',
+        tabLabelFr: 'Indice de Santé AHI (ISO 55000)',
+        tabLabelEn: 'Asset Health Index AHI (ISO 55000)',
+        titleFr: 'Formulation d\'Agrégation Pondérée de l\'Indice de Santé Global d\'Actif HTB',
+        titleEn: 'Weighted Aggregation Formulation for High-Voltage Asset Health Index (AHI)',
+        descFr: 'Algorithme normalisé synthétisant l\'ensemble des indicateurs physico-chimiques, thermiques et d\'exploitation d\'un transformateur en une note unique d\'indice de santé (AHI de 0 à 100), guidant les arbitrages de maintenance et de remplacement.',
+        descEn: 'Standardized multi-criteria weighting algorithm synthesizing physicochemical, dielectric, thermal, and operational metrics into a single Asset Health Index (AHI 0-100), driving condition-based maintenance and capital replacement schedules.',
+        formula: '\\text{AHI} = \\sum_{j=1}^{M} w_j \\cdot S_j \\quad \\left( \\text{avec } \\sum_{j=1}^{M} w_j = 1.0 \\right) \\quad ; \\quad S_j \\in [0, 100]',
+        formulaDescFr: 'Avec AHI la note globale de santé (0-30 = Bon état, 30-70 = Dégradation modérée sous surveillance, 70-100 = Risque critique d\'avarie nécessitant intervention urgente), wj le poids relatif de chaque paramètre (DGA w1=0.30, Furaniques/DP w2=0.25, Humidité w3=0.15, Rigidité w4=0.15, Âge/Historique w5=0.15), et Sj la note partielle normalisée.',
+        formulaDescEn: 'Where AHI is composite health score (0-30 = Good condition, 30-70 = Moderate degradation under heightened monitoring, 70-100 = Critical failure risk mandating urgent outage), wj represents parameter weighting (DGA w1=0.30, Furan/DP w2=0.25, Moisture w3=0.15, Dielectric breakdown w4=0.15, Age/Through-faults w5=0.15), and Sj is normalized sub-score.',
+        assumptionsFr: [
+          'Pondérations conformes aux recommandations des guides techniques CIGRE WG A2.49 et CIGRE TB 761.',
+          'Plafond de sécurité immédiat : si la teneur en acétylène C2H2 dépasse 10 ppm, l\'AHI est forcé à 85 minimum indépendamment des autres notes.',
+          'Mise à jour automatique de l\'AHI après chaque campagne de prélèvement d\'huile ou alerte DGA en ligne.'
+        ],
+        assumptionsEn: [
+          'Weight factors aligned with CIGRE WG A2.49 and CIGRE TB 761 international asset management guidelines.',
+          'Failsafe threshold clamp: if acetylene C2H2 concentration exceeds 10 ppm, composite AHI is clamped to a minimum of 85 regardless of other parameters.',
+          'Automated re-computation of AHI upon receipt of new laboratory oil tests or real-time online DGA triggers.'
+        ],
+        calcTab: 'transformer'
+      },
+      {
+        id: 'dlms_meter_channel_capacity',
+        tabLabelFr: 'Capacité de Collecte AMI CPL G3',
+        tabLabelEn: 'G3-PLC AMI Data Collection Capacity',
+        titleFr: 'Dimensionnement du Débit Utile et Temps de Relève des Compteurs par CPL G3',
+        titleEn: 'Throughput Sizing and Full Meter Reading Cycle Duration over G3-PLC Networks',
+        descFr: 'Méthodologie de calcul régissant le dimensionnement de l\'infrastructure de communication CPL basse tension pour garantir que les index de facturation et profils de charge de l\'ensemble des compteurs abonnés soient collectés dans la fenêtre journalière requise.',
+        descEn: 'Analytical sizing methodology determining low-voltage power line communication throughput, ensuring interval billing profiles from all downstream customer smart meters are successfully uploaded within statutory batch collection windows.',
+        formula: 'T_{\\text{collecte}} = \\sum_{k=1}^{N_{\\text{compteurs}}} \\left( \\frac{S_{\\text{profil}} \\cdot 8}{R_{\\text{utile\\_G3}} \\cdot (1 - \\text{FER})} + t_{\\text{interro}} \\right) \\quad \\le \\quad T_{\\text{fenêtre\\_max}}',
+        formulaDescFr: 'Avec Tcollecte le temps total de relève de la grappe, Ncompteurs le nombre de compteurs raccordés au concentrateur (typiquement 150 à 400 compteurs par poste H61), Sprofil la taille du profil de charge journalier (≈ 12 Koctets par compteur), Rutile_G3 le débit effectif moyen de la couche CPL G3 OFDM (20 à 35 kbit/s), FER le taux moyen d\'erreur de trame dû au bruit réseau (10 à 25%), et tinterro le temps de latence protocolaire d\'interrogation DLMS/COSEM (100 ms).',
+        formulaDescEn: 'Where Tcollecte is total cluster polling time, Ncompteurs is number of smart meters linked to the data concentrator (typically 150 to 400 meters per H61 substation), Sprofil is daily load profile data payload (≈ 12 Kbytes per meter), Rutile_G3 is effective OFDM G3-PLC physical layer bit rate (20 to 35 kbps), FER is network noise Frame Error Rate (10 to 25%), and tinterro is DLMS/COSEM handshake latency (100 ms).',
+        assumptionsFr: [
+          'Modulation CPL G3 adaptative (ROBO, BPSK, QPSK, 8-PSK) s\'adaptant automatiquement au niveau de bruit du réseau électrique.',
+          'Mécanisme de routage maillé dynamique LOADng permettant aux compteurs éloignés de servir de répéteurs.',
+          'Fenêtre maximale de relève fixée à 4 heures pour garantir la mise à disposition des données avant le traitement de facturation matinal.'
+        ],
+        assumptionsEn: [
+          'Adaptive G3-PLC modulation (ROBO, BPSK, QPSK, 8-PSK) dynamically adjusting to low-voltage network electrical noise.',
+          'LOADng dynamic mesh routing enabling distant smart meters to act as relays for deeper cluster nodes.',
+          'Maximum collection window constrained to 4 hours to deliver meter profiles ahead of morning billing batch runs.'
+        ],
+        calcTab: 'power'
       }
     ],
     sectionF: [
       {
+        code: 'CEI 62056 Suite (DLMS/COSEM)',
+        tag: 'COMPTAGE COMMUNICANT AMI',
+        titleFr: 'Équipements de Mesure de l\'Électricité - Échange des Données pour la Lecture des Compteurs, le Contrôle des Tarifs et de la Charge',
+        titleEn: 'Electricity Metering Data Exchange - The DLMS/COSEM Suite',
+        descFr: 'Norme internationale universelle régissant la modélisation orientée objet COSEM des grandeurs énergétiques et le protocole de messagerie DLMS pour compteurs intelligents.',
+        descEn: 'Universal international standard governing COSEM object modeling for energy registers and DLMS application layer messaging for smart grid metering.'
+      },
+      {
         code: 'CEI 60599',
-        tag: 'DIAGNOSTIC DGA',
-        titleFr: 'Matériels Électriques Imprégnés d\'Huile en Service - Guide pour l\'Interprétation des Gaz Dissous',
-        titleEn: 'Mineral Oil-Filled Electrical Equipment in Service - Guidance on the Evaluation of Dissolved and Free Gases',
-        descFr: 'Référence internationale absolue pour l\'interprétation des analyses DGA et l\'usage des ratios de Duval.',
-        descEn: 'Global benchmark standard for DGA diagnostic interpretation and Duval triangle application.'
+        tag: 'DIAGNOSTIC DGA TRANSFORMATEURS',
+        titleFr: 'Matériels Électriques Imprégnés d\'Huile en Service - Guide pour l\'Interprétation de l\'Analyse des Gaz Dissous et Libres',
+        titleEn: 'Mineral Oil-Filled Electrical Equipment in Service - Guidance on the Evaluation of Dissolved and Free Gases Analysis',
+        descFr: 'Référence mondiale fixant les seuils normatifs de gaz dissous, les ratios de concentration et la méthode du Triangle de Duval pour diagnostiquer les défauts internes.',
+        descEn: 'Global reference defining normative dissolved gas concentration thresholds, gas ratios, and the Duval Triangle methodology for diagnosing internal transformer faults.'
+      },
+      {
+        code: 'ISO 55000 / ISO 55001',
+        tag: 'GESTION PATRIMONIALE D\'ACTIFS',
+        titleFr: 'Gestion d\'Actifs - Aperçu Général, Principes et Terminologie - Systèmes de Management des Actifs Industriels',
+        titleEn: 'Asset Management - Overview, Principles and Terminology - Management Systems Requirements',
+        descFr: 'Cadre normatif régissant la gestion optimale du cycle de vie des équipements, la hiérarchisation des risques et la maintenance basée sur la valeur et la criticité.',
+        descEn: 'Foundational framework for utility asset lifecycle optimization, risk-based prioritization, and value-driven replacement investment strategies.'
+      },
+      {
+        code: 'IEEE C37.118.1 & C37.118.2',
+        tag: 'WAMS & SYNCHROPHASORS',
+        titleFr: 'Norme IEEE relative aux Mesures de Phaseurs Synchronisés pour les Réseaux Électriques & Transfert de Données en Temps Réel',
+        titleEn: 'IEEE Standard for Synchrophasor Measurements for Power Systems & Synchrophasor Data Transfer for Power Systems',
+        descFr: 'Spécifie les exigences métrologiques des unités PMU (erreur TVE < 1%), la synchronisation temporelle UTC et les protocoles de streaming vers les centres de conduite.',
+        descEn: 'Defines metrological performance requirements for PMUs (Total Vector Error TVE < 1%), UTC time synchronization, and real-time streaming protocols.'
       },
       {
         code: 'CEI 60076-7',
-        tag: 'TRANSFORMATEURS',
-        titleFr: 'Transformateurs de Puissance - Guide de Charge pour Transformateurs Immergés dans l\'Huile',
+        tag: 'VIEILLISSEMENT THERMIQUE TRANSFORMATEURS',
+        titleFr: 'Transformateurs de Puissance - Guide de Charge pour Transformateurs Immergés dans l\'Huile Minérale',
         titleEn: 'Power Transformers - Loading Guide for Mineral-Oil-Immersed Power Transformers',
-        descFr: 'Règles de calcul de l\'échauffement, des points chauds et des surcharges admissibles en exploitation.',
-        descEn: 'Formulas for winding hot-spot temperature modeling, loss of life, and permissible operational overloads.'
+        descFr: 'Méthodologie de calcul thermique dynamique des points chauds et taux de consommation de la durée de vie du papier isolant selon la loi d\'Arrhenius.',
+        descEn: 'Dynamic thermal differential equations for winding hot-spot calculation and solid cellulose insulation loss-of-life modeling via Arrhenius kinetics.'
+      },
+      {
+        code: 'IEEE C57.104',
+        tag: 'SURVEILLANCE DES GAZ DISSOUS',
+        titleFr: 'Guide IEEE pour l\'Interprétation des Gaz Générés dans les Transformateurs Immergés dans l\'Huile',
+        titleEn: 'IEEE Guide for the Interpretation of Gases Generated in Mineral Oil-Immersed Transformers',
+        descFr: 'Définit les 4 états de sévérité de dégradation des transformateurs, les taux de production de gaz (Δppm/jour) et les actions de maintenance prescrites.',
+        descEn: 'Specifies 4 transformer degradation severity condition levels, gas generation rates (Δppm/day), and recommended operational maintenance actions.'
       }
     ]
   },

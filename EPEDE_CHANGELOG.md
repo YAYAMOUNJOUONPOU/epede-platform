@@ -418,3 +418,42 @@ All notable changes, engineering refactors, and technical enhancements across th
     - IEC 61642 (Industrial a.c. networks affected by harmonics - Application of filters and shunt capacitors).
     - IEEE Std 1159 (Monitoring electric power quality).
     - IEEE C57.110 (Establishing transformer capability supplying non-sinusoidal load currents).
+
+### Domain 15 (D15) - Smart Metering, Grid Digitalization & AMI Transformation
+- Upgraded pedagogical framework in `domainPedagogicalContentRegistry.ts` from partial DGA-only to full Smart Metering & Digital Asset Management 97% master standard:
+  - **Section A**: Formulated smart metering and digitalization boundaries across physical generation/transmission/distribution assets, bidirectional DLMS/COSEM telemetry, online DGA transformer monitoring, and automated commercial loss detection.
+  - **Section B**: Documented 5 canonical smart grid digitalization architectures:
+    1. **Infrastructure Avancée de Comptage Communicant (AMI) & Système MDM (DLMS/COSEM & CPL G3 / 4G)** (Bidirectional customer smart meters, H61 data concentrators, G3-PLC OFDM / cellular backhaul, Meter Data Management for ENEO / SONATREL billing).
+    2. **Détection Automatisée des Pertes Non-Techniques (PNT) & Lutte Anti-Fraude par IA & Bilan Énergétique** (Boundary metering comparison between distribution kiosks and billing meters, XGBoost / Random Forest anomaly scoring, unauthorized bypass localization).
+    3. **Surveillance en Ligne des Gaz Dissous (DGA 9 Gaz) & Diagnostic Triangle de Duval 1** (Continuous photo-acoustic / GC multi-gas monitoring of H2, CH4, C2H6, C2H4, C2H2, CO, CO2, automatic fault classification PD/D1/D2/T1/T2/T3).
+    4. **Gestion Patrimoniale Prédictive des Actifs Réseau (APM) & Indice de Santé Global (ISO 55000)** (Multi-factor Asset Health Index AHI combining electrical, chemical, thermal, and operative stress indicators for targeted asset replacement).
+    5. **Système de Mesure Vectorielle Synchrone à Grande Échelle (WAMS & Unités PMU IEEE C37.118)** (Substation Phasor Measurement Units GPS-synchronized to < 1 µs, streaming 50 fps voltage/current phase angles for wide-area oscillation and angular stability monitoring).
+  - **Section C**: Added 6 core smart grid and asset management apparatus:
+    - Smart Grid Bidirectional Electronic Energy Meter DLMS/COSEM Sagemcom / Landis+Gyr (`eq-exp-ami-smart-meter`).
+    - Smart Substation Data Concentrator Unit (DCU) CPL G3 / 4G Schneider / Sagemcom (`eq-exp-data-concentrator-dc`).
+    - Multi-Gas Online DGA Transformer Monitor GE Transfix / Calisto / Serveron (`eq-exp-dga-transfix-calisto`).
+    - Double-Float Buchholz Relay with Gas Sampling Valve EMB / Qualitrol (`eq-exp-buchholz-double-float`).
+    - High-Precision Phasor Measurement Unit (PMU) SEL-487E / ABB RES670 (`eq-exp-wams-pmu-device`).
+    - Portable Automated Dielectric Oil Breakdown Voltage Tester Megger OTS80PB / BAUR (`eq-exp-dielectric-oil-tester`).
+  - **Section D**: Expanded methodology to 7 sequential engineering lifecycle phases:
+    1. Site Assessment, Asset Criticality Matrix & Telemetry Gap Audit.
+    2. Communications Topology Design, RF/PLC Field Surveys & Data Concentrator Sizing.
+    3. Multi-Vendor Smart Metering & Instrument Sensor Procurement & Type-Testing (DLMS/COSEM, IEC 62056).
+    4. Substation Sensor & Meter Field Installation, Wiring & Secure Gateway Hardening.
+    5. Enterprise MDM, APM & DGA Analytics Platform Ingestion & Calibration.
+    6. Non-Technical Loss (NTL) Model Training, Alarm Setting & Field Verification.
+    7. Continuous Asset Health Indexing (AHI), WAMS Oscillation Monitoring & Life Extension.
+  - **Section E**: Integrated 6 LaTeX mathematical formulations:
+    - Feeder Energy Balance & Commercial Non-Technical Loss (NTL) Detection Formulation.
+    - Duval Triangle 1 Coordinate Normalization for Dissolved Gas Analysis (%CH4, %C2H4, %C2H2).
+    - Arrhenius Solid Paper Insulation Thermal Aging and Relative Degradation Rate per IEC 60076-7 ($V = 2^{(\theta_h - 98)/6}$).
+    - WAMS Synchronized Phase-Angle Power Transfer Margin Formulation ($P = \frac{E_1 E_2}{X} \sin(\delta_1 - \delta_2)$).
+    - Composite Asset Health Index (AHI) Synthesis Formulation per ISO 55000.
+    - G3-PLC AMI Data Collection Sizing and Polling Cycle Throughput Formulation ($T_{\text{collecte}}$ vs $T_{\text{fenêtre}}$).
+  - **Section F**: Sourced 6 normative standards:
+    - IEC 62056 Suite (DLMS/COSEM Electricity metering data exchange).
+    - IEC 60599 (Mineral oil-filled electrical equipment in service - DGA guidance).
+    - ISO 55000 / ISO 55001 (Asset management systems requirements).
+    - IEEE C37.118.1 & C37.118.2 (Synchrophasor measurements and data transfer for power systems).
+    - IEC 60076-7 (Loading guide for oil-immersed power transformers - thermal aging).
+    - IEEE C57.104 (Guide for interpretation of gases generated in mineral oil-immersed transformers).

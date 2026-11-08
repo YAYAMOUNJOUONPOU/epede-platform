@@ -23,8 +23,8 @@ Complete platform transformation through continuous iterative improvement across
 | **D12** | Substation Automation Systems (SAS, SCADA, RTU, IEC 61850) | Completed | 6 | 97% | 97% | 96% | Passing |
 | **D13** | Communications & Operational Technology (Process Bus, Cybersecurity) | Completed | 6 | 97% | 97% | 96% | Passing |
 | **D14** | Power Quality & EMC (Harmonics, THD, Reactive Power, Filtering) | Completed | 6 | 97% | 97% | 96% | Passing |
-| **D15** | Metering, Smart Grids & Grid Digitalization (AMI, MDM, WAMS) | In Progress | 1 | - | - | - | Active |
-| **D16** | Electrical Safety, Earthing & Lightning (Mesh Grids, GPR, Surge Arresters) | Queued | 0 | - | - | - | - |
+| **D15** | Metering, Smart Grids & Grid Digitalization (AMI, MDM, WAMS) | Completed | 6 | 97% | 97% | 96% | Passing |
+| **D16** | Electrical Safety, Earthing & Lightning (Mesh Grids, GPR, Surge Arresters) | In Progress | 1 | - | - | - | Active |
 
 ---
 
@@ -45,6 +45,6 @@ Complete platform transformation through continuous iterative improvement across
 ---
 
 ## 3. Improvement Log Summary
-- **Completed**: D01 (Generation & Electricity Production), D02 (Power System Architecture & Grid Planning), D03 (Transmission Networks), D04 (Substations & Grid Nodes), D05 (Distribution Networks), D06 (Electrical Installations & Utilization), D07 (Industrial Automation, DCS & Variable Speed Drives VFD), D08 (Extra-Low Voltage ELV & Special Electrical Systems), D09 (Artificial Intelligence & Advanced Power Technologies), D10 (Energy Storage & Charging Systems — BESS, PSH, Microgrids, EV HPC).
-- **Current Step**: Transforming Domain 11 (Protection, Measurements & System Studies — ANSI Relays 50/51/87/21, TCC Coordination Curves, Instrument Transformers CT/VT Sizing).
-- **Next Step**: Domain 12 (Substation Automation Systems SAS, SCADA, RTU, IEC 61850 Station Bus).
+- **Completed**: D01 (Generation & Electricity Production), D02 (Power System Architecture & Grid Planning), D03 (Transmission Networks), D04 (Substations & Grid Nodes), D05 (Distribution Networks), D06 (Electrical Installations & Utilization), D07 (Industrial Automation, DCS & Variable Speed Drives VFD), D08 (Extra-Low Voltage ELV & Special Electrical Systems), D09 (Artificial Intelligence & Advanced Power Technologies), D10 (Energy Storage & Charging Systems — BESS, PSH, Microgrids, EV HPC), D11 (Protection, Measurements & System Studies), D12 (Substation Automation Systems SAS, SCADA, RTU, IEC 61850), D13 (Communications & Operational Technology), D14 (Power Quality & EMC), D15 (Smart Metering, Grid Digitalization & AMI).
+- **Current Step**: Transforming Domain 16 (Electrical Safety, Earthing & Lightning Protection — Mesh Grids, GPR, Step/Touch Potentials IEEE 80, Surge Arresters IEC 60099, Arc Flash NFPA 70E / IEEE 1584).
+- **Next Step**: Phase 3 Platform Views & Specialized Systems (Cameroon Grid Explorer, Single-Line Diagrams, Sim Lab, Calculators Suite, Hydropower Complex, Equipment List).
