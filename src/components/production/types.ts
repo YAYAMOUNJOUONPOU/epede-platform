@@ -15,7 +15,8 @@ export type GenerationTechnologyId =
   | 'thermal' 
   | 'solar' 
   | 'wind' 
-  | 'biomass';
+  | 'biomass'
+  | 'nuclear';
 
 export interface EnergyFlowDefinition {
   inflow: string;

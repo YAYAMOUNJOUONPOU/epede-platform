@@ -757,3 +757,405 @@ export const BIOMASS_EQUIPMENT_MAP: Record<string, ProductionEquipment> = {
     functionalRepresentation: 'Générateur de Vapeur : Q_vapeur · (h_vapeur - h_eau) = η_chaudière · Q_comb · PCI.'
   }
 };
+
+// -------------------------------------------------------------
+// 5. NUCLEAR POWER GENERATION (PWR / EPR)
+// -------------------------------------------------------------
+export const NUCLEAR_STAGES: ProcessStageNode[] = [
+  {
+    id: 'nuc-stage-fission',
+    stepNumber: 1,
+    labelFr: 'Cœur du Réacteur & Fission Nucléaire',
+    labelEn: 'Reactor Core & Controlled Fission',
+    subtitleFr: 'Fission induite par neutrons thermiques dans le dioxyde d\'uranium (UO2)',
+    subtitleEn: 'Thermal neutron-induced fission in uranium dioxide (UO2) ceramic fuel pellets',
+    energyStateFr: 'Énergie de Liaison Nucléaire : E = Δm · c² (200 MeV par fission)',
+    energyStateEn: 'Nuclear Binding Energy: E = Δm · c² (200 MeV per fission event)',
+    equipmentId: 'eq-nuc-core',
+    iconName: 'Atom',
+    color: '#8b5cf6'
+  },
+  {
+    id: 'nuc-stage-steam-gen',
+    stepNumber: 2,
+    labelFr: 'Circuit Primaire & Générateurs de Vapeur',
+    labelEn: 'Primary Coolant Loop & Steam Generation',
+    subtitleFr: 'Eau pressurisée à 155 bar / 325 °C transférant la chaleur aux tubes en U',
+    subtitleEn: 'Pressurized water at 155 bar / 325 °C transferring thermal energy via U-tubes',
+    energyStateFr: 'Chaleur Sensible & Enthalpie Fluide : Q_th = m_dot · Cp · ΔT (4 500 MWth)',
+    energyStateEn: 'High-Temperature Fluid Enthalpy: Q_th = m_dot · Cp · ΔT (4,500 MWth)',
+    equipmentId: 'eq-nuc-steam-generator',
+    iconName: 'Waves',
+    color: '#6366f1'
+  },
+  {
+    id: 'nuc-stage-turbine',
+    stepNumber: 3,
+    labelFr: 'Détente Turbines Vapeur HP & BP',
+    labelEn: 'Steam Turbines Expansion (HP & LP)',
+    subtitleFr: 'Vapeur saturée à 70 bar détendue dans les corps HP et multi-corps BP',
+    subtitleEn: 'Saturated steam at 70 bar expanded through HP and multi-casing LP cylinders',
+    energyStateFr: 'Couple Mécanique d\'Arbre : P_méc = ω · T_arbre (1 500 tr/min)',
+    energyStateEn: 'Rotational Shaft Mechanical Torque: P_mech = ω · T_shaft (1,500 rpm)',
+    equipmentId: 'eq-nuc-turbine',
+    iconName: 'RotateCw',
+    color: '#3b82f6'
+  },
+  {
+    id: 'nuc-stage-generator',
+    stepNumber: 4,
+    labelFr: 'Alternateur Synchrone 4 Pôles (1 500 tr/min)',
+    labelEn: '4-Pole Nuclear Synchronous Alternator',
+    subtitleFr: 'Rotor massif à pôles lisses refroidi à l\'H2 sous pression et stator à eau',
+    subtitleEn: 'Massive cylindrical rotor cooled by pressurized H2 and water-cooled stator',
+    voltageLevel: '24 kV / 50 Hz',
+    energyStateFr: 'Puissance Électrique Triphasée : S = √3 · U · I (1 650 MWe / 1 900 MVA)',
+    energyStateEn: 'Three-Phase Synchronous AC Power: S = √3 · U · I (1,650 MWe / 1,900 MVA)',
+    equipmentId: 'eq-nuc-generator',
+    iconName: 'Zap',
+    color: '#06b6d4'
+  },
+  {
+    id: 'nuc-stage-condenser',
+    stepNumber: 5,
+    labelFr: 'Condenseur Sous Vide & Source Froide',
+    labelEn: 'Surface Condenser & Heat Sink',
+    subtitleFr: 'Recondensation de la vapeur à 0.05 bar par échange avec fleuve ou aéroréfrigérant',
+    subtitleEn: 'Steam condensation at 0.05 bar via river/seawater or natural draft cooling tower',
+    energyStateFr: 'Rejet Thermique & Fermeture Cycle Rankine : Q_rejet (3 000 MWth)',
+    energyStateEn: 'Thermal Heat Rejection & Closed Rankine Cycle Loop: Q_reject (3,000 MWth)',
+    equipmentId: 'eq-nuc-condenser',
+    iconName: 'Layers',
+    color: '#0284c7'
+  },
+  {
+    id: 'nuc-stage-gsu',
+    stepNumber: 6,
+    labelFr: 'Évacuation THT 400 kV & 4 Barrières de Sûreté',
+    labelEn: '400 kV EHV Evacuation & 4 Safety Barriers',
+    subtitleFr: 'Transformateur GSU 24/400 kV et disjoncteur SF6 injectant sur l\'épine dorsale THT',
+    subtitleEn: 'GSU 24/400 kV transformer and SF6 breaker injecting onto bulk transmission grid',
+    voltageLevel: '24 kV → 400 kV',
+    energyStateFr: 'Inertie Synchrone Réseau Massive : Constante H = 5.5 s (1 650 MWe fermes)',
+    energyStateEn: 'Massive Grid Synchronous Inertia: Inertia Constant H = 5.5 s (1,650 MWe base)',
+    equipmentId: 'eq-nuc-gsu',
+    iconName: 'ShieldCheck',
+    color: '#10b981'
+  }
+];
+
+export const NUCLEAR_EQUIPMENT_MAP: Record<string, ProductionEquipment> = {
+  'eq-nuc-core': {
+    id: 'eq-nuc-core',
+    name: 'Cœur du Réacteur PWR & Cuve Sous Pression (155 bar)',
+    nameEn: 'Pressurized Water Reactor Core & RPV (155 bar)',
+    tag: 'NUC-RPV-01',
+    category: 'mechanical',
+    subsystem: 'Chaudière Nucléaire NSSS',
+    iconName: 'Atom',
+    definition: 'Enceinte en acier forgé de 250 mm d\'épaisseur contenant 241 assemblages de combustible nucléaire à l\'oxyde d\'uranium enrichi (3 à 5% U-235) et les grappes de commande.',
+    purpose: 'Initier, maintenir et contrôler la réaction de fission nucléaire en chaîne pour générer 4 500 MW de puissance thermique continue.',
+    operatingPrinciple: 'Fission des noyaux fissiles 235U par des neutrons thermiques libérant 200 MeV par réaction, modérés et refroidis par l\'eau légère sous 155 bar.',
+    physicalConstruction: 'Cuve forgée en acier 16MND5 sans soudures longitudinales, revêtement interne en acier inoxydable austenitique de 7 mm contre la corrosion, couvercle amovible boulonné par 60 goujons hydrauliques.',
+    mainComponents: ['241 assemblages combustibles UO2 (gaine Zircaloy-4 / M5)', '89 grappes de commande absorbantes (B4C et AIC)', 'Pressuriseur à cannes chauffantes (155 bar)', 'Instrumentation neutronique en cœur et hors cœur'],
+    energyFlow: {
+      inflow: 'Énergie de liaison nucléaire libérée par fission continue des noyaux U-235',
+      outflow: 'Puissance thermique du fluide primaire : Q_th = 4 500 MWth à 325 °C',
+      lossMechanism: 'Pertes thermiques pariétales négligeables (< 0.1%), échauffement gamma absorbé dans les structures',
+      efficiencyTypical: 'Rendement de libération d\'énergie neutronique > 99.8%'
+    },
+    electricalRole: 'Source thermique primaire alimentant le cycle thermodynamique. Les mécanismes de commande de grappes (RGL) sont alimentés par des onduleurs de sécurité 220 Vcc / 400 Vca non interruptibles.',
+    mechanicalRole: 'Résiste à une pression de service de 155 bar, à une température de 325 °C et au flux neutronique rapide pendant 60 ans.',
+    control: 'Contrôle réactif par déplacement des grappes de commande (barres de régulation et barres d\'arrêt) et ajustement de la concentration en acide borique soluble dans le circuit primaire.',
+    instrumentation: ['Chambres d\'ionisation hors cœur (gammes source, intermédiaire et puissance)', 'Thermocouples en sortie de cœur (température coeur)', 'Capteurs de pression et de niveau du pressuriseur'],
+    protection: {
+      description: 'Système d\'arrêt d\'urgence du réacteur (SCRAM / AU) par chute gravitaire instantanée de toutes les grappes de commande en moins de 2.2 secondes sur dépassement de flux neutronique, surpression ou déséquilibre thermique.',
+      tripActions: 'Coupure de l\'alimentation des électro-aimants de maintien des grappes ; insertion gravitaire immédiate ; injection de sécurité haute pression (ISMP) si fuite primaire.'
+    },
+    auxiliarySystems: ['Circuit de contrôle volumétrique et chimique (RCV)', 'Circuit de refroidissement à l\'arrêt (RRA)', 'Circuit d\'injection de sécurité (RIS) à 4 trains indépendants redondants (4 x 100%)'],
+    operatingStates: {
+      normal: 'Palier de pleine puissance à 100% Pn en régime stationnaire stable',
+      starting: 'Divergence neutronique contrôlée, montée en criticité et montée en puissance progressive (5%/h)',
+      running: 'Suivi de charge possible entre 50% et 100% de puissance nominale',
+      stopping: 'Insertion des grappes de puissance, puis grappes d\'arrêt, borication du primaire',
+      fault: 'Arrêt d\'urgence automatique (SCRAM) et maintien du refroidissement de repli',
+      maintenance: 'Arrêt pour rechargement du tiers du combustible tous les 18 mois',
+      isolated: 'Cuve ouverte, cœur déchargé en piscine de désactivation sous 10 m d\'eau boriquée'
+    },
+    failureModes: ['Rupture de tuyauterie primaire (APRP / LOCA)', 'Blocage d\'une grappe de commande en position haute', 'Fuite d\'un tube de générateur de vapeur (RTGV)'],
+    safetyConsiderations: ['Quatre barrières de sûreté étanches : 1. Pastille UO2, 2. Gaine Zircaloy, 3. Circuit primaire sous pression, 4. Enceinte de confinement double paroi', 'Alimentations électriques de secours par 4 diesels d\'ultime secours bunkérisés'],
+    maintenance: ['Contrôle non destructif par ultrasons de la cuve et des piquages tous les 10 ans (Visite Décennale)', 'Remplacement périodique des assemblages usés'],
+    parameters: [
+      { label: 'Puissance thermique du cœur', symbol: 'P_th', typicalValue: '4 500', unit: 'MWth', significance: 'Permet de générer 1 650 MWe nets à l\'alternateur' },
+      { label: 'Pression nominale primaire', symbol: 'P_prim', typicalValue: '155', unit: 'bar', significance: 'Maintient l\'eau liquide à 325 °C sans ébullition en cœur' },
+      { label: 'Température moyenne du cœur', symbol: 'T_moy', typicalValue: '310', unit: '°C', significance: 'Température entrée 295 °C, sortie cuve 328 °C' }
+    ],
+    standards: ['RCC-M (Règles de Conception et de Construction des Matériels Mécaniques des Îlots Nucléaires)', 'AIEA SSR-2/1 (Safety of Nuclear Power Plants: Design)', 'ASME Section III (Nuclear Facility Components)'],
+    upstreamEquipment: ['Combustible nucléaire UO2 enrichi', 'Eau déminéralisée boriquée d\'appoint'],
+    downstreamEquipment: ['Générateurs de vapeur', 'Pressuriseur', 'Pompes primaires'],
+    physicalRepresentation: 'Cuve cylindrique massive en acier de 13 m de hauteur et 5 m de diamètre logée au fond du puits de cuve en béton lourd.',
+    electricalRepresentation: 'Alimentation des 89 mécanismes de commande de grappes (bobines électromagnétiques 400 V).',
+    functionalRepresentation: 'Bilan Neutronique & Thermique : P_th = Σ_fission · Φ_neutrons · V_coeur · E_fiss.'
+  },
+  'eq-nuc-steam-generator': {
+    id: 'eq-nuc-steam-generator',
+    name: 'Générateurs de Vapeur à Tubes en U (GV / Steam Generators)',
+    nameEn: 'Vertical U-Tube Steam Generator (155 bar to 70 bar)',
+    tag: 'NUC-SG-01/04',
+    category: 'mechanical',
+    subsystem: 'Boucle d\'Échange Primaire / Secondaire',
+    iconName: 'Waves',
+    definition: 'Échangeur thermique vertical géant de 22 m de hauteur et 500 tonnes séparant le circuit primaire radioactif du circuit secondaire vapeur.',
+    purpose: 'Transférer la chaleur de l\'eau primaire (325 °C, 155 bar) à l\'eau secondaire pour produire de la vapeur saturée sèche à 70 bar sans contamination radioactive.',
+    operatingPrinciple: 'L\'eau primaire circule à l\'intérieur de 6 000 tubes en U en alliage Inconel 690 étanches, tandis que l\'eau secondaire bout à l\'extérieur des tubes en calandre sous 70 bar.',
+    physicalConstruction: 'Plaque tubulaire en acier forgé de 600 mm d\'épaisseur forée pour 6 000 tubes Inconel 690TT résistants à la corrosion sous contrainte, séparateurs d\'eau centrifuges et sécheurs à chevrons intégrés en dôme supérieur.',
+    mainComponents: ['Faisceau tubulaire en Inconel 690 (6 000 tubes)', 'Plaque tubulaire forgée', 'Séparateurs cycloniques de vapeur', 'Anneau de distribution d\'eau alimentaire'],
+    energyFlow: {
+      inflow: 'Chaleur sensible de l\'eau primaire : 1 125 MWth par générateur de vapeur (4 GV pour 4 500 MWth)',
+      outflow: 'Débit de vapeur saturée sèche : 2 400 t/h par GV à 70 bar / 285 °C vers la turbine',
+      lossMechanism: 'Résistance thermique de conduction des parois de tubes, perte de charge fluide',
+      efficiencyTypical: 'Efficacité d\'échange thermique > 98.5%'
+    },
+    electricalRole: 'Deuxième barrière de sûreté physique séparant l\'eau activée du circuit secondaire.',
+    mechanicalRole: 'Frontière de pression entre le primaire (155 bar) et le secondaire (70 bar).',
+    control: 'Régulation automatique à 3 éléments du niveau d\'eau du GV : mesure du niveau d\'eau, du débit de vapeur et du débit d\'eau alimentaire.',
+    instrumentation: ['Mesures de niveau d\'eau à large et étroite gamme', 'Débitmètres venturi de vapeur', 'Détecteurs d\'activité azote-16 (N-16) pour détection ultra-précoce de microfuite tube'],
+    protection: {
+      description: 'Soupapes de sûreté de surpression secondaire (ASG/VVP) et vannes d\'isolement vapeur rapide (VIV) en moins de 3 secondes en cas de rupture de tuyauterie.',
+      tripActions: 'Fermeture des vannes d\'isolement de vapeur et démarrage de l\'alimentation de secours en eau des générateurs de vapeur (ASG) par motopompes diesel dédiées.'
+    },
+    auxiliarySystems: ['Système de purge continue du fond de GV pour éliminer les boues de magnétite', 'Alimentation de secours des GV (ASG)'],
+    operatingStates: {
+      normal: 'Production continue de 2 400 t/h de vapeur par GV à 70 bar',
+      starting: 'Montée en température et mise sous pression progressive par recirculation',
+      running: 'Équilibre parfait débit vapeur produite = débit eau alimentaire injectée',
+      stopping: 'Évacuation de la puissance résiduelle par contournement vapeur au condenseur',
+      fault: 'Rupture de tube (RTGV) : isolement immédiat du GV défaillant',
+      maintenance: 'Inspection télévisuelle et par courants de Foucault des 6 000 tubes',
+      isolated: 'Isolé côté primaire et secondaire'
+    },
+    failureModes: ['Corrosion sous contrainte des tubes', 'Vibration des tubes sous l\'écoulement diphasique provoquant une usure par frottement', 'Entartrage de la plaque tubulaire'],
+    safetyConsiderations: ['Constitue la barrière entre fluide actif et non actif. Teneur en humidité de vapeur en sortie < 0.25% pour préserver les aubes de turbine.'],
+    maintenance: ['Bouchage préventif des tubes fissurés par dudgeonnage de bouchons mécaniques', 'Lavage chimique haute pression des boues de fond de cuve'],
+    parameters: [
+      { label: 'Débit de vapeur unitaire', symbol: 'Q_vap', typicalValue: '2 400', unit: 't/h', significance: 'Soit près de 10 000 t/h au total alimentant le groupe turbo-alternateur' },
+      { label: 'Pression vapeur secondaire', symbol: 'P_sec', typicalValue: '70', unit: 'bar', significance: 'Pression de vapeur saturée sèche à 285 °C' },
+      { label: 'Nombre de générateurs de vapeur', symbol: 'N_GV', typicalValue: '4', unit: 'unités', significance: 'Configuration 4 boucles standard EPR / 1 650 MWe' }
+    ],
+    standards: ['RCC-M Tome I (Matériels de niveau 1)', 'ASME Section III Division 1 Subsection NB', 'CEI 61513 (Instrumentation and control for systems important to safety)'],
+    upstreamEquipment: ['Cœur du réacteur', 'Pompes primaires de circulation (4 x 7 MW)'],
+    downstreamEquipment: ['Lignes de vapeur vive (VVP)', 'Corps haute pression de la turbine'],
+    physicalRepresentation: 'Gigantesque bouteille verticale conique blanche de 22 m de haut dominant le bâtiment réacteur.',
+    electricalRepresentation: 'Alimentation des vannes motorisées de régulation et pompes de purge.',
+    functionalRepresentation: 'Bilan d\'Échange Thermique : Q_prim · (h_chaud - h_froid) = Q_sec · (h_vap - h_eau_alim).'
+  },
+  'eq-nuc-turbine': {
+    id: 'eq-nuc-turbine',
+    name: 'Groupe Turbo-Alternateur Vapeur Nucléaire (HP + 3 BP)',
+    nameEn: 'Nuclear Steam Turbine Train (Single HP + Triple Double-Flow LP)',
+    tag: 'NUC-TURB-01',
+    category: 'mechanical',
+    subsystem: 'Salle des Machines & Conversion Thermomécanique',
+    iconName: 'RotateCw',
+    definition: 'Ligne d\'arbres de 70 m de long tournant à 1 500 tr/min, composée d\'un corps haute pression (HP) à double flux et de trois corps basse pression (BP) à double flux avec des aubes titane de 1.8 m de long.',
+    purpose: 'Convertir l\'énergie enthalpique de la vapeur saturée (10 000 t/h à 70 bar) en énergie cinétique rotationnelle puis en couple mécanique sur l\'arbre de l\'alternateur.',
+    operatingPrinciple: 'Détente de la vapeur à travers des aubages fixes (distributeurs) et mobiles (roues), séchage intermédiaire et surchauffe à mi-détente (MSR) pour éviter l\'érosion par gouttelettes d\'eau.',
+    physicalConstruction: 'Rotors forgés monoblocs en acier allié de 120 tonnes chacun, aubages de dernier étage BP en alliage de titane résistant à la force centrifuge extrême, paliers lisses hydrodynamiques sous film d\'huile sous pression.',
+    mainComponents: ['Corps HP double flux', 'Deux sécheurs-surchauffeurs intermédiaires (MSR)', 'Trois corps BP double flux', 'Ligne d\'arbres rigide accouplée de 70 mètres', 'Système de virage mécanique lent'],
+    energyFlow: {
+      inflow: 'Débit total de vapeur : 2 700 kg/s à 70 bar / 285 °C (enthalpie h = 2 770 kJ/kg)',
+      outflow: 'Couple mécanique sur l\'arbre : P_méc = 1 700 MWméc à 1 500 tr/min (vapeur détendue à 0.05 bar)',
+      lossMechanism: 'Pertes par condensation humide interne, frottements aérodynamiques, pertes aux paliers mécaniques',
+      efficiencyTypical: 'Rendement isentropique turbine : 88% à 91%'
+    },
+    electricalRole: 'Entraîne directement le rotor de l\'alternateur à la vitesse synchrone exacte de 1 500 tr/min (50 Hz).',
+    mechanicalRole: 'Développe un couple d\'arbre titanesque de plus de 10 800 000 N·m en régime nominal continu.',
+    control: 'Régulateur électro-hydraulique de vitesse et de puissance (TCS) commandant 4 soupapes d\'admission HP et 4 soupapes d\'interception BP avec temps de fermeture < 150 ms.',
+    instrumentation: ['Mesures de vibration des arbres par capteurs de proximité sans contact (Bently Nevada)', 'Capteurs de vitesse à roues dentées magnétiques (redondance 2oo3)', 'Mesures de dilatation différentielle rotor/stator'],
+    protection: {
+      description: 'Déclenchement d\'urgence turbine par fermeture ultra-rapide des soupapes d\'admission sur survitesse (> 108% Nn), perte d\'huile de graissage, vide condenseur dégradé ou vibrations excessives.',
+      tripActions: 'Fermeture des soupapes HP/BP en 120 ms et ouverture automatique du contournement vapeur vers le condenseur.'
+    },
+    auxiliarySystems: ['Centrale d\'huile de graissage et d\'huile de régulation haute pression (160 bar)', 'Système de vide condenseur par éjecteurs et pompes à anneau liquide', 'Dispositif de virage lent (60 tr/min) pour éviter le flambage thermique à l\'arrêt'],
+    operatingStates: {
+      normal: 'Rotation synchrone à 1 500 tr/min développant 1 700 MW mécaniques',
+      starting: 'Réchauffage des corps, montée en vitesse progressive par paliers critiques',
+      running: 'Fonctionnement régulé en puissance ou réglage primaire de fréquence réseau',
+      stopping: 'Déclenchement, ralentissement inertiel sur 45 minutes puis passage sur virageur',
+      fault: 'Déclenchement d\'urgence survitesse ou rupture d\'huile',
+      maintenance: 'Dévirage, ouverture des corps de turbine et contrôle magnétoscopique des aubages',
+      isolated: 'Ligne d\'arbre arrêtée et refroidie'
+    },
+    failureModes: ['Rupture d\'aube basse pression sous contrainte centrifuge et fatigue vibratoire', 'Instabilité de film d\'huile palier (oil whirl / whip)', 'Flambage thermique de l\'arbre en cas d\'arrêt du virageur'],
+    safetyConsiderations: ['Vitesse périphérique en bout d\'aube BP supérieure à la vitesse du son (Mach 1.4) ; énergie cinétique de rotation de plusieurs gigajoules protégée par des blindages de carter.'],
+    maintenance: ['Équilibrage dynamique in situ de la ligne d\'arbre', 'Contrôle gammagraphique et ressuage des disques frettés'],
+    parameters: [
+      { label: 'Puissance mécanique nominale', symbol: 'P_méc', typicalValue: '1 700', unit: 'MW', significance: 'Permet de délivrer 1 650 MWe nets au réseau électrique' },
+      { label: 'Vitesse de rotation synchrone', symbol: 'N', typicalValue: '1 500', unit: 'tr/min', significance: 'Machine 4 pôles pour réseau 50 Hz (1 800 tr/min en 60 Hz)' },
+      { label: 'Longueur de l\'aubage final BP', symbol: 'L_aube', typicalValue: '1 830', unit: 'mm', significance: 'Aube géante en alliage de titane à balayage optimal sous vide poussé' }
+    ],
+    standards: ['CEI 60045-1 (Steam turbines - Specifications)', 'ISO 10816-2 (Mechanical vibration - Land-based steam turbines and generators)'],
+    upstreamEquipment: ['Générateurs de vapeur (vapeur vive 70 bar)'],
+    downstreamEquipment: ['Alternateur synchrone 4 pôles', 'Condenseur de surface'],
+    physicalRepresentation: 'Immense ligne de machines carénées en gris et bleu de 70 m de long sur socle béton anti-sismique en salle des machines.',
+    electricalRepresentation: 'Alimentation des motopompes à huile de graissage secourues sur batterie 220 Vcc.',
+    functionalRepresentation: 'Détente Thermodynamique : P_méc = Q_vapeur · (h_admission - h_échappement) · η_isentropique.'
+  },
+  'eq-nuc-generator': {
+    id: 'eq-nuc-generator',
+    name: 'Alternateur Synchrone Nucléaire 4 Pôles (1 900 MVA / 24 kV)',
+    nameEn: '4-Pole Nuclear Synchronous Alternator (1,900 MVA / 24 kV)',
+    tag: 'NUC-ALT-01',
+    category: 'electromagnetic',
+    subsystem: 'Conversion Électromécanique Synchrone',
+    iconName: 'Zap',
+    definition: 'Le plus puissant générateur électrique au monde : alternateur synchrone triphasé 4 pôles à rotor lisse de 240 tonnes tournant à 1 500 tr/min.',
+    purpose: 'Convertir le couple mécanique de la turbine en puissance électrique triphasée synchrone de 1 650 MW sous 24 kV avec une contribution majeure à l\'inertie synchrone du réseau.',
+    operatingPrinciple: 'Induction électromagnétique de Faraday : un champ magnétique continu rotorique tournant induit dans l\'enroulement statorique triphasé distribué un système de tensions sinusoïdales équilibrées 24 kV / 50 Hz.',
+    physicalConstruction: 'Rotor monobloc forgé en acier Ni-Cr-Mo, enroulements rotoriques en cuivre à l\'argent refroidis par circulation directe d\'hydrogène gazeux sous 5 bar (H2), stator bobiné à barres Roebel refroidies par eau déminéralisée circulant à l\'intérieur des conducteurs creux.',
+    mainComponents: ['Stator avec circuit magnétique en tôles au silicium à faibles pertes', 'Barres statoriques Roebel à conducteurs creux refroidis à l\'eau', 'Rotor lisse 4 pôles refroidi à l\'hydrogène sous 5 bar', 'Système d\'excitation sans balais (brushless) ou statique par ponts thyristors', 'Traversées haute tension isolées SF6 ou huile'],
+    energyFlow: {
+      inflow: 'Puissance mécanique d\'arbre : P_méc = 1 700 MW à 1 500 tr/min',
+      outflow: 'Puissance électrique apparente : S_n = 1 900 MVA sous 24 kV (1 650 MW actifs à cos φ = 0.87)',
+      lossMechanism: 'Pertes par effet Joule stator et rotor, pertes fer (hystérésis et courants de Foucault), pertes par ventilation H2',
+      efficiencyTypical: 'Rendement exceptionnel : 98.9% à 99.1%'
+    },
+    electricalRole: 'Générateur synchrone de référence (slack/PV node) fournissant puissance active et réglage de tension/puissance réactive (± 600 Mvar) pour le maintien de l\'équilibre dynamique du réseau.',
+    mechanicalRole: 'Rotor de 240 tonnes apportant une énergie cinétique stockée considérable : Constante d\'inertie H = 5.5 s (plus de 9 000 MW·s d\'énergie cinétique stabilisatrice de fréquence).',
+    control: 'Régulateur Automatique de Tension (AVR) numérique redondant 2oo3 contrôlant le courant d\'excitation rotorique (If jusqu\'à 8 000 A) avec stabilisateur de puissance système (PSS) anti-oscillations.',
+    instrumentation: ['Sondes de température PT100 réparties dans les encoches statoriques', 'Capteurs de pureté et de pression d\'hydrogène H2', 'Détecteurs de décharges partielles en ligne', 'Fluxmètres d\'entrefer'],
+    protection: {
+      description: 'Protection multifonctionnelle numérique différentielle alternateur (ANSI 87G), perte d\'excitation (ANSI 40), masse stator 100% troisième harmonique (ANSI 64S), déséquilibre courant inverse (ANSI 46) et puissance inverse (ANSI 32R).',
+      tripActions: 'Déclenchement instantané du disjoncteur de groupe, désexcitation rapide par ouverture du disjoncteur de champ et arrêt d\'urgence turbine.'
+    },
+    auxiliarySystems: ['Centrale de refroidissement eau déminéralisée stator (stator water cooling)', 'Centrale de séchage et de régulation de pureté hydrogène H2 (> 98% de pureté pour éviter tout mélange explosif)', 'Système d\'étanchéité d\'arbre par film d\'huile à double bague (seal oil)'],
+    operatingStates: {
+      normal: 'Production continue de 1 650 MWe synchronisée au réseau 400 kV à cos φ = 0.90',
+      starting: 'Montée en vitesse à vide, excitation progressive et synchronisation automatique par synchrocoupleur',
+      running: 'Exploitation dans les limites de la courbe de capabilité PQ (limite thermique stator, rotor et stabilité d\'angle)',
+      stopping: 'Baisse de charge progressive, déconnexion du disjoncteur de groupe, désexcitation',
+      fault: 'Déclenchement instantané sur défaut interne ou anomalie réseau sévère',
+      maintenance: 'Inertage de l\'alternateur au CO2 puis à l\'air pour visites d\'inspection',
+      isolated: 'Arrêté sous atmosphère d\'air sec'
+    },
+    failureModes: ['Court-circuit entre spires ou défaut à la masse de barre statorique', 'Perte d\'étanchéité huile d\'arbre provoquant une fuite d\'hydrogène', 'Échauffement excessif par déséquilibre de phases (courant inverse I2)'],
+    safetyConsiderations: ['Atmosphère d\'hydrogène explosive : maintien strict de la pureté > 98% H2 et balayage obligatoire au CO2 avant tout contact avec l\'air ambiant.'],
+    maintenance: ['Contrôle d\'isolement diélectrique et mesure du facteur de dissipation tg δ', 'Contrôle robotisé de l\'entrefer et du serrage des cales d\'encoche'],
+    parameters: [
+      { label: 'Puissance apparente assignée', symbol: 'S_n', typicalValue: '1 900', unit: 'MVA', significance: 'Permet de délivrer 1 650 MW actifs avec une réserve de 600 Mvar réactifs' },
+      { label: 'Tension assignée statorique', symbol: 'U_n', typicalValue: '24 000', unit: 'V (24 kV)', significance: 'Courant nominal statorique colossal de près de 45 700 A par phase' },
+      { label: 'Courant nominal de phase', symbol: 'I_n', typicalValue: '45 700', unit: 'A', significance: 'Nécessite des gaines barres blindées à phase isolée (IPB) de 1.5 m de diamètre' }
+    ],
+    standards: ['CEI 60034-1 (Rotating electrical machines - Rating and performance)', 'CEI 60034-3 (Specific requirements for synchronous generators driven by steam turbines)', 'IEEE C50.13 (Requirements for 50 Hz and 60 Hz Cylindrical-Rotor Synchronous Generators)'],
+    upstreamEquipment: ['Turbine à vapeur HP/BP (accouplement mécanique direct)', 'Pont d\'excitation thyristors'],
+    downstreamEquipment: ['Gaines barres blindées à phase isolée (IPB 24 kV)', 'Disjoncteur générateur (GCB)', 'Transformateur élévateur GSU 24/400 kV'],
+    physicalRepresentation: 'Immense cylindre bleu/gris de 15 m de long et 4.5 m de diamètre entouré de tuyauteries d\'eau de refroidissement et gaines barres dorées.',
+    electricalRepresentation: 'Alternateur synchrone triphasé couplé en étoile avec neutre relié à la terre par transformateur de distribution ou résistance NGR.',
+    functionalRepresentation: 'Équation Électromécanique : P = (E · V / X_d) · sin(δ) ; J · (dω/dt) = T_méc - T_élec.'
+  },
+  'eq-nuc-condenser': {
+    id: 'eq-nuc-condenser',
+    name: 'Condenseur de Surface Sous Vide & Aéroréfrigérant',
+    nameEn: 'Surface Condenser & Natural Draft Cooling Tower',
+    tag: 'NUC-COND-01',
+    category: 'auxiliary',
+    subsystem: 'Source Froide & Clôture du Cycle Rankine',
+    iconName: 'Layers',
+    definition: 'Échangeur de chaleur colossal sous vide poussé (0.05 bar) situé directement sous les corps BP de turbine, composé de 50 000 tubes en titane balayés par 60 m³/s d\'eau de refroidissement.',
+    purpose: 'Condenser instantanément la vapeur détendue sortant de la turbine pour créer un vide poussé augmentant considérablement le rendement thermodynamique du cycle.',
+    operatingPrinciple: 'L\'eau de refroidissement froide (15 à 25 °C) circule dans les tubes en titane ; la vapeur détendue se condense à leur contact sous 33 °C et 0.05 bar absolu, créant un appel de vide continu.',
+    physicalConstruction: 'Calandre mécano-soudée sous vide de 30 m de long et 15 m de hauteur avec tubes en titane résistants à l\'eau de mer ou à l\'eau de rivière, raccordée à une tour aéroréfrigérante en béton armé hyperboloïde de 165 m de haut.',
+    mainComponents: ['Calandre sous vide en acier', '50 000 tubes en titane ou laiton d\'aluminium', 'Pompes d\'extraction des condensats (3 x 50%)', 'Éjecteurs de vide et pompes d\'extraction des gaz incondensables', 'Tour aéroréfrigérante à tirage naturel'],
+    energyFlow: {
+      inflow: 'Vapeur d\'échappement BP : 2 000 kg/s à 0.05 bar / 33 °C',
+      outflow: 'Eau condensée (condensats) renvoyée vers les réchauffeurs à 33 °C',
+      lossMechanism: 'Rejet thermique vers la source froide : Q_rejet ≈ 2 800 MWth évacués dans l\'atmosphère par évaporation ou dans le fleuve',
+      efficiencyTypical: 'Établit le point froid optimal du cycle de Carnot'
+    },
+    electricalRole: 'Aucun rôle électrique direct ; ses pompes de circulation d\'eau (3 x 12 MW sous 6.6 kV) constituent l\'un des plus gros consommateurs auxiliaires de la tranche.',
+    mechanicalRole: 'Supporte le vide poussé sans implosion et recueille les condensats dégazés.',
+    control: 'Régulation du niveau d\'eau dans le puits chaud du condenseur et maintien du vide par extraction continue de l\'air et des incondensables.',
+    instrumentation: ['Vacuomètres de haute précision à membrane absolue', 'Conductimètres en ligne pour détection immédiate de prise d\'eau brute (fuite de tube)', 'Sondes thermométriques en nappe'],
+    protection: {
+      description: 'Déclenchement immédiat de la turbine sur perte de vide (pression supérieure à 0.25 bar absolu) pour éviter l\'échauffement destructeur des aubages basse pression.',
+      tripActions: 'Ouverture des casseurs de vide, arrêt turbine et fermeture des vannes d\'extraction.'
+    },
+    auxiliarySystems: ['Système de nettoyage continu des tubes par circulation de billes élastomères (système Taprogge)', 'Centrale de chloration ou traitement biocide de l\'eau de refroidissement'],
+    operatingStates: {
+      normal: 'Maintien continu d\'une pression absolue de 0.045 à 0.055 bar',
+      starting: 'Mise sous vide préalable par pompes d\'amorçage avant admission de vapeur',
+      running: 'Condensation stable absorbant 2 800 MWth',
+      stopping: 'Casse du vide contrôlée après arrêt de la turbine',
+      fault: 'Perte de débit d\'eau de circulation ou rupture de tube : isolement d\'une demi-caisse',
+      maintenance: 'Détartrage et contrôle d\'étanchéité par gaz traceur hélium',
+      isolated: 'Vidangé côté eau et aéré'
+    },
+    failureModes: ['Pollution des condensats par pénétration d\'eau brute (perforation de tube)', 'Perte de vide par entrée d\'air sur les joints d\'arbre turbine', 'Encrassement biologique des faisceaux tubulaires'],
+    safetyConsiderations: ['Risque d\'implosion sous dépression extrême ; surveillance continue de la qualité chimique de l\'eau (chimie all-volatile treatment AVT).'],
+    maintenance: ['Rebouchage des tubes corrodés', 'Inspection annuelle des diffuseurs d\'eau de l\'aéroréfrigérant'],
+    parameters: [
+      { label: 'Pression absolue de fonctionnement', symbol: 'P_cond', typicalValue: '0.05', unit: 'bar abs', significance: 'Garantit la détente maximale de la vapeur jusqu\'à 33 °C' },
+      { label: 'Débit d\'eau de circulation', symbol: 'Q_circ', typicalValue: '60', unit: 'm³/s', significance: 'Débit d\'eau colossal pompé pour évacuer les 2 800 MW thermiques' },
+      { label: 'Hauteur de la tour aéroréfrigérante', symbol: 'H_tour', typicalValue: '165', unit: 'm', significance: 'Génère un tirage naturel thermique puissant sans ventilateur électrique' }
+    ],
+    standards: ['HEI Standards for Steam Surface Condensers', 'ASME PTC 12.2 (Steam Surface Condensers)'],
+    upstreamEquipment: ['Échappement des 3 corps basse pression de la turbine'],
+    downstreamEquipment: ['Pompes d\'extraction des condensats', 'Poste d\'eau (bâche dégazante et réchauffeurs)'],
+    physicalRepresentation: 'Structure parallélépipédique métallique gigantesque installée sous la turbine au niveau du sol de la salle des machines.',
+    electricalRepresentation: 'Alimentation des 3 moteurs 6.6 kV des pompes de circulation d\'eau (3 x 12 000 kW).',
+    functionalRepresentation: 'Bilan Thermodynamique Condensat : Q_rejet = Q_vapeur · h_fg_eau(P_vide).'
+  },
+  'eq-nuc-gsu': {
+    id: 'eq-nuc-gsu',
+    name: 'Transformateur Élévateur Principal GSU (3 x 650 MVA - 24/400 kV)',
+    nameEn: 'Generator Step-Up (GSU) Transformer Bank (3 x 650 MVA - 24/400 kV)',
+    tag: 'NUC-GSU-01',
+    category: 'transformer',
+    subsystem: 'Évacuation Haute Tension & Interconnexion Réseau',
+    iconName: 'ShieldCheck',
+    definition: 'Banc triphasé de trois transformateurs monophasés géants (3 x 650 MVA) ou bloc triphasé 2 000 MVA élevant la tension de génération de 24 kV à 400 kV THT.',
+    purpose: 'Évacuer la puissance totale de la tranche (1 650 MW) sur le réseau de grand transport 400 kV avec le minimum de pertes Joule, tout en assurant l\'isolement galvanique.',
+    operatingPrinciple: 'Induction électromagnétique mutuelle de Faraday à flux forcé dans un circuit magnétique en tôles à grains orientés de haute perméabilité.',
+    physicalConstruction: 'Cuve blindée étanche remplie d\'huile minérale isolante et refroidissante (ODAF / OFAF), enroulements cuivre transposés continus (CTC) résistant aux efforts électrodynamiques de court-circuit, traversées condensateur 400 kV à porcelaine ou composite.',
+    mainComponents: ['Cuve principale avec conservateur d\'huile sous membrane', 'Enroulements BT 24 kV (bobinés pour 46 000 A) et HT 400 kV', 'Traversées 400 kV avec réducteurs de courant tores intégrés', 'Aéroréfrigérants huile/air forcés (OFAF)', 'Relais Buchholz et détecteurs d\'anomalie de gaz sous huile'],
+    energyFlow: {
+      inflow: 'Puissance brute alternateur : 1 650 MW sous 24 kV (courant de phase 45 700 A)',
+      outflow: 'Puissance évacuée sur la ligne 400 kV : 1 640 MW sous 400 kV (courant de phase réduit à 2 400 A)',
+      lossMechanism: 'Pertes fer dans le noyau magnétique (environ 800 kW) et pertes Joule cuivre (environ 5 500 kW)',
+      efficiencyTypical: 'Rendement exceptionnel : > 99.65%'
+    },
+    electricalRole: 'Élévation massive de tension réduisant le courant d\'un facteur 16.7, réduisant ainsi les pertes Joules en ligne par un facteur 278 (P_joule = 3·R·I²).',
+    mechanicalRole: 'Résiste aux contraintes électrodynamiques colossales de court-circuit asymétrique atteignant plusieurs dizaines de méganewtons sur les calages d\'enroulements.',
+    control: 'Régleur en charge (OLTC) côté 400 kV permettant un ajustement de ± 10% en 17 ou 27 prises pour adapter la tension d\'évacuation aux fluctuations du réseau de transport.',
+    instrumentation: ['Analyseurs en continu des gaz dissous dans l\'huile (DGA 8 gaz)', 'Moniteurs de température des points chauds fibre optique intégrés aux enroulements', 'Capteurs de pression dynamique et relais Buchholz double flotteur'],
+    protection: {
+      description: 'Protection différentielle transformateur à pourcentage stabilisé (ANSI 87T), protection Buchholz (ANSI 63), masse cuve (ANSI 50N/51N), surintensité de phase et thermique (ANSI 49).',
+      tripActions: 'Déclenchement simultané en 40 ms du disjoncteur groupe 24 kV et du disjoncteur réseau 400 kV avec extinction automatique incendie par déluge d\'eau émulseur.'
+    },
+    auxiliarySystems: ['Bac de rétention totale avec séparateur eau-huile anti-incendie (système piège à flammes)', 'Dispositif automatique d\'extinction incendie par rideau d\'eau pulvérisée déluge', 'Pompes de circulation forcée d\'huile et ventilateurs de radiateurs'],
+    operatingStates: {
+      normal: 'Évacuation continue de 1 650 MW / 400 kV en charge thermique stable',
+      starting: 'Mise sous tension à vide depuis le réseau 400 kV avec appel de courant d\'enclenchement (inrush)',
+      running: 'Fonctionnement permanent sous surveillance télésurveillée DGA en ligne',
+      stopping: 'Déconnexion préalable côté charge 400 kV puis côté 24 kV',
+      fault: 'Déclenchement différentiel ou Buchholz : isolement total immédiat',
+      maintenance: 'Traitement sous vide de l\'huile minérale et mesure de réponse en fréquence diélectrique (DFR)',
+      isolated: 'Mis à la terre côté 24 kV et 400 kV'
+    },
+    failureModes: ['Défaut d\'isolement interne entre spires par vieillissement thermique du papier kraft', 'Amorçage diélectrique de traversée 400 kV', 'Déformation mécanique des enroulements suite à un court-circuit réseau non éliminé à temps'],
+    safetyConsiderations: ['Volume d\'huile inflammable de plus de 120 tonnes par unité ; parois coupe-feu béton armé 4 heures séparant chaque phase monophasée.'],
+    maintenance: ['Chromatographie annuelle en laboratoire des gaz dissous dans l\'huile', 'Thermographie infrarouge des raccordements haute tension'],
+    parameters: [
+      { label: 'Puissance assignée totale', symbol: 'S_n', typicalValue: '1 950', unit: 'MVA', significance: 'Composé de 3 unités monophasées de 650 MVA ou bloc triphasé 2 000 MVA' },
+      { label: 'Tension primaire / secondaire', symbol: 'U_1 / U_2', typicalValue: '24 / 400', unit: 'kV', significance: 'Rapport de transformation élévateur pour le grand réseau THT' },
+      { label: 'Tension de court-circuit', symbol: 'U_cc', typicalValue: '16.5', unit: '%', significance: 'Limite le courant de défaut symétrique côté réseau à une valeur gérable' }
+    ],
+    standards: ['CEI 60076-1 (Power transformers - General)', 'CEI 60076-5 (Ability to withstand short circuit)', 'IEEE C57.12.00 (General Requirements for Liquid-Immersed Distribution, Power, and Regulating Transformers)'],
+    upstreamEquipment: ['Alternateur 24 kV', 'Gaines barres blindées phase isolée IPB'],
+    downstreamEquipment: ['Poste de transport 400 kV', 'Lignes THT d\'interconnexion nationale'],
+    physicalRepresentation: 'Trois cuves monumentales grises bordées de radiateurs imposants et surmontées de traversées céramiques 400 kV géantes, séparées par de hauts murs anti-déflagration.',
+    electricalRepresentation: 'Transformateur élévateur couplage YNd11 (étoile à la terre côté 400 kV, triangle côté 24 kV).',
+    functionalRepresentation: 'Transformation Haute Tension : U_sec = m · U_prim ; I_sec = I_prim / m ; Pertes = P_fer + 3·R_eq·I_sec².'
+  }
+};
+

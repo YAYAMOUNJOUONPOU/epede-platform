@@ -4,7 +4,7 @@
 import { useState, useMemo } from 'react';
 import { CAMEROON_GENERATION_FLEET, type CameroonPowerPlant } from '../data/cameroonGenerationFleet';
 
-export type GenerationTechnology = 'hydro' | 'solar' | 'thermal' | 'wind' | 'biomass';
+export type GenerationTechnology = 'hydro' | 'solar' | 'thermal' | 'wind' | 'biomass' | 'nuclear';
 
 export interface GenerationPlantParameters {
   headM: number;

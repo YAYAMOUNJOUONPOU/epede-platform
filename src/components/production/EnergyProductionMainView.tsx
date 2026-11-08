@@ -103,6 +103,7 @@ export const EnergyProductionMainView: React.FC<EnergyProductionMainViewProps> =
 
   // Sub-Tab Navigation for each of the 5 Stages
   const [stage1Tab, setStage1Tab] = useState<'FLEET' | 'SIZING' | 'PHYSICS_SOURCES' | 'OTHER_TECHS'>('FLEET');
+  const [selectedOtherTech, setSelectedOtherTech] = useState<GenerationTechnologyId>('solar');
   const [stage2Tab, setStage2Tab] = useState<'SCHEMATIC_17' | 'CUTAWAY' | 'HILL_CHART' | 'TURBINE_SELECTION' | 'TURBINE_TYPES'>('SCHEMATIC_17');
   const [stage3Tab, setStage3Tab] = useState<'PQ_DIAGRAM' | 'SYNCHRONIZATION' | 'PRIMARY_CONTROL' | 'ELECTROMAGNETIC' | 'ENERGY_BALANCE'>('PQ_DIAGRAM');
   const [stage4Tab, setStage4Tab] = useState<'PROTECTION_12' | 'NEUTRAL_EARTHING' | 'STATION_BOP'>('PROTECTION_12');
@@ -299,7 +300,7 @@ export const EnergyProductionMainView: React.FC<EnergyProductionMainViewProps> =
                   }`}
                 >
                   <Layers className="w-3.5 h-3.5" />
-                  <span>{locale === 'fr' ? '4. Filières Solaire, Éolien, CCGT & Biomasse' : '4. Solar, Wind, CCGT & Biomass'}</span>
+                  <span>{locale === 'fr' ? '4. Filières Solaire, Éolien, CCGT, Biomasse & Nucléaire' : '4. Solar, Wind, CCGT, Biomass & Nuclear'}</span>
                 </button>
               </div>
 
@@ -349,9 +350,17 @@ export const EnergyProductionMainView: React.FC<EnergyProductionMainViewProps> =
 
               {stage1Tab === 'OTHER_TECHS' && (
                 <OtherGenerationsJourney
-                  technologyId="solar"
+                  technologyId={selectedOtherTech}
                   locale={locale}
-                  onSelectTechnology={() => {}}
+                  onSelectTechnology={(techId) => {
+                    if (techId === 'hydro') {
+                      store.setActiveStage(1);
+                      setStage1Tab('FLEET');
+                    } else {
+                      setSelectedOtherTech(techId);
+                    }
+                  }}
+                  onBackToOverview={() => setStage1Tab('FLEET')}
                   onSelectGlobalEquipment={handleInspectEquipment}
                 />
               )}
