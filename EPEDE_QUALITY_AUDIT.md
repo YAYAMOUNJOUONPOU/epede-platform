@@ -65,9 +65,17 @@ Each page and engineering module is evaluated on eight core axes (Target: 95%+):
 
 ### Domain 9 (D09) — Artificial Intelligence & Advanced Power Technologies
 - **Route**: `#/domain/D09`
+- **Components**: `UniversalPedagogicalDomainView`, `AdvancedAiWorkbench`, `IiotEdgeAcquisitionEngine`, `AiDeliverablesExportEngine`, `useAiProjectStore`.
+- **Initial Baseline Weaknesses Identified**:
+  - Missing entry in `DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY`, showing incomplete notice to learners entering `UniversalPedagogicalDomainView`.
+  - Needed direct alignment with Physics-Informed Neural Networks (PINN), WAMS PMU stability (IEEE C37.118), transformer DGA Duval analysis (IEC 60599 / IEEE C57.104), and OT cybersecurity probes (IEC 62443).
+- **Audit Score Post-Transformation**: 97% (5 AI/WAMS Architectures, 6 Field Apparatus, 7 Project Lifecycle Phases, 6 LaTeX Solvers, 6 Standards).
+
+### Domain 10 (D10) — Energy Storage & Charging Systems (BESS, PSH, Microgrids)
+- **Route**: `#/domain/D10`
 - **Audit Target**: 97%+
 
-### Domains 10 to 16
+### Domains 11 to 16
 - Scheduled in sequential order per execution protocol.
 
 ---

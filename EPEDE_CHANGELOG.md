@@ -184,3 +184,42 @@ All notable changes, engineering refactors, and technical enhancements across th
     - IEC 60839-11-1 (Electronic access control systems).
     - ISO 16484-5 / BACnet (Building automation and control systems).
     - NF EN 15004-1 / NFPA 2001 (Fixed firefighting systems - Gas extinguishing systems).
+
+### Domain 9 (D09) - Artificial Intelligence & Advanced Power Technologies Transformation
+- Completely overhauled pedagogical framework in `domainPedagogicalContentRegistry.ts`:
+  - **Section A**: Formulated hybrid physics-AI boundaries, high-resolution synchrophasor telemetry (PMU 50 frames/s GPS/PTP per IEEE C37.118), transformer DGA chromatography, and physics-regularized loss functions.
+  - **Section B**: Documented 5 canonical AI & advanced power technologies architectures:
+    1. **Jumeau Numérique Thermique & Diagnostic DGA par Réseaux Neuronaux (Centrale de Songloulou 384 MW & Postes HTB)** (Photoacoustic multi-gas, GaAs optical sensors, neural Duval 1/4/5, IEC 60076-7 thermal differential ODE).
+    2. **Système de Surveillance Grand Réseau WAMS par Synchrophaseurs PMU (Interconnexion RIS-RIN Cameroun 225 kV)** (GPS PMUs, PDC data concentrators, real-time angular stability margin, RoCoF swing equation).
+    3. **Prévision Neuronale Hybride Solaire & Pilotage Prédictif de Rampe BESS (Centrale Solaire de Maroua/Guider 15 MWc)** (Deep LSTM networks, all-sky cameras, 4-quadrant BESS closed-loop ramp control).
+    4. **Sonde de Détection d'Intrusions Cyber-Physiques & IA Comportementale OT (Poste Numérique d'Oyomabang 225 kV)** (Deep Packet Inspection on IEC 61850 GOOSE/MMS, unsupervised anomaly detection, MITRE ATT&CK for ICS).
+    5. **Détection d'Anomalies de Comptage & Pertes Non-Techniques par Forêts d'Isolement (Réseau AMI ENEO Douala & Yaoundé)** (Multivariate Isolation Forest processing 500,000 smart STS/AMI meters, automated tamper dispatching).
+  - **Section C**: Added 6 core AI and advanced power system apparatus with authentic equipment registry citations:
+    - Online Multi-gas DGA Monitor & AI Duval Triangle Health Index (`eq-exp-dga-online-monitor`).
+    - Synchrophasor Measurement Unit PMU & Wide-Area Stability Terminal (`eq-exp-pmu-synchrophasor`).
+    - Hardened Industrial OT Network Switch & Cyber-Physical IDS Probe (`eq-exp-switch-iec62443`).
+    - Autonomous Grid Inspection Drone with Radiometric Thermal Camera (`eq-exp-drone-radiometric`).
+    - Ruggedized Industrial Edge AI Compute Gateway for Smart Substations (`eq-exp-edge-ai-gateway`).
+    - Smart Metering Data Concentrator Unit DCU & Anti-Tamper Analyzer (`eq-exp-ami-concentrator`).
+  - **Section D**: Expanded methodology to 7 sequential engineering lifecycle phases:
+    1. Business Use-Case Framing, Data Discovery & AI Readiness Assessment per NIST AI RMF.
+    2. High-Frequency Sensor Deployment, Precision PTP Timing & OT Field Network.
+    3. Data Cleaning, Expert Failure Tagging & Data Lake Ingestion via Apache Kafka.
+    4. Physics-Informed Model Architecture, Training & Loss Function Formulation (PINN).
+    5. Backtesting & Validation on Historical Grid Incidents (Song Loulou Trips, RIN Islanding).
+    6. Containerized Edge/Cloud Deployment & SCADA/EMS Real-Time Integration.
+    7. Continuous Model Drift Monitoring, Retraining Pipelines & MLOps Governance.
+  - **Section E**: Integrated 6 LaTeX mathematical formulations:
+    - Physics-Informed Neural Network (PINN) AC Power Flow Loss Function ($\mathcal{L}_{\text{PINN}} = \mathcal{L}_{\text{data}} + \lambda_P \sum |P_i - V_i \sum V_j (G_{ij}\cos\theta_{ij} + B_{ij}\sin\theta_{ij})|^2$).
+    - WAMS Wide-Area Angular Stability & Initial Rate of Change of Frequency ($\text{RoCoF} = \frac{f_0}{2H} \frac{\Delta P}{S_n}$).
+    - Duval Triangle 1 Relative Gas Concentration Coordinates for DGA Diagnostics ($\%CH_4, \%C_2H_4, \%C_2H_2$ per IEC 60599).
+    - Differential Hot-Spot Temperature Model & Relative Aging Rate ($V_{\text{rel}} = 2^{(\theta_h - 110)/6}$ per IEC 60076-7).
+    - Solar & Wind Generation Forecast Error Metric & RMSE Normalization ($\text{RMSE}, \text{nRMSE}\%$ per IEC 61724-1).
+    - Multivariate Isolation Forest Anomaly Score for AMI Non-Technical Losses ($s(x, n) = 2^{-\mathbb{E}(h(x))/c(n)}$).
+  - **Section F**: Sourced 6 international normative standards:
+    - IEEE Std C37.118.1 / C37.118.2 (Synchrophasor measurements and data transfer for power systems).
+    - IEC 60076-7 / IEEE C57.91 (Loading guide for mineral-oil-immersed power transformers).
+    - IEC 60599 / IEEE C57.104 (Guide for the interpretation of dissolved gases analysis DGA).
+    - IEC 62443 / MITRE ATT&CK for ICS (Security for industrial automation and control systems).
+    - ISO 10816-3 / ISO 20816-2 (Mechanical vibration evaluation on non-rotating parts).
+    - IEC 61724-1 / IEEE Std 2800-2022 (PV system performance monitoring and grid interconnection).

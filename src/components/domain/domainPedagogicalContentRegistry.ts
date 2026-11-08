@@ -3910,6 +3910,421 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         descEn: 'Specifies clean agent volumetric sizing, discharge nozzle hydrodynamics, overpressure relief venting, and room enclosure integrity verification via calibrated Door-Fan Testing.'
       }
     ]
+  },
+
+  // D09: Intelligence Artificielle & Technologies Avancées de Réseau
+  D09: {
+    domainCode: 'D09',
+    sectionA: {
+      roleFr: "Déploiement des algorithmes d'apprentissage automatique (Machine Learning, Deep Learning, PINN), des systèmes de mesure de phaseurs synchronisés (WAMS / PMU IEEE C37.118) et des jumeaux numériques pour l'optimisation prédictive du dispatching électrique, la surveillance d'état des actifs HTB et la détection d'anomalies cyber-physiques.",
+      roleEn: 'Deployment of machine learning, physics-informed neural networks (PINN), synchrophasor PMU systems (IEEE C37.118), and digital twins for real-time dispatch optimization, predictive asset health indexing, and cyber-physical anomaly detection across electrical power systems.',
+      inputsFr: {
+        title: 'Flux Télémétriques Haute Résolution & Données Physiques',
+        desc: 'Synchrophaseurs PMU 50 trames/s horodatés GPS/PTP (IEEE C37.118), télémétrie SCADA CEI 60870-5-104 / ICCP, chromatographie DGA en ligne des transformateurs et images thermiques infrarouges radiométriques.',
+        voltage: 'Flux Réseau IP/Ethernet • 50 Hz Échantillonné'
+      },
+      inputsEn: {
+        title: 'High-Resolution Telemetry Streams & Physical Data',
+        desc: 'GPS/PTP-synchronized PMU synchrophasors at 50 frames/s (IEEE C37.118), SCADA IEC 60870-5-104 / ICCP telemetry, online transformer DGA gas chromatography, and radiometric infrared imagery.',
+        voltage: 'IP/Ethernet Network Stream • 50 Hz Sampled Data'
+      },
+      processFr: {
+        title: 'Modèles Hybrides Physique-IA & Jumeaux Numériques',
+        desc: 'Réseaux de neurones informés par la physique (PINN) intégrant les équations d\'écoulement de puissance de Kirchhoff, auto-encodeurs profonds pour la détection d\'anomalies dynamiques, et forêts d\'isolement pour les fraudes réseau.',
+        note: 'Conformité stricte aux lois physiques de l\'électrotechnique : pénalisation des violations de tension, de courant et de puissance dans la fonction de perte neuronale.'
+      },
+      processEn: {
+        title: 'Physics-AI Hybrid Models & Real-Time Digital Twins',
+        desc: 'Physics-Informed Neural Networks (PINN) embedding Kirchhoff power flow constraints, deep autoencoders for dynamic frequency event detection, and isolation forests isolating non-technical losses.',
+        note: 'Strict electrotechnical constraint enforcement: physical law boundary penalties embedded directly into the neural training loss function.'
+      },
+      outputsFr: {
+        title: 'Consignes de Réglage Prédictif & Indices de Santé d\'Actif',
+        desc: 'Consignes d\'effacement et d\'injection active/réactive vers les BESS et centrales solaires, alertes précoces de défauts de transformateurs (Duval 1/4/5), et recommandations d\'arbitrage automatique N-1 pour les dispatchers.',
+        earthing: 'Infrastructures serveurs de calcul hébergées en salles serveurs sécurisées (terre informatique maillée R < 1 Ω)'
+      },
+      outputsEn: {
+        title: 'Predictive Control Setpoints & Asset Health Indices',
+        desc: 'Active/reactive dispatch setpoints transmitted to BESS and solar inverters, early transformer failure alerts (Duval 1/4/5), and automated N-1 contingency redispatch recommendations.',
+        earthing: 'Edge and cloud computing server racks housed in secure data rooms with dedicated telecom mesh earthing (R < 1 Ω)'
+      }
+    },
+    sectionB: {
+      summaryFr: "Panorama architectural des 5 technologies d'intelligence artificielle et de supervision avancée des réseaux électriques, illustrant le jumeau numérique thermique des transformateurs, la surveillance grand réseau WAMS par synchrophaseurs, la prévision solaire hybride couplée au BESS, les sondes de cybersécurité OT et la détection d'anomalies de comptage AMI.",
+      summaryEn: 'Architectural overview of the 5 key artificial intelligence and advanced power system supervision technologies, spanning transformer thermal digital twins, wide-area monitoring systems (WAMS), hybrid solar-BESS forecasting, OT cybersecurity probes, and AMI non-technical loss analytics.',
+      architectures: [
+        {
+          nameFr: "Jumeau Numérique Thermique & Diagnostic DGA par Réseaux Neuronaux (Centrale de Songloulou 384 MW & Postes HTB)",
+          nameEn: 'Transformer Thermal Digital Twin & Neural DGA Diagnostics (Songloulou 384 MW Hydro Plant & HV Substations)',
+          techFr: "Chromatographie multigaz en ligne PAS, capteurs de température à fibre optique GaAs dans les enroulements, réseau de neurones Duval et modèle thermique différentiel CEI 60076-7 pour l'estimation en temps réel de la température du point chaud et de la durée de vie résiduelle (RUL).",
+          techEn: 'Online photoacoustic multi-gas chromatography, GaAs optical fiber temperature sensors embedded in winding ducts, neural Duval triangle classifier, and IEC 60076-7 differential thermal ODE estimating hot-spot temperature and Remaining Useful Life (RUL).',
+          descFr: "Surveillance d'état continue des transformateurs d'évacuation 10.5/225 kV de Songloulou : corrélation entre les montées en température, les surcharges harmoniques et les dégagements d'hydrocarbures dissous dans l'huile.",
+          descEn: 'Continuous condition monitoring of Songloulou 10.5/225 kV step-up transformers: correlates localized hot-spot thermal transients, harmonic currents, and dissolved hydrocarbon gas generation to prevent insulation failure.',
+          standard: 'IEC 60076-7, IEC 60599, IEEE C57.104, Cigré TB 738',
+          metricFr: 'Erreur point chaud < 1.8°C • Détection défaut naissant > 96% • Extension durée de vie 15–20%',
+          metricEn: 'Hot-spot prediction error < 1.8°C • Incipient fault confidence > 96% • Asset life extension 15–20%'
+        },
+        {
+          nameFr: "Système de Surveillance Grand Réseau WAMS par Synchrophaseurs PMU (Interconnexion RIS-RIN Cameroun 225 kV)",
+          nameEn: 'Wide-Area Monitoring System (WAMS) via Synchrophasors PMU (Cameroon RIS-RIN 225 kV Interconnection)',
+          techFr: "Phasor Measurement Units (PMU) haute précision synchronisées GPS (IEEE C37.118), concentrateurs de phaseurs PDC (IEEE C37.244), calcul en temps réel de la marge de stabilité angulaire et du taux de variation de fréquence (RoCoF).",
+          techEn: 'High-precision GPS-synchronized Phasor Measurement Units (PMU) conforming to IEEE C37.118, Phasor Data Concentrators (PDC per IEEE C37.244), and real-time angular stability margin and Rate of Change of Frequency (RoCoF) computing.',
+          descFr: "Observabilité dynamique à l'échelle nationale : détection des modes d'oscillation inter-zones non amortis entre le réseau Sud (RIS) et le réseau Nord (RIN), avec déclenchement automatisé de délestages d'urgence ciblés.",
+          descEn: 'Nationwide dynamic grid observability: pinpoints undamped inter-area power oscillations between the Southern (RIS) and Northern (RIN) interconnected grids, executing fast emergency remedial action schemes.',
+          standard: 'IEEE Std C37.118.1/2, IEEE Std C37.244, IEC 61850-90-5, SONATREL Code de Réseau',
+          metricFr: 'Cadence 50 phaseurs/s • Erreur vectorielle TVE < 0.5% • Détection d\'oscillation < 200 ms',
+          metricEn: '50 synchrophasor frames/s • Total Vector Error TVE < 0.5% • Oscillation detection < 200 ms'
+        },
+        {
+          nameFr: "Prévision Neuronale Hybride Solaire & Pilotage Prédictif de Rampe BESS (Centrale Solaire de Maroua/Guider 15 MWc)",
+          nameEn: 'Hybrid Neural Solar Forecasting & Predictive BESS Ramp Control (Maroua/Guider 15 MWp Solar Park)',
+          techFr: "Réseau de neurones récurrents LSTM combiné avec caméras de ciel (all-sky imager) et prévisions météo numériques pour anticiper les chutes d'irradiation, pilotant en boucle fermée les onduleurs 4-quadrants de la batterie BESS.",
+          techEn: 'Deep LSTM recurrent neural network paired with sky cameras (all-sky imager) and numerical weather predictions forecasting cloud shadow irradiance drops, driving 4-quadrant BESS inverters under predictive closed-loop ramp control.',
+          descFr: "Lissage actif de l'intermittence photovoltaïque sur le réseau isolé du Grand Nord : injection de puissance batterie en moins de 100 ms dès qu'un passage nuageux dense occulte le champ solaire de Maroua.",
+          descEn: 'Active PV intermittency smoothing on the isolated northern grid: discharges battery energy within 100 ms whenever heavy cloud cover shades the Maroua solar array, maintaining grid frequency within ±0.1 Hz.',
+          standard: 'IEC 61724-1, IEEE Std 2800-2022, IEC 62933-2-1',
+          metricFr: 'Horizon 15 min à 24 h • Erreur RMSE < 4.2% • Absorption 100% des rampes > 1 MW/s',
+          metricEn: 'Forecast horizon 15 min to 24 h • RMSE < 4.2% • 100% absorption of solar ramps > 1 MW/s'
+        },
+        {
+          nameFr: "Sonde de Détection d'Intrusions Cyber-Physiques & IA Comportementale OT (Poste Numérique d'Oyomabang 225 kV)",
+          nameEn: 'Cyber-Physical Intrusion Detection System & Behavioral OT AI (Oyomabang 225 kV Digital Substation)',
+          techFr: "Inspection approfondie des paquets (DPI) sur bus de poste CEI 61850 (GOOSE, SV, MMS), modèle d'apprentissage non supervisé détectant les injections illégitimes de commandes disjoncteurs ou falsifications de télémesures.",
+          techEn: 'Deep Packet Inspection (DPI) analyzing IEC 61850 station bus protocols (GOOSE, SV, MMS), running unsupervised anomaly models detecting unauthorized breaker trip commands or spoofed telemetry packets.',
+          descFr: "Protection périmétrique des infrastructures réseau critiques contre les cyberattaques avancées (MITRE ATT&CK for ICS) : détection en temps réel des dérives de signature protocolaire et des flux non autorisés.",
+          descEn: 'Cyber defense for high-voltage digital substations guarding against advanced industrial threats (MITRE ATT&CK for ICS): detects unauthorized payload signatures and rogue device connections with zero false breaker trips.',
+          standard: 'IEC 62443-3-3 / IEC 62443-4-2, MITRE ATT&CK for ICS, IEEE 1686',
+          metricFr: 'Latence DPI < 1 ms sur trames GOOSE • Faux positifs < 0.05% • Cartographie Purdue Niveaux 1–2',
+          metricEn: 'DPI latency < 1 ms on GOOSE frames • False positive rate < 0.05% • Purdue Level 1–2 automated asset mapping'
+        },
+        {
+          nameFr: "Détection d'Anomalies de Comptage & Pertes Non-Techniques par Forêts d'Isolement (Réseau AMI ENEO Douala & Yaoundé)",
+          nameEn: 'Metering Anomaly Detection & Non-Technical Loss AI (ENEO Douala & Yaoundé AMI Grid)',
+          techFr: "Algorithmes d'arbres de décision et forêts d'isolement (Isolation Forest) traitant les profils de charge quart-horaires de 500 000 compteurs communicants STS/AMI, corrélés avec les bilans de puissance des départs MT/BT.",
+          techEn: 'Ensemble decision trees and multivariate Isolation Forest algorithms processing 15-minute load profiles from 500,000 smart STS/AMI meters, cross-correlated with substation MV/LV energy balance calculations.',
+          descFr: "Ciblage prédictif des dérives de comptage, contournements de phases et fraudes sur le réseau basse tension de Douala : génération automatisée d'ordres d'intervention terrain pour les équipes de contrôle.",
+          descEn: 'Predictive targeting of illegal bypasses, phase-neutral swapping, and meter tampering across Douala distribution grids: automatically issues prioritized dispatch orders for field verification crews.',
+          standard: 'IEC 62056 (DLMS/COSEM), ISO/IEC 27001, IEEE Std 1366',
+          metricFr: 'Précision détection fraude > 92% • Réduction pertes non-techniques 35% • ROI < 9 mois',
+          metricEn: 'Fraud classification precision > 92% • Non-technical loss reduction 35% • Project payback < 9 months'
+        }
+      ]
+    },
+    sectionC: [
+      {
+        id: 'eq-exp-dga-online-monitor',
+        nameFr: "Analyseur DGA Multigaz en Ligne & Diagnostic IA Triangle de Duval",
+        nameEn: 'Online Multi-gas DGA Monitor & AI Duval Triangle Health Index',
+        voltage: '230 V AC / 110 V DC (Auxiliaire)',
+        roleFr: "Chromatographie en phase gazeuse et spectroscopie photoacoustique en ligne mesurant 9 gaz dissous (H2, CH4, C2H2, C2H4, C2H6, CO, CO2, O2, N2), couplée à un moteur d'inférence Duval 1/4/5.",
+        roleEn: 'Online photoacoustic multi-gas analyzer quantifying 9 dissolved gases (H2, CH4, C2H2, C2H4, C2H6, CO, CO2, O2, N2) coupled with automated Duval Triangle 1/4/5 diagnostic inference.',
+        symbol: 'DGA-PAS',
+        standard: 'IEC 60599, IEEE C57.104, Cigré TB 738',
+        imgUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1600&q=80',
+        calcTab: 'transformer'
+      },
+      {
+        id: 'eq-exp-pmu-synchrophasor',
+        nameFr: "Unité de Mesure de Phaseurs Synchronisés (PMU) & Stabilité WAMS",
+        nameEn: 'Synchrophasor Measurement Unit (PMU) & Wide-Area Stability Terminal',
+        voltage: '110–220 V DC / 100 V AC Mesure (TP/TC)',
+        roleFr: "Échantillonnage ultrarapide (50 trames/s) synchronisé par horloge atomique GPS/PTP (précision < 1 µs) des phaseurs de tension et de courant pour la surveillance de la stabilité angulaire dynamique du grand réseau.",
+        roleEn: 'Ultra-fast 50 frames/s sampling locked to atomic GPS/PTP timing (< 1 µs accuracy), measuring voltage and current phasors for wide-area dynamic grid angular stability tracking.',
+        symbol: 'PMU / WAMS',
+        standard: 'IEEE Std C37.118.1/2, IEC 61850-90-5, IEEE C37.244',
+        imgUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&q=80',
+        calcTab: 'transmission-line'
+      },
+      {
+        id: 'eq-exp-switch-iec62443',
+        nameFr: "Commutateur Réseau Durci OT & Sonde IDS de Cybersécurité Industrielle",
+        nameEn: 'Hardened Industrial OT Network Switch & Cyber-Physical IDS Probe',
+        voltage: '24–48 V DC / 110–220 V DC Redondé',
+        roleFr: "Segmentation réseau en zones et conduits per IEC 62443, inspection temps réel des trames GOOSE/MMS, blocage des attaques MITM et télésurveillance sécurisée des IED de protection.",
+        roleEn: 'Substation network segmentation per IEC 62443, real-time DPI inspection of GOOSE/MMS frames, MITM attack suppression, and secure encrypted telemetry aggregation.',
+        symbol: 'SW-OT-IDS',
+        standard: 'IEC 62443-4-2, IEEE 1613, IEC 61850-3',
+        imgUrl: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1600&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-drone-radiometric',
+        nameFr: "Drone d'Inspection Aérienne Autonome avec Caméra Radiométrique Infrarouge",
+        nameEn: 'Autonomous Grid Inspection Drone with Radiometric Thermal Camera',
+        voltage: 'Batterie LiPo Haute Capacité 24 V (Autonomie 45 min)',
+        roleFr: "Thermographie infrarouge automatisée des lignes HTB 225 kV et des parcs photovoltaïques, géolocalisation RTK centimétrique et détection par vision IA des points chauds sur pinces et isolateurs.",
+        roleEn: 'Autonomous thermal infrared corridor surveys along 225 kV lines and utility-scale PV farms, centimetric RTK positioning, and edge AI detection of conductor splice hot-spots.',
+        symbol: 'UAV-IR',
+        standard: 'IEC 62446-3, ISO 18434-1, NF C 13-100',
+        imgUrl: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=1600&q=80',
+        calcTab: 'transmission-line'
+      },
+      {
+        id: 'eq-exp-edge-ai-gateway',
+        nameFr: "Passerelle Calculatrice Edge AI Durcie pour Poste Électrique Intelligente",
+        nameEn: 'Ruggedized Industrial Edge AI Compute Gateway for Smart Substations',
+        voltage: '110–220 V DC / 24 V DC (Fanless Industriel)',
+        roleFr: "Exécution locale de modèles neuronaux légers (ONNX/TensorRT) pour le filtrage prédictif des alarmes SCADA, l'analyse vibratoire FFT des turbines et le calcul temps réel des taux de vieillissement thermique.",
+        roleEn: 'Local execution of optimized neural models (ONNX/TensorRT) performing SCADA alarm flood filtering, turbine FFT vibration diagnostics, and real-time asset degradation calculations.',
+        symbol: 'EDGE-AI',
+        standard: 'IEC 61850-3, IEEE 1613, NIST AI RMF',
+        imgUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1600&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-ami-concentrator',
+        nameFr: "Concentrateur de Données de Comptage Intelligent & Détection de Fraude (DCU AMI)",
+        nameEn: 'Smart Metering Data Concentrator Unit (DCU) & Anti-Tamper Analyzer',
+        voltage: '230 V AC / 400 V Triphasé (Boîtier MT/BT)',
+        roleFr: "Agrégation des télé-relèves de compteurs basse tension par courant porteur CPL G3 / cellulaire 4G, calcul en continu du bilan énergétique du transformateur de distribution et détection immédiate des dérivations pirates.",
+        roleEn: 'Low-voltage smart meter data aggregation over G3-PLC and cellular 4G, executing continuous MV/LV substation energy balance reconciliation and automated illegal tap detection.',
+        symbol: 'DCU-AMI',
+        standard: 'IEC 62056 (DLMS/COSEM), ITU-T G.9903 (G3-PLC), STS Standard',
+        imgUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=80',
+        calcTab: 'power'
+      }
+    ],
+    sectionD: [
+      {
+        phase: 'Phase 1',
+        titleFr: 'Identification des Enjeux Métier, Cartographie des Données & Maturité IA',
+        titleEn: 'Business Use-Case Framing, Data Discovery & AI Readiness Assessment',
+        descFr: "Définition des cas d'usage prioritaires (maintenance prédictive transformateurs, amortissement d'oscillations WAMS, réduction pertes non-techniques), inventaire des sources de données et évaluation per NIST AI RMF.",
+        descEn: 'Prioritizing high-impact utility use cases (transformer predictive health, WAMS inter-area oscillation damping, non-technical loss reduction), data asset mapping, and readiness assessment per NIST AI RMF.'
+      },
+      {
+        phase: 'Phase 2',
+        titleFr: 'Instrumentation Capteurs Haute Fréquence, Synchronisation PTP & Réseau OT',
+        titleEn: 'High-Frequency Sensor Deployment, Precision PTP Timing & OT Field Network',
+        descFr: "Installation des capteurs DGA photoacoustiques, des PMU en poste HTB, des sondes vibratoires accélérométriques et des récepteurs GNSS IEEE 1588 PTP garantissant l'horodatage sub-microseconde.",
+        descEn: 'Deploying photoacoustic DGA monitors, substation PMUs, piezoelectric accelerometers, and GPS IEEE 1588 PTP timing receivers ensuring sub-microsecond synchronization.'
+      },
+      {
+        phase: 'Phase 3',
+        titleFr: 'Nettoyage des Données, Étiquetage Expert & Ingestion dans le Data Lake',
+        titleEn: 'Data Cleaning, Expert Failure Tagging & Data Lake Ingestion',
+        descFr: "Filtrage des artéfacts de mesure, traitement des valeurs manquantes, étiquetage normatif des historiques d'avaries (rapports d'expertise Eneo/SONATREL) et ingestion temps réel via Apache Kafka.",
+        descEn: 'Telemetry outlier filtering, missing value imputation, expert annotation of historical power grid failure archives (Eneo/SONATREL trip reports), and real-time stream ingestion via Apache Kafka.'
+      },
+      {
+        phase: 'Phase 4',
+        titleFr: 'Conception & Entraînement des Modèles Hybrides Physique-IA (PINN / Time Series)',
+        titleEn: 'Physics-Informed Model Architecture, Training & Loss Function Formulation',
+        descFr: "Développement des architectures neuronales PINN intégrant les équations différentielles thermiques CEI 60076-7 et les lois de Kirchhoff, entraînement supervisé et régularisation physique.",
+        descEn: 'Developing Physics-Informed Neural Networks (PINN) embedding IEC 60076-7 thermal differential equations and Kirchhoff nodal laws directly into gradient loss functions, preventing unphysical predictions.'
+      },
+      {
+        phase: 'Phase 5',
+        titleFr: 'Validation Croisée sur Événements Historiques Réels (Trips Song Loulou, Îlotage RIN)',
+        titleEn: 'Backtesting & Validation on Historical Grid Incidents (Song Loulou Trips, RIN Islanding)',
+        descFr: "Évaluation rigoureuse des modèles sur des incidents majeurs archivés (déclenchement ligne Song Loulou 225 kV, îlotage du réseau Nord) pour quantifier la précision, le temps de réponse et la robustesse.",
+        descEn: 'Rigorous offline backtesting against documented major grid disturbance records (Song Loulou 225 kV circuit trips, RIN northern grid blackout) verifying sub-second alert speed and zero ungrounded trips.'
+      },
+      {
+        phase: 'Phase 6',
+        titleFr: 'Déploiement Conteneurisé Edge / Cloud & Interfaçage SCADA / EMS Temps Réel',
+        titleEn: 'Containerized Edge/Cloud Deployment & SCADA/EMS Real-Time Integration',
+        descFr: "Déploiement des microservices conteneurisés Docker/Kubernetes sur passerelles durcies de poste et serveurs centraux EMS, avec échange sécurisé des télémesures via CEI 60870-5-104 et MQTT/TLS.",
+        descEn: 'Deploying containerized Docker microservices onto substation edge hardware and national dispatch EMS centers, streaming telemetry over encrypted IEC 60870-5-104 and MQTT/TLS protocols.'
+      },
+      {
+        phase: 'Phase 7',
+        titleFr: 'Surveillance de la Dérive des Modèles (Model Drift), Réapprentissage & MLOps',
+        titleEn: 'Continuous Model Drift Monitoring, Retraining Pipelines & MLOps Governance',
+        descFr: "Suivi continu des métriques de précision (RMSE, F1-Score), détection de dérive conceptuelle liée aux changements saisonniers de charge ou d'hydrologie, et pipelines automatisés de réentraînement sécurisé.",
+        descEn: 'Tracking real-time model accuracy metrics (RMSE, F1-Score), detecting concept drift driven by seasonal hydrological or load pattern shifts, and managing automated retraining CI/CD pipelines.'
+      }
+    ],
+    sectionE: [
+      {
+        id: 'pinn_load_flow_loss',
+        tabLabelFr: '1. Écoulement de Puissance PINN',
+        tabLabelEn: '1. PINN Power Flow Loss',
+        titleFr: "Écoulement de Puissance Nodal Régularisé par Réseau de Neurones Informé par la Physique (PINN)",
+        titleEn: 'Physics-Informed Neural Network (PINN) AC Power Flow Loss Function',
+        descFr: "Modélisation de l'écoulement de puissance alternatif (AC Load Flow) par un réseau de neurones profond dont la fonction d'apprentissage pénalise directement la violation des équations de bilan de puissance de Kirchhoff à chaque nœud.",
+        descEn: 'Deep neural network AC load flow solver whose loss function penalizes violations of Kirchhoff nodal active and reactive power balance equations, ensuring physically consistent solutions without matrix inversions.',
+        formula: '\\mathcal{L}_{\\text{PINN}} = \\mathcal{L}_{\\text{data}} + \\lambda_P \\sum_{i=1}^N \\left| P_i - V_i \\sum_{j=1}^N V_j (G_{ij} \\cos\\theta_{ij} + B_{ij} \\sin\\theta_{ij}) \\right|^2 + \\lambda_Q \\sum_{i=1}^N \\left| Q_i - V_i \\sum_{j=1}^N V_j (G_{ij} \\sin\\theta_{ij} - B_{ij} \\cos\\theta_{ij}) \\right|^2',
+        formulaDescFr: "Où L_data est l'erreur quadratique sur les données d'entraînement observées, V_i et θ_i les modules et angles de tension aux nœuds, G_ij et B_ij les éléments de conductance et susceptance de la matrice d'admittance nodale [Y_bus], et λ_P, λ_Q les hyperparamètres de pondération physique.",
+        formulaDescEn: 'Where L_data is MSE error against supervisory measurements, V_i and θ_i are nodal voltage magnitudes and phase angles, G_ij and B_ij are conductance and susceptance elements from nodal admittance matrix [Y_bus], and λ_P, λ_Q are physical regularization weights.',
+        assumptionsFr: [
+          'Régime sinusoïdal établi équilibré triphasé à 50 Hz.',
+          'Matrice d\'admittance nodale [Y_bus] connue et issue du modèle topologique de réseau.',
+          'Pénalisation physique garantissant des tensions nodales strictes entre 0.90 et 1.05 Un.'
+        ],
+        assumptionsEn: [
+          'Balanced three-phase steady-state sinusoidal operation at 50 Hz.',
+          'Nodal admittance matrix [Y_bus] accurately derived from topological substation line models.',
+          'Physical penalty enforcing voltage magnitude boundaries strictly within 0.90 to 1.05 Un.'
+        ],
+        calcTab: 'power'
+      },
+      {
+        id: 'wams_rocof_swing_equation',
+        tabLabelFr: '2. Stabilité WAMS & RoCoF',
+        tabLabelEn: '2. WAMS Dynamic RoCoF',
+        titleFr: "Calcul de Stabilité Angulaire WAMS et Taux Initial de Variation de Fréquence (RoCoF)",
+        titleEn: 'WAMS Wide-Area Angular Stability & Initial Rate of Change of Frequency (RoCoF)',
+        descFr: "Calcul instantané du RoCoF par les synchrophaseurs PMU dès la perte d'un groupe de production ou le déclenchement d'une ligne d'interconnexion, permettant d'évaluer la puissance active déficitaire et d'ordonner un délestage d'urgence.",
+        descEn: 'Instantaneous synchrophasor RoCoF computation upon loss of a generation unit or intertie tripping, directly quantifying missing active power deficit and coordinating fast under-frequency load shedding.',
+        formula: '\\text{RoCoF} = \\left. \\frac{df}{dt} \\right|_{t=0^+} = \\frac{f_0}{2 H} \\cdot \\frac{\\Delta P}{S_n} \\quad \\implies \\quad \\Delta P = \\frac{2 H S_n}{f_0} \\cdot \\left| \\frac{df}{dt} \\right|_{t=0^+}',
+        formulaDescFr: "Où RoCoF est la dérivée temporelle de la fréquence à l'instant initial (Hz/s), f_0 la fréquence nominale (50 Hz), H la constante d'inertie équivalente du système (secondes, typiquement 3.5 à 5.0 s), S_n la puissance apparente nominale des générateurs en ligne (MVA), et ΔP le déficit de puissance active provoqué par la perte (MW).",
+        formulaDescEn: 'Where RoCoF is initial frequency slope (Hz/s), f_0 is nominal frequency (50 Hz), H is equivalent system inertia constant (seconds, typically 3.5 to 5.0 s), S_n is total rating of connected synchronous generators (MVA), and ΔP is active power deficit (MW).',
+        assumptionsFr: [
+          'Pente initiale mesurée sur une fenêtre glissante normalisée IEEE C37.118 de 100 à 500 ms.',
+          'Inertie équivalente du réseau interconnecté RIS : H = 4.2 s (valeur calibrée centrale Song Loulou + Nachtigal).',
+          'Seuil de déclenchement des automatismes de délestage d\'urgence d\'îlotage : |RoCoF| ≥ 1.0 Hz/s.'
+        ],
+        assumptionsEn: [
+          'Initial slope evaluated across standardized IEEE C37.118 sliding window of 100 to 500 ms.',
+          'Equivalent Southern Interconnected Grid (RIS) inertia: H = 4.2 s (Song Loulou + Nachtigal fleet).',
+          'Fast remedial load shedding trigger threshold: |RoCoF| ≥ 1.0 Hz/s.'
+        ],
+        calcTab: 'transmission-line'
+      },
+      {
+        id: 'dga_duval_triangle_coordinates',
+        tabLabelFr: '3. Coordonnées Duval DGA',
+        tabLabelEn: '3. Duval Triangle DGA',
+        titleFr: "Calcul des Coordonnées Triangulaires de Duval pour Diagnostic DGA (CEI 60599 / IEEE C57.104)",
+        titleEn: 'Duval Triangle 1 Relative Gas Concentration Coordinates for DGA Diagnostics (IEC 60599)',
+        descFr: "Conversion des concentrations absolues de gaz dissous dans l'huile mesurées en parties par million (ppm) en coordonnées barycentriques relatives de méthane (%CH4), éthylène (%C2H4) et acétylène (%C2H2) pour classifier le type de défaut diélectrique.",
+        descEn: 'Converts absolute dissolved gas concentrations from ppm into relative barycentric percentages of methane (%CH4), ethylene (%C2H4), and acetylene (%C2H2), classifying transformer fault type (PD, D1, D2, T1, T2, T3).',
+        formula: '\\%CH_4 = \\frac{[CH_4]}{S_{\\text{DGA}}} \\cdot 100, \\quad \\%C_2H_4 = \\frac{[C_2H_4]}{S_{\\text{DGA}}} \\cdot 100, \\quad \\%C_2H_2 = \\frac{[C_2H_2]}{S_{\\text{DGA}}} \\cdot 100 \\quad \\text{avec} \\quad S_{\\text{DGA}} = [CH_4] + [C_2H_4] + [C_2H_2]',
+        formulaDescFr: "Où [CH_4], [C_2H_4], [C_2H_2] sont les teneurs en ppm mesurées par l'analyseur DGA, et S_DGA la somme des trois hydrocarbures clés de Duval 1. Les coordonnées obtenues définissent les zones : Décharges partielles (PD), Décharges de faible énergie (D1), Décharges de haute énergie / Arc (D2), et Défauts thermiques (T1, T2, T3).",
+        formulaDescEn: 'Where [CH_4], [C_2H_4], [C_2H_2] are ppm concentrations measured by the DGA monitor, and S_DGA is sum of key gases. The resulting coordinates map into standard Duval zones: Partial Discharge (PD), Low-Energy Discharge (D1), High-Energy Arcing (D2), and Thermal Faults (T1, T2, T3).',
+        assumptionsFr: [
+          'Seuil de significativité minimale de la somme des gaz : S_DGA ≥ 10 ppm pour éviter les faux positifs.',
+          'Classification des défauts conforme au guide CEI 60599 et IEEE C57.104.',
+          'Zones Duval 1 : Arc franc D2 si %C2H2 ≥ 13% et %C2H4 ≥ 23% ; Défaut thermique T3 si %C2H4 ≥ 50%.'
+        ],
+        assumptionsEn: [
+          'Minimum gas sum significance threshold: S_DGA ≥ 10 ppm to prevent false ambient gas triggers.',
+          'Fault zone definitions compliant with IEC 60599 and IEEE C57.104 benchmarks.',
+          'Duval 1 criteria: High-energy arc D2 if %C2H2 ≥ 13% and %C2H4 ≥ 23%; Thermal fault T3 if %C2H4 ≥ 50%.'
+        ],
+        calcTab: 'transformer'
+      },
+      {
+        id: 'transformer_thermal_aging_ode',
+        tabLabelFr: '4. Vieillissement Thermique CEI',
+        tabLabelEn: '4. Thermal Aging IEC 60076-7',
+        titleFr: "Modèle Thermique Différentiel du Point Chaud & Taux de Vieillissement Relatif (CEI 60076-7)",
+        titleEn: 'Differential Hot-Spot Temperature Model & Relative Aging Rate (IEC 60076-7)',
+        descFr: "Calcul continu du vieillissement thermique accéléré du papier isolant en cellulose par rapport au taux de référence unitaire à 110°C selon l'équation d'Arrhenius normalisée par la CEI 60076-7.",
+        descEn: 'Continuous calculation of accelerated cellulose insulation thermal aging relative to reference unit rate at 110°C per the Arrhenius relationship formulated in IEC 60076-7 loading guide.',
+        formula: 'V_{\\text{rel}} = 2^{(\\theta_h - 110) / 6}, \\quad L_{\\text{perte}} = \\int_0^T V_{\\text{rel}}(t) \\, dt, \\quad \\text{RUL}_{\\text{années}} = \\frac{L_{\\text{nominal}} - L_{\\text{consommé}}}{V_{\\text{rel\\_moyen}} \\cdot 8760}',
+        formulaDescFr: "Où V_rel est le taux de vieillissement relatif (sans dimension, V_rel = 1 à 110°C, V_rel = 2 à 116°C), θ_h la température instantanée du point chaud des enroulements (°C), L_perte la durée de vie thermique consommée en heures équivalentes, et RUL la durée de vie restante estimée de l'actif (années).",
+        formulaDescEn: 'Where V_rel is relative thermal aging rate (dimensionless, V_rel = 1 at 110°C, doubling every 6°C), θ_h is hot-spot temperature (°C), L_perte is consumed life in equivalent hours, and RUL is estimated Remaining Useful Life in years.',
+        assumptionsFr: [
+          'Papier cellulosique standard non thermiquement amélioré : doublement du vieillissement tous les 6°C (règle des 6°C).',
+          'Durée de vie théorique nominale de référence d\'un transformateur HTB : L_nominal = 180 000 heures (environ 20.5 ans continus à 110°C).',
+          'Facteur de sécurité d\'exploitation : alerte de dégradation accélérée déclenchée dès que V_rel > 4.0 (soit θ_h > 122°C).'
+        ],
+        assumptionsEn: [
+          'Standard non-thermally upgraded kraft paper: aging rate doubles for every 6°C temperature rise above 110°C.',
+          'Nominal design life of primary EHV transformer: L_nominal = 180,000 hours (~20.5 continuous years at 110°C).',
+          'Accelerated operational alert threshold: flagged whenever V_rel > 4.0 (corresponding to θ_h > 122°C).'
+        ],
+        calcTab: 'transformer'
+      },
+      {
+        id: 'solar_forecasting_rmse_eval',
+        tabLabelFr: '5. Prévision Solaire & RMSE',
+        tabLabelEn: '5. Solar Forecast & RMSE',
+        titleFr: "Évaluation de la Précision des Prévisions de Production Solaire / Éolienne (IEC 61724-1)",
+        titleEn: 'Solar & Wind Generation Forecast Error Metric & RMSE Normalization (IEC 61724-1)',
+        descFr: "Formulation statistique de l'Erreur Quadratique Moyenne Normalisée (nRMSE) quantifiant la précision des algorithmes de prévision d'irradiation et de production photovoltaïque par rapport à la puissance crête installée.",
+        descEn: 'Statistical formulation of Normalized Root Mean Square Error (nRMSE) measuring accuracy of solar irradiance and PV power forecasts against installed peak capacity.',
+        formula: '\\text{RMSE} = \\sqrt{\\frac{1}{N} \\sum_{k=1}^N \\left( \\hat{P}_k - P_k \\right)^2}, \\quad \\text{nRMSE}\\% = \\frac{\\text{RMSE}}{P_{\\text{crête}}} \\cdot 100, \\quad \\text{MAE} = \\frac{1}{N} \\sum_{k=1}^N \\left| \\hat{P}_k - P_k \\right|',
+        formulaDescFr: "Où P_k est la puissance réelle injectée au point d'échantillonnage k (MW), P̂_k la prévision issue du modèle neuronale (MW), N le nombre total de pas de temps sur l'horizon évalué, et P_crête la puissance crête installée du parc (ex. 15 MWc pour Maroua).",
+        formulaDescEn: 'Where P_k is actual grid-injected power at timestep k (MW), P̂_k is neural model prediction (MW), N is total evaluation steps, and P_crête is total plant installed capacity (e.g. 15 MWp for Maroua solar park).',
+        assumptionsFr: [
+          'Pas de temps d\'évaluation normalisé : 15 minutes pour le dispatching infrajournalier et 1 heure pour le J-1.',
+          'Critère d\'acceptabilité de l\'opérateur de réseau SONATREL : nRMSE ≤ 6.0% sur horizon infrajournalier (H+1 à H+4).',
+          'Pénalité financière de déséquilibre évitée grâce au pilotage tampon de la batterie BESS.'
+        ],
+        assumptionsEn: [
+          'Standardized evaluation timestep: 15 minutes for intraday redispatch and 1 hour for day-ahead scheduling.',
+          'Grid code compliance benchmark per SONATREL rules: nRMSE ≤ 6.0% over intraday horizon (H+1 to H+4).',
+          'Financial imbalance penalties eliminated via automated buffering from co-located BESS battery.'
+        ],
+        calcTab: 'power'
+      },
+      {
+        id: 'isolation_forest_anomaly_score',
+        tabLabelFr: '6. Fraude AMI & Score Isolement',
+        tabLabelEn: '6. AMI Tamper Isolation Score',
+        titleFr: "Score d'Anomalie Multivarié par Forêts d'Isolement pour Pertes Non-Techniques AMI",
+        titleEn: 'Multivariate Isolation Forest Anomaly Score for AMI Non-Technical Losses',
+        descFr: "Algorithme d'apprentissage automatique non supervisé évaluant la profondeur moyenne d'isolement d'un point de mesure dans un ensemble d'arbres de décision pour détecter les anomalies de comptage et fraudes électriques.",
+        descEn: 'Unsupervised machine learning anomaly algorithm evaluating average path length across ensemble isolation trees to flag non-technical losses and electrical metering bypasses.',
+        formula: 's(x, n) = 2^{-\\frac{\\mathbb{E}(h(x))}{c(n)}} \\quad \\text{avec} \\quad c(n) = 2 \\left( \\ln(n - 1) + 0.5772156649 \\right) - \\frac{2(n - 1)}{n}',
+        formulaDescFr: "Où s(x, n) est le score d'anomalie compris entre 0 et 1, h(x) le nombre de fractionnements requis pour isoler l'échantillon x dans un arbre, E(h(x)) la profondeur moyenne d'isolement sur la forêt d'arbres, n la taille du jeu d'échantillonnage, et c(n) la longueur moyenne de parcours d'un arbre binaire de recherche non réussi.",
+        formulaDescEn: 'Where s(x, n) is anomaly score between 0 and 1, h(x) is path length isolating sample x, E(h(x)) is expected path length over isolation trees, n is sample size, and c(n) is average path length of unsuccessful search in Binary Search Tree.',
+        assumptionsFr: [
+          'Score d\'anomalie s(x, n) > 0.65 : très forte probabilité d\'intervention frauduleuse ou de défaillance de mesure.',
+          'Score d\'anomalie s(x, n) < 0.50 : profil de consommation considéré comme normal et conforme.',
+          'Vecteur d\'entrée multidimensionnel combinant puissance active, facteur de puissance et ratio jour/nuit.'
+        ],
+        assumptionsEn: [
+          'Anomaly score s(x, n) > 0.65: high probability of meter bypass, fraud, or instrument transformer failure.',
+          'Anomaly score s(x, n) < 0.50: consumption pattern considered normal and non-fraudulent.',
+          'Multivariate input vector combining active power, power factor, and daytime/nighttime consumption ratio.'
+        ],
+        calcTab: 'power'
+      }
+    ],
+    sectionF: [
+      {
+        code: 'IEEE Std C37.118.1 / C37.118.2',
+        tag: 'SYNCHROPHASEURS & WAMS',
+        titleFr: 'Norme pour les Mesures de Synchrophaseurs dans les Réseaux Électriques de Puissance',
+        titleEn: 'Standard for Synchrophasor Measurements and Data Transfer for Power Systems',
+        descFr: 'Définit les classes de mesure M (mesure) et P (protection), les critères d\'erreur vectorielle totale (TVE < 1%) et les protocoles de transmission temps réel vers les concentrateurs PDC.',
+        descEn: 'Specifies M and P class compliance, Total Vector Error limits (TVE < 1%), and real-time streaming protocols transmitting synchronized voltage/current phasors to wide-area PDC servers.'
+      },
+      {
+        code: 'CEI 60076-7 / IEEE C57.91',
+        tag: 'MODÉLISATION THERMIQUE',
+        titleFr: 'Transformateurs de Puissance — Guide de Charge pour Transformateurs Immergés dans l\'Huile',
+        titleEn: 'Power Transformers — Loading Guide for Mineral-Oil-Immersed Power Transformers',
+        descFr: 'Équations différentielles de calcul de la température de l\'huile supérieure, de l\'échauffement du point chaud des enroulements et calcul du vieillissement thermique relatif de l\'isolant.',
+        descEn: 'Differential equations for top-oil and winding hot-spot temperature rise calculation, and cumulative thermal loss-of-life estimation for mineral oil transformers.'
+      },
+      {
+        code: 'CEI 60599 / IEEE C57.104',
+        tag: 'DIAGNOSTIC DGA',
+        titleFr: 'Matériels Électriques Imprégnés d\'Huile — Guide pour l\'Interprétation des Gaz Dissous',
+        titleEn: 'Mineral Oil-Filled Electrical Equipment — Guide for the Interpretation of Dissolved Gases Analysis (DGA)',
+        descFr: 'Méthodes de diagnostic des gaz dissous : Triangle de Duval 1/4/5, méthode des rapports de Rogers et seuils de concentration TDCG pour la détection précoce des décharges et arcs.',
+        descEn: 'Standard interpretation guidelines for dissolved gases: Duval Triangles 1/4/5, Rogers ratios, and TDCG concentration levels identifying partial discharges, sparking, and thermal faults.'
+      },
+      {
+        code: 'CEI 62443 / MITRE ATT&CK ICS',
+        tag: 'CYBERSÉCURITÉ OT',
+        titleFr: 'Sécurité des Réseaux et des Systèmes Industriels d\'Automatisation et de Commande',
+        titleEn: 'Security for Industrial Automation and Control Systems (IACS) & MITRE ICS Threat Matrix',
+        descFr: 'Règles de cybersécurité pour les postes électriques et dispatchings : zones et conduits, authentification, détection d\'intrusions réseau DPI et résistance aux attaques ciblées.',
+        descEn: 'Cybersecurity standards for digital substations and SCADA networks: zone-conduit partitioning, cryptographic authentication, DPI intrusion monitoring, and attack resistance.'
+      },
+      {
+        code: 'ISO 10816-3 / ISO 20816-2',
+        tag: 'SURVEILLANCE VIBRATOIRE',
+        titleFr: 'Vibrations Mécaniques — Évaluation des Vibrations des Machines Industrielles par Mesures sur Parties Non-Tournantes',
+        titleEn: 'Mechanical Vibration — Evaluation of Machine Vibration on Non-Rotating Parts',
+        descFr: 'Définit les zones d\'admissibilité vibratoire A (neuf), B (bon), C (alerte) et D (danger/arrêt d\'urgence) pour les groupes turbo-alternateurs hydroélectriques et moteurs industriels.',
+        descEn: 'Defines vibration severity zones A (new), B (good), C (alarm), and D (trip danger) for hydraulic turbines, generators, and heavy industrial drives based on RMS velocity.'
+      },
+      {
+        code: 'IEC 61724-1 / IEEE Std 2800-2022',
+        tag: 'PRÉVISION & INTÉGRATION RENOUVELABLE',
+        titleFr: 'Performance des Installations Photovoltaïques & Interconnexion Réseau des Onduleurs',
+        titleEn: 'Photovoltaic System Performance Monitoring & Grid Interconnection of Inverter-Based Resources',
+        descFr: 'Prescriptions pour la mesure de l\'irradiation, calcul du Performance Ratio (PR), métriques d\'évaluation des prévisions de puissance et maintien du profil de tension/fréquence.',
+        descEn: 'Standards for irradiance monitoring, Performance Ratio (PR) calculation, forecast error evaluation, and active/reactive ride-through support from inverter-based resources.'
+      }
+    ]
   }
 };
 
