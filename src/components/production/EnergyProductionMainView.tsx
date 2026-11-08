@@ -93,6 +93,13 @@ export const EnergyProductionMainView: React.FC<EnergyProductionMainViewProps> =
   // 1. Centralized Reactive Engineering Store
   const store = useGenerationProjectStore('nachtigal');
 
+  // Synchronize initialTechnology if passed as prop
+  React.useEffect(() => {
+    if (initialTechnology) {
+      store.setActiveTechnology(initialTechnology);
+    }
+  }, [initialTechnology]);
+
   // 2. UI Controllers & Modals
   const [isSidePanelOpen, setIsSidePanelOpen] = useState<boolean>(false);
   const [selectedEquipmentForModal, setSelectedEquipmentForModal] = useState<ProductionEquipment | null>(null);
@@ -134,11 +141,15 @@ export const EnergyProductionMainView: React.FC<EnergyProductionMainViewProps> =
         isSidePanelOpen={isSidePanelOpen}
         onToggleSidePanel={() => setIsSidePanelOpen(!isSidePanelOpen)}
         activePillarLabel={
-          store.activeStage === 1 ? (locale === 'fr' ? 'Étape 1 : Ressources, Hydrologie & Parc National' : 'Stage 1: Resources & National Fleet') :
-          store.activeStage === 2 ? (locale === 'fr' ? 'Étape 2 : Génie Civil, Conduites & Turbines' : 'Stage 2: Civil Works, Penstocks & Turbines') :
-          store.activeStage === 3 ? (locale === 'fr' ? 'Étape 3 : Alternateur, Diagramme P-Q & Stabilité' : 'Stage 3: Alternator, P-Q Curve & Stability') :
-          store.activeStage === 4 ? (locale === 'fr' ? 'Étape 4 : Auxiliaires BoP, Neutre & Protections ANSI' : 'Stage 4: BoP Auxiliaries, Neutral & Protections') :
-          (locale === 'fr' ? 'Étape 5 : Essais SAT, O&M & Dossier DQE FCFA' : 'Stage 5: SAT Tests, O&M & BOQ FCFA')
+          store.activeTechnology === 'hydro' ? (
+            store.activeStage === 1 ? (locale === 'fr' ? 'Étape 1 : Ressources, Hydrologie & Parc National' : 'Stage 1: Resources & National Fleet') :
+            store.activeStage === 2 ? (locale === 'fr' ? 'Étape 2 : Génie Civil, Conduites & Turbines' : 'Stage 2: Civil Works, Penstocks & Turbines') :
+            store.activeStage === 3 ? (locale === 'fr' ? 'Étape 3 : Alternateur, Diagramme P-Q & Stabilité' : 'Stage 3: Alternator, P-Q Curve & Stability') :
+            store.activeStage === 4 ? (locale === 'fr' ? 'Étape 4 : Auxiliaires BoP, Neutre & Protections ANSI' : 'Stage 4: BoP Auxiliaries, Neutral & Protections') :
+            (locale === 'fr' ? 'Étape 5 : Essais SAT, O&M & Dossier DQE FCFA' : 'Stage 5: SAT Tests, O&M & BOQ FCFA')
+          ) : (
+            locale === 'fr' ? `Filière : ${store.activeTechnology.toUpperCase()} — Chaîne de Conversion` : `Sector: ${store.activeTechnology.toUpperCase()} — Conversion Chain`
+          )
         }
         totalPillarsCount={5}
       />
@@ -207,50 +218,86 @@ export const EnergyProductionMainView: React.FC<EnergyProductionMainViewProps> =
               </div>
 
               {/* 5 Stages Navigation List */}
-              <div className="space-y-1.5">
-                {[
-                  { stage: 1 as const, titleFr: '1. Ressources & Parc National', titleEn: '1. Resources & Fleet', desc: 'Hydrologie & Sizing' },
-                  { stage: 2 as const, titleFr: '2. Génie Civil & Turbines', titleEn: '2. Civil Works & Turbines', desc: '17 Étapes SVG & Hill Chart' },
-                  { stage: 3 as const, titleFr: '3. Alternateur & Stabilité', titleEn: '3. Alternator & Stability', desc: 'Plan P-Q & Boucles AVR' },
-                  { stage: 4 as const, titleFr: '4. Auxiliaires BoP & Protections', titleEn: '4. Station BoP & Protection', desc: 'Neutre & 12 Relais ANSI' },
-                  { stage: 5 as const, titleFr: '5. Essais, O&M & Dossier DQE', titleEn: '5. Commissioning & BOQ', desc: 'Délestage & DQE FCFA' }
-                ].map((st) => {
-                  const isSelected = store.activeStage === st.stage;
-                  return (
-                    <button
-                      key={st.stage}
-                      type="button"
-                      onClick={() => store.setActiveStage(st.stage)}
-                      className={`w-full p-2.5 rounded-xl border text-left transition-all flex items-center justify-between cursor-pointer ${
-                        isSelected
-                          ? 'bg-sky-500/20 border-sky-400 text-white shadow-xs'
-                          : 'bg-[#0E141F]/80 border-[#222B38] text-slate-400 hover:bg-[#161B22] hover:text-slate-200'
-                      }`}
-                    >
-                      <div>
-                        <div className={`text-xs font-bold ${isSelected ? 'text-sky-300' : 'text-slate-300'}`}>
-                          {locale === 'fr' ? st.titleFr : st.titleEn}
+              {store.activeTechnology === 'hydro' ? (
+                <div className="space-y-1.5">
+                  {[
+                    { stage: 1 as const, titleFr: '1. Ressources & Parc National', titleEn: '1. Resources & Fleet', desc: 'Hydrologie & Sizing' },
+                    { stage: 2 as const, titleFr: '2. Génie Civil & Turbines', titleEn: '2. Civil Works & Turbines', desc: '17 Étapes SVG & Hill Chart' },
+                    { stage: 3 as const, titleFr: '3. Alternateur & Stabilité', titleEn: '3. Alternator & Stability', desc: 'Plan P-Q & Boucles AVR' },
+                    { stage: 4 as const, titleFr: '4. Auxiliaires BoP & Protections', titleEn: '4. Station BoP & Protection', desc: 'Neutre & 12 Relais ANSI' },
+                    { stage: 5 as const, titleFr: '5. Essais, O&M & Dossier DQE', titleEn: '5. Commissioning & BOQ', desc: 'Délestage & DQE FCFA' }
+                  ].map((st) => {
+                    const isSelected = store.activeStage === st.stage;
+                    return (
+                      <button
+                        key={st.stage}
+                        type="button"
+                        onClick={() => store.setActiveStage(st.stage)}
+                        className={`w-full p-2.5 rounded-xl border text-left transition-all flex items-center justify-between cursor-pointer ${
+                          isSelected
+                            ? 'bg-sky-500/20 border-sky-400 text-white shadow-xs'
+                            : 'bg-[#0E141F]/80 border-[#222B38] text-slate-400 hover:bg-[#161B22] hover:text-slate-200'
+                        }`}
+                      >
+                        <div>
+                          <div className={`text-xs font-bold ${isSelected ? 'text-sky-300' : 'text-slate-300'}`}>
+                            {locale === 'fr' ? st.titleFr : st.titleEn}
+                          </div>
+                          <div className="text-[10px] text-slate-500">
+                            {st.desc}
+                          </div>
                         </div>
-                        <div className="text-[10px] text-slate-500">
-                          {st.desc}
-                        </div>
-                      </div>
-                      {isSelected && <ChevronRight className="w-3.5 h-3.5 text-sky-400 shrink-0" />}
-                    </button>
-                  );
-                })}
-              </div>
+                        {isSelected && <ChevronRight className="w-3.5 h-3.5 text-sky-400 shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="p-3 rounded-xl bg-[#0E141F] border border-amber-500/30 space-y-2">
+                    <span className="text-[10px] uppercase font-bold text-amber-400 block">
+                      {locale === 'fr' ? 'Filière Active' : 'Active Generation Sector'}
+                    </span>
+                    <span className="text-xs font-bold text-white block uppercase">
+                      {store.activeTechnology}
+                    </span>
+                    <p className="text-[10px] text-slate-400">
+                      {locale === 'fr'
+                        ? 'Visualisez la chaîne complète de conversion, les fiches équipements et l’évacuation réseau.'
+                        : 'Explore full conversion chain, equipment dossiers, and grid connection.'}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => store.setActiveTechnology('hydro')}
+                    className="w-full p-2.5 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 text-sky-400 text-xs font-bold transition-all text-center cursor-pointer"
+                  >
+                    {locale === 'fr' ? '← Revenir à l’Hydroélectricité' : '← Return to Hydroelectric'}
+                  </button>
+                </div>
+              )}
             </div>
           </aside>
         )}
 
         {/* MAIN STAGE CONTENT CANVAS */}
         <main className="flex-1 min-w-0 w-full space-y-6">
-
-          {/* ========================================================
-              STAGE 1: RESSOURCES, HYDROLOGIE & PARC NATIONAL
-             ======================================================== */}
-          {store.activeStage === 1 && (
+          {store.activeTechnology !== 'hydro' ? (
+            <OtherGenerationsJourney
+              technologyId={store.activeTechnology}
+              locale={locale}
+              onSelectTechnology={(techId) => {
+                store.setActiveTechnology(techId);
+              }}
+              onBackToOverview={() => store.setActiveTechnology('hydro')}
+              onSelectGlobalEquipment={handleInspectEquipment}
+            />
+          ) : (
+            <>
+              {/* ========================================================
+                  STAGE 1: RESSOURCES, HYDROLOGIE & PARC NATIONAL
+                 ======================================================== */}
+              {store.activeStage === 1 && (
             <div className="space-y-5">
               {/* Sub-Tabs Selector */}
               <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-[#222B38]">
@@ -1042,6 +1089,8 @@ export const EnergyProductionMainView: React.FC<EnergyProductionMainViewProps> =
                 </Suspense>
               )}
             </div>
+          )}
+            </>
           )}
 
         </main>
