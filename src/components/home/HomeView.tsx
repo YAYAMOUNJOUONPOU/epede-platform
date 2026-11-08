@@ -2471,24 +2471,24 @@ export const HomeView: React.FC<HomeViewProps> = ({
         {/* ========================================================================= */}
         {/* 09 FINAL CALL TO ACTION                                                   */}
         {/* ========================================================================= */}
-        <section data-screen-label="09 CTA" style={{ position: 'relative', background: '#0B1B2B', color: '#F3F7FA', padding: 'clamp(100px, 14vw, 200px) 0', overflow: 'hidden' }}>
+        <section data-screen-label="09 CTA" style={{ position: 'relative', background: '#0B1B2B', color: '#F3F7FA', padding: 'clamp(48px, 6vw, 84px) 0', overflow: 'hidden' }}>
           <div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: 'radial-gradient(60% 80% at 80% 100%, rgba(242, 165, 65, 0.16), rgba(242, 165, 65, 0) 70%)' }} />
           <div style={{ position: 'relative', maxWidth: 1360, margin: '0 auto', padding: '0 clamp(20px, 4vw, 48px)' }}>
-            <h2 style={{ margin: 0, willChange: 'transform', fontSize: 'clamp(3rem, 8vw, 8rem)', lineHeight: 0.92, letterSpacing: '-0.06em', fontWeight: 700 }}>
+            <h2 style={{ margin: 0, willChange: 'transform', fontSize: 'clamp(1.75rem, 3.5vw, 3rem)', lineHeight: 1.15, letterSpacing: '-0.03em', fontWeight: 700 }}>
               <span style={{ display: 'block', color: '#F3F7FA' }}>{isFR ? 'Voir chaque connexion.' : 'See every connection.'}</span>
               <span style={{ display: 'block', color: '#F2A541' }}>{isFR ? 'Maîtriser le système.' : 'Master the system.'}</span>
             </h2>
-            <div style={{ marginTop: 48, display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+            <div style={{ marginTop: 24, display: 'flex', flexWrap: 'wrap', gap: 12 }}>
               <button
                 onClick={() => onNavigateJourney?.()}
-                style={{ height: 56, padding: '0 26px', borderRadius: 999, background: '#F2A541', color: '#0B1B2B', fontSize: 16, fontWeight: 600, display: 'flex', alignItems: 'center', border: 0, cursor: 'pointer' }}
+                style={{ height: 44, padding: '0 22px', borderRadius: 999, background: '#F2A541', color: '#0B1B2B', fontSize: 14, fontWeight: 600, display: 'flex', alignItems: 'center', border: 0, cursor: 'pointer' }}
                 className="hover:bg-[#FFC277] transition-colors"
               >
                 {isFR ? 'Explorer le parcours de l’énergie →' : 'Explore the power journey →'}
               </button>
               <a
                 href="#pathways"
-                style={{ height: 56, padding: '0 26px', borderRadius: 999, border: '1px solid #3A536B', color: '#F3F7FA', fontSize: 16, display: 'flex', alignItems: 'center', textDecoration: 'none' }}
+                style={{ height: 44, padding: '0 22px', borderRadius: 999, border: '1px solid #3A536B', color: '#F3F7FA', fontSize: 14, display: 'flex', alignItems: 'center', textDecoration: 'none' }}
                 className="hover:border-[#F3F7FA] transition-colors"
               >
                 {isFR ? 'Parcourir les formations' : 'Browse learning paths'}
