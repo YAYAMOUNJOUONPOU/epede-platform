@@ -101,21 +101,40 @@ export const DistributionWorkbench: React.FC<DistributionWorkbenchProps> = ({
     else if (activeSubdomainId.includes('D05.6')) setActivePillar('DER_RELIABILITY');
   }, [activeSubdomainId]);
 
-  const pillarsList: { id: DistributionPillar; label_fr: string; label_en: string; icon: any; isNew?: boolean }[] = [
-    { id: 'POWER_FLOW', label_fr: '⚡ Pipeline MT 30 kV & Appareillages', label_en: '⚡ 30 kV MV Power Flow & Switchgear', icon: Zap, isNew: true },
-    { id: 'MASTER_CHAIN', label_fr: '🔗 Spine Maîtresse MT → BT (11 Niveaux)', label_en: '🔗 Master MV → LV Delivery Spine (11 Stages)', icon: Layers, isNew: true },
-    { id: 'JOURNEY', label_fr: 'Parcours Électrique (10 Étapes)', label_en: 'Electrical Journey (10 Stages)', icon: Zap },
-    { id: 'TOPOLOGY', label_fr: 'Topologies (Radiale, Boucle, Maillée)', label_en: 'Topologies (Radial, Ring, Mesh)', icon: Repeat },
-    { id: 'FEEDERS_SWITCHING', label_fr: 'Artères MT & Appareillages (RMU/ACR)', label_en: 'MV Feeders & Switchgear (RMU/ACR)', icon: Sliders },
-    { id: 'SUBSTATION_TRAFO', label_fr: 'Postes MT/BT & Transformateurs Dyn11', label_en: 'Substations & Dyn11 Transformers', icon: Building2 },
-    { id: 'LV_CONSUMER', label_fr: 'Réseau BT & Usager Final (Lien D06)', label_en: 'LV Mains & Consumer (D06 Link)', icon: Home },
-    { id: 'URBAN_VS_RURAL', label_fr: 'Urbain vs. Rural (Paradigmes)', label_en: 'Urban vs. Rural (Paradigms)', icon: Scale },
-    { id: 'CROSS_SECTION', label_fr: 'Coupe Câble PRC & Support Aérien', label_en: 'Cable Cutaway & Pole Structure', icon: Layers },
-    { id: 'PROTECTION_SAFETY', label_fr: 'Protections, Neutre & Sécurité', label_en: 'Protection, Grounding & Safety', icon: ShieldCheck },
-    { id: 'SIMULATOR', label_fr: 'Simulateur Défauts & FLISR (4 Cas)', label_en: 'Fault & FLISR Simulator (4 Cases)', icon: AlertTriangle },
-    { id: 'DER_RELIABILITY', label_fr: 'Intégration DER & IEEE 1366', label_en: 'DER Integration & IEEE 1366', icon: Activity },
-    { id: 'OPERATOR_FABRIC', label_fr: 'Console OperatorFabric & Jumeau AAS', label_en: 'OperatorFabric Console & AAS Twin', icon: Zap }
+  const pillarsList: {
+    id: DistributionPillar;
+    label_fr: string;
+    label_en: string;
+    icon: any;
+    phase: 1 | 2 | 3 | 4;
+    phaseLabel_fr: string;
+    phaseLabel_en: string;
+    isNew?: boolean;
+  }[] = [
+    // Phase 1: Topologies & Écoulement MT/BT
+    { id: 'POWER_FLOW', label_fr: '⚡ Pipeline MT 30 kV & Appareillages', label_en: '⚡ 30 kV MV Power Flow & Switchgear', icon: Zap, phase: 1, phaseLabel_fr: 'Topologies & Flux', phaseLabel_en: 'Topologies & Flow', isNew: true },
+    { id: 'MASTER_CHAIN', label_fr: '🔗 Spine Maîtresse MT → BT (11 Niveaux)', label_en: '🔗 Master MV → LV Delivery Spine (11 Stages)', icon: Layers, phase: 1, phaseLabel_fr: 'Topologies & Flux', phaseLabel_en: 'Topologies & Flow', isNew: true },
+    { id: 'JOURNEY', label_fr: 'Parcours Électrique (10 Étapes)', label_en: 'Electrical Journey (10 Stages)', icon: Zap, phase: 1, phaseLabel_fr: 'Topologies & Flux', phaseLabel_en: 'Topologies & Flow' },
+    { id: 'TOPOLOGY', label_fr: 'Topologies (Radiale, Boucle, Maillée)', label_en: 'Topologies (Radial, Ring, Mesh)', icon: Repeat, phase: 1, phaseLabel_fr: 'Topologies & Flux', phaseLabel_en: 'Topologies & Flow' },
+
+    // Phase 2: Appareillages, Lignes & Postes MT/BT
+    { id: 'FEEDERS_SWITCHING', label_fr: 'Artères MT & Appareillages (RMU/ACR)', label_en: 'MV Feeders & Switchgear (RMU/ACR)', icon: Sliders, phase: 2, phaseLabel_fr: 'Appareillages & Postes', phaseLabel_en: 'Switchgear & Subs' },
+    { id: 'SUBSTATION_TRAFO', label_fr: 'Postes MT/BT & Transformateurs Dyn11', label_en: 'Substations & Dyn11 Transformers', icon: Building2, phase: 2, phaseLabel_fr: 'Appareillages & Postes', phaseLabel_en: 'Switchgear & Subs' },
+    { id: 'LV_CONSUMER', label_fr: 'Réseau BT & Usager Final (Lien D06)', label_en: 'LV Mains & Consumer (D06 Link)', icon: Home, phase: 2, phaseLabel_fr: 'Appareillages & Postes', phaseLabel_en: 'Switchgear & Subs' },
+    { id: 'CROSS_SECTION', label_fr: 'Coupe Câble PRC & Support Aérien', label_en: 'Cable Cutaway & Pole Structure', icon: Layers, phase: 2, phaseLabel_fr: 'Appareillages & Postes', phaseLabel_en: 'Switchgear & Subs' },
+
+    // Phase 3: Environnements, Sûreté & FLISR
+    { id: 'URBAN_VS_RURAL', label_fr: 'Urbain vs. Rural (Paradigmes)', label_en: 'Urban vs. Rural (Paradigms)', icon: Scale, phase: 3, phaseLabel_fr: 'Sûreté & FLISR', phaseLabel_en: 'Safety & FLISR' },
+    { id: 'PROTECTION_SAFETY', label_fr: 'Protections, Neutre & Sécurité', label_en: 'Protection, Grounding & Safety', icon: ShieldCheck, phase: 3, phaseLabel_fr: 'Sûreté & FLISR', phaseLabel_en: 'Safety & FLISR' },
+    { id: 'SIMULATOR', label_fr: 'Simulateur Défauts & FLISR (4 Cas)', label_en: 'Fault & FLISR Simulator (4 Cases)', icon: AlertTriangle, phase: 3, phaseLabel_fr: 'Sûreté & FLISR', phaseLabel_en: 'Safety & FLISR' },
+
+    // Phase 4: Réseaux Intelligents & Jumeau Numérique
+    { id: 'DER_RELIABILITY', label_fr: 'Intégration DER & IEEE 1366', label_en: 'DER Integration & IEEE 1366', icon: Activity, phase: 4, phaseLabel_fr: 'Smart Grid & Jumeau', phaseLabel_en: 'Smart Grid & Twin' },
+    { id: 'OPERATOR_FABRIC', label_fr: 'Console OperatorFabric & Jumeau AAS', label_en: 'OperatorFabric Console & AAS Twin', icon: Zap, phase: 4, phaseLabel_fr: 'Smart Grid & Jumeau', phaseLabel_en: 'Smart Grid & Twin' }
   ];
+
+  // Normative D05 Worked Example (NGR Earth Fault 30 kV)
+  const d05WorkedExample = getWorkedExampleById('we-d05-distribution-ngr-earth-fault');
 
   // Resolve equipment for AAS drawer
   const matchedEquipment = EQUIPMENT_ITEMS.find((e) => e.id === selectedAasAssetId);
@@ -177,7 +196,7 @@ export const DistributionWorkbench: React.FC<DistributionWorkbenchProps> = ({
         isSidePanelOpen={isSidePanelOpen}
         onToggleSidePanel={() => setIsSidePanelOpen(!isSidePanelOpen)}
         activePillarLabel={activePillarConfig ? (locale === 'fr' ? activePillarConfig.label_fr : activePillarConfig.label_en) : undefined}
-        totalPillarsCount={11}
+        totalPillarsCount={13}
       />
 
       {/* CANONICAL 9-STAGE POWER CHAIN (STAGE D1: MV/LV DISTRIBUTION) */}
@@ -209,7 +228,7 @@ export const DistributionWorkbench: React.FC<DistributionWorkbenchProps> = ({
                 <div className="flex items-center gap-2">
                   <Layers className="w-4 h-4 text-teal-400" />
                   <span className="font-bold text-white uppercase tracking-wider text-[11px]">
-                    {locale === 'fr' ? 'Piliers Distribution (11)' : 'Distribution Pillars (11)'}
+                    {locale === 'fr' ? 'Piliers Distribution (13)' : 'Distribution Pillars (13)'}
                   </span>
                 </div>
                 <button
@@ -234,46 +253,50 @@ export const DistributionWorkbench: React.FC<DistributionWorkbenchProps> = ({
                 />
               </div>
 
-              {/* 11 Pillars List */}
-              <div className="space-y-1 max-h-[580px] overflow-y-auto pr-1 scrollbar-thin">
-                {pillarsList
-                  .filter(p => {
-                    if (!sidebarSearch.trim()) return true;
-                    const q = sidebarSearch.toLowerCase();
-                    return (
-                      p.label_fr.toLowerCase().includes(q) ||
-                      p.label_en.toLowerCase().includes(q)
-                    );
-                  })
-                  .map((p, idx) => {
-                    const isSelected = p.id === activePillar;
-                    return (
-                      <button
-                        key={p.id}
-                        type="button"
-                        onClick={() => setActivePillar(p.id)}
-                        className={`w-full p-2.5 rounded-xl border text-left transition-all flex items-center justify-between cursor-pointer ${
-                          isSelected
-                            ? 'bg-teal-500/20 border-teal-400 text-white shadow-xs'
-                            : 'bg-[#0C121C]/80 border-[#1C2533] text-slate-400 hover:bg-[#16202E] hover:text-slate-200'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span className={`w-5 h-5 rounded flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                            isSelected ? 'bg-teal-500 text-slate-950' : 'bg-slate-800 text-slate-400'
-                          }`}>
-                            {idx + 1}
-                          </span>
-                          <div className="min-w-0">
-                            <div className={`text-xs font-semibold truncate ${isSelected ? 'text-teal-300' : 'text-slate-300'}`}>
-                              {locale === 'fr' ? p.label_fr : p.label_en}
+              {/* 13 Pillars Grouped List */}
+              <div className="space-y-3 max-h-[580px] overflow-y-auto pr-1 scrollbar-thin">
+                {[1, 2, 3, 4].map((ph) => {
+                  const phasePillars = pillarsList.filter(p => p.phase === ph && (!sidebarSearch.trim() || p.label_fr.toLowerCase().includes(sidebarSearch.toLowerCase()) || p.label_en.toLowerCase().includes(sidebarSearch.toLowerCase())));
+                  if (phasePillars.length === 0) return null;
+                  const firstPillar = phasePillars[0];
+                  return (
+                    <div key={ph} className="space-y-1">
+                      <div className="px-1 text-[10px] font-bold text-teal-400/80 uppercase tracking-wider">
+                        {locale === 'fr' ? firstPillar.phaseLabel_fr : firstPillar.phaseLabel_en}
+                      </div>
+                      {phasePillars.map((p) => {
+                        const isSelected = p.id === activePillar;
+                        const overallIdx = pillarsList.findIndex(item => item.id === p.id);
+                        return (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => setActivePillar(p.id)}
+                            className={`w-full p-2 rounded-xl border text-left transition-all flex items-center justify-between cursor-pointer ${
+                              isSelected
+                                ? 'bg-teal-500/20 border-teal-400 text-white shadow-xs'
+                                : 'bg-[#0C121C]/80 border-[#1C2533] text-slate-400 hover:bg-[#16202E] hover:text-slate-200'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span className={`w-4 h-4 rounded flex items-center justify-center text-[9px] font-bold shrink-0 ${
+                                isSelected ? 'bg-teal-500 text-slate-950' : 'bg-slate-800 text-slate-400'
+                              }`}>
+                                {overallIdx + 1}
+                              </span>
+                              <div className="min-w-0">
+                                <div className={`text-[11px] font-semibold truncate ${isSelected ? 'text-teal-300' : 'text-slate-300'}`}>
+                                  {locale === 'fr' ? p.label_fr : p.label_en}
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        </div>
-                        <ChevronRight className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-teal-400' : 'text-slate-600'}`} />
-                      </button>
-                    );
-                  })}
+                            <ChevronRight className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-teal-400' : 'text-slate-600'}`} />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  );
+                })}
               </div>
 
               {/* Principles Drawer Shortcut */}
@@ -299,7 +322,7 @@ export const DistributionWorkbench: React.FC<DistributionWorkbenchProps> = ({
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#070A10] border border-[#1C2533] hover:border-teal-500/50 text-slate-300 hover:text-white text-xs font-mono transition-all cursor-pointer shadow-md"
             >
               <PanelLeftOpen className="w-4 h-4 text-teal-400" />
-              <span>{locale === 'fr' ? 'Ouvrir le Volet des 11 Piliers Distribution' : 'Open 11 Distribution Pillars Navigator'}</span>
+              <span>{locale === 'fr' ? 'Ouvrir le Volet des 13 Piliers Distribution' : 'Open 13 Distribution Pillars Navigator'}</span>
             </button>
           )}
 
@@ -413,11 +436,47 @@ export const DistributionWorkbench: React.FC<DistributionWorkbenchProps> = ({
         )}
 
         {activePillar === 'PROTECTION_SAFETY' && (
-          <DistributionProtectionAndSafetyOverlay locale={locale} />
+          <div className="space-y-6">
+            <DistributionProtectionAndSafetyOverlay locale={locale} />
+            {d05WorkedExample && (
+              <div className="p-4 sm:p-6 rounded-2xl bg-[#090D14] border border-amber-900/40 shadow-xl space-y-4">
+                <div className="flex items-center justify-between border-b border-[#1E2738] pb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
+                    <span className="text-xs font-bold text-white uppercase font-mono tracking-wider">
+                      {locale === 'fr' ? 'Exemple Didactique Résolu Normalisé D05' : 'Normative Worked Engineering Calculation D05'}
+                    </span>
+                  </div>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono">
+                    IEC 60071 / SONATREL 30 kV
+                  </span>
+                </div>
+                <WorkedExampleViewer example={d05WorkedExample} locale={locale} />
+              </div>
+            )}
+          </div>
         )}
 
         {activePillar === 'SIMULATOR' && (
-          <DistributionFaultScenariosSimulator locale={locale} />
+          <div className="space-y-6">
+            <DistributionFaultScenariosSimulator locale={locale} />
+            {d05WorkedExample && (
+              <div className="p-4 sm:p-6 rounded-2xl bg-[#090D14] border border-cyan-900/40 shadow-xl space-y-4">
+                <div className="flex items-center justify-between border-b border-[#1E2738] pb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
+                    <span className="text-xs font-bold text-white uppercase font-mono tracking-wider">
+                      {locale === 'fr' ? 'Calcul de Dimensionnement Associé : Résistance de Neutre NGR 30 kV' : 'Associated Sizing Calculation: 30 kV NGR Grounding'}
+                    </span>
+                  </div>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-mono">
+                    IEEE Std 142 / NF C 13-200
+                  </span>
+                </div>
+                <WorkedExampleViewer example={d05WorkedExample} locale={locale} />
+              </div>
+            )}
+          </div>
         )}
 
         {activePillar === 'DER_RELIABILITY' && (
