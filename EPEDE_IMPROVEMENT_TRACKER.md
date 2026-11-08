@@ -13,8 +13,8 @@ Complete platform transformation through continuous iterative improvement across
 | **D02** | Power-System Architecture & Grid Planning | Completed | 6 | 97% | 97% | 96% | Passing |
 | **D03** | Transmission Networks (HV Overhead Lines & Cables) | Completed | 6 | 97% | 97% | 96% | Passing |
 | **D04** | Substations & Grid Nodes (AIS, GIS, Transformers, Bays) | Completed | 6 | 97% | 97% | 96% | Passing |
-| **D05** | Distribution Networks (MV Feeders, RMUs, Pole Transformers) | In Progress | 1 | - | - | - | Queued |
-| **D06** | Electrical Installations & Utilization (LV Switchboards, Motors, Earthing) | Queued | 0 | - | - | - | - |
+| **D05** | Distribution Networks (MV Feeders, RMUs, Pole Transformers) | Completed | 6 | 97% | 97% | 96% | Passing |
+| **D06** | Electrical Installations & Utilization (LV Switchboards, Motors, Earthing) | In Progress | 1 | - | - | - | Queued |
 | **D07** | Industrial Automation, DCS & Variable Speed Drives (VFD) | Queued | 0 | - | - | - | - |
 | **D08** | Extra-Low Voltage (ELV) & Special Electrical Systems | Queued | 0 | - | - | - | - |
 | **D09** | Artificial Intelligence & Advanced Power Technologies | Queued | 0 | - | - | - | - |
@@ -45,6 +45,6 @@ Complete platform transformation through continuous iterative improvement across
 ---
 
 ## 3. Improvement Log Summary
-- **Completed**: D01 (Generation & Electricity Production), D02 (Power System Architecture & Grid Planning), D03 (Transmission Networks), D04 (Substations & Grid Nodes).
-- **Current Step**: Transforming Domain 5 (Distribution Networks — MV Feeders, RMUs, Pole Transformers).
-- **Next Step**: Domain 6 (Electrical Installations & Utilization — LV Switchboards, Motors, Earthing).
+- **Completed**: D01 (Generation & Electricity Production), D02 (Power System Architecture & Grid Planning), D03 (Transmission Networks), D04 (Substations & Grid Nodes), D05 (Distribution Networks — MV Feeders, RMUs, Pole Transformers H61, Kiosks).
+- **Current Step**: Transforming Domain 6 (Electrical Installations & Utilization — LV Switchboards TGBT, Motor Control Centers, Earthing Schemes TT/TN/IT).
+- **Next Step**: Domain 7 (Industrial Automation, DCS & Variable Speed Drives VFD).

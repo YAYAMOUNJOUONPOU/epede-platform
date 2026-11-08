@@ -1112,68 +1112,101 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
     ]
   },
 
-  // D05: Distribution HTA/BT
+  // D05: Réseaux de Distribution HTA (15 kV / 30 kV) & Postes HTA/BT
   D05: {
     domainCode: 'D05',
     sectionA: {
-      roleFr: "Acheminement et distribution finale de l'énergie électrique vers les usagers industriels, tertiaires et résidentiels en moyenne et basse tension.",
-      roleEn: 'Final electrical power delivery to industrial, commercial, and residential consumers at MV and LV.',
+      roleFr: "Acheminement, régulation et distribution finale de l'énergie électrique en moyenne tension (HTA 15 kV / 30 kV) depuis les postes sources HTB/HTA vers les postes de transformation HTA/BT, les colonnes montantes et les usagers industriels, tertiaires et résidentiels.",
+      roleEn: 'Transmission, regulation, and final delivery of medium-voltage electric power (15 kV / 30 kV MV) from primary grid substations to secondary MV/LV distribution transformers and end consumers.',
       inputsFr: {
-        title: 'Postes Sources HTB/HTA',
-        desc: 'Énergie reçue des postes de transformation 225/30 kV ou 90/15 kV.',
-        voltage: '30 kV ou 15 kV HTA'
+        title: 'Postes Sources HTB/HTA (225/30 kV, 90/30 kV, 90/15 kV)',
+        desc: 'Jeux de barres HTA des postes de répartition SONATREL/ENEO avec disjoncteurs sous vide ou SF6 et régleurs en charge (OLTC).',
+        voltage: '30 kV (standard national RIS/RIN Cameroun) ou 15 kV HTA'
       },
       inputsEn: {
-        title: 'Primary Grid Substations',
-        desc: 'Power stepped down from 225/30 kV or 90/15 kV transmission substations.',
-        voltage: '30 kV or 15 kV MV'
+        title: 'Primary Grid Substations (225/30 kV, 90/30 kV, 90/15 kV)',
+        desc: 'MV switchgear busbars at transmission step-down substations equipped with vacuum/SF6 circuit breakers and On-Load Tap Changers (OLTC).',
+        voltage: '30 kV (Cameroon national standard) or 15 kV MV'
       },
       processFr: {
-        title: 'Réseaux Moyenne Tension & Postes HTA/BT',
-        desc: 'Artères souterraines ou lignes mixtes aériennes alimentant des postes de transformation compacts ou sur poteau (H61).',
-        note: 'Transformateurs HTA/BT : 50 kVA à 1 600 kVA'
+        title: 'Artères HTA, Conduite Télécommandée (FLISR) & Postes HTA/BT',
+        desc: 'Réseaux maillés exploités en boucle ouverte, artères souterraines en câble PRC 3x240 mm² Al et lignes aériennes almélec 148 mm², sectionnement télécommandé par interrupteurs aériens (IACM/IAT) et disjoncteurs réenclencheurs de poteau (ACR), abaissement vers 400 V / 230 V via transformateurs Dyn11.',
+        note: 'Régulation de tension à ±5% sous pointe; transformateurs 50 kVA à 1 600 kVA'
       },
       processEn: {
-        title: 'MV Feeders & Distribution Kiosks',
-        desc: 'Underground cables or pole-mounted (H61) transformers stepping voltage down to 400 V.',
-        note: 'Distribution Transformers: 50 kVA to 1,600 kVA'
+        title: 'MV Feeders, Automated FLISR & Distribution Transformers',
+        desc: 'Meshed grids operated as open rings, underground XLPE 3x240 mm² cables, overhead Aster 148 mm² lines, automated sectionalizing via pole-mounted Auto-Reclosers (ACR), Fault Passage Indicators (FPI), and Dyn11 step-down transformers.',
+        note: 'Voltage regulation within ±5% statutory limits; transformers 50 kVA to 1,600 kVA'
       },
       outputsFr: {
-        title: 'Réseau Basse Tension 400 V / 230 V',
-        desc: 'Alimentation des Tableaux Généraux Basse Tension (TGBT) et compteurs divisionnaires des abonnés.',
-        earthing: 'Régime de neutre TT (distribution publique) ou TN-S'
+        title: 'Postes de Livraison HTA & Réseau BT 400 V / 230 V',
+        desc: 'Alimentation des postes de livraison abonnés HTA (NF C 13-100), départs Basse Tension vers les armoires de distribution TUR/TIPI, colonnes montantes et comptages intelligents d\'abonnés.',
+        earthing: 'Régime de neutre HTA : Neutre à la terre par résistance (RPN / NGR 40 A ou 150 A, 10 s); Régime BT : Schéma TT ou TN-S'
       },
       outputsEn: {
-        title: 'Low Voltage 400 V / 230 V Grid',
-        desc: 'Supply to Main Low Voltage Switchboards (MLVS) and customer smart revenue meters.',
-        earthing: 'TT earthing (public utilities) or TN-S (industrial)'
+        title: 'Secondary Substation Terminals & 400 V / 230 V LV Networks',
+        desc: 'Supply to dedicated MV industrial consumers (NF C 13-100), low-voltage distribution kiosks (TUR/TIPI boards), consumer service mains, and smart revenue meters.',
+        earthing: 'MV Neutral: Resistor-grounded neutral (NGR 40 A or 150 A, 10 s); LV Earthing: TT scheme (utility distribution) or TN-S (industrial plants)'
       }
     },
     sectionB: {
-      summaryFr: 'Architectures en boucle ouverte (coupure d\'artère) et départs radiaux sécurisés.',
-      summaryEn: 'Open-ring switchgear loops and protected radial feeder architectures.',
+      summaryFr: 'Architectures en boucle ouverte (coupure d\'artère RMU), départs radiaux ruraux protégés par réenclencheurs, et double dérivation avec ATS.',
+      summaryEn: 'Open-ring switchgear loops (RMU), rural overhead radial feeders with auto-reclosers, and dual radial ATS schemes.',
       architectures: [
         {
-          nameFr: 'Boucle Ouverte HTA (Coupure d\'Artère / Ring Main Unit)',
-          nameEn: 'Open Ring Feeder (Ring Main Unit RMU)',
-          techFr: 'Cellules compactes isolées au gaz SF6 ou air sec avec point de coupure normalement ouvert',
-          techEn: 'Compact RMU switchgear in SF6 or dry air with normally open sectionalizing tie-point',
-          descFr: 'Permet d\'isoler un tronçon de câble en défaut en moins de 15 minutes et de réalimenter les abonnés par l\'autre côté.',
-          descEn: 'Enables fault isolation and power restoration via alternate feeder path within 15 minutes.',
-          standard: 'CEI 62271-200',
-          metricFr: 'Indisponibilité SAIDI divisée par 4',
-          metricEn: 'SAIDI outage duration reduced by 4x'
+          nameFr: 'Boucle Ouverte HTA Urbaine (Coupure d\'Artère RMU)',
+          nameEn: 'Urban MV Open Ring Feeder (Ring Main Unit RMU)',
+          techFr: 'Cellules compactes RMU étanches sous enveloppe métallique à coupure dans le vide ou SF6, avec point de coupure normal (PCO / N.O.)',
+          techEn: 'Gas-tight compact RMU switchgear in SF6 or dry air with normally open sectionalizing tie-switch (N.O.)',
+          descFr: 'Architecture reine des réseaux urbains (Douala, Yaoundé). Les postes HTA/BT sont branchés en coupure d\'artère sur deux demi-boucles issues du même poste source ou de deux postes sources distincts. En cas de défaut de câble, le tronçon défaillant est isolé et les clients sains réalimentés en moins de 15 minutes.',
+          descEn: 'Predominant urban architecture (Douala, Yaoundé). Secondary kiosks are daisy-chained across two half-loops. In the event of a cable fault, the faulty section is isolated and healthy sections re-energized within 15 minutes.',
+          standard: 'CEI 62271-200 / CEI 62271-1',
+          metricFr: 'Indisponibilité SAIDI divisée par 4 vs radial simple',
+          metricEn: 'SAIDI outage duration reduced by 75% vs simple radial'
         },
         {
-          nameFr: 'Départ Radial HTA Aérien avec Réenclencheur (Auto-Recloser)',
-          nameEn: 'Overhead Radial Feeder with Auto-Recloser',
-          techFr: 'Ligne aérienne équipée d\'un disjoncteur réenclencheur automatique de poteau (ACR)',
-          techEn: 'Overhead rural line protected by pole-mounted automatic vacuum recloser',
-          descFr: 'Élimine automatiquement 80% des défauts fugitifs causés par la végétation ou les éclairs en zone tropicale.',
-          descEn: 'Automatically clears 80% of transient faults caused by vegetation or tropical lightning strikes.',
-          standard: 'CEI 62271-111',
-          metricFr: 'Cycle : O-0.5s-CO-2s-CO',
-          metricEn: 'Reclose cycle: O-0.5s-CO-2s-CO'
+          nameFr: 'Départ Radial Aérien Protégé par Réenclencheur (ACR 30 kV)',
+          nameEn: 'Rural Long Radial Feeder with Automatic Circuit Recloser (ACR)',
+          techFr: 'Ligne aérienne almélec (Aster 54.6 / 148 mm²) protégée par disjoncteurs réenclencheurs automatiques sous vide montés sur poteau avec coffret ANSI 50/51/50N/51N/79',
+          techEn: 'Overhead AAAC line protected by pole-mounted vacuum auto-reclosers with digital protection controller (ANSI 50/51/50N/51N/79)',
+          descFr: 'Indispensable pour les longues artères rurales et périurbaines (ex. Obala, Bafia, Mbalmayo) soumises à la végétation dense et aux foudroiements tropicaux. Le réenclencheur exécute un cycle de déclenchements ultra-rapides pour éliminer les défauts transitoires sans couper l\'ensemble du réseau amont.',
+          descEn: 'Vital for extended rural corridors exposed to dense vegetation and tropical lightning strikes. The ACR executes fast-trip and time-delayed reclose cycles to eliminate transient faults without tripping the primary feeder breaker.',
+          standard: 'CEI 62271-111 / IEEE C37.60',
+          metricFr: 'Élimine 80% à 85% des pannes fugitives; cycle O-0.3s-CO-2s-CO',
+          metricEn: 'Clears 80-85% of transient faults; cycle O-0.3s-CO-2s-CO'
+        },
+        {
+          nameFr: 'Double Dérivation HTA avec Inverseur Automatique de Source (ATS)',
+          nameEn: 'Dual Radial MV Feeders with Automatic Transfer Switch (ATS)',
+          techFr: 'Deux arrivées HTA indépendantes ("Voie Normale" et "Voie Secours") avec verrouillage mécanique et électrique et automate de basculement ultra-rapide',
+          techEn: 'Two independent MV feeder arrivals ("Normal" and "Emergency") with mechanical/electrical interlocks and automatic microgrid transfer controller',
+          descFr: 'Conçu pour les usagers à continuité de service critique (centres hospitaliers, installations industrielles stratégiques, aéroports, data centers). Lors d\'une disparition de tension sur la voie normale, l\'automate vérifie l\'absence de court-circuit aval et bascule sur la voie secours en moins de 1,5 seconde.',
+          descEn: 'Engineered for mission-critical facilities (hospitals, major industrial plants, airports, tier-3/4 data centers). Upon voltage loss on the primary arrival, the ATS verifies downstream bus health and executes automatic transfer to the reserve feeder in < 1.5 seconds.',
+          standard: 'NF C 13-100 / CEI 62271-200',
+          metricFr: 'Temps de transfert automatique < 1.5 s; redondance N-1 totale',
+          metricEn: 'Automatic transfer time < 1.5 s; full local N-1 redundancy'
+        },
+        {
+          nameFr: 'Poste Aérien sur Poteau H61 (50 kVA à 160 kVA)',
+          nameEn: 'Pole-Mounted Distribution Transformer Substation H61',
+          techFr: 'Transformateur immergé dans l\'huile minérale étanche (ONAN), coupe-circuit à fusibles HTA d\'éjection (cut-outs), parafoudres à oxyde de zinc (ZnO 30 kV) et disjoncteur BT haut de poteau (DHP)',
+          techEn: 'Hermetically sealed oil-immersed transformer (ONAN), expulsion fuse cut-outs, 30 kV ZnO surge arresters, and pole-top low-voltage circuit breaker (DHP)',
+          descFr: 'Standard d\'électrification rurale et semi-urbaine pour les villages et zones dispersées. Fixé directement sur support en béton armé ou bois, il transforme le 30 kV directement en 400 V triphasé / 230 V monophasé avec un investissement d\'infrastructure minimal et une grande résilience aux surtensions atmosphériques.',
+          descEn: 'The workhorse of rural electrification across villages and suburban perimeters. Mounted directly onto concrete or treated wooden poles, it steps down 30 kV to 400/230 V with low capital expenditure and high lightning surge withstand.',
+          standard: 'CEI 60076 / NF C 13-103',
+          metricFr: 'Puissances normalisées : 50, 100, 160 kVA; Uk = 4%',
+          metricEn: 'Standard ratings: 50, 100, 160 kVA; Uk = 4%'
+        },
+        {
+          nameFr: 'Poste Préfabriqué Compact en Kiosque Béton (250 kVA à 1 000 kVA)',
+          nameEn: 'Pad-Mounted Precast Concrete Kiosk Substation (250 to 1,000 kVA)',
+          techFr: 'Enveloppe monobloc en béton armé vibré intégrant un tableau compact RMU 24/36 kV, un transformateur étanche ou sec enrobé (Dyn11) et un tableau de distribution BT type TUR (4 à 8 départs)',
+          techEn: 'Monolithic precast reinforced concrete enclosure housing a 24/36 kV RMU, hermetically sealed or cast-resin transformer (Dyn11), and a low-voltage TUR distribution board (4 to 8 feeders)',
+          descFr: 'Solution moderne pour les centres urbains denses, lotissements résidentiels et centres commerciaux. Conforme à la qualification arc interne IAC-AB 20 kA 1s, il garantit la sécurité totale des passants et des techniciens d\'exploitation avec un niveau acoustique inférieur à 48 dB.',
+          descEn: 'Modern standard for dense city centers, residential subdivisions, and shopping malls. Fully qualified for internal arc classification IAC-AB 20 kA 1s, providing comprehensive public and operator safety with acoustic noise below 48 dB.',
+          standard: 'CEI 62271-202 / CEI 61439-2',
+          metricFr: 'Emprise au sol < 6 m²; tenue à l\'arc interne IAC-AB 20 kA 1s',
+          metricEn: 'Footprint < 6 m²; internal arc classification IAC-AB 20 kA 1s'
         }
       ]
     },
@@ -1182,128 +1215,314 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         id: 'eq-exp-cell-mv-30k',
         nameFr: 'Cellule Modulaire HTA 30 kV (SM6 / Ringmaster)',
         nameEn: 'Modular MV Switchgear 30 kV (Ringmaster)',
-        voltage: '30 kV • 630 A • 16 kA 1s',
-        roleFr: 'Interrupteur-sectionneur et protection combinée fusibles ou disjoncteur de poste HTA/BT.',
-        roleEn: 'Load-break switch and circuit breaker for MV/LV distribution transformer protection.',
-        symbol: 'RMU',
+        voltage: '30 kV (Um 36 kV) • 630 A • 16 kA 1s',
+        roleFr: 'Interrupteur-sectionneur et protection départ de boucle urbaine HTA avec compartimentage LSC2A / LSC2B et coupure dans le vide ou SF6.',
+        roleEn: 'Load-break switch and circuit breaker cubicle for MV urban loops with LSC2A/LSC2B compartmentalization and vacuum/SF6 interruption.',
+        symbol: 'RMU-30',
         standard: 'CEI 62271-200',
         imgUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
         calcTab: 'cable-short-circuit'
       },
       {
         id: 'eq-exp-kiosk-30kv-400v',
-        nameFr: 'Transformateur HTA/BT Kiosque (630 kVA)',
-        nameEn: 'MV/LV Distribution Substation Transformer (630 kVA)',
-        voltage: '30 kV / 400 V • Dyn11',
-        roleFr: 'Abaissement direct au niveau d\'utilisation triphasé 400 V / monophasé 230 V.',
-        roleEn: 'Direct step-down to utilization voltage 400 V three-phase / 230 V single-phase.',
-        symbol: 'TR-BT',
-        standard: 'CEI 60076-1',
+        nameFr: 'Transformateur HTA/BT Kiosque Béton (630 kVA Dyn11)',
+        nameEn: 'MV/LV Distribution Substation Transformer (630 kVA Dyn11)',
+        voltage: '30 kV / 400 V • 630 kVA • Dyn11',
+        roleFr: 'Abaissement final 30 kV vers 400 V / 230 V, diélectrique huile minérale étanche ou résine sèche, pertes réduites EcoDesign Tier 2.',
+        roleEn: 'Secondary distribution transformer stepping 30 kV down to 400 V / 230 V, hermetically sealed mineral oil or cast resin, EcoDesign Tier 2 losses.',
+        symbol: 'TR-630kVA',
+        standard: 'CEI 60076 / CEI 62271-202',
         imgUrl: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?auto=format&fit=crop&w=800&q=80',
         calcTab: 'transformer'
+      },
+      {
+        id: 'eq-recloser-30k',
+        nameFr: 'Disjoncteur Réenclencheur Aérien de Poteau (ACR 30 kV)',
+        nameEn: 'Pole-Mounted Automatic Vacuum Circuit Recloser (ACR 30 kV)',
+        voltage: '30 kV (Um 38 kV) • 630 A • 12.5 kA',
+        roleFr: 'Appareillage de coupure sous vide monté sur poteau pour éliminer les défauts fugitifs sur les longues lignes aériennes rurales et automatiser la réalimentation.',
+        roleEn: 'Pole-mounted vacuum circuit breaker engineered to clear transient faults on rural overhead lines and execute autonomous restoration cycles.',
+        symbol: 'ACR-79',
+        standard: 'CEI 62271-111 / IEEE C37.60',
+        imgUrl: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'relay-tcc'
+      },
+      {
+        id: 'eq-pole-trafo-h61',
+        nameFr: 'Poste de Transformation Aérien sur Poteau H61 (100 kVA)',
+        nameEn: 'Pole-Mounted Rural Distribution Transformer H61 (100 kVA)',
+        voltage: '30 kV / 400 V • 100 kVA • Dyn11',
+        roleFr: 'Transformateur abaisseur rural compact suspendu sur poteau béton, protégé par coupe-circuit fusibles à expulsion et parafoudres ZnO 30 kV.',
+        roleEn: 'Pole-mounted rural distribution transformer, protected by expulsion fuse cutouts and 30 kV ZnO lightning surge arresters.',
+        symbol: 'H61-100',
+        standard: 'CEI 60076 / NF C 13-103',
+        imgUrl: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'transformer'
+      },
+      {
+        id: 'eq-fpi-indicator',
+        nameFr: 'Détecteur de Passage de Défaut Communicant (DPD / FPI)',
+        nameEn: 'Communicating Fault Passage Indicator (FPI / DPD)',
+        voltage: 'HTA 15–36 kV • Tores ouvrants • 4G/DNP3',
+        roleFr: 'Capteur autonome de détection des courants de court-circuit de phase et de défaut à la terre homopolaire avec signalisation lumineuse et télétransmission SCADA.',
+        roleEn: 'Autonomous phase and earth-fault sensor with directional fault flagging, high-visibility LED beacons, and cellular SCADA telemetry.',
+        symbol: 'FPI-DPD',
+        standard: 'CEI 61850-7-420',
+        imgUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'relay-tcc'
+      },
+      {
+        id: 'eq-ngr-neutral',
+        nameFr: 'Résistance de Neutre HTA au Poste Source (RPN / NGR 30 kV)',
+        nameEn: '30 kV Neutral Grounding Resistor (NGR / RPN)',
+        voltage: '30 kV / √3 • 40 A à 150 A • 10 s',
+        roleFr: 'Résistance en acier inox insérée entre le neutre du transformateur HTB/HTA et la terre pour limiter le courant de court-circuit monophasé et les surtensions transitoires.',
+        roleEn: 'Stainless steel neutral grounding resistor inserted between primary transformer neutral and earth to limit single-phase ground fault currents.',
+        symbol: 'NGR-RPN',
+        standard: 'IEEE Std 32 / CEI 60076-16',
+        imgUrl: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'neutral-grounding'
       }
     ],
     sectionD: [
       {
         phase: '01',
-        titleFr: 'Bilan de Puissance & Foisonnement',
-        titleEn: 'Load Schedule & Coincidence Factor',
-        descFr: 'Calcul de la puissance installée (Pn), coefficients d\'utilisation (ku) et de foisonnement (ks).',
-        descEn: 'Installed capacity aggregation with utilization (ku) and coincidence (ks) factors.'
+        titleFr: 'Bilan de Puissance, Foisonnement & Prévision de Demande HTA',
+        titleEn: 'Load Schedule, Coincidence Factor & MV Demand Forecasting',
+        descFr: 'Agrégation des puissances installées, calcul des coefficients d\'utilisation (ku) et de foisonnement spatial (ks), et modélisation de la croissance de la charge à horizon 10 ans.',
+        descEn: 'Aggregation of installed loads, application of utilization (ku) and spatial coincidence (ks) factors, and 10-year demand growth projections.'
       },
       {
         phase: '02',
-        titleFr: 'Calcul de Section Câble & Chute de Tension',
-        titleEn: 'Cable Sizing & Voltage Drop Sag',
-        descFr: 'Vérification du courant admissible Iz, de la chute de tension ΔU ≤ 5% et de la contrainte thermique Icc.',
-        descEn: 'Conductor current capacity Iz, voltage drop ΔU ≤ 5%, and short-circuit thermal limit.'
+        titleFr: 'Choix Topologique & Dimensionnement Électrique des Artères',
+        titleEn: 'Feeder Topology Selection & Conductor Thermal Sizing',
+        descFr: 'Arbitrage entre boucle ouverte urbaine et départs radiaux ruraux, vérification de la chute de tension ΔU ≤ 5% et du courant admissible en régime permanent Iz selon CEI 60287.',
+        descEn: 'Selection between urban open-ring loops and rural radial feeders, verification of permissible voltage drop ΔU ≤ 5%, and steady-state thermal ampacity Iz per IEC 60287.'
       },
       {
         phase: '03',
-        titleFr: 'Sélection des Protections & Déclencheurs',
-        titleEn: 'Protective Breaker Setting',
-        descFr: 'Calibrage des déclencheurs thermiques Ir et magnétiques Im pour garantir le déclenchement sur défaut bout de ligne.',
-        descEn: 'Setting thermal Ir and magnetic Im trips ensuring instantaneous clearance on remote end faults.'
+        titleFr: 'Plan de Protection & Coordination Sélective HTA',
+        titleEn: 'Protection Scheme & MV Overcurrent/Earth Selective Coordination',
+        descFr: 'Réglage des seuils de surintensité de phase (ANSI 50/51) et terre homopolaire (ANSI 50N/51N), coordination sélective entre disjoncteurs de départ poste source, ACR de poteau et fusibles transformateurs.',
+        descEn: 'Threshold settings for phase overcurrent (ANSI 50/51) and residual earth-fault (ANSI 50N/51N), coordinating primary substation breakers, pole-mounted ACRs, and transformer fuses.'
       },
       {
         phase: '04',
-        titleFr: 'Pose, Raccordement & Mesure de Terre',
-        titleEn: 'Installation & Ground Resistance Test',
-        descFr: 'Déroulage en tranchée selon NF C 15-100, confection des boîtes d\'extrémité et contrôle de la terre (R ≤ 10 Ω).',
-        descEn: 'Trench laying, heat-shrink cable terminations, and ground rod testing (R ≤ 10 Ω).'
+        titleFr: 'Automatisation de Réseau, Détection DPD & Intégration FLISR',
+        titleEn: 'Distribution Automation, FPI Sensing & FLISR Integration',
+        descFr: 'Déploiement des Détecteurs de Passage de Défaut (DPD) communicants et téléconduite des interrupteurs sectionneurs motorisés pour l\'auto-cicatrisation du réseau en moins de 30 secondes.',
+        descEn: 'Deployment of communicating Fault Passage Indicators (FPI) and motorized load-break switches enabling self-healing loop automation (FLISR) within 30 seconds.'
       },
       {
         phase: '05',
-        titleFr: 'Mise en Service & Équilibrage des Phases',
-        titleEn: 'Commissioning & Phase Balancing',
-        descFr: 'Mesure des courants de phase à pleine charge, équilibrage des départs monophasés et contrôle du neutre.',
-        descEn: 'Full-load phase current clamp measurements and neutral current unbalance mitigation.'
+        titleFr: 'Génie Civil, Pose des Câbles Souterrains & Lignes Aériennes',
+        titleEn: 'Civil Works, Trench Cable Laying & Overhead Line Erection',
+        descFr: 'Tranchées selon NF C 13-200 avec lit de sable et grillage avertisseur rouge, déroulage des câbles PRC 3x240 mm² Al ou armement des supports en béton avec conducteurs almélec.',
+        descEn: 'Trenching per NF C 13-200 with sand bedding and red warning mesh, pulling of 3x240 mm² Al XLPE cables, or erecting concrete poles with AAAC conductors.'
+      },
+      {
+        phase: '06',
+        titleFr: 'Équipement des Postes HTA/BT, Raccordements & Essais Diélectriques VLF',
+        titleEn: 'Substation Outfitting, Terminations & VLF Tan-Delta Commissioning',
+        descFr: 'Confection des boîtes d\'extrémité rétractables à froid, raccordement sur cellules RMU, contrôle de la rigidité diélectrique par essai VLF 0.1 Hz et mesure des prises de terre (R ≤ 10 Ω).',
+        descEn: 'Assembly of cold-shrink cable terminations, RMU connections, dielectric insulation testing via 0.1 Hz VLF / Tan-Delta, and ground grid resistance testing (R ≤ 10 Ω).'
+      },
+      {
+        phase: '07',
+        titleFr: 'Mise sous Tension, Équilibrage des Phases & Suivi de Fiabilité IEEE 1366',
+        titleEn: 'Energization, Phase Balancing & Reliability Performance Tracking',
+        descFr: 'Vérification de la concordance de phases, équilibrage des charges monophasées pour minimiser le courant de neutre, et télémesure continue des indicateurs de coupure SAIDI et SAIFI.',
+        descEn: 'Phase rotation checks, single-phase load rebalancing to minimize neutral unbalance currents, and continuous SCADA telemetry tracking SAIDI and SAIFI metrics.'
       }
     ],
     sectionE: [
       {
-        id: 'voltage_drop_calc',
-        tabLabelFr: 'Chute de Tension ΔU (Câbles)',
-        tabLabelEn: 'Cable Voltage Drop (ΔU)',
-        titleFr: 'Calcul de la Chute de Tension en Ligne selon NF C 15-105 / CEI 60364',
-        titleEn: 'Voltage Sag Calculation per NF C 15-105 / IEC 60364',
-        descFr: 'Garantit que la tension au point le plus éloigné de l\'installation reste dans les tolérances réglementaires.',
-        descEn: 'Verifies that voltage at the furthest load terminal meets standard statutory limits.',
-        formula: 'ΔU = b · ( (ρ · L / S) · cos φ + λ · L · sin φ ) · I_b',
-        formulaDescFr: 'Avec b = 1 en triphasé équilibré, ρ = résistivité du conducteur au régime chaud (0.023 Ω·mm²/m Cu, 0.037 Al).',
-        formulaDescEn: 'With b = 1 for 3-phase, ρ at operating temperature (0.023 for copper, 0.037 for aluminum).',
+        id: 'mv_voltage_drop',
+        tabLabelFr: 'Chute de Tension ΔU (HTA)',
+        tabLabelEn: 'MV Feeder Voltage Drop (ΔU)',
+        titleFr: 'Calcul de la Chute de Tension en Ligne HTA Triphasée',
+        titleEn: 'Three-Phase Medium-Voltage Feeder Voltage Drop',
+        descFr: 'Garantit que la tension en extrémité de ligne moyenne tension (15 kV ou 30 kV) reste strictement dans les plages contractuelles (±5% en régime normal, ±8% en secours).',
+        descEn: 'Ensures medium-voltage (15 kV or 30 kV) line-end voltage stays within regulatory limits (±5% normal, ±8% contingency).',
+        formula: '\\Delta U = \\frac{\\sqrt{3} \\cdot I_b \\cdot L \\cdot (R\' \\cos\\varphi + X\' \\sin\\varphi)}{1000} \\quad [\\text{V}] \\quad \\iff \\quad \\Delta u\\% = \\frac{P \\cdot R\' + Q \\cdot X\'}{U_n^2} \\cdot L \\cdot 100',
+        formulaDescFr: 'Avec Ib courant de charge (A), L longueur (km), R\' résistance linéique (Ω/km à température de service), X\' réactance linéique (Ω/km), P puissance active (MW), Q puissance réactive (Mvar), Un tension nominale entre phases (kV).',
+        formulaDescEn: 'Where Ib is load current (A), L is feeder length (km), R\' is linear resistance (Ω/km at operating temp), X\' is linear reactance (Ω/km), P is active power (MW), Q is reactive power (Mvar), and Un is phase-to-phase nominal voltage (kV).',
         assumptionsFr: [
-          'Chute de tension maximale tolérée : 3% éclairage, 5% force motrice.',
-          'Prise en compte de la réactance linéique λ ≈ 0.08 mΩ/m.',
-          'Conducteurs en nappe ou trèfle selon mode de pose standard.'
+          'Chute de tension maximale tolérée : 5% en bout d\'artère en régime normal, 8% en configuration secours.',
+          'Résistance linéique calculée à la température maximale admissible en service continu (75°C Almélec, 90°C PRC).',
+          'Réactance linéique standard : X\' ≈ 0.35 Ω/km en ligne aérienne, X\' ≈ 0.10 Ω/km en câble souterrain.'
         ],
         assumptionsEn: [
-          'Statutory voltage drop limits: 3% lighting, 5% other power loads.',
-          'Line inductive reactance λ ≈ 0.08 mΩ/m.',
-          'Standard installation reference methods.'
+          'Maximum permissible voltage drop: 5% at feeder remote end under peak load, 8% under emergency tie-switching.',
+          'Linear resistance calculated at maximum continuous operating temperature (75°C AAAC, 90°C XLPE).',
+          'Standard linear reactance: X\' ≈ 0.35 Ω/km for overhead lines, X\' ≈ 0.10 Ω/km for underground XLPE cables.'
         ],
         calcTab: 'voltage-drop'
       },
       {
-        id: 'end_fault_calc',
-        tabLabelFr: 'Icc Bout de Câble (Protection)',
-        tabLabelEn: 'Cable-End Fault Current',
-        titleFr: 'Courant de Court-Circuit Minimal en Extrémité de Câble',
-        titleEn: 'Minimum Short-Circuit Current at Cable End',
-        descFr: 'Indispensable pour vérifier que le disjoncteur ou le fusible déclenchera instantanément en cas de défaut éloigné.',
-        descEn: 'Required to ensure that the protective breaker magnetic trip will reliably operate on remote faults.',
-        formula: 'Icc_min = (c_min · Un) / (√3 · Z_boucle)',
-        formulaDescFr: 'La condition de déclenchement magnétique sécurisé impose : Im ≤ Icc_min.',
-        formulaDescEn: 'Instantaneous magnetic trip clearance requires: Im ≤ Icc_min.',
+        id: 'ngr_ground_fault',
+        tabLabelFr: 'Courant Défaut Neutre HTA (RPN)',
+        tabLabelEn: 'NGR Earth Fault Current',
+        titleFr: 'Limitation du Courant de Défaut à la Terre par Résistance de Point Neutre (RPN)',
+        titleEn: 'Earth Fault Current Limitation via Neutral Grounding Resistor (NGR)',
+        descFr: 'Dimensionnement de la résistance de neutre insérée au poste source pour limiter les courants de court-circuit homopolaires monophasés, réduire les surtensions transitoires et protéger les écrans de câbles.',
+        descEn: 'Sizing of the primary substation neutral grounding resistor (NGR) to limit single-phase ground fault currents, suppress transient overvoltages, and protect cable screens.',
+        formula: 'I_F = \\frac{U_n / \\sqrt{3}}{\\sqrt{R_N^2 + \\left(X_{tr} + \\frac{1}{3 \\omega C_0}\\right)^2}} \\approx \\frac{U_n}{\\sqrt{3} \\cdot R_N} \\quad [\\text{A}]',
+        formulaDescFr: 'La valeur de RN est calibrée pour fixer IF à une valeur standardisé : 40 A ou 150 A (réseau ENEO/SONATREL 30 kV) pendant une durée assignée de 10 secondes.',
+        formulaDescEn: 'RN is calibrated to fix IF to standardized utility ratings: 40 A or 150 A (ENEO/SONATREL 30 kV network) for a rated duration of 10 seconds.',
         assumptionsFr: [
-          'Facteur de tension c_min = 0.95 en basse tension.',
-          'Résistance des conducteurs calculée à la température maximale de défaut (160°C PR).',
-          'Défaut phase-neutre ou phase-PE le plus défavorable.'
+          'Tension simple de phase U0 = 30 / √3 ≈ 17.32 kV.',
+          'Résistance de neutre RN dimensionnée pour 40 A (RN = 433 Ω) ou 150 A (RN = 115 Ω).',
+          'Prise en compte des capacités homopolaires de câbles C0 pour vérifier l\'absence de résonance ferromagnétique.'
         ],
         assumptionsEn: [
-          'Voltage factor c_min = 0.95.',
-          'Conductor resistance at peak fault temperature (160°C XLPE).',
-          'Worst-case phase-to-neutral or phase-to-earth fault.'
+          'Nominal phase-to-ground voltage U0 = 30 / √3 ≈ 17.32 kV.',
+          'Neutral resistor calibrated for 40 A (RN = 433 Ω) or 150 A (RN = 115 Ω).',
+          'Zero-sequence cable capacitance C0 accounted for to prevent ferroresonance and transient restrikes.'
+        ],
+        calcTab: 'neutral-grounding'
+      },
+      {
+        id: 'cable_adiabatic_thermal',
+        tabLabelFr: 'Tenue Thermique Câble (Icc)',
+        tabLabelEn: 'Cable Short-Circuit Thermal Limit',
+        titleFr: 'Contrainte Thermique Adiabatique des Câbles HTA (CEI 60364-5-54 / CEI 60287)',
+        titleEn: 'Adiabatic Short-Circuit Thermal Stress in MV Cables',
+        descFr: 'Vérifie que la section de l\'âme conductrice et de l\'écran métallique en cuivre supporte l\'échauffement intense provoqué par le court-circuit sans dégradation irréversible de l\'isolant PRC.',
+        descEn: 'Verifies that conductor core and metallic copper screen cross-sections withstand short-circuit heating without permanent degradation of XLPE insulation.',
+        formula: 'S \\ge \\frac{I_{cc} \\cdot \\sqrt{t_c}}{k} \\quad [\\text{mm}^2] \\iff I_{cc,max} = \\frac{k \\cdot S}{\\sqrt{t_c}} \\quad [\\text{A}]',
+        formulaDescFr: 'Où Icc est le courant de court-circuit triphasé ou monophasé maximal (A), tc est le temps de coupure de la protection (s), et k est le facteur caractéristique dépendant du métal et de l\'isolant.',
+        formulaDescEn: 'Where Icc is maximum short-circuit current (A), tc is protection clearing time (s), and k is material constant depending on conductor metal and insulation temperature limits.',
+        assumptionsFr: [
+          'Facteur k = 143 pour âme cuivre isolée PRC (température initiale 90°C, température finale 250°C).',
+          'Facteur k = 94 pour âme aluminium isolée PRC (XLPE).',
+          'Pour écran métallique de cuivre : k = 212 (élastomère/PRC).'
+        ],
+        assumptionsEn: [
+          'Constant k = 143 for copper conductor with XLPE insulation (initial 90°C, peak 250°C).',
+          'Constant k = 94 for aluminum conductor with XLPE insulation.',
+          'For copper tape/wire metallic screen: k = 212.'
         ],
         calcTab: 'cable-short-circuit'
+      },
+      {
+        id: 'reliability_indices_ieee1366',
+        tabLabelFr: 'Indices Fiabilité (SAIDI/SAIFI)',
+        tabLabelEn: 'Reliability Indices (IEEE 1366)',
+        titleFr: 'Indices Internationaux de Continuité de Fourniture selon IEEE Std 1366',
+        titleEn: 'Utility Reliability Indices per IEEE Std 1366 (SAIDI & SAIFI)',
+        descFr: 'Indicateurs réglementaires audités par l\'ARSEL pour évaluer la qualité de service et la continuité de fourniture de l\'énergie électrique sur le réseau de distribution.',
+        descEn: 'Statutory performance indices monitored by utility regulators (ARSEL) evaluating grid continuity and customer outage duration.',
+        formula: '\\text{SAIDI} = \\frac{\\sum (r_i \\cdot N_i)}{N_T} \\quad [\\text{h/client/an}], \\quad \\text{SAIFI} = \\frac{\\sum N_i}{N_T} \\quad [\\text{coupures/client/an}]',
+        formulaDescFr: 'Où Ni est le nombre de clients interrompus par l\'incident i, ri la durée de rétablissement de l\'incident i (h ou min), et NT le nombre total d\'abonnés alimentés par le gestionnaire de réseau.',
+        formulaDescEn: 'Where Ni is the number of interrupted customers for event i, ri is restoration duration (hours or minutes), and NT is the total number of connected customers.',
+        assumptionsFr: [
+          'Ne prend en compte que les coupures soutenues d\'une durée supérieure à 5 minutes (les coupures transitoires relèvent du MAIFI).',
+          'Traitement des journées de catastrophes majeures (MED) selon la méthode statistique IEEE 2.5 Beta.',
+          'Objectifs contractuels ENEO : réduction annuelle ciblée du SAIDI urbain et péri-urbain.'
+        ],
+        assumptionsEn: [
+          'Considers sustained interruptions lasting longer than 5 minutes (momentary outages evaluated under MAIFI).',
+          'Major Event Days (MED) classified using IEEE Std 1366 2.5 Beta statistical threshold.',
+          'Utility performance targets: progressive reduction of urban and suburban SAIDI.'
+        ],
+        calcTab: 'power'
+      },
+      {
+        id: 'trafo_inrush_grading',
+        tabLabelFr: 'Courant d\'Enclenchement (Inrush)',
+        tabLabelEn: 'Transformer Inrush Grading',
+        titleFr: 'Courant d\'Enclenchement Magnétique et Sélectivité des Fusibles HTA',
+        titleEn: 'Magnetizing Inrush Current & MV Transformer Fuse Grading',
+        descFr: 'Modélisation du pic transitoire de magnétisation à la mise sous tension à vide des transformateurs HTA/BT, indispensable pour éviter tout déclenchement intempestif des fusibles ou relais.',
+        descEn: 'Modeling transient magnetizing current spikes during no-load energization of MV/LV transformers, preventing false tripping of primary fuses or protection relays.',
+        formula: 'I_{\\text{inrush}}(t) \\approx k_{\\text{inr}} \\cdot I_n \\cdot e^{-t / \\tau} \\quad \\text{avec} \\quad I_{\\text{inrush}}(100\\,\\text{ms}) \\approx (10 \\text{ à } 14) \\cdot I_n',
+        formulaDescFr: 'Le point caractéristique d\'enclenchement retenu pour la coordination de protection est I = 10 à 12 In pendant une durée de 100 ms.',
+        formulaDescEn: 'The canonical inrush coordination point for protective device grading is I = 10 to 12 In for 100 ms.',
+        assumptionsFr: [
+          'Enclenchement au passage à zéro de l\'onde de tension avec rémanence magnétique maximale dans le circuit magnétique.',
+          'Constante de temps d\'amortissement τ ≈ 30 ms à 100 ms pour transformateurs de distribution 50 kVA à 1 000 kVA.',
+          'Règle de sélectivité : la courbe temps-courant de pré-arc du fusible HTA doit passer impérativement au-dessus du point (100 ms, 12 In).'
+        ],
+        assumptionsEn: [
+          'Energization at voltage zero crossing with peak remnant magnetic flux in core.',
+          'Aperiodic damping time constant τ ≈ 30 ms to 100 ms for distribution transformers 50 kVA to 1,000 kVA.',
+          'Grading criterion: the fuse pre-arcing time-current curve must lie strictly above the (100 ms, 12 In) operating point.'
+        ],
+        calcTab: 'transformer'
+      },
+      {
+        id: 'flisr_reclosing_cycle',
+        tabLabelFr: 'Cycle ACR & Automatisation FLISR',
+        tabLabelEn: 'ACR Cycle & FLISR Automation',
+        titleFr: 'Coordination Chronométrique ACR & Auto-Cicatrisation FLISR',
+        titleEn: 'ACR Reclosing Coordination & FLISR Loop Reconfiguration',
+        descFr: 'Automatisation de boucle HTA permettant la localisation immédiate du tronçon défaillant, son isolement par télécommande et la réalimentation automatique des clients sains.',
+        descEn: 'Distribution self-healing loop automation providing rapid fault location, motorized sectionalizing, and automated restoration of un-faulted segments.',
+        formula: 't_{\\text{reprise}} = t_{\\text{détection DPD}} + t_{\\text{ouverture PCO}} + t_{\\text{fermeture tie}} \\le 30\\,\\text{s} \\quad \\text{vs} \\quad t_{\\text{manuel}} \\ge 90\\,\\text{min}',
+        formulaDescFr: 'L\'automate de boucle centralisé ou distribué reconfigure le réseau en moins de 30 secondes, transformant une coupure longue en micro-coupure transitoire.',
+        formulaDescEn: 'Centralized or distributed FLISR automation reconfigures the network within 30 seconds, turning potentially multi-hour outages into brief momentary transfers.',
+        assumptionsFr: [
+          'Cycle réenclencheur ACR standard : O - 0.3s - CO - 2s - CO - 30s - CO puis verrouillage définitif (lockout).',
+          'Localisation automatique du tronçon défaillant par discrimination de passage de courant de court-circuit via DPD communicants.',
+          'Verrouillage automatique de fermeture si présence confirmée de court-circuit sur le jeu de barres aval.'
+        ],
+        assumptionsEn: [
+          'Standard ACR multishot reclosing sequence: O - 0.3s - CO - 2s - CO - 30s - CO followed by final lockout on permanent faults.',
+          'Automated faulted section localization via directional short-circuit flags from cellular FPI units.',
+          'Close interlocking verified to prevent re-energizing confirmed permanent bus faults.'
+        ],
+        calcTab: 'relay-tcc'
       }
     ],
     sectionF: [
       {
-        code: 'NF C 15-100 / 105',
-        tag: 'BASSE TENSION',
-        titleFr: 'Installations Électriques à Basse Tension & Règles de Calcul',
-        titleEn: 'Low Voltage Electrical Installations & Sizing Guide',
-        descFr: 'Guide de référence pour le dimensionnement des câbles, la protection contre les chocs et le choix des SLT.',
-        descEn: 'Reference rules for conductor sizing, protection against electric shock, and earthing schemes.'
+        code: 'CEI 62271-200',
+        tag: 'APPAREILLAGE HTA',
+        titleFr: 'Appareillage sous enveloppe métallique pour courant alternatif (1 kV à 52 kV)',
+        titleEn: 'AC Metal-Enclosed Switchgear and Controlgear for Rated Voltages Above 1 kV and Up to 52 kV',
+        descFr: 'Spécifications de sécurité des cellules compactes RMU, règles de compartimentage LSC2A/LSC2B et qualification de tenue à l\'arc interne IAC A-FLR.',
+        descEn: 'Safety and functional requirements for compact RMU switchgear, LSC2A/LSC2B service continuity classifications, and internal arc qualification IAC A-FLR.'
       },
       {
-        code: 'CEI 60364-5-52',
-        tag: 'INTERNATIONAL',
-        titleFr: 'Choix & Mise en Œuvre des Canalisations Électriques',
-        titleEn: 'Selection and Erection of Electrical Equipment - Wiring Systems',
-        descFr: 'Facteurs de correction de température, groupement de câbles et courants admissibles Iz.',
-        descEn: 'Temperature derating factors, grouping corrections, and current carrying capacities.'
+        code: 'CEI 62271-111 / IEEE C37.60',
+        tag: 'RÉENCLENCHEURS',
+        titleFr: 'Disjoncteurs et réenclencheurs automatiques sur circuit aérien pour réseaux de distribution',
+        titleEn: 'Automatic Circuit Reclosers and Fault Interrupters for AC Systems Up to 38 kV',
+        descFr: 'Norme de conception des disjoncteurs réenclencheurs de poteau (ACR), séquences d\'essais sous vide et coordination avec les fusibles de dérivation.',
+        descEn: 'Design, ratings, and testing standard for pole-mounted automatic circuit reclosers (ACR), vacuum interrupter endurance, and coordination with branch fuses.'
+      },
+      {
+        code: 'NF C 13-100 / NF C 13-200',
+        tag: 'POSTES DE LIVRAISON',
+        titleFr: 'Postes de livraison HTA raccordés au réseau de distribution / Installations électriques HTA',
+        titleEn: 'Medium-Voltage Delivery Substations & High-Voltage Electrical Installations',
+        descFr: 'Prescriptions techniques d\'installation des postes HTA à comptage basse ou haute tension, verrouillages de sécurité et règles de mise à la terre.',
+        descEn: 'Technical specifications for utility customer MV delivery substations with LV or HV metering, mechanical interlocks, and grounding earthing grids.'
+      },
+      {
+        code: 'IEEE Std 1366',
+        tag: 'FIABILITÉ RÉSEAUX',
+        titleFr: 'Guide IEEE pour les indices de fiabilité des réseaux de distribution électrique',
+        titleEn: 'IEEE Guide for Electric Power Distribution Reliability Indices',
+        descFr: 'Standard international de référence définissant les méthodes de calcul des indices SAIDI, SAIFI, CAIDI, CEMI et le filtrage statistique des événements météorologiques extrêmes (MED).',
+        descEn: 'International benchmark defining formulas and tracking methodologies for SAIDI, SAIFI, CAIDI, CEMI, and statistical 2.5-Beta Major Event Day filtering.'
+      },
+      {
+        code: 'CEI 60076-1 / CEI 62271-202',
+        tag: 'POSTES COMPACTS HTA/BT',
+        titleFr: 'Transformateurs de puissance / Postes préfabriqués compacts sous enveloppe (Kiosques)',
+        titleEn: 'Power Transformers / High-Voltage/Low-Voltage Prefabricated Substation Kiosks',
+        descFr: 'Règles de construction des transformateurs étanches à diélectrique liquide ou sec, et des postes préfabriqués en béton armé monobloc avec ventilation naturelle.',
+        descEn: 'Standards for hermetically sealed liquid-immersed and dry-type distribution transformers, and factory-assembled concrete pad-mounted secondary substations.'
+      },
+      {
+        code: 'Code de Réseau ENEO / ARSEL',
+        tag: 'RÉGULATION NATIONALE',
+        titleFr: 'Règles Techniques de Raccordement et d\'Exploitation du Réseau de Distribution MT Cameroun',
+        titleEn: 'Technical Connection and Operating Code for the Cameroon MV Distribution Grid',
+        descFr: 'Prescriptions d\'exploitation du réseau 30 kV et 15 kV au Cameroun : seuils de chute de tension admissibles (±5%), régime de neutre à la terre par résistance (40 A / 150 A), et sélectivité amont-aval.',
+        descEn: 'Operating regulations for the 30 kV and 15 kV networks in Cameroon: statutory voltage limits (±5%), resistor-grounded neutral schemes (40 A / 150 A), and upstream protection selectivity.'
       }
     ]
   },

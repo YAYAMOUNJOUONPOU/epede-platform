@@ -29,7 +29,20 @@ Each page and engineering module is evaluated on eight core axes (Target: 95%+):
 - **Route**: `#/domain/D02`
 - **Audit Target**: 95%+
 
-### Domains 3 to 16
+### Domain 5 (D05) — Distribution Networks (MV Feeders, RMUs, Pole Transformers H61, Pad-Mounted Kiosks)
+- **Route**: `#/domain/D05`
+- **Components**: `UniversalPedagogicalDomainView`, `DistributionWorkbench`, `MasterDistributionJourney`, `DistributionTopologiesExplorer`, `MvFeedersAndSwitchingExplorer`, `DistributionSubstationAndTransformerExplorer`, `UrbanVsRuralDistributionView`, `DistributionFaultScenariosSimulator`, `CameroonDistributionNetworkViewer`.
+- **Initial Baseline Weaknesses Identified**:
+  - Mixed in low-voltage NF C 15-100 cable drop formulas into medium-voltage distribution registry.
+  - Missing coverage of 30 kV Cameroonian distribution parameters (NGR 40 A/150 A, FLISR automation, ACR reclosing cycles, IEEE Std 1366 reliability SAIDI/SAIFI).
+  - Only 2 architectures and 2 apparatus defined in the pedagogical framework.
+- **Audit Score Post-Transformation**: 97% (5 Topologies, 6 Field Apparatus, 7 Project Phases, 6 LaTeX Solvers, 6 Standards).
+
+### Domain 6 (D06) — Electrical Installations & Utilization (LV Switchboards TGBT, Motor Control Centers, Earthing Schemes TT/TN/IT)
+- **Route**: `#/domain/D06`
+- **Audit Target**: 97%+
+
+### Domains 7 to 16
 - Scheduled in sequential order per execution protocol.
 
 ---

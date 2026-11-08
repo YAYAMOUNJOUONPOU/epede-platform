@@ -54,3 +54,29 @@ All notable changes, engineering refactors, and technical enhancements across th
   - **Section D**: Modeled 7-phase project lifecycle from short-circuit studies (IEC 60909) to online DGA transformer oil diagnostics.
   - **Section E**: Implemented 6 normative solvers: IEC 60909-0 short-circuit current ($I_k''$), IEC 60076 transformer impedance & secondary fault current, ANSI 87T dual-slope differential characteristic with 2nd harmonic restraint, IEEE Std 80 step and touch potentials, IEC 61936-1 air clearances with altitude factor $k_a$, and IEC 60865-1 busbar electrodynamic Laplace forces.
   - **Section F**: Sourced 6 standards: IEC 61936-1, IEC 62271-100/200/203, IEC 60076 (Series), IEEE Std 80-2013, IEC 61850 (Series), and Cameroon SONATREL Grid Code §5.
+
+### Domain 5 (D05) - Distribution Networks Transformation
+- Completely overhauled pedagogical framework in `domainPedagogicalContentRegistry.ts`:
+  - **Section A**: Cleanly established boundary conditions for Medium-Voltage distribution ($15\text{ kV} / 30\text{ kV}$), separating it from low-voltage utilization. Formulated primary substation inputs, open-ring feeder routing, resistor-grounded neutral ($40\text{ A}$ to $150\text{ A}$ / $10\text{ s}$), voltage regulation ($\pm 5\%$), and secondary transformer step-down ($400\text{ V} / 230\text{ V}$ Dyn11).
+  - **Section B**: Documented 5 canonical distribution topologies:
+    1. **Boucle Ouverte HTA Urbaine (Coupure d'Artère RMU)** (SF6/Dry-Air switchgear, normally open tie point, SAIDI reduced by 75%).
+    2. **Départ Radial Aérien Longue Distance avec Réenclencheur (ACR 30 kV)** (Vacuum reclosers, multishot sequence O-0.3s-CO-2s-CO, clears 80-85% of transient faults).
+    3. **Double Dérivation HTA avec Inverseur Automatique de Source (ATS)** (Dual feeders with auto-transfer in $< 1.5\text{ s}$ for hospitals, industry, data centers).
+    4. **Poste de Transformation Aérien sur Poteau H61 (50 kVA à 160 kVA)** (Hermetic ONAN transformer, expulsion cut-outs, ZnO 30 kV arresters, pole-top breaker).
+    5. **Poste Préfabriqué Compact en Kiosque Béton (250 kVA à 1 000 kVA)** (Monobloc reinforced concrete, internal arc classification IAC-AB 20 kA 1s, noise $< 48\text{ dB}$).
+  - **Section C**: Added 6 authenticated distribution field apparatus:
+    1. `eq-exp-cell-mv-30k`: Cellule Modulaire HTA 30 kV (RMU Ringmaster / SM6 - 30 kV, 630 A, 16 kA 1s).
+    2. `eq-exp-kiosk-30kv-400v`: Transformateur HTA/BT Kiosque Béton (630 kVA Dyn11, EcoDesign Tier 2).
+    3. `eq-recloser-30k`: Disjoncteur Réenclencheur Aérien de Poteau (ACR 30 kV, 630 A, 12.5 kA, ANSI 79).
+    4. `eq-pole-trafo-h61`: Poste de Transformation Aérien sur Poteau H61 (100 kVA, 30 kV / 400 V, Dyn11).
+    5. `eq-fpi-indicator`: Détecteur de Passage de Défaut Communicant (DPD / FPI, 4G/DNP3, directional I> and Io>).
+    6. `eq-ngr-neutral`: Résistance de Neutre HTA au Poste Source (RPN / NGR 30 kV, 40 A / 150 A, 10 s, IEEE Std 32).
+  - **Section D**: Modeled 7-phase project lifecycle from spatial coincidence & load forecasting to phase balancing and IEEE Std 1366 reliability tracking.
+  - **Section E**: Formulated 6 normative LaTeX mathematical solvers:
+    1. Three-Phase MV Feeder Voltage Drop ($\Delta U = \frac{\sqrt{3} I_b L (R' \cos\varphi + X' \sin\varphi)}{1000}$).
+    2. Earth Fault Current Limitation via Neutral Grounding Resistor ($I_F \approx \frac{U_n}{\sqrt{3} R_N}$).
+    3. Adiabatic Short-Circuit Thermal Stress in MV Cables ($S \ge \frac{I_{cc} \sqrt{t_c}}{k}$).
+    4. IEEE Std 1366 Distribution Reliability Indices ($\text{SAIDI} = \frac{\sum r_i N_i}{N_T}$, $\text{SAIFI} = \frac{\sum N_i}{N_T}$).
+    5. Transformer Magnetizing Inrush Current & Fuse Grading ($I_{inrush}(100\text{ ms}) \approx 10\text{--}14 I_n$).
+    6. ACR Reclosing Cycle & FLISR Loop Reconfiguration Time ($t_{reprise} \le 30\text{ s}$ vs $t_{manuel} \ge 90\text{ min}$).
+  - **Section F**: Sourced 6 normative standards: IEC 62271-200, IEC 62271-111 / IEEE C37.60, NF C 13-100 / NF C 13-200, IEEE Std 1366, IEC 60076-1 / IEC 62271-202, and Cameroon ENEO / ARSEL MV Distribution Grid Code.
