@@ -81,6 +81,45 @@ All notable changes, engineering refactors, and technical enhancements across th
     6. ACR Reclosing Cycle & FLISR Loop Reconfiguration Time ($t_{reprise} \le 30\text{ s}$ vs $t_{manuel} \ge 90\text{ min}$).
   - **Section F**: Sourced 6 normative standards: IEC 62271-200, IEC 62271-111 / IEEE C37.60, NF C 13-100 / NF C 13-200, IEEE Std 1366, IEC 60076-1 / IEC 62271-202, and Cameroon ENEO / ARSEL MV Distribution Grid Code.
 
+### Domain 7 (D07) - Industrial Automation, DCS & Variable Speed Drives (VFD) Transformation
+- Completely overhauled pedagogical framework in `domainPedagogicalContentRegistry.ts`:
+  - **Section A**: Formulated industrial automation principles across Purdue Model Levels 0 to 4 (Sensors/Actuators, PLCs/DCS, SCADA/MES, Plant Historian/ERP) and deterministic control timing.
+  - **Section B**: Documented 5 industrial automation architectures:
+    1. Plantwide Redundant DCS with Dual Optical PRP/HSR Ring (Nachtigal 420 MW Hydroelectric Plant).
+    2. Four-Quadrant Active Front End (AFE) Heavy Drive Architecture (CIMENCAM Figuil Cement Kiln).
+    3. Triple Modular Redundant (TMR 2oo3) SIS with Ex-i galvanic barriers (SCDP Bessengue Hydrocarbon Terminal).
+    4. High-Speed Deterministic PLC Islands with CIP Sync Motion & SERCOS III (SABC Douala Packaging Line).
+    5. Purdue Model Layered OT Cybersecurity Architecture with Demilitarized Zone (DMZ) per IEC 62443.
+  - **Section C**: Added 6 core industrial automation apparatus with authentic equipment registry citations:
+    - Safety PLC / DCS Dual-Redundant Controller (`eq-plc-dcs-controller`).
+    - Variable Frequency Drive 690 V / 400 kW AFE Inverter (`eq-vfd-inverter-drive`).
+    - Industrial Capacitive Multi-Touch HMI Display (`eq-exp-hmi-scada`).
+    - Safety Instrumented System (SIS) 2oo3 TMR Logic Solver (`eq-exp-safety-relay`).
+    - Distributed Fieldbus I/O Block IP67 with PROFINET IRT (`eq-exp-fieldbus-io`).
+    - Sine-Wave Output & dv/dt Motor Protection Filter (`eq-exp-dvdt-sine-filter`).
+  - **Section D**: Expanded methodology to 7 sequential engineering lifecycle phases:
+    1. Process Functional Specifications (PFS) & HAZOP/LOPA SIL Allocation.
+    2. Automation Hardware Architecture & Fieldbus Network Design.
+    3. IEC 61131-3 Software Development & Deterministic Cyclic Task Execution.
+    4. Factory Acceptance Testing (FAT) with Real-Time Hardware-in-the-Loop (HIL).
+    5. On-Site Loop Checking, Instrumentation Calibration & Cold Commissioning.
+    6. Hot Commissioning, Motor Tuning, Dynamic Optimization & Baseline Archival.
+    7. OT Asset Management, Firmware Lifecycle & IEC 62443 Cyber Patching.
+  - **Section E**: Integrated 6 LaTeX mathematical formulations:
+    - Discrete Euler ODE PID controller with back-calculation anti-windup clamping.
+    - Field-Oriented Control (FOC) Clarke/Park $d$-$q$ vector transformation and torque generation.
+    - IEC 61508 / IEC 61511 2oo3 TMR Average Probability of Failure on Demand ($PFD_{avg}$).
+    - Centrifugal pump/fan affinity laws and cubic energy savings ($P \propto \omega^3$).
+    - Induction motor stator thermal heating ODE ($I^2t$) and trip curve.
+    - IEC 61850-9-2LE / IEC 61869-9 Process Bus Sampled Values (SV) network bandwidth calculation.
+  - **Section F**: Sourced 6 international and industrial automation standards:
+    - IEC 61131-3 (Programmable controllers - Programming languages).
+    - IEC 61508 / IEC 61511 (Functional safety of electrical/electronic/programmable safety-related systems).
+    - IEC 61800-3 / IEC 61800-5-1 (Adjustable speed electrical power drive systems).
+    - IEC 62443 (Security for industrial automation and control systems).
+    - IEC 61850-9-2LE / IEC 61869-9 (Process bus sampled values and digital instrument transformers).
+    - NAMUR NE 43 (Standardization of the signal level for the failure information of digital transmitters).
+
 ### Domain 6 (D06) - Electrical Installations & Utilization Transformation
 - Completely overhauled pedagogical framework in `domainPedagogicalContentRegistry.ts`:
   - **Section A**: Modeled low-voltage terminal distribution boundaries ($400\text{ V} / 230\text{ V}$), dual-supply ATS backup from diesel genset, TGBT Form 4b internal segregation (IEC 61439-2), statutory touch voltage safety thresholds ($U_L \le 50\text{ V}$ dry / $25\text{ V}$ wet), and foundation equipotential earthing loop ($R \le 10\,\Omega$).

@@ -1,10 +1,10 @@
 # EPEDE CONTINUATION STATE CHECKPOINT
 
 ## Active Status
-- **Current Phase**: Phase 2 — Domain 7 Transformation & Verification
-- **Current Domain**: D07 (Industrial Automation, DCS & Variable Speed Drives VFD — PLC Architectures, FOC Vector Control, IEC 61508 Functional Safety SIL, Nachtigal/CIMENCAM/SABC Industrial Profiles)
-- **Active Task**: Elevating D07 pedagogical content registry with 5 industrial automation architectures, 6 apparatus, 7 automation project lifecycle phases, and 6 normative mathematical solvers (Euler ODE PID, FOC torque/flux d-q transformation, IEC 61508 SIL 2oo3 PFDavg, VFD energy savings, motor thermal I2t model, IEC 61850 SV bandwidth).
-- **Next Domain in Queue**: D08 (Extra-Low Voltage ELV & Special Electrical Systems — Fire Detection, BMS, Access Control)
+- **Current Phase**: Phase 2 — Domain 8 Transformation & Verification
+- **Current Domain**: D08 (Extra-Low Voltage ELV & Special Electrical Systems — Fire Detection SSI Cat A, BMS/SCADA, Access Control, CCTV, Novec 1230 gas extinguishing per NF S 61-970 / EN 54)
+- **Active Task**: Elevating D08 pedagogical content registry with 5 ELV architectures, 6 apparatus, 7 project lifecycle phases, and 6 normative mathematical solvers (Battery backup standby/alarm autonomy, loop voltage drop, sounder dBA attenuation, gas concentration volume, video bandwidth/storage, MTBF reliability).
+- **Next Domain in Queue**: D09 (Artificial Intelligence & Advanced Power Technologies)
 - **Execution Mode**: Autonomous continuous improvement loop (Analyze -> Improve -> Reanalyze -> Reimprove -> Validate -> Quality Gate).
 
 ## Unresolved Issues / Blockers

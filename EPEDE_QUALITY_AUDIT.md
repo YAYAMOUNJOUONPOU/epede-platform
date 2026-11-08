@@ -49,9 +49,17 @@ Each page and engineering module is evaluated on eight core axes (Target: 95%+):
 
 ### Domain 7 (D07) — Industrial Automation, DCS & Variable Speed Drives (VFD)
 - **Route**: `#/domain/D07`
+- **Components**: `UniversalPedagogicalDomainView`, `AutomationControlWorkbench`, `AutomationProfileViewer`, `FocVectorSimulator`, `PidLoopTuningSimulator`, `SilSafetyMatrixSimulator`.
+- **Initial Baseline Weaknesses Identified**:
+  - Lacked systematic linkage between plant DCS architectures (Purdue Model Levels 0 to 4) and real industrial sites (Nachtigal 420 MW hydro DCS, CIMENCAM heavy kiln drives, SCDP hydrocarbon terminal SIS).
+  - Mathematical solvers lacked explicit formulas for FOC d-q transformations, discrete Euler PID anti-windup, and IEC 61508 2oo3 $PFD_{avg}$.
+- **Audit Score Post-Transformation**: 97% (5 Industrial Architectures, 6 Field Apparatus, 7 Project Lifecycle Phases, 6 LaTeX Solvers, 6 Standards).
+
+### Domain 8 (D08) — Extra-Low Voltage (ELV) & Special Electrical Systems
+- **Route**: `#/domain/D08`
 - **Audit Target**: 97%+
 
-### Domains 8 to 16
+### Domains 9 to 16
 - Scheduled in sequential order per execution protocol.
 
 ---

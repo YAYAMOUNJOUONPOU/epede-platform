@@ -3086,194 +3086,413 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
   D07: {
     domainCode: 'D07',
     sectionA: {
-      roleFr: "Commande automatisée des procédés industriels par Automates Programmables (API/PLC), systèmes numériques de contrôle-commande (DCS) et pilotage à vitesse variable des moteurs (VFD).",
-      roleEn: 'Automated industrial process control via Programmable Logic Controllers (PLC), Distributed Control Systems (DCS), and Variable Frequency Drives (VFD).',
+      roleFr: "Commande temps réel et supervision des procédés industriels continus et manufacturiers par Automates Programmables Industriels (API/PLC), Systèmes Numériques de Contrôle-Commande (DCS), Entraînements à Vitesse Variable (VFD) et Systèmes Instrumentés de Sécurité (SIS SIL2/SIL3).",
+      roleEn: 'Real-time process control and plantwide SCADA supervision of continuous and manufacturing industries via Programmable Logic Controllers (PLC), Distributed Control Systems (DCS), Variable Frequency Drives (VFD), and Safety Instrumented Systems (SIS SIL2/SIL3).',
       inputsFr: {
-        title: 'Capteurs Terrain & Réseau Force 400 V / 690 V',
-        desc: 'Entrées logiques TOR 24 Vcc, boucles analogiques 4–20 mA / PT100 et alimentation triphasée des variateurs.',
-        voltage: '24 Vcc Contrôle • 400 V / 690 V Force'
+        title: 'Capteurs de Terrain, Transmetteurs 4–20 mA & Alimentations Redondées',
+        desc: 'Capteurs TOR 24 Vcc, transmetteurs analogiques 4–20 mA HART / NAMUR NE 43, sondes PT100/Thermocouples, et alimentations secourues 24 Vcc redondées avec diode de découplage.',
+        voltage: '24 Vcc Instrumentation • 400 V / 690 V Triphasé Force'
       },
       inputsEn: {
-        title: 'Field Sensors & 400 V / 690 V Power Supply',
-        desc: '24 Vdc discrete inputs, 4–20 mA / RTD analog loops, and 3-phase power feeders for motor drives.',
-        voltage: '24 Vdc Control • 400 V / 690 V Power'
+        title: 'Field Sensors, 4–20 mA Transmitters & Redundant DC Supplies',
+        desc: '24 Vdc discrete switches, 4–20 mA HART / NAMUR NE 43 transmitters, RTD PT100 temperature sensors, and redundant 24 Vdc diode-isolated power supplies.',
+        voltage: '24 Vdc Instrumentation • 400 V / 690 V 3-Phase Power'
       },
       processFr: {
-        title: 'Cycle Automate IEC 61131-3 & Modulation MLI (PWM)',
-        desc: 'Scrutation cyclique déterministe (Grafcet, Ladder, Blocs PID) et redressement/onduleur IGBT à rapport U/f ou contrôle vectoriel de flux.',
-        note: 'Économie d\'énergie sur pompes/ventilateurs : P varie avec le cube de la vitesse (N³)'
+        title: 'Scrutation Déterministe IEC 61131-3, Contrôle Vectoriel FOC & Sécurité SIL',
+        desc: 'Cycles de scrutation déterministes (< 5 ms), exécution multitâche en Grafcet/SFC et Texte Structuré (ST), algorithmes PID avec anti-windup, contrôle vectoriel de flux direct/quadrature (d-q), et vote majoritaire 2oo3.',
+        note: 'Lois d\'affinité centrifuge : P varie avec le cube de la vitesse (N³); économie d\'énergie jusqu\'à 50%'
       },
       processEn: {
-        title: 'IEC 61131-3 PLC Scan & IGBT PWM Modulation',
-        desc: 'Deterministic PLC scan execution (SFC, Ladder, PID loops) and VFD IGBT pulse-width modulation with flux vector control.',
-        note: 'Centrifugal pump/fan energy savings: Power scales with the cube of speed (N³)'
+        title: 'Deterministic IEC 61131-3 Scan, FOC Vector Control & SIL Voting',
+        desc: 'Deterministic scan cycles (< 5 ms), multitasking execution via SFC and Structured Text (ST), anti-windup PID loops, d-q Field-Oriented Control, and 2oo3 safety voting logic.',
+        note: 'Centrifugal affinity laws: Power scales with the cube of speed (N³); up to 50% energy savings'
       },
       outputsFr: {
-        title: 'Actionneurs, Vannes & Moteurs Asynchrones',
-        desc: 'Pilotage progressif sans à-coup de courant au démarrage, régulation de pression/débit et supervision SCADA/IHM.',
-        earthing: 'Câbles moteurs blindés CEM mis à la terre à 360° par presse-étoupe métallique'
+        title: 'Actionneurs Numériques, Vannes de Régulation & Moteurs Industriels',
+        desc: 'Sorties TOR statiques, positionneurs électropneumatiques 4–20 mA, signaux PWM vers ponts onduleurs IGBT, liaisons réseaux industriels Profinet IRT / EtherNet/IP et télémesure SCADA.',
+        earthing: 'Mise à la terre CEM équipotentielle 360° des tresses de blindage des câbles moteurs et régulation des boucles de masse'
       },
       outputsEn: {
-        title: 'Actuators, Control Valves & Induction Motors',
-        desc: 'Soft-start torque control without inrush current spikes, closed-loop process regulation, and HMI supervision.',
-        earthing: 'Shielded VFD motor cables grounded 360° via EMC metallic glands'
+        title: 'Solid-State Outputs, Control Valves & Industrial Drives',
+        desc: 'Solid-state digital outputs, 4–20 mA electro-pneumatic positioners, PWM IGBT inverter firing pulses, Profinet IRT / EtherNet/IP links, and SCADA telemetry.',
+        earthing: '360° EMC peripheral shield grounding on motor cables and equipotential instrument signal reference grounding'
       }
     },
     sectionB: {
-      summaryFr: 'Architectures d\'automatisme industriel : commande locale sur API modulaire vs architecture DCS redondée et variateurs régénératifs.',
-      summaryEn: 'Industrial automation topologies: modular PLC islands vs redundant plant-wide DCS and regenerative VFDs.',
+      summaryFr: 'Architectures d\'automatisme industriel : DCS redondé d\'infrastructure, commande fort couple AFE réversible, SIS TMR 2oo3, et réseaux déterministes temps réel.',
+      summaryEn: 'Industrial automation topologies: plantwide redundant DCS, 4-quadrant AFE heavy drives, TMR 2oo3 safety systems, and deterministic real-time networks.',
       architectures: [
         {
-          nameFr: 'Variateur de Vitesse 6 Pulsations + Filtre d\'Harmoniques (AFE)',
-          nameEn: 'Active Front End (AFE) Low-Harmonic VFD Drive',
-          techFr: 'Redresseur actif à IGBT en entrée limitant la distorsion harmonique THDi < 5%',
-          techEn: 'IGBT active front-end rectifier maintaining grid current harmonic distortion THDi < 5%',
-          descFr: 'Permet le freinage régénératif (renvoi d\'énergie sur le réseau) et respecte les limites CEI 61000-3-12 sans polluer le TGBT.',
-          descEn: 'Enables 4-quadrant regenerative braking while complying with IEC 61000-3-12 harmonic limits.',
-          standard: 'CEI 61800-3',
-          metricFr: 'THDi : < 4.5% à pleine charge',
-          metricEn: 'THDi: < 4.5% at full load'
+          nameFr: 'Architecture DCS Redondée Multi-Serveurs & Anneau Optique PRP/HSR (Centrale Nachtigal 420 MW)',
+          nameEn: 'Plantwide Redundant DCS with Dual Optical PRP/HSR Ring (Nachtigal 420 MW Hydro Station)',
+          techFr: 'Double unité centrale en basculement chaud automatique (Hot-Standby), réseau temps réel double anneau fibre optique PRP/HSR (CEI 62439-3) à zéro perte de trame',
+          techEn: 'Dual redundant Hot-Standby controllers, dual optical fiber PRP/HSR real-time ring (IEC 62439-3) with zero packet loss switchover',
+          descFr: 'Architecture maîtresse de la plus grande centrale hydroélectrique du Cameroun (Nachtigal 7 × 60 MW). Contrôle synchronisé des groupes turbo-alternateurs, régulation de vitesse tachymétrique et téléconduite vers le Dispatching National SONATREL de Mangombé.',
+          descEn: 'Flagship control architecture of Cameroon\'s largest hydropower complex (Nachtigal 7 × 60 MW). Synchronized governor control, turbine wicket gate positioning, and real-time dispatch to the National Grid Control Center.',
+          standard: 'CEI 61511 / CEI 62439-3 / CEI 61850',
+          metricFr: 'Disponibilité : 99.999%; temps de basculement processeur = 0 ms',
+          metricEn: 'Availability: 99.999%; CPU bump-less switchover = 0 ms'
         },
         {
-          nameFr: 'Architecture Automate Redondée Hot-Standby & E/S Déportées',
-          nameEn: 'Hot-Standby Redundant PLC with Distributed Fieldbus I/O',
-          techFr: 'Double unité centrale synchronisée par fibre optique sur anneau Profinet / Modbus TCP',
-          techEn: 'Dual fiber-synced CPU racks polling distributed I/O islands over ring topology',
-          descFr: 'Garantit le maintien du procédé continu (eau, cimenterie, agro-industrie) sans arrêt en cas de défaillance d\'un processeur.',
-          descEn: 'Guarantees uninterrupted industrial process continuity upon single CPU or link failure.',
-          standard: 'CEI 61131-2',
-          metricFr: 'Basculement : 0 ms (sans à-coup)',
-          metricEn: 'Switchover: 0 ms bumpless'
+          nameFr: 'Entraînement Réversible AFE 4 Quadrants & Broyeurs de Ciment (CIMENCAM Figuil / Nomayos)',
+          nameEn: 'Four-Quadrant Active Front End (AFE) Heavy Drive (CIMENCAM Cement Mill)',
+          techFr: 'Variateur moyenne tension 690 V / 3.8 MW à pont redresseur actif (AFE) à IGBT et filtre LCL, permettant la réinjection d\'énergie sur le réseau et un THDi < 4%',
+          techEn: 'Medium-voltage 690 V / 3.8 MW drive with IGBT Active Front End (AFE) and LCL filter, enabling four-quadrant regeneration and THDi < 4%',
+          descFr: 'Pilotage des broyeurs à boulets et fours rotatifs de clinker à forte inertie et couple de démarrage sévère (160% Tn). Élimine les harmoniques de rang 5 et 7 et supprime l\'échauffement sur le transformateur de distribution du site.',
+          descEn: 'Drives high-inertia ball mills and rotary kilns with severe breakaway torque (160% Tn). Neutralizes 5th and 7th harmonic pollution, maintaining unit power factor.',
+          standard: 'CEI 61800-3 / CEI 61000-3-12',
+          metricFr: 'Facteur de puissance cos φ ≈ 1.00; THDi < 4.0% à pleine charge',
+          metricEn: 'Displacement power factor cos φ ≈ 1.00; THDi < 4.0% at full load'
+        },
+        {
+          nameFr: 'Système Instrumenté de Sécurité (SIS) TMR 2oo3 & Barrières Ex-i (Dépôt Pétrolier SCDP Bessengue)',
+          nameEn: 'Triple Modular Redundant (TMR 2oo3) Safety Instrumented System (SCDP Hydrocarbon Terminal)',
+          techFr: 'Architecture à triple redondance modulaire (TMR 2oo3) avec voteur matériel certifié SIL 3 selon CEI 61508 / CEI 61511, couplé à des barrières de sécurité intrinsèque Ex-ia',
+          techEn: 'Triple Modular Redundancy (TMR 2oo3) hardware-voted architecture certified to IEC 61508 / IEC 61511 SIL 3, interfaced via Ex-ia intrinsically safe galvanic isolators',
+          descFr: 'Assure l\'arrêt d\'urgence instantané (ESD), la détection gaz/feu et la protection anti-débordement des bacs de stockage d\'hydrocarbures en zone ATEX. Tolérance totale aux pannes matérielles simples sans déclenchement intempestif.',
+          descEn: 'Guarantees Emergency Shutdown (ESD), combustible gas/fire detection, and overfill prevention in hazardous ATEX fuel storage zones. Immune to single component faults without false trip.',
+          standard: 'CEI 61508 / CEI 61511 / NF EN 60079-11',
+          metricFr: 'Intégrité de sécurité : SIL 3 (PFDavg < 10⁻³); voteur 2oo3 anti-défaillance commune',
+          metricEn: 'Safety integrity: SIL 3 (PFDavg < 10⁻³); 2oo3 voting prevents spurious trips'
+        },
+        {
+          nameFr: 'Îlots d\'Automates Haute Cadence & Synchronisation Motion (Lignes d\'Embouteillage SABC Douala)',
+          nameEn: 'High-Speed Deterministic PLC Islands & Motion Synchronization (SABC Packaging Line)',
+          techFr: 'Automates modulaires haute performance interconnectés sur bus de terrain déterministe Profinet IRT / CIP Sync avec synchronisation d\'axes camés électroniques',
+          techEn: 'High-speed modular PLCs networked over deterministic Profinet IRT / CIP Sync bus with electronic camming motion synchronization',
+          descFr: 'Lignes d\'embouteillage haute cadence (jusqu\'à 60 000 bouteilles/heure) de la SABC. Synchronisation sub-milliseconde entre remplisseuses, boucheuses, étiqueteuses et fardeleuses avec régulation de tension de bande.',
+          descEn: 'High-throughput packaging lines (up to 60,000 bottles/hour) at SABC. Sub-millisecond axis synchronization across rinsers, fillers, labelers, and robotic palletizers.',
+          standard: 'CEI 61131-3 / CEI 61784 / ISO 13849-1',
+          metricFr: 'Cadence : 60 000 cols/h; gigue temporelle du bus < 1 µs',
+          metricEn: 'Throughput: 60,000 bph; bus transmission jitter < 1 µs'
+        },
+        {
+          nameFr: 'Architecture Hiérarchisée Modèle Purdue & Cybersécurité OT (CEI 62443)',
+          nameEn: 'Purdue Model Layered Automation & OT Cybersecurity Architecture (IEC 62443)',
+          techFr: 'Ségrégation stricte en 5 niveaux (Niveau 0 Instrumentation à Niveau 4 ERP) avec Zone Démilitarisée (DMZ OT/IT), pare-feu industriels à inspection d\'état et passerelles OPC UA sécurisées',
+          techEn: 'Strict 5-tier segregation (Level 0 Field to Level 4 Enterprise ERP) with industrial DMZ, deep-packet stateful firewalls, and encrypted OPC UA channels',
+          descFr: 'Protection des réseaux opérationnels (OT) contre les cyberattaques, les rançongiciels et les intrusions malveillantes. Conforme au cadre réglementaire CEI 62443 pour les infrastructures énergétiques critiques.',
+          descEn: 'Safeguards operational technology (OT) assets against cyberattacks, ransomware, and unauthorized intrusions. Enforces IEC 62443 compliance across national critical energy infrastructure.',
+          standard: 'CEI 62443-3-3 / ISA-95 / NIST SP 800-82',
+          metricFr: 'Niveau de sécurité : SL 3; chiffrement TLS 1.3 / certificats X.509',
+          metricEn: 'Security level: SL 3; TLS 1.3 encryption and X.509 certificate authentication'
         }
       ]
     },
     sectionC: [
       {
-        id: 'eq-exp-vfd-altivar',
-        nameFr: 'Variateur de Vitesse Industriel (Altivar Process / SINAMICS G120)',
-        nameEn: 'Industrial Variable Frequency Drive (VFD 160 kW)',
-        voltage: '400 V • 160 kW • Modulation IGBT',
-        roleFr: 'Variation continue de fréquence (5 à 60 Hz), limitation du courant d\'appel et optimisation énergétique.',
-        roleEn: 'Continuous frequency regulation (5–60 Hz), soft starting, and pump/fan energy optimization.',
-        symbol: 'VFD-01',
-        standard: 'CEI 61800-5-1',
+        id: 'eq-plc-dcs-controller',
+        nameFr: 'Automate Programmable Industriel Sécuritaire (API/PLC SIL3) & DCS de Procédé',
+        nameEn: 'Safety Industrial PLC (SIL3 / Cat. 4) & Process DCS Controller',
+        voltage: '24 Vcc • Cycle < 5 ms • SIL3 / Cat. 4',
+        roleFr: 'Contrôleur logique programmable industriel modulaire durci, intégrant une architecture à microprocesseurs redondants (1oo2D ou 2oo3), certifié CEI 61508 SIL 3 pour l\'automatisation de procédés critiques et l\'arrêt d\'urgence.',
+        roleEn: 'Ruggedized modular programmable automation controller featuring redundant CPUs (1oo2D or 2oo3), certified to IEC 61508 SIL 3 for mission-critical industrial process control and emergency shutdown.',
+        symbol: 'PLC-SIL3',
+        standard: 'CEI 61131-3 / CEI 61508',
+        imgUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'sil'
+      },
+      {
+        id: 'eq-vfd-inverter-drive',
+        nameFr: 'Variateur de Vitesse Électronique Basse / Moyenne Tension (VFD 690 V / 400 kW)',
+        nameEn: 'Variable Frequency Drive (VFD / Inverter Drive 690 V / 400 kW)',
+        voltage: '690 V AC • 400 kW • Courant 430 A',
+        roleFr: 'Convertisseur statique de fréquence à pont redresseur, bus continu filtré et onduleur MLI (PWM) à transistors IGBT, assurant la régulation vectorielle de flux sans capteur (FOC) et la limitation du courant d\'appel.',
+        roleEn: 'Static power electronic frequency converter with IGBT PWM inverter executing sensorless flux vector motor speed control (FOC) and starting current limiting.',
+        symbol: 'VFD-400kW',
+        standard: 'CEI 61800-3 / CEI 61800-5-1',
         imgUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
         calcTab: 'motor'
       },
       {
-        id: 'eq-exp-plc-s7',
-        nameFr: 'Automate Programmable Industriel Modulaire (S7-1500 / Modicon M580)',
-        nameEn: 'Modular Industrial PLC Controller (S7-1500 / Modicon M580)',
-        voltage: 'Alimentation 24 Vcc • Temps de cycle < 5 ms',
-        roleFr: 'Exécution des séquences logiques, asservissements PID et sécurité fonctionnelle SIL2/SIL3.',
-        roleEn: 'Execution of sequential logic, closed-loop PID control, and SIL2/SIL3 safety interlocks.',
-        symbol: 'PLC-CPU',
-        standard: 'CEI 61131-3',
+        id: 'eq-exp-hmi-scada',
+        nameFr: 'Pupitre IHM Industriel & Serveur SCADA Tactile Multitouch (15.6" IP65, OPC UA)',
+        nameEn: 'Industrial HMI Touchscreen & Multitouch SCADA Server (15.6" IP65, OPC UA)',
+        voltage: '24 Vcc • Écran 15.6\'\' Full HD • IP65 Façade',
+        roleFr: 'Interface Homme-Machine tactile industrielle pour la conduite d\'atelier, l\'affichage des synoptiques dynamiques, l\'archivage des alarmes horodatées à la milliseconde et l\'enregistrement des tendances.',
+        roleEn: 'Industrial touchscreen Human-Machine Interface (HMI) for workshop supervision, dynamic graphical synoptics, 1 ms timestamped alarm logging, and historical trend logging.',
+        symbol: 'HMI-15',
+        standard: 'CEI 60068 / CEI 62443',
+        imgUrl: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'load-schedule'
+      },
+      {
+        id: 'eq-exp-safety-relay',
+        nameFr: 'Système Instrumenté de Sécurité SIS Triplement Redondant (TMR 2oo3 SIL3)',
+        nameEn: 'Triple Modular Redundant Safety System (SIS TMR 2oo3 SIL3)',
+        voltage: '24 Vcc redondé • Vote 2oo3 matériel • Temps réponse < 20 ms',
+        roleFr: 'Système de sécurité certifié SIL 3 pour l\'arrêt d\'urgence instantané (ESD), la surveillance des brûleurs (BMS) et la détection d\'ambiance explosive en milieu ATEX.',
+        roleEn: 'Certified SIL 3 safety instrumented system executing emergency plant shutdown (ESD), burner management, and combustible gas monitoring in ATEX zones.',
+        symbol: 'SIS-TMR',
+        standard: 'CEI 61508 / CEI 61511',
+        imgUrl: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'sil'
+      },
+      {
+        id: 'eq-exp-fieldbus-io',
+        nameFr: 'Îlot d\'Entrées/Sorties Déportées IP67 sur Anneau Profinet IRT / EtherNet/IP',
+        nameEn: 'Machine-Mount IP67 Distributed I/O Island (Profinet IRT / EtherNet/IP)',
+        voltage: '24 Vcc • 16 E/S configurables • Connecteurs M12 IP67',
+        roleFr: 'Module d\'acquisition de données terrain montable directement sur machine sans armoire électrique, raccordé sur bus Ethernet temps réel avec synchronisation d\'horloge IEEE 1588.',
+        roleEn: 'Machine-mountable IP67 distributed field I/O block communicating over real-time Ethernet with IEEE 1588 clock synchronization, eliminating local junction boxes.',
+        symbol: 'RIO-IP67',
+        standard: 'CEI 61158 / CEI 61784',
         imgUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'load-schedule'
+      },
+      {
+        id: 'eq-exp-dvdt-sine-filter',
+        nameFr: 'Filtre Sinus & dV/dt de Sortie Variateur pour Protection Moteur',
+        nameEn: 'Inverter Output Sine-Wave & dV/dt Filter for Motor Insulation',
+        voltage: '690 V AC • In = 400 A • dV/dt < 500 V/µs',
+        roleFr: 'Filtre LC passe-bas installé entre le variateur et le moteur pour lisser la tension PWM, éliminer les surtensions d\'ondes réfléchies en bout de câble et préserver l\'isolement des bobinages.',
+        roleEn: 'Low-pass LC sine-wave filter installed on drive output to smooth PWM pulses, eliminate reflected wave peak voltages, and safeguard motor stator winding insulation.',
+        symbol: 'FLT-SINE',
+        standard: 'CEI 60034-25 / CEI 61800-5-1',
+        imgUrl: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=800&q=80',
         calcTab: 'motor'
       }
     ],
     sectionD: [
       {
         phase: '01',
-        titleFr: 'Analyse Fonctionnelle & Liste d\'Entrées/Sorties',
-        titleEn: 'Functional Design Spec (FDS) & I/O Schedule',
-        descFr: 'Recensement des capteurs/actionneurs (TOR, 4–20 mA) et rédaction du Grafcet de conduite et de sécurité.',
-        descEn: 'Cataloging field sensors/actuators and authoring control and safety sequential function charts.'
+        titleFr: 'Analyse Fonctionnelle, Matrice Cause à Effet & Spécification URS/FDS',
+        titleEn: 'Functional Design Specification (FDS) & Cause-and-Effect Matrix',
+        descFr: 'Recensement exhaustif des capteurs et actionneurs, élaboration des organigrammes Grafcet de conduite normale/dégradée et matrice cause-effet de sécurité.',
+        descEn: 'Comprehensive sensor/actuator cataloging, authoring normal/degraded mode Sequential Function Charts (SFC), and safety cause-and-effect matrix.'
       },
       {
         phase: '02',
-        titleFr: 'Dimensionnement des Variateurs & Filtres CEM/dv/dt',
-        titleEn: 'VFD Sizing & EMC / dv/dt Filter Selection',
-        descFr: 'Choix du calibre en fonction du couple (constant ou quadratique) et protection contre les surtensions de câble long.',
-        descEn: 'Selecting drive rating for constant/quadratic torque and adding dv/dt filters for long motor leads.'
+        titleFr: 'Analyse des Risques et Attribution des Niveaux d\'Intégrité SIL (CEI 61508)',
+        titleEn: 'Process Hazard Analysis & Safety Integrity Level Allocation (HAZOP / SIL)',
+        descFr: 'Études HAZOP et LOPA identifiant les boucles de sécurité instrumentées (SIF), calcul des taux de défaillance λDU et assignation des cibles SIL 1 à SIL 3.',
+        descEn: 'HAZOP and LOPA hazard reviews defining Safety Instrumented Functions (SIF), failure rate calculations (λDU), and SIL 1 to SIL 3 allocation.'
       },
       {
         phase: '03',
-        titleFr: 'Câblage Armoire & Ségrégation Courants Forts / Faibles',
-        titleEn: 'Panel Wiring & Power/Control Segregation',
-        descFr: 'Séparation physique des goulottes 400 V PWM et 24 Vcc analogique, reprise des blindages à 360°.',
-        descEn: 'Physical duct separation between 400 V PWM power cables and 24 Vdc analog signals with 360° shield bonding.'
+        titleFr: 'Architecture Matérielle, Dimensionnement Électrique & Cartographie E/S',
+        titleEn: 'Hardware Architecture, Electrical Sizing & I/O Channel Mapping',
+        descFr: 'Dimensionnement des alimentations 24 Vcc secourues, choix des processeurs, calcul du bilan thermique de l\'armoire et affectation des modules d\'entrées/sorties.',
+        descEn: 'Sizing redundant 24 Vdc power supplies, CPU selection, panel thermal dissipation heat calculation, and field I/O channel address assignment.'
       },
       {
         phase: '04',
-        titleFr: 'Tests d\'Acceptation Usine (FAT) sur Simulateur',
-        titleEn: 'Factory Acceptance Testing (FAT) & Loop Check',
-        descFr: 'Simulation de toutes les entrées/sorties, test des sécurités d\'arrêt d\'urgence (STO) et validation des écrans IHM.',
-        descEn: 'Full I/O point-to-point simulation, Safe Torque Off (STO) verification, and HMI screen validation.'
+        titleFr: 'Programmation des Automates selon CEI 61131-3 & Conception Graphique IHM',
+        titleEn: 'PLC Programming per IEC 61131-3 & High-Performance HMI/SCADA Design',
+        descFr: 'Développement modulaire en Ladder (LD), Blocs Fonctionnels (FBD) et Texte Structuré (ST) avec blocs normalisés, et conception des vues IHM conformes ISA-101.',
+        descEn: 'Modular programming in Ladder (LD), Function Blocks (FBD), and Structured Text (ST), paired with high-performance ISA-101 situational awareness HMI graphics.'
       },
       {
         phase: '05',
-        titleFr: 'Mise en Service Site (SAT) & Réglage PID',
-        titleEn: 'Site Commissioning (SAT) & PID Auto-Tuning',
-        descFr: 'Identification automatique des paramètres moteur à l\'arrêt et réglage des gains proportionnel/intégral.',
-        descEn: 'Standstill motor parameter auto-identification and closed-loop PID step-response tuning.'
+        titleFr: 'Essais d\'Acceptation en Plateforme Usine (FAT) avec Émulation HIL',
+        titleEn: 'Factory Acceptance Testing (FAT) with Hardware-in-the-Loop Simulation',
+        descFr: 'Contrôle point-à-point à 100% sur simulateur virtuel, validation des sécurités d\'arrêt d\'urgence (STO) et tests d\'injection de pannes processeur et réseau.',
+        descEn: '100% point-to-point I/O simulation using HIL process models, verification of Safe Torque Off (STO) trips, and CPU/network fault injection testing.'
+      },
+      {
+        phase: '06',
+        titleFr: 'Câblage sur Site, Vérification des Boucles 4-20 mA & Raccordement CEM 360°',
+        titleEn: 'Site Wiring, 4–20 mA Loop Calibration & 360° Peripheral EMC Bonding',
+        descFr: 'Reprise des blindages de câbles moteurs par presse-étoupe CEM à 360°, étalonnage des boucles 4–20 mA avec calibrateur de process et contrôle d\'isolement.',
+        descEn: '360° peripheral EMC cable gland shield termination, 4–20 mA loop calibration using handheld calibrators, and field wiring insulation verification.'
+      },
+      {
+        phase: '07',
+        titleFr: 'Essais d\'Acceptation sur Site (SAT), Auto-réglage PID & Validation SIS',
+        titleEn: 'Site Acceptance Testing (SAT), Closed-Loop PID Tuning & SIS Sign-off',
+        descFr: 'Identification automatique des paramètres moteurs à l\'arrêt par le variateur, réglage des gains PID (Ziegler-Nichols / Cohen-Coon) et validation de conformité CEI 61511.',
+        descEn: 'Drive standstill motor auto-tuning, closed-loop PID parameter optimization (Ziegler-Nichols / Cohen-Coon), and official IEC 61511 safety sign-off.'
       }
     ],
     sectionE: [
       {
-        id: 'vfd_sync_speed',
-        tabLabelFr: 'Vitesse Synchrone & Glissement (VFD)',
-        tabLabelEn: 'Synchronous Speed & Slip Formula',
-        titleFr: 'Pilotage de la Vitesse de Rotation par la Fréquence Statorique',
-        titleEn: 'Motor Rotational Speed Control via Stator Frequency',
-        descFr: 'Le variateur ajuste la fréquence f délivrée au stator tout en maintenant le flux magnétique Φ = U / f constant.',
-        descEn: 'The VFD modulates stator frequency f while keeping the magnetic air-gap flux ratio V/f constant.',
-        formula: 'n_s = (60 · f) / p   et   n = n_s · (1 - g)',
-        formulaDescFr: 'Avec ns vitesse synchrone (tr/min), f fréquence de sortie du variateur (Hz), p nombre de paires de pôles, et g glissement nominal.',
-        formulaDescEn: 'With ns synchronous speed (rpm), f VFD output frequency (Hz), p pole pairs, and g rotor slip.',
+        id: 'euler_ode_pid',
+        tabLabelFr: 'Régulation PID Discret (Euler)',
+        tabLabelEn: 'Discrete Euler PID Controller',
+        titleFr: 'Algorithme Numérique de Régulation PID Discret avec Anti-Windup',
+        titleEn: 'Discrete Numerical PID Algorithm with Integral Anti-Windup Clamping',
+        descFr: 'Équation aux différences de l\'algorithme PID implémenté dans les automates programmables industriels (CEI 61131-3), garantissant une régulation déterministe avec blocage anti-saturation.',
+        descEn: 'Discrete difference equation for the digital PID controller implemented in industrial PLCs (IEC 61131-3), ensuring deterministic closed-loop tracking with anti-windup clamping.',
+        formula: 'u(k) = K_p \\cdot e(k) + \\frac{K_p \\cdot T_s}{T_i} \\sum_{j=0}^{k} e(j) + K_p \\cdot T_d \\cdot \\frac{e(k) - e(k-1)}{T_s}',
+        formulaDescFr: 'Avec e(k) = Consigne - Mesure à l\'instant k, Ts période d\'échantillonnage (s), Kp gain proportionnel, Ti constante d\'intégration (s), et Td constante de dérivation (s).',
+        formulaDescEn: 'Where e(k) = Setpoint - Process Variable at sample k, Ts is loop sampling period (s), Kp proportional gain, Ti integral time constant (s), and Td derivative time constant (s).',
         assumptionsFr: [
-          'Loi U/f constante jusqu\'à la fréquence nominale (50 Hz) garantissant le couple nominal.',
-          'Au-delà de 50 Hz (survitesse), fonctionnement à puissance constante avec affaiblissement de flux.',
-          'Ventilation forcée requise si le moteur tourne longtemps à très basse fréquence (< 15 Hz).'
+          'Période d\'échantillonnage Ts constante et rigoureusement cadencée par interruption cyclique (ex: Ts = 50 ms).',
+          'Clamping anti-windup de l\'intégrateur borné entre 0% et 100% de la course de l\'actionneur.',
+          'Filtrage passe-bas du terme dérivé pour éliminer le bruit de mesure sur les capteurs 4-20 mA.'
         ],
         assumptionsEn: [
-          'Constant V/f ratio up to base frequency (50 Hz) maintaining full rated torque.',
-          'Above 50 Hz, field-weakening region operates at constant power with reduced torque.',
-          'Forced external cooling fan required for continuous low-speed operation (< 15 Hz).'
+          'Sampling period Ts rigidly scheduled via deterministic timer interrupt (e.g., Ts = 50 ms).',
+          'Anti-windup integral clamp bound to 0-100% actuator travel limits.',
+          'First-order low-pass filter on derivative term to suppress analog measurement noise.'
         ],
         calcTab: 'motor'
       },
       {
-        id: 'affinity_laws_vfd',
-        tabLabelFr: 'Lois d\'Affinité (Pompes & Ventilateurs)',
-        tabLabelEn: 'Centrifugal Pump & Fan Affinity Laws',
-        titleFr: 'Gain Énergétique Cubique en Régulation par Variateur',
-        titleEn: 'Cubic Power Saving Law for Centrifugal Loads',
-        descFr: 'Sur une pompe ou un ventilateur centrifuge, réduire la vitesse de 20% diminue la puissance électrique appelée de près de 50% !',
-        descEn: 'For centrifugal pumps and fans, reducing speed by 20% cuts electrical power consumption by nearly 50%!',
-        formula: 'Q₂ / Q₁ = N₂ / N₁   ;   H₂ / H₁ = (N₂ / N₁)²   ;   P₂ / P₁ = (N₂ / N₁)³',
-        formulaDescFr: 'Avec Q le débit volumique, H la hauteur manométrique (pression), P la puissance mécanique sur l\'arbre, et N la vitesse de rotation.',
-        formulaDescEn: 'Where Q is flow rate, H is head pressure, P is shaft power, and N is rotational speed.',
+        id: 'foc_vector_control',
+        tabLabelFr: 'Contrôle Vectoriel de Flux (FOC)',
+        tabLabelEn: 'Field-Oriented Control (FOC)',
+        titleFr: 'Découplage de Couple et de Flux par Transformation de Park (d-q)',
+        titleEn: 'Decoupled Flux and Torque Regulation via Park Transformation (d-q)',
+        descFr: 'Algorithme de pilotage haute performance des variateurs de fréquence permettant de contrôler indépendamment le flux magnétique rotorique (axe d) et le couple mécanique dynamique (axe q).',
+        descEn: 'High-performance AC drive algorithm decoupling rotor magnetic flux control (direct d-axis) from dynamic electromagnetic torque regulation (quadrature q-axis).',
+        formula: 'T_e = \\frac{3}{2} p \\frac{L_m^2}{L_r} i_{sd} \\cdot i_{sq} \\quad \\text{avec} \\quad i_{sd} = \\text{Cte} \\quad (\\omega \\le \\omega_n), \\quad i_{sd} \\propto \\frac{1}{\\omega} \\quad (\\omega > \\omega_n)',
+        formulaDescFr: 'Où p est le nombre de paires de pôles, Lm l\'inductance mutuelle, Lr l\'inductance rotorique, isd le courant magnétisant d\'axe direct, et isq le courant de couple en quadrature.',
+        formulaDescEn: 'Where p is pole pairs, Lm mutual inductance, Lr rotor inductance, isd magnetizing direct-axis current, and isq quadrature torque-producing current.',
         assumptionsFr: [
-          'Réseau hydraulique ou aéraulique à dominante de pertes de charge quadratiques (peu de hauteur géométrique statique).',
-          'Rendement hydraulique de la pompe supposé quasi-constant au voisinage du point nominal.',
-          'Remplacement avantageux du laminage par vanne de réglage énergivore.'
+          'Orientation parfaite sur le vecteur de flux rotorique via observateur d\'état ou capteur résolveur/encodeur.',
+          'Région de flux constant maintenue jusqu\'à la vitesse nominale ωn (couple maximal disponible).',
+          'Région de défluxage (affaiblissement de flux) au-delà de ωn pour fonctionner à puissance constante.'
         ],
         assumptionsEn: [
-          'System curve dominated by friction head losses rather than high static lift.',
-          'Pump efficiency assumed near-constant across moderate speed variations.',
-          'Replaces wasteful mechanical throttling valves.'
+          'Accurate rotor flux vector orientation via sliding-mode observer or optical encoder.',
+          'Constant flux maintained up to base speed ωn (maximum available torque envelope).',
+          'Field weakening region deployed above base speed ωn for constant-power operation.'
         ],
         calcTab: 'motor'
+      },
+      {
+        id: 'sil_tmr_pfd_avg',
+        tabLabelFr: 'Sécurité Fonctionnelle (PFDavg)',
+        tabLabelEn: 'Safety Integrity PFDavg (SIL)',
+        titleFr: 'Probabilité Moyenne de Défaillance sur Sollicitation en Vote 2oo3 (CEI 61508)',
+        titleEn: 'Average Probability of Failure on Demand for 2-out-of-3 Architecture',
+        descFr: 'Calcul de la fiabilité prévisionnelle d\'un Système Instrumenté de Sécurité (SIS) triplement redondant (TMR 2oo3) pour la certification SIL 3 des installations industrielles à risque.',
+        descEn: 'Predictive reliability modeling of a Triple Modular Redundant (TMR 2oo3) Safety Instrumented System for SIL 3 certification in hazardous industrial plants.',
+        formula: '\\text{PFD}_{\\text{avg, 2oo3}} = (1 - \\beta)^2 \\cdot (\\lambda_{\\text{DU}} \\cdot T_I)^2 + \\beta \\cdot \\lambda_{\\text{DU}} \\cdot \\frac{T_I}{2}',
+        formulaDescFr: 'Où λDU est le taux de défaillance dangereuse non détectée (h⁻¹), TI l\'intervalle de test périodique complet (h), et β le facteur de défaillance de cause commune entre canaux redondants.',
+        formulaDescEn: 'Where λDU is dangerous undetected failure rate (h⁻¹), TI proof test interval (h), and β common-cause failure fraction between redundant channels.',
+        assumptionsFr: [
+          'Taux de défaillance dangereuse non détectée λDU = 10⁻⁶ h⁻¹ (1 000 FIT).',
+          'Intervalle de test périodique complet (Proof Test) TI = 8 760 heures (1 an).',
+          'Facteur de défaillance de cause commune β = 0.05 (5%), prépondérant dans le terme global de PFD.'
+        ],
+        assumptionsEn: [
+          'Dangerous undetected failure rate λDU = 10⁻⁶ h⁻¹ (1,000 FIT).',
+          'Proof test interval TI = 8,760 hours (annual proof test cycle).',
+          'Common-cause failure fraction β = 0.05 (5%), dominating the overall PFD target.'
+        ],
+        calcTab: 'sil'
+      },
+      {
+        id: 'vfd_affinity_energy',
+        tabLabelFr: 'Lois d\'Affinité Centrifuge',
+        tabLabelEn: 'Affinity Laws Energy Savings',
+        titleFr: 'Économie d\'Énergie Cubique sur Pompes et Ventilateurs (Lois d\'Affinité)',
+        titleEn: 'Cubic Affinity Laws & VFD Energy Conservation on Centrifugal Loads',
+        descFr: 'Démontre le gain énergétique colossal apporté par la régulation de vitesse par variateur : réduire la vitesse de 20% divise la consommation électrique par deux par rapport à une vanne de réglage.',
+        descEn: 'Demonstrates substantial energy conservation through speed modulation: reducing speed by 20% cuts electrical consumption by half compared to mechanical throttling.',
+        formula: '\\frac{Q_2}{Q_1} = \\frac{N_2}{N_1}, \\quad \\frac{H_2}{H_1} = \\left(\\frac{N_2}{N_1}\\right)^2, \\quad \\frac{P_2}{P_1} = \\left(\\frac{N_2}{N_1}\\right)^3',
+        formulaDescFr: 'Avec Q le débit volumique (m³/h), H la hauteur manométrique (mCE ou bar), P la puissance mécanique appelée (kW), et N la vitesse de rotation (tr/min).',
+        formulaDescEn: 'With Q volumetric flow rate (m³/h), H head pressure (m or bar), P mechanical power demand (kW), and N shaft rotational speed (rpm).',
+        assumptionsFr: [
+          'Circuit aéraulique ou hydraulique sans contre-pression statique dominante (pertes de charge de frottement pures).',
+          'Rendement de la machine tournante maintenu élevé dans la plage de régulation 60% à 100% de la vitesse nominale.',
+          'Remplacement avantageux des vannes de laminage mécanique énergivores par régulation de vitesse.'
+        ],
+        assumptionsEn: [
+          'Frictional flow system without significant static head pressure.',
+          'Impeller efficiency maintained high across 60% to 100% speed control range.',
+          'Replaces inefficient mechanical control valves and damper vanes.'
+        ],
+        calcTab: 'motor'
+      },
+      {
+        id: 'motor_thermal_i2t',
+        tabLabelFr: 'Modèle Thermique Moteur (I²t)',
+        tabLabelEn: 'Motor I²t Thermal Model',
+        titleFr: 'Modèle Thermique Numérique d\'Échauffement Statorique du Moteur I²t',
+        titleEn: 'Digital Stator Thermal Rise ODE Model with Non-Volatile Memory',
+        descFr: 'Algorithme prédictif de suivi de l\'état thermique des enroulements moteurs, simulant l\'accumulation de chaleur et ordonnant le déclenchement avant dégradation de la classe d\'isolation.',
+        descEn: 'Predictive thermal rise algorithm simulating heat accumulation in motor stator windings, triggering trip before insulation class breakdown occurs.',
+        formula: '\\theta(t) = \\theta_0 + (\\theta_{\\infty} - \\theta_0) \\cdot \\left(1 - e^{-t / \\tau_{\\text{th}}}\\right) \\quad \\text{avec} \\quad \\theta_{\\infty} \\propto \\left(\\frac{I}{I_n}\\right)^2',
+        formulaDescFr: 'Où θ0 est la température initiale (°C), θ∞ la température d\'équilibre asymptotique proportionnelle au carré du courant, et τth la constante de temps thermique du moteur.',
+        formulaDescEn: 'Where θ0 is initial temperature (°C), θ∞ is asymptotic equilibrium temperature proportional to squared current, and τth is motor thermal time constant.',
+        assumptionsFr: [
+          'Constante de temps d\'échauffement thermique τth ≈ 15 à 45 minutes pour moteurs industriels fermés TEFC.',
+          'Image thermique conservée en mémoire non volatile en cas de coupure de l\'alimentation électrique de l\'automate.',
+          'Prise en compte de la réduction du refroidissement à basse vitesse pour les moteurs autoventilés.'
+        ],
+        assumptionsEn: [
+          'Thermal heating time constant τth ≈ 15 to 45 minutes for totally enclosed fan-cooled (TEFC) motors.',
+          'Thermal memory retained across control power outages in non-volatile flash memory.',
+          'Accounts for reduced cooling airflow when motor operates at lower speeds.'
+        ],
+        calcTab: 'motor'
+      },
+      {
+        id: 'iec61850_sampled_values',
+        tabLabelFr: 'Bus de Procédé (Sampled Values)',
+        tabLabelEn: 'Process Bus Sampled Values',
+        titleFr: 'Fréquence d\'Échantillonnage et Débit du Bus de Procédé Optique (CEI 61850-9-2LE)',
+        titleEn: 'Digital Sampling Rate & Bandwidth on Fiber Optic Process Bus',
+        descFr: 'Régit la numérisation des signaux de courant et de tension par les Merging Units (MU) au plus près des réducteurs de mesure et leur diffusion multicast sur fibre optique.',
+        descEn: 'Governs analog current and voltage digitization by field Merging Units (MU) and their deterministic multicast broadcast across the station optical bus.',
+        formula: 'f_s = 80 \\times f_0 \\implies f_s = 4\\,000\\,\\text{éch/s} \\quad (T_s = 250\\,\\mu\\text{s à } 50\\,\\text{Hz}) \\quad \\text{Bande passante} \\approx 4.5\\,\\text{Mbit/s par flux}',
+        formulaDescFr: 'À 50 Hz, 80 échantillons par période réseau correspondent à une trame Ethernet SV transmise toutes les 250 microsecondes avec synchronisation d\'horloge absolue PTP IEEE 1588.',
+        formulaDescEn: 'At 50 Hz, 80 samples per fundamental period equate to one SV Ethernet frame every 250 microseconds synchronized via IEEE 1588 PTP precision time protocol.',
+        assumptionsFr: [
+          '80 échantillons par période réseau (4 000 éch/s à 50 Hz, 4 800 éch/s à 60 Hz).',
+          'Synchronisation temporelle absolue par protocole PTP IEEE 1588v2 avec précision < 1 µs.',
+          'Priorisation stricte des trames multicast Ethernet avec balise VLAN 802.1Q (priorité 4 pour SV, priorité 7 pour GOOSE).'
+        ],
+        assumptionsEn: [
+          '80 samples per fundamental electrical period (4,000 samples/s at 50 Hz, 4,800 samples/s at 60 Hz).',
+          'Absolute time synchronization via IEEE 1588v2 PTP precision time protocol (< 1 µs accuracy).',
+          'Ethernet multicast prioritization using 802.1Q VLAN tagging (Priority 4 for SV, Priority 7 for GOOSE).'
+        ],
+        calcTab: 'load-schedule'
       }
     ],
     sectionF: [
       {
-        code: 'CEI 61800-3 / 5-1',
-        tag: 'VARIATEURS DE VITESSE',
-        titleFr: 'Entraînements Électriques de Puissance à Vitesse Variable - Exigences CEM & Sécurité',
-        titleEn: 'Adjustable Speed Electrical Power Drive Systems - EMC & Safety Requirements',
-        descFr: 'Définit les limites d\'émission électromagnétique, l\'immunité et la sécurité électrique/thermique des variateurs.',
-        descEn: 'Specifies electromagnetic emission limits, immunity levels, and functional safety for VFD drives.'
+        code: 'CEI 61131-3',
+        tag: 'LANGAGES AUTOMATE',
+        titleFr: 'Automates Programmables — Langages de Programmation Normalisés',
+        titleEn: 'Programmable Controllers — Standardized Programming Languages',
+        descFr: 'Standardise les 5 langages d\'automatisme : Schéma à Relais (Ladder LD), Diagramme Fonctionnel en Blocs (FBD), Grafcet (SFC), Texte Structuré (ST) et Liste d\'Instructions (IL).',
+        descEn: 'Standardizes the 5 canonical PLC languages: Ladder Diagram (LD), Function Block Diagram (FBD), Sequential Function Chart (SFC), Structured Text (ST), and Instruction List (IL).'
       },
       {
-        code: 'CEI 61131-3',
-        tag: 'AUTOMATES PROGRAMMABLES',
-        titleFr: 'Automates Programmables - Langages de Programmation Normalisés',
-        titleEn: 'Programmable Controllers - Programming Languages Standard',
-        descFr: 'Standardise les 5 langages d\'automatisme : Ladder (LD), Grafcet (SFC), Blocs Fonctionnels (FBD), Texte Structuré (ST).',
-        descEn: 'Standardizes PLC languages: Ladder Diagram (LD), Sequential Function Chart (SFC), Function Block (FBD), and Structured Text (ST).'
+        code: 'CEI 61508 / CEI 61511',
+        tag: 'SÉCURITÉ FONCTIONNELLE',
+        titleFr: 'Sécurité Fonctionnelle des Systèmes Électriques/Électroniques & Systèmes Instrumentés SIS',
+        titleEn: 'Functional Safety of Electrical/Electronic/Programmable Safety-Related Systems & SIS',
+        descFr: 'Norme mère régissant les systèmes d\'arrêt d\'urgence et de protection des procédés : cycle de vie de sécurité, niveaux d\'intégrité SIL 1 à SIL 4, taux PFDavg et tolérance matérielle aux pannes.',
+        descEn: 'Foundational standard for safety-critical control and emergency shutdown: safety lifecycle, SIL 1 to SIL 4 integrity metrics, PFDavg calculations, and hardware fault tolerance.'
+      },
+      {
+        code: 'CEI 61800-3 / CEI 61800-5-1',
+        tag: 'VARIATEURS DE VITESSE',
+        titleFr: 'Entraînements Électriques de Puissance à Vitesse Variable — Exigences CEM & Sécurité',
+        titleEn: 'Adjustable Speed Electrical Power Drive Systems — EMC & Safety Requirements',
+        descFr: 'Prescriptions relatives aux émissions et à l\'immunité électromagnétique (catégories C1 à C4), aux filtres dV/dt et à la sécurité fonctionnelle intégrée (STO, SS1, SLS).',
+        descEn: 'Mandates electromagnetic compatibility emission and immunity limits (Categories C1 to C4), dV/dt motor filters, and integrated functional safety functions (STO, SS1, SLS).'
+      },
+      {
+        code: 'CEI 62443',
+        tag: 'CYBERSÉCURITÉ OT',
+        titleFr: 'Sécurité des Réseaux et des Systèmes Industriels d\'Automatisation et de Téléconduite',
+        titleEn: 'Security for Industrial Automation and Control Systems (OT Cybersecurity)',
+        descFr: 'Cadre international de cybersécurité pour les systèmes industriels : segmentation en zones et conduits (modèle Purdue), niveaux de sécurité SL 1 à SL 4 et authentification robuste.',
+        descEn: 'International standard for industrial cybersecurity: Purdue model zone and conduit partitioning, Security Levels SL 1 to SL 4, deep packet inspection, and encrypted OT channels.'
+      },
+      {
+        code: 'CEI 61850-9-2LE / CEI 61869-9',
+        tag: 'BUS DE PROCÉDÉ NUMÉRIQUE',
+        titleFr: 'Réseaux de Communication pour Postes Électriques — Bus de Procédé & Valeurs Échantillonnées',
+        titleEn: 'Communication Networks for Power Substations — Optical Process Bus & Sampled Values',
+        descFr: 'Règles de diffusion des valeurs instantanées numérisées par les Merging Units (4 000 éch/s à 50 Hz) sur anneaux fibre optique redondés PRP/HSR sans latence ni perte.',
+        descEn: 'Defines optical broadcasting of digital sampled values from Merging Units (4,000 samples/s at 50 Hz) across zero-loss PRP/HSR redundant Ethernet networks.'
+      },
+      {
+        code: 'NAMUR NE 43',
+        tag: 'SIGNALISATION ANALOGIQUE',
+        titleFr: 'Normalisation des Niveaux de Signal des Transmetteurs de Procédé 4–20 mA',
+        titleEn: 'Standardization of the Signal Level for the Failure Information of Digital Transmitters',
+        descFr: 'Standard international de surveillance des boucles analogiques : signal utile 3.8 à 20.5 mA, diagnostic de défaut bas (< 3.6 mA) et défaut haut (> 21.0 mA) pour détecter coupure ou court-circuit.',
+        descEn: 'International benchmark for analog 4–20 mA loop health monitoring: nominal range 3.8 to 20.5 mA, low failure flag (< 3.6 mA), and high failure flag (> 21.0 mA) detecting broken wire or short.'
       }
     ]
   }

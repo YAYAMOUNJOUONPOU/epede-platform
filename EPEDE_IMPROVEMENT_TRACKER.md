@@ -15,8 +15,8 @@ Complete platform transformation through continuous iterative improvement across
 | **D04** | Substations & Grid Nodes (AIS, GIS, Transformers, Bays) | Completed | 6 | 97% | 97% | 96% | Passing |
 | **D05** | Distribution Networks (MV Feeders, RMUs, Pole Transformers) | Completed | 6 | 97% | 97% | 96% | Passing |
 | **D06** | Electrical Installations & Utilization (LV Switchboards, Motors, Earthing) | Completed | 6 | 97% | 97% | 96% | Passing |
-| **D07** | Industrial Automation, DCS & Variable Speed Drives (VFD) | In Progress | 1 | - | - | - | Queued |
-| **D08** | Extra-Low Voltage (ELV) & Special Electrical Systems | Queued | 0 | - | - | - | - |
+| **D07** | Industrial Automation, DCS & Variable Speed Drives (VFD) | Completed | 6 | 97% | 97% | 96% | Passing |
+| **D08** | Extra-Low Voltage (ELV) & Special Electrical Systems | In Progress | 1 | - | - | - | Queued |
 | **D09** | Artificial Intelligence & Advanced Power Technologies | Queued | 0 | - | - | - | - |
 | **D10** | Energy Storage & Charging Systems (BESS, PSH, Microgrids) | Queued | 0 | - | - | - | - |
 | **D11** | Protection, Measurements & System Studies (Relays, TCC, ANSI) | Queued | 0 | - | - | - | - |
@@ -45,6 +45,6 @@ Complete platform transformation through continuous iterative improvement across
 ---
 
 ## 3. Improvement Log Summary
-- **Completed**: D01 (Generation & Electricity Production), D02 (Power System Architecture & Grid Planning), D03 (Transmission Networks), D04 (Substations & Grid Nodes), D05 (Distribution Networks), D06 (Electrical Installations & Utilization — LV Switchboards TGBT, Motor Control Centers, Earthing Schemes TT/TN/IT).
-- **Current Step**: Transforming Domain 7 (Industrial Automation, DCS & Variable Speed Drives VFD — Nachtigal, CIMENCAM, SABC, PLC/SCADA).
-- **Next Step**: Domain 8 (Extra-Low Voltage ELV & Building Management Systems BMS).
+- **Completed**: D01 (Generation & Electricity Production), D02 (Power System Architecture & Grid Planning), D03 (Transmission Networks), D04 (Substations & Grid Nodes), D05 (Distribution Networks), D06 (Electrical Installations & Utilization), D07 (Industrial Automation, DCS & Variable Speed Drives VFD).
+- **Current Step**: Transforming Domain 8 (Extra-Low Voltage ELV & Special Electrical Systems — Fire Detection SSI Cat A, BMS/SCADA, Access Control, CCTV, Novec 1230 gas extinguishing).
+- **Next Step**: Domain 9 (Artificial Intelligence & Advanced Power Technologies).
