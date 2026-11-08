@@ -179,6 +179,29 @@ const FORMULAS_CATALOG: FormulaItem[] = [
     assumptions_en: 'Uncompensated cable link. At L_crit, capacitive charging current consumes 100% of ampacity.',
     limitations_fr: 'En pratique, la compensation en extrémités permet de doubler la distance maximale admissible.',
     limitations_en: 'In practice, terminal and intermediate shunt reactors permit doubling permissible length.'
+  },
+  {
+    id: 'FERRANTI_VOLTAGE_RISE',
+    category: 'LINE_PHYSICS',
+    title_fr: 'Effet Ferranti & Montée en Tension à Vide (CEI 60071-1)',
+    title_en: 'Ferranti Effect & No-Load Open-Circuit Voltage Rise (IEC 60071-1)',
+    formula: 'U_2 = U_1 / cos(β · L) ≈ U_1 · [ 1 + (ω² · L² · l_km · c_km) / 2 ]',
+    variables_fr: [
+      { name: 'U_1', desc: 'Tension efficace au poste émetteur (kV)' },
+      { name: 'U_2', desc: 'Tension efficace au poste récepteur ouvert à vide (kV)' },
+      { name: 'β', desc: 'Constante de phase de propagation = ω · √(l · c) ≈ ω / v (rad/km)' },
+      { name: 'L', desc: 'Longueur physique de la ligne de grand transport (km)' }
+    ],
+    variables_en: [
+      { name: 'U_1', desc: 'Sending-end line RMS voltage (kV)' },
+      { name: 'U_2', desc: 'Receiving-end open-circuit no-load voltage (kV)' },
+      { name: 'β', desc: 'Wave propagation phase constant = ω / v (rad/km)' },
+      { name: 'L', desc: 'Total physical transmission line route length (km)' }
+    ],
+    assumptions_fr: 'Ligne ouverte à vide à l\'extrémité réceptrice (I_2 = 0) ou très faiblement chargée.',
+    assumptions_en: 'Open-circuit receiving end (I_2 = 0) or lightly loaded transmission line.',
+    limitations_fr: 'Sur de très longues liaisons (> 250 km en 225 kV, ex: Edéa-Yaoundé ou Songloulou), la surtension diélectrique dépasse +10% à +15% et impose l\'enclenchement de réactances shunt compensatrices.',
+    limitations_en: 'On long EHV lines (> 250 km), overvoltage exceeds insulation limits (+10% to +15%), mandating shunt reactor compensation.'
   }
 ];
 

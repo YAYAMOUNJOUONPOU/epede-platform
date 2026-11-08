@@ -555,7 +555,34 @@ export const InstallationsWorkbench: React.FC<InstallationsWorkbenchProps> = ({
             )}
 
             {activeSubTool === 'HARMONICS_THD' && (
-              <HarmonicsAndPowerQualityAnalyzer locale={locale} />
+              <div className="space-y-6">
+                <HarmonicsAndPowerQualityAnalyzer locale={locale} />
+                {getWorkedExampleById('we-d08-building-neutral-harmonics') && (
+                  <div className="space-y-3 pt-4 border-t border-[#20293A]">
+                    <div className="flex items-center gap-2">
+                      <span className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                        <Activity className="w-4 h-4" />
+                      </span>
+                      <div>
+                        <h3 className="text-sm font-bold text-white tracking-wide">
+                          {isFr 
+                            ? 'Cas d’Ingénierie Résolu · Dimensionnement du Neutre Harmonique (CEI 60364-5-52)' 
+                            : 'Normative Worked Example · Neutral Sizing Under 3rd Harmonics (IEC 60364-5-52)'}
+                        </h3>
+                        <p className="text-[11px] text-slate-400 font-sans">
+                          {isFr
+                            ? 'Courant homopolaire triplé dans le conducteur neutre et facteur de réduction pour complexe tertiaire à Douala.'
+                            : 'Tripled zero-sequence current in neutral conductor and derating factor for commercial facility in Douala.'}
+                        </p>
+                      </div>
+                    </div>
+                    <WorkedExampleViewer
+                      example={getWorkedExampleById('we-d08-building-neutral-harmonics')!}
+                      locale={locale}
+                    />
+                  </div>
+                )}
+              </div>
             )}
 
             {activeSubTool === 'FORMULAS_EXPLAINER' && (
@@ -621,7 +648,34 @@ export const InstallationsWorkbench: React.FC<InstallationsWorkbenchProps> = ({
             )}
 
             {activeSubTool === 'DIFF_PROTECTION_LAB' && (
-              <DifferentialProtectionLab locale={locale} />
+              <div className="space-y-6">
+                <DifferentialProtectionLab locale={locale} />
+                {getWorkedExampleById('we-d16-touch-voltage-tt') && (
+                  <div className="space-y-3 pt-4 border-t border-[#20293A]">
+                    <div className="flex items-center gap-2">
+                      <span className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                        <Shield className="w-4 h-4" />
+                      </span>
+                      <div>
+                        <h3 className="text-sm font-bold text-white tracking-wide">
+                          {isFr 
+                            ? 'Cas d’Ingénierie Résolu · Tension de Toucher & Sensibilité DDR en Schéma TT (CEI 60364-4-41)' 
+                            : 'Normative Worked Example · Touch Voltage & RCD Sensitivity in TT Scheme (IEC 60364-4-41)'}
+                        </h3>
+                        <p className="text-[11px] text-slate-400 font-sans">
+                          {isFr
+                            ? 'Dimensionnement du seuil différentiel IΔn ≤ UL / RA pour prévenir tout risque de contact indirect.'
+                            : 'Dimensioning residual threshold IΔn ≤ UL / RA to guarantee indirect contact safety.'}
+                        </p>
+                      </div>
+                    </div>
+                    <WorkedExampleViewer
+                      example={getWorkedExampleById('we-d16-touch-voltage-tt')!}
+                      locale={locale}
+                    />
+                  </div>
+                )}
+              </div>
             )}
 
             {activeSubTool === 'SPD_LAB' && (
