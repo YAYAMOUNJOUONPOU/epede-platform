@@ -37,6 +37,7 @@ import { GridPlanningAndN1Lab } from './GridPlanningAndN1Lab';
 // New Advanced Simulation & Export Modules
 import { AcLoadFlowAndVoltageStabilityLab } from './modules/AcLoadFlowAndVoltageStabilityLab';
 import { GridPlanningDeliverablesExportEngine } from './modules/GridPlanningDeliverablesExportEngine';
+import { GridArchitectureComparisonMatrix } from './modules/GridArchitectureComparisonMatrix';
 
 // Central Reactive Data Mesh Store
 import { useGridPlanningProjectStore } from './services/useGridPlanningProjectStore';
@@ -58,7 +59,7 @@ export const GridArchitectureVisualJourney: React.FC<GridArchitectureVisualJourn
   // 2. UI Sub-Tab Controls for Stages
   const [stage1SubTab, setStage1SubTab] = useState<'MASTER_15'>('MASTER_15');
   const [stage2SubTab, setStage2SubTab] = useState<'VOLTAGE_BANDS' | 'AC_LOAD_FLOW'>('VOLTAGE_BANDS');
-  const [stage3SubTab, setStage3SubTab] = useState<'TOPOLOGIES'>('TOPOLOGIES');
+  const [stage3SubTab, setStage3SubTab] = useState<'TOPOLOGIES' | 'COMPARISON_MATRIX'>('TOPOLOGIES');
   const [stage4SubTab, setStage4SubTab] = useState<'SLD_INTERLOCKS'>('SLD_INTERLOCKS');
   const [stage5SubTab, setStage5SubTab] = useState<'N1_LAB' | 'DOSSIER_DQE'>('N1_LAB');
 
@@ -179,8 +180,42 @@ export const GridArchitectureVisualJourney: React.FC<GridArchitectureVisualJourn
             STAGE 3: TOPOLOGIES DE RÉSEAU & FIABILITÉ SAIDI/SAIFI
            ======================================================== */}
         {store.activeStage === 3 && (
-          <div className="space-y-4">
-            <NetworkTopologiesAndReliability locale={locale} />
+          <div className="space-y-5">
+            {/* Sub-Tabs Selector */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-[#222B38]">
+              <button
+                type="button"
+                onClick={() => setStage3SubTab('TOPOLOGIES')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  stage3SubTab === 'TOPOLOGIES'
+                    ? 'bg-sky-400 text-slate-950 shadow-md'
+                    : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                }`}
+              >
+                <GitFork className="w-3.5 h-3.5" />
+                <span>{locale === 'fr' ? '1. Simulateur de Défaillances & SAIDI/SAIFI' : '1. Fault Simulation & SAIDI/SAIFI'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setStage3SubTab('COMPARISON_MATRIX')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  stage3SubTab === 'COMPARISON_MATRIX'
+                    ? 'bg-sky-400 text-slate-950 shadow-md'
+                    : 'bg-[#0E141F] text-slate-400 hover:text-white border border-[#222B38]'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" />
+                <span>{locale === 'fr' ? '2. Matrice Comparative 8-Axes & Schémas Postes' : '2. 8-Axis Comparison & Busbar Schemes'}</span>
+              </button>
+            </div>
+
+            {stage3SubTab === 'TOPOLOGIES' && (
+              <NetworkTopologiesAndReliability locale={locale} />
+            )}
+
+            {stage3SubTab === 'COMPARISON_MATRIX' && (
+              <GridArchitectureComparisonMatrix locale={locale} />
+            )}
           </div>
         )}
 

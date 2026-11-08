@@ -681,64 +681,97 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
   D02: {
     domainCode: 'D02',
     sectionA: {
-      roleFr: "Planification stratégique, modélisation nodale globale, calculs d'écoulement de charge (Load Flow) et vérification du critère de sécurité N-1.",
-      roleEn: 'Strategic grid planning, nodal modeling, load flow dispatch analysis, and N-1 contingency security assessment.',
+      roleFr: "Planification stratégique, modélisation nodale globale [Ybus], calculs d'écoulement de charge (AC Load Flow Newton-Raphson), optimisation économique du dispatch (Security-Constrained Economic Dispatch) et vérification déterministe du critère de sécurité N-1 selon les normes CEI et le Code de Réseau SONATREL.",
+      roleEn: 'Strategic grid planning, global nodal admittance modeling [Ybus], AC Newton-Raphson power flow calculations, Security-Constrained Economic Dispatch (SCED), and deterministic N-1 contingency security assessment per IEC standards and the SONATREL Grid Code.',
       inputsFr: {
-        title: 'Bilan d\'Offre & Courbes de Charge',
-        desc: 'Parcs de production hydraulique/thermique, prévisions d\'évolution de la demande de pointe industrielle et urbaine.',
-        voltage: 'Réseaux HTB 225 kV & 90 kV'
+        title: 'Bilan d\'Offre & Courbes de Charge Prévisionnelles',
+        desc: 'Parcs de production hydraulique (Song Loulou, Nachtigal, Memve\'ele) et thermique, courbes de charge horaires, prévisions de pointe industrielle/urbaine et matrice des admittances de branches [Ybus].',
+        voltage: 'Réseaux THT/HTB 400 kV, 225 kV & 90 kV'
       },
       inputsEn: {
-        title: 'Generation Fleet & Demand Forecasts',
-        desc: 'Hydro/thermal power plant dispatch capacities and long-term urban/industrial peak load forecasts.',
-        voltage: '225 kV & 90 kV HV Networks'
+        title: 'Generation Fleet & Load Profiles',
+        desc: 'Hydro generation fleet (Song Loulou, Nachtigal, Memve\'ele) and thermal plants, hourly load curves, urban/industrial peak forecasts, and branch admittance matrix [Ybus].',
+        voltage: '400 kV, 225 kV & 90 kV EHV/HV Networks'
       },
       processFr: {
-        title: 'Résolution des Équations Nodales & Stabilité',
-        desc: 'Calcul itératif de Newton-Raphson pour déterminer les modules et phases des tensions aux nœuds, transits sur lignes et marges de stabilité.',
-        note: 'Critère de sécurité : Aucun dépassement de capacité thermique en régime N-1'
+        title: 'Résolution des Équations Nodales & Stabilité Multi-Critères',
+        desc: 'Résolution itérative du système non linéaire de Newton-Raphson par matrice jacobienne [J]. Calcul simultané des modules et phases des tensions (|V|, θ), transits de puissance (P, Q), pertes joule, et vérification des marges de stabilité dynamique rotorique et de tension.',
+        note: 'Critères de sécurité : Zéro surcharge thermique en régime permanent N et N-1 ; tension maintenue dans la plage 0.90 – 1.05 Un'
       },
       processEn: {
-        title: 'Nodal Power Flow & Stability Solving',
-        desc: 'Iterative Newton-Raphson algorithms computing bus voltage magnitudes, angles, line active/reactive flows, and dynamic stability limits.',
-        note: 'Security benchmark: Zero line thermal overload during any single N-1 contingency'
+        title: 'Nodal Power Flow & Multi-Criteria Stability Solving',
+        desc: 'Iterative solving of the non-linear Newton-Raphson system via Jacobian matrix [J]. Simultaneous computation of voltage magnitudes and angles (|V|, θ), branch flows (P, Q), transmission losses, and dynamic rotor/voltage stability margins.',
+        note: 'Security criteria: Zero thermal overloading under base N and N-1 contingencies; bus voltages maintained strictly within 0.90 – 1.05 Un'
       },
       outputsFr: {
-        title: 'Plan de Tension & Schéma Directeur d\'Investissement',
-        desc: 'Détermination des besoins de renforcement des corridors de transit, compensation réactive (bancs condensateurs, FACTS) et nouveaux postes.',
-        earthing: 'Critère de stabilité dynamique transitoire respecté'
+        title: 'Plan de Tension, Schéma Directeur d\'Investissement & Consignes de Dispatch',
+        desc: 'Cartographie complète des tensions nodales, identification des goulots d\'étranglement de transit, plan d\'implantation de la compensation réactive (bancs condensateurs, FACTS/STATCOM), seuils de délestage d\'urgence (UFLS/UVLS) et Schéma Directeur d\'Investissement (SDI) décennal.',
+        earthing: 'Critère de stabilité dynamique transitoire (CCT > 150 ms) & conformité Code de Réseau'
       },
       outputsEn: {
-        title: 'Voltage Profile & Master Investment Plan',
-        desc: 'Identification of transmission bottleneck reinforcements, reactive compensation siting, and future substation layout.',
-        earthing: 'Transient stability margin compliant with grid codes'
+        title: 'Voltage Profile, Master Investment Plan & Dispatch Directives',
+        desc: 'Comprehensive bus voltage map, transmission bottleneck identification, reactive compensation siting roadmap (capacitor banks, FACTS/STATCOM), under-frequency/under-voltage load shedding triggers (UFLS/UVLS), and 10-year capital expansion plan.',
+        earthing: 'Transient stability margin compliance (CCT > 150 ms) & Grid Code adherence'
       }
     },
     sectionB: {
-      summaryFr: 'Architectures de réseaux maillés interconnectés à haute résilience vs réseaux radiaux ou bouclés ouverts.',
-      summaryEn: 'High-resilience meshed interconnected transmission topologies vs radial distribution architectures.',
+      summaryFr: 'Architectures fondamentales de réseaux électriques : du maillage haute tension interconnecté à haute résilience jusqu\'aux boucles urbaines et antennes de distribution rurale.',
+      summaryEn: 'Core power grid architectures: from high-resilience interconnected high-voltage transmission meshes down to urban loops and radial rural distribution feeders.',
       architectures: [
         {
-          nameFr: 'Réseau Maillé Interconnecté (225 kV / 90 kV)',
+          nameFr: 'Réseau Maillé Interconnecté Haute Tension (225 kV / 90 kV)',
           nameEn: 'Meshed Transmission Grid (225 kV / 90 kV)',
-          techFr: 'Chaque poste nœud est relié par au moins deux lignes indépendantes d\'interconnexion',
-          techEn: 'Every substation node is interconnected via at least two independent transmission lines',
-          descFr: 'Permet la redistribution instantanée des flux d\'énergie en cas de perte inopinée d\'un ouvrage (critère N-1 sans délestage de charge).',
-          descEn: 'Instantaneous power rerouting upon sudden outage of any single asset without customer load shedding.',
-          standard: 'CEI 60909 / Grid Code',
-          metricFr: 'Disponibilité : > 99.9%',
-          metricEn: 'Availability: > 99.9%'
+          techFr: 'Chaque poste nœud est relié par au moins deux à trois lignes indépendantes formant des boucles polygonales fermées.',
+          techEn: 'Every substation node is tied to at least two or three independent lines forming closed polygonal meshes.',
+          descFr: 'Permet la redistribution instantanée et automatique des flux de puissance selon les lois de Kirchhoff en cas de perte inopinée d\'un ouvrage (critère N-1 sans coupure client).',
+          descEn: 'Enables instantaneous, automatic power flow redistribution per Kirchhoff laws upon unplanned outage of any single line or transformer (N-1 criterion with zero customer blackout).',
+          standard: 'CEI 60909 / IEEE Std 399 / SONATREL Code',
+          metricFr: 'Disponibilité : > 99.98% • SAIDI Transport < 0.5 h/an',
+          metricEn: 'Availability: > 99.98% • Transmission SAIDI < 0.5 h/yr'
         },
         {
-          nameFr: 'Réseau Bouclé Exploité en Antenne Ouverte',
-          nameEn: 'Open-Ring Feeder Topology',
-          techFr: 'Boucle physique ouverte en un point central (Point d\'Ouverture Normal - PON)',
-          techEn: 'Physical ring loop operated with a normally open tie switch (NOP)',
-          descFr: 'Permet un isolement rapide du tronçon défaillant et le rebouclage manuel ou automatique par automates de réseau.',
-          descEn: 'Facilitates fast fault isolation and automated feeder reconfiguration from adjacent healthy circuits.',
-          standard: 'CEI 61936',
-          metricFr: 'Temps de reprise : < 3 min',
-          metricEn: 'Restoration time: < 3 min'
+          nameFr: 'Réseau Bouclé Exploité en Antenne Ouverte (Ring Main - 30 kV)',
+          nameEn: 'Open-Ring Feeder Topology (30 kV RMU)',
+          techFr: 'Boucle physique interconnectant plusieurs postes de transformation MT/BT, exploitée avec un Point d\'Ouverture Normal (PON / Normally Open Tie).',
+          techEn: 'Physical cable ring looping several MV/LV transformer substations, operated open at a designated Normally Open (NO) tie switch.',
+          descFr: 'Allie la simplicité des protections radiales non directionnelles à la flexibilité de reprise rapide : en cas de défaut sur un tronçon, les interrupteurs RMU encadrent et isolent le câble défaillant, et le point ouvert est refermé pour réalimenter les clients en moins de 3 minutes.',
+          descEn: 'Combines the simplicity of non-directional radial protections with fast restoration flexibility: RMU switches isolate the faulty cable segment, and the tie switch closes to restore power in under 3 minutes.',
+          standard: 'CEI 61936-1 / CEI 62271-200',
+          metricFr: 'Temps de reprise : < 3 min (Télécommandé FLISR)',
+          metricEn: 'Restoration time: < 3 min (FLISR Automated)'
+        },
+        {
+          nameFr: 'Réseau Radial Arborescent (15 kV / 30 kV & Basse Tension)',
+          nameEn: 'Radial Tree Feeder Topology (15 kV / 30 kV & LV)',
+          techFr: 'Départ unique depuis le poste source se ramifiant en arbre vers les transformateurs de distribution sans chemin de secours.',
+          techEn: 'Single trunk line branching outward from source substation to distribution transformers with zero alternate paths.',
+          descFr: 'Structure la plus économique en investissement initial. Cependant, tout défaut sur le tronc principal provoque le déclenchement du disjoncteur de tête et coupe 100% des usagers situés en aval jusqu\'à réparation complète sur site.',
+          descEn: 'Most economical architecture in upfront capital investment. However, any fault on the feeder trunk trips the head breaker, cutting 100% of downstream consumers until physical on-site repair is complete.',
+          standard: 'CEI 60364 / NF C 13-100',
+          metricFr: 'SAIDI : 40 à 180 h/an • Coût : Minimal',
+          metricEn: 'SAIDI: 40 to 180 h/yr • Capital Cost: Minimal'
+        },
+        {
+          nameFr: 'Super-Réseau Régional & Interconnexion Transfrontalière (225 kV / 400 kV)',
+          nameEn: 'Regional & Transboundary Interconnected Supergrid (225 kV / 400 kV)',
+          techFr: 'Liaisons THT synchrones AC ou HVDC reliant plusieurs réseaux nationaux souverains ou bassins hydrographiques distants (ex: RIS-RIN et PIECT Cameroun-Tchad).',
+          techEn: 'Synchronous AC or HVDC extra-high-voltage tie-lines linking sovereign national grids or distant hydrological basins (e.g., Cameroon RIS-RIN and PIECT Cameroon-Chad).',
+          descFr: 'Permet la mutualisation des réserves tournantes de puissance, la compensation des variations saisonnières d\'hydraulicité (Sanaga au Sud vs Bénoué au Nord), et le secours mutuel face aux grands aléas de production.',
+          descEn: 'Enables mutual sharing of spinning reserves, hydrological balance across seasonal rainfall variations, and bilateral emergency power support during major generation trips.',
+          standard: 'CIGRE TB 577 / IEEE Std 1547',
+          metricFr: 'Capacité de transit : 100 à 600 MW • Réserve mutualisée',
+          metricEn: 'Transfer capacity: 100 to 600 MW • Pooled reserves'
+        },
+        {
+          nameFr: 'Architecture Postes HTB : Double Jeu de Barres & Disjoncteur et Demi (1½ CB)',
+          nameEn: 'Substation Bus Topologies: Double Bus & Breaker-and-a-Half (1½ CB)',
+          techFr: 'Topologies de jeux de barres en poste de transformation permettant l\'aiguillage, la maintenance d\'un disjoncteur ou d\'une barre sans interruption de service.',
+          techEn: 'Substation switchgear bus schemes providing bay selector flexibility, allowing circuit breaker or busbar maintenance without outage.',
+          descFr: 'Le schéma double barre à un disjoncteur offre une souplesse d\'exploitation quotidienne via le disjoncteur de couplage. Le schéma à disjoncteur et demi (3 disjoncteurs pour 2 départs) garantit qu\'aucun déclenchement de barre n\'interrompt de départ de ligne ou de groupe.',
+          descEn: 'Double-bus single-breaker topology provides daily dispatch flexibility via bus coupler. Breaker-and-a-half (3 breakers for 2 bays) guarantees that no busbar fault causes line or generator outage.',
+          standard: 'CEI 61936-1 / IEEE Std 605',
+          metricFr: 'Sécurité d\'exploitation : Maximale • Zéro coupure maintenance',
+          metricEn: 'Operating security: Maximum • Zero maintenance outage'
         }
       ]
     },
@@ -747,61 +780,119 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         id: 'eq-exp-svc-statcom',
         nameFr: 'Compensateur Statique de Puissance Réactive (SVC / STATCOM)',
         nameEn: 'Static Synchronous Compensator (STATCOM)',
-        voltage: '225 kV • ±50 MVAr',
-        roleFr: 'Régulation dynamique instantanée de la tension et maintien de la stabilité de réseau.',
-        roleEn: 'Dynamic instantaneous bus voltage regulation and grid transient stability enhancement.',
+        voltage: '225 kV • ±50 MVAr (Convertisseur MMC à IGBT)',
+        roleFr: 'Régulation dynamique continue et ultra-rapide (< 20 ms) de la tension nodale et amortissement des oscillations de puissance inter-zones.',
+        roleEn: 'Continuous ultra-fast (< 20 ms) nodal bus voltage regulation and inter-area power oscillation damping.',
         symbol: 'STATCOM',
-        standard: 'CEI 61000-3-6',
-        imgUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
+        standard: 'CEI 61000-3-6 / IEEE Std 1052',
+        imgUrl: '/images/homepage_uploads/batch_02_image_007.jpg',
         calcTab: 'cable-ampacity'
       },
       {
         id: 'eq-exp-ems-dispatch',
-        nameFr: 'Superviseur Énergétique EMS & Calculateurs Dispatching',
-        nameEn: 'Energy Management System (EMS) Dispatch Computer',
-        voltage: 'Contrôle-commande 48 Vcc / Serveurs Redondés',
-        roleFr: 'Exécution en temps réel des calculs d\'estimateur d\'état et d\'optimisation économique du dispatch.',
-        roleEn: 'Real-time state estimation execution and security-constrained economic dispatch computation.',
+        nameFr: 'Superviseur Énergétique EMS & Calculateurs de Dispatching National',
+        nameEn: 'Energy Management System (EMS) & National Dispatch Computer',
+        voltage: 'Contrôle-commande 48 Vcc / Serveurs Redondés Haute Disponibilité',
+        roleFr: 'Exécution en temps réel (cycle de 4 secondes) des calculs d\'estimation d\'état, d\'analyse de contingence N-1 et de réglage secondaire fréquence-puissance (AGC).',
+        roleEn: 'Real-time 4-second cycle execution of state estimation, online N-1 contingency screening, and Automatic Generation Control (AGC).',
         symbol: 'EMS',
-        standard: 'CEI 61970 (CIM)',
-        imgUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80'
+        standard: 'CEI 61970 (CIM) / CEI 60870-6 (TASE.2/ICCP)',
+        imgUrl: '/images/homepage_uploads/batch_05_image_022.jpg'
+      },
+      {
+        id: 'eq-exp-sync-condenser',
+        nameFr: 'Compensateur Synchrone à Forte Inertie Mécanique (Inertie Virtuelle & Puissance de Court-Circuit)',
+        nameEn: 'Synchronous Condenser with Flywheel (Inertia & Short-Circuit Strength)',
+        voltage: '15 kV raccordé par Transformateur Évacuation 225 kV • 50 MVA',
+        roleFr: 'Fourniture d\'inertie rotationnelle pure (constante H = 5.0 s), augmentation du courant de court-circuit au nœud et soutien de tension Q instantané lors des creux de tension.',
+        roleEn: 'Delivery of physical rotational kinetic inertia (inertia constant H = 5.0 s), grid short-circuit level reinforcement, and instantaneous MVAR injection during fault ride-through.',
+        symbol: 'SYNC-COND',
+        standard: 'CEI 60034-1 / IEEE Std 1812',
+        imgUrl: '/images/homepage_uploads/batch_07_image_031_hydro_turbine_hall.jpg'
+      },
+      {
+        id: 'eq-exp-shunt-reactor',
+        nameFr: 'Bobine d\'Inductance Shunt Haute Tension (Compensation de l\'Effet Ferranti)',
+        nameEn: 'High-Voltage Shunt Reactor (Ferranti Effect Mitigation)',
+        voltage: '225 kV • 30 MVAr Triphasé à Isolement Huile Minérale',
+        roleFr: 'Absorption de la puissance réactive capacitive excédentaire générée par les longues lignes aériennes ou câbles souterrains à vide ou faible charge, évitant les surtensions destructrices.',
+        roleEn: 'Absorption of surplus capacitive reactive power produced by long overhead lines or underground cables during light-load conditions, preventing hazardous voltage rise.',
+        symbol: 'SHUNT-REACT',
+        standard: 'CEI 60076-6 / IEEE C57.21',
+        imgUrl: '/assets/ecosystem/power-substation-ecosystem.jpg'
+      },
+      {
+        id: 'eq-exp-double-bus-bay',
+        nameFr: 'Travée de Ligne Double Jeu de Barres 245 kV avec Sectionneurs Motorisés',
+        nameEn: '245 kV Double-Busbar Line Bay with Motorized Disconnectors & Earthing',
+        voltage: '245 kV Assigné • In = 2500 A • Icc = 40 kA / 3 s',
+        roleFr: 'Raccordement modulaire d\'un départ de transport permettant le basculement à chaud d\'un jeu de barres à l\'autre sans interruption de charge et l\'isolement sécurisé pour consignation.',
+        roleEn: 'Modular connection of high-voltage transmission circuit allowing on-load busbar transfer without power interruption and locked safety earthing during maintenance.',
+        symbol: 'BAY-225',
+        standard: 'CEI 62271-100 / CEI 62271-102 / CEI 61936-1',
+        imgUrl: '/images/homepage_uploads/batch_02_image_006.jpg'
+      },
+      {
+        id: 'eq-exp-pst-transformer',
+        nameFr: 'Transformateur Déphaseur (Phase-Shifting Transformer / PST)',
+        nameEn: 'Phase-Shifting Transformer (PST / Quadrature Booster)',
+        voltage: '225 kV • 250 MVA • Déphasage réglable ±25°',
+        roleFr: 'Contrôle actif et forcé de la répartition des transits de puissance active sur des lignes parallèles d\'impédances dissemblables, empêchant la surcharge des liaisons fragiles.',
+        roleEn: 'Active control of active power flows across parallel transmission corridors with mismatched impedances, preventing thermal bottlenecking on weaker paths.',
+        symbol: 'PST',
+        standard: 'CEI 60076-1 / IEEE C57.135',
+        imgUrl: '/images/homepage_uploads/batch_03_image_011.jpg'
       }
     ],
     sectionD: [
       {
         phase: '01',
-        titleFr: 'Collecte des Données & Bilan Énergétique',
-        titleEn: 'Data Ingestion & Energy Balance',
-        descFr: 'Modélisation des nœuds de production, matrice des impédances de lignes et profils de consommation.',
-        descEn: 'Production nodes modeling, line impedance matrix construction, and demand profiles.'
+        titleFr: 'Modélisation Nodale & Ingestion des Données Topologiques',
+        titleEn: 'Nodal Network Modeling & Topology Ingestion',
+        descFr: 'Construction de la matrice d\'admittance nodale [Ybus], spécification des caractéristiques physiques des conducteurs (r, x, b), modélisation des transformateurs avec prises en charge (OLTC) et import des profils de charge.',
+        descEn: 'Construction of the nodal bus admittance matrix [Ybus], branch impedance parameters (r, x, b), on-load tap changer (OLTC) modeling, and historical load curve ingestion.'
       },
       {
         phase: '02',
-        titleFr: 'Simulations d\'Écoulement de Charge (Load Flow)',
-        titleEn: 'Load Flow Simulations',
-        descFr: 'Résolution numérique par Newton-Raphson pour évaluer le profil de tension et les pertes joule globales.',
-        descEn: 'Numerical solving via Newton-Raphson assessing bus voltage profiles and transmission losses.'
+        titleFr: 'Bilan d\'Offre-Demande & Dispatch Économique Sécurisé (SCED)',
+        titleEn: 'Supply-Demand Balance & Security-Constrained Dispatch',
+        descFr: 'Arbitrage technico-économique de l\'ordre de préséance de production (Merit Order) entre grands barrages hydroélectriques et centrales thermiques, sous contraintes de réserves primaires et secondaires tournantes.',
+        descEn: 'Techno-economic merit-order dispatch between base-load hydro complexes and thermal peak units under strict spinning primary and secondary reserve constraints.'
       },
       {
         phase: '03',
-        titleFr: 'Analyse de Contingence & Critère N-1',
-        titleEn: 'Contingency Analysis & N-1 Rule',
-        descFr: 'Déconnexion systématique de chaque ligne ou groupe pour identifier les risques d\'avalanche de surcharges.',
-        descEn: 'Systematic outage testing of every branch to isolate potential cascading overload risks.'
+        titleFr: 'Simulations d\'Écoulement de Charge AC (Newton-Raphson)',
+        titleEn: 'AC Load Flow Simulations (Newton-Raphson)',
+        descFr: 'Résolution numérique itérative des équations nodales pour déterminer le module des tensions |V|, les angles de phase θ, les transits actifs P et réactifs Q, ainsi que les pertes joule totales du système.',
+        descEn: 'Iterative numerical solving of non-linear nodal balance equations to evaluate voltage magnitudes |V|, angles θ, line power flows (P, Q), and system transmission losses.'
       },
       {
         phase: '04',
-        titleFr: 'Dimensionnement de la Compensation Réactive',
-        titleEn: 'Reactive Compensation Sizing',
-        descFr: 'Optimisation de l\'emplacement des bancs de condensateurs et réactances pour maintenir cos φ ≥ 0.93.',
-        descEn: 'Optimal capacitor and reactor bank placement to uphold power factor standards.'
+        titleFr: 'Analyse Déterministe de Contingence & Critère N-1',
+        titleEn: 'Deterministic Contingency Analysis & N-1 Rule',
+        descFr: 'Déconnexion systématique automatisée de chaque ligne de transport, transformateur et groupe de production. Vérification stricte qu\'aucun élément restant ne dépasse sa limite thermique admissible temporaire.',
+        descEn: 'Automated systematic tripping simulation of every transmission line, GSU transformer, and generator unit. Verification that remaining assets stay strictly below emergency thermal limits.'
       },
       {
         phase: '05',
-        titleFr: 'Schéma Directeur & Plan d\'Investissement',
-        titleEn: 'Master Plan & CAPEX Roadmap',
-        descFr: 'Arbitrage technico-économique des nouveaux corridors de lignes et extensions de postes.',
-        descEn: 'Techno-economic prioritization for upcoming line corridors and substation expansions.'
+        titleFr: 'Stabilité Dynamique de Tension & Marges aux Courbes en Nez (P-V / Q-V)',
+        titleEn: 'Dynamic Voltage Stability & P-V / Q-V Nose Curve Margins',
+        descFr: 'Calcul des courbes de transférabilité limite P-V pour identifier la proximité du point de bifurcation de selle (point de nez dV/dQ → ∞) et dimensionner les marges de sécurité en MVAR.',
+        descEn: 'Computation of P-V transfer capability curves to measure distance from the saddle-node bifurcation point (nose collapse dV/dQ → ∞) and size required MVAR safety margins.'
+      },
+      {
+        phase: '06',
+        titleFr: 'Calculs des Courants de Court-Circuit (CEI 60909) & Tenue Électrodynamique',
+        titleEn: 'Short-Circuit Calculations (IEC 60909) & Switchgear Ratings',
+        descFr: 'Évaluation des courants de défaut triphasés Icc", crêtes ip et thermiques Ith à chaque nœud pour vérifier que le pouvoir de coupure des disjoncteurs (ex: 31.5 kA ou 40 kA) et la tenue des barres restent conformes.',
+        descEn: 'Evaluation of symmetrical initial short-circuit currents Icc", peak currents ip, and thermal ratings Ith to ensure substation switchgear breaking capacity and busbar withstand conform.'
+      },
+      {
+        phase: '07',
+        titleFr: 'Plan de Défense, Délesseurs Fréquencemétriques & Schéma Directeur (SDI)',
+        titleEn: 'System Defense Plan, Load Shedding & 10-Year Master Plan',
+        descFr: 'Paramétrage des échelons de délestage automatique par baisse de fréquence (UFLS 49.0 Hz à 48.0 Hz), îlotage d\'urgence, et élaboration de la feuille de route CAPEX de renforcement des corridors de transit.',
+        descEn: 'Configuration of Under-Frequency Load Shedding stages (UFLS from 49.0 Hz to 48.0 Hz), emergency islanding logic, and synthesis into the multi-year CAPEX transmission investment plan.'
       }
     ],
     sectionE: [
@@ -809,24 +900,72 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         id: 'newton_raphson_flow',
         tabLabelFr: 'Équations Nodales de Transit (Load Flow)',
         tabLabelEn: 'Nodal Power Flow Equations',
-        titleFr: 'Formulation d\'Écoulement de Charge de Newton-Raphson',
-        titleEn: 'Newton-Raphson Power Flow Formulation',
-        descFr: 'Permet de calculer les puissances actives et réactives transitant par chaque ligne à partir de la matrice d\'admittance nodale.',
-        descEn: 'Calculates active and reactive power flows through every branch using the nodal admittance matrix.',
-        formula: 'P_i = Σ |V_i| · |V_j| · (G_ij · cos θ_ij + B_ij · sin θ_ij)',
-        formulaDescFr: 'Avec Vi le module de tension au nœud i, Gij et Bij la conductance et susceptance de la branche, et θij la différence angulaire.',
-        formulaDescEn: 'With Vi the voltage magnitude at bus i, Gij and Bij line conductance/susceptance, and θij voltage angle difference.',
+        titleFr: 'Formulation d\'Écoulement de Charge AC de Newton-Raphson',
+        titleEn: 'Newton-Raphson AC Power Flow Formulation',
+        descFr: 'Permet de calculer les puissances actives et réactives transitant par chaque ligne à partir de la matrice d\'admittance nodale complexe [Ybus] = [G] + j[B].',
+        descEn: 'Calculates active and reactive power flows through every branch using the complex nodal admittance matrix [Ybus] = [G] + j[B].',
+        formula: 'P_i = \\sum_{j=1}^{N} |V_i| |V_j| (G_{ij} \\cos \\theta_{ij} + B_{ij} \\sin \\theta_{ij}) \\quad;\\quad Q_i = \\sum_{j=1}^{N} |V_i| |V_j| (G_{ij} \\sin \\theta_{ij} - B_{ij} \\cos \\theta_{ij})',
+        formulaDescFr: 'Avec Vi le module de tension au nœud i, Gij et Bij la conductance et susceptance de la branche mutuelle, et θij = θi - θj le déphasage angulaire entre les deux nœuds.',
+        formulaDescEn: 'With Vi voltage magnitude at bus i, Gij and Bij mutual conductance and susceptance, and θij = θi - θj voltage angle difference across the branch.',
         assumptionsFr: [
-          'Système triphasé équilibré en régime permanent sinusoïdal.',
-          'Nœud bilan (Slack Bus) imposé avec tension module 1.00 pu et angle 0.0°.',
-          'Nœuds générateurs fixés en puissance active P et module de tension V (Nœuds PV).',
+          'Système triphasé équilibré en régime permanent sinusoïdal 50 Hz.',
+          'Nœud bilan (Slack Bus) imposé avec tension module 1.00 pu et angle de référence 0.0°.',
+          'Nœuds générateurs fixés en puissance active P et module de tension |V| (Nœuds PV).',
           'Nœuds de consommation fixés en puissance active P et réactive Q (Nœuds PQ).'
         ],
         assumptionsEn: [
-          'Balanced 3-phase steady-state condition.',
-          'Slack bus defined with fixed voltage 1.00 pu and 0.0° phase angle.',
-          'Generator buses specified by active power P and voltage magnitude V (PV buses).',
+          'Balanced 3-phase steady-state sinusoidal 50 Hz operation.',
+          'Slack bus defined with fixed reference voltage 1.00 pu and 0.0° phase angle.',
+          'Generator buses specified by active power P and voltage magnitude |V| (PV buses).',
           'Load buses defined by active power P and reactive power Q (PQ buses).'
+        ],
+        simTab: 'ferranti'
+      },
+      {
+        id: 'surge_impedance_loading',
+        tabLabelFr: 'Puissance Naturelle de Transit (SIL)',
+        tabLabelEn: 'Surge Impedance Loading (SIL)',
+        titleFr: 'Puissance Naturelle d\'une Ligne de Transport (Surge Impedance Loading)',
+        titleEn: 'Transmission Line Surge Impedance Loading (SIL)',
+        descFr: 'Représente le niveau de puissance active transmis pour lequel la puissance réactive inductive consommée par la ligne compense exactement la puissance réactive capacitive produite par sa capacité propre.',
+        descEn: 'Represents the active power loading at which reactive power absorbed by series line inductance exactly equals reactive power generated by line shunt capacitance.',
+        formula: 'P_{nat} = \\frac{U_n^2}{Z_c} = \\frac{U_n^2}{\\sqrt{L / C}}',
+        formulaDescFr: 'Avec Un tension nominale entre phases (V) et Zc impédance caractéristique d\'onde (typiquement 350-400 Ω pour ligne aérienne 225 kV, 30-50 Ω pour câble souterrain).',
+        formulaDescEn: 'With Un nominal line-to-line voltage (V) and Zc surge impedance (typically 350-400 Ω for 225 kV overhead lines, 30-50 Ω for underground cables).',
+        assumptionsFr: [
+          'Ligne sans pertes diélectriques et résistance série négligée devant la réactance (R << X).',
+          'À P = Pnat, le profil de tension le long de la ligne est rigoureusement plat (|V(x)| = Un).',
+          'À P < Pnat, la ligne est génératrice nette de réactif (effet Ferranti à vide).',
+          'À P > Pnat, la ligne est consommatrice nette de réactif (chute de tension accentuée).'
+        ],
+        assumptionsEn: [
+          'Lossless line assumption with series resistance much smaller than reactance (R << X).',
+          'At P = SIL, voltage profile along the line is flat (|V(x)| = Un).',
+          'At P < SIL, line acts as net capacitive reactive generator (Ferranti rise at no-load).',
+          'At P > SIL, line acts as net inductive consumer, accelerating voltage drop.'
+        ],
+        calcTab: 'cable-ampacity'
+      },
+      {
+        id: 'max_power_transfer',
+        tabLabelFr: 'Limite de Transfert de Puissance & Marge',
+        tabLabelEn: 'Maximum Power Transfer Limit',
+        titleFr: 'Limite de Stabilité Statique en Ligne Réactive Pure',
+        titleEn: 'Steady-State Power Transfer Limit across Line Reactance',
+        descFr: 'Définit la puissance active maximale transmissible entre deux sous-stations avant perte de synchronisme électromécanique (bifurcation angulaire à δ = 90°).',
+        descEn: 'Establishes the maximum active power transferable between two substations across series reactance X before loss of electromechanical synchronism (angle limit δ = 90°).',
+        formula: 'P_{transit} = \\frac{V_1 \\cdot V_2}{X_{ligne}} \\sin \\delta \\quad \\implies \\quad P_{max} = \\frac{V_1 \\cdot V_2}{X_{ligne}}',
+        formulaDescFr: 'Avec V1 et V2 les tensions aux deux extrémités, Xligne la réactance série inductive totale de la liaison, et δ l\'angle de déphasage interne.',
+        formulaDescEn: 'With V1 and V2 sending/receiving bus voltages, Xline total series inductive reactance, and δ internal angular power displacement.',
+        assumptionsFr: [
+          'Résistance ohmique de ligne négligeable devant la réactance série (X/R > 5).',
+          'Tensions terminales V1 et V2 maintenues constantes par les régulateurs de tension AVR.',
+          'Marge de sécurité d\'exploitation : le transit permanent normal ne doit pas dépasser 70% de Pmax (angle δ ≤ 35°-45°).'
+        ],
+        assumptionsEn: [
+          'Ohmic line resistance negligible relative to reactance (X/R > 5).',
+          'Terminal bus voltages V1 and V2 maintained constant by generator AVRs.',
+          'Operational safety margin: steady-state flow must not exceed 70% of Pmax (power angle δ ≤ 35°-45°).'
         ],
         simTab: 'ferranti'
       },
@@ -836,22 +975,45 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         tabLabelEn: 'Short-Circuit Capacity (Scc)',
         titleFr: 'Puissance de Court-Circuit au Nœud de Raccordement selon CEI 60909',
         titleEn: 'Grid Node Short-Circuit Capacity per IEC 60909',
-        descFr: 'Caractérise la "raideur" du réseau au point de livraison et détermine le pouvoir de coupure requis des disjoncteurs.',
-        descEn: 'Defines grid electrical stiffness at the connection point and sets minimum switchgear breaking capacity.',
-        formula: 'S_cc = √3 · U_n · I"k = (c · U_n²) / Z_th',
-        formulaDescFr: 'Avec Un tension nominale entre phases, Icc" courant de court-circuit initial symétrique, et Zth impédance équivalente Thévenin.',
-        formulaDescEn: 'With Un nominal line-to-line voltage, Icc" initial subtransient fault current, and Zth Thevenin equivalent grid impedance.',
+        descFr: 'Caractérise la "raideur" du réseau au point de livraison et détermine le pouvoir de coupure requis des disjoncteurs ainsi que la tenue électrodynamique des jeux de barres.',
+        descEn: 'Defines grid electrical stiffness at the connection point and sets minimum switchgear breaking capacity and electrodynamic withstand.',
+        formula: 'S_{sc} = \\sqrt{3} \\cdot U_n \\cdot I_{k}^{\\prime\\prime} = \\frac{c \\cdot U_n^2}{Z_{th}}',
+        formulaDescFr: 'Avec Un tension nominale entre phases, Ik" courant de court-circuit initial symétrique, c facteur de tension (1.10 en HTB), et Zth impédance équivalente Thévenin.',
+        formulaDescEn: 'With Un nominal line-to-line voltage, Ik" initial subtransient fault current, c voltage factor (1.10 for HV), and Zth Thevenin equivalent grid impedance.',
         assumptionsFr: [
-          'Facteur de tension c = 1.10 pour les réseaux haute tension HTB.',
+          'Facteur de tension c = 1.10 pour les réseaux haute tension HTB (CEI 60909-0).',
           'Sources synchrones représentées par leur réactance subtransitoire xd".',
           'Court-circuit triphasé franc sans impédance d\'arc au point de raccordement.'
         ],
         assumptionsEn: [
-          'Voltage factor c = 1.10 for high-voltage networks.',
+          'Voltage factor c = 1.10 for high-voltage networks (IEC 60909-0).',
           'Synchronous generators modeled by their subtransient reactance xd".',
           'Solid symmetrical 3-phase fault with zero arc resistance.'
         ],
         calcTab: 'cable-short-circuit'
+      },
+      {
+        id: 'swing_equation_stability',
+        tabLabelFr: 'Équation du Balancement & Stabilité Rotorique',
+        tabLabelEn: 'Swing Equation & Rotor Stability',
+        titleFr: 'Équation du Balancement du Rotor (Swing Equation) & Temps Critique d\'Élimination',
+        titleEn: 'Generator Rotor Swing Equation & Critical Clearing Time (CCT)',
+        descFr: 'Décrit la dynamique électromécanique de l\'alternateur lors d\'une perturbation brutale sur le réseau de transport, régissant la stabilité transitoire.',
+        descEn: 'Governs electromechanical rotor acceleration following severe grid faults, determining transient stability and critical clearing time.',
+        formula: '\\frac{2H}{\\omega_s} \\frac{d^2 \\delta}{dt^2} = P_m - P_e = P_a',
+        formulaDescFr: 'Avec H constante d\'inertie mécanique (secondes), ωs vitesse synchrone (rad/s), δ angle rotorique, Pm puissance mécanique motrice, et Pe puissance électrique électromagnétique.',
+        formulaDescEn: 'With H inertia constant (seconds), ωs synchronous speed (rad/s), δ rotor angle, Pm mechanical turbine power, and Pe electromagnetic grid power.',
+        assumptionsFr: [
+          'Pertes mécaniques et amortissement asynchrone négligés au premier instant.',
+          'Si un court-circuit élimine la capacité d\'évacuation (Pe → 0), le rotor accélère au taux d²δ/dt² = (ωs / 2H) · Pm.',
+          'Temps critique d\'élimination CCT typique requis : > 150 ms en 225 kV.'
+        ],
+        assumptionsEn: [
+          'Mechanical losses and damping winding torques neglected during initial cycles.',
+          'If a severe fault zeroes power transfer (Pe → 0), the rotor accelerates at rate d²δ/dt² = (ωs / 2H) · Pm.',
+          'Target Critical Clearing Time (CCT) benchmark: > 150 ms on 225 kV corridors.'
+        ],
+        simTab: 'ferranti'
       }
     ],
     sectionF: [
@@ -860,16 +1022,40 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         tag: 'CALCULS DE RÉSEAUX',
         titleFr: 'Courants de Court-Circuit dans les Réseaux Triphasés à Courant Alternatif',
         titleEn: 'Short-Circuit Currents in Three-Phase A.C. Systems',
-        descFr: 'Méthode normalisée internationale pour le calcul des courants de défaut symétriques et asymétriques.',
-        descEn: 'International standard method for symmetrical and asymmetrical fault current determination.'
+        descFr: 'Méthode normalisée internationale pour le calcul des courants de défaut symétriques et asymétriques pour le dimensionnement des appareils de coupure.',
+        descEn: 'International standard method for symmetrical and asymmetrical fault current calculation for switchgear breaking capacity sizing.'
+      },
+      {
+        code: 'IEEE Std 399-1997',
+        tag: 'GRID PLANNING (BROWN BOOK)',
+        titleFr: 'Pratiques Recommandées pour l\'Analyse Industrielle et Commerciale des Systèmes de Puissance',
+        titleEn: 'Recommended Practice for Industrial and Commercial Power Systems Analysis',
+        descFr: 'Référence internationale régissant les études d\'écoulement de charge, d\'analyse de contingence, de stabilité transitoire et de démarrage des moteurs.',
+        descEn: 'Authoritative international guide covering load flow dispatch, contingency screening, transient stability, and motor starting analysis.'
       },
       {
         code: 'CEI 61970 / CIM',
-        tag: 'INTEROPÉRABILITÉ EMS',
-        titleFr: 'Interface de Gestion de Réseau & Common Information Model',
+        tag: 'INTEROPÉRABILITÉ EMS / SCADA',
+        titleFr: 'Interface de Gestion de Réseau & Common Information Model (CIM)',
         titleEn: 'Energy Management System Application Program Interface (CIM)',
-        descFr: 'Modèle sémantique universel pour l\'échange de données de topologie et d\'état de réseau entre outils de simulation.',
-        descEn: 'Universal semantic model for grid topology and state estimation data exchange between simulation platforms.'
+        descFr: 'Modèle sémantique universel pour l\'échange de données de topologie, d\'estimateur d\'état et de dispatching entre outils de simulation et dispatching national.',
+        descEn: 'Universal semantic standard for grid topology, state estimation, and SCADA data exchange between network simulation tools and dispatch centers.'
+      },
+      {
+        code: 'CODE DE RÉSEAU SONATREL',
+        tag: 'RÉGULATION NATIONALE CAMEROUN',
+        titleFr: 'Règles Techniques de Raccordement & d\'Exploitation du Réseau Public de Transport 225 kV / 90 kV',
+        titleEn: 'Technical Rules for Connection & Operation of the Cameroon 225 kV / 90 kV Transmission Grid',
+        descFr: 'Fixe les critères déterministes de sécurité N-1, les plages de maintien de la tension (±10%), la réserve primaire de fréquence et les plans de délestage UFLS.',
+        descEn: 'Establishes deterministic N-1 security criteria, allowable bus voltage envelopes (±10%), primary frequency containment reserves, and UFLS emergency load shedding.'
+      },
+      {
+        code: 'CEI 60038 / CEI 60071',
+        tag: 'TENSIONS NORMALISÉES & COORDINATION',
+        titleFr: 'Tensions Normalisées de la CEI & Coordination de l\'Isolement Électrique',
+        titleEn: 'IEC Standard Voltages & Insulation Coordination Principles',
+        descFr: 'Définit les paliers de tension assignés (BT 400V, HTA 15-30 kV, HTB 90-225-400 kV) et les niveaux d\'isolement aux chocs de foudre (BIL) et manœuvre.',
+        descEn: 'Defines standardized voltage ratings (LV 400V, MV 15-30 kV, HV 90-225-400 kV) and Basic Impulse Insulation Levels (BIL) for lightning and switching surges.'
       }
     ]
   },

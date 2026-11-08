@@ -23,3 +23,16 @@ All notable changes, engineering refactors, and technical enhancements across th
   4. **Thermal CCGT & Gas/Steam Turbines** (Rankine steam, Brayton gas, HRSG, cooling towers, auxiliaries, emissions control).
   5. **Nuclear Power Generation** (PWR/BWR fission cycles, primary/secondary coolant loops, steam generation, turbines, quadruple safety barriers).
 - Integrated energy conversion step ribbons, operating sequences, and apparatus tables with IEC 60034, IEC 61400, IEC 62817, and IEC 61215 standards.
+
+### Domain 2 (D02) - Power-System Architecture & Grid Planning Transformation
+- Completely overhauled pedagogical framework in `domainPedagogicalContentRegistry.ts`:
+  - **Section A**: Modeled nodal admittance $[Y_{bus}]$, Newton-Raphson Jacobian $[J]$, active/reactive convergence tolerances, and dynamic voltage boundaries ($0.90\text{--}1.05\text{ Un}$).
+  - **Section B**: Documented 5 network topologies: Meshed ($225\text{ kV}/90\text{ kV}$), Open-Ring Loop ($30\text{ kV}$), Radial Tree ($15\text{ kV}/30\text{ kV}$), Transboundary Supergrid (RIS-RIN/PIECT $225\text{ kV}/400\text{ kV}$), and Substation Bus Topologies.
+  - **Section C**: Added 6 core engineering apparatus: STATCOM/SVC, EMS/SCADA dispatch computer, Synchronous Condenser ($H = 5.0\text{ s}$), Shunt Reactor, $245\text{ kV}$ Double-Busbar Bay, and Phase-Shifting Transformer (PST).
+  - **Section D**: Expanded methodology to 7 sequential phases from nodal demand modeling to 10-year master investment planning (SDI).
+  - **Section E**: Formulated 5 LaTeX engineering equations: AC Newton-Raphson load flow, Surge Impedance Loading (SIL), static power transfer limits, IEC 60909 short-circuit capacity, and the rotor swing equation.
+  - **Section F**: Sourced 5 international and national standards: IEC 60909-0, IEEE Std 399, IEC 61970/CIM, SONATREL Grid Code, IEC 60038/IEC 60071.
+- Created `GridArchitectureComparisonMatrix.tsx`:
+  - Interactive 8-axis comparison matrix (Radial vs Open-Ring vs Meshed vs Interconnected vs Microgrid) covering reliability, protection, CapEx, OpEx, voltage stability, and real Cameroon grid exemplars.
+  - Comprehensive Substation Busbar Scheme matrix (Single Bus, Sectionalized, Double Bus, $1\frac{1}{2}$ CB, Ring Bus) with maintenance flexibility and interlocking rules.
+  - Integrated into Stage 3 of `GridArchitectureVisualJourney.tsx`.

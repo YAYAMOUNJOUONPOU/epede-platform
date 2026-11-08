@@ -1,10 +1,10 @@
 # EPEDE CONTINUATION STATE CHECKPOINT
 
 ## Active Status
-- **Current Phase**: Phase 2 — Domain 1 Transformation & Verification
-- **Current Domain**: D01 (Energy Resources & Generation)
-- **Active Task**: Implementing the Phase 4 Generation master standard across Hydro, Solar, Wind, Thermal, and Nuclear technologies.
-- **Next Domain in Queue**: D02 (Power-System Architecture & Grid Planning)
+- **Current Phase**: Phase 2 — Domain 3 Transformation & Verification
+- **Current Domain**: D03 (Transmission Networks — HV Overhead Lines & Underground Cables)
+- **Active Task**: Auditing and enriching D03 with full physical line parameters, tension-sag equations (Cigré TB 273), insulation coordination (IEC 60071), cable ampacity (IEC 60287), and real Cameroon line corridors (225 kV Nachtigal-Nyom II, Songloulou-Mangombé).
+- **Next Domain in Queue**: D04 (Substations & Grid Nodes — AIS/GIS, Bays, Power Transformers)
 - **Execution Mode**: Autonomous continuous improvement loop (Analyze -> Improve -> Reanalyze -> Reimprove -> Validate -> Quality Gate).
 
 ## Unresolved Issues / Blockers
