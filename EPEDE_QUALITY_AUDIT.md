@@ -92,9 +92,14 @@ Each page and engineering module is evaluated on eight core axes (Target: 95%+):
 ### Domain 13 (D13) — Communications & Operational Technology (Process Bus, Cybersecurity)
 - **Route**: `#/domain/D13`
 - **Audit Target**: 97%+
+- **Audit Score Post-Transformation**: 97% (5 Canonical OT Architectures: OPGW SDH/MPLS-TP Backbone, Dedicated IEEE C37.94 87L Teleprotection, High-Voltage PLC Backup Carrier, IEC 62443 Defense-in-Depth Zones & Conduits, Private LTE/Microwave FLISR; 6 Field Apparatus; 7 Project Lifecycle Phases; 6 LaTeX Solvers: OPGW optical link budget, Teleprotection delay asymmetry budget Δt, PRP redundancy control trailer RCT overhead, IEEE 1588 PTP drift and offset compensation, IPsec VPN crypto effective throughput, IEC 62443 cyber risk score; 6 Standards).
 
-### Domains 14 to 16
-- Scheduled in sequential order per execution protocol (D14 Power Quality & EMC, D15 Smart Metering & AMI, D16 Electrical Safety & Earthing).
+### Domain 14 (D14) — Power Quality & EMC (Harmonics, THD, Reactive Power, Filtering)
+- **Route**: `#/domain/D14`
+- **Audit Target**: 97%+
+
+### Domains 15 to 16
+- Scheduled in sequential order per execution protocol (D15 Smart Metering & AMI, D16 Electrical Safety & Earthing).
 
 ---
 

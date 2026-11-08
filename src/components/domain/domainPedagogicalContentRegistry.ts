@@ -3155,6 +3155,421 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
     ]
   },
 
+  // D13: Télécommunications de Réseau, Réseaux Cyber-Physiques & Cybersécurité OT
+  D13: {
+    domainCode: 'D13',
+    sectionA: {
+      roleFr: "Ingénierie, déploiement et sécurisation des réseaux de télécommunications critiques et opérationnels (OT) pour le transport d'électricité : dorsales optiques OPGW (Optical Ground Wire), multiplexage déterministe SDH / MPLS-TP à latence garantie, liaisons par courants porteurs en ligne (CPL/PLC), téléprotection différentielle haute vitesse (< 5 ms), et cybersécurité de défense en profondeur (CEI 62443 / CEI 62351) pour la protection des infrastructures énergétiques souveraines camerounaises (SONATREL / ENEO / EDC).",
+      roleEn: 'Engineering, deployment, and cyber-defense of mission-critical Operational Technology (OT) communication backbones for high-voltage power grids: optical ground wire (OPGW) physical links, deterministic SDH / MPLS-TP packet transport with guaranteed QoS, power line carrier (PLC) communications, sub-5ms line differential teleprotection, and defense-in-depth cybersecurity (IEC 62443 / IEC 62351) safeguarding critical sovereign energy infrastructure.',
+      inputsFr: {
+        title: 'Fibres Optiques OPGW, Courants Porteurs & Flux CEI 61850',
+        desc: 'Câbles de garde à fibres optiques monomodes G.652D intégrées dans les lignes 225 kV (48 à 96 brins OPGW), signaux haute fréquence injectés sur conducteurs de phase par bobines d\'arrêt CPL, flux Ethernet trames GOOSE/SV CEI 61850, et liaisons hertziennes micro-ondes secourues.',
+        voltage: 'Longueur d\'onde 1 310 / 1 550 nm • CPL 40–500 kHz • Interfaces IEEE C37.94 / E1 G.703'
+      },
+      inputsEn: {
+        title: 'OPGW Optical Fibers, Power Line Carrier & IEC 61850 Streams',
+        desc: 'Single-mode ITU-T G.652D optical fiber cores embedded in 225 kV transmission line ground wires (48 to 96 OPGW fibers), high-frequency carrier signals coupled onto phase conductors via PLC line traps, IEC 61850 GOOSE/SV Ethernet streams, and microwave radio backup links.',
+        voltage: 'Optical wavelength 1,310 / 1,550 nm • PLC 40–500 kHz • IEEE C37.94 / E1 G.703 interfaces'
+      },
+      processFr: {
+        title: 'Transport Déterministe MPLS-TP, Commutation APS & Pare-Feu DPI',
+        desc: 'Multiplexage spatial et temporel déterministe (SDH STM-1/STM-4 / MPLS-TP) avec commutation de protection automatique sans coupure (< 50 ms), conversion optique-électronique, segmentation en zones et conduits de sécurité OT selon CEI 62443-3-2 (modèle de Purdue), inspection étatique approfondie des paquets (DPI pour protocoles CEI 60870-5-104 / MMS / GOOSE), et chiffrement IPsec / MACsec matériel à latence quasi-nulle.',
+        note: 'Temps de commutation de protection automatique en boucle fermée : APS ≤ 50 ms (ITU-T G.8131)'
+      },
+      processEn: {
+        title: 'Deterministic MPLS-TP Transport, APS Switching & DPI Firewalls',
+        desc: 'Deterministic time-division and packet transport multiplexing (SDH STM-1/STM-4 / MPLS-TP) with sub-50ms automatic protection switching (APS), optical-electronic conversion, OT network zoning and conduit partitioning per IEC 62443-3-2 (Purdue Model), Deep Packet Inspection (DPI for IEC 60870-5-104 / MMS / GOOSE industrial protocols), and hardware-accelerated wire-speed MACsec / IPsec encryption.',
+        note: 'Automatic protection switching failover duration: APS ≤ 50 ms (ITU-T G.8131)'
+      },
+      outputsFr: {
+        title: 'Téléprotection Différentielle Symétrique, Téléconduite & SIEM',
+        desc: 'Canaux de téléprotection ultra-rapides et symétriques (gigue < 0.2 ms) pour protections différentielles de ligne 87L (interconnexion Songloulou - Mangombé - Oyomabang), téléconduite SCADA sécurisée vers le centre national SONATREL, voix d\'exploitation VoIP / PBX de sécurité, et journalisation centralisée des événements de sécurité (SIEM / Syslog).',
+        earthing: 'Raccordement équipotentiel des armoires télécom au réseau de terre haute fréquence avec blindage 360° et parafoudres coaxiaux pour lignes CPL'
+      },
+      outputsEn: {
+        title: 'Symmetrical Teleprotection, Encrypted SCADA Links & SIEM Audits',
+        desc: 'Ultra-fast strictly symmetrical teleprotection channels (jitter < 0.2 ms) for 87L line differential relays (Songloulou - Mangombé - Oyomabang interties), encrypted SCADA telecontrol streams to SONATREL national EMS, operational VoIP/PBX dispatch communications, and centralized SIEM/Syslog security event logging.',
+        earthing: 'Equipotential telecom chassis grounding bonded to high-frequency station earthing with 360° coaxial lightning surge suppressors'
+      }
+    },
+    sectionB: {
+      summaryFr: 'Architectures de télécommunications d\'énergie : dorsales optiques OPGW à multiplexage déterministe SDH/MPLS-TP, canaux de téléprotection dédiés IEEE C37.94 pour différentielle 87L, courants porteurs en ligne CPL haute tension, et défense en profondeur cyber OT selon CEI 62443.',
+      summaryEn: 'Power utility telecommunication architectures: OPGW optical backbones with deterministic SDH/MPLS-TP transport, dedicated IEEE C37.94 teleprotection channels for 87L differential relays, high-voltage power line carrier (PLC) links, and IEC 62443 defense-in-depth OT cybersecurity.',
+      architectures: [
+        {
+          nameFr: 'Dorsale Optique Nationale OPGW & Multiplexage Déterministe SDH / MPLS-TP',
+          nameEn: 'National OPGW Optical Backbone & Deterministic SDH / MPLS-TP Transport',
+          techFr: 'Câbles de garde OPGW 48 brins sur pylônes 225 kV et nœuds de transport durcis à commutation APS < 50 ms',
+          techEn: '48-fiber OPGW optical ground wires along 225 kV towers and hardened transport nodes with APS < 50 ms',
+          descFr: 'Réseau de transport de données à très haute résilience couvrant l\'ensemble des dorsales 225 kV camerounaises (interconnexions Nachtigal-Yaoundé, Songloulou-Douala-Edéa et boucle du Sud). Utilise des équipements de multiplexage déterministe MPLS-TP et SDH garantissant une qualité de service stricte (Strict Priority QoS), sans gigue de commutation et avec un temps de basculement automatique sans coupure inférieur à 50 ms en cas de rupture de fibre.',
+          descEn: 'Ultra-resilient utility transmission backbone covering all 225 kV Cameroonian transmission corridors (Nachtigal-Yaoundé, Songloulou-Douala-Edéa, and Southern loop). Employs deterministic MPLS-TP and SDH transport equipment delivering guaranteed quality of service (Strict Priority QoS), zero packet jitter, and sub-50ms automatic protection switching (APS) upon optical fiber severance.',
+          standard: 'ITU-T G.652D / ITU-T G.8131 / CEI 61850-3',
+          metricFr: 'Affaiblissement linéique : ≤ 0.22 dB/km à 1 550 nm • Temps de basculement APS : < 50 ms',
+          metricEn: 'Attenuation: ≤ 0.22 dB/km at 1,550 nm • APS failover time: < 50 ms'
+        },
+        {
+          nameFr: 'Système de Téléprotection Dédié pour Protection Différentielle de Ligne 87L (C37.94 & E1)',
+          nameEn: 'Dedicated Teleprotection System for 87L Line Differential Relays (C37.94 & E1)',
+          techFr: 'Canal optique direct normalisé IEEE C37.94 à 2 Mbit/s avec symétrie absolue de délai aller-retour',
+          techEn: 'Dedicated optical IEEE C37.94 2 Mbps channel guaranteeing absolute symmetrical round-trip delay',
+          descFr: 'Liaison de téléaction haute vitesse reliant directement les relais différentiels de ligne numériques d\'extrémités (ex. postes de Mangombé et d\'Oyomabang). La norme IEEE C37.94 élimine toute conversion électrique intermédiaire en utilisant une fibre optique multimode 820 nm. Le système garantit une asymétrie de propagation aller-retour inférieure à 0.2 ms pour empêcher tout déclenchement intempestif sur faux calcul de courant différentiel vectoriel.',
+          descEn: 'High-speed teleprotection channel directly interconnecting numerical line differential relays at opposite line terminals (e.g., Mangombé and Oyomabang 225 kV substations). The IEEE C37.94 standard eliminates intermediate copper conversions by using dedicated 820 nm multimode optical fibers. The system guarantees round-trip propagation asymmetry below 0.2 ms to prevent false differential current tripping during grid switching surges.',
+          standard: 'IEEE C37.94 / CEI 60834-1',
+          metricFr: 'Temps de transmission téléaction : < 5 ms • Asymétrie aller-retour Δt : < 0.2 ms',
+          metricEn: 'Teleprotection transmission time: < 5 ms • Round-trip asymmetry Δt: < 0.2 ms'
+        },
+        {
+          nameFr: 'Liaison de Secours par Courants Porteurs en Ligne Haute Tension (CPL / PLC)',
+          nameEn: 'High-Voltage Power Line Carrier (PLC) Backup Telecommunication Link',
+          techFr: 'Injection de signaux haute fréquence (40–500 kHz) sur les conducteurs de phase 225 kV via bobines d\'arrêt',
+          techEn: 'High-frequency carrier signal injection (40–500 kHz) onto 225 kV phase conductors via wave traps',
+          descFr: 'Système de télécommunication de secours utilisant les conducteurs électriques haute tension eux-mêmes comme support physique de transmission. Les bobines d\'arrêt d\'ondes (Line Traps) bloquent les signaux haute fréquence vers l\'intérieur du poste tout en laissant circuler l\'énergie 50 Hz, et les transformateurs de tension capacitifs (CVT) assurent l\'injection HF. Assure la survie des télécommandes et téléprotections critiques même en cas de destruction physique du câble OPGW par tempête ou foudre.',
+          descEn: 'Autonomous backup communication infrastructure utilizing high-voltage transmission phase conductors themselves as the physical transmission medium. Line traps confine high-frequency signals to the protected line section while allowing 50 Hz power to flow unimpeded, and capacitive voltage transformers (CVT) couple the RF transceiver. Guarantees teleprotection and emergency SCADA survivability even if the OPGW ground wire is severed by storms or lightning.',
+          standard: 'CEI 60495 / CEI 60663 / CEI 60353',
+          metricFr: 'Portée de liaison : jusqu\'à 200 km sans répéteur • Puissance d\'émission HF : 40 W PEP',
+          metricEn: 'Link reach: up to 200 km without repeaters • Transmit RF power: 40 W PEP'
+        },
+        {
+          nameFr: 'Architecture de Cybersécurité OT en Zones & Conduits selon CEI 62443 / Modèle de Purdue',
+          nameEn: 'OT Cybersecurity Architecture with Zones & Conduits per IEC 62443 / Purdue Model',
+          techFr: 'Cloisonnement étanche en 4 niveaux de sécurité avec pare-feux industriels durcis et inspection DPI',
+          techEn: 'Strict 4-tier network partitioning with hardened industrial firewalls and Deep Packet Inspection (DPI)',
+          descFr: 'Ségrégation rigoureuse des réseaux de commande et téléconduite en zones de confiance étanches : Niveau 0 (Procédé HT), Niveau 1 (Cellules et IEDs), Niveau 2 (Supervision SAS locale), Niveau 3 (Conduite de site) et Niveau 3.5 (DMZ industrielle vers le réseau d\'entreprise IT). Chaque flux franchissant une frontière est analysé par inspection étatique profonde (DPI) validant la syntaxe et les droits des commandes CEI 60870-5-104, MMS et GOOSE.',
+          descEn: 'Rigorous architectural segmentation of industrial control networks into sealed trust zones: Level 0 (Switchyard Process), Level 1 (Bay IEDs), Level 2 (Substation SAS), Level 3 (Site SCADA), and Level 3.5 (Industrial DMZ interfacing corporate IT). Every cross-boundary communication conduit is filtered by stateful Deep Packet Inspection (DPI) validating protocol syntax and authorized write commands for IEC 60870-5-104, MMS, and GOOSE.',
+          standard: 'CEI 62443-3-2 / CEI 62443-3-3 / CEI 62351',
+          metricFr: 'Niveau de sécurité cible : SL-3 • Débit filtrage DPI : 1 Gbit/s • Zéro latence induite',
+          metricEn: 'Target security level: SL-3 • DPI inspection rate: 1 Gbps • Zero induced operational latency'
+        },
+        {
+          nameFr: 'Réseau Sans-Fil Privé LTE / Faisceaux Hertziens pour Automatisation MT (FLISR)',
+          nameEn: 'Private Cellular LTE / Microwave Wireless Network for MV Distribution Automation (FLISR)',
+          techFr: 'Réseau radio privé bande étroite sous-gigahertz (400 MHz / 1.4 GHz) reliant les organes de coupure MT',
+          techEn: 'Sub-gigahertz private cellular/microwave radio (400 MHz / 1.4 GHz) linking MV automated reclosers',
+          descFr: 'Infrastructure de télécommunication sans fil dédiée reliant l\'ensemble des interrupteurs aériens télécommandés (IACM/IAT) et disjoncteurs réenclencheurs (reclosers) du réseau de distribution HTA 30 kV / 15 kV d\'ENEO aux systèmes de gestion avancée de la distribution (ADMS). Permet l\'automatisation complète de la boucle de détection, isolement de défaut et rétablissement automatique du service (FLISR) en moins de 60 secondes.',
+          descEn: 'Dedicated private wireless utility communication network connecting distributed pole-mounted automated switches (IACM) and line reclosers across the ENEO 30 kV / 15 kV distribution network to central Advanced Distribution Management Systems (ADMS). Enables full Fault Location, Isolation, and Service Restoration (FLISR) automation cycles, re-energizing healthy line sections in under 60 seconds.',
+          standard: '3GPP Band 31/68 / CEI 61968-1 / IEEE 802.16',
+          metricFr: 'Temps de cycle FLISR automatique : < 60 s • Couverture radio : > 98% du territoire',
+          metricEn: 'Automated FLISR cycle time: < 60 s • Radio coverage: > 98% of target territory'
+        }
+      ]
+    },
+    sectionC: [
+      {
+        id: 'eq-exp-sdh-mpls-node',
+        nameFr: 'Nœud de Multiplexage Déterministe Optique SDH / MPLS-TP (ABB FOX615 / Cisco NCS 4200)',
+        nameEn: 'Hardened Multi-Service Utility Transport Node SDH/MPLS-TP (ABB FOX615 / Cisco NCS)',
+        voltage: 'Alimentation secourue 110 Vcc • Interfaces optiques STM-1/4/16 & 10GbE',
+        roleFr: 'Agrégation et transport déterministe à très haute disponibilité de l\'ensemble des flux du réseau électrique (téléprotection différentielle C37.94, téléconduite SCADA CEI 60870-5-104, voix VoIP et vidéosurveillance de poste) avec commutation automatique de protection APS < 50 ms.',
+        roleEn: 'High-availability deterministic aggregation and transport of all mission-critical power grid communications (C37.94 line differential, IEC 60870-5-104 SCADA, operational VoIP, and security CCTV) featuring sub-50ms hitless automatic protection switching (APS).',
+        symbol: 'NODE-MPLS',
+        standard: 'ITU-T G.8131 / CEI 61850-3',
+        imgUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-teleprotection-interface',
+        nameFr: 'Borne Numérique Dédiée de Téléprotection Haute Vitesse (RFL 9745 / Siemens 7XP24)',
+        nameEn: 'Dedicated High-Speed Digital Teleprotection Terminal (RFL 9745 / Siemens 7XP24)',
+        voltage: 'Alimentation 110/220 Vcc • Interfaces optiques IEEE C37.94 & E1 G.703',
+        roleFr: 'Transmission ultra-rapide et sécurisée des ordres de déclenchement accéléré (POTT/PUTT) et de blocage entre relais de protection de ligne haute tension, avec surveillance continue de la qualité de transmission et gigue temporelle inférieure à 0.2 ms.',
+        roleEn: 'Ultra-fast failsafe transmission of permissive tripping (POTT/PUTT) and blocking signals between transmission line protective relays, featuring continuous channel quality auditing and round-trip delay asymmetry below 0.2 ms.',
+        symbol: 'TP-UNIT',
+        standard: 'CEI 60834-1 / IEEE C37.94',
+        imgUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-line-trap-plc',
+        nameFr: 'Bobine d\'Arrêt d\'Ondes CPL Haute Tension 225 kV & Boîte d\'Accord (Line Trap Trench / Arteche)',
+        nameEn: '225 kV High-Voltage Wave Trap (Line Trap) & Line Matching Unit (LMU)',
+        voltage: 'Tension assignée 245 kV • Courant permanent 1 250 A • Inductance 0.5 à 1.0 mH',
+        roleFr: 'Raccordement de télécommunication par courants porteurs en ligne (CPL) : bloque les signaux haute fréquence vers les jeux de barres du poste pour empêcher leur affaiblissement tout en assurant l\'écoulement libre du courant 50 Hz, et adaptation d\'impédance coaxial/ligne.',
+        roleEn: 'High-voltage power line carrier (PLC) coupling: traps high-frequency carrier signals within the transmission line boundary preventing attenuation into substation busbars while freely passing 50 Hz power current, paired with coaxial line impedance matching.',
+        symbol: 'LINE-TRAP',
+        standard: 'CEI 60353 / CEI 60481',
+        imgUrl: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'transmission-line'
+      },
+      {
+        id: 'eq-exp-ot-firewall-dpi',
+        nameFr: 'Pare-Feu Industriel Durci de Sécurité Périmétrique OT avec DPI (Fortinet FortiGate Rugged / Moxa EDF)',
+        nameEn: 'Hardened Substation Security Gateway & DPI Industrial Firewall (FortiGate Rugged / Moxa)',
+        voltage: 'Double alimentation 110/220 Vcc • Certification environnementale CEI 61850-3',
+        roleFr: 'Filtrage étatique haute performance et inspection approfondie (DPI) des protocoles industriels CEI 60870-5-104, MMS et GOOSE à la frontière des zones de confiance du poste, terminaison de tunnels VPN IPsec chiffrés AES-256 et détection d\'attaques réseau.',
+        roleEn: 'High-performance stateful filtering and Deep Packet Inspection (DPI) of industrial protocols IEC 60870-5-104, MMS, and GOOSE at substation security perimeter boundaries, AES-256 IPsec VPN termination, and cyber threat neutralization.',
+        symbol: 'FW-OT',
+        standard: 'CEI 62443-4-2 / CEI 62351-3',
+        imgUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-opgw-splice-box',
+        nameFr: 'Boîte d\'Épanouissement et d\'Épissurage OPGW Renforcée pour Pylône HTB (AFL / CommScope)',
+        nameEn: 'Tower-Mounted Stainless Steel OPGW Fiber Splice Closure (AFL / CommScope)',
+        voltage: 'Cuve acier inoxydable étanche IP68 • Capacité 48 à 96 épissures thermiques',
+        roleFr: 'Protection hermétique et mécanique des soudures de fibres optiques monomodes reliant les longueurs successives de câble de garde OPGW sur pylônes 225 kV, avec guidage anti-torsion et résistance aux surtensions de foudre directe.',
+        roleEn: 'Hermetic and mechanical protection for fusion-spliced single-mode optical fibers interconnecting adjacent OPGW spans on 225 kV towers, featuring anti-torsion routing and high-current direct lightning strike withstand.',
+        symbol: 'OPGW-BOX',
+        standard: 'IEEE Std 1138 / CEI 60794-4',
+        imgUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-ot-ids-sensor',
+        nameFr: 'Sonde Passive de Détection d\'Intrusions Cybernétiques OT (Claroty Continuous Threat / Nozomi Guardian)',
+        nameEn: 'Passive OT Substation Intrusion Detection System Sensor (Claroty / Nozomi Networks)',
+        voltage: 'Alimentation 110 Vcc / 230 Vca • Raccordement passif sur port miroir SPAN',
+        roleFr: 'Surveillance passive et non intrusive du réseau Ethernet de poste : cartographie d\'inventaire automatique des actifs IED, détection précoce d\'anomalies comportementales, signatures de vulnérabilités connues (CVE) et alertes en temps réel vers le SOC.',
+        roleEn: 'Passive non-intrusive monitoring of substation Ethernet bus traffic: automatic IED asset discovery, real-time behavioral anomaly detection, industrial CVE vulnerability matching, and threat alerting to the central cybersecurity operations center (SOC).',
+        symbol: 'IDS-OT',
+        standard: 'CEI 62443-3-3 / ISO/IEC 27019',
+        imgUrl: 'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'power'
+      }
+    ],
+    sectionD: [
+      {
+        phase: '01',
+        titleFr: 'Schéma Directeur Télécom & Cartographie des Besoins OT',
+        titleEn: 'Telecom Master Plan & Critical OT Traffic Mapping',
+        descFr: 'Recensement exhaustif des flux de données : exigences de latence (< 5 ms pour téléprotection, < 1 s pour téléconduite SCADA), bandes passantes, topologies physiques et sélection des supports de transmission (OPGW, CPL, micro-ondes).',
+        descEn: 'Comprehensive cataloging of grid data flows: strict latency requirements (< 5 ms for teleprotection, < 1 s for SCADA telecontrol), throughput sizing, physical topologies, and transmission media allocation (OPGW, PLC, microwave radio).'
+      },
+      {
+        phase: '02',
+        titleFr: 'Bilan Optique de Liaison OPGW & Modélisation de Dispersion',
+        titleEn: 'OPGW Optical Link Budget Calculation & Dispersion Modeling',
+        descFr: 'Calcul de l\'atténuation cumulée de chaque portée optique (dB), vérification de la marge de conception minimale de 3 dB, calcul de dispersion chromatique à 1 550 nm et dimensionnement des émetteurs optiques SFP+ longue portée (ex. 80 km ZX).',
+        descEn: 'Detailed link attenuation budget calculations (dB), verifying a minimum 3 dB maintenance headroom, modeling chromatic dispersion at 1,550 nm, and selecting long-reach optical transceivers (e.g., 80 km ZX optics).'
+      },
+      {
+        phase: '03',
+        titleFr: 'Modélisation des Zones & Conduits de Cybersécurité (CEI 62443-3-2)',
+        titleEn: 'Cybersecurity Zoning & Conduit Architecture Design (IEC 62443-3-2)',
+        descFr: 'Découpage du réseau du poste selon le modèle de Purdue, évaluation des vecteurs d\'attaque (menaces internes, interconnexions distantes), définition du niveau de sécurité cible (SL-3) et rédaction des règles de filtrage pare-feu.',
+        descEn: 'Partitioning substation networks per the Purdue reference model, assessing attack surfaces (insider threats, remote access conduits), assigning Target Security Levels (SL-3), and defining granular firewall rulesets.'
+      },
+      {
+        phase: '04',
+        titleFr: 'Paramétrage des Équipements de Transport MPLS-TP & Profils QoS',
+        titleEn: 'Deterministic MPLS-TP Configuration & Quality of Service (QoS) Tuning',
+        descFr: 'Configuration des pseudo-fils Ethernet déterministes, réservation stricte de bande passante sans sursouscription, paramétrage des commutations de protection automatique APS (ITU-T G.8131) et priorité stricte de file d\'attente.',
+        descEn: 'Provisioning deterministic MPLS-TP pseudowires, strict bandwidth reservation with zero oversubscription, configuring automatic protection switching (APS) per ITU-T G.8131, and enforcing strict-priority queueing.'
+      },
+      {
+        phase: '05',
+        titleFr: 'Essais FAT de Téléprotection & Simulation de Rupture de Fibre',
+        titleEn: 'Factory Acceptance Testing (FAT) & Fiber Cutover Simulation (APS < 50 ms)',
+        descFr: 'Validation sur banc de test avec simulateurs de ligne et bobines de fibre de 80 km : injection d\'ordres de déclenchement téléprotection, mesure de l\'asymétrie de délai aller-retour Δt < 0.2 ms, et coupure physique de fibre avec vérification du basculement sous 50 ms.',
+        descEn: 'Testbed validation using line simulators and 80 km optical spools: injecting teleprotection trip orders, verifying round-trip delay asymmetry Δt < 0.2 ms, and performing physical fiber cutovers to audit sub-50ms APS recovery.'
+      },
+      {
+        phase: '06',
+        titleFr: 'Déploiement sur Pylônes, Réflectométrie OTDR & Raccordement OPGW',
+        titleEn: 'Tower Installation, OTDR Reflectometry & OPGW Fusion Splicing',
+        descFr: 'Tirage sous tension mécanique régulée du câble OPGW, soudure des fibres par fusion thermique cœur-à-cœur (atténuation < 0.05 dB par soudure), et mesure de réflectométrie optique bidirectionnelle OTDR à 1 310 nm et 1 550 nm.',
+        descEn: 'Controlled tension pulling of OPGW cables along transmission towers, core-alignment thermal fusion splicing (< 0.05 dB loss per splice), and bidirectional OTDR optical reflectometry testing at 1,310 nm and 1,550 nm.'
+      },
+      {
+        phase: '07',
+        titleFr: 'Audit de Cybersécurité SAT, Tests de Pénétration & Recette Finale',
+        titleEn: 'Site Acceptance Cybersecurity Audit, Penetration Testing & Handover',
+        descFr: 'Audit d\'homologation selon CEI 62443-3-3, tests d\'intrusion éthiques non perturbateurs sur la DMZ, vérification du bon fonctionnement des sondes passives IDS OT, et mise en service officielle du réseau télécom d\'exploitation.',
+        descEn: 'Formal certification audit against IEC 62443-3-3, ethical penetration testing on industrial DMZ boundary firewalls, validation of passive OT IDS threat alerting, and commercial commissioning of the mission-critical OT backbone.'
+      }
+    ],
+    sectionE: [
+      {
+        id: 'opgw_optical_link_budget',
+        tabLabelFr: 'Bilan Optique OPGW (UIT-T G.652)',
+        tabLabelEn: 'OPGW Optical Link Budget (ITU-T G.652)',
+        titleFr: 'Calcul de l\'Affaiblissement Optique Cumulé de Liaison sur Câble OPGW',
+        titleEn: 'Cumulative Optical Attenuation Link Budget Calculation along OPGW Spans',
+        descFr: 'Méthodologie normalisée vérifiant que la puissance lumineuse émise par le transmetteur optique parviendra au récepteur distant avec un niveau supérieur à son seuil de sensibilité, en tenant compte de la dispersion linéique, des épissures et d\'une marge de vieillissement.',
+        descEn: 'Standardized engineering formulation ensuring transmitted optical power arrives at the remote receiver above its statutory sensitivity threshold, taking into account linear fiber attenuation, splices, connectors, and an aging margin.',
+        formula: 'A_{\\text{total}} = \\alpha \\cdot L + N_{\\text{splice}} \\cdot A_{\\text{splice}} + N_{\\text{conn}} \\cdot A_{\\text{conn}} + M_{\\text{safety}} \\quad \\le \\quad P_{\\text{tx}} - S_{\\text{rx}}',
+        formulaDescFr: 'Avec Atotal l\'atténuation totale de la liaison (dB), α l\'atténuation linéique de la fibre monomode G.652D (≤ 0.22 dB/km à 1 550 nm), L la longueur de la portée (km), Nsplice le nombre d\'épissures par fusion avec Asplice ≤ 0.05 dB par épissure, Nconn le nombre de connecteurs optiques avec Aconn ≤ 0.25 dB, Msafety la marge de sécurité pour réparations futures (3.0 dB), Ptx la puissance optique minimale d\'émission, et Srx la sensibilité du récepteur.',
+        formulaDescEn: 'Where Atotal is total link optical attenuation (dB), α is single-mode G.652D fiber attenuation coefficient (≤ 0.22 dB/km at 1,550 nm), L is route distance (km), Nsplice is number of fusion splices with Asplice ≤ 0.05 dB per splice, Nconn is number of optical connectors with Aconn ≤ 0.25 dB, Msafety is design safety margin for fiber repair cuts (3.0 dB), Ptx is minimum optical transmitter output power, and Srx is receiver sensitivity.',
+        assumptionsFr: [
+          'Longueur d\'onde de calcul retenue à 1 550 nm pour minimiser les pertes sur longues distances (> 40 km).',
+          'Marge de maintenance minimale de 3.0 dB réservée pour absorber d\'éventuelles épissures de réparation après coupure de câble.',
+          'Tolérance maximale de courbure respectée sur les cassettes d\'épissurage des boîtes OPGW sur pylône.'
+        ],
+        assumptionsEn: [
+          'Design wavelength established at 1,550 nm to minimize linear attenuation over long transmission distances (> 40 km).',
+          'Minimum maintenance headroom of 3.0 dB strictly reserved to absorb future post-fault repair splices.',
+          'Minimum bend radius strictly preserved within tower-mounted OPGW splice trays.'
+        ],
+        calcTab: 'power'
+      },
+      {
+        id: 'teleprotection_asymmetric_delay',
+        tabLabelFr: 'Budget d\'Asymétrie Téléprotection (ANSI 87L)',
+        tabLabelEn: 'Teleprotection Delay Asymmetry Budget (ANSI 87L)',
+        titleFr: 'Tolérance Maximale d\'Asymétrie de Délai de Propagation Aller-Retour',
+        titleEn: 'Maximum Allowable Round-Trip Propagation Delay Asymmetry for 87L Relays',
+        descFr: 'Les protections différentielles de ligne numériques (ANSI 87L) synchronisent les échantillons de courant en mesurant le temps de propagation aller-retour et en supposant le canal parfaitement symétrique. Une asymétrie non compensée crée un faux courant différentiel pouvant déclencher intempestivement la ligne.',
+        descEn: 'Numerical line current differential relays (ANSI 87L) synchronize current phase measurements by calculating half the round-trip propagation time, assuming channel symmetry. An uncompensated propagation asymmetry produces a spurious differential current, risking catastrophic nuisance trips.',
+        formula: '\\Delta t_{\\text{asym}} = |t_{\\text{tx}\\to\\text{rx}} - t_{\\text{rx}\\to\\text{tx}}| \\quad \\le \\quad \\frac{\\epsilon_{\\text{phase}}}{2 \\pi \\cdot f_n} \\approx 0.20\\text{ ms}',
+        formulaDescFr: 'Avec Δtasym la différence absolue de temps de propagation entre le sens aller et le sens retour sur le réseau de télécommunication, fn la fréquence nominale du réseau (50 Hz), et εphase l\'erreur de déphasage maximale tolérée par l\'algorithme différentiel (typiquement 3.6° soit 0.20 ms à 50 Hz). Une asymétrie de 1 ms produit une erreur de phase de 18° simulant un faux courant différentiel d\'environ 31% In.',
+        formulaDescEn: 'Where Δtasym is absolute propagation delay discrepancy between forward and reverse channels over the telecommunication network, fn is power system nominal frequency (50 Hz), and εphase is maximum tolerable phase angle error (typically 3.6° or 0.20 ms at 50 Hz). A 1.0 ms asymmetry creates an 18° phase shift error, generating a false differential current of approximately 31% In.',
+        assumptionsFr: [
+          'Sur les réseaux de paquets (MPLS-TP), routage symétrique obligatoire empruntant exactement les mêmes nœuds à l\'aller et au retour.',
+          'Utilisation d\'horloges GPS/IEEE 1588 PTP aux deux extrémités pour permettre une synchronisation par horodatage absolu sans dépendre de la symétrie du canal.',
+          'Surveillance en temps réel de la gigue de paquet et blocage automatique de la fonction 87L si l\'asymétrie dépasse 0.5 ms.'
+        ],
+        assumptionsEn: [
+          'On packet transport networks (MPLS-TP), co-routed bidirectional paths traversing identical physical switches are mandatory.',
+          'Implementation of GPS / IEEE 1588 PTP time stamping at both line terminals enables direct sampling synchronization independent of channel symmetry.',
+          'Real-time packet jitter monitoring with automatic restraint of 87L differential tripping if measured asymmetry exceeds 0.5 ms.'
+        ],
+        calcTab: 'power'
+      },
+      {
+        id: 'prp_redundancy_trailer_overhead',
+        tabLabelFr: 'Surcoût Trame Redondante PRP (CEI 62439-3)',
+        tabLabelEn: 'PRP Redundancy Control Trailer Overhead (IEC 62439-3)',
+        titleFr: 'Impact Protocolaire et Surcoût de Bande Passante de la Remorque RCT PRP',
+        titleEn: 'Protocol Framing Overhead and Bandwidth Impact of PRP Redundancy Control Trailer (RCT)',
+        descFr: 'Le protocole de redondance parallèle PRP insère une remorque de contrôle de 6 octets (Redundancy Control Trailer - RCT) à la fin de chaque trame Ethernet pour permettre au nœud récepteur d\'identifier et d\'éliminer instantanément les paquets dupliqués.',
+        descEn: 'The Parallel Redundancy Protocol (PRP) appends a 6-byte Redundancy Control Trailer (RCT) at the end of each Ethernet frame to enable destination Dual Attached Nodes (DANP) to identify and seamlessly discard duplicate frames.',
+        formula: 'S_{\\text{PRP\\_frame}} = S_{\\text{payload}} + 14_{\\text{MAC}} + 4_{\\text{VLAN}} + 6_{\\text{RCT}} + 4_{\\text{FCS}} \\quad ; \\quad \\text{Overhead}\\% = \\frac{6}{S_{\\text{payload}} + 28} \\cdot 100',
+        formulaDescFr: 'Avec SPRP_frame la taille totale de la trame Ethernet PRP, Spayload la taille utile des données (ex. 100 à 300 octets pour GOOSE, 150 octets pour SV), et 6 octets alloués à la remorque RCT contenant le numéro de séquence (16 bits), l\'identifiant de réseau LanId (4 bits) et la longueur de trame (12 bits). Pour une trame GOOSE de 200 octets, le surcoût de la remorque PRP est d\'environ 2.6%.',
+        formulaDescEn: 'Where SPRP_frame is total PRP Ethernet frame size, Spayload is message payload (e.g., 100 to 300 bytes for GOOSE, 150 bytes for SV), and 6 bytes allocated to the RCT trailer containing sequence number (16 bits), LanId network identifier (4 bits), and frame size (12 bits). For a 200-byte GOOSE frame, RCT trailer bandwidth overhead is approximately 2.6%.',
+        assumptionsFr: [
+          'Les trames PRP sont transmises simultanément sur deux réseaux LAN A et LAN B physiquement indépendants.',
+          'Les nœuds à simple attachement (SAN) connectés via une RedBox (Redundancy Box) ne voient pas la remorque RCT qui est retirée par la RedBox.',
+          'Temps de basculement effectif strictement égal à 0 ms (zéro perte de paquet en cas de coupure physique d\'un réseau).'
+        ],
+        assumptionsEn: [
+          'PRP frames are transmitted simultaneously across two physically isolated LAN A and LAN B backbones.',
+          'Singly Attached Nodes (SAN) interfaced via a Redundancy Box (RedBox) do not see the RCT trailer, stripped automatically by the RedBox.',
+          'Effective failover recovery time strictly equals 0 ms (zero packet loss upon total failure of either communication network).'
+        ],
+        calcTab: 'power'
+      },
+      {
+        id: 'ptp_clock_drift_phase_offset',
+        tabLabelFr: 'Synchronisation PTP IEEE 1588',
+        tabLabelEn: 'IEEE 1588 PTP Synchronization Drift',
+        titleFr: 'Calcul du Déphasage d\'Horloge et Compensation de Dérive Temporelle',
+        titleEn: 'Clock Offset and Network Propagation Delay Compensation in IEEE 1588 PTP',
+        descFr: 'Algorithme à quatre horodatages matériels (t1, t2, t3, t4) permettant à un équipement esclave d\'asservir son horloge locale sur l\'horloge Grandmaster GPS avec une précision inférieure à la microseconde.',
+        descEn: 'Four-timestamp hardware exchange algorithm (t1, t2, t3, t4) enabling slave substation devices to discipline their local oscillators to the master GPS Grandmaster Clock with sub-microsecond precision.',
+        formula: '\\text{Offset} = \\frac{(t_2 - t_1) - (t_4 - t_3)}{2} \\quad ; \\quad \\text{Delay}_{\\text{prop}} = \\frac{(t_2 - t_1) + (t_4 - t_3)}{2}',
+        formulaDescFr: 'Avec t1 l\'instant d\'émission du message Sync par le maître, t2 l\'instant de réception par l\'esclave, t3 l\'instant d\'émission du message Delay_Req par l\'esclave, et t4 l\'instant de réception par le maître. L\'horloge esclave corrige son heure en retranchant l\'Offset calculé et en compensant le délai de propagation Delayprop.',
+        formulaDescEn: 'Where t1 is master Sync message egress timestamp, t2 is slave Sync ingress timestamp, t3 is slave Delay_Req egress timestamp, and t4 is master Delay_Req ingress timestamp. The slave clock aligns its time by subtracting the computed Offset while compensating for mean propagation delay Delayprop.',
+        assumptionsFr: [
+          'Symétrie rigoureuse des temps de propagation aller et retour entre le commutateur PTP et l\'esclave.',
+          'Utilisation d\'horloges transparentes (Transparent Clocks TC) sur les commutateurs industriels pour compenser le temps de résidence en file d\'attente.',
+          'Précision temporelle cible < 1 µs pour satisfaire aux exigences du profil CEI 61850-9-3 pour le bus de processus.'
+        ],
+        assumptionsEn: [
+          'Strict symmetry of forward and reverse propagation delays between PTP boundary switches and slave nodes.',
+          'Implementation of Transparent Clocks (TC) on substation switches to compensate for switch queuing residence time.',
+          'Target time synchronization accuracy < 1 µs meeting IEC 61850-9-3 Power Profile criteria for digital process buses.'
+        ],
+        calcTab: 'power'
+      },
+      {
+        id: 'ipsec_vpn_tunnel_crypto_throughput',
+        tabLabelFr: 'Débit Utile Tunnel VPN IPsec',
+        tabLabelEn: 'IPsec VPN Crypto Effective Throughput',
+        titleFr: 'Débit Net Disponible et Surcoût Cryptographique de Tunnel Sécurisé',
+        titleEn: 'Net Available Throughput and Cryptographic Overhead for Substation IPsec Tunnels',
+        descFr: 'Formule régissant le calcul de la bande passante réelle disponible pour les téléconduites SCADA à travers un tunnel chiffré reliant un poste haute tension au centre de dispatching national en tenant compte de l\'encapsulation ESP et du chiffrement AES-GCM.',
+        descEn: 'Analytical formulation calculating net effective throughput available for SCADA telecontrol streams over encrypted IPsec VPN tunnels linking high-voltage substations to national dispatch centers, accounting for ESP encapsulation and AES-GCM cipher overhead.',
+        formula: 'BW_{\\text{utile}} = BW_{\\text{brut}} \\cdot \\left( \\frac{\\text{MTU} - S_{\\text{IPsec\\_header}} - S_{\\text{ESP\\_trailer}}}{\\text{MTU}} \\right) \\quad ; \\quad S_{\\text{overhead}} \\approx 50\\text{ to } 70\\text{ bytes/packet}',
+        formulaDescFr: 'Avec BWutile le débit utile disponible, BWbrut la bande passante du canal de télécommunication (ex. 2 Mbps E1 ou 100 Mbps optique), MTU l\'unité maximale de transmission (typiquement 1 500 octets), SIPsec_header l\'en-tête IPsec (20 octets IP + 8 octets SPI/SeqNum + 8 octets IV), et SESP_trailer la remorque cryptographique (16 octets ICV d\'authentification + bourrage d\'alignement 32 bits).',
+        formulaDescEn: 'Where BWutile is net effective bandwidth, BWbrut is gross telecom channel bandwidth (e.g., 2 Mbps E1 or 100 Mbps fiber), MTU is Maximum Transmission Unit (typically 1,500 bytes), SIPsec_header is IPsec encapsulation header (20 bytes IP + 8 bytes SPI/SeqNum + 8 bytes IV), and SESP_trailer is cryptographic trailer (16 bytes ICV authentication tag + 32-bit alignment padding).',
+        assumptionsFr: [
+          'Chiffrement robuste conforme à la norme CEI 62351-3 : algorithme AES-256-GCM assurant confidentialité et intégrité simultanées.',
+          'Gestion des clés cryptographiques par protocole automatisé IKEv2 avec renouvellement périodique des certificats X.509.',
+          'Accélération matérielle cryptographique sur les passerelles pare-feux industrielles pour maintenir la latence inférieure à 1 ms.'
+        ],
+        assumptionsEn: [
+          'Robust cryptography conforming to IEC 62351-3: AES-256-GCM cipher providing simultaneous confidentiality and message integrity.',
+          'Cryptographic key management via automated IKEv2 with periodic X.509 public key certificate rotation.',
+          'Hardware cryptographic acceleration engines on industrial firewall gateways keeping forwarding latency below 1 ms.'
+        ],
+        calcTab: 'power'
+      },
+      {
+        id: 'ot_cyber_risk_score_iec62443',
+        tabLabelFr: 'Score de Risque Cyber OT (CEI 62443)',
+        tabLabelEn: 'OT Cyber Risk Evaluation (IEC 62443)',
+        titleFr: 'Évaluation Quantitative du Risque Cyber-Physique pour Postes Électriques',
+        titleEn: 'Quantitative Cyber-Physical Risk Assessment for High-Voltage Substations',
+        descFr: 'Modélisation du risque selon la méthodologie normalisée CEI 62443-3-2 combinant la vraisemblance d\'une menace industrielle, l\'exploitabilité d\'une vulnérabilité (score CVSS v3.1) et l\'impact physique sur le réseau interconnecté camerounais.',
+        descEn: 'Risk modeling per IEC 62443-3-2 methodology combining industrial threat actor likelihood, vulnerability exploitability (CVSS v3.1 score), and physical blackout impact on the interconnected Cameroonian power grid.',
+        formula: 'R_{\\text{cyber}} = \\text{Menace} \\times \\text{Vulnérabilité} \\times \\text{Impact}_{\\text{grid}} \\quad ; \\quad \\text{SL}_{\\text{target}} = \\min(4, \\lceil \\log_2(1 + R_{\\text{cyber}}) \\rceil)',
+        formulaDescFr: 'Avec Menace la capacité de l\'attaquant (1 à 5), Vulnérabilité la sévérité CVSS de l\'équipement non patché (1 à 10), Impactgrid l\'impact sur le réseau électrique (1 = perte de mesure locale, 5 = délestage massif, 10 = black-out national ou destruction de transformateur de puissance 225 kV), et SLtarget le niveau de sécurité cible exigé (SL-1 à SL-4 selon CEI 62443-3-3).',
+        formulaDescEn: 'Where Threat is attacker capability (1 to 5), Vulnerability is unpatched equipment CVSS severity score (1 to 10), Impactgrid is power system consequence (1 = local telemetry loss, 5 = regional load shedding, 10 = national blackout or physical destruction of 225 kV power transformers), and SLtarget is statutory required security level (SL-1 to SL-4 per IEC 62443-3-3).',
+        assumptionsFr: [
+          'Les postes d\'évacuation de grandes centrales (Nachtigal 420 MW, Songloulou 384 MW) sont classés au niveau de sécurité maximal SL-3 / SL-4.',
+          'Les accès distants de maintenance tiers doivent obligatoirement franchir une passerelle bastion avec authentification multifacteur (MFA).',
+          'Toute commande critique de manœuvre disjoncteur émise via réseau doit comporter une signature cryptographique conforme à CEI 62351-6.'
+        ],
+        assumptionsEn: [
+          'Major power evacuation substations (Nachtigal 420 MW, Songloulou 384 MW) are classified at highest security levels SL-3 / SL-4.',
+          'Third-party remote maintenance access must traverse a hardened bastion host gateway with mandatory multi-factor authentication (MFA).',
+          'Every network-transmitted breaker trip/close command must carry an authentic cryptographic signature compliant with IEC 62351-6.'
+        ],
+        calcTab: 'power'
+      }
+    ],
+    sectionF: [
+      {
+        code: 'CEI 62443-3-2 & CEI 62443-3-3',
+        tag: 'CYBERSÉCURITÉ OT EN ZONES ET CONDUITS',
+        titleFr: 'Sécurité des Réseaux et des Systèmes Industriels de Téléconduite - Évaluation de la Sécurité et Niveaux de Sécurité des Systèmes',
+        titleEn: 'Security for Industrial Automation and Control Systems - Security Risk Assessment for System Design and System Security Requirements',
+        descFr: 'Norme internationale régissant la segmentation des réseaux de commande des postes électriques en zones et conduits étanches et définissant les exigences de sécurité SL-1 à SL-4.',
+        descEn: 'International standard governing the segmentation of substation control networks into sealed zones and conduits, defining technical security requirements for SL-1 to SL-4.'
+      },
+      {
+        code: 'CEI 62351 Parts 3/5/6/7',
+        tag: 'SÉCURITÉ DES PROTOCOLES ÉNERGÉTIQUES',
+        titleFr: 'Gestion des Systèmes de Puissance - Sécurité des Données et des Communications pour Protocoles Énergétiques (CEI 60870-5-104, MMS, GOOSE)',
+        titleEn: 'Power Systems Management - Data and Communications Security for Power Utility Protocols (IEC 60870-5-104, MMS, GOOSE)',
+        descFr: 'Prescriptions normatives imposant le chiffrement TLS pour les liaisons de téléconduite SCADA IP, l\'authentification cryptographique des trames GOOSE/SV et la supervision SNMPv3.',
+        descEn: 'Normative specifications enforcing TLS encryption for IP SCADA telecontrol, cryptographic message authentication for GOOSE/SV frames, and secure SNMPv3 network monitoring.'
+      },
+      {
+        code: 'IEEE C37.94',
+        tag: 'TÉLÉPROTECTION NUMÉRIQUE OPTIQUE',
+        titleFr: 'Norme IEEE pour l\'Interface Optique N x 64 kbit/s entre Relais de Téléprotection et Équipements de Multiplexage',
+        titleEn: 'IEEE Standard for N times 64 Kilobits per Second Optical Fiber Interfaces Between Teleprotection and Multiplexer Equipment',
+        descFr: 'Standard universel éliminant toute conversion en cuivre pour la liaison de téléprotection différentielle 87L par fibre optique multimode 820 nm.',
+        descEn: 'Universal utility standard eliminating copper wiring interfaces by connecting 87L line differential teleprotection directly over 820 nm multimode optical fibers.'
+      },
+      {
+        code: 'CEI 60834-1',
+        tag: 'PERFORMANCE DES TÉLÉACTIONS',
+        titleFr: 'Matériels de Téléprotection pour Réseaux Électriques - Performances et Essais - Systèmes de Commande',
+        titleEn: 'Teleprotection Equipment of Power Systems - Performance and Testing - Command Systems',
+        descFr: 'Définit les temps de transmission maximaux (< 5 ms pour ordres permissifs), la sécurité contre les faux déclenchements et la disponibilité minimale de canal télécom.',
+        descEn: 'Specifies maximum permissible transmission delays (< 5 ms for permissive trips), security against false tripping, and mandatory teleprotection channel availability.'
+      },
+      {
+        code: 'ITU-T G.652 & G.8131',
+        tag: 'DORSALE OPTIQUE & MULTIPLEXAGE DÉTERMINISTE',
+        titleFr: 'Caractéristiques des Câbles à Fibres Optiques Monomodes & Commutation de Protection Linéaire MPLS-TP',
+        titleEn: 'Characteristics of a Single-Mode Optical Fibre Cable & Linear Protection Switching for MPLS-TP Networks',
+        descFr: 'Règles de dimensionnement des fibres optiques OPGW (atténuation linéique ≤ 0.22 dB/km) et spécification du temps de basculement secours automatique APS < 50 ms sans coupure.',
+        descEn: 'Engineering specifications for single-mode OPGW optical fibers (attenuation ≤ 0.22 dB/km) and automatic protection switching (APS) with guaranteed sub-50ms hitless recovery.'
+      },
+      {
+        code: 'IEEE Std 1138',
+        tag: 'CÂBLES DE GARDE OPGW',
+        titleFr: 'Norme IEEE relative aux Câbles de Garde à Fibres Optiques Intégrées (OPGW) pour Lignes Aériennes de Transport d\'Énergie',
+        titleEn: 'IEEE Standard for Testing and Performance for Optical Ground Wire (OPGW) for Use on Electric Utility Power Lines',
+        descFr: 'Spécifications de résistance mécanique à la traction, tenue thermique aux courants de foudre directe (jusqu\'à 100 kA) et protection des fibres optiques en environnement tropical humide.',
+        descEn: 'Mechanical tensile strength, thermal withstand against direct cloud-to-ground lightning currents (up to 100 kA), and optical fiber hermetic protection in humid tropical environments.'
+      }
+    ]
+  },
+
   // D10: Stockage d'Énergie BESS & Recharge IRVE
   // D10: Systèmes de Stockage d'Énergie, STEP & Recharge IRVE
   D10: {

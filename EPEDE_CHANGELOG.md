@@ -340,3 +340,42 @@ All notable changes, engineering refactors, and technical enhancements across th
     - IEC 60870-5-104 (Telecontrol equipment and systems - Network access for IEC 60870-5-101 using TCP/IP).
     - IEEE Std 485 (Recommended practice for sizing lead-acid batteries for stationary applications).
     - IEC 62351 Parts 3/5/6/7 (Data and communications security for power systems management and SCADA).
+
+### Domain 13 (D13) - Communications & Operational Technology (OT) Transformation
+- Populated previously missing pedagogical framework in `domainPedagogicalContentRegistry.ts` directly at 97% master standard:
+  - **Section A**: Formulated OT communication boundaries (single-mode G.652D OPGW fibers at 1,310/1,550 nm, high-voltage PLC carrier at 40–500 kHz, IEEE C37.94 interfaces, sub-50ms APS protection switching, and symmetrical teleprotection channels with jitter < 0.2 ms).
+  - **Section B**: Documented 5 canonical communication and OT architectures:
+    1. **Dorsale Optique Nationale OPGW & Multiplexage Déterministe SDH / MPLS-TP** (48-fiber OPGW on 225 kV towers, deterministic MPLS-TP/SDH transport, sub-50ms APS failover, Nachtigal-Yaoundé and Songloulou-Douala corridors).
+    2. **Système de Téléprotection Dédié pour Protection Différentielle de Ligne 87L (C37.94 & E1)** (Direct optical IEEE C37.94 2 Mbps channel, strict delay asymmetry < 0.2 ms, Mangombé-Oyomabang 225 kV link).
+    3. **Liaison de Secours par Courants Porteurs en Ligne Haute Tension (CPL / PLC)** (40–500 kHz HF carrier over 225 kV phases, line traps, capacitive coupling CVT, autonomous backup surviving severed OPGW).
+    4. **Architecture de Cybersécurité OT en Zones & Conduits selon CEI 62443 / Modèle de Purdue** (4-tier industrial segmentation, hardened DPI firewalls decoding IEC 60870-5-104/MMS/GOOSE, SL-3 target security level).
+    5. **Réseau Sans-Fil Privé LTE / Faisceaux Hertziens pour Automatisation MT (FLISR)** (Sub-gigahertz private radio network, pole-mounted automated switches IACM, ENEO 30 kV / 15 kV automated fault restoration in < 60 s).
+  - **Section C**: Added 6 core OT communication and cybersecurity apparatus with authentic equipment registry citations:
+    - Hardened Multi-Service Utility Transport Node SDH/MPLS-TP ABB FOX615 / Cisco NCS (`eq-exp-sdh-mpls-node`).
+    - Dedicated High-Speed Digital Teleprotection Terminal RFL 9745 / Siemens 7XP24 (`eq-exp-teleprotection-interface`).
+    - 225 kV High-Voltage Wave Trap (Line Trap) & Line Matching Unit LMU Trench / Arteche (`eq-exp-line-trap-plc`).
+    - Hardened Substation Security Gateway & DPI Industrial Firewall Fortinet FortiGate Rugged (`eq-exp-ot-firewall-dpi`).
+    - Tower-Mounted Stainless Steel OPGW Fiber Splice Closure AFL / CommScope (`eq-exp-opgw-splice-box`).
+    - Passive OT Substation Intrusion Detection System Sensor Claroty / Nozomi Guardian (`eq-exp-ot-ids-sensor`).
+  - **Section D**: Expanded OT engineering methodology to 7 sequential phases:
+    1. Telecom Master Plan & Critical OT Traffic Mapping (Latency budgets, bandwidth sizing, OPGW/PLC/microwave allocation).
+    2. OPGW Optical Link Budget Calculation & Dispersion Modeling (Linear attenuation, 3 dB maintenance headroom, long-reach optics).
+    3. Cybersecurity Zoning & Conduit Architecture Design (Purdue model, threat attack surfaces, SL-3 rulesets).
+    4. Deterministic MPLS-TP Configuration & Quality of Service (QoS) Tuning (Pseudowires, strict priority queueing, ITU-T G.8131 APS).
+    5. Factory Acceptance Testing (FAT) & Fiber Cutover Simulation (80 km optical spools, asymmetry auditing, sub-50ms APS recovery).
+    6. Tower Installation, OTDR Reflectometry & OPGW Fusion Splicing (Controlled tension pulling, core-alignment fusion < 0.05 dB, bidirectional OTDR).
+    7. Site Acceptance Cybersecurity Audit, Penetration Testing & Handover (IEC 62443-3-3 compliance, DMZ pen-testing, commercial handover).
+  - **Section E**: Integrated 6 LaTeX mathematical formulations:
+    - Cumulative Optical Attenuation Link Budget Calculation along OPGW Spans ($A_{\text{total}} = \alpha L + N_{\text{splice}} A_{\text{splice}} + N_{\text{conn}} A_{\text{conn}} + M_{\text{safety}} \le P_{\text{tx}} - S_{\text{rx}}$ per ITU-T G.652).
+    - Maximum Allowable Round-Trip Propagation Delay Asymmetry for 87L Relays ($\Delta t_{\text{asym}} \le \frac{\epsilon_{\text{phase}}}{2 \pi f_n} \approx 0.20\text{ ms}$).
+    - Protocol Framing Overhead and Bandwidth Impact of PRP Redundancy Control Trailer RCT ($S_{\text{PRP\_frame}} = S_{\text{payload}} + 28$, $\text{Overhead}\% \approx 2.6\%$).
+    - Clock Offset and Network Propagation Delay Compensation in IEEE 1588 PTP ($\text{Offset} = \frac{(t_2 - t_1) - (t_4 - t_3)}{2}$, $\text{Delay}_{\text{prop}}$).
+    - Net Available Throughput and Cryptographic Overhead for Substation IPsec Tunnels ($BW_{\text{utile}} = BW_{\text{brut}} \cdot \frac{\text{MTU} - S_{\text{overhead}}}{\text{MTU}}$).
+    - Quantitative Cyber-Physical Risk Assessment for High-Voltage Substations ($R_{\text{cyber}} = \text{Menace} \times \text{Vulnérabilité} \times \text{Impact}_{\text{grid}}$, $\text{SL}_{\text{target}}$ per IEC 62443).
+  - **Section F**: Sourced 6 international and normative standards:
+    - IEC 62443-3-2 & IEC 62443-3-3 (Security for industrial automation and control systems - Zones & conduits and system security).
+    - IEC 62351 Parts 3/5/6/7 (Data and communications security for power utility protocols).
+    - IEEE C37.94 (Optical fiber interface between teleprotection and multiplexer equipment).
+    - IEC 60834-1 (Teleprotection equipment of power systems - Performance and testing).
+    - ITU-T G.652 & G.8131 (Single-mode optical fiber characteristics & linear protection switching for MPLS-TP).
+    - IEEE Std 1138 (Testing and performance for optical ground wire OPGW for utility lines).
