@@ -697,6 +697,421 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
     ]
   },
 
+  // D04: Postes Électriques & Nœuds Réseau
+  D04: {
+    domainCode: 'D04',
+    sectionA: {
+      roleFr: "Nœuds de convergence stratégique, d'interconnexion maillée, de transformation de tension (225 kV / 90 kV / 30 kV) et d'aiguillage sécurisé de la puissance électrique, abritant l'appareillage de coupure (disjoncteurs SF6, sectionneurs motorisés), les transformateurs de puissance avec régleurs en charge (OLTC) et le contrôle-commande numérique IEC 61850.",
+      roleEn: 'Strategic grid convergence, meshed interconnection, voltage transformation (225 kV / 90 kV / 30 kV), and secure switching substations housing switchgear (SF6 circuit breakers, motorized disconnectors), OLTC power transformers, and IEC 61850 digital automation.',
+      inputsFr: {
+        title: 'Lignes de Transport 225 kV / 90 kV & Évacuation Centrales',
+        desc: 'Énergie injectée depuis les lignes 225 kV de transport (Nachtigal, Song Loulou) et départs 90 kV. Alimentation continue sécurisée par double banc de batteries 110 Vcc pour le contrôle-commande.',
+        voltage: '225 kV & 90 kV HTB • 50 Hz'
+      },
+      inputsEn: {
+        title: '225 kV / 90 kV Transmission Lines & Generator Injections',
+        desc: 'Power imported from 225 kV transmission circuits (Nachtigal, Song Loulou) and 90 kV lines. Station auxiliary dual 110 V DC battery banks powering digital relaying.',
+        voltage: '225 kV & 90 kV EHV/HV • 50 Hz'
+      },
+      processFr: {
+        title: 'Abaissement de Tension, Coupure des Défauts & Sécurité des Personnes',
+        desc: 'Abaissement par transformateurs de puissance avec régleurs OLTC (±16%), élimination des courts-circuits en moins de 45 ms par disjoncteurs SF6 (40 kA), coordination d\'isolement aux chocs de foudre (BIL 1050 kV), et écoulement des défauts à la terre par maillage équipotentiel cuivre (IEEE Std 80).',
+        note: 'Courant de court-circuit assigné de tenue : 40 kA / 3 s • Temps de coupure disjoncteur : ≤ 45 ms'
+      },
+      processEn: {
+        title: 'Voltage Step-Down, Fault Clearing & Human Life Safety',
+        desc: 'Voltage transformation via OLTC transformers (±16%), high-speed <45 ms SF6 fault clearing (40 kA rating), lightning insulation coordination (BIL 1050 kV), and ground fault energy dissipation through a buried copper equipotential mesh (IEEE Std 80).',
+        note: 'Rated short-circuit withstand: 40 kA / 3 s • Breaker total interrupting time: ≤ 45 ms'
+      },
+      outputsFr: {
+        title: 'Rames HTA 30 kV / 15 kV & Liaisons d\'Interconnexion Régionales',
+        desc: 'Alimentation des départs de distribution MT urbains et industriels sous tension régulée à ±1.5% Un. Téléconduite vers le dispatching national par protocole IEC 60870-5-104 / ICCP.',
+        earthing: 'Prise de terre générale de poste (R < 0.5 Ω) avec surveillance des tensions de pas et de toucher'
+      },
+      outputsEn: {
+        title: '30 kV / 15 kV Distribution Busbars & Regional Grid Interties',
+        desc: 'Supply to urban and heavy industrial distribution feeders with OLTC-regulated bus voltage within ±1.5% Un. Remote dispatch control via IEC 60870-5-104 / ICCP links.',
+        earthing: 'Station earth mat (R < 0.5 Ω) guaranteeing safe step and touch potentials'
+      }
+    },
+    sectionB: {
+      summaryFr: 'Architectures de postes haute tension : technologie ouverte isolée dans l\'air (AIS), postes blindés encapsulés sous SF6 (GIS), postes de centrale et postes numériques CEI 61850.',
+      summaryEn: 'High-voltage substation architectures: outdoor air-insulated substations (AIS), metal-enclosed gas-insulated substations (GIS), step-up switchyards, and digital IEC 61850 substations.',
+      architectures: [
+        {
+          nameFr: 'Poste Ouvert Isolé dans l\'Air (AIS 225 kV / 90 kV)',
+          nameEn: 'Outdoor Air-Insulated Substation (AIS 225 kV / 90 kV)',
+          techFr: 'Appareillage installé à l\'air libre sur charpentes métalliques avec distances d\'isolement atmosphériques.',
+          techEn: 'Outdoor apparatus mounted on steel lattice gantries relying on atmospheric air dielectric clearances.',
+          descFr: 'Technologie la plus répandue au Cameroun (ex: postes de Mangombé, Bekoko, Nomayos). Coût initial d\'investissement modéré, maintenance visuelle aisée, mais emprise foncière importante (15 000 à 25 000 m²) et exposition à la pollution et à l\'humidité tropicale.',
+          descEn: 'Most widespread substation topology in Cameroon (e.g. Mangombé, Bekoko, Nomayos). Low CAPEX and straightforward visual maintenance, but large surface footprint and exposure to tropical humidity.',
+          standard: 'CEI 61936-1 / CEI 60071',
+          metricFr: 'Emprise : ~20 000 m² • Distance phase-terre : ≥ 2.10 m',
+          metricEn: 'Footprint: ~20,000 m² • Phase-to-earth clearance: ≥ 2.10 m'
+        },
+        {
+          nameFr: 'Poste Blindé sous Enveloppe Métallique SF6 (GIS 225 kV)',
+          nameEn: 'Gas-Insulated Metal-Enclosed Substation (GIS 225 kV)',
+          techFr: 'Barres, disjoncteurs et sectionneurs encapsulés sous pression de gaz SF6 (0.4 à 0.6 MPa).',
+          techEn: 'Busbars, circuit breakers, and disconnectors encapsulated inside pressurized SF6 gas enclosures.',
+          descFr: 'Réduit l\'emprise foncière de 85% par rapport à l\'AIS (idéal pour l\'insertion urbaine dense à Yaoundé et Douala). Totalement insensible aux intempéries, à la salinité marine et aux orages tropicaux avec disponibilité maximale.',
+          descEn: '85% footprint reduction compared to AIS (ideal for dense urban siting in Yaoundé and Douala). Absolute immunity to tropical weather, saline moisture, and lightning flashovers.',
+          standard: 'CEI 62271-203',
+          metricFr: 'Emprise : ~2 500 m² (-85%) • Pression SF6 : 0.45 MPa',
+          metricEn: 'Footprint: ~2,500 m² (-85%) • SF6 Pressure: 0.45 MPa'
+        },
+        {
+          nameFr: 'Poste Source d\'Abaissement HTB/HTA (225/30 kV - 63 MVA)',
+          nameEn: 'EHV/MV Step-Down Distribution Substation (225/30 kV - 63 MVA)',
+          techFr: 'Transformateurs 225/30 kV raccordés à des rames de cellules blindées HTA 30 kV intérieures.',
+          techEn: '225/30 kV power transformers feeding indoor metal-clad 30 kV medium-voltage switchgear boards.',
+          descFr: 'Nœud d\'interface clé entre le transporteur SONATREL et le distributeur ENEO (ex: poste d\'Oyomabang à Yaoundé). Comporte des résistances de neutre NGR limitant les défauts terre à 40 A et des condensateurs de compensation réactive.',
+          descEn: 'Interface junction between transmission operator SONATREL and utility ENEO (e.g. Oyomabang substation in Yaoundé). Equipped with Neutral Grounding Resistors (NGR) limiting earth faults to 40 A.',
+          standard: 'CEI 62271-200 / CEI 60076',
+          metricFr: 'Puissance : 2 x 63 MVA • Départs MT : 8 à 16 départs 30 kV',
+          metricEn: 'Rating: 2 x 63 MVA • MV Feeders: 8 to 16 circuits (30 kV)'
+        },
+        {
+          nameFr: 'Poste Élévateur de Centrale Hydroélectrique (GSU Switchyard 10.5/225 kV)',
+          nameEn: 'Powerhouse Step-Up Switchyard (GSU 10.5/225 kV)',
+          techFr: 'Transformateurs élévateurs unitaires raccordés en bloc avec les groupes turbo-alternateurs.',
+          techEn: 'Unit-connected step-up transformers tied directly to individual hydro-generator sets.',
+          descFr: 'Évacue l\'énergie brute produite aux alternateurs (10.5 kV ou 15 kV) vers le réseau de transport 225 kV. Implantation en falaise ou plate-forme compacte avec protection différentielle unitaire 87T et 87G.',
+          descEn: 'Evacuates bulk power generated at alternator voltage (10.5 kV or 15 kV) into the 225 kV transmission grid. Built on powerhouse terraces with unit differential 87T and 87G relaying.',
+          standard: 'CEI 60076 / IEEE C57.12',
+          metricFr: 'Rendement GSU : > 99.4% • Refroidissement ODAF / OFWF',
+          metricEn: 'GSU Efficiency: > 99.4% • Cooling: ODAF / OFWF'
+        },
+        {
+          nameFr: 'Poste Numérique CEI 61850 à Bus de Process (Digital Substation)',
+          nameEn: 'Digital Substation with IEC 61850 Process Bus',
+          techFr: 'Remplacement des câbles cuivre filaires par des fibres optiques avec Merging Units (MU) et protocoles SV/GOOSE.',
+          techEn: 'Replacement of physical copper multicore cables with optical fibers utilizing Merging Units (MU) and SV/GOOSE streams.',
+          descFr: 'Numérisation intégrale dès le pied des appareils primaires. Les valeurs échantillonnées (Sampled Values CEI 61850-9-2LE) et les ordres de déclenchement ultra-rapides GOOSE circulent sur un réseau Ethernet redondé PRP/HSR, éliminant les risques d\'ouverture accidentelle de circuits TC.',
+          descEn: 'Full digitization at the primary equipment level. Sampled Values (IEC 61850-9-2LE) and ultra-fast GOOSE trip signals route over redundant PRP/HSR Ethernet, eliminating open CT hazards.',
+          standard: 'CEI 61850-9-2 / CEI 61850-8-1',
+          metricFr: 'Câblage cuivre : -80% • Temps de déclenchement GOOSE : < 4 ms',
+          metricEn: 'Copper cabling: -80% • GOOSE trip latency: < 4 ms'
+        }
+      ]
+    },
+    sectionC: [
+      {
+        id: 'eq-exp-gsu-trafo-01',
+        nameFr: 'Transformateur de Puissance HTB/HTA (63 MVA - 225/30 kV)',
+        nameEn: 'EHV/MV Power Transformer (63 MVA - 225/30 kV Dyn11)',
+        voltage: '225 kV / 30 kV • Dyn11 • 63 MVA ONAN/ONAF',
+        roleFr: 'Abaissement de tension pour l\'injection dans les réseaux de distribution urbains avec régleur en charge sous tension (OLTC ±16%).',
+        roleEn: 'Step-down voltage conversion for urban distribution feeders with motorized on-load tap changer (OLTC ±16%).',
+        symbol: 'T1',
+        standard: 'CEI 60076-1 / CEI 60076-5',
+        imgUrl: '/images/homepage_uploads/batch_03_image_011.jpg',
+        calcTab: 'transformer'
+      },
+      {
+        id: 'eq-exp-gis-bay-225k',
+        nameFr: 'Disjoncteur Haute Tension SF6 (225 kV - 3150 A - 40 kA)',
+        nameEn: '225 kV SF6 High-Voltage Circuit Breaker',
+        voltage: '245 kV Assigné • In = 3150 A • Icc = 40 kA / 3 s',
+        roleFr: 'Interruption des courants de charge et élimination ultra-rapide des courts-circuits en moins de 45 ms sous gaz SF6.',
+        roleEn: 'Fault and load current interruption in less than 45 ms utilizing SF6 thermal blast arc quenching.',
+        symbol: 'Q0',
+        standard: 'CEI 62271-100',
+        imgUrl: '/images/homepage_uploads/batch_02_image_006.jpg',
+        calcTab: 'cable-short-circuit'
+      },
+      {
+        id: 'eq-exp-ct-225k',
+        nameFr: 'Transformateur de Courant (TC) de Mesure & Protection 225 kV',
+        nameEn: '225 kV Current Transformer (CT) for Metering & Protection',
+        voltage: '225 kV / 5 A - 1 A • Classe 5P20 / 0.2S • 4 Enroulements',
+        roleFr: 'Réduction galvanique et mesure du courant primaire pour alimenter les relais de protection 50/51/87 sans saturation.',
+        roleEn: 'Galvanic isolation and current scaling for protection relays 50/51/87 with high saturation knee-point voltage.',
+        symbol: 'TC1',
+        standard: 'CEI 61869-2',
+        imgUrl: '/assets/ecosystem/power-substation-ecosystem.jpg',
+        calcTab: 'ct-sizing'
+      },
+      {
+        id: 'eq-exp-vt-225k',
+        nameFr: 'Transformateur de Tension Inductif / Capacitif (TT / CCVT 225 kV)',
+        nameEn: '225 kV Inductive / Capacitive Voltage Transformer (CCVT)',
+        voltage: '225 kV / √3 : 100 V / √3 • Classe 0.2 / 3P',
+        roleFr: 'Mesure de tension pour le synchronisme de couplage, la mesure de puissance et les relais de distance 21.',
+        roleEn: 'Bus voltage sensing for synchrocheck, energy revenue metering, and distance 21 relay impedance zones.',
+        symbol: 'TT1',
+        standard: 'CEI 61869-3 / CEI 61869-5',
+        imgUrl: '/images/homepage_uploads/batch_02_image_007.jpg',
+        calcTab: 'voltage-drop'
+      },
+      {
+        id: 'eq-exp-surge-arrester-225kv',
+        nameFr: 'Parafoudre à Oxyde de Zinc ZnO (Ur = 198 kV)',
+        nameEn: 'Zinc Oxide (ZnO) Metal-Oxide Surge Arrester',
+        voltage: 'Ur = 198 kV • Classe 4 • In = 10 kA crête',
+        roleFr: 'Protection du matériel contre les surtensions d\'origine atmosphérique (foudre) et de manœuvre pour préserver l\'isolement des transformateurs.',
+        roleEn: 'High-energy clipping of lightning and switching surges to protect transformer winding insulation (BIL 1050 kV).',
+        symbol: 'F1',
+        standard: 'CEI 60099-4',
+        imgUrl: '/images/homepage_uploads/batch_05_image_022.jpg',
+        calcTab: 'surge-arrester'
+      },
+      {
+        id: 'eq-exp-discon-earth-225k',
+        nameFr: 'Sectionneur d\'Aiguillage & Sectionneur de Terre Motorisé 225 kV',
+        nameEn: 'Motorized Bus Selector Disconnector & Earth Switch',
+        voltage: '245 kV Assigné • 2500 A • Icc = 40 kA / 1 s',
+        roleFr: 'Aiguillage des départs entre jeux de barres sans coupure de charge et mise à la terre franche pour sécurité des interventions.',
+        roleEn: 'On-load bus transfer switching and locked safety earth closure for de-energized bay maintenance clearance.',
+        symbol: 'Q1/Q8',
+        standard: 'CEI 62271-102',
+        imgUrl: '/images/homepage_uploads/batch_07_image_031_hydro_turbine_hall.jpg',
+        calcTab: 'cable-short-circuit'
+      }
+    ],
+    sectionD: [
+      {
+        phase: '01',
+        titleFr: 'Études de Réseau, Bilan de Puissance & Court-Circuit (CEI 60909)',
+        titleEn: 'Grid Studies, Power Balance & Short-Circuit Calculations',
+        descFr: 'Détermination du courant de court-circuit maximal présumé (Icc" = 40 kA), calcul du pouvoir de coupure requis des disjoncteurs et choix du schéma unifilaire de poste.',
+        descEn: 'Determination of maximum prospective fault current (Icc" = 40 kA), circuit breaker breaking capacity sizing, and busbar configuration selection.'
+      },
+      {
+        phase: '02',
+        titleFr: 'Arbitrage Technologique AIS vs GIS & Implantation Générale',
+        titleEn: 'AIS vs GIS Techno-Economic Trade-Off & General Layout',
+        descFr: 'Arbitrage foncier et environnemental (poste ouvert AIS à emprise standard vs poste blindé GIS compact urbain), distances d\'isolement dans l\'air et voiries lourdes pour transformateurs.',
+        descEn: 'Land and environmental trade-off (outdoor AIS vs compact urban GIS), air clearances, and heavy-haul access roads for transformer delivery.'
+      },
+      {
+        phase: '03',
+        titleFr: 'Dimensionnement de la Grille de Terre & Sécurité des Personnes (IEEE 80)',
+        titleEn: 'Earthing Mesh Sizing & Personnel Safety Design (IEEE Std 80)',
+        descFr: 'Mesure de la résistivité du sol par méthode de Wenner, calcul de la section des conducteurs de terre en cuivre nu (120 mm²), et vérification des tensions limites de pas et de toucher.',
+        descEn: 'Wenner 4-pin soil resistivity profiling, bare copper ground mesh sizing (120 mm²), and step/touch voltage safety calculations with gravel surface layer.'
+      },
+      {
+        phase: '04',
+        titleFr: 'Essais de Réception en Usine (FAT - Factory Acceptance Tests)',
+        titleEn: 'Factory Acceptance Testing (FAT)',
+        descFr: 'Mesure des pertes à vide P0 et en charge Pk des transformateurs, essais diélectriques aux chocs de foudre (BIL), étanchéité gaz SF6 et vérification fonctionnelle des armoires BCU.',
+        descEn: 'Transformer no-load P0 and load Pk loss testing, lightning impulse dielectric tests (BIL), SF6 leakage rate measurement, and BCU cubicle factory checks.'
+      },
+      {
+        phase: '05',
+        titleFr: 'Génie Civil, Bacs de Rétention d\'Huile & Montage Appareillage',
+        titleEn: 'Civil Works, Oil Retention Bunds & Switchgear Erection',
+        descFr: 'Coulage des massifs fondations, bacs de rétention avec extincteur à caillebotis pour huile transformateur (norme NF C 17-300), érection des charpentes et pose des disjoncteurs.',
+        descEn: 'Reinforced concrete foundation casting, oil containment bunds with fire-quenching gravel grating, steel gantry erection, and breaker rigging.'
+      },
+      {
+        phase: '06',
+        titleFr: 'Commissioning sur Site (SAT - Site Acceptance Tests) & Injections',
+        titleEn: 'Site Acceptance Testing (SAT) & Relay Current Injection',
+        descFr: 'Injections primaires et secondaires de courant sur les relais de protection (50/51, 87T, 21), vérification des verrouillages mécaniques/électriques et mise sous tension progressive.',
+        descEn: 'Primary and secondary current injection across protection relays (50/51, 87T, 21), interlock logic verification, and progressive initial energization.'
+      },
+      {
+        phase: '07',
+        titleFr: 'Exploitation Continue, Surveillance des Gaz Dissous (DGA) & Thermographie',
+        titleEn: 'Operations & Maintenance, Dissolved Gas Analysis (DGA) & IR Thermography',
+        descFr: 'Prélèvements périodiques d\'huile pour chromatographie DGA (Triangle de Duval), inspection thermographique infrarouge des connexions sous charge et procédures de consignation LOTO.',
+        descEn: 'Periodic oil sampling for Dissolved Gas Analysis (Duval triangle), live infrared thermography of busbar joints, and strict lockout-tagout (LOTO) clearances.'
+      }
+    ],
+    sectionE: [
+      {
+        id: 'short_circuit_iec60909',
+        tabLabelFr: 'Court-Circuit Triphasé Ik3',
+        tabLabelEn: '3-Phase Short Circuit Ik3',
+        titleFr: 'Courant de Court-Circuit Triphasé Symétrique Initial selon CEI 60909-0',
+        titleEn: 'Initial Symmetrical 3-Phase Short-Circuit Current per IEC 60909-0',
+        descFr: 'Détermine le pouvoir de coupure assigné minimal des disjoncteurs HTB (Icu/Ics) et la contrainte électrodynamique crête ip sur les charpentes de poste.',
+        descEn: 'Determines the minimum required breaking capacity for substation circuit breakers and peak electrodynamic stress ip on support structures.',
+        formula: 'I_k^{\\prime\\prime} = \\frac{c \\cdot U_n}{\\sqrt{3} \\cdot Z_k} \\quad ; \\quad i_p = \\kappa \\cdot \\sqrt{2} \\cdot I_k^{\\prime\\prime}',
+        formulaDescFr: 'Avec c = 1.10 en haute tension HTB, Un tension nominale entre phases (225 kV), Zk = √(Rk² + Xk²) impédance équivalente de court-circuit, et κ facteur de crête (1.80 à 2.0).',
+        formulaDescEn: 'With c = 1.10 for HV networks, Un nominal line-to-line voltage (225 kV), Zk equivalent Thevenin impedance, and κ peak making factor (1.80 to 2.0).',
+        assumptionsFr: [
+          'Court-circuit franc triphasé sans impédance d\'arc au point de raccordement.',
+          'Facteur de tension c = 1.10 selon CEI 60909-0.',
+          'Alimentation par réseau de grande puissance avec rapport X/R > 10.'
+        ],
+        assumptionsEn: [
+          'Bolted symmetrical three-phase fault with zero arc resistance.',
+          'Voltage factor c = 1.10 per IEC 60909-0 for HV systems.',
+          'Bulk generation feeding with high X/R ratio > 10.'
+        ],
+        calcTab: 'cable-short-circuit'
+      },
+      {
+        id: 'transformer_sizing_losses',
+        tabLabelFr: 'Transformateur Uk% & Pertes',
+        tabLabelEn: 'Transformer Uk% & Losses',
+        titleFr: 'Impédance de Court-Circuit (Uk%) & Courant Secondaire Isc2 (CEI 60076)',
+        titleEn: 'Transformer Impedance (Uk%) & Secondary Fault Current per IEC 60076',
+        descFr: 'Arbitrage entre la limitation du courant de court-circuit aval et la chute de tension interne en charge du transformateur de puissance.',
+        descEn: 'Design trade-off between downstream short-circuit current containment and internal on-load voltage sag.',
+        formula: 'I_{sc2} = \\frac{I_{n2}}{U_k \\% / 100} = \\frac{S_n}{\\sqrt{3} \\cdot U_{2n} \\cdot (U_k / 100)}',
+        formulaDescFr: 'Pour un transformateur 63 MVA 225/30 kV avec Uk = 12.5% : In2 = 1 212 A → Isc2 = 9.7 kA rms au secondaire 30 kV.',
+        formulaDescEn: 'For a 63 MVA 225/30 kV unit with Uk = 12.5%: In2 = 1,212 A → Isc2 = 9.7 kA rms at 30 kV secondary.',
+        assumptionsFr: [
+          'Tension primaire maintenue constante pendant le défaut.',
+          'Température d\'enroulement de référence : 75°C.',
+          'Régleur en charge sur prise nominale (prise 9 sur 17).'
+        ],
+        assumptionsEn: [
+          'Infinite primary bus voltage during secondary fault duration.',
+          'Reference winding temperature: 75°C.',
+          'On-load tap changer on nominal center tap.'
+        ],
+        calcTab: 'transformer'
+      },
+      {
+        id: 'differential_87t_slope',
+        tabLabelFr: 'Différentielle 87T Double Pente',
+        tabLabelEn: 'Differential 87T Dual-Slope',
+        titleFr: 'Protection Différentielle Transformateur (ANSI 87T) à Double Pente',
+        titleEn: 'Transformer Differential Protection (ANSI 87T) Dual-Slope Curve',
+        descFr: 'Zone de déclenchement ultra-rapide (< 30 ms) comparant les courants entrants et sortants avec blocage harmonique d\'enclenchement (H2) et surfluxage (H5).',
+        descEn: 'Unit protection operating in <30 ms comparing input/output currents with 2nd harmonic inrush restraint (H2) and 5th harmonic overfluxing block (H5).',
+        formula: 'I_d = |\\vec{I}_1 + \\vec{I}_2| \\quad ; \\quad I_r = \\frac{|\\vec{I}_1| + |\\vec{I}_2|}{2} \\quad ; \\quad I_d > I_{s1} + K_1 \\cdot I_r',
+        formulaDescFr: 'Pente 1 (K1 ≈ 30%) couvre les erreurs de prises OLTC ; Pente 2 (K2 ≈ 70%) prévient les déclenchements intempestifs sur défaut externe avec saturation de TC.',
+        formulaDescEn: 'Slope 1 (K1 ≈ 30%) compensates for OLTC tap variations; Slope 2 (K2 ≈ 70%) prevents false trips on heavy through-fault CT saturation.',
+        assumptionsFr: [
+          'Compensation automatique d\'angle vectoriel (ex: déphasage de 30° pour couplage Dyn11).',
+          'Filtrage du courant homopolaire résiduel côté étoile.',
+          'Retenue harmonique 2 fixée à 15% pour immunité à l\'enclenchement.'
+        ],
+        assumptionsEn: [
+          'Automatic vector group phase shift compensation (e.g., 30° for Dyn11).',
+          'Zero-sequence current filtering on grounded wye winding.',
+          '2nd harmonic inrush restraint set to 15% threshold.'
+        ],
+        simTab: 'differential-protection'
+      },
+      {
+        id: 'earthing_mesh_ieee80',
+        tabLabelFr: 'Grille de Terre IEEE 80',
+        tabLabelEn: 'Substation Earthing Mesh (IEEE 80)',
+        titleFr: 'Mise à la Terre du Poste & Tensions de Pas / Toucher selon IEEE Std 80',
+        titleEn: 'Substation Grounding Grid & Step/Touch Potentials per IEEE Std 80',
+        descFr: 'Garantit la sécurité des personnes en maintenant les tensions de toucher et de pas sous les seuils physiologiques de fibrillation ventriculaire en cas de défaut terre.',
+        descEn: 'Ensures human safety by restricting step and touch voltages below ventricular fibrillation thresholds during ground fault clearance.',
+        formula: 'E_{touch} = \\left(1000 + 1.5 \\cdot C_s \\cdot \\rho_s\\right) \\cdot \\frac{0.116}{\\sqrt{t_s}} \\quad ; \\quad R_g \\approx \\frac{\\rho}{4r} + \\frac{\\rho}{L}',
+        formulaDescFr: 'Avec ρs = résistivité du gravillon de surface (3000 Ω·m), Cs facteur d\'atténuation, ts temps d\'élimination (0.5 s), et Rg résistance de terre de Sverak.',
+        formulaDescEn: 'With ρs crushed rock surface layer resistivity (3000 Ω·m), Cs derating factor, ts fault clearing time (0.5 s), and Rg Sverak grid resistance.',
+        assumptionsFr: [
+          'Corps humain modélisé par une résistance de 1 000 Ω entre pieds et main.',
+          'Couche de gravillon de surface d\'épaisseur minimale 10 à 15 cm.',
+          'Durée maximale d\'élimination du défaut terre : ts = 0.5 s.'
+        ],
+        assumptionsEn: [
+          'Human body modeled as 1,000 Ω resistance between hand and feet.',
+          'Crushed rock surface layer thickness: 10 to 15 cm.',
+          'Maximum earth fault clearing time: ts = 0.5 s.'
+        ],
+        calcTab: 'earthing'
+      },
+      {
+        id: 'air_clearances_iec61936',
+        tabLabelFr: 'Distances d\'Isolement CEI 61936',
+        tabLabelEn: 'Air Clearances (IEC 61936)',
+        titleFr: 'Distances Minimales d\'Isolement dans l\'Air selon CEI 61936-1 & CEI 60071',
+        titleEn: 'Minimum Air Clearances & Safety Envelopes per IEC 61936-1 & IEC 60071',
+        descFr: 'Fixe les distances géométriques de sécurité phase-terre N, phase-phase et garde au sol en fonction de la tension assignée et de l\'altitude du site.',
+        descEn: 'Mandates minimum phase-to-earth N, phase-to-phase, and ground vehicular safety clearances corrected for site altitude.',
+        formula: 'N_{alt} = N_{mer} \\cdot k_a \\quad ; \\quad k_a = e^{\\frac{m \\cdot (H - 1000)}{8150}}',
+        formulaDescFr: 'En 225 kV (BIL 1050 kV) : distance phase-terre N = 2 100 mm ; phase-phase = 2 400 mm ; garde au sol pour circulation véhicules = 5 500 mm.',
+        formulaDescEn: 'At 225 kV (BIL 1050 kV): phase-to-earth N = 2,100 mm; phase-to-phase = 2,400 mm; vehicular ground safety height = 5,500 mm.',
+        assumptionsFr: [
+          'Niveau de tenue assigné aux chocs de foudre BIL = 1050 kV crête.',
+          'Correction d\'altitude obligatoire au-delà de 1 000 m (facteur ka > 1.0).',
+          'Conditions atmosphériques standards : température 20°C, pression 101.3 kPa.'
+        ],
+        assumptionsEn: [
+          'Rated lightning impulse withstand voltage BIL = 1050 kV peak.',
+          'Mandatory altitude derating above 1,000 m (factor ka > 1.0).',
+          'Standard reference atmosphere: 20°C temperature, 101.3 kPa barometric pressure.'
+        ],
+        calcTab: 'cable-ampacity'
+      },
+      {
+        id: 'busbar_electrodynamic_iec60865',
+        tabLabelFr: 'Forces de Laplace CEI 60865',
+        tabLabelEn: 'Busbar Laplace Forces (IEC 60865)',
+        titleFr: 'Tenue Électrodynamique des Jeux de Barres selon CEI 60865-1',
+        titleEn: 'Busbar Electrodynamic Peak Force & Bending Stress per IEC 60865-1',
+        descFr: 'Vérifie que les efforts répulsifs de Laplace entre conducteurs tubulaires sous courant de crête ip n\'entraînent pas de déformation plastique permanente.',
+        descEn: 'Verifies that electromagnetic peak repulsive Laplace forces between tubular conductors during short-circuit do not cause mechanical failure.',
+        formula: 'F_m = \\frac{\\mu_0}{2\\pi} \\cdot \\frac{i_p^2}{a} \\cdot L \\quad ; \\quad \\sigma = \\frac{F_m \\cdot L}{8 \\cdot W} \\le 0.8 \\cdot R_{p0.2}',
+        formulaDescFr: 'Avec ip courant de crête (102 kA pour Icc = 40 kA), a entraxe entre barres (2.5 m), L portée entre isolateurs, et Rp0.2 limite d\'élasticité de l\'aluminium.',
+        formulaDescEn: 'With ip peak current (102 kA for 40 kA rms), a phase centerline spacing (2.5 m), L support span, and Rp0.2 aluminum yield strength.',
+        assumptionsFr: [
+          'Courant de court-circuit triphasé symétrique avec asymétrie maximale (facteur κ = 1.80).',
+          'Barres tubulaires rigides en alliage d\'aluminium 6101-T6.',
+          'Contrainte maximale admissible limitée à 80% de la limite élastique Rp0.2.'
+        ],
+        assumptionsEn: [
+          'Three-phase short-circuit with maximum DC offset (peak factor κ = 1.80).',
+          'Rigid tubular busbars made of high-strength 6101-T6 aluminum alloy.',
+          'Maximum permissible bending stress capped at 80% of yield strength Rp0.2.'
+        ],
+        calcTab: 'cable-short-circuit'
+      }
+    ],
+    sectionF: [
+      {
+        code: 'CEI 61936-1',
+        tag: 'CONCEPTION POSTES HTB',
+        titleFr: 'Installations Électriques en Courant Alternatif Dépassant 1 kV - Prescriptions Communes',
+        titleEn: 'Power Installations Exceeding 1 kV AC - Part 1: Common Rules',
+        descFr: 'Norme mère pour la conception des postes HTB/HTA : distances d\'isolement dans l\'air, bacs de rétention d\'huile transfo, murs coupe-feu et clôtures de sécurité.',
+        descEn: 'Master international standard for substation design: air clearances, transformer oil retention sumps, fire barriers, and safety fencing.'
+      },
+      {
+        code: 'CEI 62271-100 / 200 / 203',
+        tag: 'APPAREILLAGE HAUTE TENSION',
+        titleFr: 'Appareillage Haute Tension : Disjoncteurs, Ensembles Préfabriqués & Postes Blindés SF6 (GIS)',
+        titleEn: 'High-Voltage Switchgear and Controlgear: Circuit Breakers, Metal-Enclosed & GIS',
+        descFr: 'Régit le pouvoir de coupure assigné, les séquences de réenclenchement O-0.3s-CO-3min-CO, la tenue à l\'arc interne IAC et l\'étanchéité sous gaz SF6.',
+        descEn: 'Governs rated breaking capacity, standard duty cycles, internal arc classification (IAC), and SF6 gas tightness.'
+      },
+      {
+        code: 'CEI 60076 (Séries 1 à 5)',
+        tag: 'TRANSFORMATEURS DE PUISSANCE',
+        titleFr: 'Transformateurs de Puissance : Échauffements, Niveaux d\'Isolement & Tenue au Court-Circuit',
+        titleEn: 'Power Transformers: Temperature Rise, Insulation Levels & Ability to Withstand Short Circuit',
+        descFr: 'Définit les limites thermiques d\'enroulement (65 K), les essais de tenue diélectrique, l\'impédance de court-circuit Uk% et les régleurs en charge (OLTC).',
+        descEn: 'Defines winding temperature rises (65 K), dielectric impulse withstand, short-circuit impedance, and on-load tap changers.'
+      },
+      {
+        code: 'IEEE Std 80-2013',
+        tag: 'SÉCURITÉ MISE À LA TERRE',
+        titleFr: 'Guide IEEE pour la Sécurité de la Mise à la Terre dans les Postes Électriques en Courant Alternatif',
+        titleEn: 'IEEE Guide for Safety in AC Substation Grounding',
+        descFr: 'Référence mondiale régissant le dimensionnement des mailles de terre en cuivre, l\'élévation de potentiel de terre (GPR) et les tensions de pas et toucher tolérables.',
+        descEn: 'Global benchmark for copper grid mesh sizing, ground potential rise (GPR), and tolerable step/touch voltage safety limits.'
+      },
+      {
+        code: 'CEI 61850 (Séries 1 à 10)',
+        tag: 'POSTE NUMÉRIQUE & SAS',
+        titleFr: 'Réseaux & Systèmes de Communication pour l\'Automatisation des Postes Électriques',
+        titleEn: 'Communication Networks and Systems for Power Utility Automation',
+        descFr: 'Architecture du poste numérique : bus de station (MMS), bus de process (Sampled Values 9-2LE), téléprotection ultra-rapide par messages GOOSE (< 4 ms).',
+        descEn: 'Digital substation architecture: station bus (MMS), process bus (Sampled Values), and ultra-fast peer-to-peer GOOSE protection signaling.'
+      },
+      {
+        code: 'CODE DE RÉSEAU SONATREL §5',
+        tag: 'RÉGULATION NATIONALE CAMEROUN',
+        titleFr: 'Prescriptions Techniques de Conception & d\'Exploitation des Postes de Raccordement 225 kV / 90 kV',
+        titleEn: 'Technical Design & Operation Rules for Cameroon 225 kV / 90 kV Connection Substations',
+        descFr: 'Fixe les schémas unifilaires minimaux admissibles (double jeu de barres obligatoire en 225 kV), le temps d\'élimination des défauts (≤ 80 ms) et la télésurveillance SCADA.',
+        descEn: 'Mandates minimum substation topologies (double busbar mandatory at 225 kV), maximum fault clearing times (≤ 80 ms), and SCADA telemetry.'
+      }
+    ]
+  },
+
   // D05: Distribution HTA/BT
   D05: {
     domainCode: 'D05',

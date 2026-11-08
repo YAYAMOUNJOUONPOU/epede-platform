@@ -1,10 +1,10 @@
 # EPEDE CONTINUATION STATE CHECKPOINT
 
 ## Active Status
-- **Current Phase**: Phase 2 — Domain 4 Transformation & Verification
-- **Current Domain**: D04 (Substations & Grid Nodes — AIS/GIS, Power Transformers, Bay Architectures)
-- **Active Task**: Auditing and enriching D04 pedagogical framework and workbench with full insulation coordination (IEC 60071), clearances (IEC 61936-1), transformer short-circuit withstand (IEC 60076-5), breaker switching dynamics (IEC 62271-100), earthing mesh (IEEE 80), and Cameroon hub nodes (Oyomabang, Mangombé, Bekoko, Nyom II).
-- **Next Domain in Queue**: D05 (Distribution Networks — MV Feeders, RMUs, Pole Transformers)
+- **Current Phase**: Phase 2 — Domain 5 Transformation & Verification
+- **Current Domain**: D05 (Distribution Networks — MV Feeders, RMUs, Pole Transformers H61, Pad-Mounted Kiosks)
+- **Active Task**: Cleanly separating Medium-Voltage HTA distribution (15/30 kV) from Low-Voltage installations; enriching pedagogical framework with 5 distribution topologies, 6 MV assets, 7 planning phases, and 6 normative solvers (MV voltage drop, NGR neutral grounding, inrush grading, SAIDI/SAIFI IEEE 1366, FLISR automation, cable adiabatic thermal withstand).
+- **Next Domain in Queue**: D06 (Electrical Installations & Utilization — LV Switchboards TGBT, Motor Control Centers, SLT Earthing)
 - **Execution Mode**: Autonomous continuous improvement loop (Analyze -> Improve -> Reanalyze -> Reimprove -> Validate -> Quality Gate).
 
 ## Unresolved Issues / Blockers

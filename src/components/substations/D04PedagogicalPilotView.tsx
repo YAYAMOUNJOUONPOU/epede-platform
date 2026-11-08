@@ -51,7 +51,7 @@ export const D04PedagogicalPilotView: React.FC<D04PedagogicalPilotViewProps> = (
   );
 
   // Section E active solver state
-  const [activeAnalysisTopic, setActiveAnalysisTopic] = useState<'short_circuit' | 'transformer' | 'protection' | 'earthing'>('short_circuit');
+  const [activeAnalysisTopic, setActiveAnalysisTopic] = useState<'short_circuit' | 'transformer' | 'protection' | 'earthing' | 'clearances' | 'busbar_withstand'>('short_circuit');
 
   // Representative equipment list with verified/honest status
   const keyEquipmentList = [
@@ -59,10 +59,10 @@ export const D04PedagogicalPilotView: React.FC<D04PedagogicalPilotViewProps> = (
       id: 'eq-exp-gsu-trafo-01',
       nameFr: 'Transformateur de Puissance HTB/HTA (63 MVA)',
       nameEn: 'EHV/MV Power Transformer (63 MVA)',
-      voltage: '225 kV / 30 kV',
-      roleFr: 'Abaissement de tension pour l\'injection dans les réseaux de distribution urbains.',
-      roleEn: 'Step-down voltage conversion for injection into urban MV distribution feeders.',
-      imgUrl: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?auto=format&fit=crop&w=800&q=80',
+      voltage: '225 kV / 30 kV • Dyn11',
+      roleFr: 'Abaissement de tension pour l\'injection dans les réseaux de distribution urbains avec régleur en charge (OLTC ±16%).',
+      roleEn: 'Step-down voltage conversion for injection into urban MV distribution feeders with on-load tap changer (OLTC ±16%).',
+      imgUrl: '/images/homepage_uploads/batch_03_image_011.jpg',
       symbol: 'T1',
       standard: 'CEI 60076-1',
       calcTab: 'transformer' as CalculatorTabType,
@@ -71,10 +71,10 @@ export const D04PedagogicalPilotView: React.FC<D04PedagogicalPilotViewProps> = (
       id: 'eq-exp-gis-bay-225k',
       nameFr: 'Disjoncteur Haute Tension SF6 (Poste 225 kV)',
       nameEn: 'SF6 High Voltage Circuit Breaker (225 kV)',
-      voltage: '225 kV • 3 150 A • 40 kA',
-      roleFr: 'Interruption des courants de charge et de court-circuit en moins de 50 ms.',
-      roleEn: 'Fault and load current interruption in less than 50 ms.',
-      imgUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
+      voltage: '225 kV • 3 150 A • 40 kA / 3 s',
+      roleFr: 'Interruption des courants de charge et élimination ultra-rapide des courts-circuits en moins de 45 ms sous gaz SF6.',
+      roleEn: 'Fault and load current interruption in less than 45 ms utilizing SF6 thermal blast arc quenching.',
+      imgUrl: '/images/homepage_uploads/batch_02_image_006.jpg',
       symbol: 'Q0',
       standard: 'CEI 62271-100',
       calcTab: 'cable-short-circuit' as CalculatorTabType,
@@ -83,25 +83,49 @@ export const D04PedagogicalPilotView: React.FC<D04PedagogicalPilotViewProps> = (
       id: 'eq-exp-ct-225k',
       nameFr: 'Transformateur de Courant (TC) de Mesure & Protection',
       nameEn: 'Current Transformer (CT) for Metering & Protection',
-      voltage: '225 kV / 5 A - 1 A',
-      roleFr: 'Réduction galvanique du courant primaire pour alimenter les relais 50/51/87.',
-      roleEn: 'Galvanic isolation and current scaling for protection relays 50/51/87.',
-      imgUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80',
+      voltage: '225 kV / 5 A - 1 A • Classe 5P20 / 0.2S',
+      roleFr: 'Réduction galvanique du courant primaire pour alimenter les relais de protection 50/51/87 sans saturation.',
+      roleEn: 'Galvanic isolation and current scaling for protection relays 50/51/87 with high saturation knee-point voltage.',
+      imgUrl: '/assets/ecosystem/power-substation-ecosystem.jpg',
       symbol: 'TC1',
       standard: 'CEI 61869-2',
       calcTab: 'ct-sizing' as CalculatorTabType,
     },
     {
+      id: 'eq-exp-vt-225k',
+      nameFr: 'Transformateur de Tension Inductif / Capacitif (TT / CCVT)',
+      nameEn: 'Voltage Transformer / CCVT (225 kV)',
+      voltage: '225 kV / √3 : 100 V / √3 • Classe 0.2 / 3P',
+      roleFr: 'Mesure précise de la tension pour le synchronisme de couplage, la mesure de puissance et les relais de distance 21.',
+      roleEn: 'Precise bus voltage sensing for synchrocheck, energy revenue metering, and distance 21 relay impedance zones.',
+      imgUrl: '/images/homepage_uploads/batch_02_image_007.jpg',
+      symbol: 'TT1',
+      standard: 'CEI 61869-3 / CEI 61869-5',
+      calcTab: 'voltage-drop' as CalculatorTabType,
+    },
+    {
       id: 'eq-exp-surge-arrester-225kv',
       nameFr: 'Parafoudre à Oxyde de Zinc (ZnO)',
-      nameEn: 'Zinc Oxide (ZnO) Surge Arrester',
-      voltage: 'Ur = 198 kV • Classe 4',
-      roleFr: 'Protection du matériel contre les surtensions d\'origine atmosphérique (foudre) et de manœuvre.',
-      roleEn: 'Equipment protection against lightning strikes and switching overvoltages.',
-      imgUrl: 'https://images.unsplash.com/photo-1509390144018-eeaf65052242?auto=format&fit=crop&w=800&q=80',
+      nameEn: 'Zinc Oxide (ZnO) Metal-Oxide Surge Arrester',
+      voltage: 'Ur = 198 kV • Classe 4 • In = 10 kA',
+      roleFr: 'Écrêtage instantané des surtensions atmosphériques (foudre) et de manœuvre pour protéger l\'isolement des transformateurs.',
+      roleEn: 'High-energy clipping of lightning and switching surges to protect transformer winding insulation (BIL 1050 kV).',
+      imgUrl: '/images/homepage_uploads/batch_05_image_022.jpg',
       symbol: 'F1',
       standard: 'CEI 60099-4',
       calcTab: 'surge-arrester' as CalculatorTabType,
+    },
+    {
+      id: 'eq-exp-discon-earth-225k',
+      nameFr: 'Sectionneur d\'Aiguillage & Sectionneur de Terre Motorisé',
+      nameEn: 'Motorized Bus Selector Disconnector & Earth Switch',
+      voltage: '245 kV Assigné • 2500 A • Icc = 40 kA / 1 s',
+      roleFr: 'Aiguillage des départs entre jeux de barres sans coupure de charge et mise à la terre franche pour sécurité des interventions.',
+      roleEn: 'On-load bus transfer switching and locked safety earth closure for de-energized bay maintenance clearance.',
+      imgUrl: '/images/homepage_uploads/batch_07_image_031_hydro_turbine_hall.jpg',
+      symbol: 'Q1/Q8',
+      standard: 'CEI 62271-102',
+      calcTab: 'cable-short-circuit' as CalculatorTabType,
     }
   ];
 
@@ -462,8 +486,8 @@ export const D04PedagogicalPilotView: React.FC<D04PedagogicalPilotViewProps> = (
             </div>
           </div>
 
-          <div className="hidden sm:flex items-center gap-2">
-            {(['short_circuit', 'transformer', 'protection', 'earthing'] as const).map((tab) => (
+          <div className="hidden sm:flex flex-wrap items-center gap-2">
+            {(['short_circuit', 'transformer', 'protection', 'earthing', 'clearances', 'busbar_withstand'] as const).map((tab) => (
               <button
                 key={tab}
                 type="button"
@@ -477,7 +501,9 @@ export const D04PedagogicalPilotView: React.FC<D04PedagogicalPilotViewProps> = (
                 {tab === 'short_circuit' ? (isFr ? 'Court-Circuit Ik3' : 'Short Circuit') :
                  tab === 'transformer' ? (isFr ? 'Transfo Uk%' : 'Transformer Uk%') :
                  tab === 'protection' ? (isFr ? 'Différentielle 87T' : 'Diff. 87T') :
-                 (isFr ? 'Terre IEEE 80' : 'Earthing Grid')}
+                 tab === 'earthing' ? (isFr ? 'Terre IEEE 80' : 'Earthing Grid') :
+                 tab === 'clearances' ? (isFr ? 'Distances CEI 61936' : 'Clearances') :
+                 (isFr ? 'Tenue Barres 60865' : 'Busbar Forces')}
               </button>
             ))}
           </div>
@@ -639,6 +665,102 @@ export const D04PedagogicalPilotView: React.FC<D04PedagogicalPilotViewProps> = (
                 <p className="text-[11px] text-slate-500 font-sans">
                   {isFr ? 'Avec ρs = résistivité de la couche de gravillon de surface (~3 000 Ω·m) et ts = temps d\'élimination du défaut par les protections amont (~0.5 s).' : 'With gravel surface resistivity ~3,000 Ω·m and fault duration ~0.5 s.'}
                 </p>
+              </div>
+            </div>
+          )}
+
+          {activeAnalysisTopic === 'clearances' && (
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="font-bold text-sm text-slate-900 dark:text-white">
+                    {isFr ? 'Distances Minimales d\'Isolement dans l\'Air selon CEI 61936-1 & CEI 60071' : 'Minimum Air Clearances per IEC 61936-1 & IEC 60071'}
+                  </h3>
+                  <p className="text-xs text-slate-500 font-sans mt-0.5">
+                    {isFr ? 'Distances de garde phase-terre (N), phase-phase et garde au sol en fonction du niveau d\'isolement BIL et de l\'altitude.' : 'Phase-to-earth (N), phase-to-phase, and ground safety clearances corrected for altitude.'}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => onNavigateCalculator?.('cable-ampacity')}
+                  className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold flex items-center gap-1.5 transition-colors self-start"
+                >
+                  <Calculator className="w-3.5 h-3.5" />
+                  <span>{isFr ? 'Calculateur Distances' : 'Clearances Calculator'}</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                <div className="p-4 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2">
+                  <span className="text-[10px] text-slate-400 uppercase font-bold">{isFr ? 'Distances Normalisées en 225 kV' : 'Standard 225 kV Clearances'}</span>
+                  <div className="p-2 rounded bg-slate-100 dark:bg-slate-950 text-amber-600 dark:text-amber-300 font-bold text-center text-xs space-y-1">
+                    <div>{isFr ? 'Phase-Terre (N) : ≥ 2 100 mm' : 'Phase-to-Earth (N): ≥ 2,100 mm'}</div>
+                    <div>{isFr ? 'Phase-Phase : ≥ 2 400 mm' : 'Phase-to-Phase: ≥ 2,400 mm'}</div>
+                    <div>{isFr ? 'Garde au Sol (Circulation) : ≥ 5 500 mm' : 'Ground Vehicle Clearance: ≥ 5,500 mm'}</div>
+                  </div>
+                  <p className="text-[11px] text-slate-500 font-sans">
+                    {isFr ? 'Calculé pour un niveau de tenue aux chocs de foudre BIL = 1050 kV crête.' : 'Based on 1050 kV peak Basic Impulse Insulation Level (BIL).'}
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2">
+                  <span className="text-[10px] text-slate-400 uppercase font-bold">{isFr ? 'Correction d\'Altitude (Facteur ka)' : 'Altitude Correction (ka factor)'}</span>
+                  <div className="p-2 rounded bg-slate-100 dark:bg-slate-950 text-sky-600 dark:text-sky-300 font-bold text-center text-xs">
+                    ka = e^[m · (H - 1000) / 8150]
+                  </div>
+                  <p className="text-[11px] text-slate-600 dark:text-slate-400 font-sans leading-relaxed">
+                    {isFr
+                      ? 'Au-delà de 1 000 m d\'altitude (ex: plateaux de l\'Ouest et Adamaoua à Ngaoundéré ~1 150 m), la raréfaction de l\'air réduit la tenue diélectrique et exige d\'augmenter les distances de 1.25% par tranche de 100 m.'
+                      : 'Above 1,000 m altitude (e.g. Ngaoundéré ~1,150 m), air rarefaction degrades breakdown strength, requiring clearance expansion.'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeAnalysisTopic === 'busbar_withstand' && (
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="font-bold text-sm text-slate-900 dark:text-white">
+                    {isFr ? 'Tenue Électrodynamique & Thermique des Jeux de Barres selon CEI 60865-1' : 'Busbar Electrodynamic & Thermal Withstand per IEC 60865-1'}
+                  </h3>
+                  <p className="text-xs text-slate-500 font-sans mt-0.5">
+                    {isFr ? 'Vérification de la contrainte mécanique maximale sous courant de crête ip (forces de Laplace) et échauffement adiabatique.' : 'Mechanical stress verification under peak making fault current ip (Laplace forces) and thermal withstand.'}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => onNavigateCalculator?.('cable-short-circuit')}
+                  className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold flex items-center gap-1.5 transition-colors self-start"
+                >
+                  <Calculator className="w-3.5 h-3.5" />
+                  <span>{isFr ? 'Calculateur Jeux de Barres' : 'Busbar Calculator'}</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                <div className="p-4 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2">
+                  <span className="text-[10px] text-slate-400 uppercase font-bold">{isFr ? 'Force Électrodynamique de Laplace' : 'Laplace Electrodynamic Force'}</span>
+                  <div className="p-2 rounded bg-slate-100 dark:bg-slate-950 text-rose-600 dark:text-rose-300 font-bold text-center text-xs">
+                    Fm = (μ0 / 2π) · (ip² / a) · L
+                  </div>
+                  <p className="text-[11px] text-slate-500 font-sans">
+                    {isFr ? 'Avec ip = courant de crête initial (~ 102 kA pour Icc = 40 kA avec κ = 1.80), a = entraxe entre phases (ex: 2.5 m), L = portée entre isolateurs supports.' : 'With ip peak current (~102 kA for 40 kA rms with κ = 1.80), a phase spacing, and L support span.'}
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2">
+                  <span className="text-[10px] text-slate-400 uppercase font-bold">{isFr ? 'Contrainte de Flexion sur Barres Tubulaires' : 'Tubular Busbar Bending Stress'}</span>
+                  <div className="p-2 rounded bg-slate-100 dark:bg-slate-950 text-amber-600 dark:text-amber-300 font-bold text-center text-xs">
+                    σ = (Fm · L) / (8 · W) ≤ 0.8 · Rp0.2
+                  </div>
+                  <p className="text-[11px] text-slate-600 dark:text-slate-400 font-sans leading-relaxed">
+                    {isFr
+                      ? 'La contrainte de flexion σ calculée sur les tubes d\'aluminium (diamètre 120-160 mm) doit rester inférieure à 80% de la limite élastique Rp0.2 pour éviter toute déformation plastique permanente.'
+                      : 'Bending stress σ on aluminum tubular busbars must remain below 80% of yield strength Rp0.2 to prevent permanent deformation.'}
+                  </p>
+                </div>
               </div>
             </div>
           )}
