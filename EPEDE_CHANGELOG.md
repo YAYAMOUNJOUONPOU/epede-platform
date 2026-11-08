@@ -457,3 +457,46 @@ All notable changes, engineering refactors, and technical enhancements across th
     - IEEE C37.118.1 & C37.118.2 (Synchrophasor measurements and data transfer for power systems).
     - IEC 60076-7 (Loading guide for oil-immersed power transformers - thermal aging).
     - IEEE C57.104 (Guide for interpretation of gases generated in mineral oil-immersed transformers).
+
+### Domain 16 (D16) - Electrical Safety, Earthing & Lightning Protection Transformation
+- Populated complete pedagogical framework in `domainPedagogicalContentRegistry.ts` achieving full 97% master standard:
+  - **Section A**: Formulated boundary physics for high-voltage substation earthing, atmospheric lightning dissipation (up to 200 kA 10/350 µs), touch/step voltage safety thresholds, and active arc flash containment.
+  - **Section B**: Documented 5 canonical safety and grounding architectures:
+    1. **Réseau de Terre Maillé en Cuivre Enterré pour Postes HTB 225 kV (IEEE Std 80)** (95-120 mm² bare copper grid, 10x10 m meshes, 3 m vertical rods, limiting GPR and holding touch voltages < 850 V).
+    2. **Protection Extérieure contre les Effets Directs de la Foudre (CEI 62305)** (Early Streamer Emission ESE air terminals Δt=60 µs, Faraday cages, and low-inductance down-conductors with lightning event strike counters).
+    3. **Coordination de l'Isolement & Parafoudres ZnO sans Éclateur (CEI 60099-4 / CEI 60071)** (Gapless zinc-oxide surge arresters in silicone composite housings, Upl ≤ 495 kV at 10 kA, BIL margin ≥ 20%).
+    4. **Liaisons Équipotentielles & Régimes de Neutre BT TT / TN / IT (NF C 15-100 / CEI 60364)** (Foundation loop main equipotential bonding, TT/TN/IT earthing schemes with disconnection times ≤ 0.4 s).
+    5. **Protection Active contre l'Arc Flash & Habilitations Électriques (IEEE 1584 / UTE C 18-510)** (Point optical and fiber loop sensors tripping upstream breakers in < 35 ms, incident energy < 1.2 cal/cm²).
+  - **Section C**: Added 6 authenticated safety and grounding apparatus:
+    - Bare Copper Grounding Grid (95 mm²) & Copper-Bonded Steel Rods IEEE 80 (`eq-exp-earthing-grid-copper`).
+    - 225 kV Gapless Metal-Oxide (ZnO) Surge Arrester Silicone Enclosed IEC 60099-4 (`eq-exp-surge-arrester-225k`).
+    - Early Streamer Emission (ESE) Lightning Air Terminal with Strike Counter IEC 62305 (`eq-exp-ese-lightning-rod`).
+    - Chauvin Arnoux CA 6472 4-Pole Earth Ground Tester & Soil Resistivity Meter (`eq-exp-earth-tester-wenner`).
+    - Ultra-Fast Optical Arc Flash Detection Relay SEL-751 / ABB REA (`eq-exp-arc-flash-relay`).
+    - Arc Flash Personal Protective Equipment (PPE) Kit 40 cal/cm² NFPA 70E (`eq-exp-safety-ppe-kit-40cal`).
+  - **Section D**: Modeled 7 sequential engineering project lifecycle phases:
+    1. Geophysical Soil Resistivity Measurement Campaign (Wenner 4-Pin & Schlumberger).
+    2. Substation Ground Grid Computer Modeling & IEEE Std 80 Compliance Sizing.
+    3. Lightning Risk Assessment & External LPS Engineering Design (IEC 62305-2/3).
+    4. Insulation Coordination & Metal-Oxide Surge Arrester Sizing (IEC 60071 / 60099).
+    5. Site Grid Installation, Exothermic Cadweld Splicing & Crushed Rock Placement.
+    6. Commissioning Metrology, High-Current Injection Testing & Real Touch Voltage Verification.
+    7. Arc Flash Hazard Evaluation (IEEE 1584), Warning Labeling & Safety Certifications.
+  - **Section E**: Integrated 6 LaTeX mathematical formulations:
+    - Sverak Formula for Substation Grounding Grid Resistance per IEEE Std 80 ($R_g = \rho [ \frac{1}{L_T} + \frac{1}{\sqrt{20A}} ( 1 + \frac{1}{1 + h\sqrt{20/A}} ) ]$).
+    - Tolerable Touch Voltage Threshold for 70 kg Body Weight ($E_{\text{touch70}} = \frac{1000 + 1.5 C_s \rho_s}{\sqrt{t_s}} \cdot 0.157$).
+    - Tolerable Step Voltage Threshold for 70 kg Body Weight ($E_{\text{step70}} = \frac{1000 + 6.0 C_s \rho_s}{\sqrt{t_s}} \cdot 0.157$).
+    - Electrogeometrical Rolling Sphere Radius for Lightning Protection ($R_s = 10 \cdot I_p^{0.65}$ per IEC 62305-3).
+    - Thermal Energy Absorption of Metal-Oxide Surge Arresters ($W_{\text{abs}} \approx 1.15 \cdot U_{\text{res}} \cdot I_{\text{imp}} \cdot T_{\text{imp}}$ per IEC 60099-4).
+    - Arc Flash Thermal Incident Energy and Flash Boundary Distance ($E_i = 4.184 \cdot C_f \cdot E_n \cdot (\frac{t_{\text{arc}}}{0.2}) \cdot (\frac{610^x}{D^x})$ per IEEE 1584-2018).
+  - **Section F**: Sourced 6 international and normative standards:
+    - IEEE Std 80-2013 (Guide for safety in AC substation grounding).
+    - IEC 62305 (Parts 1 to 4 - Protection against lightning).
+    - IEC 60099-4 (Metal-oxide surge arresters without gaps for AC systems).
+    - IEEE 1584-2018 & NFPA 70E (Arc-flash hazard calculations & electrical safety in the workplace).
+    - NF C 15-100 (Part 4-41) & UTE C 18-510 (Low-voltage electrical safety & personnel qualification).
+    - IEC 60071-1 & IEC 60071-2 (Insulation coordination principles and application guide).
+
+### Milestone Achieved: Complete 16-Domain Platform Transformation
+- All 16 core engineering domains (D01 through D16) now fully elevated to 97%+ Master Standard.
+- Moving immediately into Phase 3 Platform Views & Specialized Systems Elevation.

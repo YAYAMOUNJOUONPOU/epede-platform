@@ -6059,6 +6059,421 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         descEn: 'Standards for irradiance monitoring, Performance Ratio (PR) calculation, forecast error evaluation, and active/reactive ride-through support from inverter-based resources.'
       }
     ]
+  },
+
+  // D16: Sécurité Électrique, Réseaux de Terre & Protection Foudre
+  D16: {
+    domainCode: 'D16',
+    sectionA: {
+      roleFr: "Préservation absolue des vies humaines contre les chocs électriques (tensions de pas et de toucher), canalisation non destructive des courants de défaut phase-terre (jusqu'à 40 kA) et écoulement des ondes de foudre atmosphérique (jusqu'à 200 kA 10/350 µs) par des réseaux de terre maillés enterrés, la liaison équipotentielle générale, des parafoudres à oxyde de zinc (ZnO), des paratonnerres et la protection active contre les arcs électriques (Arc Flash).",
+      roleEn: 'Guaranteed preservation of human life against electric shock (step and touch potentials), non-destructive drainage of high-voltage single-phase-to-earth fault currents (up to 40 kA) and safe dissipation of direct/induced atmospheric lightning surges (up to 200 kA 10/350 µs) via buried meshed copper grounding grids, master equipotential bonding, metal-oxide surge arresters (ZnO), lightning rods, and fast optical arc flash mitigation.',
+      inputsFr: {
+        title: "Courants de Défaut à la Terre & Ondes de Foudre Atmosphériques",
+        desc: "Courants de court-circuit asymétriques phase-terre (If jusqu'à 31,5 kA / 40 kA sous 225 kV), coups de foudre directs descendants (ondes normalisées 10/350 µs de 100 à 200 kA), surtensions de foudre induites (ondes 8/20 µs) et tensions d'arc de court-circuit interne.",
+        voltage: "225 kV / 90 kV / 30 kV / 400 V • Courants de défaut If jusqu'à 40 kA • Foudre jusqu'à 200 kA"
+      },
+      inputsEn: {
+        title: "Single-Phase Earth Fault Currents & Atmospheric Lightning Surges",
+        desc: "Asymmetrical phase-to-ground short-circuit currents (If up to 31.5 kA / 40 kA at 225 kV), direct downward cloud-to-ground lightning strokes (normalized 10/350 µs waves of 100 to 200 kA), induced switching and lightning traveling waves (8/20 µs), and internal arc flash fault voltages.",
+        voltage: "225 kV / 90 kV / 30 kV / 400 V • Fault Currents If up to 40 kA • Lightning surges up to 200 kA"
+      },
+      processFr: {
+        title: "Écoulement Massif dans le Sol, Équipotentialité & Écrêtage d'Onde Ultra-Rapide",
+        desc: "Dispersion radiale des charges dans le sol géologique à travers la maille de cuivre et piquets profonds, nivellement du gradient de potentiel de surface (GPR < Upas/Utoucher), écrêtage nanoseconde des surtensions par varistances ZnO sans étincelage, et détection optique d'arc flash < 1 ms.",
+        note: "Résistance de terre cible du poste HTB : Rg < 0,5 Ω (IEEE Std 80 / SONATREL); gravillon de concassage 10–15 cm (ρs ≥ 2 000 Ω·m) pour décupler la résistance superficielle des pieds"
+      },
+      processEn: {
+        title: "Massive Earth Dissipation, Master Equipotentiality & Sub-Microsecond Surge Clamping",
+        desc: "Radial charge dispersion into geological strata via buried copper mesh grids and deep vertical rods, surface potential gradient leveling (GPR suppression within touch/step limits), nanosecond surge clamping via gapless metal-oxide varistors, and sub-millisecond optical arc flash detection.",
+        note: "Target high-voltage substation grid resistance: Rg < 0.5 Ω (IEEE Std 80 / SONATREL); crushed rock surface layer 10–15 cm (ρs ≥ 2,000 Ω·m) to boost tolerable human touch and step thresholds"
+      },
+      outputsFr: {
+        title: "Protection des Personnes, Immunité des Équipements & Continuité de Service",
+        desc: "Tensions de toucher et de pas maintenues strictement en deçà des seuils de fibrillation ventriculaire (CEI 60479-1 / IEEE 80), absence de perforation diélectrique des isolateurs et transformateurs (coordination CEI 60071), et confinement des effets thermiques et blast de l'arc flash.",
+        earthing: "Interconnexion équipotentielle intégrale des masses métalliques, charpentes, cuves de transformateurs, clôtures périphériques et blindages de câbles au réseau de terre maillé"
+      },
+      outputsEn: {
+        title: "Personnel Protection, Insulation Immunity & Uninterrupted Grid Service",
+        desc: "Touch and step potentials strictly maintained below ventricular fibrillation thresholds (IEC 60479-1 / IEEE 80), complete elimination of transformer and bushing dielectric breakdown (IEC 60071 insulation coordination), and containment of arc flash thermal blast energy.",
+        earthing: "Comprehensive equipotential bonding tying all steel gantries, transformer tanks, perimeter boundary fences, and cable shields to the buried mesh grid"
+      }
+    },
+    sectionB: {
+      summaryFr: "Architectures de mise à la terre et de sécurité : réseau de terre maillé HTB 225 kV, cages maillées et paratonnerres PDA, parafoudres ZnO, régimes TT/TN/IT et détection d'arc flash.",
+      summaryEn: "Grounding and safety architectures: 225 kV HV mesh grid, Faraday cages and ESE air terminals, ZnO surge arresters, LV TT/TN/IT earthing schemes, and optical arc flash mitigation.",
+      architectures: [
+        {
+          nameFr: "Réseau de Terre Maillé en Cuivre Enterré pour Postes HTB 225 kV (IEEE Std 80)",
+          nameEn: 'Buried Copper Mesh Grounding Grid for 225 kV Substations (IEEE Std 80)',
+          techFr: 'Conducteurs cuivre nu 95-120 mm² enfouis à 0,8 m avec mailles 10x10 m et piquets verticaux de 3 m',
+          techEn: '95-120 mm² bare copper conductors buried at 0.8 m with 10x10 m meshes and 3 m vertical rods',
+          descFr: "Grille rectangulaire ou polygonale en cuivre nu 95 à 120 mm² enfouie à 0,6–0,8 m avec mailles de 5x5 m à 10x10 m et piquets verticaux cuivrés de 3 m aux nœuds périphériques, conçue pour limiter l'élévation du potentiel de terre (GPR) et maintenir les tensions de pas et toucher sous les seuils physiologiques tolérables lors d'un défaut 31,5 kA / 40 kA.",
+          descEn: 'Rectangular or polygonal bare copper grid (95 to 120 mm²) buried at 0.6–0.8 m depth with 5x5 m to 10x10 m mesh conductor spacing and 3 m vertical copper-bonded rods at peripheral corners, sized to limit Ground Potential Rise (GPR) and keep step and touch voltages below tolerable physiological thresholds during 31.5 kA / 40 kA ground faults.',
+          standard: 'IEEE Std 80-2013 / SONATREL Code §5',
+          metricFr: 'Résistance de terre : Rg < 0,5 Ω • Tension de toucher tolérable : < 850 V • Gravillon : ρs ≥ 2 500 Ω·m',
+          metricEn: 'Station ground resistance: Rg < 0.5 Ω • Tolerable touch voltage: < 850 V • Gravel: ρs ≥ 2,500 Ω·m'
+        },
+        {
+          nameFr: "Protection Extérieure contre les Effets Directs de la Foudre (CEI 62305)",
+          nameEn: 'External Lightning Protection System (LPS) & ESE Terminals (IEC 62305)',
+          techFr: 'Paratonnerres à dispositif d\'amorçage PDA Δt=60 µs et cage de Faraday avec conducteurs de descente',
+          techEn: 'Early Streamer Emission ESE air terminals Δt=60 µs and Faraday cage with low-inductance down-leads',
+          descFr: "Système de protection contre la foudre combinant paratonnerres à dispositif d'amorçage (PDA / ESE) à grand rayon de protection sur mâts télescopiques et cage maillée de Faraday sur les toitures des bâtiments d'exploitation, reliés à des conducteurs de descente directs non inductifs et des compteurs d'impacts.",
+          descEn: 'Comprehensive lightning protection system combining Early Streamer Emission (ESE) air terminals on elevated masts providing extended protective radii with meshed Faraday cages on control building roofs, linked via low-inductance down-conductors to dedicated ground terminations and lightning event strike counters.',
+          standard: 'CEI 62305-1/3 (Niveau LPL I & II)',
+          metricFr: 'Rayon de protection : jusqu\'à 107 m • Efficacité de capture : > 98% (LPL I) • Écoulement : 10/350 µs',
+          metricEn: 'Protection radius: up to 107 m • Capture efficiency: > 98% (LPL I) • Wave dissipation: 10/350 µs'
+        },
+        {
+          nameFr: "Coordination de l'Isolement & Parafoudres ZnO sans Éclateur (CEI 60099-4 / CEI 60071)",
+          nameEn: 'Insulation Coordination & Gapless ZnO Surge Arresters (IEC 60099-4 / IEC 60071)',
+          techFr: 'Colonnes de varistances ZnO sous enveloppe composite silicone hydrophobe avec limiteur de surpression',
+          techEn: 'ZnO varistor block columns enclosed in hydrophobic silicone housing with pressure relief venting',
+          descFr: "Protection contre les surtensions transitoires de manœuvre et de foudre par colonnes de varistances à oxyde de zinc (ZnO) sous enveloppe polymère silicone, raccordées au plus près des traversées des transformateurs et départs lignes HTB avec liaisons de terre ultra-courtes sans boucle inductive.",
+          descEn: 'Overvoltage surge protection against atmospheric lightning and switching transients via zinc-oxide (ZnO) metal-oxide varistor blocks encased in hydrophobic silicone polymer housings, installed directly adjacent to power transformer bushings and overhead line terminations with low-inductance straight ground leads.',
+          standard: 'CEI 60099-4 / CEI 60071-1',
+          metricFr: 'Tension résiduelle Upl à 10 kA : ≤ 495 kV • Marge de sécurité BIL : ≥ 20% • Énergie : 8 kJ/kV',
+          metricEn: 'Residual voltage Upl at 10 kA: ≤ 495 kV • BIL safety margin: ≥ 20% • Thermal energy: 8 kJ/kV'
+        },
+        {
+          nameFr: "Liaisons Équipotentielles & Régimes de Neutre BT TT / TN / IT (NF C 15-100 / CEI 60364)",
+          nameEn: 'Equipotential Bonding & LV Earthing Systems TT / TN / IT (NF C 15-100 / IEC 60364)',
+          techFr: 'Liaisons équipotentielles LEP/LES en fond de fouille et sélection du régime de neutre d\'exploitation',
+          techEn: 'Foundation loop main equipotential bonding (LEP/LES) and coordinated neutral grounding scheme',
+          descFr: "Maillage équipotentiel basse tension interconnectant les structures métalliques, canalisations de fluides et masses électriques au collecteur principal de terre (LEP/LES), couplé au régime de neutre adapté : TT pour coupure au 1er défaut par DDR, TN pour coupure rapide par disjoncteur, ou IT pour continuité de service en milieu critique.",
+          descEn: 'Low-voltage equipotential bonding tying all structural steel, metallic piping, and electrical chassis to master earth terminals (main and supplementary bonding), integrated with application-specific earthing schemes: TT for RCD fault tripping, TN for instantaneous magnetic breaker clearance, or IT for critical process continuity.',
+          standard: 'NF C 15-100 / CEI 60364-4-41',
+          metricFr: 'Tension limite conventionnelle UL : 50 V (sec) / 25 V (humide) • Temps de coupure : ≤ 0,4 s (230 V)',
+          metricEn: 'Touch voltage limit UL: 50 V (dry) / 25 V (wet) • Disconnection time: ≤ 0.4 s (230 V)'
+        },
+        {
+          nameFr: "Protection Active contre l'Arc Flash & Habilitations Électriques (IEEE 1584 / UTE C 18-510)",
+          nameEn: 'Active Arc Flash Protection & Personnel Electrical Safety (IEEE 1584 / NFPA 70E)',
+          techFr: 'Capteurs optiques ponctuels et fibres dénudées couplés à des relais numériques à déclenchement < 35 ms',
+          techEn: 'Point optical and bare fiber loop sensors linked to high-speed numerical relays clearing faults in < 35 ms',
+          descFr: "Système de protection ultra-rapide combinant détection optique ponctuelle ou par boucle de fibre optique des flashs lumineux d'arc interne et seuil de surintensité instantanée pour déclenchement en moins de 35 ms, réduisant l'énergie incidente sous 1,2 cal/cm² (Catégorie EPI 1/2) et protégeant les intervenants habilités.",
+          descEn: 'Ultra-fast active arc flash mitigation combining point or continuous fiber-optic light sensors with instantaneous overcurrent supervision to trip upstream breakers within 35 ms, reducing incident energy below 1.2 cal/cm² (PPE Category 1/2) and ensuring certified operator survival under NFPA 70E and UTE C 18-510.',
+          standard: 'IEEE 1584-2018 / NFPA 70E / UTE C 18-510',
+          metricFr: 'Énergie incidente : < 1,2 cal/cm² (Cat. 1/2) • Temps de coupure total : < 35 ms • Rayon de sécurité : calculé',
+          metricEn: 'Incident energy: < 1.2 cal/cm² (Cat. 1/2) • Total clearing time: < 35 ms • Flash boundary: computed'
+        }
+      ]
+    },
+    sectionC: [
+      {
+        id: 'eq-exp-earthing-grid-copper',
+        nameFr: "Grille de Terre Maillée en Cuivre Nu 95 mm² & Piquets Cuivrés IEEE 80",
+        nameEn: 'Bare Copper Grounding Grid (95 mm²) & Copper-Bonded Steel Rods IEEE 80',
+        voltage: 'HTB 225 kV / HTA 30 kV • Cuivre nu 95-120 mm² • Piquets 5/8" (3 m) • Tenue 31,5 kA / 1s',
+        roleFr: "Canalise les courants de défaut phase-terre vers les couches géologiques profondes et maintient la résistance globale Rg < 0,5 Ω.",
+        roleEn: 'Safely disperses single-phase-to-ground fault currents into deep earth strata while holding station ground resistance Rg < 0.5 Ω.',
+        symbol: 'EARTH-GRID',
+        standard: 'IEEE Std 80-2013',
+        imgUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'earthing'
+      },
+      {
+        id: 'eq-exp-surge-arrester-225k',
+        nameFr: "Parafoudre Haute Tension 225 kV ZnO à Enveloppe Silicone CEI 60099-4",
+        nameEn: '225 kV Gapless Metal-Oxide (ZnO) Surge Arrester Silicone Enclosed IEC 60099-4',
+        voltage: 'Tension assignée Ur = 198 kV • Décharge 10 kA (8/20 µs) • Énergie thermique 8 kJ/kV',
+        roleFr: "Écrête les surtensions transitoires atmosphériques et de manœuvre en amont des traversées des transformateurs 225 kV.",
+        roleEn: 'Clamps atmospheric lightning and switching overvoltage surges ahead of 225 kV transformer bushings.',
+        symbol: 'SURGE-ARR',
+        standard: 'CEI 60099-4',
+        imgUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'surge-arrester'
+      },
+      {
+        id: 'eq-exp-ese-lightning-rod',
+        nameFr: "Paratonnerre à Dispositif d'Amorçage (PDA) avec Compteur d'Impacts CEI 62305",
+        nameEn: 'Early Streamer Emission (ESE) Lightning Air Terminal with Strike Counter IEC 62305',
+        voltage: 'Avance à l\'amorçage Δt = 60 µs • Rayon de protection jusqu\'à 107 m • Inox 316L • IP67',
+        roleFr: "Capte les coups de foudre directs descendants sur les structures de poste et usines pour les écouler à la terre sans dégât.",
+        roleEn: 'Intercepts direct downward lightning flashes over substation gantries and powerhouse buildings, channeling discharge to ground safely.',
+        symbol: 'ESE-ROD',
+        standard: 'CEI 62305 / NF C 17-102',
+        imgUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'surge-arrester'
+      },
+      {
+        id: 'eq-exp-earth-tester-wenner',
+        nameFr: "Telluromètre 4 Piquets Méthode de Wenner & Résistivité des Sols Chauvin Arnoux CA 6472",
+        nameEn: 'Chauvin Arnoux CA 6472 4-Pole Earth Ground Tester & Soil Resistivity Meter',
+        voltage: 'Mesure 4P Wenner / Schlumberger 0,001 Ω à 100 kΩ • Fréquence 41 à 512 Hz • Test 16/32 Vrms',
+        roleFr: "Mesure la résistivité des couches du sol géologique et la résistance de terre de boucle des postes sous injection sélective.",
+        roleEn: 'Measures multi-layer soil geological resistivity and high-voltage substation grid resistance via selective frequency injection.',
+        symbol: 'TEST-WENN',
+        standard: 'IEEE Std 81 / CEI 61557-5',
+        imgUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'earthing'
+      },
+      {
+        id: 'eq-exp-arc-flash-relay',
+        nameFr: "Relais Optique Ultra-Rapide Détecteur d'Arc Flash SEL-751 / ABB REA",
+        nameEn: 'Ultra-Fast Optical Arc Flash Detection Relay SEL-751 / ABB REA',
+        voltage: 'Alimentation 110/220 Vcc • Détection optique < 1 ms • Coupure < 35 ms • Capteurs fibres et ponctuels',
+        roleFr: "Détecte l'éclair d'un court-circuit interne dans les jeux de barres et ordonne le déclenchement immédiat pour limiter l'énergie incidente.",
+        roleEn: 'Detects internal busbar fault flash and triggers instantaneous upstream breaker tripping to minimize arc flash incident energy.',
+        symbol: 'ARC-RELAY',
+        standard: 'IEEE 1584 / CEI 60255',
+        imgUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'arc-flash'
+      },
+      {
+        id: 'eq-exp-safety-ppe-kit-40cal',
+        nameFr: "Kit d'Équipements de Protection Individuelle EPI Arc Flash 40 cal/cm² NFPA 70E",
+        nameEn: 'Arc Flash Personal Protective Equipment (PPE) Kit 40 cal/cm² NFPA 70E',
+        voltage: 'Indice thermique ATPV = 40 cal/cm² (Cat. 4) • Gants isolants Classe 4 (36 kV) • Écran teinté anti-UV',
+        roleFr: "Protège l'intervenant habilité contre les brûlures thermiques au 3e degré et les projections lors des manœuvres sous tension.",
+        roleEn: 'Protects certified electricians from severe 3rd-degree thermal burns and shrapnel during live electrical operations and switching.',
+        symbol: 'PPE-KIT',
+        standard: 'NFPA 70E / ASTM F1506 / UTE C 18-510',
+        imgUrl: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'arc-flash'
+      }
+    ],
+    sectionD: [
+      {
+        phase: '01',
+        titleFr: "Campagne de Mesures Géophysiques de Résistivité des Sols (Wenner)",
+        titleEn: 'Geophysical Soil Resistivity Measurement Campaign (Wenner 4-Pin)',
+        descFr: "Réalisation de profils de résistivité sur le site du poste selon la méthode des 4 piquets équidistants de Wenner et Schlumberger (espacements 'a' de 1 à 40 m) pour identifier la structure géologique multicouche (sol arable, latérite, roche granitique).",
+        descEn: 'Execution of site soil resistivity profiles via Wenner and Schlumberger 4-pin methods across varying pin spacings "a" (1 to 40 m) to determine multi-layer strata stratification (topsoil, weathered laterite, granite bedrock).'
+      },
+      {
+        phase: '02',
+        titleFr: "Modélisation Numérique de la Grille de Terre & Calcul IEEE Std 80",
+        titleEn: 'Substation Ground Grid Computer Modeling & IEEE Std 80 Compliance Sizing',
+        descFr: "Dimensionnement analytique et par éléments finis du maillage de cuivre : calcul de la résistance globale de terre Rg, de l'élévation du potentiel de terre (GPR = If · Rg), et des tensions de maillage (Em) et de pas (Es) maximales.",
+        descEn: 'Analytical and finite-element modeling of buried copper grid: calculation of station ground resistance Rg, maximum Ground Potential Rise (GPR = If · Rg), and worst-case mesh (Em) and step (Es) potentials.'
+      },
+      {
+        phase: '03',
+        titleFr: "Étude d'Analyse du Risque Foudre & Conception de la Protection Extérieure (CEI 62305)",
+        titleEn: 'Lightning Risk Assessment & External LPS Engineering Design (IEC 62305-2/3)',
+        descFr: "Évaluation normative des risques de pertes de vies humaines (R1) et de pertes matérielles (R2) en fonction de la densité de foudroiement locale (Ng coups/km²/an), puis tracé des zones protégées par la méthode de la sphère roulante et des angles de protection.",
+        descEn: 'Normative risk assessment quantifying loss of human life (R1) and physical damage (R2) against local ground flash density (Ng flashes/km²/year), followed by electrogeometrical rolling sphere and protective angle layout.'
+      },
+      {
+        phase: '04',
+        titleFr: "Coordination de l'Isolement & Spécification des Parafoudres ZnO (CEI 60071 / 60099)",
+        titleEn: 'Insulation Coordination & Metal-Oxide Surge Arrester Sizing (IEC 60071 / 60099)',
+        descFr: "Détermination des tensions assignées Ur et continues Uc des parafoudres ZnO en tenant compte du facteur de défaut à la terre (Terg) du réseau, vérification de la marge de protection par rapport au niveau d'isolement aux chocs (BIL) des transformateurs.",
+        descEn: 'Determination of surge arrester rated voltage Ur and continuous operating voltage Uc based on system earth fault factor (k), verifying protective margins against transformer Basic Lightning Impulse Insulation Level (BIL).'
+      },
+      {
+        phase: '05',
+        titleFr: "Travaux de Pose, Soudures Cadweld & Revêtement de Gravillon Haute Résistivité",
+        titleEn: 'Site Grid Installation, Exothermic Cadweld Splicing & Crushed Rock Placement',
+        descFr: "Exécution des tranchées à 0,8 m de profondeur, déroulage des câbles cuivre nu 95 mm², battage des piquets de terre verticaux, réalisation des soudures aluminothermiques moléculaires (Cadweld), et épandage de 10 à 15 cm de gravillon granitique lavé.",
+        descEn: 'Trench excavation to 0.8 m depth, bare copper conductor laying, vertical ground rod driving, exothermic Cadweld molecular fusion bonding, and placement of a 10 to 15 cm washed granite crushed rock surface layer.'
+      },
+      {
+        phase: '06',
+        titleFr: "Essais Métrologiques de Réception, Injection Haute Fréquence & Tensions de Pas Réelles",
+        titleEn: 'Commissioning Metrology, High-Current Injection Testing & Real Touch Voltage Verification',
+        descFr: "Mesure de la résistance globale de terre Rg par la méthode de chute de potentiel (62%), injection de courant réel simulant un défaut à la terre pour mesurer in situ les tensions de toucher et de pas effectives, et mesure de continuité des liaisons équipotentielles.",
+        descEn: 'Measurement of station ground grid resistance Rg via fall-of-potential method (62% rule), low-current simulation injection to record actual touch and step potentials across switchyard walkways, and equipotential bond continuity checks.'
+      },
+      {
+        phase: '07',
+        titleFr: "Évaluation du Risque d'Arc Flash (IEEE 1584), Étiquetage de Sécurité & Habilitation UTE C 18-510",
+        titleEn: 'Arc Flash Hazard Evaluation (IEEE 1584), Warning Labeling & Safety Certifications',
+        descFr: "Calcul de l'énergie incidente (cal/cm²) et de la distance limite d'éclair d'arc pour chaque tableau BT et cellule HTA, pose des étiquettes normalisées d'avertissement de danger, définition des EPI obligatoires et formation aux habilitations électriques.",
+        descEn: 'Calculation of incident energy (cal/cm²) and arc flash boundary distances for every LV switchboard and MV cubicle, application of standardized warning labels, PPE kit specification, and electrical safety workforce certification.'
+      }
+    ],
+    sectionE: [
+      {
+        id: 'ieee_80_sverak_grid_resistance',
+        tabLabelFr: 'Résistance Grille IEEE 80',
+        tabLabelEn: 'IEEE 80 Grid Resistance',
+        titleFr: 'Formule de Sverak pour la Résistance de Terre d\'une Grille de Poste HTB selon IEEE Std 80',
+        titleEn: 'Sverak Formula for High-Voltage Substation Grounding Grid Resistance per IEEE Std 80',
+        descFr: 'Équation fondamentale reliant la résistance globale de mise à la terre d\'un poste électrique à la résistivité géologique du sol, à la longueur totale de cuivre enfoui, à la superficie de la grille et à sa profondeur d\'enfouissement.',
+        descEn: 'Fundamental analytical formulation relating the total grounding resistance of an AC substation grid to soil geological resistivity, total buried conductor and rod length, grid footprint area, and burial depth.',
+        formula: 'R_g = \\rho \\cdot \\left[ \\frac{1}{L_T} + \\frac{1}{\\sqrt{20 A}} \\cdot \\left( 1 + \\frac{1}{1 + h \\cdot \\sqrt{20/A}} \\right) \\right]',
+        formulaDescFr: 'Où Rg est la résistance globale de mise à la terre (Ω), ρ la résistivité apparente du sol (Ω·m), LT la longueur totale cumulée des conducteurs maillés et des piquets verticaux (m), A la superficie du polygone de la grille (m²), et h la profondeur d\'enfouissement de la grille (m, typiquement 0,6 à 0,8 m).',
+        formulaDescEn: 'Where Rg is total substation ground resistance (Ω), ρ is apparent soil resistivity (Ω·m), LT is total combined length of grid conductors and vertical ground rods (m), A is area occupied by the grounding grid (m²), and h is conductor burial depth (m, typically 0.6 to 0.8 m).',
+        assumptionsFr: [
+          'Modèle géologique homogène équivalent à une résistivité moyenne apparente ρ issue des mesures de Wenner.',
+          'Grille polygonale régulière maillée interconnectée par des soudures aluminothermiques non corrodées.',
+          'Piquets de terre verticaux uniformément répartis sur le périmètre et aux coins de la grille.'
+        ],
+        assumptionsEn: [
+          'Homogeneous equivalent soil model characterized by apparent resistivity ρ derived from Wenner pin profiles.',
+          'Regular polygonal conductor mesh interconnected via sound, non-corroded exothermic molecular joints.',
+          'Vertical ground rods uniformly distributed along perimeter boundaries and grid corner junctions.'
+        ],
+        calcTab: 'earthing'
+      },
+      {
+        id: 'ieee_80_tolerable_touch_voltage',
+        tabLabelFr: 'Tension de Toucher IEEE 80',
+        tabLabelEn: 'IEEE 80 Tolerable Touch',
+        titleFr: 'Tension de Toucher Tolérable pour le Corps Humain (70 kg) selon IEEE Std 80',
+        titleEn: 'Tolerable Touch Voltage Threshold for 70 kg Body Weight per IEEE Std 80',
+        descFr: 'Calcul de la tension de contact maximale admissible entre la main d\'un opérateur touchant une carcasse métallique sous défaut et ses pieds posés sur le sol, sans provoquer de fibrillation ventriculaire cardiaque mortelle.',
+        descEn: 'Analytical threshold formulation calculating the maximum safe potential difference between an energized metal enclosure touched by a human hand and the feet on the ground surface, preventing fatal ventricular fibrillation.',
+        formula: 'E_{\\text{touch70}} = \\frac{1000 + 1.5 \\cdot C_s \\cdot \\rho_s}{\\sqrt{t_s}} \\cdot 0.157',
+        formulaDescFr: 'Où Etouch70 est la tension de toucher maximale tolérable (V), Cs le facteur de réduction de surface tenant compte de l\'épaisseur de gravillon, ρs la résistivité du gravillon de surface humide (typiquement 2 500 à 3 000 Ω·m), et ts la durée totale d\'élimination du défaut par les protections amont (s, typiquement 0,2 à 0,5 s).',
+        formulaDescEn: 'Where Etouch70 is tolerable touch voltage limit (V), Cs is surface layer derating factor accounting for crushed rock thickness, ρs is wet resistivity of the crushed stone layer (typically 2,500 to 3,000 Ω·m), and ts is total fault clearing duration by protective relays and breakers (s, typically 0.2 to 0.5 s).',
+        assumptionsFr: [
+          'Résistance du corps humain modélisée à 1 000 Ω de main aux deux pieds en parallèle.',
+          'Facteur physiologique Dalziel pour un poids corporel standard de 70 kg (k = 0,157).',
+          'Présence d\'une couche de gravillon de concassage lavé de 10 à 15 cm d\'épaisseur convenablement drainée.'
+        ],
+        assumptionsEn: [
+          'Human body internal resistance modeled as 1,000 Ω from hand to both feet in parallel contact.',
+          'Dalziel physiological electrocution factor for 70 kg standard body mass (k = 0.157).',
+          'Presence of a well-drained, clean crushed granite stone surface layer of 10 to 15 cm thickness.'
+        ],
+        calcTab: 'earthing'
+      },
+      {
+        id: 'ieee_80_tolerable_step_voltage',
+        tabLabelFr: 'Tension de Pas IEEE 80',
+        tabLabelEn: 'IEEE 80 Tolerable Step',
+        titleFr: 'Tension de Pas Tolérable pour le Corps Humain (70 kg) selon IEEE Std 80',
+        titleEn: 'Tolerable Step Voltage Threshold for 70 kg Body Weight per IEEE Std 80',
+        descFr: 'Calcul de la différence de potentiel maximale admissible entre deux pieds distants d\'un mètre sur le sol du poste lors de l\'écoulement d\'un courant de court-circuit à la terre sans risque pour la vie humaine.',
+        descEn: 'Formulation calculating the maximum tolerable step potential difference between two human feet spaced 1 meter apart on the switchyard ground surface during fault current dissipation.',
+        formula: 'E_{\\text{step70}} = \\frac{1000 + 6.0 \\cdot C_s \\cdot \\rho_s}{\\sqrt{t_s}} \\cdot 0.157',
+        formulaDescFr: 'Où Estep70 est la tension de pas admissible (V), Cs le facteur de réduction de surface du gravillon, ρs la résistivité du matériau superficiel (Ω·m), et ts la durée du défaut à la terre (s). Le coefficient 6,0 découle de la mise en série des résistances de contact des deux pieds (2 × 3 ρs).',
+        formulaDescEn: 'Where Estep70 is tolerable step voltage limit (V), Cs is gravel layer derating factor, ρs is surface layer resistivity (Ω·m), and ts is fault clearing time (s). The 6.0 factor reflects both feet connected in series with the ground surface (2 × 3 ρs).',
+        assumptionsFr: [
+          'Distance standardisée de 1,0 mètre entre les deux pieds lors d\'une foulée normale dans le poste.',
+          'Courant corporel traversant uniquement les membres inférieurs sans traverser le myocarde (seuil de fibrillation supérieur).',
+          'Gravillon exempt d\'accumulation de boue ou de sédiments conducteurs.'
+        ],
+        assumptionsEn: [
+          'Standardized 1.0 m pace distance between feet during human stride across switchyard gravel.',
+          'Body current path restricted to lower limbs without traversing cardiac tissues (higher fibrillation threshold).',
+          'Surface rock free of accumulated silt, mud, or standing conductive rainwater.'
+        ],
+        calcTab: 'earthing'
+      },
+      {
+        id: 'iec_62305_rolling_sphere_radius',
+        tabLabelFr: 'Sphère Roulante CEI 62305',
+        tabLabelEn: 'Rolling Sphere IEC 62305',
+        titleFr: 'Rayon de la Sphère Roulante pour la Protection Foudre selon la CEI 62305-3',
+        titleEn: 'Electrogeometrical Rolling Sphere Radius for Lightning Protection per IEC 62305-3',
+        descFr: 'Relation électrogéométrique reliant la distance d\'amorçage final du traceur foudre descendant à l\'intensité de crête du coup de foudre, définissant les zones de capture des paratonnerres.',
+        descEn: 'Electrogeometrical relationship defining final striking distance of downward lightning leader as a function of prospective peak stroke current, establishing physical lightning terminal capture volumes.',
+        formula: 'R_s = 10 \\cdot I_p^{0.65}',
+        formulaDescFr: 'Où Rs est le rayon de la sphère fictive roulante (m), et Ip l\'intensité de crête du premier coup de foudre (kA). Pour le niveau LPL I, Ip = 3 kA correspond à un rayon critique de Rs = 20 m. Pour LPL II, Rs = 30 m (Ip = 5 kA). Pour LPL III, Rs = 45 m (Ip = 10 kA). Pour LPL IV, Rs = 60 m (Ip = 16 kA).',
+        formulaDescEn: 'Where Rs is rolling sphere radius (m), and Ip is prospective peak lightning current (kA). For Lightning Protection Level I, Ip = 3 kA yields a critical sphere radius Rs = 20 m. For LPL II, Rs = 30 m (Ip = 5 kA). For LPL III, Rs = 45 m (Ip = 10 kA). For LPL IV, Rs = 60 m (Ip = 16 kA).',
+        assumptionsFr: [
+          'Modèle électrogéométrique d\'attraction d\'Armstrong et Whitehead validé expérimentalement par le CIGRE.',
+          'Toute surface touchée par la sphère roulant sur l\'installation sans toucher le sol est exposée à un impact direct.',
+          'Les structures situées sous les zones d\'ombre géométrique de la sphère sont totalement protégées.'
+        ],
+        assumptionsEn: [
+          'Armstrong-Whitehead electrogeometrical striking model verified through CIGRE international field observations.',
+          'Any switchyard surface contacted by the rolling sphere without ground contact is exposed to direct lightning impact.',
+          'Equipment situated within the geometric shadow beneath sphere contact envelopes is fully shielded.'
+        ],
+        calcTab: 'surge-arrester'
+      },
+      {
+        id: 'iec_60099_surge_arrester_energy',
+        tabLabelFr: 'Énergie Parafoudre ZnO',
+        tabLabelEn: 'Surge Arrester Energy',
+        titleFr: 'Énergie Thermique Absorbée par un Parafoudre ZnO lors d\'une Décharge selon CEI 60099-4',
+        titleEn: 'Thermal Energy Absorption Capability of Metal-Oxide Surge Arresters per IEC 60099-4',
+        descFr: 'Calcul de l\'énergie thermique volumique dissipée dans les blocs de varistance à oxyde de zinc lors de l\'écoulement d\'une surtension transitoire de foudre ou de manœuvre de ligne à vide.',
+        descEn: 'Analytical formulation calculating thermal energy dissipated across zinc-oxide varistor disks during transient atmospheric surge absorption or long transmission line switching discharge.',
+        formula: 'W_{\\text{abs}} = \\int_0^{\\tau} u(t) \\cdot i(t) \\, dt \\quad \\approx \\quad 1.15 \\cdot U_{\\text{res}} \\cdot I_{\\text{imp}} \\cdot T_{\\text{imp}} \\quad \\le \\quad W_{\\text{th\\_max}}',
+        formulaDescFr: 'Où Wabs est l\'énergie thermique totale absorbée (kJ), Ures la tension résiduelle de crête aux bornes du parafoudre pour le courant d\'onde considéré (kV), Iimp le courant de crête injecté (kA), Timp la durée effective de l\'onde (s), et Wth_max la capacité thermique nominale certifiée du parafoudre (exprimée en kJ/kV de tension assignée Ur, typiquement 4 à 10 kJ/kV).',
+        formulaDescEn: 'Where Wabs is total thermal energy absorbed (kJ), Ures is peak residual clamping voltage across arrester terminals (kV), Iimp is peak surge impulse current (kA), Timp is effective duration of impulse wave (s), and Wth_max is certified thermal energy rating (expressed in kJ/kV of rated voltage Ur, typically 4 to 10 kJ/kV).',
+        assumptionsFr: [
+          'Distribution uniforme du courant et de la température dans l\'ensemble du volume des pastilles ZnO.',
+          'Dissipation adiabatique : transfert thermique vers l\'enveloppe silicone négligeable durant la nanoseconde d\'impulsion.',
+          'Vérification de la marge thermique pour éviter l\'emballement thermique réversible ou la destruction par surchauffe.'
+        ],
+        assumptionsEn: [
+          'Uniform current and temperature distribution throughout the full cross-sectional volume of ZnO varistor disks.',
+          'Adiabatic energy absorption: heat transfer to external silicone housing is negligible during microsecond impulse.',
+          'Thermal safety margin verified to prevent thermal runaway under continuous operating system voltage.'
+        ],
+        calcTab: 'surge-arrester'
+      },
+      {
+        id: 'ieee_1584_arc_flash_incident_energy',
+        tabLabelFr: 'Énergie Arc Flash IEEE 1584',
+        tabLabelEn: 'IEEE 1584 Arc Flash Energy',
+        titleFr: 'Énergie Incidente Thermique d\'Arc Flash et Distance Limite selon IEEE 1584-2018',
+        titleEn: 'Arc Flash Thermal Incident Energy and Flash Protection Boundary per IEEE 1584-2018',
+        descFr: 'Calcul de l\'énergie thermique radiative et convective libérée par un arc électrique de court-circuit interne dans un tableau électrique reçue à la distance de travail d\'un opérateur.',
+        descEn: 'Empirical model calculating thermal radiant and convective incident energy released during an internal electrical arcing fault received at the operator\'s working distance.',
+        formula: 'E_i = 4.184 \\cdot C_f \\cdot E_n \\cdot \\left( \\frac{t_{\\text{arc}}}{0.2} \\right) \\cdot \\left( \\frac{610^{x}}{D^{x}} \\right)',
+        formulaDescFr: 'Où Ei est l\'énergie incidente à la distance de travail (J/cm² ou cal/cm² après division par 4,184), Cf le facteur de calcul (1,0 pour BT > 1 kV, 1,5 pour BT ≤ 1 kV), En l\'énergie incidente normalisée fonction du courant d\'arc franc Iarc et de l\'écartement des barres, tarc la durée de l\'arc (s, dépendante du temps de déclenchement du relais optique ou disjoncteur), D la distance de travail de l\'opérateur (mm, typiquement 457 à 914 mm), et x l\'exposant de distance lié à la configuration des électrodes (VCB, VCBB, HCB).',
+        formulaDescEn: 'Where Ei is incident energy at working distance (J/cm² or cal/cm² when divided by 4.184), Cf is calculation factor (1.0 for > 1 kV, 1.5 for ≤ 1 kV), En is normalized incident energy based on arcing current Iarc and electrode gap, tarc is arcing duration (s, dictated by optical detector and circuit breaker clearing time), D is operator working distance (mm, typically 457 to 914 mm), and x is distance exponent based on box configuration (VCB, VCBB, HCB).',
+        assumptionsFr: [
+          'Configuration des électrodes identifiée selon les 5 modèles IEEE 1584-2018 (barres verticales ou horizontales en coffret ouvert/fermé).',
+          'Courant d\'arc arborescent calculé à partir du courant de court-circuit franc triphasé présumé Isc.',
+          'Seuil de brûlure cutanée irréversible au deuxième degré fixé à 1,2 cal/cm² (5,0 J/cm²).'
+        ],
+        assumptionsEn: [
+          'Electrode configuration identified according to 5 IEEE 1584-2018 models (vertical or horizontal electrodes in box/open air).',
+          'Arcing current determined from prospective bolted 3-phase short-circuit current Isc and system voltage.',
+          'Second-degree irreversible skin burn threshold defined at 1.2 cal/cm² (5.0 J/cm²).'
+        ],
+        calcTab: 'arc-flash'
+      }
+    ],
+    sectionF: [
+      {
+        code: 'IEEE Std 80-2013',
+        tag: 'TERRE POSTES HTB',
+        titleFr: 'Guide IEEE pour la Sécurité de la Mise à la Terre des Postes Électriques à Courant Alternatif',
+        titleEn: 'IEEE Guide for Safety in AC Substation Grounding',
+        descFr: 'Référence mondiale absolue régissant le calcul des résistances de grilles maillées, des tensions de pas et de toucher tolérables et le dimensionnement thermique des conducteurs de terre.',
+        descEn: 'The definitive international benchmark for AC substation grounding grid design, tolerable touch and step potential thresholds, and earth conductor thermal sizing.'
+      },
+      {
+        code: 'CEI 62305 Suite (Parties 1 à 4)',
+        tag: 'PROTECTION FOUDRE',
+        titleFr: 'Protection contre la Foudre — Principes Généraux, Évaluation des Risques, Dommages Physiques et Systèmes Intérieurs',
+        titleEn: 'Protection Against Lightning — General Principles, Risk Management, Physical Damage, and Electronic Systems',
+        descFr: 'Norme internationale universelle régissant la méthode de la sphère roulante, les niveaux de protection LPL I à IV, les cages de Faraday et les mesures de protection contre les surtensions.',
+        descEn: 'Comprehensive lightning protection code defining rolling sphere radii, Lightning Protection Levels LPL I to IV, Faraday mesh grids, and internal surge protective measures.'
+      },
+      {
+        code: 'CEI 60099-4',
+        tag: 'PARAFOUDRES ZnO',
+        titleFr: 'Parafoudres — Parafoudres à Oxyde Métallique sans Éclateurs pour Réseaux à Courant Alternatif',
+        titleEn: 'Surge Arresters — Metal-Oxide Surge Arresters without Gaps for A.C. Systems',
+        descFr: 'Spécifie les caractéristiques assignées, les essais diélectriques, les niveaux de protection résiduelle Upl/Ups et la tenue thermique en énergie des parafoudres ZnO.',
+        descEn: 'Specifies rated characteristics, dielectric testing, residual voltage protective levels Upl/Ups, and thermal energy absorption withstand for gapless zinc-oxide surge arresters.'
+      },
+      {
+        code: 'IEEE 1584-2018 & NFPA 70E',
+        tag: 'SÉCURITÉ ARC FLASH',
+        titleFr: 'Guide IEEE pour les Calculs de Risque d\'Arc Électrique & Norme pour la Sécurité Électrique sur le Lieu de Travail',
+        titleEn: 'IEEE Guide for Performing Arc-Flash Hazard Calculations & Standard for Electrical Safety in the Workplace',
+        descFr: 'Modèle mathématique mondial régissant la prédiction de l\'énergie thermique d\'arc flash, la délimitation des périmètres de sécurité et les catégories d\'équipements de protection individuelle (EPI).',
+        descEn: 'Standardized empirical formulas predicting arc flash thermal incident energy, flash protection boundary boundaries, and mandatory Personal Protective Equipment (PPE) categories.'
+      },
+      {
+        code: 'NF C 15-100 (Partie 4-41) & UTE C 18-510',
+        tag: 'RÉGIMES DE NEUTRE & HABILITATION',
+        titleFr: 'Installations Électriques à Basse Tension — Protection contre les Chocs Électriques & Recueil de Prescriptions de Sécurité',
+        titleEn: 'Low-Voltage Electrical Installations — Protection Against Electric Shock & Electrical Safety Work Practices',
+        descFr: 'Régit les règles d\'équipotentialité, les régimes de neutre TT/TN/IT, les coupures automatiques par DDR et disjoncteurs, et les conditions réglementaires d\'habilitation des intervenants.',
+        descEn: 'Governs equipotential bonding rules, TT/TN/IT earthing schemes, automatic disconnection of supply, and formal electrician safety qualification certifications.'
+      },
+      {
+        code: 'CEI 60071-1 & CEI 60071-2',
+        tag: 'COORDINATION DE L\'ISOLEMENT',
+        titleFr: 'Coordination de l\'Isolement — Définitions, Principes et Règles — Guide d\'Application',
+        titleEn: 'Insulation Coordination — Definitions, Principles and Rules — Application Guide',
+        descFr: 'Fixe la sélection rigoureuse des niveaux d\'isolement assignés aux chocs de foudre (BIL) et de manœuvre (BSL) des matériels HTB en corrélation avec la protection par parafoudres.',
+        descEn: 'Defines insulation level selection criteria for high-voltage equipment against lightning (BIL) and switching surges (BSL) in direct correlation with surge arrester protective levels.'
+      }
+    ]
   }
 };
 
