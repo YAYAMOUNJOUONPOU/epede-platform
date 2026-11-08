@@ -379,3 +379,42 @@ All notable changes, engineering refactors, and technical enhancements across th
     - IEC 60834-1 (Teleprotection equipment of power systems - Performance and testing).
     - ITU-T G.652 & G.8131 (Single-mode optical fiber characteristics & linear protection switching for MPLS-TP).
     - IEEE Std 1138 (Testing and performance for optical ground wire OPGW for utility lines).
+
+### Domain 14 (D14) - Power Quality & Electromagnetic Compatibility (EMC) Transformation
+- Populated previously missing pedagogical framework in `domainPedagogicalContentRegistry.ts` directly at 97% master standard:
+  - **Section A**: Formulated power quality boundaries (harmonic orders 2 to 50, THDu ≤ 5% per IEC 61000-2-4 Class 2, dynamic reactive target cos φ ≥ 0.96, Akagi instantaneous p-q active filtering, and high-frequency meshed EMC grounding).
+  - **Section B**: Documented 5 canonical power quality and harmonic mitigation architectures:
+    1. **Batterie de Condensateurs Shunt HTA / BT avec Selfs d'Anti-Résonance (Gradins Détunés)** (Automatically staged steps 1:2:2:4, three-phase detuning reactors p = 7% 189 Hz or p = 14% 134 Hz, parallel LC resonance prevention for Douala-Bassa / Bonabéri industries).
+    2. **Filtre Actif de Puissance Shunt (SAPF / APF) à Technologie IGBT/SiC & Algorithme p-q d'Akagi** (4-quadrant 20 kHz PWM inverter, wideband Rogowski measurement, sub-5ms anti-phase harmonic cancellation from 45% to < 3% THDi).
+    3. **Compensateur Statique Réversible de Réseau HTB 225 kV (STATCOM MMC & SVC TCR/TSC)** (Modular Multilevel Converter MMC with floating capacitors delivering ±50 to ±200 MVAr in < 10 ms, transmission voltage stabilization at Nomayos/Mangombé).
+    4. **Conditionneur Numérique Unifié de Qualité de Réseau Série-Shunt (UPQC & DVR Creux de Tension)** (Series inverter injecting restoring vector voltage in < 2 ms for sags up to 70% depth, combined with shunt harmonic/PF filter).
+    5. **Infrastructure CEM Intégrée, Filtres de Ligne RFI & Topologie de Masse Maillée (CEI 61000-5-2)** (Physical cable segregation into 4 disturbance classes, continuous grounded metallic trays, 360° shield bonding, and HF mesh ground grid).
+  - **Section C**: Added 6 core power quality and EMC apparatus with authentic equipment registry citations:
+    - Class A Power Quality & Energy Analyzer Chauvin Arnoux CA 8336 / Fluke 435-II (`eq-exp-pqa-class-a`).
+    - MV 24 kV Detuned Anti-Harmonic Reactor Trench / Schneider Electric (`eq-exp-detuned-reactor-mv`).
+    - Shunt Active Harmonic Filter (AHF) 400 V 300 A Schneider AccuSine / Danfoss (`eq-exp-active-harmonic-filter`).
+    - High-Voltage STATCOM MMC Power Converter Siemens SVC PLUS / Hitachi Energy (`eq-exp-statcom-inverter-chain`).
+    - Industrial 3-Phase RFI/EMI Line Noise Filter Schaffner FN 3280 / TDK Epcos (`eq-exp-emc-line-filter`).
+    - Dynamic Voltage Restorer (DVR) Series Sag Mitigator ABB PCS100 / Schneider (`eq-exp-voltage-sag-mitigator`).
+  - **Section D**: Expanded power quality engineering methodology to 7 sequential phases:
+    1. Site Power Quality Measurement Campaign & Metrological Audit (IEC 61000-4-30 Class A, 7-day logging, THD/sags/flicker).
+    2. Spectral Analysis, THD Calculation & LC Anti-Resonance Simulation (ETAP/DIgSILENT harmonic scan, detuning factor p determination).
+    3. Reactive Power Sizing & Capacitor Step Specification (ΔQ sizing for target cos φ 0.96, staged progression, dielectric overvoltage).
+    4. Harmonic Filter Engineering (Detuned passive reactors p=7%/14%, Class H thermal rating, active filter RMS/peak current sizing).
+    5. EMC Site Layout, Cable Segregation & Meshed Ground Grid Design (IEC 61000-5-2 layout, 4-class segregation, 360° shield bonding).
+    6. Commissioning Tests, Inrush Transient Verification & Harmonic Audit (Oscillographic inrush supervision, THD attenuation validation).
+    7. Permanent Online Monitoring, Thermal Auditing & Grid Code Compliance (SCADA/EMS PQA telemetry, automated utility limit alarms).
+  - **Section E**: Integrated 6 LaTeX mathematical formulations:
+    - Total Harmonic Voltage and Current Distortion Formulation ($THD_u = \frac{\sqrt{\sum U_h^2}}{U_1} \times 100\%$, $THD_i$ per IEC 61000-2-4 / IEEE 519).
+    - Parallel LC Anti-Resonance Frequency & Detuning Factor per IEC 61642 ($f_r = f_1 \sqrt{\frac{S_{sc}}{Q_c}}$, $p = (f_1/f_r)^2$).
+    - Residual Voltage and Depth Calculation during System Voltage Sags ($U_{\text{sag}}\% = (1 - \frac{Z_{\text{source}}}{Z_{\text{source}} + Z_{\text{défaut}}}) \times 100\%$ per IEC 61000-4-11).
+    - True Power Factor Decomposition under Distorted Harmonic Conditions ($PF_{\text{true}} = \frac{\cos \varphi_1}{\sqrt{1 + THD_i^2}}$).
+    - Transformer Harmonic Heating K-Factor Calculation per IEEE C57.110 ($K = \sum I_h^2 h^2$).
+    - Reactive Power Compensation Sizing for Power Factor Correction ($\Delta Q = P \cdot (\tan \varphi_1 - \tan \varphi_2)$).
+  - **Section F**: Sourced 6 international and normative standards:
+    - IEC 61000-4-30 Class A (Power quality measurement methods).
+    - IEEE Std 519-2022 (Harmonic control in electric power systems).
+    - IEC 61000-2-4 (Compatibility levels in industrial plants for low-frequency conducted disturbances).
+    - IEC 61642 (Industrial a.c. networks affected by harmonics - Application of filters and shunt capacitors).
+    - IEEE Std 1159 (Monitoring electric power quality).
+    - IEEE C57.110 (Establishing transformer capability supplying non-sinusoidal load currents).

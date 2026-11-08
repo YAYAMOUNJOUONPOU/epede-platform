@@ -3570,6 +3570,421 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
     ]
   },
 
+  // D14: Qualité de l'Énergie, Harmoniques, Compensation Réactive & Compatibilité Électromagnétique (EMC)
+  D14: {
+    domainCode: 'D14',
+    sectionA: {
+      roleFr: "Maîtrise de la qualité de l'onde de tension et de courant dans les réseaux électriques industriels et de transport (HTB/HTA/BT) : compensation dynamique de l'énergie réactive (cos φ), atténuation des distorsions harmoniques (THDu ≤ 5%, THDi per IEEE 519), élimination des phénomènes d'anti-résonance parallèle LC par selfs d'anti-harmoniques, stabilisation de tension par compensateurs rapides STATCOM/SVC, remédiation des creux de tension (voltage sags) et du papillotement (flicker), et blindage électromagnétique CEM selon la série normalisée CEI 61000.",
+      roleEn: 'Power system waveform quality control and electromagnetic compatibility (EMC) across transmission, industrial distribution, and utilization networks (HV/MV/LV): dynamic reactive power compensation (target displacement factor cos φ ≥ 0.95), mitigation of harmonic voltage and current distortions (THDu ≤ 5%, IEEE 519 compliance), prevention of dangerous LC parallel anti-resonance via detuning reactors, high-speed voltage stabilization via STATCOM/SVC, voltage sag and flicker attenuation, and strict EMC shielding per the IEC 61000 standards suite.',
+      inputsFr: {
+        title: 'Tensions et Courants Distordus par Charges Non-Linéaires',
+        desc: 'Tensions triphasées et courants de charge pollués par variateurs de vitesse VFD à pont 6 ou 12 impulsions, fours à arc de fonderie, onduleurs solaires, redresseurs de traction, transitoires d\'enclenchement de bancs de condensateurs et harmoniques de réseau.',
+        voltage: 'HTB 225/90 kV • HTA 15/30 kV • BT 400 V • Spectres harmoniques rang 2 à 50'
+      },
+      inputsEn: {
+        title: 'Non-Linear Industrial Distorted Voltages & Harmonic Currents',
+        desc: 'Distorted three-phase voltages and non-sinusoidal load currents injected by 6/12-pulse variable frequency drives, steel plant electric arc furnaces, utility solar PV inverters, traction rectifiers, capacitor switching transients, and background grid harmonic voltage pollution.',
+        voltage: 'HV 225/90 kV • MV 15/30 kV • LV 400 V • Harmonic spectra orders 2 to 50'
+      },
+      processFr: {
+        title: 'Filtrage Actif p-q d\'Akagi, Désaccordage LC & Compensation STATCOM',
+        desc: 'Analyse spectrale temps réel par Transformée de Fourier Rapide (FFT) synchrone sur 10/12 cycles (CEI 61000-4-30 Classe A), calcul des composantes de puissance active P, réactive fondamentale Q1 et déformante D, injection de contre-harmoniques en opposition de phase par onduleurs shunt IGBT (théorie p-q), amortissement de résonance par selfs désaccordées p = 7% ou 14%, et injection réactive dynamique STATCOM sous 10 ms.',
+        note: 'Atténuation du taux de distorsion harmonique global en tension au point de livraison : THDu ≤ 3.0 à 5.0% (CEI 61000-2-4 Classe 2)'
+      },
+      processEn: {
+        title: 'Akagi Instantaneous p-q Active Filtering, LC Detuning & STATCOM VAr Injection',
+        desc: 'Real-time synchronous Fast Fourier Transform (FFT) spectral decomposition over 10/12 cycles (IEC 61000-4-30 Class A), computation of active P, fundamental reactive Q1, and distortion D powers, dynamic anti-phase harmonic cancellation via IGBT shunt active power filters (p-q theory), resonance suppression via detuning reactors p = 7% or 14%, and sub-10ms STATCOM dynamic reactive injection.',
+        note: 'Point of Common Coupling harmonic voltage distortion compliance: THDu ≤ 3.0 to 5.0% (IEC 61000-2-4 Class 2)'
+      },
+      outputsFr: {
+        title: 'Tension Sinusoïdale Pure, Cos φ Optimisé & Protection Thermique',
+        desc: 'Rétablissement d\'une onde de tension rigoureusement sinusoïdale, relèvement du facteur de puissance réel (True PF ≥ 0.96) sans risque de pénalité tarifaire, réduction drastique de l\'échauffement des transformateurs (abaissement du facteur K), suppression des déclenchements intempestifs d\'automates et immunité CEM certifiée.',
+        earthing: 'Réseau de masse maillé à très faible impédance HF selon CEI 61000-5-2 avec reprise de blindage des câbles à 360° et barres d\'équipotentialité CEM'
+      },
+      outputsEn: {
+        title: 'Pristine Sinusoidal Waveforms, Elevated Power Factor & Thermal Relief',
+        desc: 'Restoration of pristine sinusoidal voltage waveforms, elevation of true power factor (True PF ≥ 0.96) eliminating utility reactive penalties, drastic reduction in transformer eddy-current heating (K-factor reduction), elimination of spurious PLC/relay trips, and certified EMC immunity.',
+        earthing: 'Low-impedance high-frequency mesh earthing network per IEC 61000-5-2 with 360° circumferential cable shield bonding and dedicated EMC bonding bars'
+      }
+    },
+    sectionB: {
+      summaryFr: 'Architectures de dépollution harmonique et compensation réactive : gradins de condensateurs automatiques avec selfs d\'anti-résonance, filtres actifs shunt IGBT, compensateurs rapides STATCOM/SVC, conditionneurs série-shunt UPQC/DVR et infrastructure CEM maillée.',
+      summaryEn: 'Power quality and harmonic mitigation architectures: detuned automatic capacitor banks with anti-resonance reactors, IGBT shunt active filters, STATCOM/SVC high-speed compensators, UPQC/DVR series-shunt conditioners, and meshed EMC grounding infrastructures.',
+      architectures: [
+        {
+          nameFr: 'Batterie de Condensateurs Shunt HTA / BT avec Selfs d\'Anti-Résonance (Gradins Détunés)',
+          nameEn: 'Detuned Shunt Capacitor Banks with Anti-Resonance Reactors (MV / LV Auto-Graded)',
+          techFr: 'Gradins échelonnés automatiques (1:2:2:4) avec selfs triphasées de désaccordage p = 7% (189 Hz) ou p = 14% (134 Hz)',
+          techEn: 'Automatically staged steps (1:2:2:4) with three-phase detuning reactors p = 7% (189 Hz) or p = 14% (134 Hz)',
+          descFr: 'Système de compensation de puissance réactive par condensateurs tout-ou-rien échelonnés par un régulateur varmétrique numérique. L\'adjonction en série d\'une self d\'anti-résonance abaisse la fréquence d\'accord du circuit LC sous le rang harmonique le plus bas (rang 5 à 250 Hz ou rang 3 à 150 Hz), empêchant formellement toute résonance destructrice avec l\'inductance du transformateur source. Solution standard pour les sites industriels lourds de Douala-Bassa et Bonabéri.',
+          descEn: 'Reactive power compensation system featuring stepped capacitor banks switched automatically by a numerical varmetric controller. The series addition of a detuning reactor tunes the natural frequency of the LC branch below the lowest dominant harmonic order (5th harmonic 250 Hz or 3rd harmonic 150 Hz), strictly preventing catastrophic parallel resonance amplification with the upstream transformer inductance. Standard solution across heavy industrial plants in Douala and Limbe.',
+          standard: 'CEI 61642 / CEI 60871-1',
+          metricFr: 'Facteur de puissance cible : cos φ ≥ 0.96 • Taux de désaccord p : 7% (189 Hz) ou 14% (134 Hz)',
+          metricEn: 'Target power factor: cos φ ≥ 0.96 • Detuning factor p: 7% (189 Hz) or 14% (134 Hz)'
+        },
+        {
+          nameFr: 'Filtre Actif de Puissance Shunt (SAPF / APF) à Technologie IGBT/SiC & Algorithme p-q d\'Akagi',
+          nameEn: 'Shunt Active Power Filter (APF) with IGBT/SiC Inverters & Instantaneous p-q Theory',
+          techFr: 'Onduleur 4-quadrants à modulation PWM 20 kHz mesurant les courants pollués et injectant des contre-harmoniques',
+          techEn: '4-quadrant 20 kHz PWM inverter measuring load distortion and dynamically synthesizing anti-phase harmonics',
+          descFr: 'Appareil d\'électronique de puissance raccordé en parallèle au tableau général basse tension (TGBT). Il calcule en temps réel par capteurs Rogowski à large bande passante les courants harmoniques (rangs 2 à 50) et le courant réactif fondamental, puis commande ses ponts de puissance IGBT/SiC pour injecter exactement le contre-courant opposé en moins de 5 millisecondes. Permet d\'abaisser le THDi d\'une usine de 45% à moins de 3% sans aucun risque de surtension.',
+          descEn: 'Power electronics device connected in parallel with the main low-voltage switchboard (TGBT). It continuously calculates real-time harmonic currents (orders 2 to 50) and fundamental reactive currents via wideband Rogowski coils, commanding its IGBT/SiC power bridges to inject exact cancelling anti-phase currents within 5 milliseconds. Successfully lowers an industrial plant\'s THDi from 45% to below 3% with zero risk of capacitive resonance.',
+          standard: 'CEI 61000-3-4 / IEEE Std 519-2022',
+          metricFr: 'Temps de réponse dynamique : < 5 ms • Réduction THDi : de 45% à < 3% • Rangs filtrés : 2 à 50',
+          metricEn: 'Dynamic response time: < 5 ms • THDi reduction: from 45% to < 3% • Filtered orders: 2 to 50'
+        },
+        {
+          nameFr: 'Compensateur Statique Réversible de Réseau HTB 225 kV (STATCOM MMC & SVC TCR/TSC)',
+          nameEn: 'High-Voltage 225 kV Grid STATCOM (MMC Modular Multilevel) & Static VAr Compensator (SVC)',
+          techFr: 'Convertisseur multi-niveaux modulaire MMC à IGBTs et condensateurs flottants délivrant ±50 à ±200 MVAr',
+          techEn: 'Modular Multilevel Converter (MMC) with IGBT sub-modules and floating capacitors delivering ±50 to ±200 MVAr',
+          descFr: 'Équipement FACTS (Flexible AC Transmission System) interconnecté aux nœuds stratégiques du réseau de transport 225 kV camerounais (postes de Nomayos, Mangombé ou Bekoko). Les modules MMC commutent à haute fréquence pour injecter ou absorber de la puissance réactive de manière ultra-rapide et continue en moins de 10 millisecondes, stabilisant la tension réseau lors de l\'enclenchement de fortes charges ou amortissant les oscillations inter-zones après déclenchement d\'une ligne.',
+          descEn: 'Flexible AC Transmission System (FACTS) installation deployed at critical nodes on the 225 kV transmission backbone (Nomayos, Mangombé, or Bekoko substations). Modular Multilevel Converter (MMC) submodules operate at high frequency to continuously inject or absorb reactive power within 10 milliseconds, clamping transmission grid voltage during heavy industrial load switching and damping inter-area power oscillations following transmission line tripping.',
+          standard: 'IEEE Std 1052 / CIGRE TB 730 / CEI 62501',
+          metricFr: 'Temps de réponse Volt-VAr : < 10 ms • Plage continue : ±50 à ±200 MVAr • Régulation tension : ±1%',
+          metricEn: 'Volt-VAr response time: < 10 ms • Continuous range: ±50 to ±200 MVAr • Voltage regulation: ±1%'
+        },
+        {
+          nameFr: 'Conditionneur Numérique Unifié de Qualité de Réseau Série-Shunt (UPQC & DVR Creux de Tension)',
+          nameEn: 'Unified Power Quality Conditioner (UPQC) & Dynamic Voltage Restorer (DVR)',
+          techFr: 'Association coordonnée d\'un onduleur série (compensation de tension) et d\'un onduleur shunt (compensation de courant)',
+          techEn: 'Coordinated topology uniting series inverter (voltage compensation) and shunt inverter (current compensation)',
+          descFr: 'Système complet de protection des charges industrielles hautement sensibles contre l\'ensemble des perturbations de l\'onde électrique. L\'onduleur série injecte instantanément (< 2 ms) une tension vectorielle de secours pour compenser les creux de tension profonds (voltage sags jusqu\'à 70% de chute pendant 1 seconde causés par courts-circuits lointains), tandis que l\'onduleur shunt élimine les harmoniques de courant et compense le facteur de puissance.',
+          descEn: 'Comprehensive power quality conditioning system protecting hyper-sensitive industrial processes against electrical waveform disturbances. The series inverter injects an instantaneous (< 2 ms) restoring vector voltage to ride through deep voltage sags (up to 70% voltage drop lasting 1 second triggered by remote transmission faults), while the shunt inverter cancels current harmonics and maintains unity power factor.',
+          standard: 'IEEE Std 1159 / CEI 61000-4-11',
+          metricFr: 'Temps d\'injection tension série : < 2 ms • Compensation creux de tension : jusqu\'à 70% de chute',
+          metricEn: 'Series injection response: < 2 ms • Sag ride-through depth: up to 70% voltage drop'
+        },
+        {
+          nameFr: 'Infrastructure CEM Intégrée, Filtres de Ligne RFI & Topologie de Masse Maillée (CEI 61000-5-2)',
+          nameEn: 'Comprehensive Substation & Industrial EMC Shielding with RFI Filters and Mesh Grounding',
+          techFr: 'Ségrégation spatiale des câbles par classes de perturbation, filtres passe-bas RFI et réseau de masse maillé HF',
+          techEn: 'Physical cable segregation into disturbance classes, industrial RFI line filters, and high-frequency meshed ground grid',
+          descFr: 'Règles d\'ingénierie physique et électromagnétique pour l\'immunité des postes électriques et usines automatisées : séparation physique en 4 classes de câbles (Classe 1 signaux analogiques sensibles, Classe 2 contrôle TOR 24/48V, Classe 3 puissance BT, Classe 4 câbles HTB/HTA), cheminements métalliques continus mis à la masse aux deux extrémités, reprise des blindages à 360° par presse-étoupes CEM et réseau de terre maillé annulant les boucles de masse inductives.',
+          descEn: 'Physical and electromagnetic engineering guidelines guaranteeing total noise immunity across digital substations and industrial plants: physical separation into 4 cable disturbance classes (Class 1 sensitive analog signals, Class 2 24/48V digital control, Class 3 LV power, Class 4 HV/MV cables), continuous metallic tray bonding grounded at both ends, 360° circumferential shield bonding via EMC cable glands, and high-frequency mesh ground grids eliminating inductive ground loops.',
+          standard: 'CEI 61000-5-2 / CEI 61000-6-2 / CEI 61000-6-4',
+          metricFr: 'Atténuation transitoires EFT/Surge : > 40 dB • Impédance de boucle HF : < 0.1 Ω',
+          metricEn: 'EFT/Surge transient attenuation: > 40 dB • High-frequency ground loop impedance: < 0.1 Ω'
+        }
+      ]
+    },
+    sectionC: [
+      {
+        id: 'eq-exp-pqa-class-a',
+        nameFr: 'Analyseur Triphasé de Qualité de Réseau Électrique Classe A (Chauvin Arnoux CA 8336 / Fluke 435-II)',
+        nameEn: 'Class A Power Quality & Energy Analyzer (Chauvin Arnoux CA 8336 / Fluke 435-II)',
+        voltage: 'Tension jusqu\'à 1 000 V RMS • Courant jusqu\'à 10 000 A • Précision Classe A CEI 61000-4-30',
+        roleFr: 'Audit métrologique légal et contractuel des perturbations électriques : calcul du THDu et THDi jusqu\'au rang 50, capture des transitoires d\'enclenchement à 200 kHz, mesure du flicker Pst/Plt, détection des creux et surtensions et évaluation du cos φ.',
+        roleEn: 'Statutory metrological auditing of power quality disturbances: THDu and THDi computation up to 50th order, 200 kHz transient capture, Pst/Plt flicker measurement, sag/swell detection, and true power factor evaluation.',
+        symbol: 'PQA-CLASS-A',
+        standard: 'CEI 61000-4-30 Classe A / CEI 61000-4-7',
+        imgUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-detuned-reactor-mv',
+        nameFr: 'Self Triphasée d\'Anti-Résonance HTA 24 kV Classe H (Trench / Schneider Electric)',
+        nameEn: 'MV 24 kV Detuned Anti-Harmonic Reactor (Trench / Schneider Electric)',
+        voltage: 'Tension assignée 24 kV • Puissance associée 500 à 2 000 kVAr • Facteur p = 7% ou 14%',
+        roleFr: 'Décalage de la fréquence de résonance propre du circuit LC sous le rang 5 (189 Hz pour p = 7%) ou rang 3 (134 Hz pour p = 14%), immunisant les batteries de condensateurs contre la destruction par résonance harmonique.',
+        roleEn: 'Tuning the natural frequency of the LC branch below the 5th harmonic (189 Hz for p = 7%) or 3rd harmonic (134 Hz for p = 14%), protecting shunt capacitor banks against destructive parallel harmonic resonance.',
+        symbol: 'L-DETUNED',
+        standard: 'CEI 60076-6 / CEI 61642',
+        imgUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'pfc'
+      },
+      {
+        id: 'eq-exp-active-harmonic-filter',
+        nameFr: 'Filtre Actif d\'Harmoniques Shunt IGBT 400 V 300 A (Schneider AccuSine PCSn / Danfoss)',
+        nameEn: 'Shunt Active Harmonic Filter (AHF) 400 V 300 A (Schneider AccuSine / Danfoss)',
+        voltage: 'Tension 400 V triphasé • Courant de compensation 300 A • Découpage PWM 20 kHz',
+        roleFr: 'Génération instantanée en opposition de phase des courants harmoniques rangs 2 à 50 mesurés sur le TGBT par capteurs Rogowski, annulant la distorsion harmonique globale THDi et relevant le cos φ fondamental.',
+        roleEn: 'Instantaneous anti-phase synthesis of harmonic currents orders 2 to 50 measured via wideband Rogowski sensors at the main switchboard, cancelling total harmonic current distortion THDi and optimizing power factor.',
+        symbol: 'AHF-SH',
+        standard: 'IEEE Std 519 / CEI 61000-3-4',
+        imgUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'pfc'
+      },
+      {
+        id: 'eq-exp-statcom-inverter-chain',
+        nameFr: 'Chaîne de Conversion STATCOM HTB MMC à Condensateurs Flottants (Siemens SVC PLUS / Hitachi)',
+        nameEn: 'High-Voltage STATCOM MMC Power Converter (Siemens SVC PLUS / Hitachi Energy)',
+        voltage: 'Tension de raccordement 15 à 225 kV • Puissance continue dynamique ±50 à ±200 MVAr',
+        roleFr: 'Régulation dynamique continue de tension au nœud de transport 225 kV, injection ou absorption de puissance réactive en moins de 10 millisecondes et amortissement des oscillations de puissance de réseau (POD).',
+        roleEn: 'Continuous high-speed dynamic voltage regulation at 225 kV transmission nodes, sub-10ms reactive power injection/absorption, and inter-area power oscillation damping (POD).',
+        symbol: 'STATCOM',
+        standard: 'IEEE Std 1052 / CEI 62501',
+        imgUrl: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-emc-line-filter',
+        nameFr: 'Filtre Industriel d\'Entrée RFI/EMI Antiparasite Triphasé (Schaffner FN 3280 / TDK Epcos)',
+        nameEn: 'Industrial 3-Phase RFI/EMI Line Noise Filter (Schaffner FN 3280 / TDK Epcos)',
+        voltage: 'Tension nominale 480 Vca • Courant assigné 100 à 600 A • Atténuation > 60 dB',
+        roleFr: 'Atténuation des perturbations électromagnétiques conduites différentielles et de mode commun générées par le découpage haute fréquence des variateurs de vitesse et redresseurs industriels sur le réseau basse tension.',
+        roleEn: 'Suppression of high-frequency conducted differential and common-mode electromagnetic interference generated by VFD PWM switching and industrial rectifiers onto the low-voltage supply network.',
+        symbol: 'FILT-EMC',
+        standard: 'CEI 61000-6-4 / EN 55011 Classe A',
+        imgUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-voltage-sag-mitigator',
+        nameFr: 'Régulateur Dynamique de Tension Série DVR pour Creux de Tension (ABB PCS100 / Schneider)',
+        nameEn: 'Dynamic Voltage Restorer (DVR) Series Sag Mitigator (ABB PCS100 / Schneider)',
+        voltage: 'Puissance 500 kVA à 3 MVA • Temps de réponse < 2 ms • Compensation creux jusqu\'à 70%',
+        roleFr: 'Injection série instantanée d\'une tension vectorielle d\'appoint pour maintenir une alimentation continue et stable des processus industriels sensibles pendant les creux de tension causés par des défauts réseau externes.',
+        roleEn: 'Instantaneous series injection of restoring vector voltage to maintain continuous power stability for sensitive industrial automation processes during grid voltage sags caused by remote faults.',
+        symbol: 'DVR-UNIT',
+        standard: 'CEI 61000-4-11 / IEEE Std 1159',
+        imgUrl: 'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'voltage-drop'
+      }
+    ],
+    sectionD: [
+      {
+        phase: '01',
+        titleFr: 'Campagne de Mesures & Audit Métrologique sur Site (CEI 61000-4-30)',
+        titleEn: 'Site Power Quality Measurement Campaign & Metrological Audit (IEC 61000-4-30)',
+        descFr: 'Déploiement d\'un analyseur de réseau Classe A pendant une semaine représentative d\'activité industrielle : cartographie du profil de charge, spectres harmoniques U et I jusqu\'au rang 50, creux de tension et flicker Pst/Plt.',
+        descEn: 'Deploying a certified Class A power quality analyzer over a representative 7-day industrial operating cycle: logging load profiles, voltage and current harmonic spectra up to 50th order, voltage sags, and Pst/Plt flicker indices.'
+      },
+      {
+        phase: '02',
+        titleFr: 'Analyse Spectrale, Calcul du THD & Simulation d\'Anti-Résonance LC',
+        titleEn: 'Spectral Analysis, THD Calculation & LC Anti-Resonance Simulation',
+        descFr: 'Modélisation du réseau électrique sous logiciel de simulation (ETAP / DIgSILENT) : calcul des fréquences de résonance parallèle entre transformateur source et condensateurs, et détermination du taux de désaccord p nécessaire.',
+        descEn: 'Power system modeling using analytical suites (ETAP / DIgSILENT): computing parallel anti-resonance frequencies between source transformer inductance and power factor capacitors, determining required reactor detuning factor p.'
+      },
+      {
+        phase: '03',
+        titleFr: 'Dimensionnement de la Puissance Réactive & Spécification des Gradins',
+        titleEn: 'Reactive Power Sizing & Capacitor Step Specification',
+        descFr: 'Calcul de la puissance réactive requise ΔQ = P · (tan φ1 - tan φ2) pour atteindre le cos φ cible (ex. 0.96), étagement des gradins (ex. 1:2:2:4) et calcul des contraintes diélectriques sur condensateurs.',
+        descEn: 'Calculating required reactive compensation ΔQ = P · (tan φ1 - tan φ2) to reach target cos φ (e.g., 0.96), designing stage progression (e.g., 1:2:2:4), and auditing dielectric overvoltage ratings across capacitor cells.'
+      },
+      {
+        phase: '04',
+        titleFr: 'Ingénierie des Filtres Harmoniques (Passifs Détunés ou Actifs Shunt)',
+        titleEn: 'Harmonic Filter Engineering (Detuned Passive & Active Shunt)',
+        descFr: 'Spécification des selfs d\'anti-résonance (taux p = 7% ou 14%), dimensionnement thermique classe H et choix du filtre actif (courant nominal d\'annulation harmonique en régime permanent et de crête).',
+        descEn: 'Specifying detuned anti-resonance reactors (factor p = 7% or 14%), Class H thermal rating, and selecting active harmonic filter ratings (steady-state RMS and peak harmonic cancellation currents).'
+      },
+      {
+        phase: '05',
+        titleFr: 'Implantation CEM, Ségrégation des Câbles & Mise à la Terre Maillée',
+        titleEn: 'EMC Site Layout, Cable Segregation & Meshed Ground Grid Design',
+        descFr: 'Élaboration du plan de compatibilité électromagnétique de site selon CEI 61000-5-2 : ségrégation des câbles de puissance et signaux dans des caniveaux séparés, mise à la terre des blindages à 360° et liaisons équipotentielles.',
+        descEn: 'Developing the site electromagnetic compatibility plan per IEC 61000-5-2: physical segregation of power and signal cabling into isolated metallic trays, 360° circumferential shield earthing, and equipotential bonding.'
+      },
+      {
+        phase: '06',
+        titleFr: 'Essais de Mise en Service, Contrôle d\'Enclenchement & Harmoniques',
+        titleEn: 'Commissioning Tests, Inrush Transient Verification & Harmonic Audit',
+        descFr: 'Manœuvres d\'enclenchement des gradins de condensateurs sous surveillance oscillographique, contrôle de l\'absence de surtension transitoire, vérification de l\'atténuation du THD et validation du filtre actif.',
+        descEn: 'Stepwise energization of capacitor stages under oscillographic supervision, auditing inrush transient overvoltages, confirming THD attenuation across all operating modes, and commissioning active filters.'
+      },
+      {
+        phase: '07',
+        titleFr: 'Monitoring Permanent, Surveillance Thermique & Conformité Contrat Réseau',
+        titleEn: 'Permanent Online Monitoring, Thermal Auditing & Grid Code Compliance',
+        descFr: 'Intégration des télémesures PQA dans le système de supervision d\'usine (SCADA/EMS), alertes automatiques en cas de dépassement des limites contractuelles SONATREL/ENEO et suivi du vieillissement des condensateurs.',
+        descEn: 'Interfacing permanent power quality monitors with the plant EMS/SCADA, setting automated alarms upon exceeding contractual utility harmonic limits, and trending capacitor aging and reactor thermal health.'
+      }
+    ],
+    sectionE: [
+      {
+        id: 'thd_calculation_formula',
+        tabLabelFr: 'Taux de Distorsion Harmonique THD',
+        tabLabelEn: 'Total Harmonic Distortion THD',
+        titleFr: 'Formulation Normative du THDu et THDi selon CEI 61000-2-4 / IEEE 519',
+        titleEn: 'Total Harmonic Voltage and Current Distortion Formulation (IEC 61000-2-4 / IEEE 519)',
+        descFr: 'Quantification normalisée de la pollution harmonique totale en tension et en courant par rapport à l\'onde fondamentale à 50 Hz. Les limites normatives imposent généralement THDu ≤ 5% au point de livraison HTA.',
+        descEn: 'Standardized quantitative index measuring composite harmonic pollution in voltage and current relative to the 50 Hz fundamental waveform. Normative grid codes mandate THDu ≤ 5% at the Point of Common Coupling.',
+        formula: 'THD_u = \\frac{\\sqrt{\\sum_{h=2}^{50} U_h^2}}{U_1} \\times 100\\% \\quad ; \\quad THD_i = \\frac{\\sqrt{\\sum_{h=2}^{50} I_h^2}}{I_1} \\times 100\\%',
+        formulaDescFr: 'Avec Uh la valeur efficace de la composante harmonique de tension de rang h (mesurée jusqu\'au rang 50 soit 2 500 Hz en 50 Hz), U1 la tension fondamentale efficace, Ih le courant harmonique efficace de rang h, et I1 le courant fondamental de charge.',
+        formulaDescEn: 'Where Uh is RMS magnitude of the harmonic voltage component of order h (computed up to order 50 or 2,500 Hz at 50 Hz), U1 is fundamental RMS voltage, Ih is harmonic current component of order h, and I1 is fundamental load current.',
+        assumptionsFr: [
+          'Calcul normalisé sur une fenêtre d\'intégration de 10 périodes (200 ms à 50 Hz) synchronisée selon CEI 61000-4-7.',
+          'Prise en compte des sous-groupes d\'harmoniques incluant les raies interharmoniques adjacentes.',
+          'Respect strict de la limite contractuelle : THDu ≤ 5.0% et harmoniques individuels de rangs impairs ≤ 3.0% (ENEO/SONATREL).'
+        ],
+        assumptionsEn: [
+          'Standardized calculation window of 10 cycles (200 ms at 50 Hz) synchronized per IEC 61000-4-7.',
+          'Inclusion of harmonic subgroups accounting for adjacent interharmonic bins.',
+          'Strict adherence to utility Point of Common Coupling limits: THDu ≤ 5.0% and odd individual harmonic limits ≤ 3.0%.'
+        ],
+        calcTab: 'power'
+      },
+      {
+        id: 'parallel_resonance_detuning',
+        tabLabelFr: 'Anti-Résonance LC & Désaccordage p',
+        tabLabelEn: 'LC Anti-Resonance & Detuning Factor p',
+        titleFr: 'Fréquence d\'Anti-Résonance Parallèle LC et Facteur de Désaccord selon CEI 61642',
+        titleEn: 'Parallel LC Anti-Resonance Frequency & Detuning Factor per IEC 61642',
+        descFr: 'Détermination analytique de la fréquence propre d\'oscillation entre l\'inductance du transformateur source et les condensateurs de compensation. L\'adjonction d\'une self de désaccordage p (ex. 7%) déplace la résonance sous le premier rang polluant (rang 5).',
+        descEn: 'Analytical determination of the natural anti-resonance frequency between upstream source transformer inductance and power factor correction capacitors. Series insertion of a detuning reactor p (e.g., 7%) shifts the resonance below the dominant 5th harmonic.',
+        formula: 'f_r = f_1 \\cdot \\sqrt{\\frac{S_{\\text{sc}}}{Q_c}} \\quad ; \\quad p = \\left( \\frac{f_1}{f_r} \\right)^2 \\times 100\\% \\quad \\implies \\quad f_r = \\frac{f_1}{\\sqrt{p}}',
+        formulaDescFr: 'Avec fr la fréquence d\'anti-résonance parallèle (Hz), f1 la fréquence fondamentale (50 Hz), Ssc la puissance de court-circuit amont au jeu de barres (MVA), Qc la puissance réactive des condensateurs (MVAr), et p le facteur de désaccord de la self (typiquement p = 7% soit fr = 189 Hz, ou p = 14% soit fr = 134 Hz).',
+        formulaDescEn: 'Where fr is parallel anti-resonance frequency (Hz), f1 is fundamental frequency (50 Hz), Ssc is upstream prospective short-circuit capacity at the busbar (MVA), Qc is capacitor bank reactive power (MVAr), and p is reactor detuning factor (typically p = 7% yielding fr = 189 Hz, or p = 14% yielding fr = 134 Hz).',
+        assumptionsFr: [
+          'Pour un réseau pollué par des variateurs à pont 6 impulsions (harmoniques 5 et 7 dominants), p = 7% (189 Hz) est impératif.',
+          'Pour un réseau pollué par des harmoniques de rang 3 (charges monophasées, éclairage LED, serveurs), p = 14% (134 Hz) est requis.',
+          'La présence de la self augmente la tension aux bornes des condensateurs : U_cond = Un / (1 - p), nécessitant des condensateurs 480 V sur réseau 400 V.'
+        ],
+        assumptionsEn: [
+          'For grids polluted by 6-pulse drives (dominant 5th and 7th harmonics), p = 7% (189 Hz) is strictly required.',
+          'For networks polluted by 3rd harmonic currents (single-phase loads, LED lighting, data centers), p = 14% (134 Hz) is required.',
+          'Series reactor increases fundamental voltage across capacitor terminals: U_cond = Un / (1 - p), requiring 480 V rated capacitors on 400 V mains.'
+        ],
+        calcTab: 'pfc'
+      },
+      {
+        id: 'voltage_sag_depth_calculation',
+        tabLabelFr: 'Profondeur de Creux de Tension (CEI 61000-4-11)',
+        tabLabelEn: 'Voltage Sag Depth Calculation (IEC 61000-4-11)',
+        titleFr: 'Calcul de la Chute et de la Tension Résiduelle lors de Creux de Tension',
+        titleEn: 'Residual Voltage and Depth Calculation during System Voltage Sags',
+        descFr: 'Formule régissant le calcul de la tension résiduelle vue par les installations industrielles saines lors de l\'apparition d\'un court-circuit lointain sur le réseau haute tension ou lors du démarrage direct d\'un puissant moteur électrique.',
+        descEn: 'Engineering formula calculating the residual voltage experienced by healthy industrial facilities during remote transmission short-circuits or direct-on-line starting of large industrial induction motors.',
+        formula: '\\Delta U = \\frac{R \\cdot P + X \\cdot Q}{U_n} \\quad ; \\quad U_{\\text{sag}}\\% = \\left( 1 - \\frac{Z_{\\text{source}}}{Z_{\\text{source}} + Z_{\\text{défaut}}} \\right) \\times 100\\%',
+        formulaDescFr: 'Avec ΔU la chute de tension vectorielle en ligne, Usag% la tension résiduelle en pourcentage de la tension nominale, Zsource l\'impédance amont du réseau jusqu\'au point de raccordement commun (PCC), et Zdéfaut l\'impédance de ligne entre le PCC et l\'emplacement physique du court-circuit.',
+        formulaDescEn: 'Where ΔU is vector voltage drop along the feeder, Usag% is residual voltage as a percentage of nominal voltage, Zsource is upstream grid impedance up to the Point of Common Coupling (PCC), and Zdéfaut is line impedance between the PCC and the fault location.',
+        assumptionsFr: [
+          'Un creux de tension est défini par une chute de 10% à 90% de Un pendant une durée de 10 ms à 1 minute selon CEI 61000-4-30.',
+          'Les équipements sensibles (relais, contacteurs BT, automates) déclenchent généralement lorsque la tension résiduelle chute sous 70% pendant plus de 20 ms.',
+          'L\'installation d\'un conditionneur DVR permet de combler instantanément la composante manquante (1 - Usag).'
+        ],
+        assumptionsEn: [
+          'A voltage sag is defined as a temporary drop between 10% and 90% of nominal voltage lasting from 10 ms to 1 minute per IEC 61000-4-30.',
+          'Sensitive automation (coils, contactors, PLCs) typically drop out when residual voltage falls below 70% for more than 20 ms.',
+          'Installation of a Dynamic Voltage Restorer (DVR) series conditioner instantly injects the missing potential vector (1 - Usag).'
+        ],
+        calcTab: 'voltage-drop'
+      },
+      {
+        id: 'true_power_factor_distortion',
+        tabLabelFr: 'Facteur de Puissance Réel & Déplacement',
+        tabLabelEn: 'True Power Factor & Displacement Factor',
+        titleFr: 'Décomposition du Facteur de Puissance Réel en Présence d\'Harmoniques',
+        titleEn: 'True Power Factor Decomposition under Distorted Harmonic Conditions',
+        descFr: 'Démontre analytiquement que le facteur de puissance réel (True PF) mesuré au compteur est le produit du facteur de déplacement fondamental (cos φ1) et d\'un facteur de distorsion dépendant directement du THDi.',
+        descEn: 'Demonstrates analytically that true power factor (True PF) recorded by billing meters is the product of fundamental displacement power factor (cos φ1) and a distortion factor directly dictated by current THDi.',
+        formula: 'PF_{\\text{true}} = \\frac{P}{S} = \\frac{P}{\\sqrt{P^2 + Q_1^2 + D^2}} = \\frac{\\cos \\varphi_1}{\\sqrt{1 + THD_i^2}}',
+        formulaDescFr: 'Avec PFtrue le facteur de puissance réel, P la puissance active (kW), S la puissance apparente totale (kVA), Q1 la puissance réactive fondamentale (kVAr), D la puissance déformante harmonique (kVA), cos φ1 le facteur de déplacement fondamental, et THDi le taux de distorsion harmonique de courant.',
+        formulaDescEn: 'Where PFtrue is true total power factor, P is active power (kW), S is total apparent power (kVA), Q1 is fundamental reactive power (kVAr), D is harmonic distortion power (kVA), cos φ1 is fundamental displacement factor, and THDi is total harmonic current distortion.',
+        assumptionsFr: [
+          'Une batterie de condensateurs classique ne peut compenser que Q1 et n\'a aucun effet sur la puissance déformante D.',
+          'Si le THDi d\'une usine atteint 48%, le PF maximal atteignable est plafonné à 1 / √(1 + 0.48²) = 0.90 même avec un cos φ1 parfait de 1.0.',
+          'L\'utilisation d\'un filtre actif d\'harmoniques éliminant D est indispensable pour atteindre un True PF > 0.96.'
+        ],
+        assumptionsEn: [
+          'Conventional capacitor banks compensate solely for fundamental reactive power Q1, having zero effect on distortion power D.',
+          'If plant THDi reaches 48%, maximum achievable true power factor is capped at 1 / √(1 + 0.48²) = 0.90 even with a perfect cos φ1 of 1.0.',
+          'Implementation of an active harmonic filter cancelling distortion power D is mandatory to achieve True PF > 0.96.'
+        ],
+        calcTab: 'power'
+      },
+      {
+        id: 'transformer_k_factor_formula',
+        tabLabelFr: 'Facteur K des Transformateurs (IEEE C57.110)',
+        tabLabelEn: 'Transformer K-Factor Rating (IEEE C57.110)',
+        titleFr: 'Calcul du Facteur K d\'Échauffement Harmonique des Transformateurs de Distribution',
+        titleEn: 'Transformer Harmonic Heating K-Factor Calculation per IEEE C57.110',
+        descFr: 'Quantifie l\'accroissement des pertes par courants de Foucault dans les enroulements d\'un transformateur alimentant des charges non linéaires, guidant le choix d\'un transformateur renforcé (K-4, K-13, K-20) pour éviter le déclassement de puissance.',
+        descEn: 'Quantifies additional eddy-current winding losses inside transformers supplying non-linear loads, establishing required K-factor ratings (K-4, K-13, K-20) to prevent thermal degradation and power derating.',
+        formula: 'K = \\sum_{h=1}^{h_{\\max}} I_h^2 \\cdot h^2 \\quad \\left( \\text{avec } \\sum_{h=1}^{h_{\\max}} I_h^2 = 1.0 \\text{ en valeur réduite} \\right)',
+        formulaDescFr: 'Avec K le facteur K sans dimension (égal à 1.0 pour une charge sinusoïdale pure), h le rang harmonique, et Ih le courant harmonique efficace de rang h exprimé en fraction normalisée du courant efficace total.',
+        formulaDescEn: 'Where K is dimensionless K-factor (strictly equals 1.0 for a pure sinusoidal linear load), h is harmonic order, and Ih is RMS harmonic current of order h expressed as a normalized per-unit fraction of total RMS load current.',
+        assumptionsFr: [
+          'Un transformateur standard standardisé CEI non renforcé (K = 1) ne peut supporter sans déclassement qu\'une charge non linéaire modérée (< 15%).',
+          'Pour des variateurs de vitesse et redresseurs industriels sévères, un transformateur spécifié K-13 ou K-20 est obligatoire.',
+          'Pertes par courants de Foucault proportionnelles au carré du rang harmonique (h²).'
+        ],
+        assumptionsEn: [
+          'Standard standard unrated transformers (K = 1) tolerate only modest non-linear load fractions (< 15%) without thermal derating.',
+          'For heavy industrial VFDs and power rectifiers, transformers rated K-13 or K-20 are mandatory.',
+          'Winding eddy current losses increase proportionally with the square of the harmonic frequency order (h²).'
+        ],
+        calcTab: 'transformer'
+      },
+      {
+        id: 'reactive_power_sizing_pfc',
+        tabLabelFr: 'Dimensionnement Condensateurs ΔQ',
+        tabLabelEn: 'Capacitor Sizing Formula ΔQ',
+        titleFr: 'Calcul de la Puissance Réactive de Compensation pour Relèvement du Cos φ',
+        titleEn: 'Reactive Power Compensation Sizing for Power Factor Correction',
+        descFr: 'Formule universelle déterminant la puissance réactive capacitive en kVAr à installer au jeu de barres pour relever le facteur de déplacement d\'une valeur initiale non conforme cos φ1 vers la consigne contractuelle cos φ2.',
+        descEn: 'Universal engineering formula calculating total capacitive reactive power in kVAr required at the busbar to raise plant displacement factor from an uncompensated cos φ1 to the contractual target cos φ2.',
+        formula: '\\Delta Q = P \\cdot (\\tan \\varphi_1 - \\tan \\varphi_2) = P \\cdot \\left( \\sqrt{\\frac{1}{\\cos^2 \\varphi_1} - 1} - \\sqrt{\\frac{1}{\\cos^2 \\varphi_2} - 1} \\right)',
+        formulaDescFr: 'Avec ΔQ la puissance réactive de la batterie de condensateurs à installer (kVAr), P la puissance active moyenne appelée en pointe (kW), cos φ1 le facteur de déplacement initial mesuré sur site, et cos φ2 le facteur de déplacement cible (typiquement 0.96 à 0.98 inductif).',
+        formulaDescEn: 'Where ΔQ is rated capacitor bank reactive power required (kVAr), P is average peak active power demand (kW), cos φ1 is uncompensated baseline displacement factor, and cos φ2 is contractual target displacement factor (typically 0.96 to 0.98 inductive).',
+        assumptionsFr: [
+          'Interdiction stricte de passer en régime capacitif (cos φ capacitif) pour éviter d\'éventuelles montées de tension par effet Ferranti.',
+          'Prise en compte de la surtension provoquée par les selfs de désaccordage p = 7% qui majorent la puissance nominale des condensateurs de 7.5%.',
+          'Échelonnement en gradins régulés par un automate varmétrique avec temps de décharge minimale de 60 secondes entre réenclenchements.'
+        ],
+        assumptionsEn: [
+          'Strict prohibition against leading (capacitive) operation to prevent busbar overvoltages via Ferranti-like effect.',
+          'Accounting for terminal voltage boost from p = 7% detuning reactors, which elevates effective capacitor output by 7.5%.',
+          'Staged step switching managed by a numerical varmetric controller with mandatory 60-second discharge interlocks between cycles.'
+        ],
+        calcTab: 'pfc'
+      }
+    ],
+    sectionF: [
+      {
+        code: 'CEI 61000-4-30 Classe A',
+        tag: 'MESURE DE QUALITÉ D\'ÉNERGIE',
+        titleFr: 'Compatibilité Électromagnétique (CEM) - Techniques d\'Essai et de Mesure - Méthodes de Mesure de la Qualité de l\'Alimentation',
+        titleEn: 'Electromagnetic Compatibility (EMC) - Testing and Measurement Techniques - Power Quality Measurement Methods (Class A)',
+        descFr: 'Norme internationale de référence définissant les algorithmes de mesure certifiés sans ambiguïté métrologique pour le THD, creux, harmoniques et flicker.',
+        descEn: 'Foundational international standard specifying certified measurement algorithms with legal metrological validity for THD, sags, harmonics, and flicker.'
+      },
+      {
+        code: 'IEEE Std 519-2022',
+        tag: 'LIMITES D\'HARMONIQUES RÉSEAU',
+        titleFr: 'Norme IEEE relative aux Pratiques Recommandées et Exigences pour le Contrôle des Harmoniques dans les Réseaux Électriques',
+        titleEn: 'IEEE Standard for Harmonic Control in Electric Power Systems',
+        descFr: 'Standard mondial fixant les limites admissibles de distorsion harmonique en courant (TDD) et en tension (THDu ≤ 5%) au point de livraison commun (PCC).',
+        descEn: 'Global benchmark defining allowable current distortion (TDD) and voltage harmonic distortion (THDu ≤ 5%) at the Point of Common Coupling (PCC).'
+      },
+      {
+        code: 'CEI 61000-2-4',
+        tag: 'NIVEAUX DE COMPATIBILITÉ INDUSTRIELLE',
+        titleFr: 'Compatibilité Électromagnétique - Niveaux de Compatibilité dans les Installations Industrielles pour Perturbations Conduites Basse Fréquence',
+        titleEn: 'Electromagnetic Compatibility - Compatibility Levels in Industrial Plants for Low-Frequency Conducted Disturbances',
+        descFr: 'Classement des environnements industriels en Classe 1 (sensible), Classe 2 (standard THDu ≤ 8%) et Classe 3 (lourdement perturbé avec convertisseurs).',
+        descEn: 'Categorization of industrial environments into Class 1 (sensitive), Class 2 (standard THDu ≤ 8%), and Class 3 (heavily disturbed converter sites).'
+      },
+      {
+        code: 'CEI 61642',
+        tag: 'FILTRES & CONDENSATEURS HARMONIQUES',
+        titleFr: 'Réseaux Industriels à Courant Alternatif Affectés par des Harmoniques - Application de Filtres et de Condensateurs Shunt',
+        titleEn: 'Industrial a.c. Networks Affected by Harmonics - Application of Filters and Shunt Capacitors',
+        descFr: 'Guide d\'application pour le calcul des résonances LC, le choix des facteurs de désaccordage p (7% ou 14%) et la protection thermique des selfs.',
+        descEn: 'Application guide for calculating parallel LC resonance, selecting reactor detuning factors p (7% or 14%), and protecting shunt capacitor banks.'
+      },
+      {
+        code: 'IEEE Std 1159',
+        tag: 'SURVEILLANCE DE QUALITÉ DE RÉSEAU',
+        titleFr: 'Pratique Recommandée IEEE pour la Surveillance de la Qualité de l\'Énergie Électrique',
+        titleEn: 'IEEE Recommended Practice for Monitoring Electric Power Quality',
+        descFr: 'Classification normalisée des phénomènes électromagnétiques transitoires, creux de tension (sags), surtensions temporaires et papillotement (flicker).',
+        descEn: 'Standardized classification of electromagnetic phenomena including transients, sags, swells, interruptions, and flicker phenomena.'
+      },
+      {
+        code: 'IEEE C57.110',
+        tag: 'DÉCLASSEMENT TRANSFORMATEURS',
+        titleFr: 'Pratique Recommandée IEEE pour l\'Établissement de la Capacité des Transformateurs Alimentant des Courants Non Sinusoïdaux',
+        titleEn: 'IEEE Recommended Practice for Establishing Liquid-Filled and Dry-Type Power and Distribution Transformer Capability When Supplying Nonsinusoidal Load Currents',
+        descFr: 'Formule de calcul du facteur K et méthodologie de déclassement thermique des transformateurs alimentant des variateurs et redresseurs industriels.',
+        descEn: 'Harmonic K-factor formula and thermal derating methodology for distribution transformers supplying non-linear drives and converter loads.'
+      }
+    ]
+  },
+
   // D10: Stockage d'Énergie BESS & Recharge IRVE
   // D10: Systèmes de Stockage d'Énergie, STEP & Recharge IRVE
   D10: {

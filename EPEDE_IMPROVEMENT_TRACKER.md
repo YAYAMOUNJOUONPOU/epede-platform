@@ -22,8 +22,8 @@ Complete platform transformation through continuous iterative improvement across
 | **D11** | Protection, Measurements & System Studies (Relays, TCC, ANSI) | Completed | 6 | 97% | 97% | 96% | Passing |
 | **D12** | Substation Automation Systems (SAS, SCADA, RTU, IEC 61850) | Completed | 6 | 97% | 97% | 96% | Passing |
 | **D13** | Communications & Operational Technology (Process Bus, Cybersecurity) | Completed | 6 | 97% | 97% | 96% | Passing |
-| **D14** | Power Quality & EMC (Harmonics, THD, Reactive Power, Filtering) | In Progress | 1 | - | - | - | Active |
-| **D15** | Metering, Smart Grids & Grid Digitalization (AMI, MDM, WAMS) | Queued | 0 | - | - | - | - |
+| **D14** | Power Quality & EMC (Harmonics, THD, Reactive Power, Filtering) | Completed | 6 | 97% | 97% | 96% | Passing |
+| **D15** | Metering, Smart Grids & Grid Digitalization (AMI, MDM, WAMS) | In Progress | 1 | - | - | - | Active |
 | **D16** | Electrical Safety, Earthing & Lightning (Mesh Grids, GPR, Surge Arresters) | Queued | 0 | - | - | - | - |
 
 ---

@@ -97,9 +97,14 @@ Each page and engineering module is evaluated on eight core axes (Target: 95%+):
 ### Domain 14 (D14) — Power Quality & EMC (Harmonics, THD, Reactive Power, Filtering)
 - **Route**: `#/domain/D14`
 - **Audit Target**: 97%+
+- **Audit Score Post-Transformation**: 97% (5 Canonical Power Quality Architectures: Detuned Shunt Capacitor Banks p=7%/14%, Shunt Active Power Filter APF p-q, 225 kV Transmission STATCOM/SVC, Series-Shunt UPQC/DVR Sag Mitigator, Integrated Meshed EMC Shielding; 6 Field Apparatus; 7 Project Lifecycle Phases; 6 LaTeX Solvers: THDu/THDi per IEC 61000-2-4 / IEEE 519, Parallel resonance fr and detuning p, Voltage sag depth and residual profile, True Power Factor decomposition with distortion, Transformer K-factor rating IEEE C57.110, Reactive power compensation sizing ΔQ; 6 Standards).
 
-### Domains 15 to 16
-- Scheduled in sequential order per execution protocol (D15 Smart Metering & AMI, D16 Electrical Safety & Earthing).
+### Domain 15 (D15) — Smart Metering, Grid Digitalization & AMI (Smart Meters, MDM, Losses, Asset Management)
+- **Route**: `#/domain/D15`
+- **Audit Target**: 97%+
+
+### Domain 16 (D16) — Electrical Safety, Earthing & Lightning Protection (Mesh Grids, GPR, Step/Touch potentials IEEE 80, Surge Arresters IEC 60099)
+- Scheduled immediately following Domain 15 per continuous execution protocol.
 
 ---
 
