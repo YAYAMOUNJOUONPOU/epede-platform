@@ -289,128 +289,220 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
   D03: {
     domainCode: 'D03',
     sectionA: {
-      roleFr: "Transit massif d'énergie électrique sur de longues distances entre les centrales de production et les centres de charge urbains.",
-      roleEn: 'Bulk power transmission over long distances between generating plants and urban load centers.',
+      roleFr: "Transit massif d'énergie électrique en très haute tension (225 kV & 90 kV) sur de longues distances interurbaines, reliant les bassins de production hydraulique (Nachtigal, Song Loulou, Memve'ele) et thermique aux grands centres de consommation (Yaoundé, Douala, Bafoussam) avec maîtrise rigoureuse des pertes Joule, de l'effet Ferranti et de la coordination de l'isolement aux chocs de foudre.",
+      roleEn: 'Bulk extra-high-voltage (225 kV & 90 kV) electrical power transmission across long interurban distances, interconnecting distant hydro complexes (Nachtigal, Song Loulou, Memve\'ele) with metropolitan load centers (Yaoundé, Douala, Bafoussam) while mastering Joule losses, Ferranti overvoltages, and lightning insulation coordination.',
       inputsFr: {
-        title: 'Postes Élévateurs de Centrale',
-        desc: 'Énergie injectée à 225 kV depuis les centrales de Songloulou, Edéa et Nachtigal.',
-        voltage: '225 kV THT • 50 Hz'
+        title: 'Postes Élévateurs de Centrale & Couloir d\'Emprise',
+        desc: 'Énergie injectée à 225 kV depuis les transformateurs GSU de Nachtigal (420 MW), Song Loulou (384 MW) et Memve\'ele (211 MW). Couloir d\'emprise déboisé de 35 à 50 m et exposition kéraunique tropicale sévère (Nk > 80 jours d\'orage/an).',
+        voltage: '225 kV THT & 90 kV HTB • 50 Hz'
       },
       inputsEn: {
-        title: 'Powerhouse Step-Up Substations',
-        desc: 'Power injected at 225 kV from Songloulou, Edéa, and Nachtigal powerplants.',
-        voltage: '225 kV EHV • 50 Hz'
+        title: 'Powerhouse Step-Up Substations & Right-of-Way',
+        desc: 'Power injected at 225 kV from GSU step-up transformers at Nachtigal (420 MW), Song Loulou (384 MW), and Memve\'ele (211 MW). Cleared 35 to 50 m right-of-way corridor with severe tropical lightning exposure (Nk > 80 thunderstorm days/yr).',
+        voltage: '225 kV EHV & 90 kV HV • 50 Hz'
       },
       processFr: {
-        title: 'Lignes Aériennes & Pylônes SONATREL',
-        desc: 'Faisceaux de conducteurs Almelec/ACSR portés par pylônes en treillis avec câbles de garde à fibre optique (OPGW).',
-        note: 'Capacité thermique : jusqu\'à 350 MVA par circuit'
+        title: 'Lignes Aériennes à Faisceaux, Équilibre Thermique & Tenue Mécanique',
+        desc: 'Faisceaux de conducteurs Almelec Aster 570 mm² portés par pylônes métalliques en treillis sous calcul de flèche de chaînette à 75°C (Cigré TB 273). Maîtrise de l\'effet couronne (E < 17 kV/cm), double câble de garde OPGW avec résistance de pied de pylône Rp ≤ 10 Ω pour immunité aux coups de foudre.',
+        note: 'Capacité de transit : jusqu\'à 350 MVA par circuit 225 kV • Vitesse d\'onde v ≈ 300 000 km/s'
       },
       processEn: {
-        title: 'Overhead Lines & Transmission Towers',
-        desc: 'Bundle conductors on steel lattice towers equipped with OPGW optical ground wires.',
-        note: 'Thermal capacity: up to 350 MVA per circuit'
+        title: 'Bundle Overhead Lines, Thermal Equilibrium & Mechanical State Equations',
+        desc: 'Aster 570 mm² AAAC bundle conductors on steel lattice towers calculated per catenary sag-tension at 75°C core rating (Cigré TB 273). Corona surface gradient suppression (E < 17 kV/cm), dual OPGW optical shield wires with tower footing resistance Rp ≤ 10 Ω for lightning back-flashover immunity.',
+        note: 'Thermal transfer capacity: up to 350 MVA per 225 kV circuit • Wave propagation speed v ≈ 300,000 km/s'
       },
       outputsFr: {
-        title: 'Postes d\'Interconnexion & Répartition',
-        desc: 'Arrivée dans les grands postes de nœud (Oyomabang, Bekoko, Mangombé) pour abaissement 90 kV / 30 kV.',
-        earthing: 'Lignes avec mise à la terre des pylônes (< 10 Ω)'
+        title: 'Postes d\'Interconnexion Régionaux & Téléprotection OPGW',
+        desc: 'Livraison de la puissance aux grands nœuds de répartition (Oyomabang, Nyom II, Mangombé, Bekoko) pour abaissement 90 kV et 30 kV. Disponibilité N-1 > 99.98% et échange instantané des signaux de protection différentielle de ligne 87L par fibre optique OPGW.',
+        earthing: 'Mise à la terre des massifs de pylônes (Rp ≤ 10 Ω) & éclateurs de décharge'
       },
       outputsEn: {
-        title: 'Grid Interconnection & Distribution Substations',
-        desc: 'Delivery at major regional hub nodes (Oyomabang, Bekoko) for step-down to 90 kV / 30 kV.',
-        earthing: 'Tower footing resistance < 10 Ω'
+        title: 'Regional Transmission Nodes & High-Speed OPGW Teleprotection',
+        desc: 'Power delivery to major bulk substations (Oyomabang, Nyom II, Mangombé, Bekoko) for step-down to 90 kV and 30 kV. N-1 availability > 99.98% and millisecond-level line differential 87L teleprotection signaling over dark fiber OPGW.',
+        earthing: 'Tower footing earth grid (Rp ≤ 10 Ω) & surge protection coordination'
       }
     },
     sectionB: {
-      summaryFr: 'Topologies en simple et double terne 225 kV / 90 kV formant l\'épine dorsale du Réseau Interconnecté Sud (RIS).',
-      summaryEn: 'Single and double-circuit overhead 225 kV / 90 kV lines forming the Cameroon Southern Grid backbone.',
+      summaryFr: 'Architectures de transport d\'électricité en très haute tension : lignes aériennes double terne, câbles souterrains XLPE, faisceaux 400 kV et liaisons à courant continu HVDC.',
+      summaryEn: 'High-voltage power transmission architectures: double-circuit overhead lines, XLPE underground cables, 400 kV multi-bundles, and HVDC direct-current interties.',
       architectures: [
         {
-          nameFr: 'Ligne 225 kV Double Terne (2 Circuits)',
-          nameEn: 'Double-Circuit 225 kV Line',
-          techFr: 'Pylônes en treillis avec 2 circuits triphasés indépendants et 2 câbles de garde',
-          techEn: 'Lattice towers supporting two independent 3-phase circuits and dual shield wires',
-          descFr: 'Garantit la redondance N-1 : en cas de déclenchement d\'un circuit par coup de foudre, l\'autre maintient l\'alimentation.',
-          descEn: 'Ensures N-1 contingency: tripping of one circuit by lightning leaves the second circuit in service.',
-          standard: 'CEI 60826',
-          metricFr: 'Portée moyenne : 350 à 450 m',
-          metricEn: 'Average span: 350 to 450 m'
+          nameFr: 'Ligne Aérienne 225 kV Double Terne en Treillis (2 Circuits Indépendants)',
+          nameEn: 'Double-Circuit 225 kV Lattice Tower Overhead Line',
+          techFr: 'Pylônes métalliques en treillis supportant 2 circuits triphasés indépendants (6 phases) et 2 câbles de garde OPGW en sommet.',
+          techEn: 'Steel lattice towers carrying two independent 3-phase circuits (6 phases) and twin optical ground wires (OPGW) at the apex.',
+          descFr: 'Épine dorsale de transport du RIS camerounais (ex: Nachtigal - Nyom II et Songloulou - Mangombé). En cas de foudroiement ou avarie sur un terne, la protection déclenche uniquement le circuit défaillant en moins de 60 ms pendant que le second terne évacue la totalité de la puissance (critère N-1 sans coupure).',
+          descEn: 'Backbone of the Cameroon Southern Grid (e.g. Nachtigal - Nyom II and Songloulou - Mangombé). In the event of a lightning flashover, line protection trips only the faulted circuit in < 60 ms while the parallel circuit carries full load.',
+          standard: 'CEI 60826 / NF EN 50341',
+          metricFr: 'Portée moyenne : 380 à 450 m • Transit nominal : 2 x 350 MVA',
+          metricEn: 'Average span: 380 to 450 m • Nominal capacity: 2 x 350 MVA'
         },
         {
-          nameFr: 'Câbles Souterrains 90 kV / 225 kV XLPE',
-          nameEn: 'Underground EHV XLPE Cable Feeders',
-          techFr: 'Conducteurs cuivre ou aluminium isolés au polyéthylène réticulé haute tension',
-          techEn: 'Cross-linked polyethylene insulated EHV underground cables',
-          descFr: 'Utilisés pour les traversées urbaines denses (pénétration dans Yaoundé et Douala) où les lignes aériennes sont interdites.',
-          descEn: 'Deployed for urban grid penetration into dense city centers where overhead rights-of-way are unavailable.',
-          standard: 'CEI 60840',
-          metricFr: 'Effet capacitif : 0.2 - 0.3 µF/km',
-          metricEn: 'Capacitance: 0.2 - 0.3 µF/km'
+          nameFr: 'Ligne Aérienne 90 kV Simple Terne de Répartition Régionale',
+          nameEn: 'Single-Circuit 90 kV Regional Sub-Transmission Line',
+          techFr: 'Pylônes métalliques compacts ou poteaux béton armé/bois en nappe horizontale ou disposition en drapeau.',
+          techEn: 'Compact steel lattice or spun concrete poles arranged in horizontal flat or vertical flag configuration.',
+          descFr: 'Assure la distribution régionale depuis les grands postes 225 kV vers les villes secondaires (ex: Oyomabang - Mbalmayo ou Mangombé - Bafoussam). Coût d\'emprise réduit, adaptée aux reliefs accidentés.',
+          descEn: 'Feeds regional towns from major 225 kV hub substations (e.g. Oyomabang - Mbalmayo). Reduced right-of-way footprint tailored for rugged terrain.',
+          standard: 'CEI 60826 / IEEE Std 1313',
+          metricFr: 'Portée : 250 à 350 m • Transit : 60 à 120 MVA',
+          metricEn: 'Span: 250 to 350 m • Transfer: 60 to 120 MVA'
+        },
+        {
+          nameFr: 'Liaison Souterraine THT 225 kV XLPE avec Permutation d\'Écran (Cross-Bonding)',
+          nameEn: 'Underground EHV 225 kV XLPE Cable with Cross-Bonding',
+          techFr: 'Câbles unisolaires haute tension à âme cuivre (1200 à 2000 mm²), isolant polyéthylène réticulé (XLPE) et gaine de plomb étanche.',
+          techEn: 'Single-core EHV cables with copper conductor (1200 to 2000 mm²), cross-linked polyethylene (XLPE) insulation, and lead sheath.',
+          descFr: 'Indispensable pour la pénétration de forte puissance au cœur des métropoles denses (Yaoundé, Douala) où les couloirs aériens sont impossibles. Le système de cross-bonding élimine les courants de circulation dans les écrans métalliques pour maximiser l\'ampacité.',
+          descEn: 'Essential for bulk power penetration into dense city centers (Yaoundé, Douala) where overhead corridors are prohibited. Cross-bonding cancels sheath circulating currents to maximize ampacity.',
+          standard: 'CEI 60840 / CEI 62067 / CEI 60287',
+          metricFr: 'Ampacité : 1000 à 1600 A • Effet capacitif : 0.20 µF/km',
+          metricEn: 'Ampacity: 1000 to 1600 A • Capacitance: 0.20 µF/km'
+        },
+        {
+          nameFr: 'Ligne THT à Faisceaux Multiples 400 kV (Corridor d\'Interconnexion Régionale)',
+          nameEn: '400 kV Multi-Bundle Extra-High-Voltage Line (Regional Intertie)',
+          techFr: 'Faisceau de 3 ou 4 conducteurs par phase espacés de 400 à 450 mm par entretoises amortissantes pour limiter le gradient couronne.',
+          techEn: 'Bundle of 3 or 4 subconductors per phase spaced 400 to 450 mm via spacer dampers to keep surface electric field below corona limit.',
+          descFr: 'Architecture retenue pour les grands corridors transfrontaliers d\'interconnexion régionale (ex: corridor 400 kV PEAC et PIECT Cameroun-Tchad). Réduit considérablement les pertes réactives et augmente la puissance naturelle SIL à plus de 550 MW.',
+          descEn: 'Selected for major transboundary regional interties (e.g. 400 kV PEAC & PIECT Cameroon-Chad). Minimizes line reactance and boosts Surge Impedance Loading (SIL) beyond 550 MW.',
+          standard: 'CEI 60826 / CIGRE TB 498',
+          metricFr: 'SIL : > 550 MW • Portée : 400 à 500 m',
+          metricEn: 'SIL: > 550 MW • Span: 400 to 500 m'
+        },
+        {
+          nameFr: 'Liaison à Courant Continu Haute Tension (HVDC VSC / MMC)',
+          nameEn: 'High-Voltage Direct Current (HVDC VSC / MMC Link)',
+          techFr: 'Convertisseurs modulaires multiniveaux (MMC) à IGBT raccordés par une ligne bipolaire ±320 kV à ±500 kV sans effet de charge capacitive.',
+          techEn: 'Modular Multilevel Converters (MMC) with IGBTs interconnected via a bipolar DC link without capacitive distance limits.',
+          descFr: 'Solution optimale pour le transport massif d\'énergie sur distances supérieures à 600-800 km ou liaisons sous-marines/souterraines longues, permettant un contrôle instantané bidirectionnel de la puissance active et un soutien dynamique de tension AC aux deux extrémités.',
+          descEn: 'Optimal solution for bulk power transfer over distances exceeding 600-800 km, enabling instantaneous bidirectional active power dispatch and independent AC voltage support at both terminals.',
+          standard: 'CEI 62501 / IEEE Std 1775',
+          metricFr: 'Pertes : < 3% sur 1000 km • Zéro limite capacitive de distance',
+          metricEn: 'Losses: < 3% over 1000 km • Zero reactive distance limit'
         }
       ]
     },
     sectionC: [
       {
         id: 'eq-exp-tower-225kv',
-        nameFr: 'Pylône Métallique en Treillis 225 kV',
-        nameEn: '225 kV Steel Lattice Transmission Tower',
-        voltage: '225 kV • Double Terne',
-        roleFr: 'Support mécanique et maintien des distances diélectriques au sol et entre phases.',
-        roleEn: 'Structural support and dielectric clearance maintenance for transmission bundles.',
-        symbol: 'LINE-225',
-        standard: 'CEI 60826',
-        imgUrl: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=800&q=80',
+        nameFr: 'Pylône Métallique en Treillis 225 kV Double Terne',
+        nameEn: '225 kV Double-Circuit Steel Lattice Transmission Tower',
+        voltage: '225 kV • 2 Circuits Triphasés Indépendants',
+        roleFr: 'Support mécanique des conducteurs et maintien des distances d\'isolement dans l\'air au sol et entre phases selon CEI 60826.',
+        roleEn: 'Structural support and dielectric clearance maintenance for twin 3-phase bundles per IEC 60826.',
+        symbol: 'TOWER-225',
+        standard: 'CEI 60826 / NF EN 50341',
+        imgUrl: '/images/homepage_uploads/batch_02_image_007.jpg',
         calcTab: 'cable-ampacity'
       },
       {
         id: 'eq-exp-line-conductor',
-        nameFr: 'Faisceau de Conducteurs Almelec (Aster 570 mm²)',
-        nameEn: 'All-Aluminium Alloy Conductor (AAAC 570 mm²)',
-        voltage: '225 kV • 900 A permanent',
-        roleFr: 'Transport du courant de puissance avec résistance ohmique linéique minimale.',
-        roleEn: 'High-current bulk power transport with minimized line resistive losses.',
-        symbol: 'COND',
-        standard: 'CEI 61089',
-        imgUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
+        nameFr: 'Faisceau de Conducteurs Almelec (Aster 570 mm² / ACSR Curlew)',
+        nameEn: 'All-Aluminium Alloy Bundle Conductor (Aster 570 mm² / ACSR)',
+        voltage: '225 kV • In = 980 A par conducteur à 75°C',
+        roleFr: 'Transport du courant de puissance avec résistance ohmique linéique minimale (R = 0.058 Ω/km) et tenue à la traction élevée.',
+        roleEn: 'Bulk power transport with minimized line resistance (R = 0.058 Ω/km) and high ultimate tensile strength.',
+        symbol: 'AAAC-570',
+        standard: 'CEI 61089 / ASTM B232',
+        imgUrl: '/images/homepage_uploads/batch_02_image_006.jpg',
         calcTab: 'cable-ampacity'
+      },
+      {
+        id: 'eq-exp-insulator-composite',
+        nameFr: 'Chaîne d\'Isolateurs Composites Silicone & Verre Trempé',
+        nameEn: 'Silicone Composite & Toughened Glass Insulator String',
+        voltage: '225 kV • Ligne de fuite 31 mm/kV (Environnement très pollué)',
+        roleFr: 'Isolement diélectrique entre les conducteurs sous haute tension et la charpente métallique du pylône mis à la terre.',
+        roleEn: 'Dielectric isolation between energized high-voltage conductors and the grounded steel lattice tower structure.',
+        symbol: 'INSUL-225',
+        standard: 'CEI 61109 / CEI 60383-1',
+        imgUrl: '/images/homepage_uploads/batch_03_image_011.jpg'
+      },
+      {
+        id: 'eq-exp-opgw-shield',
+        nameFr: 'Câble de Garde à Fibre Optique Intégrée (OPGW - 48 Fibres G.652D)',
+        nameEn: 'Optical Ground Wire with Integrated Fiber Optics (OPGW 48 Fibers)',
+        voltage: 'Terre Pylône • Tenue au court-circuit 15 kA / 0.5 s',
+        roleFr: 'Protection contre les coups de foudre directs en sommet de pylône et support physique des télécommunications de téléprotection 87L et SCADA.',
+        roleEn: 'Direct lightning flashover shielding at tower apex and high-capacity optical transmission medium for 87L protection and SCADA.',
+        symbol: 'OPGW-48',
+        standard: 'CEI 60794-4-10 / IEEE Std 1138',
+        imgUrl: '/images/homepage_uploads/batch_05_image_022.jpg'
+      },
+      {
+        id: 'eq-exp-ugc-xlpe-225',
+        nameFr: 'Câble Souterrain THT 225 kV XLPE (Âme Cuivre 1600 mm² & Gaine Plomb)',
+        nameEn: '225 kV EHV Underground XLPE Cable (1600 mm² Copper & Lead Sheath)',
+        voltage: '225 kV Assigné (Um = 245 kV) • In = 1450 A en Tranchée',
+        roleFr: 'Évacuation de puissance en milieu urbain dense avec écran métallique étanche radial et longitudinal contre l\'humidité.',
+        roleEn: 'Bulk power transfer through congested urban subsoils with radial and longitudinal water-tight metallic lead barrier.',
+        symbol: 'XLPE-225',
+        standard: 'CEI 62067 / CEI 60840 / CEI 60287',
+        imgUrl: '/assets/ecosystem/power-transmission-ecosystem.jpg',
+        calcTab: 'cable-ampacity'
+      },
+      {
+        id: 'eq-exp-spacer-damper',
+        nameFr: 'Entretoise Amortissante de Faisceau & Amortisseur Stockbridge',
+        nameEn: 'Conductor Bundle Spacer Damper & Stockbridge Vibration Damper',
+        voltage: '225 kV - 400 kV • Écartement normalisé 400 mm',
+        roleFr: 'Maintien de l\'écartement géométrique entre sous-conducteurs et dissipation des vibrations éoliennes (Aeolian vibrations) et du galop.',
+        roleEn: 'Preservation of geometric subconductor spacing and dissipation of wind-induced Aeolian vibrations and subspan oscillation.',
+        symbol: 'SPACER',
+        standard: 'CEI 61854 / CEI 61897',
+        imgUrl: '/images/homepage_uploads/batch_07_image_031_hydro_turbine_hall.jpg'
       }
     ],
     sectionD: [
       {
         phase: '01',
-        titleFr: 'Étude de Tracé & Météorologie',
-        titleEn: 'Route Survey & Environmental Profile',
-        descFr: 'Tracé topographique, niveau kéraunique (Nk > 80 j/an au Cameroun) et tenue aux vents violents.',
-        descEn: 'Corridor profiling, high keraunic lightning exposure, and gale wind loading criteria.'
+        titleFr: 'Études Topographiques, LiDAR & Délimitation de l\'Emprise (ROW)',
+        titleEn: 'Topographic LiDAR Survey & Right-of-Way Delineation',
+        descFr: 'Relevé aéroporté haute densité pour modélisation numérique du terrain (MNT), identification des croisements (fleuves, routes, lignes existantes) et délimitation du couloir de déboisement de 35 à 50 m.',
+        descEn: 'Airborne LiDAR high-density corridor scanning, digital elevation modeling (DEM), clearance obstacle profiling, and 35 to 50 m right-of-way clearance zoning.'
       },
       {
         phase: '02',
-        titleFr: 'Dimensionnement Électrique & Mécanique',
-        titleEn: 'Electrical & Sag-Tension Sizing',
-        descFr: 'Calcul de la flèche maximale à 75°C, portée équivalente et pertes Joule / effet couronne.',
-        descEn: 'Maximum sag at 75°C, ruling span, Joule losses, and corona inception threshold.'
+        titleFr: 'Dimensionnement Électrique & Maîtrise de l\'Effet Couronne',
+        titleEn: 'Electrical Conductor Sizing & Corona Gradient Control',
+        descFr: 'Choix de la section d\'aluminium et de la géométrie de faisceau (diamètre équivalent) pour limiter le champ électrique surfacique sous 17 kV/cm, réduisant les pertes couronne et les bruits radioélectriques.',
+        descEn: 'Conductor cross-section and bundle geometry selection ensuring surface electric field remains below 17 kV/cm, mitigating corona losses and audible radio interference.'
       },
       {
         phase: '03',
-        titleFr: 'Fondations & Levage des Pylônes',
-        titleEn: 'Foundations & Tower Erection',
-        descFr: 'Massifs béton armé, vérification de la résistance à l\'arrachement et assemblage mécano-soudé.',
-        descEn: 'Reinforced concrete footings, uplift resistance verification, and tower bolting.'
+        titleFr: 'Calcul Mécanique des Portées & Flèches (Équation de Changement d\'État)',
+        titleEn: 'Mechanical Sag-Tension Sizing & State Change Equation',
+        descFr: 'Résolution de l\'équation cubique de changement d\'état selon Cigré TB 273. Détermination de la portée équivalente (Ruling Span), de la flèche maximale à température d\'âme de 75°C et des efforts sur pylônes sous vent cyclonique.',
+        descEn: 'Solving the cubic conductor state-change equation per Cigré TB 273. Evaluating ruling span, maximum sag at 75°C conductor core rating, and mechanical wind blowout clearances.'
       },
       {
         phase: '04',
-        titleFr: 'Déroulage des Conducteurs & Réglage Flèches',
-        titleEn: 'Conductor Stringing & Sagging',
-        descFr: 'Tirage sous tension mécanique contrôlée, serrage des pinces d\'ancrage et pose des entretoises.',
-        descEn: 'Tension stringing, dead-end clamping, and bundle spacer damper installation.'
+        titleFr: 'Coordination de l\'Isolement & Immunité aux Coups de Foudre (CEI 60071)',
+        titleEn: 'Insulation Coordination & Lightning Withstand Design (IEC 60071)',
+        descFr: 'Dimensionnement du niveau d\'isolement aux chocs de foudre (BIL 1050 kV en 225 kV), angle de protection des câbles de garde OPGW (≤ 25°), et traitement de la prise de terre des massifs pour Rp ≤ 10 Ω.',
+        descEn: 'Basic lightning impulse insulation level specification (BIL 1050 kV at 225 kV), OPGW shielding angle verification (≤ 25°), and tower footing grounding grid treatment for Rp ≤ 10 Ω.'
       },
       {
         phase: '05',
-        titleFr: 'Inspection Ligne & Thermographie',
-        titleEn: 'Line Patrol & Thermal Inspection',
-        descFr: 'Visite de ligne pédestre/drone, contrôle thermographique des manchons et élagage des couloirs.',
-        descEn: 'Drone/foot patrol, infrared inspection of compression sleeves, and right-of-way clearing.'
+        titleFr: 'Génie Civil des Fondations & Montage des Pylônes en Treillis',
+        titleEn: 'Substructure Civil Foundations & Lattice Tower Erection',
+        descFr: 'Coulage des massifs béton armé à semelles ancrées dans la roche ou sur pieux forés en terrain meuble. Assemblage mécano-boulonné des tronçons de fûts de pylônes et pose des consoles de phases.',
+        descEn: 'Reinforced concrete foundation casting designed for uplift overturning moments. Tower section crane/derrick bolting and phase crossarm mounting.'
+      },
+      {
+        phase: '06',
+        titleFr: 'Déroulage sous Tension Mécanique Contrôlée & Clavetage des Faisceaux',
+        titleEn: 'Tension Stringing, Sag Adjustment & Clamping',
+        descFr: 'Tirage au treuil freineur sans contact avec le sol pour protéger la surface des brins d\'aluminium. Visée topographique des flèches, ancrage sur chaînes d\'isolateurs et installation des entretoises amortissantes.',
+        descEn: 'Tension stringing using puller-tensioner rigs preventing ground abrasion of conductor strands. Optical sag sighting, dead-end clamping, and spacer-damper fitting.'
+      },
+      {
+        phase: '07',
+        titleFr: 'Mise en Service, Inspection Thermographique & Dynamic Line Rating (DLR)',
+        titleEn: 'Commissioning, Aerial Thermography & Dynamic Line Rating (DLR)',
+        descFr: 'Essais diélectriques de continuité et d\'isolement, inspection pédestre et drone avec caméra infrarouge pour détecter les échauffements anormaux des manchons, et déploiement de capteurs DLR météo.',
+        descEn: 'Dielectric continuity and insulation testing, drone infrared thermal scanning of compression splices, and real-time weather-based Dynamic Line Rating sensor deployment.'
       }
     ],
     sectionE: [
@@ -418,65 +510,189 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         id: 'ferranti_effect',
         tabLabelFr: 'Effet Ferranti & Réactif',
         tabLabelEn: 'Ferranti Effect & Var',
-        titleFr: 'Élévation de Tension à Vide en Bout de Ligne',
-        titleEn: 'No-Load Voltage Rise at Line Receiving End',
-        descFr: 'Sur longue ligne peu chargée, la puissance réactive capacitive générée élève la tension réceptrice au-delà de la consigne.',
-        descEn: 'Under light load, line distributed shunt capacitance produces dangerous receiving-end overvoltages.',
-        formula: 'ΔU = U_receptrice - U_emission ≈ (ω² · L_total · C_total / 2) · U',
-        formulaDescFr: 'Nécessite la mise en service de réactances shunt inductives de compensation (CEI 60076-6).',
-        formulaDescEn: 'Requires installation of shunt inductive compensation reactors (IEC 60076-6).',
+        titleFr: 'Élévation de Tension à Vide en Bout de Ligne (Effet Ferranti)',
+        titleEn: 'No-Load Voltage Rise at Line Receiving End (Ferranti Effect)',
+        descFr: 'Sur une longue ligne aérienne ou un câble souterrain fonctionnant à vide ou sous très faible charge, la puissance réactive capacitive générée par sa capacité shunt élève la tension réceptrice V2 au-dessus de la tension émettrice V1.',
+        descEn: 'Along long overhead lines or underground cables operating at no-load or light load, distributed shunt capacitance produces net capacitive vars, raising receiving-end voltage V2 above sending-end V1.',
+        formula: '\\Delta U = V_2 - V_1 \\approx \\frac{\\omega^2 \\cdot L_{tot} \\cdot C_{tot}}{2} \\cdot V_1 = \\frac{1}{2} \\left(\\frac{\\omega \\cdot l}{v}\\right)^2 \\cdot V_1',
+        formulaDescFr: 'Avec ω = 2πf pulsation réseau (314 rad/s à 50 Hz), Ltot inductance linéique totale, Ctot capacité linéique totale, l longueur de ligne (km) et v vitesse de l\'onde (300 000 km/s).',
+        formulaDescEn: 'With ω = 2πf angular frequency (314 rad/s at 50 Hz), Ltot total series inductance, Ctot total shunt capacitance, l line length (km), and v light speed (300,000 km/s).',
         assumptionsFr: [
-          'Régime permanent à vide (I_charge = 0).',
-          'Fréquence nominale 50 Hz.',
-          'Ligne longue modélisée en schéma en Pi distribué.'
+          'Ligne à vide sans soutirage de charge à l\'extrémité réceptrice (I2 = 0).',
+          'Fréquence industrielle 50 Hz sinusoïdale équilibrée.',
+          'Nécessite la connexion de bobines d\'inductance shunt haute tension (CEI 60076-6) pour absorber le réactif excédentaire.'
         ],
         assumptionsEn: [
-          'Open-circuit receiving end condition.',
-          '50 Hz nominal frequency.',
-          'Distributed Pi-network transmission line model.'
+          'Open-circuit receiving end condition (I2 = 0).',
+          'Industrial 50 Hz steady-state balanced sinusoidal supply.',
+          'Requires connection of high-voltage shunt compensation reactors (IEC 60076-6) to clamp overvoltages.'
         ],
         calcTab: 'voltage-drop'
       },
       {
         id: 'thermal_ampacity',
-        tabLabelFr: 'Capacité Thermique de Ligne',
-        tabLabelEn: 'Line Thermal Ampacity',
-        titleFr: 'Courant Admissible Permanent & Échauffement Conducteur',
-        titleEn: 'Continuous Current Ampacity & Conductor Temperature',
-        descFr: 'Équilibre entre échauffement par effet Joule / rayonnement solaire et refroidissement par convection du vent.',
-        descEn: 'Thermal balance between Joule heating, solar gain, and wind convective cooling.',
-        formula: 'I_max = √[ (q_convection + q_rayonnement - q_solaire) / R(T_max) ]',
-        formulaDescFr: 'Méthode CIGRE / IEEE 738 avec température maximale d\'âme fixée à 75°C ou 90°C.',
-        formulaDescEn: 'IEEE 738 / CIGRE heat balance model with maximum core limit at 75°C or 90°C.',
+        tabLabelFr: 'Capacité Thermique & Bilan IEEE 738',
+        tabLabelEn: 'Thermal Ampacity & Heat Balance',
+        titleFr: 'Courant Admissible Permanent & Échauffement Conducteur (IEEE Std 738)',
+        titleEn: 'Steady-State Thermal Ampacity Heat Balance per IEEE Std 738',
+        descFr: 'Détermine le courant permanent maximal admissible sans dépassement de la température limite d\'âme (75°C pour Almelec, 90°C pour ACSR), par bilan thermique entre échauffement Joule/solaire et refroidissement éolien.',
+        descEn: 'Establishes continuous maximum current rating without exceeding maximum core temperature (75°C for AAAC, 90°C for ACSR), balancing Joule/solar gains against wind cooling.',
+        formula: 'I_{max} = \\sqrt{ \\frac{q_c(T_{max}) + q_r(T_{max}) - q_s}{R_{ac}(T_{max})} }',
+        formulaDescFr: 'Avec qc pertes par convection du vent (W/m), qr pertes par rayonnement radiatif (W/m), qs apport thermique solaire incident (W/m), et Rac(Tmax) résistance ohmique AC à chaud.',
+        formulaDescEn: 'With qc convective cooling (W/m), qr radiative cooling (W/m), qs solar heat gain (W/m), and Rac(Tmax) AC resistance at maximum allowable temperature.',
         assumptionsFr: [
-          'Vitesse de vent minimale défavorable : 0.6 m/s.',
-          'Ensoleillement tropical : 1 000 W/m².',
-          'Température ambiante maximale : 40°C à 45°C.'
+          'Vitesse de vent minimale défavorable perpendiculaire : 0.6 m/s.',
+          'Flux solaire tropical : 1 000 W/m² avec coefficient d\'absorption solaire α = 0.5 à 0.8.',
+          'Température ambiante de calcul : 40°C à 45°C en plaine équatoriale.'
         ],
         assumptionsEn: [
-          'Conservative minimum perpendicular wind: 0.6 m/s.',
-          'Tropical solar insolation: 1,000 W/m².',
-          'Ambient ceiling temperature: 40°C to 45°C.'
+          'Conservative perpendicular crosswind: 0.6 m/s.',
+          'Tropical solar insolation: 1,000 W/m² with emissivity/absorptivity α = 0.5 to 0.8.',
+          'Design ambient temperature: 40°C to 45°C in equatorial lowlands.'
         ],
         calcTab: 'cable-ampacity'
+      },
+      {
+        id: 'catenary_sag_equation',
+        tabLabelFr: 'Flèche Mécanique de Chaînette',
+        tabLabelEn: 'Catenary Sag & Mechanical State',
+        titleFr: 'Calcul de la Flèche Maximale d\'une Ligne Aérienne (Cigré TB 273)',
+        titleEn: 'Overhead Line Catenary Maximum Sag Calculation (Cigré TB 273)',
+        descFr: 'Permet de vérifier que la flèche au milieu de la portée ne viole à aucun moment les gabarits de sécurité verticaux par rapport au sol (ex: 8.0 m en 225 kV selon CEI 61936-1).',
+        descEn: 'Verifies that mid-span conductor sag preserves required ground clearance safety envelopes (e.g., 8.0 m at 225 kV per IEC 61936-1) under maximum thermal elongation.',
+        formula: 'f = \\frac{w \\cdot S^2}{8 \\cdot T_0} \\quad ; \\quad L_c \\approx S + \\frac{8 \\cdot f^2}{3 \\cdot S}',
+        formulaDescFr: 'Avec w poids linéique total résultant (conducteur + vent) en N/m, S portée horizontale entre pylônes (m), T0 tension mécanique horizontale à la suspension (N), et Lc longueur développée.',
+        formulaDescEn: 'With w resultant linear weight (conductor weight + wind force) in N/m, S horizontal span between towers (m), T0 horizontal tension at support (N), and Lc developed conductor length.',
+        assumptionsFr: [
+          'Portée horizontale modélisée par approximation parabolique de la chaînette (valide pour f/S < 0.10).',
+          'Température d\'âme maximale calculée à 75°C sous vent nul.',
+          'Tension de pose initiale limitée à 20-25% de la charge de rupture mécanique (UTS) pour éviter la fatigue par vibration éolienne.'
+        ],
+        assumptionsEn: [
+          'Parabolic approximation of catenary curve valid for sag-to-span ratios f/S < 0.10.',
+          'Conductor temperature evaluated at 75°C still-air condition.',
+          'Everyday tension (EDT) capped at 20-25% of Ultimate Tensile Strength (UTS) to prevent Aeolian fatigue.'
+        ],
+        calcTab: 'cable-ampacity'
+      },
+      {
+        id: 'corona_inception_voltage',
+        tabLabelFr: 'Effet Couronne & Gradient Peek',
+        tabLabelEn: 'Corona Inception Gradient (Peek)',
+        titleFr: 'Tension Critique Disruptive d\'Effet Couronne selon Peek',
+        titleEn: 'Corona Inception Electric Field Gradient per Peek Formula',
+        descFr: 'Détermine le gradient électrique superficiel au-delà duquel l\'air ambiant s\'ionise, créant des décharges d\'effluve lumineuses, des pertes diélectriques et des perturbations radioélectriques.',
+        descEn: 'Calculates the surface electric field threshold above which ambient air ionizes, causing luminous discharges, active power losses, and audible/radio interference.',
+        formula: 'E_0 = 30 \\cdot m \\cdot \\delta \\left(1 + \\frac{0.301}{\\sqrt{r \\cdot \\delta}}\\right) \\quad [\\text{kV/cm}]',
+        formulaDescFr: 'Avec r rayon extérieur du conducteur (cm), m facteur d\'état de surface (0.80 à 0.85 pour brins torsadés neufs), et δ densité relative de l\'air en fonction de l\'altitude et température.',
+        formulaDescEn: 'With r outer conductor radius (cm), m conductor surface irregularity factor (0.80 to 0.85 for stranded wire), and δ relative air density correcting for altitude and temperature.',
+        assumptionsFr: [
+          'Le gradient d\'exploitation maximal en 225 kV doit rester strictement inférieur à E0 (typiquement E_op < 17 kV/cm).',
+          'L\'utilisation de faisceaux à plusieurs sous-conducteurs augmente le diamètre équivalent et abaisse le gradient de surface.',
+          'Conditions atmosphériques humides (pluie tropicale) abaissent le seuil critique de 20% à 30%.'
+        ],
+        assumptionsEn: [
+          'Operational surface gradient must stay strictly below inception field (typically E_op < 17 kV/cm).',
+          'Multi-conductor bundles expand effective geometric radius, drastically suppressing surface stress.',
+          'Tropical heavy rain lowers the corona inception threshold by 20% to 30%.'
+        ],
+        calcTab: 'voltage-drop'
+      },
+      {
+        id: 'cable_ampacity_iec60287',
+        tabLabelFr: 'Ampacité Câble Souterrain CEI 60287',
+        tabLabelEn: 'Underground Cable Rating (IEC 60287)',
+        titleFr: 'Intensité Admissible des Câbles Souterrains en Régime Permanent (CEI 60287)',
+        titleEn: 'Steady-State Current Rating for Underground Cables per IEC 60287',
+        descFr: 'Modélisation du réseau thermique équivalent de Kennelly calculant l\'échauffement de l\'âme cuivre en tranchée en fonction des résistances thermiques de l\'isolant, de la gaine et du sol.',
+        descEn: 'Kennelly lumped-parameter thermal network evaluating conductor temperature rise in a buried trench based on thermal resistances of insulation, bedding, and backfill soil.',
+        formula: 'I = \\sqrt{ \\frac{\\Delta \\theta - W_d [0.5 T_1 + n(T_2 + T_3 + T_4)]}{R_{ac} [T_1 + n(1+\\lambda_1) T_2 + n(1+\\lambda_1+\\lambda_2)(T_3 + T_4)]} }',
+        formulaDescFr: 'Avec Δθ élévation de température admissible (90°C - Tsol), Wd pertes diélectriques, T1 à T4 résistances thermiques (isolant, écran, gaine, sol), et λ1, λ2 coefficients de pertes dans les écrans métalliques.',
+        formulaDescEn: 'With Δθ permissible temperature rise (90°C - Tsoil), Wd dielectric losses, T1 to T4 thermal resistances (insulation, bedding, sheath, soil), and λ1, λ2 sheath loss factors.',
+        assumptionsFr: [
+          'Profondeur d\'enfouissement en tranchée standard : 1.20 à 1.50 m.',
+          'Résistivité thermique du sol sec sans humidité : 1.2 à 2.0 K·m/W.',
+          'Système de permutation des écrans (Cross-Bonding) réduisant les pertes d\'écran λ1 sous 0.05.'
+        ],
+        assumptionsEn: [
+          'Standard trench burial depth: 1.20 to 1.50 m.',
+          'Backfill dry soil thermal resistivity: 1.2 to 2.0 K·m/W.',
+          'Special cross-bonding sheath bonding keeping sheath loss factor λ1 below 0.05.'
+        ],
+        calcTab: 'cable-ampacity'
+      },
+      {
+        id: 'surge_impedance_propagation',
+        tabLabelFr: 'Impédance d\'Onde & Vitesse de Propagation',
+        tabLabelEn: 'Surge Impedance & Wave Speed',
+        titleFr: 'Impédance Caractéristique d\'Onde Zc & Vitesse de Propagation Télécom',
+        titleEn: 'Surge Impedance Zc & Wave Velocity for Teleprotection & Travelling Waves',
+        descFr: 'Régit la propagation des ondes de foudre, les surtensions de manœuvre et la localisation ultra-rapide des défauts par ondes progressives (Travelling Wave Relays).',
+        descEn: 'Governs lightning surge propagation, switching overvoltages, and ultra-high-speed travelling wave fault location.',
+        formula: 'Z_c = \\sqrt{\\frac{l_{line}}{c_{line}}} \\approx 360 - 400 \\ \\Omega \\quad ; \\quad v = \\frac{1}{\\sqrt{l_{line} \\cdot c_{line}}} \\approx \\frac{c_0}{\\sqrt{\\epsilon_r}} \\approx 300\\,000 \\text{ km/s}',
+        formulaDescFr: 'Avec l_line inductance linéique (~ 1.0 mH/km), c_line capacité linéique (~ 0.011 µF/km en aérien, ~ 0.20 µF/km en câble XLPE avec Zc ≈ 30-50 Ω).',
+        formulaDescEn: 'With l_line linear inductance (~ 1.0 mH/km), c_line linear capacitance (~ 0.011 µF/km for lines, ~ 0.20 µF/km for XLPE cables with Zc ≈ 30-50 Ω).',
+        assumptionsFr: [
+          'Ligne modélisée sans pertes en hautes fréquences (R << ωL et G << ωC).',
+          'Vitesse de propagation dans le vide/air c0 = 300 000 km/s (εr ≈ 1.0) ; réduite à ~ 160 000 km/s dans l\'isolant XLPE (εr ≈ 2.3).',
+          'Permet la détection milliseconde des défauts par relais de distance 21 et ondes progressives.'
+        ],
+        assumptionsEn: [
+          'High-frequency lossless line approximation (R << ωL and G << ωC).',
+          'Propagation velocity in air c0 = 300,000 km/s (εr ≈ 1.0); slowed to ~ 160,000 km/s in XLPE solid dielectric (εr ≈ 2.3).',
+          'Enables sub-millisecond fault location via Travelling Wave distance relays.'
+        ],
+        calcTab: 'voltage-drop'
       }
     ],
     sectionF: [
       {
         code: 'CEI 60826',
-        tag: 'CONCEPTION LIGNES',
-        titleFr: 'Critères de Conception des Lignes Aériennes de Transport',
+        tag: 'CONCEPTION MÉCANIQUE LIGNES',
+        titleFr: 'Critères de Conception des Lignes Aériennes de Transport Électrique',
         titleEn: 'Design Criteria of Overhead Transmission Lines',
-        descFr: 'Hypothèses de vent, charges mécaniques de rupture et distances d\'isolement de sécurité.',
-        descEn: 'Wind loads, mechanical conductor tensile limits, and clearance safety envelopes.'
+        descFr: 'Méthodologie probabiliste pour la détermination des charges de vent, du poids des conducteurs, des efforts sur pylônes et des distances de garde au sol.',
+        descEn: 'Probabilistic design framework for wind loading, conductor tension, tower structure integrity, and safety clearance envelopes.'
       },
       {
-        code: 'NF EN 50341',
-        tag: 'EUROPE / INTERNATIONAL',
-        titleFr: 'Lignes Électriques Aériennes Dépassant 1 kV CA',
-        titleEn: 'Overhead Electrical Lines Exceeding 1 kV AC',
-        descFr: 'Règles normatives pour le calcul des flèches, des efforts sur pylônes et coordination d\'isolement.',
-        descEn: 'Engineering rules for sag-tension, tower structural integrity, and insulation coordination.'
+        code: 'NF EN 50341 / CENELEC',
+        tag: 'LIGNES AÉRIENNES HTB',
+        titleFr: 'Lignes Électriques Aériennes Dépassant 1 kV CA - Exigences Communes',
+        titleEn: 'Overhead Electrical Lines Exceeding 1 kV AC - General Requirements',
+        descFr: 'Norme européenne et internationale de référence régissant les équations d\'état mécanique des conducteurs, la coordination de l\'isolement et les portées de sécurité.',
+        descEn: 'Primary standard governing mechanical conductor state equations, dielectric air clearances, and foundation design.'
+      },
+      {
+        code: 'IEEE Std 738-2012',
+        tag: 'AMPACITÉ THERMIQUE DLR',
+        titleFr: 'Calcul de la Relation Courant-Température des Conducteurs Aériens Nus',
+        titleEn: 'Standard for Calculating the Current-Temperature of Bare Overhead Conductors',
+        descFr: 'Formulation aérothermique normalisée pour le calcul de l\'ampacité permanente et le déploiement du Dynamic Line Rating (DLR) en temps réel.',
+        descEn: 'Standardized heat balance equations for steady-state ampacity and dynamic line rating (DLR) thermal tracking.'
+      },
+      {
+        code: 'CEI 60287 / CEI 60853',
+        tag: 'CÂBLES SOUTERRAINS THT',
+        titleFr: 'Calcul du Courant Admissible dans les Câbles Électriques en Régime Permanent & Cyclique',
+        titleEn: 'Electric Cables - Calculation of the Current Rating (100% Load Factor & Cyclic)',
+        descFr: 'Modèle thermique par réseau de résistances équivalentes (Kennelly) pour le dimensionnement des câbles souterrains haute tension en tranchée.',
+        descEn: 'Equivalent thermal resistance network method (Kennelly) for sizing underground high-voltage cables in trench backfill.'
+      },
+      {
+        code: 'CEI 60071-1 / CEI 60071-2',
+        tag: 'COORDINATION ISOLEMENT',
+        titleFr: 'Coordination de l\'Isolement - Définitions, Principes et Règles d\'Application',
+        titleEn: 'Insulation Co-ordination - Principles, Rules and Application Guide',
+        descFr: 'Fixe les niveaux assignés de tenue aux chocs de foudre (BIL), aux surtensions de manœuvre et les distances d\'isolement dans l\'air en fonction de la pollution.',
+        descEn: 'Establishes Basic Impulse Insulation Levels (BIL), switching surge withstand, and creepage clearances under severe pollution.'
+      },
+      {
+        code: 'CIGRÉ TB 273 / TB 498',
+        tag: 'DYNAMIQUE DES CONDUCTEURS',
+        titleFr: 'Guide de Sélection des Faisceaux & Comportement Vibratoire des Conducteurs Aériens',
+        titleEn: 'Guide for the Selection of Bundle Conductors & Overhead Line Vibrations',
+        descFr: 'Recommandations pour la maîtrise des vibrations éoliennes, du galop, du sous-balancement des faisceaux et l\'utilisation des amortisseurs Stockbridge.',
+        descEn: 'Guidelines for suppressing Aeolian vibrations, conductor galloping, subspan oscillations, and Stockbridge damper positioning.'
       }
     ]
   },

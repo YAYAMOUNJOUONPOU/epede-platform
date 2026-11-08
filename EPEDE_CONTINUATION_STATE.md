@@ -1,10 +1,10 @@
 # EPEDE CONTINUATION STATE CHECKPOINT
 
 ## Active Status
-- **Current Phase**: Phase 2 — Domain 3 Transformation & Verification
-- **Current Domain**: D03 (Transmission Networks — HV Overhead Lines & Underground Cables)
-- **Active Task**: Auditing and enriching D03 with full physical line parameters, tension-sag equations (Cigré TB 273), insulation coordination (IEC 60071), cable ampacity (IEC 60287), and real Cameroon line corridors (225 kV Nachtigal-Nyom II, Songloulou-Mangombé).
-- **Next Domain in Queue**: D04 (Substations & Grid Nodes — AIS/GIS, Bays, Power Transformers)
+- **Current Phase**: Phase 2 — Domain 4 Transformation & Verification
+- **Current Domain**: D04 (Substations & Grid Nodes — AIS/GIS, Power Transformers, Bay Architectures)
+- **Active Task**: Auditing and enriching D04 pedagogical framework and workbench with full insulation coordination (IEC 60071), clearances (IEC 61936-1), transformer short-circuit withstand (IEC 60076-5), breaker switching dynamics (IEC 62271-100), earthing mesh (IEEE 80), and Cameroon hub nodes (Oyomabang, Mangombé, Bekoko, Nyom II).
+- **Next Domain in Queue**: D05 (Distribution Networks — MV Feeders, RMUs, Pole Transformers)
 - **Execution Mode**: Autonomous continuous improvement loop (Analyze -> Improve -> Reanalyze -> Reimprove -> Validate -> Quality Gate).
 
 ## Unresolved Issues / Blockers

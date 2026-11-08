@@ -36,3 +36,12 @@ All notable changes, engineering refactors, and technical enhancements across th
   - Interactive 8-axis comparison matrix (Radial vs Open-Ring vs Meshed vs Interconnected vs Microgrid) covering reliability, protection, CapEx, OpEx, voltage stability, and real Cameroon grid exemplars.
   - Comprehensive Substation Busbar Scheme matrix (Single Bus, Sectionalized, Double Bus, $1\frac{1}{2}$ CB, Ring Bus) with maintenance flexibility and interlocking rules.
   - Integrated into Stage 3 of `GridArchitectureVisualJourney.tsx`.
+
+### Domain 3 (D03) - Transmission Networks Transformation
+- Enriched pedagogical framework in `domainPedagogicalContentRegistry.ts`:
+  - **Section A**: Formulated transmission electrotechnical boundaries ($v \approx 300\,000\text{ km/s}$, $Q_c = \omega C V^2$, $Z_c \approx 360\text{--}400\,\Omega$, $R_p \le 10\,\Omega$).
+  - **Section B**: Documented 5 canonical transmission architectures: 225 kV Double-Circuit Lattice Tower Line, 90 kV Sub-Transmission Line, 225 kV XLPE Underground Cable with Cross-Bonding, 400 kV Multi-Bundle Regional Intertie (PIECT), and HVDC VSC/MMC Bipolar Intertie.
+  - **Section C**: Added 6 high-voltage assets with authentic imagery: 225 kV lattice towers, AAAC Aster 570 mm² conductors, silicone composite insulator strings, 48-fiber OPGW shield wires, 225 kV XLPE underground cables, and spacer dampers / Stockbridge vibration dampers.
+  - **Section D**: Expanded methodology to 7 sequential phases from LiDAR corridor surveys to Dynamic Line Rating (DLR).
+  - **Section E**: Integrated 6 LaTeX mathematical formulations: Ferranti effect ($\Delta U \approx \frac{\omega^2 L C}{2} U$), IEEE Std 738 heat balance ampacity, Cigré TB 273 catenary sag equation, Peek corona inception field ($E_0$), IEC 60287 underground cable Kennelly network, and surge propagation velocity ($Z_c, v$).
+  - **Section F**: Sourced 6 international standards: IEC 60826, NF EN 50341, IEEE Std 738, IEC 60287, IEC 60071, and Cigré TB 273.
