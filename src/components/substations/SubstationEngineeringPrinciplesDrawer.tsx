@@ -92,7 +92,23 @@ export const SubstationEngineeringPrinciplesDrawer: React.FC<SubstationEngineeri
     loadRatio: 1.15,
     // Surge arrester
     slewRate: 1000,
-    separationDist: 25
+    separationDist: 25,
+    // Busbar Laplace force (IEC 60865-1)
+    ipPeakKa: 102,
+    phaseSpacingA: 2.5,
+    spanLengthL: 6.0,
+    // CT Saturation Knee-point (IEC 61869-2)
+    iFaultKa: 31.5,
+    ktd: 1.5,
+    rCt: 3.5,
+    rLead: 1.2,
+    rRelay: 0.2,
+    // Ground Grid Sverak Rg (IEEE Std 80)
+    rhoSoil: 120,
+    gridAreaA: 10000,
+    totalConductorLength: 2800,
+    burialDepthH: 0.8,
+    faultCurrentIgKa: 15
   });
 
   const formulas: FormulaItem[] = [
@@ -385,6 +401,148 @@ export const SubstationEngineeringPrinciplesDrawer: React.FC<SubstationEngineeri
           note_en: `With ${iperm} A steady load over ${taut} h and 25% aging reserve, specify an industrial ${roundedAh} Ah battery bank.`
         };
       }
+    },
+    {
+      id: 'FORMULA_BUSBAR_ELECTRODYNAMIC',
+      category: 'ELECTROTECHNICAL',
+      standard: 'IEC 60865-1 / IEEE Std 605',
+      title_fr: 'Effort Électrodynamique de Crête sur Jeux de Barres (Forces de Laplace)',
+      title_en: 'Busbar Electrodynamic Peak Force (Laplace Forces)',
+      formula: 'F_m = (μ_0 / 2π) · (i_p^2 / a) · L = 0.2 · (i_p^2 / a) · L   [N]',
+      variables: [
+        { sym: 'i_p', desc_fr: 'Courant de court-circuit crête initial maximal', desc_en: 'Peak making short-circuit current', unit: 'kA crête' },
+        { sym: 'a', desc_fr: 'Entraxe géométrique entre axes de conducteurs de phases parallèles', desc_en: 'Center-to-center spacing between parallel phase conductors', unit: 'mètres' },
+        { sym: 'L', desc_fr: 'Portée mécanique entre deux isolateurs supports successifs', desc_en: 'Span length between adjacent support post insulators', unit: 'mètres' },
+        { sym: 'F_m', desc_fr: 'Force électrodynamique maximale de répulsion mécanique', desc_en: 'Maximum electrodynamic peak repulsion force', unit: 'N ou daN' }
+      ],
+      explanation_fr: 'Selon la loi de Biot-Savart et de Laplace, les courants de court-circuit de sens opposé dans deux phases parallèles engendrent une force répulsive violente proportionnelle au carré du courant de crête (ip²). Cette force impose une contrainte de flexion aux tubes d\'aluminium et aux isolateurs colonnes en porcelaine ou composite.',
+      explanation_en: 'Per Biot-Savart and Laplace laws, opposing short-circuit fault currents produce violent repulsion forces proportional to ip². This peak mechanical thrust exerts severe bending moments onto tubular busbars and station post insulators.',
+      practical_example_fr: 'Pour ip = 102 kA crête (Icc = 40 kA), entraxe a = 2.5 m et portée L = 6.0 m : Fm = 0.2 · (102² / 2.5) · 6.0 = 4 994 N ≈ 509 daN. Un isolateur de tenue minimale 10 kN résiste avec une marge de sécurité de +50%.',
+      practical_example_en: 'With ip = 102 kA peak, a = 2.5 m, L = 6.0 m: Fm = 4,994 N ≈ 509 daN. A standardized 10 kN cantilever rated insulator withstands this shock with +50% security margin.',
+      interactiveParams: [
+        { key: 'ipPeakKa', label_fr: 'Courant Crête ip', label_en: 'Peak Current ip', min: 20, max: 160, step: 2, defaultVal: 102, unit: 'kA' },
+        { key: 'phaseSpacingA', label_fr: 'Entraxe Phases a', label_en: 'Phase Spacing a', min: 1.0, max: 5.0, step: 0.1, defaultVal: 2.5, unit: 'm' },
+        { key: 'spanLengthL', label_fr: 'Portée Isolateurs L', label_en: 'Span Length L', min: 2.0, max: 12.0, step: 0.5, defaultVal: 6.0, unit: 'm' }
+      ],
+      computeInteractiveResult: (p) => {
+        const ip = p.ipPeakKa ?? 102;
+        const a = p.phaseSpacingA ?? 2.5;
+        const l = p.spanLengthL ?? 6.0;
+        const fmN = 0.2 * ((ip * ip) / a) * l;
+        const fmDaN = fmN / 9.81;
+        const insulatorRatingkN = 10;
+        const stressRatio = (fmN / 1000) / insulatorRatingkN;
+        const isSafe = stressRatio < 0.8;
+        return {
+          resultLabel_fr: `Fm = ${Math.round(fmN)} N (${Math.round(fmDaN)} daN) | Effort unitaire = ${(fmN / l).toFixed(0)} N/m`,
+          resultLabel_en: `Fm = ${Math.round(fmN)} N (${Math.round(fmDaN)} daN) | Unit load = ${(fmN / l).toFixed(0)} N/m`,
+          value: isSafe ? 'TENUE MÉCANIQUE ISOLATEURS VALIDE' : 'ATTENTION : CONTRAINTE ÉLECTRODYNAMIQUE ÉLEVÉE',
+          status: isSafe ? 'OPTIMAL' : 'CRITICAL',
+          note_fr: isSafe
+            ? `L'effort mécanique (${Math.round(fmDaN)} daN) reste inférieur à la limite de rupture en flexion des isolateurs de poste classe ${insulatorRatingkN} kN (taux de fatigue ${(stressRatio * 100).toFixed(0)}%).`
+            : `L'effort (${Math.round(fmDaN)} daN) approche ou excède la charge de rupture admissible. Augmenter l'entraxe ou réduire la portée entre isolateurs.`,
+          note_en: isSafe
+            ? `Mechanical thrust (${Math.round(fmDaN)} daN) complies with ${insulatorRatingkN} kN cantilever post insulator rating (stress ratio ${(stressRatio * 100).toFixed(0)}%).`
+            : `Mechanical thrust exceeds recommended safety margin. Increase phase spacing or reduce support span.`
+        };
+      }
+    },
+    {
+      id: 'FORMULA_CT_KNEEPOINT',
+      category: 'PROTECTION',
+      standard: 'IEC 61869-2 / IEEE C57.13',
+      title_fr: 'Tension de Coude de Saturation du TC (Knee-Point Vk)',
+      title_en: 'Current Transformer Saturation Knee-Point Voltage (Vk)',
+      formula: 'V_k ≥ K_td · I_sc · (I_sec / I_prim) · (R_ct + 2 · R_wire + R_relay)',
+      variables: [
+        { sym: 'V_k', desc_fr: 'Tension de coude minimale requise sur la caractéristique d\'aimantation', desc_en: 'Minimum knee-point voltage required to prevent CT saturation', unit: 'V' },
+        { sym: 'K_td', desc_fr: 'Facteur transitoire de surdimensionnement (composante continue L/R réseau)', desc_en: 'Transient dimensioning factor accounting for primary L/R DC offset', unit: '-' },
+        { sym: 'I_sc', desc_fr: 'Courant de court-circuit maximal primaire traversant', desc_en: 'Maximum through-fault short-circuit current', unit: 'kA' },
+        { sym: 'R_ct', desc_fr: 'Résistance interne de l\'enroulement secondaire du TC à 75 °C', desc_en: 'CT secondary internal winding resistance at 75 °C', unit: 'Ω' },
+        { sym: 'R_wire', desc_fr: 'Résistance unifilaire de la liaison filaire entre TC et salle de commande', desc_en: 'One-way cable lead resistance to protection cubicle', unit: 'Ω' },
+        { sym: 'R_relay', desc_fr: 'Impédance d\'entrée du relais de protection numérique IED', desc_en: 'Numerical protection relay input burden impedance', unit: 'Ω' }
+      ],
+      explanation_fr: 'Pour éviter que le transformateur de courant ne sature durant les premières périodes critiques d\'un court-circuit (où la composante apériodique continue est maximale), la tension induite dans le noyau magnétique doit rester inférieure à la tension de coude Vk où commence la saturation ferromagnétique.',
+      explanation_en: 'To prevent CT core saturation during initial fault cycles with severe DC offset, secondary induced voltage must remain well below knee-point voltage Vk where ferromagnetic saturation distorts waveforms and delays relay tripping.',
+      practical_example_fr: 'Sur départ 225 kV avec Icc = 31.5 kA, TC 1200/1 A, Rct = 3.5 Ω, 2·Rwire = 2.4 Ω, Rrelay = 0.2 Ω (Rtot = 6.1 Ω) et Ktd = 1.5 : Isec = 31 500 / 1200 = 26.25 A. Vk requis = 1.5 · 26.25 · 6.1 = 240.2 V. Un TC de classe PX avec Vk = 300 V garantit une marge de sécurité de +25%.',
+      practical_example_en: 'On 225 kV bay with 31.5 kA fault, CT ratio 1200/1 A, loop resistance 6.1 Ω and Ktd = 1.5: Isec = 26.25 A. Required Vk = 240.2 V. A Class PX CT rated Vk = 300 V ensures secure operation.',
+      interactiveParams: [
+        { key: 'iFaultKa', label_fr: 'Courant Défaut Isc', label_en: 'Fault Current Isc', min: 10, max: 63, step: 0.5, defaultVal: 31.5, unit: 'kA' },
+        { key: 'ktd', label_fr: 'Facteur Transitoire Ktd', label_en: 'Transient Factor Ktd', min: 1.0, max: 3.0, step: 0.1, defaultVal: 1.5, unit: '-' },
+        { key: 'rCt', label_fr: 'Résistance TC (Rct)', label_en: 'CT Resistance (Rct)', min: 0.5, max: 8.0, step: 0.1, defaultVal: 3.5, unit: 'Ω' },
+        { key: 'rLead', label_fr: 'Résistance Ligne Câble', label_en: 'Lead Resistance', min: 0.2, max: 4.0, step: 0.1, defaultVal: 1.2, unit: 'Ω' }
+      ],
+      computeInteractiveResult: (p) => {
+        const isc = p.iFaultKa ?? 31.5;
+        const ktd = p.ktd ?? 1.5;
+        const rct = p.rCt ?? 3.5;
+        const rlead = p.rLead ?? 1.2;
+        const rrelay = 0.2;
+        const ctRatio = 1200;
+        const isec = (isc * 1000) / ctRatio;
+        const rloop = rct + 2 * rlead + rrelay;
+        const vkRequired = ktd * isec * rloop;
+        const standardVkRating = Math.ceil(vkRequired / 50) * 50 + 50;
+        return {
+          resultLabel_fr: `Vk Requis = ${Math.round(vkRequired)} V eff (Boucle = ${rloop.toFixed(2)} Ω)`,
+          resultLabel_en: `Required Vk = ${Math.round(vkRequired)} V rms (Loop = ${rloop.toFixed(2)} Ω)`,
+          value: `PALIER TC CONSEILLÉ: CLASSE PX Vk ≥ ${standardVkRating} V`,
+          status: 'OPTIMAL',
+          note_fr: `Sous un courant secondaire de ${isec.toFixed(1)} A eff, le coude d'aimantation doit dépasser ${Math.round(vkRequired)} V pour éliminer tout risque de saturation et retard de déclenchement.`,
+          note_en: `Under ${isec.toFixed(1)} A secondary fault current, magnetization knee must exceed ${Math.round(vkRequired)} V to eliminate relay tripping delays.`
+        };
+      }
+    },
+    {
+      id: 'FORMULA_IEEE80_SVERAK_RG',
+      category: 'SAFETY',
+      standard: 'IEEE Std 80-2013 / IEC 61936-1',
+      title_fr: 'Résistance de Terre du Poste & Élévation de Potentiel (GPR)',
+      title_en: 'Substation Ground Grid Resistance (Rg) & Ground Potential Rise (GPR)',
+      formula: 'R_g = ρ · [ 1 / L_T + 1 / √(20 · A) · (1 + 1 / (1 + h · √(20 / A))) ]   et   GPR = I_g · R_g',
+      variables: [
+        { sym: 'R_g', desc_fr: 'Résistance de terre globale du poste calculée selon Sverak', desc_en: 'Overall substation ground grid resistance per Sverak equation', unit: 'Ω' },
+        { sym: 'ρ', desc_fr: 'Résistivité apparente du sol mesurée selon méthode Wenner', desc_en: 'Apparent soil resistivity measured via Wenner 4-pin method', unit: 'Ω·m' },
+        { sym: 'A', desc_fr: 'Superficie de l\'emprise du poste clôturée et maillée', desc_en: 'Total substation fenced and meshed yard area', unit: 'm²' },
+        { sym: 'L_T', desc_fr: 'Longueur totale cumulée des conducteurs de cuivre nus enfouis + piquets', desc_en: 'Total combined length of buried grid conductors and ground rods', unit: 'mètres' },
+        { sym: 'h', desc_fr: 'Profondeur de fouille et d\'enfouissement de la grille', desc_en: 'Grid burial depth', unit: 'mètres' },
+        { sym: 'GPR', desc_fr: 'Élévation de potentiel du réseau de terre sous défaut monophasé maximal', desc_en: 'Ground Potential Rise during maximum single-phase earth fault', unit: 'kV' }
+      ],
+      explanation_fr: 'L\'équation de Sverak (adoptée par l\'IEEE Std 80-2013) permet de prédire avec une excellente précision la résistance équivalente de la grille de terre maillée. Une valeur Rg ≤ 1.0 Ω (idéalement < 0.5 Ω) est impérative pour limiter l\'élévation de potentiel (GPR) et préserver les équipements de contrôle-commande des tensions de mode commun destructrices.',
+      explanation_en: 'Sverak\'s formulation (IEEE Std 80-2013) accurately determines substation grounding grid resistance. Maintaining Rg ≤ 1.0 Ω (ideally < 0.5 Ω) is mandatory to restrict Ground Potential Rise (GPR) and shield control and telecommunication cables from hazardous common-mode surges.',
+      practical_example_fr: 'Pour poste 10 000 m² (100x100 m), sol ρ = 120 Ω·m, LT = 2 800 m et h = 0.8 m : Rg = 120 · [1/2800 + 1/√200000 · (1 + 1/(1 + 0.8·√0.002))] = 0.57 Ω. Avec Ig = 15 kA, GPR = 15 · 0.57 = 8.55 kV.',
+      practical_example_en: 'For 10,000 m² yard, ρ = 120 Ω·m, LT = 2,800 m, h = 0.8 m: Rg = 0.57 Ω. With 15 kA earth fault injection, GPR = 8.55 kV.',
+      interactiveParams: [
+        { key: 'rhoSoil', label_fr: 'Résistivité Sol (ρ)', label_en: 'Soil Resistivity (ρ)', min: 20, max: 800, step: 10, defaultVal: 120, unit: 'Ω·m' },
+        { key: 'gridAreaA', label_fr: 'Superficie Poste (A)', label_en: 'Substation Area (A)', min: 1000, max: 40000, step: 500, defaultVal: 10000, unit: 'm²' },
+        { key: 'totalConductorLength', label_fr: 'Longueur Cuivre (LT)', label_en: 'Conductor Length (LT)', min: 500, max: 8000, step: 100, defaultVal: 2800, unit: 'm' },
+        { key: 'faultCurrentIgKa', label_fr: 'Courant Défaut Terre (Ig)', label_en: 'Earth Fault Current (Ig)', min: 2, max: 40, step: 1, defaultVal: 15, unit: 'kA' }
+      ],
+      computeInteractiveResult: (p) => {
+        const rho = p.rhoSoil ?? 120;
+        const area = p.gridAreaA ?? 10000;
+        const lt = p.totalConductorLength ?? 2800;
+        const h = 0.8;
+        const ig = p.faultCurrentIgKa ?? 15;
+        const term1 = 1 / lt;
+        const sqrt20A = Math.sqrt(20 * area);
+        const term2 = (1 / sqrt20A) * (1 + 1 / (1 + h * Math.sqrt(20 / area)));
+        const rg = rho * (term1 + term2);
+        const gprKv = ig * rg;
+        const isCompliant = rg <= 1.0;
+        return {
+          resultLabel_fr: `Rg = ${rg.toFixed(3)} Ω | GPR = ${gprKv.toFixed(1)} kV`,
+          resultLabel_en: `Rg = ${rg.toFixed(3)} Ω | GPR = ${gprKv.toFixed(1)} kV`,
+          value: isCompliant ? 'RÉSISTANCE CONFORME CEI / IEEE (< 1.0 Ω)' : 'RÉSISTANCE TROP ÉLEVÉE (PIQUETS REQUIS)',
+          status: isCompliant ? (rg <= 0.5 ? 'OPTIMAL' : 'ACCEPTABLE') : 'CRITICAL',
+          note_fr: isCompliant
+            ? `Avec Rg = ${rg.toFixed(3)} Ω, l'élévation de potentiel (${gprKv.toFixed(1)} kV) reste maîtrisée. Le maillage de ${lt} m de cuivre garantit une équipotentialité optimale.`
+            : `La résistance (${rg.toFixed(3)} Ω) dépasse le seuil normatif de 1.0 Ω. Enfoncer des piquets profonds en fond de fouille ou ajouter un traitement bentonite.`,
+          note_en: isCompliant
+            ? `With Rg = ${rg.toFixed(3)} Ω, Ground Potential Rise (${gprKv.toFixed(1)} kV) is securely bounded. Meshed grid of ${lt} m provides solid equipotentiality.`
+            : `Resistance (${rg.toFixed(3)} Ω) breaches 1.0 Ω utility ceiling. Drive deep ground rods or apply earth enhancement material.`
+        };
+      }
     }
   ];
 
@@ -421,7 +579,7 @@ export const SubstationEngineeringPrinciplesDrawer: React.FC<SubstationEngineeri
                     {locale === 'fr' ? 'Formulaire & Principes Mathématiques du Poste' : 'Substation Engineering Principles & Laws'}
                   </h2>
                   <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold">
-                    6 FORMULES CEI / IEEE
+                    10 FORMULES CEI / IEEE
                   </span>
                 </div>
                 <span className="text-[11px] text-slate-400 font-sans font-normal block mt-0.5">

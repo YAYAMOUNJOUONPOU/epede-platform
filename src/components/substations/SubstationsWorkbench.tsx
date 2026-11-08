@@ -51,6 +51,8 @@ import { SubstationOperationsScenarios } from './SubstationOperationsScenarios';
 import { SubstationEngineeringPrinciplesDrawer } from './SubstationEngineeringPrinciplesDrawer';
 import { EngineeringInfographicCard } from '../common/EngineeringInfographicCard';
 import { EngineeringInfographicsModal } from '../common/EngineeringInfographicsModal';
+import { getWorkedExampleById } from '../../data/workedExamplesRegistry';
+import { WorkedExampleViewer } from '../common/WorkedExampleViewer';
 
 // Specialized Modules
 import { CameroonSubstationGridNodesEngine } from './modules/CameroonSubstationGridNodesEngine';
@@ -120,6 +122,10 @@ export const SubstationsWorkbench: React.FC<SubstationsWorkbenchProps> = ({
   const [stage3Tab, setStage3Tab] = useState<'TRANSFORMER' | 'PARALLEL_OLTC' | 'DC_AUXILIARY' | 'BATTERY_SIZING' | 'AC_ATS'>('TRANSFORMER');
   const [stage4Tab, setStage4Tab] = useState<'ZONES' | 'DIFF_87T' | 'DISTANCE_21' | 'PROCESS_BUS' | 'GOOSE_PTP' | 'SCL_INSPECTOR'>('ZONES');
   const [stage5Tab, setStage5Tab] = useState<'DOSSIER_BOQ' | 'SWITCHING_LOTO' | 'BCU_INTERLOCK' | 'EARTHING_IEEE80' | 'FIRE_CIVIL' | 'BLACK_START'>('DOSSIER_BOQ');
+
+  // Authoritative Normative Worked Examples for D04 Substation Engineering
+  const d04WorkedExample = getWorkedExampleById('we-d04-substation-short-circuit');
+  const d12WorkedExample = getWorkedExampleById('we-d12-substation-goose-latency');
 
   return (
     <div className="space-y-6 font-mono">
@@ -436,6 +442,28 @@ export const SubstationsWorkbench: React.FC<SubstationsWorkbenchProps> = ({
                       onOpenModal={(id) => setModalInfographicId(id)}
                     />
                     <SubstationBusbarTopologyExplorer locale={locale} />
+                    {d04WorkedExample && (
+                      <div className="space-y-3 pt-4 border-t border-[#222B38]">
+                        <div className="flex items-center gap-2">
+                          <span className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                            <Calculator className="w-4 h-4" />
+                          </span>
+                          <div>
+                            <h3 className="text-sm font-bold text-white tracking-wide">
+                              {locale === 'fr' 
+                                ? 'Cas d’Ingénierie Résolu · Court-Circuit Triphasé selon CEI 60909-0' 
+                                : 'Normative Worked Example · Three-Phase Short Circuit per IEC 60909-0'}
+                            </h3>
+                            <p className="text-[11px] text-slate-400 font-sans">
+                              {locale === 'fr'
+                                ? 'Dimensionnement électrodynamique et pouvoir de coupure au Poste 225 kV d’Oyomabang (SONATREL).'
+                                : 'Electrodynamic and breaking capacity dimensioning at Oyomabang 225 kV Substation (SONATREL).'}
+                            </p>
+                          </div>
+                        </div>
+                        <WorkedExampleViewer example={d04WorkedExample} locale={locale} />
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -684,6 +712,28 @@ export const SubstationsWorkbench: React.FC<SubstationsWorkbenchProps> = ({
                   <div className="space-y-6">
                     <Iec61850GoosePtpClockSimulator locale={locale} />
                     <GooseLatencyStormSimulator locale={locale} />
+                    {d12WorkedExample && (
+                      <div className="space-y-3 pt-4 border-t border-[#222B38]">
+                        <div className="flex items-center gap-2">
+                          <span className="p-1.5 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/30">
+                            <Radio className="w-4 h-4" />
+                          </span>
+                          <div>
+                            <h3 className="text-sm font-bold text-white tracking-wide">
+                              {locale === 'fr' 
+                                ? 'Cas d’Ingénierie Résolu · Latence des Trames GOOSE selon CEI 61850-8-1' 
+                                : 'Normative Worked Example · GOOSE Message Latency per IEC 61850-8-1'}
+                            </h3>
+                            <p className="text-[11px] text-slate-400 font-sans">
+                              {locale === 'fr'
+                                ? 'Vérification du budget de temps de transmission (< 3 ms) et schéma de rafales pour déclenchement ultra-rapide.'
+                                : 'Verification of transmission time budget (< 3 ms) and burst retransmission scheme for trip security.'}
+                            </p>
+                          </div>
+                        </div>
+                        <WorkedExampleViewer example={d12WorkedExample} locale={locale} />
+                      </div>
+                    )}
                   </div>
                 )}
 
