@@ -20,8 +20,8 @@ Complete platform transformation through continuous iterative improvement across
 | **D09** | Artificial Intelligence & Advanced Power Technologies | Completed | 6 | 97% | 97% | 96% | Passing |
 | **D10** | Energy Storage & Charging Systems (BESS, PSH, Microgrids) | Completed | 6 | 97% | 97% | 96% | Passing |
 | **D11** | Protection, Measurements & System Studies (Relays, TCC, ANSI) | Completed | 6 | 97% | 97% | 96% | Passing |
-| **D12** | Substation Automation Systems (SAS, SCADA, RTU, IEC 61850) | In Progress | 1 | - | - | - | Active |
-| **D13** | Communications & Operational Technology (Process Bus, Cybersecurity) | Queued | 0 | - | - | - | - |
+| **D12** | Substation Automation Systems (SAS, SCADA, RTU, IEC 61850) | Completed | 6 | 97% | 97% | 96% | Passing |
+| **D13** | Communications & Operational Technology (Process Bus, Cybersecurity) | In Progress | 1 | - | - | - | Active |
 | **D14** | Power Quality & EMC (Harmonics, THD, Reactive Power, Filtering) | Queued | 0 | - | - | - | - |
 | **D15** | Metering, Smart Grids & Grid Digitalization (AMI, MDM, WAMS) | Queued | 0 | - | - | - | - |
 | **D16** | Electrical Safety, Earthing & Lightning (Mesh Grids, GPR, Surge Arresters) | Queued | 0 | - | - | - | - |

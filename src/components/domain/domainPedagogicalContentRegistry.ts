@@ -2740,172 +2740,417 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
     ]
   },
 
-  // D12: Téléconduite, SAS & Contrôle-Commande de Poste (et D13 CEI 61850)
+  // D12: Téléconduite, SAS & Contrôle-Commande de Poste
   D12: {
     domainCode: 'D12',
     sectionA: {
-      roleFr: "Supervision en temps réel des réseaux, télémesures analogiques, télécommandes d'appareillage et communication inter-équipements par protocole CEI 61850.",
-      roleEn: 'Real-time grid supervision, analog telemetering, remote equipment control, and substation interoperability via IEC 61850 protocols.',
+      roleFr: "Automatisation intégrale, conduite locale et téléconduite en temps réel des postes électriques haute tension (HTB/HTA), acquisition décentralisée des mesures et signalisations par calculateurs de tranche (BCU), inter-verrouillages logiques par trames Ethernet GOOSE sans filerie cuivre, conduite par IHM durcie et télétransmission sécurisée vers le Dispatching National de Mangombé (SONATREL) via CEI 60870-5-104 / ICCP TASE.2.",
+      roleEn: 'Comprehensive substation automation, local HMI supervision, and real-time remote control of high-voltage transmission substations, decentralized telemetry and status acquisition via Bay Control Units (BCUs), hardwire-free peer-to-peer logical interlocking via IEC 61850 GOOSE multicast, local hardened touch HMI control, and secure teletransmission to the Mangombé National Control Center (SONATREL) via IEC 60870-5-104 / ICCP TASE.2.',
       inputsFr: {
-        title: 'Signaux d\'Organes & Télémesures',
-        desc: 'Contacts de fin de course (position disjoncteur/sectionneur), grandeurs analogiques P, Q, U, I, f, et niveaux d\'huile/pression SF6.',
-        voltage: 'Signaux numériques optiques & 48 Vcc'
+        title: 'Signaux d\'Organes, Télémesures Numériques & SV',
+        desc: 'Contacts auxiliaires de fin de course (disjoncteurs, sectionneurs de ligne/barre/terre), pressostats de densité gaz SF6, relais de protection transformateur (Buchholz, surpression), grandeurs électriques (P, Q, U, I, f, cos φ), et flux Sampled Values (SV CEI 61869-9 issus d\'unités Merging Units).',
+        voltage: 'Signaux TOR 48/110 Vcc • Liens optiques Ethernet 100Base-FX • Échantillonnage SV 4 800 Hz'
       },
       inputsEn: {
-        title: 'Switchgear Status & Analog Telemetry',
-        desc: 'Breaker/disconnector auxiliary contacts, analog P, Q, U, I, f transducers, and transformer oil/SF6 gas alarms.',
-        voltage: 'Optical digital links & 48/110 Vdc'
+        title: 'Switchgear Status Contacts, Digital Telemetry & SV Streams',
+        desc: 'Auxiliary limit switches (circuit breaker and disconnector open/closed status), SF6 gas density monitors, transformer protective devices (Buchholz, pressure relief), electrical power variables (P, Q, U, I, f, power factor), and digital Sampled Values streams (SV IEC 61869-9 from Merging Units).',
+        voltage: 'Binary inputs 48/110 Vdc • Optical Ethernet 100Base-FX • SV sampling 4,800 Hz'
       },
       processFr: {
-        title: 'Réseau Ethernet Industriel & Trame GOOSE / MMS',
-        desc: 'Échange ultra-rapide pair-à-pair entre calculateurs de tranche (IEDs) par trames Ethernet GOOSE (≤ 3 ms) et remontée client/serveur MMS.',
-        note: 'Disponibilité maximale : Redondance sans coupure PRP (CEI 62439-3)'
+        title: 'Traitement Décentralisé BCU, Bus de Station CEI 61850 & PRP',
+        desc: 'Traitement en temps réel par calculateurs de tranche (BCU), exécution de matrices d\'inter-verrouillage topologique par messagerie GOOSE prioritaire (latence ≤ 3 ms), synchronisation sub-microseconde IEEE 1588 PTP, double réseau à redondance sans coupure PRP (CEI 62439-3), et conversion de protocoles MMS / CEI 60870-5-104 par passerelle RTU redondante.',
+        note: 'Disponibilité téléconduite 99.999% : Zéro temps de basculement réseau (Zero-failover PRP CEI 62439-3)'
       },
       processEn: {
-        title: 'Industrial Ethernet Bus & GOOSE / MMS Messaging',
-        desc: 'Sub-3ms peer-to-peer multicast GOOSE communications between IEDs and client/server MMS SCADA data acquisition.',
-        note: 'Zero failover downtime: PRP Parallel Redundancy Protocol (IEC 62439-3)'
+        title: 'Distributed BCU Processing, IEC 61850 Station Bus & PRP Redundancy',
+        desc: 'Distributed real-time processing via Bay Control Units (BCUs), execution of topological interlocking matrices via priority multicast GOOSE messaging (latency ≤ 3 ms), sub-microsecond IEEE 1588 PTP time synchronization, seamless dual-network redundancy via Parallel Redundancy Protocol PRP (IEC 62439-3), and protocol conversion to MMS / IEC 60870-5-104 via redundant RTU gateways.',
+        note: 'Substation SCADA availability 99.999%: Zero network failover time (Zero-failover PRP IEC 62439-3)'
       },
       outputsFr: {
-        title: 'IHM de Conduite & Télétransmission Dispatching',
-        desc: 'Synoptiques dynamiques sur écrans de contrôle de poste et télétransmission vers le Dispatching National via CEI 60870-5-104.',
-        earthing: 'Réseaux de terre télécom équipotentiels indépendants des courants de foudre'
+        title: 'Télécommandes Sécurisées SBO, Synoptique IHM & Télégestion',
+        desc: 'Télécommandes sécurisées d\'organes par procédure à deux étapes "Select-Before-Operate" (SBO), synoptique dynamique haute résolution sur IHM locale avec enregistrement chronologique des événements (SOE à résolution 1 ms), trames de téléconduite sécurisées vers le dispatching central SONATREL, et verrouillage d\'urgence électromécanique.',
+        earthing: 'Mise à la terre équipotentielle blindée des baies informatiques et réseaux télécom découplée des surtensions de foudre'
       },
       outputsEn: {
-        title: 'Substation HMI & Remote Dispatch Links',
-        desc: 'Dynamic one-line mimics on local operator screens and uplink to National Dispatch center via IEC 60870-5-104.',
-        earthing: 'Equipotential communication earth mesh shielded from lightning ground surge'
+        title: 'Secure SBO Supervisory Controls, Station HMI & National Dispatch',
+        desc: 'Secure switchgear remote control commands via two-step "Select-Before-Operate" (SBO) sequences, dynamic high-resolution one-line mimics on local station HMI with 1 ms Sequence of Events (SOE) timestamping, encrypted telecontrol frames to SONATREL central EMS, and failsafe hardware lockout.',
+        earthing: 'Equipotential shielded grounding for telecom racks and SAS control cubicles isolated from high-voltage lightning surges'
       }
     },
     sectionB: {
-      summaryFr: 'Architecture normalisée CEI 61850 à 3 niveaux : Niveaux Procédé (Process Bus), Tranche (Bay Level) et Poste (Station Level).',
-      summaryEn: 'Standardized 3-tier IEC 61850 architecture: Process Bus, Bay Level, and Station Level.',
+      summaryFr: 'Architectures de contrôle-commande numérique de poste : bus de station CEI 61850-8-1 (MMS & GOOSE), bus de processus optique avec unités de fusion (Sampled Values), passerelles RTU redondantes vers dispatching national, et matrices d\'inter-verrouillage topologique sécuritaire.',
+      summaryEn: 'Substation automation architectures: IEC 61850-8-1 station bus (MMS & GOOSE), optical digital process bus with merging units (Sampled Values), dual-redundant RTU gateways to national control centers, and failsafe topological interlocking matrices.',
       architectures: [
         {
-          nameFr: 'Bus de Poste & Tranche (Station Bus - MMS & GOOSE)',
-          nameEn: 'Station Bus Architecture (MMS & GOOSE)',
-          techFr: 'Anneau optique Ethernet 1 Gbit/s reliant l\'ensemble des relais IED au superviseur local',
-          techEn: '1 Gbps fiber Ethernet ring interconnecting all protection IEDs to local SCADA servers',
-          descFr: 'Permet les verrouillages logiques instantanés entre cellules (interlocking) sans câblage filaire point à point.',
-          descEn: 'Enables high-speed logic interlocking between bays without hardwired inter-panel copper cables.',
-          standard: 'CEI 61850-8-1',
-          metricFr: 'Vitesse de verrouillage : < 4 ms',
-          metricEn: 'Interlock response: < 4 ms'
+          nameFr: 'Bus de Station Numérique CEI 61850-8-1 (MMS Client/Serveur & GOOSE Tranche)',
+          nameEn: 'IEC 61850-8-1 Digital Station Bus (Client/Server MMS & Bay GOOSE)',
+          techFr: 'Double anneau ou étoile optique 1 Gbit/s reliant l\'ensemble des calculateurs BCU et IEDs au superviseur SAS',
+          techEn: 'Dual optical 1 Gbps ring/star topology interconnecting all bay control units (BCU) and IEDs to SAS servers',
+          descFr: 'Architecture normalisée articulée autour du bus de station. Les trames MMS assurent la remontée cyclique et sur événement des mesures et états vers le superviseur local et la passerelle RTU. Les trames Ethernet GOOSE (Generic Object Oriented Substation Events) permettent les échanges transversaux directs entre tranches (inter-verrouillages, déclenchements de secours) en moins de 3 ms sans passer par le superviseur ni utiliser de fils cuivre.',
+          descEn: 'Standardized architecture built upon the station bus. MMS services handle cyclic and event-driven transmission of measurements and breaker states to the local SCADA server and RTU gateway. Layer-2 peer-to-peer GOOSE multicasts enable direct high-speed inter-bay communication (interlocking, breaker failure tripping) in under 3 ms without traversing the central SCADA server or using point-to-point inter-panel copper wires.',
+          standard: 'CEI 61850-8-1 / CEI 61850-7-2',
+          metricFr: 'Vitesse de transfert GOOSE : < 3 ms • Débit lien : 1 Gbit/s',
+          metricEn: 'GOOSE transfer latency: < 3 ms • Link bandwidth: 1 Gbps'
         },
         {
-          nameFr: 'Bus de Processus Numérique (Process Bus - Sampled Values)',
-          nameEn: 'Full Digital Process Bus (Sampled Values SV)',
-          techFr: 'Numérisation au pied des réducteurs de mesure par unités Merging Units (MU)',
-          techEn: 'Primary current/voltage digitization right at instrument transformer foot via Merging Units (MU)',
-          descFr: 'Élimine tout câble de mesure en cuivre dans le poste : transmission par fibre optique d\'échantillons normalisés 4 kHz.',
-          descEn: 'Completely eliminates copper analog wiring: transmits calibrated 4 kHz digital samples over fiber optics.',
-          standard: 'CEI 61850-9-2 LE',
-          metricFr: 'Échantillonnage : 80 éch/période (4000 Hz)',
-          metricEn: 'Sampling rate: 80 samples/cycle (4000 Hz)'
+          nameFr: 'Poste Numérique Intégral avec Bus de Processus Optique (Process Bus - Sampled Values)',
+          nameEn: 'Full Digital Substation with Optical Process Bus (Sampled Values SV)',
+          techFr: 'Numérisation au pied des réducteurs de mesure par unités Stand-Alone Merging Units (SAMU)',
+          techEn: 'Primary current/voltage digitization right at instrument transformer foot via Stand-Alone Merging Units (SAMU)',
+          descFr: 'Élimination totale des câbles de mesure analogiques et de contrôle en cuivre dans la cour haute tension. Les courants et tensions sont convertis en flux de valeurs échantillonnées numériques (Sampled Values à 4 800 Hz) transmises par fibres optiques aux IEDs de protection et calculateurs de tranche selon la norme CEI 61869-9 / CEI 61850-9-2 LE. Améliore drastiquement la sécurité du personnel en supprimant tout risque d\'ouverture intempestive de circuit TC.',
+          descEn: 'Complete elimination of copper analog measurement and control cabling in the outdoor switchyard. Primary currents and voltages are digitized into standardized digital Sampled Values streams (4,800 Hz) transmitted via optical fibers to protection IEDs and bay controllers per IEC 61869-9 / IEC 61850-9-2 LE. Dramatically enhances human safety by permanently eliminating hazardous open-circuit secondary CT hazards.',
+          standard: 'CEI 61850-9-2 LE / CEI 61869-9',
+          metricFr: 'Fréquence d\'échantillonnage : 4 800 Hz (96 éch/pér à 50 Hz) • Gigue temporelle < 1 µs',
+          metricEn: 'Sampling rate: 4,800 Hz (96 samples/cycle at 50 Hz) • Timing jitter < 1 µs'
+        },
+        {
+          nameFr: 'Passerelle de Téléconduite RTU Redondante & Interfaçage Dispatching National (CEI 60870-5-104)',
+          nameEn: 'Dual-Redundant RTU Telecontrol Gateway & National Dispatch Interface (IEC 60870-5-104)',
+          techFr: 'Double calculateur durci en basculement chaud automatique (Hot-Standby) avec tunnel VPN IPsec sécurisé',
+          techEn: 'Dual-redundant hardened controllers with automatic hitless hot-standby failover and IPsec VPN tunneling',
+          descFr: 'Concentration de l\'ensemble des données télésignalées (TS), télémesurées (TM) et points de télécommande (TC) de l\'ensemble des départs du poste haute tension. Conversion transparente des protocoles internes CEI 61850 en messages normalisés CEI 60870-5-104 pour transmission vers le SCADA central SONATREL de Mangombé et les centres régionaux (Yaoundé / Douala) via les liaisons optiques OPGW et faisceaux hertziens.',
+          descEn: 'Aggregation of all digital status signals, analog telemetry, and supervisory control points from all substation bays. Seamless protocol mapping from internal IEC 61850 data objects to standardized IEC 60870-5-104 telecontrol packets sent to the SONATREL Mangombé National Control Center and regional dispatching nodes (Yaoundé / Douala) over high-capacity OPGW fiber links and microwave backbones.',
+          standard: 'CEI 60870-5-104 / CEI 62351-3/5',
+          metricFr: 'Disponibilité passerelle : 99.999% • Basculement secours : < 500 ms',
+          metricEn: 'Gateway availability: 99.999% • Hot failover time: < 500 ms'
+        },
+        {
+          nameFr: 'Système d\'Inter-verrouillage Topologique de Sécurité de Manœuvre (Bay & Station Interlocking)',
+          nameEn: 'Topological Substation Interlocking Safety Logic System',
+          techFr: 'Matrice d\'équations logiques booléennes décentralisées évaluant la position physique de chaque organe',
+          techEn: 'Decentralized Boolean logic matrix continuously evaluating real-time physical switchgear topology',
+          descFr: 'Automatismes de sécurité interdisant formellement toute manœuvre erronée pouvant provoquer un court-circuit destructeur : interdiction formelle d\'ouverture ou fermeture d\'un sectionneur sous charge (détection de courant nul I < 1% In sur disjoncteur), interdiction de fermeture de sectionneur de terre sur barre sous tension, et séquençage obligatoire lors du transfert de jeu de barres sous charge (fermeture couplage -> fermeture sectionneurs départ -> ouverture anciens sectionneurs).',
+          descEn: 'Failsafe automated logic preventing catastrophic operator errors: absolute prohibition of disconnector operation under current (zero-current verification I < 1% In on associated circuit breaker), absolute interlock against closing grounding switches onto energized conductors, and mandatory automatic sequencing during on-load busbar transfers (bus-coupler closure -> target bus disconnector closure -> source bus disconnector opening).',
+          standard: 'CEI 61936-1 / CEI 61850-7-4 (LN CSWI & XSWI)',
+          metricFr: 'Temps d\'évaluation logique : < 5 ms • Sécurité anti-arc : 100%',
+          metricEn: 'Logic evaluation time: < 5 ms • Arc-flash safety guarantee: 100%'
+        },
+        {
+          nameFr: 'Infrastructure Réseau Haute Disponibilité PRP / HSR & Synchronisation PTP IEEE 1588',
+          nameEn: 'High-Availability PRP / HSR Network Infrastructure & IEEE 1588 PTP Synchronization',
+          techFr: 'Protocole de redondance parallèle PRP (CEI 62439-3) avec duplication de paquets et horloge Grandmaster GNSS',
+          techEn: 'Parallel Redundancy Protocol PRP (IEC 62439-3) with packet duplication and GNSS Grandmaster Clock',
+          descFr: 'Réseau informatique de poste à tolérance de panne totale : chaque trame Ethernet est dupliquée et injectée simultanément sur deux réseaux locaux physiquement indépendants (LAN A et LAN B). Le récepteur traite la première trame arrivée et détruit la réplique sans le moindre milliseconde d\'interruption en cas de coupure de fibre. Synchronisation temporelle absolue par protocole PTP IEEE 1588 Profil Énergie (CEI 61850-9-3) avec précision sub-microseconde.',
+          descEn: 'Fault-tolerant substation communication backbone: each Ethernet frame is duplicated and transmitted simultaneously across two physically isolated local area networks (LAN A and LAN B). The receiving node consumes the first arrival and discards the duplicate with zero millisecond packet loss upon fiber severance. Sub-microsecond absolute network time synchronization via IEEE 1588 PTP Power Profile (IEC 61850-9-3).',
+          standard: 'CEI 62439-3 (PRP/HSR) / IEEE 1588-2008 / CEI 61850-9-3',
+          metricFr: 'Temps de basculement : 0 ms (hitless) • Précision horloge PTP : < 1 µs',
+          metricEn: 'Failover recovery time: 0 ms (hitless) • PTP time accuracy: < 1 µs'
         }
       ]
     },
     sectionC: [
       {
-        id: 'eq-exp-rugged-switch',
-        nameFr: 'Commutateur Ethernet Industriel Robuste (Ruggedcom / Cisco IE)',
-        nameEn: 'Hardened Substation Ethernet Switch (Ruggedcom)',
-        voltage: 'Alimentation redondante 110/220 Vcc • Portée optique LC',
-        roleFr: 'Commutation durcie sans perte de paquets, immunité électromagnétique extrême CEI 61850-3.',
-        roleEn: 'Zero-packet-loss hardened switching, IEEE 1613 and IEC 61850-3 severe electromagnetic immunity.',
-        symbol: 'SW-ETH',
-        standard: 'CEI 61850-3',
-        imgUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80'
+        id: 'eq-exp-bcu-bay-controller',
+        nameFr: 'Calculateur Numérique de Tranche Bay Control Unit (SIPROTEC 6MD85 / MiCOM C264)',
+        nameEn: 'Numerical Bay Control Unit BCU (SIPROTEC 6MD85 / MiCOM C264)',
+        voltage: 'Alimentation 110/220 Vcc • Entrées TOR 64 voies • 32 sorties relais',
+        roleFr: 'Conduite locale de cellule, commande Select-Before-Operate des sectionneurs et disjoncteurs, gestion des automatismes de tranche (interlocking, réenclenchement), mesures P/Q/U/I, double port optique PRP et publication GOOSE.',
+        roleEn: 'Local bay control and monitoring, two-step Select-Before-Operate switchgear actuation, local interlocking and automation routines, precision P/Q/U/I telemetry, dual optical PRP ports, and fast GOOSE publishing.',
+        symbol: 'BCU-BAY',
+        standard: 'CEI 61850-7-4 / CEI 60255-1',
+        imgUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'power'
       },
       {
-        id: 'eq-exp-ptp-clock',
-        nameFr: 'Horloge Maître GPS / PTP IEEE 1588 (Grandmaster Clock)',
-        nameEn: 'Precision Time Protocol (PTP) Grandmaster Clock',
-        voltage: '230 Vca / 110 Vcc • Synchronisation GNSS/GPS',
-        roleFr: 'Fourniture d\'une référence temporelle ultra-précise sub-microseconde pour l\'échantillonnage synchrone.',
-        roleEn: 'Sub-microsecond time reference distribution across the process bus for synchronous sampling.',
+        id: 'eq-exp-rugged-switch-61850',
+        nameFr: 'Commutateur Ethernet Industriel Durci CEI 61850-3 (Ruggedcom RS900 / Cisco IE 4000)',
+        nameEn: 'Hardened Substation Managed Ethernet Switch (Ruggedcom RS900 / Cisco IE 4000)',
+        voltage: 'Double alimentation redondante 110/220 Vcc • Ports SFP Gigabit optiques',
+        roleFr: 'Commutation déterministe ultra-rapide des flux GOOSE et Sampled Values sans perte de paquets, immunité électromagnétique sévère CEI 61850-3 / IEEE 1613, support matériel du protocole PRP/HSR et horloge transparente PTP IEEE 1588.',
+        roleEn: 'Deterministic ultra-fast switching of GOOSE and Sampled Values without packet loss, severe electromagnetic immunity per IEC 61850-3 / IEEE 1613, hardware PRP/HSR offload, and IEEE 1588 PTP transparent clock support.',
+        symbol: 'SW-ETH-61850',
+        standard: 'CEI 61850-3 / IEEE 1613',
+        imgUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-rtu-gateway-scada',
+        nameFr: 'Passerelle de Téléconduite RTU Modulaire Redondante (ABB RTU560 / MicroSCADA Pro)',
+        nameEn: 'Modular Dual-Redundant Substation RTU & SCADA Gateway (ABB RTU560 / MicroSCADA)',
+        voltage: 'Double châssis redondant 110 Vcc • Interfaces CEI 60870-5-104 & DNP3 IP',
+        roleFr: 'Concentration et prétraitement de l\'ensemble des points de télémesure (TM), télésignalisation (TS) et télécommande (TC) du poste, conversion client MMS CEI 61850, et télétransmission sécurisée IPsec vers le SCADA SONATREL.',
+        roleEn: 'Aggregation and preprocessing of all substation telemetry, binary indications, and supervisory controls, client MMS IEC 61850 mapping, and encrypted IPsec telecontrol transmission to the national EMS dispatch center.',
+        symbol: 'RTU-GW',
+        standard: 'CEI 60870-5-104 / CEI 62351',
+        imgUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-ptp-grandmaster',
+        nameFr: 'Horloge Maître Grandmaster GPS/Galileo PTP IEEE 1588 (Meinberg LANTIME M1000)',
+        nameEn: 'Dual-GNSS PTP Grandmaster Substation Clock (Meinberg LANTIME M1000)',
+        voltage: 'Double alimentation 110 Vcc / 230 Vca • Oscillateur interne Rubidium / OCXO',
+        roleFr: 'Génération et distribution de références temporelles ultra-précises synchronisées sur constellations GPS/Galileo, horodatage à la microseconde des événements SOE, et synchronisation synchrone des unités Merging Units du bus de processus.',
+        roleEn: 'Generation and network distribution of ultra-precise time references synchronized to GPS/Galileo satellites, microsecond Sequence of Events (SOE) timestamping, and phase synchronization of process bus Merging Units.',
         symbol: 'CLK-PTP',
-        standard: 'IEEE 1588 / CEI 61850-9-3',
-        imgUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80'
+        standard: 'IEEE 1588-2008 / CEI 61850-9-3',
+        imgUrl: 'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-station-hmi-server',
+        nameFr: 'Serveur SCADA & Console IHM Tactile Durcie de Poste (Zenon Energy / MicroSCADA)',
+        nameEn: 'Substation SCADA Server & Hardened Touch Operator HMI (Zenon / MicroSCADA)',
+        voltage: 'Châssis industriel sans ventilateur 19" IP54 • Alimentation secourue 110 Vcc',
+        roleFr: 'Visualisation interactive du schéma unifilaire dynamique du poste, surveillance temps réel des grandeurs électriques, gestion des consignes et alarmes par niveau d\'urgence, et interface ergonomique pour manœuvres sécurisées SBO.',
+        roleEn: 'Interactive real-time visualization of substation dynamic single-line mimics, continuous electrical parameter supervision, multi-level alarm and event journaling, and ergonomic operator interface for two-step SBO control.',
+        symbol: 'HMI-SAS',
+        standard: 'CEI 62264 / Ergonomie ISO 9241',
+        imgUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-substation-ups-battery',
+        nameFr: 'Atelier d\'Énergie Continu 110 Vcc & Onduleur de Sécurité SAS (Chargeur Thyristor + Batterie 400 Ah)',
+        nameEn: 'Substation Auxiliary 110 Vdc Charger & Battery Bank (100 A Rectifier + 400 Ah Bank)',
+        voltage: 'Tension continue 110 Vcc nominale • Courant assigné 100 A • Capacité 400 Ah',
+        roleFr: 'Alimentation secourue ininterrompue de l\'ensemble des systèmes de contrôle-commande SAS, des calculateurs de tranche BCU, des télécommunications et des bobines de déclenchement des disjoncteurs avec une autonomie de 10 heures sans secteur.',
+        roleEn: 'Continuous uninterruptible auxiliary DC power supply for all SAS automation racks, bay control units, telecommunication switches, and circuit breaker trip/close coils providing guaranteed 10-hour autonomy upon total AC blackout.',
+        symbol: 'UPS-110VCC',
+        standard: 'IEEE Std 485 / CEI 60896',
+        imgUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'power'
       }
     ],
     sectionD: [
       {
         phase: '01',
-        titleFr: 'Table d\'Échange d\'Informations (TEI)',
-        titleEn: 'Signal & Information Exchange Matrix',
-        descFr: 'Inventaire de chaque état, alarme, mesure et télécommande à intégrer dans le système SCADA.',
-        descEn: 'Comprehensive cataloging of all discrete inputs, analog telemetry, and control points.'
+        titleFr: 'Table d\'Échange d\'Informations (TEI) & Liste des Points SCADA',
+        titleEn: 'Signal & Information Exchange Matrix (IO List & Addressing)',
+        descFr: 'Recensement exhaustif de chaque point de données du poste : télésignalisations simples/doubles (TS), télémesures analogiques (TM), télécommandes (TC), consignes de régleurs en charge (TC-OLTC) et seuils d\'alarme par départ.',
+        descEn: 'Comprehensive cataloging of all discrete inputs (single/double indications), analog telemetry (currents, voltages, active/reactive power), supervisory control commands, OLTC tap commands, and bay-level threshold alarms.'
       },
       {
         phase: '02',
-        titleFr: 'Ingénierie des Fichiers SCL (SCD, ICD, CID)',
-        titleEn: 'Substation Configuration Language (SCL) Design',
-        descFr: 'Configuration normalisée en XML des capacités de chaque équipement et des flux de données GOOSE.',
-        descEn: 'Standard XML configuration of device communication capabilities and dataset linkages.'
+        titleFr: 'Ingénierie SCL Normalisée (SSD, ICD, SCD, CID) selon CEI 61850-6',
+        titleEn: 'Standardized SCL System Engineering (SSD, ICD, SCD, CID) per IEC 61850-6',
+        descFr: 'Création de la description fonctionnelle du poste (SSD), importation des fichiers d\'aptitude constructeurs (ICD), configuration unifiée des flux de données et liaisons GOOSE/MMS dans le fichier SCD (Substation Configuration Description).',
+        descEn: 'Authoring substation functional single-line descriptions (SSD), importing vendor capability files (ICD), and systematically configuring dataset bindings, report control blocks, and peer-to-peer GOOSE routing within the master SCD file.'
       },
       {
         phase: '03',
-        titleFr: 'Conception du Réseau Ethernet & VLANs',
-        titleEn: 'Network Topology & VLAN Segregation',
-        descFr: 'Paramétrage des priorités de trames IEEE 802.1Q pour garantir le passage prioritaire des ordres de déclenchement.',
-        descEn: 'Setting IEEE 802.1Q priority tagging ensuring critical trip packets bypass non-urgent traffic.'
+        titleFr: 'Conception Réseau Ethernet, VLANs & Redondance PRP/HSR',
+        titleEn: 'Network Topology Design, VLAN Segregation & PRP/HSR Architecture',
+        descFr: 'Architecture en double étoile optique PRP (LAN A et LAN B), découpage en VLANs IEEE 802.1Q dédiés (VLAN GOOSE, VLAN MMS, VLAN SV, VLAN Télécom), priorisation 802.1p et calcul prévisionnel de bande passante sous tempête.',
+        descEn: 'Dual-star optical PRP network architecture (LAN A & LAN B), VLAN segregation per IEEE 802.1Q (GOOSE VLAN, MMS VLAN, Process Bus SV VLAN), IEEE 802.1p traffic prioritization, and bandwidth load modeling under worst-case fault bursts.'
       },
       {
         phase: '04',
-        titleFr: 'Essais de Communication FAT (Simulation Wireshark)',
-        titleEn: 'Factory Acceptance Testing & Packet Inspection',
-        descFr: 'Contrôle des trames réseau sous tempête de trafic pour vérifier l\'absence de perte de paquets GOOSE.',
-        descEn: 'Network stress testing under burst storm conditions validating zero frame drops.'
+        titleFr: 'Programmation des Logiques d\'Inter-verrouillage & Automates de Tranche',
+        titleEn: 'Interlocking Logic Implementation & Bay Automation Programming',
+        descFr: 'Développement des équations booléennes d\'autorisation de manœuvre (sectionneurs de barres, mise à la terre, transfert sous charge) et des automatismes de délestage/permutations de sources en langage CEI 61131-3 CFC.',
+        descEn: 'Developing Boolean authorization matrices for switchgear operations (bus disconnectors, earth switches, on-load busbar changeover) and automatic load shedding / bus transfer schemes using standardized IEC 61131-3 CFC logic.'
       },
       {
         phase: '05',
-        titleFr: 'Point-to-Point SAT & Validation Dispatching',
-        titleEn: 'Site Point-to-Point End-to-End Validation',
-        descFr: 'Manœuvre réelle de chaque organe et vérification de la remontée sur le synoptique du dispatching national.',
-        descEn: 'Live physical operation of every switch verifying telemetry confirmation at national EMS.'
+        titleFr: 'Essais d\'Intégration Plateforme FAT & Analyse Réseau Wireshark',
+        titleEn: 'Factory Acceptance Testing (FAT) & Network Packet Stress Analysis',
+        descFr: 'Interconnexion de l\'ensemble des armoires de tranche et calculateurs SAS en plateforme d\'essais, simulation d\'avalanches de 1 000 événements par seconde, contrôle de l\'absence de perte de paquets et validation de latence GOOSE < 3 ms.',
+        descEn: 'Interconnecting all bay cubicles and SAS servers in the test laboratory, simulating message bursts of 1,000 events/second, verifying zero frame drops across redundant PRP rings, and confirming sub-3ms GOOSE delivery latency.'
+      },
+      {
+        phase: '06',
+        titleFr: 'Essais sur Site SAT & Vérification Point-à-Point Extrémité',
+        titleEn: 'Site Acceptance Testing (SAT) & End-to-End Switchgear Verification',
+        descFr: 'Vérification de l\'ensemble des retours de position d\'organes haute tension sur l\'IHM locale, manœuvres réelles des disjoncteurs et sectionneurs sous double verrouillage, et contrôle de conformité des horodatages SOE à 1 ms.',
+        descEn: 'Verifying all high-voltage switchgear position feedback signals on the local HMI, performing live physical operations of circuit breakers and disconnectors with interlocking active, and auditing 1 ms SOE chronological accuracy.'
+      },
+      {
+        phase: '07',
+        titleFr: 'Raccordement au Dispatching National & Mise en Service Industrielle',
+        titleEn: 'National EMS/SCADA Uplink Commissioning & Industrial Handover',
+        descFr: 'Établissement du canal téléconduite CEI 60870-5-104 vers le Dispatching National SONATREL de Mangombé, tests d\'exécution des télécommandes avec procédure sécurisée SBO, et basculement en exploitation industrielle continue.',
+        descEn: 'Commissioning the dual IEC 60870-5-104 communication channels to the SONATREL Mangombé National Control Center, validating remote telecommands via two-step SBO handshakes, and completing commercial commissioning.'
       }
     ],
     sectionE: [
       {
         id: 'goose_latency_calc',
-        tabLabelFr: 'Temps de Transit de Trame GOOSE',
-        tabLabelEn: 'GOOSE Message Latency Budget',
-        titleFr: 'Budget de Temps de Transmission des Ordres Rapides selon CEI 61850-5',
-        titleEn: 'Fast Tripping Transmission Time Budget per IEC 61850-5',
-        descFr: 'Spécifie le temps maximal admissible entre l\'instant où un IED décide un déclenchement et sa réception par l\'autre appareil.',
-        descEn: 'Defines statutory maximum allowable latency between internal trip command and peer reception.',
-        formula: 'T_transit = t_encapsulation + t_switch + t_propagation ≤ 3 ms',
-        formulaDescFr: 'La norme classe IA impose un temps total inférieur à 3 millisecondes pour égaler ou surpasser les liaisons filaires cuivre.',
-        formulaDescEn: 'IEC Class IA mandates total elapsed time below 3 ms to outperform direct copper hardwiring.',
+        tabLabelFr: 'Temps de Transit de Trame GOOSE (CEI 61850-5)',
+        tabLabelEn: 'GOOSE Transmission Latency Budget (IEC 61850-5)',
+        titleFr: 'Budget de Temps de Transmission des Ordres Rapides de Classe IA',
+        titleEn: 'Fast Tripping Transmission Time Budget for Class IA Messages',
+        descFr: 'Spécifie le temps maximal admissible entre l\'instant où un IED décide l\'émission d\'un ordre de déclenchement ou de verrouillage et sa réception effective par les appareils récepteurs sur le réseau Ethernet.',
+        descEn: 'Defines statutory maximum allowable latency between the instant an IED decides an internal trip or interlock command and its physical reception by destination devices over the substation Ethernet bus.',
+        formula: 'T_{\\text{transit}} = t_{\\text{encaps}} + \\sum_{i=1}^{N_{\\text{sw}}} t_{\\text{sw},i} + \\frac{L}{v_{\\text{prop}}} + t_{\\text{decaps}} \\quad \\le \\quad 3\\text{ ms}',
+        formulaDescFr: 'Avec tencaps le temps d\'encapsulation de la trame Ethernet couche 2 par le processeur de l\'IED (typiquement 0.8 à 1.2 ms), Nsw le nombre de commutateurs traversés avec tsw,i temps de transit par switch (< 10 µs en commutation cut-through), L la longueur de la fibre optique, vprop la vitesse de propagation dans la silice (≈ 200 000 km/s soit 5 µs/km), et tdecaps le temps de désencapsulation et traitement du récepteur (< 1.0 ms).',
+        formulaDescEn: 'Where tencaps is Layer 2 Ethernet frame assembly time in the transmitting IED (typically 0.8 to 1.2 ms), Nsw is number of switches traversed with tsw,i forwarding latency per switch (< 10 µs in cut-through mode), L is fiber optic length, vprop is speed of light in silica (≈ 200,000 km/s or 5 µs/km), and tdecaps is receiver processing and parsing duration (< 1.0 ms).',
         assumptionsFr: [
-          'Trames GOOSE transmises directement sur la couche 2 Ethernet (sans pile TCP/IP).',
-          'Priorité maximale IEEE 802.1p (Priority tag = 6 ou 7).',
-          'Commutateurs Ethernet industriels de temps de traversée inférieur à 10 microsecondes par switch.'
+          'Trames GOOSE transmises directement sur la couche 2 Ethernet (sans pile de protocoles TCP/IP ni routage IP).',
+          'Priorité maximale IEEE 802.1p assignée aux trames GOOSE critiques (Priority Tag = 6 ou 7).',
+          'Commutateurs Ethernet industriels de temps de traversée inférieur à 10 microsecondes par commutateur.'
         ],
         assumptionsEn: [
-          'GOOSE packets mapped directly onto Ethernet Layer 2 (bypassing TCP/IP overhead).',
-          'Highest IEEE 802.1p priority tagging (Class 6 or 7).',
-          'Substation switches featuring cut-through latency below 10 microseconds per hop.'
-        ]
+          'GOOSE messages mapped directly onto Ethernet Data Link Layer 2 (bypassing TCP/IP overhead).',
+          'Highest IEEE 802.1p priority tagging assigned to critical trip GOOSE frames (Priority Tag = 6 or 7).',
+          'Hardened industrial switches featuring cut-through latency below 10 microseconds per switch hop.'
+        ],
+        calcTab: 'power'
+      },
+      {
+        id: 'goose_retransmission_backoff',
+        tabLabelFr: 'Retransmission GOOSE (Backoff Exponentiel)',
+        tabLabelEn: 'GOOSE Retransmission Exponential Backoff',
+        titleFr: 'Séquence Temporelle de Répétition et Sécurisation de Trame GOOSE',
+        titleEn: 'GOOSE Retransmission Timing Sequence with Exponential Backoff',
+        descFr: 'Comme le protocole GOOSE utilise une diffusion multicast Ethernet sans accusé de réception (ACK), la fiabilité absolue de transmission est garantie par une rafale de retransmissions ultra-rapides au moment d\'un changement d\'état, s\'espaçant progressivement jusqu\'à un état de veille stable.',
+        descEn: 'Because GOOSE utilizes connectionless Layer 2 multicast without acknowledgement (ACK) packets, absolute delivery reliability is achieved through an instantaneous burst of retransmissions upon any state change, progressively decaying to a steady-state heartbeat.',
+        formula: 'T_i = \\min(T_0 \\cdot 2^i, T_{\\max}) \\quad \\text{pour } i = 0, 1, 2, \\dots \\quad ; \\quad T_0 \\approx 2\\text{ ms}, \\; T_{\\max} \\approx 1\\,000\\text{ ms}',
+        formulaDescFr: 'Avec T0 le temps de retransmission initial après événement (typiquement 2 ms), i l\'indice de la retransmission, et Tmax la période de répétition cyclique de veille (typiquement 1 000 ms). En régime stable, la trame est répétée toutes les 1 000 ms pour signaler que l\'émetteur est vivant (heartbeat) et surveiller la liaison.',
+        formulaDescEn: 'Where T0 is initial retransmission interval following state transition (typically 2 ms), i is retransmission counter, and Tmax is steady-state repetition heartbeat period (typically 1,000 ms). During quiescent operation, the frame is broadcast every 1,000 ms to confirm link health and device heartbeat.',
+        assumptionsFr: [
+          'En cas de nouveau changement d\'état avant la fin du cycle, le compteur i est réinitialisé immédiatement à 0 et stNum est incrémenté.',
+          'Le numéro de séquence sqNum est incrémenté à chaque répétition tandis que le numéro d\'état stNum reste constant.',
+          'Le temps de vie TimeAllowedToLive est positionné à 2 · Ti pour permettre au récepteur de détecter une perte de liaison.'
+        ],
+        assumptionsEn: [
+          'Upon any subsequent state change, counter i resets immediately to 0 and state number stNum increments.',
+          'Sequence number sqNum increments with each retransmission while state number stNum remains constant.',
+          'TimeAllowedToLive parameter is set to 2 · Ti enabling receiving nodes to declare communication loss upon missed frames.'
+        ],
+        calcTab: 'power'
+      },
+      {
+        id: 'station_lan_bandwidth_calc',
+        tabLabelFr: 'Bande Passante LAN sous Avalanche',
+        tabLabelEn: 'Station LAN Bandwidth under Storm Burst',
+        titleFr: 'Dimensionnement de la Bande Passante Réseau Station Bus sous Condition d\'Avalanche',
+        titleEn: 'Substation Ethernet LAN Bandwidth Sizing under Worst-Case Event Burst',
+        descFr: 'Méthodologie de calcul garantissant que lors d\'un incident réseau majeur (court-circuit déclenchant l\'ensemble des protections et générant des centaines de trames GOOSE et rapports MMS simultanés), la charge du bus de station ne saturera pas les commutateurs.',
+        descEn: 'Analytical sizing methodology ensuring that during severe multi-bay grid disturbances (where simultaneous relay trips generate hundreds of burst GOOSE messages and MMS reports), total network utilization remains well within switch buffer capacities.',
+        formula: 'BW_{\\text{total}} = \\sum_{k=1}^{M} \\left( \\frac{S_{\\text{GOOSE},k} \\cdot 8}{T_{\\min,k}} \\right) + N_{\\text{SV}} \\cdot (f_s \\cdot S_{\\text{SV}} \\cdot 8) + BW_{\\text{MMS}} \\quad \\le \\quad 0.40 \\cdot BW_{\\text{link}}',
+        formulaDescFr: 'Avec SGOOSE la taille moyenne d\'une trame GOOSE (≈ 200 à 400 octets), Tmin l\'intervalle minimal de rafale (2 ms), NSV le nombre de flux SV sur le lien (0 sur le bus de station pur, ou flux partagé), fs la fréquence d\'échantillonnage, SSV la taille de trame SV (≈ 150 octets), BWMMS le débit résiduel de supervision SCADA, et BWlink la capacité nominale du lien (100 Mbps ou 1 Gbps). Le taux de charge maximal ne doit pas dépasser 40% pour prévenir toute gigue.',
+        formulaDescEn: 'Where SGOOSE is average GOOSE frame payload (≈ 200 to 400 bytes), Tmin is minimum burst interval (2 ms), NSV is number of concurrent SV streams, fs is sampling frequency, SSV is SV frame size (≈ 150 bytes), BWMMS is background SCADA supervisory traffic, and BWlink is nominal link throughput (100 Mbps or 1 Gbps). Composite network utilization must not exceed 40% to guarantee near-zero queuing jitter.',
+        assumptionsFr: [
+          'Ségrégation stricte des flux multicast par VLANs IEEE 802.1Q et filtrage IGMP Snooping / GMRP.',
+          'Bande passante des cœurs de commutation optique dimensionnée en Gigabit Ethernet (1 000 Mbit/s).',
+          'Marge de sécurité de 60% réservée pour absorber les tempêtes de broadcast et transitoires imprévus.'
+        ],
+        assumptionsEn: [
+          'Strict multicast segregation via IEEE 802.1Q VLANs and IGMP Snooping / GMRP filtering.',
+          'Core optical substation switch backplanes rated for Gigabit Ethernet (1,000 Mbps non-blocking).',
+          '60% safety bandwidth headroom reserved to absorb unexpected broadcast storms and transient surges.'
+        ],
+        calcTab: 'power'
+      },
+      {
+        id: 'substation_battery_ah_sizing',
+        tabLabelFr: 'Capacité Batterie 110 Vcc (IEEE Std 485)',
+        tabLabelEn: 'Substation 110 Vdc Battery Sizing (IEEE 485)',
+        titleFr: 'Dimensionnement de la Capacité Nominale de la Batterie SAS selon IEEE Std 485',
+        titleEn: 'Substation Auxiliary Battery Bank Capacity Sizing per IEEE Std 485',
+        descFr: 'Formule régissant le calcul de la capacité minimale en Ampères-heures (Ah) requise pour alimenter l\'ensemble des automatismes de poste (IEDs, BCU, commutateurs, RTU) pendant une coupure secteur prolongée (10 h) tout en conservant l\'énergie nécessaire pour manœuvrer les disjoncteurs en fin d\'autonomie.',
+        descEn: 'Normative formulation determining minimum battery storage capacity in Ampere-hours (Ah) required to power all substation automation electronics (IEDs, BCUs, switches, RTUs) during extended blackout conditions (10 h) while retaining sufficient discharge reserve to trip/close circuit breakers.',
+        formula: 'C_{\\text{req}} = \\frac{1}{K_t \\cdot K_c} \\cdot \\left[ \\sum_{p=1}^{N} \\frac{I_p - I_{p-1}}{R_p} \\right] \\cdot K_{\\text{age}} \\cdot K_{\\text{temp}}',
+        formulaDescFr: 'Avec Ip l\'échelon de courant du profil de décharge (courant permanent de veille SAS + courant de pointe d\'enclenchement des bobines disjoncteurs), Rp le facteur de décharge à la durée p (A/Ah), Kt le facteur de marge de conception (1.10 à 1.15), Kc le coefficient d\'utilisation utile de tension minimale (1.75 V/élément), Kage le facteur de vieillissement normatif (1.25), et Ktemp le facteur de correction thermique pour température ambiante tropicale (ex. 35 °C à Douala/Yaoundé).',
+        formulaDescEn: 'Where Ip is load duty cycle discharge step current (continuous SAS quiescent load + peak breaker operating coils), Rp is discharge capacity rating factor, Kt is design margin factor (1.10 to 1.15), Kc is cell end-voltage factor (1.75 V/cell), Kage is normative aging compensation factor (1.25), and Ktemp is temperature derating factor adjusted for tropical ambient conditions (e.g., 35 °C in Douala/Yaoundé).',
+        assumptionsFr: [
+          'Autonomie minimale de veille permanente sans recharge secteur fixée à 10 heures.',
+          'Cycle final de déclenchement simultané de 4 disjoncteurs haute tension (bobines de 20 A chacune pendant 100 ms).',
+          'Facteur de vieillissement de 1.25 prévoyant le remplacement lorsque la batterie atteint 80% de sa capacité nominale.'
+        ],
+        assumptionsEn: [
+          'Guaranteed quiescent backup duration without AC mains recharge established at 10 hours.',
+          'Worst-case end-of-duty cycle: simultaneous tripping of 4 HV circuit breakers (20 A trip coils for 100 ms each).',
+          'Aging margin of 1.25 anticipating end-of-life battery replacement when capacity degrades to 80% of nameplate rating.'
+        ],
+        calcTab: 'power'
+      },
+      {
+        id: 'mms_report_buffer_sizing',
+        tabLabelFr: 'Mémoire Tampon de Rapportage MMS',
+        tabLabelEn: 'MMS Report Buffer Memory Sizing',
+        titleFr: 'Dimensionnement de la Mémoire Tampon de Rapportage Non-Volatile MMS',
+        titleEn: 'Non-Volatile Buffered Report Control Block (BRCB) Memory Sizing',
+        descFr: 'Détermine la capacité de stockage interne en mémoire non-volatile de chaque IED pour garantir qu\'aucun événement de poste, alarme ou mesure chronodatée ne soit perdu en cas de défaillance temporaire du serveur SCADA ou du réseau Ethernet.',
+        descEn: 'Calculates minimum non-volatile buffer memory required in each bay IED to guarantee that no substation Sequence of Events, timestamped alarm, or telemetry record is lost during temporary SCADA server offline periods or network disruptions.',
+        formula: 'N_{\\text{buffer}} = \\lambda_{\\text{events}} \\cdot t_{\\text{outage}} \\cdot S_{\\text{entry}} \\quad \\implies \\quad \\text{RAM}_{\\text{req}} \\ge N_{\\text{buffer}} \\cdot K_{\\text{safety}}',
+        formulaDescFr: 'Avec λevents le taux d\'arrivée maximal d\'événements lors d\'une perturbation (ex. 50 événements/seconde par tranche), toutage la durée maximale prévue de perte de communication SCADA (typiquement 2 heures soit 7 200 s), Sentry la taille mémoire d\'une entrée d\'événement horodatée SOE selon le standard CEI 61850 (≈ 64 octets), et Ksafety un coefficient de sécurité de 2.0.',
+        formulaDescEn: 'Where λevents is peak event generation rate during complex grid disturbance (e.g., 50 events/second per bay), toutage is statutory communication outage duration (typically 2 hours or 7,200 s), Sentry is memory footprint of an IEC 61850 SOE timestamped report entry (≈ 64 bytes), and Ksafety is design headroom factor of 2.0.',
+        assumptionsFr: [
+          'Utilisation obligatoire de blocs de contrôle de rapportage tamponnés (BRCB - Buffered Report Control Block).',
+          'Mémoire Flash / NVRAM non volatile conservant les données même en cas de coupure d\'alimentation continue.',
+          'Horodatage SOE conservé avec une résolution temporelle absolue de 1 milliseconde.'
+        ],
+        assumptionsEn: [
+          'Mandatory implementation of Buffered Report Control Blocks (BRCB).',
+          'Non-volatile Flash / NVRAM retaining data integrity even upon complete auxiliary DC power collapse.',
+          'SOE timestamps preserved with absolute 1 millisecond chronological precision.'
+        ],
+        calcTab: 'power'
+      },
+      {
+        id: 'boolean_interlocking_matrix',
+        tabLabelFr: 'Inter-verrouillage Topologique Booléen',
+        tabLabelEn: 'Topological Boolean Interlocking Matrix',
+        titleFr: 'Formulation Algorithmique de l\'Inter-verrouillage Topologique de Sécurité',
+        titleEn: 'Algorithmic Formulation of Topological Safety Interlocking Rules',
+        descFr: 'Modélisation mathématique rigoureuse sous forme d\'équation logique booléenne des conditions formelles de sécurité préalables à toute manœuvre d\'un appareil de coupure ou d\'isolement dans le poste haute tension.',
+        descEn: 'Rigorous mathematical formulation as a Boolean logic equation defining mandatory physical preconditions before permitting any switching operation on high-voltage substation apparatus.',
+        formula: 'E_{\\text{permis}}(\\text{DS}_k) = \\overline{I_{\\text{flow}}(\\text{CB})} \\land \\overline{U_{\\text{bus}}(\\text{ES})} \\land \\prod_{j \\ne k} C_{j,k} \\quad ; \\quad E_{\\text{permis}}(\\text{ES}) = \\overline{U_{\\text{line}}} \\land \\overline{U_{\\text{bus}}} \\land \\text{DS}_{\\text{open}}',
+        formulaDescFr: 'Avec Epermis(DSk) l\'autorisation booléenne de manœuvre du sectionneur k, Iflow(CB) l\'état de passage de courant dans le disjoncteur associé (I > 0.02 In), Ubus(ES) la condition de mise à la terre, Cj,k la cohérence des positions des sectionneurs voisins, et Epermis(ES) l\'autorisation stricte de fermeture du sectionneur de terre nécessitant l\'absence totale de tension mesurée par les TT de ligne.',
+        formulaDescEn: 'Where Epermis(DSk) is Boolean authorization signal enabling disconnector k actuation, Iflow(CB) is current flow detection across associated circuit breaker (I > 0.02 In), Ubus(ES) is ground switch position condition, Cj,k represents neighbor disconnector configuration rules, and Epermis(ES) is strict earth switch closing permission requiring absolute absence of voltage verified by line VTs.',
+        assumptionsFr: [
+          'Validation systématique de la double discordance de position (contacts auxiliaires NO et NC vérifiés complémentaires).',
+          'Transmission des états d\'organes distants par trames Ethernet GOOSE avec contrôle du bit de validité et horodatage.',
+          'Verrouillage matériel d\'urgence en série interdisant toute alimentation des moteurs de manœuvre en cas de perte de calculateur.'
+        ],
+        assumptionsEn: [
+          'Systematic dual-position discrepancy validation (auxiliary NO and NC contacts verified complementary).',
+          'Remote switchgear position exchange via Ethernet GOOSE messages with validity bit and timestamp auditing.',
+          'Hardware backup lockout wired in series preventing any motor mechanism operation upon BCU failure.'
+        ],
+        calcTab: 'power'
       }
     ],
     sectionF: [
       {
-        code: 'CEI 61850-7-2',
-        tag: 'AUTOMATISATION DE POSTE',
-        titleFr: 'Réseaux & Systèmes de Communication pour l\'Automatisation des Postes - ACSI',
-        titleEn: 'Communication Networks and Systems for Power Utility Automation - Abstract Communication Service Interface',
-        descFr: 'Définit les services de communication abstraits (MMS, GOOSE, SV) et modèles de données d\'organes.',
-        descEn: 'Specifies abstract communication services (MMS, GOOSE, SV) and standardized logical device models.'
+        code: 'CEI 61850-8-1',
+        tag: 'BUS DE STATION CEI 61850',
+        titleFr: 'Réseaux & Systèmes de Communication pour l\'Automatisation des Postes - Spécification des Services de Communication Spécifiques (SCSM) pour MMS et GOOSE',
+        titleEn: 'Communication Networks and Systems for Power Utility Automation - Specific Communication Service Mapping (SCSM) - Mappings on MMS and ISO/IEC 8802-3',
+        descFr: 'Norme fondamentale régissant le protocole MMS pour la téléconduite SCADA et le protocole Ethernet GOOSE pour les automatismes ultra-rapides de tranche et d\'inter-verrouillage.',
+        descEn: 'Foundational standard defining client/server MMS for SCADA telecontrol and Layer 2 GOOSE multicast for high-speed bay protection and interlocking.'
+      },
+      {
+        code: 'CEI 61850-9-2 & CEI 61869-9',
+        tag: 'BUS DE PROCESSUS NUMÉRIQUE',
+        titleFr: 'Réseaux de Communication pour Postes - Transmission Numérique de Valeurs Échantillonnées (Sampled Values)',
+        titleEn: 'Communication Networks for Substations - Digital Interface for Instrument Transformers - Sampled Values (SV)',
+        descFr: 'Définit les flux de valeurs échantillonnées (4 800 Hz à 50 Hz) transmis par fibres optiques depuis les Merging Units vers les IEDs, remplaçant la filerie analogique cuivre.',
+        descEn: 'Defines optical Sampled Values streams (4,800 Hz at 50 Hz) transmitted from Merging Units to protective IEDs, replacing analog copper instrument wiring.'
       },
       {
         code: 'CEI 62439-3',
-        tag: 'RÉSEAU HAUTE DISPONIBILITÉ',
+        tag: 'REDONDANCE SANS COUPURE',
         titleFr: 'Réseaux de Communication Industriels - Protocoles de Redondance Haute Disponibilité (PRP & HSR)',
         titleEn: 'Industrial Communication Networks - High Availability Redundancy Protocols (PRP & HSR)',
-        descFr: 'Standard universel pour la transmission de données simultanée sur deux réseaux indépendants sans temps de basculement.',
-        descEn: 'Universal standard for zero-switchover packet duplication across dual independent network infrastructures.'
+        descFr: 'Standard universel imposant la duplication des paquets Ethernet sur deux réseaux physiquement indépendants garantissant un temps de basculement nul (0 ms) en cas de panne.',
+        descEn: 'Universal standard mandating simultaneous packet duplication across dual isolated networks ensuring zero-millisecond (hitless) recovery upon link failure.'
+      },
+      {
+        code: 'CEI 60870-5-104',
+        tag: 'TÉLÉCONDUITE SCADA',
+        titleFr: 'Matériels & Systèmes de Téléconduite - Protocoles de Transmission - Accès Réseau pour CEI 60870-5-101 Utilisant des Profils de Transport Normalisés (TCP/IP)',
+        titleEn: 'Telecontrol Equipment and Systems - Transmission Protocols - Network Access for IEC 60870-5-101 Using Standard Transport Profiles (TCP/IP)',
+        descFr: 'Protocole de référence reliant les postes électriques au centre de dispatching national de Mangombé (SONATREL) pour l\'acquisition des mesures et l\'envoi des télécommandes.',
+        descEn: 'Primary standard governing telecontrol data transmission between high-voltage substations and the SONATREL national grid control center over IP backbones.'
+      },
+      {
+        code: 'IEEE Std 485',
+        tag: 'ALIMENTATION SECOURUE',
+        titleFr: 'Pratique Recommandée IEEE pour le Dimensionnement des Batteries d\'Accumulateurs au Plomb pour Postes Électriques',
+        titleEn: 'IEEE Recommended Practice for Sizing Lead-Acid Batteries for Stationary Applications',
+        descFr: 'Méthodologie normalisée de calcul des profils de décharge et de dimensionnement des ateliers d\'énergie 110 Vcc secourant les calculateurs SAS et bobines de disjoncteurs.',
+        descEn: 'Standardized methodology for duty cycle profiling and Ampere-hour sizing of 110 Vdc stationary battery banks powering substation automation and trip coils.'
+      },
+      {
+        code: 'CEI 62351 Parts 3/5/6/7',
+        tag: 'CYBERSÉCURITÉ DES RÉSEAUX ÉNERGÉTIQUES',
+        titleFr: 'Gestion des Systèmes de Puissance & Échanges d\'Informations Associés - Sécurité des Données et des Communications',
+        titleEn: 'Power Systems Management and Associated Information Exchange - Data and Communications Security',
+        descFr: 'Exigences de chiffrement TLS, authentification des trames GOOSE et protection contre les cyberattaques sur les architectures de contrôle-commande de poste et SCADA.',
+        descEn: 'Encryption standards, TLS tunneling, cryptographic GOOSE authentication, and cyber defense guidelines for substation automation and SCADA systems.'
       }
     ]
   },

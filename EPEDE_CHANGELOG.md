@@ -301,3 +301,42 @@ All notable changes, engineering refactors, and technical enhancements across th
     - IEEE C37.113 (IEEE Guide for protective relay applications to transmission lines).
     - IEC 60909-0 (Short-circuit currents in three-phase A.C. systems).
     - SONATREL Protection Grid Code (Cameroon transmission system protection and measurement specifications).
+
+### Domain 12 (D12) - Substation Automation Systems (SAS) Transformation
+- Completely elevated pedagogical framework in `domainPedagogicalContentRegistry.ts` to 97% master standard:
+  - **Section A**: Formulated SAS boundaries (binary inputs 48/110 Vdc, 100Base-FX optical fibers, SV sampling 4,800 Hz, sub-3ms GOOSE latency, PRP zero-failover, SBO two-step control, and 1 ms SOE chronological resolution).
+  - **Section B**: Documented 5 canonical automation architectures:
+    1. **Bus de Station Numérique CEI 61850-8-1 (MMS Client/Serveur & GOOSE Tranche)** (1 Gbps dual-redundant ring/star, event-driven and cyclic MMS, sub-3ms GOOSE interlocking, Nachtigal/Oyomabang substations).
+    2. **Poste Numérique Intégral avec Bus de Processus Optique (Process Bus - Sampled Values)** (Outdoor switchyard copper-free SAMU merging units, optical SV 4,800 Hz per IEC 61869-9 / IEC 61850-9-2 LE, CT open-circuit hazard elimination).
+    3. **Passerelle de Téléconduite RTU Redondante & Interfaçage Dispatching National (CEI 60870-5-104)** (Dual hot-standby industrial controllers, protocol normalization, encrypted IPsec telecontrol to SONATREL Mangombé National Control Center).
+    4. **Système d'Inter-verrouillage Topologique de Sécurité de Manœuvre (Bay & Station Interlocking)** (Decentralized Boolean logic, zero-current breaker verification I < 0.02 In, ground switch live-bus lock, on-load busbar transfer sequence).
+    5. **Infrastructure Réseau Haute Disponibilité PRP / HSR & Synchronisation PTP IEEE 1588** (Parallel Redundancy Protocol PRP zero-drop dual-LAN A/B, IEEE 1588 PTP Power Profile sub-microsecond Grandmaster clock).
+  - **Section C**: Added 6 core substation automation apparatus with authentic equipment registry citations:
+    - Numerical Bay Control Unit BCU SIPROTEC 6MD85 / MiCOM C264 (`eq-exp-bcu-bay-controller`).
+    - Hardened Substation Managed Ethernet Switch IEC 61850-3 Ruggedcom RS900 / Cisco IE 4000 (`eq-exp-rugged-switch-61850`).
+    - Modular Dual-Redundant Substation RTU & SCADA Gateway ABB RTU560 / MicroSCADA (`eq-exp-rtu-gateway-scada`).
+    - Dual-GNSS PTP Grandmaster Substation Clock Meinberg LANTIME M1000 (`eq-exp-ptp-grandmaster`).
+    - Substation SCADA Server & Hardened Touch Operator HMI Zenon / MicroSCADA (`eq-exp-station-hmi-server`).
+    - Substation Auxiliary 110 Vdc Charger & Battery Bank 400 Ah (`eq-exp-substation-ups-battery`).
+  - **Section D**: Expanded SAS engineering methodology to 7 sequential phases:
+    1. Signal & Information Exchange Matrix (IO List & Addressing, TS/TM/TC/OLTC).
+    2. Standardized SCL System Engineering (SSD, ICD, SCD, CID per IEC 61850-6).
+    3. Network Topology Design, VLAN Segregation & PRP/HSR Architecture (Dual-star LAN A/B, IEEE 802.1Q/p, burst storm simulation).
+    4. Interlocking Logic Implementation & Bay Automation Programming (IEC 61131-3 CFC, safety interlocks, load shedding).
+    5. Factory Acceptance Testing (FAT) & Network Packet Stress Analysis (1,000 events/second burst test, zero frame drop).
+    6. Site Acceptance Testing (SAT) & End-to-End Switchgear Verification (Live physical breaker/disconnector operations, 1 ms SOE audit).
+    7. National EMS/SCADA Uplink Commissioning & Industrial Handover (IEC 60870-5-104 to SONATREL Mangombé, SBO handshake, commercial handover).
+  - **Section E**: Integrated 6 LaTeX mathematical formulations:
+    - GOOSE Transmission Latency Budget ($T_{\text{transit}} = t_{\text{encaps}} + \sum t_{\text{sw},i} + \frac{L}{v_{\text{prop}}} + t_{\text{decaps}} \le 3\text{ ms}$ per IEC 61850-5).
+    - GOOSE Retransmission Timing Sequence with Exponential Backoff ($T_i = \min(T_0 \cdot 2^i, T_{\max})$).
+    - Substation Ethernet LAN Bandwidth Sizing under Worst-Case Event Burst ($BW_{\text{total}} \le 0.40 \cdot BW_{\text{link}}$).
+    - Substation Auxiliary Battery Bank Capacity Sizing per IEEE Std 485 ($C_{\text{req}} = \frac{1}{K_t \cdot K_c} \cdot \left[ \sum \frac{I_p - I_{p-1}}{R_p} \right] \cdot K_{\text{age}} \cdot K_{\text{temp}}$).
+    - Non-Volatile Buffered Report Control Block (BRCB) Memory Sizing ($N_{\text{buffer}} = \lambda_{\text{events}} \cdot t_{\text{outage}} \cdot S_{\text{entry}}$).
+    - Algorithmic Formulation of Topological Safety Interlocking Rules ($E_{\text{permis}}(\text{DS}_k) = \overline{I_{\text{flow}}(\text{CB})} \land \overline{U_{\text{bus}}(\text{ES})} \land \prod C_{j,k}$).
+  - **Section F**: Sourced 6 international and normative standards:
+    - IEC 61850-8-1 (MMS client/server and GOOSE mapping).
+    - IEC 61850-9-2 & IEC 61869-9 (Sampled Values optical process bus).
+    - IEC 62439-3 (Industrial communication networks - PRP & HSR high-availability redundancy).
+    - IEC 60870-5-104 (Telecontrol equipment and systems - Network access for IEC 60870-5-101 using TCP/IP).
+    - IEEE Std 485 (Recommended practice for sizing lead-acid batteries for stationary applications).
+    - IEC 62351 Parts 3/5/6/7 (Data and communications security for power systems management and SCADA).

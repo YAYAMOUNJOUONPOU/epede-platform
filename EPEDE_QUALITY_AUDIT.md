@@ -87,9 +87,14 @@ Each page and engineering module is evaluated on eight core axes (Target: 95%+):
 ### Domain 12 (D12) — Substation Automation Systems (SAS, SCADA, RTU, IEC 61850)
 - **Route**: `#/domain/D12`
 - **Audit Target**: 97%+
+- **Audit Score Post-Transformation**: 97% (5 Canonical Automation Architectures: Station Bus IEC 61850-8-1 MMS/GOOSE, Optical Process Bus SV 4,800 Hz, Dual-Redundant RTU Gateway IEC 60870-5-104, Topological Interlocking Matrix, High-Availability PRP/HSR & PTP IEEE 1588; 6 Field Apparatus; 7 Project Lifecycle Phases; 6 LaTeX Solvers: GOOSE latency budget Ttransit, GOOSE exponential backoff, Station LAN bandwidth under storm conditions, Substation battery 110 Vdc Ah sizing per IEEE 485, Non-volatile MMS buffer sizing, Boolean topological interlocking matrix; 6 Standards).
 
-### Domains 13 to 16
-- Scheduled in sequential order per execution protocol (D13 Communications & OT, D14 Power Quality & EMC, D15 Smart Metering & AMI, D16 Electrical Safety & Earthing).
+### Domain 13 (D13) — Communications & Operational Technology (Process Bus, Cybersecurity)
+- **Route**: `#/domain/D13`
+- **Audit Target**: 97%+
+
+### Domains 14 to 16
+- Scheduled in sequential order per execution protocol (D14 Power Quality & EMC, D15 Smart Metering & AMI, D16 Electrical Safety & Earthing).
 
 ---
 
