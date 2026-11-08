@@ -82,9 +82,14 @@ Each page and engineering module is evaluated on eight core axes (Target: 95%+):
 ### Domain 11 (D11) — Protection, Measurements & System Studies
 - **Route**: `#/domain/D11`
 - **Audit Target**: 97%+
+- **Audit Score Post-Transformation**: 97% (5 Canonical Protection Architectures: 87L/21 distance 225 kV, 87G/87T unit generator-transformer, 87B high-speed busbar, 50/51-50N/51N time-graded MV, 67N wattmetric earth fault; 6 Field Apparatus; 7 Project Lifecycle Phases; 6 LaTeX Solvers: IDMT CEI 60255, CT knee-point Vk CEI 61869, dual-slope differential 87T, quadrilateral impedance reach Z1/Z2/Z3, grading margin Δt breakdown, wattmetric residual power P0; 6 Standards).
 
-### Domains 12 to 16
-- Scheduled in sequential order per execution protocol.
+### Domain 12 (D12) — Substation Automation Systems (SAS, SCADA, RTU, IEC 61850)
+- **Route**: `#/domain/D12`
+- **Audit Target**: 97%+
+
+### Domains 13 to 16
+- Scheduled in sequential order per execution protocol (D13 Communications & OT, D14 Power Quality & EMC, D15 Smart Metering & AMI, D16 Electrical Safety & Earthing).
 
 ---
 

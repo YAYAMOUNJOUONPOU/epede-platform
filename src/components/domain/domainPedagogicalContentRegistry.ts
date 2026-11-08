@@ -2329,128 +2329,223 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
   D11: {
     domainCode: 'D11',
     sectionA: {
-      roleFr: "Détection ultra-rapide des défauts (courts-circuits, surcharges, rupture d'isolement) et déclenchement sélectif pour isoler la zone défaillante en préservant le reste du réseau.",
-      roleEn: 'Ultra-fast electrical fault detection and selective tripping to clear disturbances while maintaining systemwide grid stability.',
+      roleFr: "Détection ultra-rapide des défauts électriques (courts-circuits triphasés, biphasés, défauts phase-terre, ruptures d'isolement), discrimination sélective instantanée et émission d'ordres de déclenchement pour isoler les sections défaillantes en garantissant la stabilité dynamique globale du réseau interconnecté.",
+      roleEn: 'Ultra-fast electrical fault detection (three-phase, phase-to-phase, phase-to-earth faults, insulation breakdowns), absolute selective discrimination, and high-speed tripping to isolate faulty sections while preserving global interconnected grid dynamic stability.',
       inputsFr: {
-        title: 'Réducteurs de Mesure TC & TT',
-        desc: 'Signaux analogiques secondaires 1 A / 5 A (Transformateurs de Courant) et 100 V / 110 V (Transformateurs de Tension).',
-        voltage: 'Secondaires normalisés 1A/5A et 100V'
+        title: 'Réducteurs de Mesure TC/TT & Capteurs LPIT Numériques',
+        desc: 'Signaux analogiques secondaires normalisés 1 A / 5 A (Transformateurs de Courant 5P20/TPX/TPY) et 100 V / 110 V (Transformateurs de Tension capacitifs ou inductifs), ou trames numériques de valeurs échantillonnées (Sampled Values CEI 61850-9-2 LE / CEI 61869-9 issues d\'Unités de Fusion Merging Units).',
+        voltage: 'Secondaires normalisés 1 A / 5 A, 100 V / 110 V • Échantillonnage SV 4 000 / 4 800 Hz'
       },
       inputsEn: {
-        title: 'CT & VT Instrument Transformers',
-        desc: 'Standardized secondary analog signals 1 A / 5 A (Current Transformers) and 100 V / 110 V (Voltage Transformers).',
-        voltage: 'Standardized 1A/5A & 100V secondaries'
+        title: 'Instrument Transformers CT/VT & Digital LPIT Sensors',
+        desc: 'Standardized secondary analog signals 1 A / 5 A (Current Transformers 5P20/TPX/TPY) and 100 V / 110 V (Capacitive or Inductive Voltage Transformers), or digital Sampled Values streams (IEC 61850-9-2 LE / IEC 61869-9 from Stand-Alone Merging Units).',
+        voltage: 'Standardized secondaries 1 A / 5 A, 100 V / 110 V • Sampled Values 4,000 / 4,800 Hz'
       },
       processFr: {
-        title: 'Algorithmes Numériques ANSI (50/51/87/21)',
-        desc: 'Filtrage numérique de Fourier (DFT), calcul des composantes symétriques (directe, inverse, homopolaire) et discrimination différentielle.',
-        note: 'Temps d\'élimination total de défaut : ≤ 80 ms (relais + disjoncteur)'
+        title: 'Algorithmes Numériques d\'Extraction Phasorielle & Logique ANSI',
+        desc: 'Filtrage numérique de Fourier (DFT) réjecteur d\'harmoniques, décomposition instantanée en composantes symétriques de Fortescue (directe, inverse, homopolaire), comparaison vectorielle différentielle stabilisée à pourcentage, caractéristiques de distance polygonales/mho, retenue d\'harmonique 2 (inrush) et 5 (surfluxage), et téléprotection ultra-rapide (POTT/PUTT via OPGW).',
+        note: 'Temps total d\'élimination de défaut : ≤ 60 à 80 ms (relais numérique 15-25 ms + disjoncteur SF6 40-50 ms)'
       },
       processEn: {
-        title: 'Numerical ANSI Protection Algorithms (50/51/87/21)',
-        desc: 'Discrete Fourier Transform (DFT) filtering, symmetrical component decomposition, and high-speed differential zone discrimination.',
-        note: 'Total fault clearance duration: ≤ 80 ms (relay calculation + breaker mechanical trip)'
+        title: 'Numerical Phasor Extraction Algorithms & ANSI Protection Logic',
+        desc: 'Discrete Fourier Transform (DFT) harmonic-rejection filtering, instantaneous Fortescue symmetrical component decomposition (positive, negative, zero sequence), percentage-biased differential comparison, polygonal/mho distance zones, 2nd harmonic inrush and 5th harmonic overexcitation restraint, and ultra-fast teleprotection schemes (POTT/PUTT via OPGW).',
+        note: 'Total fault clearance duration: ≤ 60 to 80 ms (numerical IED 15-25 ms + SF6 breaker 40-50 ms)'
       },
       outputsFr: {
-        title: 'Ordre de Déclenchement & Télé-action',
-        desc: 'Contact statique vers bobine à émission du disjoncteur, émission de trames GOOSE CEI 61850 et enregistrement oscilloperturbographique.',
-        earthing: 'Protection homopolaire 51N/50N calée selon le régime de neutre'
+        title: 'Ordres de Déclenchement Sélectif, Automatismes & COMTRADE',
+        desc: 'Contacts statiques ultra-rapides (< 1 ms) vers bobines à émission des disjoncteurs, émission de trames GOOSE CEI 61850-8-1 (latence réseau < 3 ms), réenclenchement automatique 79 mono/tripolaire, téléaction de délestage d\'urgence par sous-fréquence 81U/df/dt, et archivage oscilloperturbographique normalisé IEEE COMTRADE.',
+        earthing: 'Coordination homopolaire 51N/67N calée sur le régime de neutre (mis à la terre direct 225 kV, impédant 30 kV ou Petersen)'
       },
       outputsEn: {
-        title: 'Trip Output & Teleprotection Signals',
-        desc: 'High-speed solid-state trip contact to breaker shunt coil, IEC 61850 GOOSE messaging, and COMTRADE transient disturbance recording.',
-        earthing: 'Residual earth fault 51N/50N coordinated with grid neutral earthing'
+        title: 'Selective Trip Commands, Automation Cycles & COMTRADE Records',
+        desc: 'Ultra-fast solid-state trip outputs (< 1 ms) to circuit breaker shunt coils, IEC 61850-8-1 GOOSE messaging (< 3 ms network latency), 79 single/three-pole auto-reclosing sequences, under-frequency 81U/df/dt load shedding tele-tripping, and IEEE COMTRADE transient disturbance recording.',
+        earthing: 'Residual 51N/67N ground protection coordinated with system earthing (solidly grounded 225 kV, impedance/Petersen 30 kV)'
       }
     },
     sectionB: {
-      summaryFr: 'Plans de protection en zones sélectives : protection différentielle unitaire vs protection à maximum de courant échelonnée.',
-      summaryEn: 'Unit differential protection zones vs time-graded directional overcurrent protection schemes.',
+      summaryFr: 'Plans de protection des réseaux interconnectés : principes différentiels unitaires haute vitesse, sélectivité ampèremétrique et chronométrique échelonnée, protection de distance numérique et schémas directifs de terre.',
+      summaryEn: 'High-voltage grid protection schemes: high-speed unit differential principles, time-graded directional overcurrent discrimination, numerical distance protection, and sensitive earth fault schemes.',
       architectures: [
         {
-          nameFr: 'Protection Différentielle Unitaire 87 (Transformateur / Ligne)',
-          nameEn: 'Unit Differential Protection 87 (Transformer / Line)',
-          techFr: 'Comparaison vectorielle directe du courant entrant et sortant de la zone protégée',
-          techEn: 'Direct vectorial comparison of incoming vs outgoing zone currents',
-          descFr: 'Instantanée et strictement sélective : ne déclenche que pour les défauts situés à l\'intérieur de sa zone délimitée par les TC.',
-          descEn: 'Instantaneous and strictly selective: operates solely on internal faults within current transformer boundaries.',
-          standard: 'CEI 60255-187',
-          metricFr: 'Temps d\'action : 15 à 25 ms',
-          metricEn: 'Operating time: 15 to 25 ms'
+          nameFr: 'Protection Différentielle de Ligne 225 kV & Distance Numérique (ANSI 87L / 21/21N)',
+          nameEn: '225 kV Line Current Differential & Distance Protection (ANSI 87L / 21/21N)',
+          techFr: 'Double chaîne différentielle optique 87L sur OPGW et impédance de distance quadrilatérale 21/21N multi-zones',
+          techEn: 'Dual-channel optical current differential 87L over OPGW and multi-zone quadrilateral distance protection 21/21N',
+          descFr: 'Protection unitaire absolue par comparaison vectorielle cycle-à-cycle des courants d\'extrémités via canal télécom numérique dédié (OPGW), secondée par un algorithme de distance à 4 zones (Zone 1 instantanée à 85%, Zone 2 à 120% temporisée à 350 ms, Zone 3 amont et zone inverse) avec schéma de téléprotection POTT/PUTT. Déployée sur les dorsales 225 kV Nachtigal-Yaoundé et Mangombé-Oyomabang.',
+          descEn: 'Absolute unit protection by cycle-by-cycle vector comparison of terminal currents via dedicated digital OPGW telecom links, backed by a 4-zone quadrilateral distance scheme (Zone 1 instantaneous 85%, Zone 2 120% at 350 ms, Zone 3 and reverse) with POTT/PUTT teleprotection logic. Standardized on the Nachtigal-Yaoundé and Mangombé-Oyomabang 225 kV backbones.',
+          standard: 'CEI 60255-187-1 / IEEE C37.113',
+          metricFr: 'Temps d\'action 87L : 15 à 22 ms • Zone 1 : < 20 ms',
+          metricEn: '87L operating time: 15 to 22 ms • Zone 1: < 20 ms'
         },
         {
-          nameFr: 'Protection à Maximum de Courant Échelonnée 50/51 (Réseaux HTA)',
-          nameEn: 'Time-Graded Overcurrent Scheme 50/51 (Radial MV Feeders)',
-          techFr: 'Échelonnement chronométrique avec intervalle de sélectivité Δt = 300 ms entre étages',
-          techEn: 'Chronometric time discrimination with safety margin grading step Δt = 300 ms',
-          descFr: 'Le relais le plus proche du défaut déclenche en premier. Les relais amont servent de secours temporisé.',
-          descEn: 'The downstream relay closest to fault clears first; upstream relays act as time-delayed backup.',
-          standard: 'CEI 60255-151',
-          metricFr: 'Marge de sélectivité : Δt = 0.3 s',
-          metricEn: 'Discrimination step: Δt = 0.3 s'
+          nameFr: 'Protection Différentielle de Bloc Générateur-Transformateur (ANSI 87G / 87T / 87U)',
+          nameEn: 'Generator-Transformer Unit Differential Scheme (ANSI 87G / 87T / 87U)',
+          techFr: 'Caractéristique différentielle stabilisée à double pente avec filtrage harmonique 2 (inrush) et 5 (surfluxage)',
+          techEn: 'Dual-slope percentage-biased differential with 2nd harmonic inrush and 5th harmonic overexcitation restraint',
+          descFr: 'Protection unitaire instantanée du groupe de production et de son transformateur élévateur (ex. 7 x 60 MW Nachtigal). Élimine les erreurs dues aux courants magnétisants d\'enclenchement par blocage harmonique 2 (seuil 15%) et prévient les déclenchements intempestifs sur défauts externes grâce à une pente de retenue adaptative (pente 1 : 20%, pente 2 : 60% au-delà du courant nominal). Intègre la compensation logicielle d\'indice horaire (YNd11).',
+          descEn: 'Instantaneous unit protection for turbine-generator sets and step-up power transformers (e.g., 7 x 60 MW Nachtigal). Eliminates nuisance tripping during transformer energization via 2nd harmonic cross-blocking (15% threshold) and provides high security during external faults via adaptive dual-slope restraint (Slope 1: 20%, Slope 2: 60%). Incorporates automatic software vector group compensation (YNd11).',
+          standard: 'CEI 60255-187-1 / IEEE C37.102',
+          metricFr: 'Temps de déclenchement interne : < 25 ms • Taux de retenue H2 : 15%',
+          metricEn: 'Internal fault trip time: < 25 ms • H2 restraint threshold: 15%'
+        },
+        {
+          nameFr: 'Protection Différentielle Haute Vitesse de Jeu de Barres Numérique (ANSI 87B)',
+          nameEn: 'Numerical Busbar High-Speed Differential Protection (ANSI 87B)',
+          techFr: 'Architecture décentralisée bay-unit / central-unit avec critère de saturation TC cycle-à-cycle',
+          techEn: 'Distributed bay-unit / central-unit architecture with cycle-by-cycle CT saturation detection algorithm',
+          descFr: 'Protection différentielle ultra-rapide des jeux de barres 225 kV et 90 kV double-barres avec couplage. Chaque travée mesure ses courants via une unité de travée (Bay Unit) et transmet les phaseurs à l\'unité centrale (Central Unit). Un algorithme de détection de saturation prévient tout déclenchement intempestif sur court-circuit externe avec TC saturé, tout en garantissant un déclenchement franc en moins de 15 ms en cas de défaut sur barre.',
+          descEn: 'Ultra-high-speed differential protection for 225 kV and 90 kV double-busbar configurations with bus coupler. Each bay samples currents through a Bay Unit and transmits phase data to the Central Unit. A sophisticated CT saturation detection algorithm prevents false tripping during close-in external faults with saturated CTs, while ensuring clear tripping in under 15 ms on true internal bus faults.',
+          standard: 'CEI 60255-187-2 / IEEE C37.234',
+          metricFr: 'Temps total de déclenchement : ≤ 12 à 15 ms • Jusqu\'à 32 travées',
+          metricEn: 'Total trip duration: ≤ 12 to 15 ms • Up to 32 bays supported'
+        },
+        {
+          nameFr: 'Coordination Sélective Ampèremétrique & Chronométrique HTA (ANSI 50/51 - 50N/51N)',
+          nameEn: 'MV Feeder Time-Graded Overcurrent Coordination (ANSI 50/51 - 50N/51N)',
+          techFr: 'Courbes normalisées à temps inverse CEI (Normalement / Très / Extrêmement Inverse) et réenclencheurs 79',
+          techEn: 'Standard IEC inverse definite minimum time (IDMT) curves with auto-recloser 79 cycles',
+          descFr: 'Plan de protection échelonné pour départs HTA radiaux 30 kV et 15 kV (ex. réseaux urbains et périurbains ENEO). Coordination chronométrique rigoureuse avec un intervalle de sélectivité Δt = 300 ms entre disjoncteur d\'arrivée transformateur HTB/HTA, disjoncteurs de départs et réenclencheurs en ligne (reclosers), assurant l\'élimination du défaut par l\'organe le plus proche sans coupure générale.',
+          descEn: 'Graded protection scheme for 30 kV and 15 kV radial MV feeders (e.g., ENEO urban and peri-urban networks). Strict chronometric time grading with a discrimination margin Δt = 300 ms between substation incomers, outgoing feeder breakers, and downstream line reclosers, ensuring the protective device closest to the fault opens without causing wide-area blackouts.',
+          standard: 'CEI 60255-151 / IEEE C37.112',
+          metricFr: 'Intervalle de sélectivité : Δt = 250 à 300 ms • Précision temps : ±5%',
+          metricEn: 'Discrimination step: Δt = 250 to 300 ms • Timing accuracy: ±5%'
+        },
+        {
+          nameFr: 'Protection Terre Directive Réseau à Neutre Compensé / Impédant (ANSI 67N / Wattmétrique)',
+          nameEn: 'Directional Ground Fault Protection for Resonant/Impedance Grids (ANSI 67N / Wattmetric)',
+          techFr: 'Mesure de puissance homopolaire active P0 = 3·V0·I0·cos(φ0) et transitoire quator/cosinus',
+          techEn: 'Zero-sequence active power computation P0 = 3·V0·I0·cos(φ0) and quator transient directional detection',
+          descFr: 'Détection sélective ultra-sensible des défauts monophasés à la terre sur les réseaux HTA 30 kV dont le neutre est mis à la terre par résistance de limitation (ex. 20 à 40 A) ou bobine de compensation de Petersen. Le relais analyse le déphasage entre la tension résiduelle V0 et le courant résiduel I0 pour isoler avec certitude le départ en défaut même lorsque le courant de défaut est très inférieur au courant de charge nominal.',
+          descEn: 'Ultra-sensitive directional detection of single-phase-to-ground faults on 30 kV MV distribution networks grounded via neutral grounding resistors (e.g., 20 to 40 A) or Petersen compensating coils. The relay calculates the phase relationship between residual displacement voltage V0 and residual zero-sequence current I0 to pinpoint the faulted feeder even when fault current is far below nominal load.',
+          standard: 'CEI 60255-151 / CIGRE TB 784',
+          metricFr: 'Sensibilité résiduelle : I0 ≥ 0.2 A • Seuil tension résiduelle V0 : 1% Un',
+          metricEn: 'Residual sensitivity: I0 ≥ 0.2 A • Residual voltage threshold V0: 1% Un'
         }
       ]
     },
     sectionC: [
       {
-        id: 'eq-exp-siprotec-5',
-        nameFr: 'Relais Numérique Multifonction (SIPROTEC 5 / MiCOM P643)',
-        nameEn: 'Multifunctional Numerical Protection Relay (SIPROTEC 5)',
-        voltage: 'Alimentation 110 Vcc • Entrées 1A/5A',
-        roleFr: 'Acquisition des grandeurs électriques, exécution des fonctions ANSI 50/51/87 et commande directe du disjoncteur.',
-        roleEn: 'Analog current/voltage acquisition, ANSI 50/51/87 execution, and high-speed breaker trip issuance.',
-        symbol: 'F-87T',
-        standard: 'CEI 60255-1',
+        id: 'eq-exp-relay-ied-61850',
+        nameFr: 'Relais Numérique Multifonction de Protection IED (SIPROTEC 5 / MiCOM P643)',
+        nameEn: 'Multifunctional Protection Numerical IED (SIPROTEC 5 / MiCOM P643)',
+        voltage: 'Alimentation 110/220 Vcc • Entrées analogiques 1 A / 5 A & 100 V',
+        roleFr: 'Acquisition des grandeurs électriques par filtrage DFT, exécution des fonctions ANSI 50/51/87/21/67N, logique d\'automatisme de poste CFC, émission d\'ordres de déclenchement statiques (< 1 ms), synchronisation temporelle IEEE 1588 PTP et consignation COMTRADE.',
+        roleEn: 'High-speed analog acquisition via DFT filtering, ANSI 50/51/87/21/67N execution, CFC substation automation logic, high-speed solid-state tripping (< 1 ms), IEEE 1588 PTP time synchronization, and IEEE COMTRADE fault recording.',
+        symbol: 'IED-PROT',
+        standard: 'CEI 60255-1 / CEI 61850-8-1',
         imgUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80',
         calcTab: 'relay-tcc'
       },
       {
-        id: 'eq-exp-ct-5p20',
-        nameFr: 'Transformateur de Courant Classe Protection 5P20',
-        nameEn: 'Protection Current Transformer Class 5P20',
-        voltage: 'Primaire 600 A • Secondaire 1 A • 30 VA',
-        roleFr: 'Mesure fidèle des courants de court-circuit jusqu\'à 20 fois le nominal sans saturation du circuit magnétique.',
-        roleEn: 'Faithful measurement of fault currents up to 20x nominal without magnetic core saturation.',
-        symbol: 'TC-PROT',
+        id: 'eq-exp-ct-225k',
+        nameFr: 'Transformateur de Courant HTB 225 kV Classe Protection (5P20 / TPX)',
+        nameEn: 'HV 225 kV Protection Instrument Current Transformer (5P20 / TPX)',
+        voltage: 'Tension assignée 245 kV • Primaire 600-1200-2400 A • Secondaire 1 A / 5 A',
+        roleFr: 'Mesure fidèle et reproduction linéaire des courants de court-circuit symétriques et asymétriques jusqu\'à 20 fois le courant nominal sans saturation magnétique prématurée du noyau de protection, garantissant l\'exactitude des calculs différentiels et de distance.',
+        roleEn: 'Accurate and linear reproduction of symmetrical and asymmetrical subtransient short-circuit currents up to 20 times rated current without premature core saturation, ensuring computational fidelity for unit differential and distance relays.',
+        symbol: 'TC-225KV',
         standard: 'CEI 61869-2',
         imgUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
         calcTab: 'ct-sizing'
+      },
+      {
+        id: 'eq-exp-vt-225k',
+        nameFr: 'Transformateur de Tension Capacitif 225 kV avec Raccordement CPL (CVT)',
+        nameEn: '225 kV Capacitor Voltage Transformer with PLC Coupling (CVT)',
+        voltage: '225/√3 kV primaire • 100/√3 V & 100/3 V secondaires • Classe 0.2 / 3P',
+        roleFr: 'Diviseur de tension capacitif pour l\'alimentation des organes de mesure de tension (ANSI 21/27/59) et filtre passe-bas pour l\'injection de signaux de télécommunication par courant porteur en ligne (CPL) sur le réseau de transport 225 kV.',
+        roleEn: 'Capacitive voltage divider supplying accurate potential signals to protection relays (ANSI 21/27/59) and power quality instruments, while doubling as carrier-frequency coupling capacitor for power line carrier (PLC) teleprotection signals.',
+        symbol: 'TT-225KV',
+        standard: 'CEI 61869-5',
+        imgUrl: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'transmission-line'
+      },
+      {
+        id: 'eq-test-set-omicron',
+        nameFr: 'Valise d\'Essai Triphasée d\'Injection Secondaire Numérique (Omicron CMC 356)',
+        nameEn: 'Universal Secondary Injection Protection Test Set (Omicron CMC 356)',
+        voltage: 'Générateurs 6 x 32 A (ou 1 x 128 A) • 4 x 300 V • Sync GPS/PTP',
+        roleFr: 'Génération de courants et tensions triphasés haute précision pour l\'étalonnage des seuils de relais, le tracé des courbes temps-courant TCC, la validation de la caractéristique de distance Z(R,X), et la relecture transitoire de fichiers COMTRADE.',
+        roleEn: 'High-precision secondary current and voltage injection kit for testing and verifying numerical protection relays, plotting TCC curves, confirming impedance boundary characteristics, and replaying real-world COMTRADE transient disturbance files.',
+        symbol: 'TEST-SET',
+        standard: 'CEI 60255-21 / IEEE C37.90',
+        imgUrl: 'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'relay-tcc'
+      },
+      {
+        id: 'eq-exp-trip-circuit-relay',
+        nameFr: 'Relais de Surveillance Permanente de Circuit de Déclenchement (ANSI 74TC)',
+        nameEn: 'Trip Circuit Continuous Supervision & Lockout Relay (ANSI 74TC / 86)',
+        voltage: 'Tension auxiliaire 110 Vcc / 220 Vcc • Injection de courant de veille < 2 mA',
+        roleFr: 'Surveillance continue de l\'intégrité galvanique de la bobine de déclenchement à émission du disjoncteur et de sa filerie en position ouverte comme fermée, avec émission d\'une alarme instantanée en cas de coupure de circuit ou perte de tension continue.',
+        roleEn: 'Continuous galvanic loop monitoring of circuit breaker trip coils and secondary cabling in both breaker open and closed positions, immediately generating alarms upon wire breakage, supply failure, or auxiliary switch open-circuit.',
+        symbol: 'RL-74TC',
+        standard: 'CEI 60255-27 / ANSI C37.90',
+        imgUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'power'
+      },
+      {
+        id: 'eq-exp-merging-unit-61850',
+        nameFr: 'Unité de Fusion Numérique de Tranche Merging Unit (CEI 61850-9-2 LE / 61869-9)',
+        nameEn: 'Stand-Alone Merging Unit SAMU for Process Bus (IEC 61850-9-2 LE / 61869-9)',
+        voltage: 'Entrées 1 A / 5 A & 100 V • Sortie Ethernet optique 100Base-FX SV 4.8 kHz',
+        roleFr: 'Numérisation haute fréquence synchrone des signaux de courant et de tension au plus près des réducteurs de mesure en baie extérieure, et diffusion en temps réel de trames Sampled Values (SV) horodatées par IEEE 1588 PTP vers le bus de processus.',
+        roleEn: 'Synchronous high-speed digitization of current and voltage signals directly in the substation switchyard, publishing standardized Sampled Values (SV) Ethernet multicast streams time-stamped via IEEE 1588 PTP over the station process bus.',
+        symbol: 'SAMU-61850',
+        standard: 'CEI 61850-9-2 / CEI 61869-9',
+        imgUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'relay-tcc'
       }
     ],
     sectionD: [
       {
         phase: '01',
-        titleFr: 'Calcul des Courants de Court-Circuit Max & Min',
-        titleEn: 'Max & Min Fault Current Computation',
-        descFr: 'Détermination de Ik"max (dimensionnement disjoncteur) et Ik"min (sensibilité de déclenchement en bout de ligne).',
-        descEn: 'Calculating Ik"max for breaker breaking capacity and Ik"min for remote end fault trip sensitivity.'
+        titleFr: 'Philosophie de Protection & Cahier des Charges Fonctionnel',
+        titleEn: 'Protection Philosophy & Functional Specification',
+        descFr: 'Définition des principes de protection du réseau : duplication Main 1 / Main 2 à technologies hétérogènes, allocation des fonctions unitaires et de secours, sélection du régime de neutre et matrice de déclenchement préliminaire.',
+        descEn: 'Establishing grid protection principles: Main 1 / Main 2 dual-redundancy using heterogeneous vendor platforms, defining unit vs backup functions, selecting grounding criteria, and developing the preliminary trip matrix.'
       },
       {
         phase: '02',
-        titleFr: 'Vérification de Non-Saturation des TC',
-        titleEn: 'CT Saturation & Knee-Point Check',
-        descFr: 'Calcul de la tension de coude Vk et de la constante de temps apériodique L/R du réseau.',
-        descEn: 'Knee-point voltage Vk verification considering system primary time constant L/R.'
+        titleFr: 'Calcul des Courants de Court-Circuit Max & Min (CEI 60909)',
+        titleEn: 'Max & Min Short-Circuit Fault Calculations (IEC 60909)',
+        descFr: 'Modélisation du réseau sous logiciel de calcul électrotechnique (DIgSILENT PowerFactory / ETAP). Détermination des courants de court-circuit subtransitoires triphasés Ik"max (pouvoir de coupure) et biphasés/monophasés Ik"min en bout de ligne (sensibilité).',
+        descEn: 'Power system modeling using analytical software (DIgSILENT / ETAP). Computing three-phase subtransient fault current Ik"max for breaker rating and minimum line-end phase-to-ground Ik"min for relay pickup sensitivity verification.'
       },
       {
         phase: '03',
-        titleFr: 'Établissement du Carnet de Réglages des Relais',
-        titleEn: 'Relay Setting Schedule Preparation',
-        descFr: 'Définition des seuils Is, des temporisations t et des courbes à temps inverse CEI (Normalement / Très Inverse).',
-        descEn: 'Configuring pickup currents Is, delay timers, and standard IEC inverse curves.'
+        titleFr: 'Dimensionnement & Vérification de Non-Saturation des TC',
+        titleEn: 'Current Transformer Sizing & Knee-Point Saturation Check',
+        descFr: 'Calcul de la tension de coude requise Vk selon la norme CEI 61869-2, vérification du facteur de surdimensionnement transitoire Ktd avec la constante de temps L/R du réseau, et contrôle du fardeau secondaire total (filerie + relais).',
+        descEn: 'Calculating minimum required knee-point voltage Vk per IEC 61869-2, verifying transient dimensioning factor Ktd against primary system L/R time constants, and checking secondary loop resistance (cabling + relay burden).'
       },
       {
         phase: '04',
-        titleFr: 'Essais par Injection Secondaire (Valise Omicron)',
-        titleEn: 'Secondary Injection Testing (Omicron)',
-        descFr: 'Simulation de défauts réels par injection de courants triphasés et contrôle des temps de déclenchement.',
-        descEn: 'Simulating primary fault scenarios via calibrated 3-phase secondary injection kits.'
+        titleFr: 'Établissement du Carnet de Réglages & Courbes TCC',
+        titleEn: 'Relay Setting Schedule & TCC Coordination Curves',
+        descFr: 'Détermination analytique des seuils de courant Is, des facteurs temporaux TMS, des portées de distance Z1/Z2/Z3/Zrev, des pentes différentielles K1/K2, et tracé des courbes temps-courant pour garantir la sélectivité amont/aval.',
+        descEn: 'Analytical determination of current pickup thresholds Is, time multiplier settings TMS, distance zone reaches Z1/Z2/Z3/Zrev, percentage differential slopes K1/K2, and plotting TCC curves to ensure strict upstream/downstream selectivity.'
       },
       {
         phase: '05',
-        titleFr: 'Analyse des Enregistrements COMTRADE Post-Défaut',
-        titleEn: 'COMTRADE Disturbance Post-Mortem',
-        descFr: 'Dépouillement des oscilloperturbographies pour valider la bonne séquence des automatismes.',
-        descEn: 'Transient waveform analysis confirming correct breaker clearance sequence.'
+        titleFr: 'Paramétrage des Fichiers IED (CID/IID) & Logique Automate CFC',
+        titleEn: 'IED Configuration (CID/IID) & CFC Automation Logic Programming',
+        descFr: 'Injection des réglages dans les logiciels constructeurs (DIGSI, Easergy Studio), programmation des équations d\'automatisme et verrouillages logiques en langage CFC, et configuration des téléactions GOOSE CEI 61850-8-1.',
+        descEn: 'Importing parameter schedules into engineering suites (DIGSI, Easergy Studio), programming interlocking and auto-reclosing logic via Continuous Function Chart (CFC), and mapping peer-to-peer IEC 61850 GOOSE teleprotection datasets.'
+      },
+      {
+        phase: '06',
+        titleFr: 'Essais par Injection Secondaire & Tests Bout-en-Bout Synchronisés GPS',
+        titleEn: 'Secondary Injection Testing & GPS-Synchronized End-to-End Trials',
+        descFr: 'Vérification métrologique au banc d\'essai Omicron CMC 356 : injection des caractéristiques différentielles, contrôle des temps de déclenchement IDMT, et validation des téléprotections 87L par injection synchronisée GPS aux deux extrémités de ligne.',
+        descEn: 'Metrological validation using Omicron CMC 356 test sets: verifying differential bias curves, confirming IDMT trip operating times, and validating line differential 87L schemes via GPS-synchronized injection at both substations.'
+      },
+      {
+        phase: '07',
+        titleFr: 'Mise en Service, Essais Primaires & Analyse Post-Défaut COMTRADE',
+        titleEn: 'Commissioning, Primary Injection Tests & COMTRADE Post-Mortem Analysis',
+        descFr: 'Essais de mise sous tension, vérification du sens des puissances actives et réactives sous charge primaire réelle pour validation des polarités TC/TT, simulation de déclenchement réel sur disjoncteur, et dépouillement oscillographique après perturbation.',
+        descEn: 'Substation energization, verification of active and reactive power flow directions under real load to confirm CT/VT polarities, trip verification on circuit breaker coils, and automated COMTRADE oscillographic analysis following grid disturbances.'
       }
     ],
     sectionE: [
@@ -2460,63 +2555,187 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         tabLabelEn: 'IEC Inverse Time Overcurrent (ANSI 51)',
         titleFr: 'Équation Universelle des Relais à Temps Dépendant selon CEI 60255-151',
         titleEn: 'Universal Inverse Definite Minimum Time Equation per IEC 60255-151',
-        descFr: 'Plus le courant de défaut est intense, plus le relais déclenche rapidement, assurant une sélectivité naturelle avec l\'amont.',
-        descEn: 'Tripping delay shortens automatically as fault magnitude rises, creating natural discrimination.',
-        formula: 't = TMS · [ k / ((I / I_s)^α - 1) ]',
-        formulaDescFr: 'Pour courbe Normalement Inverse CEI : k = 0.14, α = 0.02. Avec TMS le facteur de réglage temporel et Is le seuil de courant.',
-        formulaDescEn: 'For IEC Standard Inverse curve: k = 0.14, α = 0.02. With TMS time multiplier setting and Is pickup current.',
+        descFr: 'L\'algorithme calcule le temps d\'élimination en fonction de l\'intensité relative du court-circuit. Plus le défaut est violent, plus la coupure est rapide, procurant une coordination sélective chronométrique naturelle avec les appareils amont et aval.',
+        descEn: 'The numerical algorithm computes operating trip time as a function of relative fault severity. As fault magnitude increases, tripping time automatically decreases, providing natural time-graded selectivity with adjacent grid protective devices.',
+        formula: 't = TMS \\cdot \\left[ \\frac{k}{\\left( \\frac{I}{I_s} \\right)^\\alpha - 1} \\right]',
+        formulaDescFr: 'Avec TMS le facteur de réglage temporel (Time Multiplier Setting), I le courant de défaut mesuré, Is le seuil de courant de démarrage du relais. Paramètres normalisés : Courbe Normalement Inverse (k = 0.14, α = 0.02) ; Très Inverse (k = 13.5, α = 1.0) ; Extrêmement Inverse (k = 80.0, α = 2.0).',
+        formulaDescEn: 'Where TMS is the Time Multiplier Setting, I is the measured RMS fault current, and Is is the relay current pickup setting. Standard curve constants: Standard Inverse (k = 0.14, α = 0.02); Very Inverse (k = 13.5, α = 1.0); Extremely Inverse (k = 80.0, α = 2.0).',
         assumptionsFr: [
-          'Le courant I doit être supérieur au seuil de démarrage (I > 1.10 · Is).',
-          'TMS (Time Multiplier Setting) compris entre 0.05 et 1.20.',
-          'Prise en compte du temps de retombée du relais (Reset time) lors de réenclenchements rapides.'
+          'Le courant de défaut doit dépasser le seuil de démarrage : I > 1.10 · Is pour engager le chronomètre d\'intégration.',
+          'TMS réglable par pas de 0.01 entre 0.05 et 1.20 selon le carnet de coordination.',
+          'Prise en compte du temps d\'amortissement et de retombée du relais (Reset time) lors des cycles de réenclenchement 79.'
         ],
         assumptionsEn: [
-          'Fault current must exceed pickup threshold (I > 1.10 · Is).',
-          'TMS factor calibrated between 0.05 and 1.20.',
-          'Relay reset dynamics taken into account during auto-reclose cycles.'
+          'Fault current must exceed pickup threshold: I > 1.10 · Is to initiate timer integration.',
+          'TMS adjustable in increments of 0.01 between 0.05 and 1.20 per coordination study.',
+          'Relay cooling and reset dynamics must be accounted for during fast auto-reclose 79 dead times.'
         ],
         calcTab: 'relay-tcc'
       },
       {
         id: 'ct_kneepoint_formula',
-        tabLabelFr: 'Tension de Coude du TC (Classe 5P20)',
-        tabLabelEn: 'CT Knee-Point Voltage Formula',
+        tabLabelFr: 'Tension de Coude TC (CEI 61869-2)',
+        tabLabelEn: 'CT Knee-Point Voltage Sizing',
         titleFr: 'Dimensionnement de la Tension de Saturation du Transformateur de Courant',
-        titleEn: 'Current Transformer Saturation Knee-Point Sizing',
-        descFr: 'Garantit que le TC ne saturera pas lors du premier cycle de court-circuit asymétrique.',
-        descEn: 'Guarantees that the CT core will not saturate during initial asymmetrical subtransient fault peaks.',
-        formula: 'V_k ≥ K_td · (I_cc_max / I_1n) · (R_ct + R_w + R_b)',
-        formulaDescFr: 'Avec Ktd facteur de surdimensionnement transitoire, Rct résistance interne de l\'enroulement secondaire, Rw résistance de filerie, et Rb fardeau du relais.',
-        formulaDescEn: 'With Ktd transient dimensioning factor, Rct secondary winding resistance, Rw lead resistance, and Rb connected relay burden.',
+        titleEn: 'Protection Current Transformer Saturation Knee-Point Sizing',
+        descFr: 'Formulation normative garantissant que le circuit magnétique du TC ne saturera pas lors du premier cycle de court-circuit asymétrique subtransitoire, évitant tout déclenchement intempestif des protections différentielles ou refus de fonctionnement des protections de distance.',
+        descEn: 'Standardized formulation ensuring the magnetic core of the CT will not enter saturation during the subtransient asymmetrical DC offset phase of a severe fault, preventing differential relay misoperation or distance zone underreach.',
+        formula: 'V_k \\ge K_{td} \\cdot \\left( \\frac{I_{k,\\max}}{I_{1n}} \\right) \\cdot (R_{ct} + 2 R_L + R_b)',
+        formulaDescFr: 'Avec Vk la tension de point de coude assignée (V), Ktd le facteur de surdimensionnement transitoire lié à la constante apériodique L/R du réseau (Ktd = 1 + 2π·fn·Tp), Ik,max le courant de court-circuit maximal présumé, I1n le courant primaire nominal, Rct la résistance de l\'enroulement secondaire du TC, RL la résistance unifilaire du câble de liaison (aller-retour), et Rb le fardeau interne du relais.',
+        formulaDescEn: 'Where Vk is the rated knee-point voltage (V), Ktd is the transient dimensioning factor accounting for grid DC offset time constant L/R (Ktd = 1 + 2π·fn·Tp), Ik,max is the maximum prospective subtransient fault current, I1n is rated primary current, Rct is secondary winding resistance, RL is one-way wiring lead resistance, and Rb is connected relay resistive burden.',
         assumptionsFr: [
-          'Régime asymétrique maximal avec composante continue apériodique (DC offset 100%).',
-          'Constante de temps primaire L/R du réseau haute tension (typique 40 à 100 ms).',
-          'Résistance de boucle de câblage Rw calculée à température maximale (75°C).'
+          'Régime asymétrique subtransitoire maximal avec composante apériodique continue de 100% (fermeture au zéro de tension).',
+          'Constante de temps apériodique primaire L/R du réseau haute tension (typiquement 60 à 120 ms sur le réseau 225 kV SONATREL).',
+          'Résistance de filerie RL calculée à la température maximale de service des conducteurs cuivre (75 °C).'
         ],
         assumptionsEn: [
-          'Worst-case 100% DC offset subtransient current peak.',
-          'System primary time constant L/R (typically 40 to 100 ms).',
-          'Wiring loop resistance Rw calculated at maximum operating temperature (75°C).'
+          'Maximum asymmetrical subtransient DC offset of 100% (breaker closing at voltage zero-crossing).',
+          'Primary grid time constant L/R (typically 60 to 120 ms on the SONATREL 225 kV transmission backbone).',
+          'Cabling lead resistance RL evaluated at conductor maximum operating temperature (75 °C).'
         ],
         calcTab: 'ct-sizing'
+      },
+      {
+        id: 'diff_dual_slope_formula',
+        tabLabelFr: 'Différentielle à Double Pente (ANSI 87T/87L)',
+        tabLabelEn: 'Dual-Slope Biased Differential (ANSI 87T/87L)',
+        titleFr: 'Caractéristique Différentielle Stabilisée à Pourcentage et Double Pente',
+        titleEn: 'Percentage-Biased Dual-Slope Differential Operating Characteristic',
+        descFr: 'Algorithme comparant le courant différentiel vectoriel (grandeur d\'action) au courant de traversée de retenue (grandeur de stabilisation). La double pente assure une excellente sensibilité sur défauts internes faibles tout en immunisant la protection contre la saturation des TC lors de courts-circuits externes majeurs.',
+        descEn: 'Numerical algorithm comparing vectorial differential current (operating quantity) to through-current (restraining quantity). The dual-slope profile provides maximum sensitivity for low internal faults while guaranteeing absolute stability against CT saturation during massive through-faults.',
+        formula: 'I_{diff} = |\\vec{I}_1 + \\vec{I}_2| \\quad ; \\quad I_{rest} = \\frac{|\\vec{I}_1| + |\\vec{I}_2|}{2} \\quad \\implies \\quad I_{diff} \\ge I_{s0} + K_1 \\cdot I_{rest} \\; (I_{rest} \\le I_{r1}) \\quad ; \\quad I_{diff} \\ge I_{s0} + K_1 \\cdot I_{r1} + K_2 \\cdot (I_{rest} - I_{r1}) \\; (I_{rest} > I_{r1})',
+        formulaDescFr: 'Avec Idiff le courant différentiel vectoriel, Irest le courant de retenue scalaire, Is0 le seuil de sensibilité minimale au repos (typiquement 0.20 In), K1 la première pente pour erreurs de TC et régleurs en charge (15 à 25%), Ir1 le coude de transition (1.5 In), et K2 la seconde pente renforcée contre la saturation sévère (50 à 80%).',
+        formulaDescEn: 'Where Idiff is the vectorial differential current, Irest is the scalar restraint current, Is0 is the minimum pickup threshold at no-load (typically 0.20 In), K1 is Slope 1 covering CT errors and OLTC tap variation (15 to 25%), Ir1 is the knee breakpoint (1.5 In), and K2 is Slope 2 offering high restraint against heavy CT saturation (50 to 80%).',
+        assumptionsFr: [
+          'Compensation numérique automatique du rapport de transformation et de l\'indice horaire (ex. YNd11) intégrée dans l\'IED.',
+          'Blocage harmonique 2 activé si le taux I(2·f0)/I(f0) dépasse 15% (distinction enclenchement transformateur).',
+          'Déclenchement différentiel instantané non-stabilisé à très haut niveau (ANSI 87U) si Idiff > 8 à 10 In.'
+        ],
+        assumptionsEn: [
+          'Automatic digital ratio matching and vector group phase-angle shift compensation (e.g., YNd11) inside the IED.',
+          '2nd harmonic cross-blocking active if I(2·f0)/I(f0) exceeds 15% (transformer magnetizing inrush discriminator).',
+          'High-set instantaneous unrestrained differential trip (ANSI 87U) configured for extreme internal faults when Idiff > 8 to 10 In.'
+        ],
+        calcTab: 'relay-tcc'
+      },
+      {
+        id: 'distance_impedance_reach',
+        tabLabelFr: 'Portée de Distance Quadrilatérale (ANSI 21)',
+        tabLabelEn: 'Distance Protection Zone Reach (ANSI 21)',
+        titleFr: 'Calcul des Réglages d\'Impédance de Zone pour Lignes Haute Tension',
+        titleEn: 'Impedance Reach Settings for High-Voltage Transmission Lines',
+        descFr: 'Délimitation géométrique des zones de protection de distance dans le plan d\'impédance complexe R-X. La zone 1 couvre la quasi-totalité de la ligne protégée sans risque de dépassement de portée sur court-circuit au jeu de barres aval.',
+        descEn: 'Geometric boundary setting of distance protection zones in the complex R-X impedance plane. Zone 1 provides instantaneous clearance for the bulk of the line without risking overreach beyond the remote substation busbar.',
+        formula: 'Z_{1} = 0.85 \\cdot Z_L \\quad ; \\quad Z_{2} = Z_L + 0.50 \\cdot Z_{L,\\text{next}} \\quad ; \\quad Z_{3} = 1.20 \\cdot (Z_L + Z_{L,\\text{next}})',
+        formulaDescFr: 'Avec ZL l\'impédance directe de la ligne protégée, ZL,next l\'impédance de la ligne adjacente la plus courte connectée au poste distant. Z1 déclenche en temps instantané t1 ≤ 20 ms (marge de sécurité de 15% contre les erreurs de TC/TT), Z2 temporisé à t2 = 350 ms, et Z3 temporisé à t3 = 800 ms servant de secours distant.',
+        formulaDescEn: 'Where ZL is positive-sequence impedance of the protected line, and ZL,next is impedance of the shortest adjacent line departing the remote bus. Zone 1 trips instantaneously at t1 ≤ 20 ms (15% security margin against CT/VT and line parameter errors), Zone 2 delayed to t2 = 350 ms, and Zone 3 delayed to t3 = 800 ms providing remote backup.',
+        assumptionsFr: [
+          'Prise en compte de la résistance de défaut d\'arc (formule de Warrington) et compensation de résistance de terre RF.',
+          'Facteur de compensation homopolaire k0 = (Z0 - Z1) / (3 · Z1) appliqué pour les défauts monophasés à la terre (ANSI 21N).',
+          'Schéma de téléprotection POTT (Permissive Overreach Transfer Trip) accélérant l\'ouverture Zone 2 à 25 ms par signal fibre optique OPGW.'
+        ],
+        assumptionsEn: [
+          'Warrington arc resistance and tower-footing ground fault resistance RF factored into reach boundaries.',
+          'Zero-sequence residual compensation factor k0 = (Z0 - Z1) / (3 · Z1) enabled for single-line-to-ground faults (ANSI 21N).',
+          'Permissive Overreach Transfer Trip (POTT) teleprotection accelerating remote end clearing to 25 ms via OPGW optical channel.'
+        ],
+        calcTab: 'transmission-line'
+      },
+      {
+        id: 'grading_margin_delta_t',
+        tabLabelFr: 'Intervalle de Sélectivité Δt',
+        tabLabelEn: 'Discrimination Margin Δt',
+        titleFr: 'Décomposition Physique de l\'Intervalle Chronométrique de Sélectivité',
+        titleEn: 'Physical Breakdown of Chronometric Discrimination Time Margin',
+        descFr: 'Pour garantir que le disjoncteur amont ne déclenche pas lorsque le disjoncteur aval élimine un défaut, un décalage temporel minimal Δt doit être respecté entre les courbes de déclenchement consécutives.',
+        descEn: 'To prevent upstream circuit breakers from opening when a downstream breaker is clearing a fault, a minimum chronometric grading margin Δt must be maintained between adjacent protection stages.',
+        formula: '\\Delta t = t_{cb} + t_{overshoot} + t_{safety} + \\epsilon_{meas} \\approx 60\\text{ ms} + 40\\text{ ms} + 150\\text{ ms} + 50\\text{ ms} = 300\\text{ ms}',
+        formulaDescFr: 'Avec tcb le temps total d\'ouverture mécanique du disjoncteur aval (40 à 60 ms), tovershoot le temps de dépassement et d\'inertie du relais amont (30 à 40 ms pour relais numériques), tsafety la marge de sécurité pour variations d\'alimentation auxiliaire (100 à 150 ms), et εmeas l\'erreur globale de mesure de courant et de temps des TC et relais (50 ms).',
+        formulaDescEn: 'Where tcb is downstream circuit breaker mechanical interrupting time (40 to 60 ms), tovershoot is upstream relay overshoot and reset time (30 to 40 ms for modern numerical relays), tsafety is security tolerance against auxiliary supply fluctuations (100 to 150 ms), and εmeas is composite current and timing measurement tolerance (50 ms).',
+        assumptionsFr: [
+          'Utilisation de disjoncteurs modernes sous SF6 ou vide dont le temps de coupure est certifié ≤ 3 périodes (60 ms à 50 Hz).',
+          'Pour relais électromécaniques anciens, Δt doit être majoré à 400 - 500 ms en raison de l\'inertie du disque d\'induction.',
+          'Pour les réseaux purement numériques avec disjoncteurs rapides, Δt peut être optimisé à 250 ms.'
+        ],
+        assumptionsEn: [
+          'Modern SF6 or vacuum breakers with verified interrupting time ≤ 3 cycles (60 ms at 50 Hz).',
+          'For legacy induction-disc electromechanical relays, Δt must be expanded to 400 - 500 ms due to disc mechanical inertia.',
+          'For fully numerical digital substations with high-speed breakers, Δt can be optimized down to 250 ms.'
+        ],
+        calcTab: 'relay-tcc'
+      },
+      {
+        id: 'wattmetric_directional_zero_seq',
+        tabLabelFr: 'Puissance Résiduelle Wattmétrique (ANSI 67N)',
+        tabLabelEn: 'Wattmetric Residual Power Directional (ANSI 67N)',
+        titleFr: 'Détection Directive des Défauts à la Terre en Réseau à Neutre Compensé',
+        titleEn: 'Directional Earth Fault Detection in Compensated & Resonant Grids',
+        descFr: 'Sur les réseaux HTA où le courant capacitif de fuite masque le courant de défaut à la terre, la protection utilise la composante active de la puissance homopolaire (puissance résiduelle) pour déterminer sans ambiguïté si le défaut se situe en amont ou en aval du relais.',
+        descEn: 'On MV distribution networks where natural feeder capacitive charging currents obscure ground fault currents, the directional protection computes the real active component of zero-sequence power to reliably determine fault directionality.',
+        formula: 'P_0 = 3 \\cdot V_0 \\cdot I_0 \\cdot \\cos(\\varphi_0 - \\varphi_{\\max}) \\quad \\ge \\quad P_{0,\\text{pickup}}',
+        formulaDescFr: 'Avec V0 la tension homopolaire résiduelle mesurée sur l\'enroulement en triangle ouvert des TT, I0 le courant homopolaire résiduel mesuré par tore homopolaire de haute perméabilité, φ0 le déphasage entre V0 et I0, et φmax l\'angle de sensibilité maximale du relais (0° en réseau compensé bobine de Petersen, ou calé sur la résistance de neutre).',
+        formulaDescEn: 'Where V0 is residual zero-sequence voltage from open-delta voltage transformer windings, I0 is residual zero-sequence current from high-permeability core-balance current transformers (CBCT), φ0 is the phase angle between V0 and I0, and φmax is the relay characteristic angle (0° for Petersen-coil compensated networks, or tuned to the neutral grounding resistor).',
+        assumptionsFr: [
+          'Tension résiduelle minimale de validation de présence de défaut : V0 ≥ 1% à 5% de la tension nominale de phase Un/√3.',
+          'Utilisation d\'un transformateur de courant de type tore tore homopolaire entourant les 3 phases avec reprise de tresse de terre.',
+          'Sensibilité active minimale P0,pickup calibrée entre 200 W et 2 kW primaire selon la longueur du réseau de câbles HTA.'
+        ],
+        assumptionsEn: [
+          'Minimum residual displacement voltage required to arm logic: V0 ≥ 1% to 5% of nominal phase voltage Un/√3.',
+          'Use of a core-balance current transformer (toroid) encompassing all three phases with insulated ground shield return loop.',
+          'Minimum active residual power sensitivity P0,pickup calibrated between 200 W and 2 kW primary according to feeder cable length.'
+        ],
+        calcTab: 'neutral-grounding'
       }
     ],
     sectionF: [
       {
         code: 'CEI 60255-151',
-        tag: 'RELAIS NUMÉRIQUES',
-        titleFr: 'Relais de Mesure & Dispositifs de Protection - Exigences Fonctionnelles pour Protections à Maximum de Courant',
-        titleEn: 'Measuring Relays and Protection Equipment - Over/Under Current Protection',
-        descFr: 'Définit les courbes caractéristiques temps-courant normalisées et les précisions métrologiques.',
-        descEn: 'Specifies standardized time-current inverse curve characteristics and relay measurement tolerances.'
+        tag: 'RELAIS DE PROTECTION',
+        titleFr: 'Relais de Mesure & Dispositifs de Protection - Exigences Fonctionnelles pour Protections à Maximum et Minimum de Courant',
+        titleEn: 'Measuring Relays and Protection Equipment - Functional Requirements for Over/Under Current Protection',
+        descFr: 'Définit les courbes caractéristiques temps-courant normalisées (IDMT), les seuils de précision métrologique, les tolérances dynamiques et les algorithmes de réenclenchement.',
+        descEn: 'Defines standardized inverse time-current characteristics (IDMT), metrological accuracy classes, dynamic tolerances, and auto-reclose sequencing.'
       },
       {
-        code: 'CEI 61869-2',
-        tag: 'TRANSFORMATEURS DE COURANT',
-        titleFr: 'Transformateurs de Mesure - Exigences Spécifiques pour Transformateurs de Courant',
-        titleEn: 'Instrument Transformers - Specific Requirements for Current Transformers',
-        descFr: 'Règles de dimensionnement des classes de précision mesure (0.2S, 0.5) et protection (5P20, TPX).',
-        descEn: 'Sizing criteria for metering accuracy classes (0.2S, 0.5) and protective transient classes (5P20, TPX).'
+        code: 'CEI 60255-187-1',
+        tag: 'PROTECTION DIFFÉRENTIELLE',
+        titleFr: 'Relais de Mesure - Exigences Fonctionnelles pour Protections Différentielles de Moteurs, Générateurs et Transformateurs',
+        titleEn: 'Measuring Relays - Functional Requirements for Motor, Generator and Transformer Differential Protection',
+        descFr: 'Spécifie les exigences de sécurité et de sensibilité des caractéristiques différentielles à pourcentage, les critères de retenue harmonique et l\'immunité aux transitoires d\'enclenchement.',
+        descEn: 'Specifies stability and sensitivity requirements for percentage-biased differential schemes, harmonic restraint criteria, and transient inrush immunity.'
+      },
+      {
+        code: 'CEI 61869-2 & CEI 61869-3',
+        tag: 'TRANSFORMATEURS DE MESURE',
+        titleFr: 'Transformateurs de Mesure - Exigences Spécifiques pour Transformateurs de Courant et de Tension Inductifs',
+        titleEn: 'Instrument Transformers - Specific Requirements for Current Transformers and Inductive Voltage Transformers',
+        descFr: 'Règles de dimensionnement des classes de précision pour la protection (5P20, TPX, TPY) et la mesure (0.2S, 0.5), calcul de la tension de saturation Vk et tenue diélectrique.',
+        descEn: 'Sizing criteria for protective accuracy classes (5P20, TPX, TPY) and revenue metering (0.2S, 0.5), knee-point saturation Vk sizing, and dielectric ratings.'
+      },
+      {
+        code: 'IEEE C37.113',
+        tag: 'LIGNES DE TRANSPORT',
+        titleFr: 'Guide IEEE pour la Protection des Lignes de Transport Haute Tension',
+        titleEn: 'IEEE Guide for Protective Relay Applications to Transmission Lines',
+        descFr: 'Norme de référence internationale régissant l\'application des protections différentielles de ligne 87L, protections de distance 21, téléactions PUTT/POTT et réenclenchement monopolaire.',
+        descEn: 'International reference standard covering transmission line current differential 87L, distance protection 21, PUTT/POTT teleprotection, and single-pole trip/reclose schemes.'
+      },
+      {
+        code: 'CEI 60909-0',
+        tag: 'COURTS-CIRCUITS',
+        titleFr: 'Calcul des Courants de Court-Circuit dans les Réseaux Triphasés à Courant Alternatif',
+        titleEn: 'Short-Circuit Currents in Three-Phase A.C. Systems - Calculation of Currents',
+        descFr: 'Méthodologie normalisée de calcul des courants subtransitoires, transitoires et permanents, des composantes apériodiques continues et des pouvoirs de coupure disjoncteurs.',
+        descEn: 'Standardized methodology for calculating subtransient, transient, and steady-state fault currents, DC asymmetrical components, and circuit breaker breaking duties.'
+      },
+      {
+        code: 'SONATREL Protection Grid Code',
+        tag: 'CODE DE RÉSEAU CAMEROUNAIS',
+        titleFr: 'Spécifications Techniques Générales de Protection et de Mesure du Réseau de Transport Interconnecté',
+        titleEn: 'General Technical Specifications for Protection and Metering of the Interconnected Transmission Grid',
+        descFr: 'Cahier des charges imposant la double chaîne de protection indépendante (Main 1 / Main 2), les temps d\'élimination maximaux de défaut (< 80 ms sur le 225 kV), et la consignation COMTRADE obligatoire.',
+        descEn: 'Cameroon transmission system operator code mandating redundant independent protection channels (Main 1 / Main 2), maximum fault clearance times (< 80 ms at 225 kV), and mandatory COMTRADE recording.'
       }
     ]
   },
