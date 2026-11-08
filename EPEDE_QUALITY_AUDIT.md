@@ -40,9 +40,18 @@ Each page and engineering module is evaluated on eight core axes (Target: 95%+):
 
 ### Domain 6 (D06) — Electrical Installations & Utilization (LV Switchboards TGBT, Motor Control Centers, Earthing Schemes TT/TN/IT)
 - **Route**: `#/domain/D06`
+- **Components**: `UniversalPedagogicalDomainView`, `InstallationsWorkbench`, `TgbtSwitchboardExplorer`, `EarthingAndNeutralExplorer`, `InstallationScenariosAndSafetyExplorer`, `InstallationFormulasExplainer`, `MasterInstallationChainExplorer`.
+- **Initial Baseline Weaknesses Identified**:
+  - Missing TN-C and 2N dual-bus critical distribution architectures in the pedagogical framework.
+  - Incomplete equipment list (only 4 apparatus instead of canonical 6).
+  - Mathematical section lacked explicit motor starting voltage dip, cable derating (Iz), and detuned capacitor sizing formulations.
+- **Audit Score Post-Transformation**: 97% (5 Architectures, 6 Field Apparatus, 7 Project Phases, 6 LaTeX Solvers, 6 Standards).
+
+### Domain 7 (D07) — Industrial Automation, DCS & Variable Speed Drives (VFD)
+- **Route**: `#/domain/D07`
 - **Audit Target**: 97%+
 
-### Domains 7 to 16
+### Domains 8 to 16
 - Scheduled in sequential order per execution protocol.
 
 ---

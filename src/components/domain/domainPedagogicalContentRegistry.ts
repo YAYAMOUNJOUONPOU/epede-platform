@@ -1910,79 +1910,101 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
     ]
   },
 
-  // D06: Installations Électriques & Tertiaire (Basse Tension & SLT)
+  // D06: Installations Électriques & Tertiaire (Basse Tension, TGBT & SLT)
   D06: {
     domainCode: 'D06',
     sectionA: {
-      roleFr: "Distribution basse tension, protection absolue des personnes contre les chocs électriques (contacts directs/indirects) et continuité de service.",
-      roleEn: 'Low-voltage terminal distribution, absolute personnel safety against electrical shocks, and uninterrupted service continuity.',
+      roleFr: "Distribution terminale basse tension (400 V / 230 V), gestion rigoureuse des Schémas de Liaison à la Terre (SLT : TT, TN, IT), protection absolue des personnes contre les chocs électriques (contacts directs et indirects), continuité d'alimentation des procédés industriels et efficacité énergétique active.",
+      roleEn: 'Low-voltage terminal power distribution (400 V / 230 V), rigorous earthing system management (SLT: TT, TN, IT), absolute personnel protection against electric shocks (direct and indirect contact), industrial process continuity, and active energy efficiency.',
       inputsFr: {
-        title: 'Arrivée HTA/BT ou Groupe Secours',
-        desc: 'Secondaire du transformateur HTA/BT (ex: 30 kV / 400 V Dyn11) et basculement automatique groupe électrogène / inverseur Normal-Secours.',
-        voltage: '400 V Triphasé / 230 V Monophasé • 50 Hz'
+        title: 'Secondaire Transformateur HTA/BT ou Groupe Électrogène',
+        desc: 'Alimentation issue du transformateur de distribution 30 kV / 400 V Dyn11 ou d\'une centrale autonome de secours (groupe diesel avec automate Normal-Secours ATS), jeu de barres TGBT principal.',
+        voltage: '400 V Triphasé / 230 V Monophasé • 50 Hz • Régime stabilisé ±10%'
       },
       inputsEn: {
         title: 'MV/LV Transformer Secondary or Standby Genset',
-        desc: 'MV/LV distribution transformer secondary (e.g., 30 kV / 400 V Dyn11) with Automatic Transfer Switch (ATS) standby diesel generator.',
-        voltage: '400 V 3-Phase / 230 V 1-Phase • 50 Hz'
+        desc: 'Power fed from 30 kV / 400 V Dyn11 secondary substation or emergency diesel generator via Automatic Transfer Switch (ATS), feeding the main LV busbar.',
+        voltage: '400 V 3-Phase / 230 V Single-Phase • 50 Hz • Voltage regulation ±10%'
       },
       processFr: {
-        title: 'TGBT & Maîtrise des Régimes de Neutre (SLT)',
-        desc: 'Distribution sécurisée par colonnes TGBT, compensation locale du cos φ, onduleurs ASI sans coupure, et gestion des régimes TT, TN ou IT.',
-        note: 'Sécurité des personnes : Tension limite conventionnelle UL ≤ 50 V'
+        title: 'Tableau Général Basse Tension (TGBT Forme 4b) & Maîtrise des Régimes de Neutre',
+        desc: 'Ségrégation compartimentée Forme 4b selon CEI 61439-2, compensation automatique de l\'énergie réactive par gradins avec selfs anti-harmoniques (cos φ ≥ 0.95), alimentation sans coupure par onduleurs statiques (ASI/UPS), et déclenchement sélectif amont-aval (sélectivité logique, chronométrique et ampèremétrique).',
+        note: 'Sécurité des personnes : Tension limite conventionnelle UL ≤ 50 V (local sec) ou UL ≤ 25 V (local humide)'
       },
       processEn: {
-        title: 'Main Switchboard & Earthing Scheme (SLT) Control',
-        desc: 'Protected routing via LV switchboards, local power factor compensation, UPS systems, and implementation of TT, TN, or IT earthing schemes.',
-        note: 'Personnel safety: Statutory touch voltage threshold UL ≤ 50 V'
+        title: 'Main Switchboard (TGBT Form 4b) & Earthing Scheme (SLT) Control',
+        desc: 'Compartmentalized Form 4b switchgear per IEC 61439-2, detuned automatic capacitor banks for power factor correction (cos φ ≥ 0.95), static uninterruptible power supplies (UPS), and full 3-tier selective discrimination.',
+        note: 'Personnel safety: Statutory touch voltage threshold UL ≤ 50 V (dry) or UL ≤ 25 V (damp/wet locations)'
       },
       outputsFr: {
-        title: 'Circuits Terminaux Force Motrice & Tertiaire',
-        desc: 'Alimentation des moteurs de procédés, éclairage LED, prises de courant et serveurs sensibles avec sélectivité totale des protections.',
-        earthing: 'Prise de terre réglementaire interconnectée (R ≤ 10 Ω)'
+        title: 'Circuits Terminaux Force Motrice, Colonnes Tertiaires & Tableaux Divisionnaires',
+        desc: 'Centres de Contrôle Moteurs (MCC) pour pompes, broyeurs et compresseurs industriels, canalisations préfabriquées canalis (barres blindées), armoires divisionnaires tertiaires et prises sécurisées par DDR 30 mA.',
+        earthing: 'Prise de terre réglementaire ceinturant le bâtiment (R ≤ 10 Ω), liaison équipotentielle principale (LEP) et supplémentaire (LES)'
       },
       outputsEn: {
-        title: 'Terminal Power, Motor & Auxiliary Circuits',
-        desc: 'Supplying industrial process drives, lighting, server rooms, and socket outlets with certified protective discrimination.',
-        earthing: 'Statutory earth electrode resistance (R ≤ 10 Ω)'
+        title: 'Terminal Motor Feeders, Commercial Risers & Sub-Distribution Boards',
+        desc: 'Motor Control Centers (MCC) for pumps, crushers, and process drives, busbar trunking systems (busways), commercial sub-panels, and 30 mA RCD-protected branch circuits.',
+        earthing: 'Foundation earth loop electrode (R ≤ 10 Ω), Main Equipotential Bonding (MEB), and Supplementary Equipotential Bonding (SEB)'
       }
     },
     sectionB: {
-      summaryFr: 'Comparatif direct des 3 Schémas de Liaison à la Terre (SLT) selon NF C 15-100 et CEI 60364-4-41.',
-      summaryEn: 'Comprehensive comparative matrix of the 3 fundamental earthing schemes (TT, TN, IT) per IEC 60364-4-41.',
+      summaryFr: 'Comparatif direct des Schémas de Liaison à la Terre (TT, TN-S, TN-C, IT) et architecture de distribution critique double voie 2N.',
+      summaryEn: 'Comprehensive comparative matrix of the earthing schemes (TT, TN-S, TN-C, IT) and mission-critical 2N dual-bus architectures.',
       architectures: [
         {
-          nameFr: 'Schéma de Neutre TT (Résidentiel & Petit Tertiaire)',
-          nameEn: 'TT Earthing Scheme (Standard Commercial & Residential)',
-          techFr: 'Neutre du transformateur relié à la terre, masses des récepteurs reliées à une terre indépendante',
-          techEn: 'Transformer neutral grounded, equipment chassis connected to independent earth rod',
-          descFr: 'Le premier défaut d\'isolement provoque une coupure automatique obligatoire via Disjoncteur Différentiel Résiduel (DDR).',
-          descEn: 'The first insulation fault creates a hazardous touch voltage, tripping the mandatory Residual Current Device (RCD).',
-          standard: 'NF C 15-100 / CEI 60364',
-          metricFr: 'Condition de sécurité : R_A · I_Δn ≤ 50 V',
-          metricEn: 'Safety rule: R_A · I_Δn ≤ 50 V'
+          nameFr: 'Schéma de Neutre TT (Distribution Publique Basse Tension & Tertiaire)',
+          nameEn: 'TT Earthing Scheme (Public Utility Distribution & Commercial)',
+          techFr: 'Neutre du transformateur relié directement à une prise de terre distincte; masses métalliques des récepteurs reliées à une prise de terre locale indépendante',
+          techEn: 'Transformer neutral connected directly to earth electrode; installation metal enclosures connected to independent earth rod',
+          descFr: 'Schéma universel imposé pour la distribution publique basse tension (ENEO Cameroun) et les usagers raccordés au tarif BT. Tout premier défaut d\'isolement crée une tension de contact dangereuse : la coupure automatique par Dispositif Différentiel Résiduel (DDR) est obligatoire dès le premier défaut.',
+          descEn: 'Universal mandatory scheme for public utility low-voltage distribution and tariff-BT consumers. Any insulation fault generates a dangerous touch voltage, requiring immediate automatic disconnection of supply via Residual Current Devices (RCD).',
+          standard: 'NF C 15-100 / CEI 60364-4-41',
+          metricFr: 'Condition de sécurité : R_A · I_Δn ≤ 50 V; coupure t ≤ 0.2 s (230 V)',
+          metricEn: 'Safety rule: R_A · I_Δn ≤ 50 V; disconnection time t ≤ 0.2 s'
         },
         {
-          nameFr: 'Schéma de Neutre TN-S (Grand Tertiaire & Industrie)',
-          nameEn: 'TN-S Earthing Scheme (Industrial Plants & Data Centers)',
-          techFr: 'Neutre à la terre, masses reliées au neutre via un conducteur de protection PE séparé',
-          techEn: 'Transformer neutral grounded, equipment frames tied to neutral via dedicated PE conductor',
-          descFr: 'Le défaut d\'isolement franc se transforme en court-circuit phase-PE. Coupure instantanée par déclencheur magnétique du disjoncteur.',
-          descEn: 'An insulation fault becomes a phase-to-PE short circuit, cleared rapidly by the circuit breaker magnetic trip.',
-          standard: 'CEI 60364-4-41',
-          metricFr: 'Temps de coupure max : ≤ 0.4 s (230 V)',
-          metricEn: 'Maximum disconnection time: ≤ 0.4 s'
+          nameFr: 'Schéma de Neutre TN-S (Grand Tertiaire, Data Centers & Industrie)',
+          nameEn: 'TN-S Earthing Scheme (Industrial Plants, Data Centers & Commercial)',
+          techFr: 'Neutre relié directement à la terre au poste de livraison; masses métalliques interconnectées au neutre via un conducteur de protection PE séparé sur toute l\'installation',
+          techEn: 'Transformer neutral solidly grounded; equipment frames tied to neutral via a separate dedicated PE conductor throughout',
+          descFr: 'Solution optimale pour les grandes usines et les bâtiments à forte composante informatique. Le défaut d\'isolement se transforme en un court-circuit franc phase-PE d\'intensité élevée, éliminé instantanément par le déclencheur magnétique du disjoncteur. Absence de courants vagabonds dans le PE, compatible CEM.',
+          descEn: 'Optimal scheme for major industrial complexes and facilities with sensitive IT/electronics. An insulation fault becomes an instantaneous phase-to-PE short circuit cleared by magnetic breaker trips. Zero stray return currents on PE, optimal EMC.',
+          standard: 'CEI 60364-4-41 / NF C 15-105',
+          metricFr: 'Temps de coupure maximal : t ≤ 0.4 s sous 230 V; Id = U0 / Zs',
+          metricEn: 'Max disconnection time: t ≤ 0.4 s at 230 V; Id = U0 / Zs'
         },
         {
-          nameFr: 'Schéma de Neutre IT (Hôpitaux, Mines & Process Continus)',
-          nameEn: 'IT Earthing Scheme (Hospitals, Mines & Continuous Process)',
-          techFr: 'Neutre isolé ou relié à la terre par une impédance élevée (1000 à 2000 Ω), masses à la terre',
-          techEn: 'Isolated neutral or high-impedance ground connection, equipment frames grounded',
-          descFr: 'Le premier défaut d\'isolement n\'engendre qu\'un très faible courant : aucune coupure ! Alerte immédiate par Contrôleur Permanent d\'Isolement (CPI).',
-          descEn: 'The first fault produces minimal current with zero tripping! Signaled immediately by an Insulation Monitoring Device (IMD).',
-          standard: 'NF C 15-100 / CEI 60364',
-          metricFr: 'Continuité de service : 100% au premier défaut',
-          metricEn: 'Service continuity: 100% on 1st fault'
+          nameFr: 'Schéma de Neutre TN-C / TN-C-S (Distribution Industrielle Économique & Colonnes)',
+          nameEn: 'TN-C / TN-C-S Earthing Scheme (Cost-Effective Heavy Risers)',
+          techFr: 'Conducteur neutre et de protection combinés en un conducteur unique PEN (TN-C pour câbles ≥ 10 mm² Cu), puis scindés en N et PE distincts (TN-S) au tableau divisionnaire',
+          techEn: 'Combined neutral and protective conductor (PEN in TN-C for cables ≥ 10 mm² Cu), transitioning into separate N and PE (TN-S) at sub-distribution',
+          descFr: 'Permet une économie d\'un pôle de câble sur les grandes longueurs de liaison entre le poste HTA/BT et les armoires divisionnaires. Interdiction formelle du TN-C en aval du TN-S, et interdiction d\'utiliser des conducteurs souples ou des sections inférieures à 10 mm² cuivre ou 16 mm² alu.',
+          descEn: 'Delivers substantial copper/aluminum savings on long cable runs from the primary substation to sub-switchboards. TN-C is strictly prohibited downstream of TN-S, and prohibited on flexible conductors or cross-sections below 10 mm² Cu / 16 mm² Al.',
+          standard: 'CEI 60364-5-54 / NF C 15-100 §543',
+          metricFr: 'Économie de cuivre : 20% à 25% sur les colonnes de puissance; section PEN ≥ 10 mm² Cu',
+          metricEn: 'Conductor copper saving: 20-25% on heavy feeder risers; PEN ≥ 10 mm² Cu'
+        },
+        {
+          nameFr: 'Schéma de Neutre IT (Hôpitaux, Salles d\'Opération, Mines & Process Continus)',
+          nameEn: 'IT Earthing Scheme (Hospitals, Operating Theaters, Mining & Continuous Process)',
+          techFr: 'Point neutre du transformateur isolé de la terre ou relié par une impédance élevée (1 000 à 2 000 Ω); masses métalliques interconnectées à la terre',
+          techEn: 'Transformer neutral isolated from earth or connected through high impedance (1,000 to 2,000 Ω); equipment frames solidly grounded',
+          descFr: 'Exigé dans les blocs opératoires hospitaliers, les raffineries, les mines et les lignes de production verrières/cimentières. Au premier défaut d\'isolement franc, le courant de fuite est infime (quelques dizaines de milliampères) : aucune coupure de l\'alimentation ! Un Contrôleur Permanent d\'Isolement (CPI) signale l\'incident aux équipes de maintenance sans arrêt de production.',
+          descEn: 'Mandatory in hospital operating rooms, refineries, mining, and continuous chemical/glass manufacturing. Upon a first insulation fault, leakage current is negligible (< 2 A): zero tripping occurs! An Insulation Monitoring Device (IMD) alerts technicians to locate and clear the fault without plant shutdown.',
+          standard: 'NF C 15-100 §411.6 / CEI 61557-8',
+          metricFr: 'Disponibilité au 1er défaut : 100% sans déclenchement; alarme CPI sous seuil ≤ 50 kΩ',
+          metricEn: 'Continuity on 1st fault: 100% uninterrupted; IMD alarm threshold ≤ 50 kΩ'
+        },
+        {
+          nameFr: 'Distribution Critique Double Voie TGBT 2N avec Commutateur Statique (STS)',
+          nameEn: 'Mission-Critical 2N Dual-Bus Switchboard with Static Transfer Switch (STS)',
+          techFr: 'Architecture 2N intégrant deux TGBT entièrement indépendants (Voie A et Voie B), alimentés par deux transformateurs MT/BT séparés et deux groupes électrogènes de secours, couplés par commutateurs STS',
+          techEn: 'Fully redundant 2N architecture with two independent switchboards (Bus A and Bus B) fed by distinct MV/LV transformers and diesel gensets, bridged by Static Transfer Switches (STS)',
+          descFr: 'Architecture maximale de fiabilité (Tier IV) pour centres de données bancaires, télécoms et infrastructures critiques. En cas de défaillance complète d\'une voie, le STS commute les charges sensibles sur la voie saine en moins de 4 millisecondes, garantissant zéro interruption pour les serveurs.',
+          descEn: 'Maximum mission-critical reliability architecture (Tier IV) for data centers, telecom exchanges, and financial processing centers. In case of bus failure, the STS transfers sensitive loads within 4 milliseconds, ensuring zero dropout for servers.',
+          standard: 'CEI 61439-2 / TIA-942 Tier IV',
+          metricFr: 'Temps de transfert STS < 4 ms; disponibilité théorique : 99.999%',
+          metricEn: 'STS transfer time < 4 ms; theoretical availability: 99.999%'
         }
       ]
     },
@@ -1992,7 +2014,7 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         nameFr: 'Disjoncteur Général TGBT Ouvert Débrochable (1 600 A)',
         nameEn: 'Air Circuit Breaker (ACB) Masterpact 1600 A',
         voltage: '400 V • 1 600 A • Icu 65 kA',
-        roleFr: 'Protection générale du TGBT, coupure des courants de défaut et mesure d\'énergie intégrée.',
+        roleFr: 'Protection générale du TGBT, coupure des courants de défaut et mesure d\'énergie intégrée classe 1.',
         roleEn: 'Main switchboard protection, fault current clearance, and integrated digital power metering.',
         symbol: 'Q0-TGBT',
         standard: 'CEI 60947-2',
@@ -2000,142 +2022,305 @@ export const DOMAIN_PEDAGOGICAL_FRAMEWORK_REGISTRY: Partial<Record<DomainCode, D
         calcTab: 'cable-short-circuit'
       },
       {
+        id: 'eq-exp-tgbt-cubicle',
+        nameFr: 'Tableau Général Basse Tension Modulaire (TGBT Forme 4b - 2 500 A)',
+        nameEn: 'Modular Low-Voltage Main Switchboard (Form 4b - 2500 A)',
+        voltage: '400 V / 690 V • 2 500 A • Icw 65 kA 1s',
+        roleFr: 'Séparation physique totale des jeux de barres, unités fonctionnelles et bornes de raccordement selon CEI 61439-2.',
+        roleEn: 'Total physical segregation between busbars, functional units, and external cable terminations per IEC 61439-2.',
+        symbol: 'TGBT-F4b',
+        standard: 'CEI 61439-1/2',
+        imgUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'busbar-electrodynamic'
+      },
+      {
         id: 'eq-exp-rcd-diff',
-        nameFr: 'Interrupteur Différentiel Haute Sensibilité (30 mA)',
+        nameFr: 'Dispositif Différentiel Résiduel Haute Sensibilité (DDR 30 mA)',
         nameEn: 'Residual Current Device (RCD) 30 mA',
         voltage: '230/400 V • In = 40 A • IΔn = 30 mA',
-        roleFr: 'Protection complémentaire contre les chocs électriques et contacts directs/indirects.',
+        roleFr: 'Protection complémentaire vitale des personnes contre les chocs électriques et contacts directs/indirects.',
         roleEn: 'Mandatory personnel life-saving protection against direct and indirect touch shocks.',
-        symbol: 'DDR',
-        standard: 'CEI 61008-1',
+        symbol: 'DDR-30mA',
+        standard: 'CEI 61008-1 / CEI 61009-1',
         imgUrl: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?auto=format&fit=crop&w=800&q=80',
         calcTab: 'earthing'
       },
       {
         id: 'eq-exp-cpi-monitor',
-        nameFr: 'Contrôleur Permanent d\'Isolement (CPI / IMD)',
-        nameEn: 'Insulation Monitoring Device (IMD)',
-        voltage: 'Réseau IT 400 V • Injection 2.5 Hz',
-        roleFr: 'Surveillance continue de la résistance d\'isolement globale et alarme au premier défaut en schéma IT.',
-        roleEn: 'Continuous insulation resistance monitoring with immediate first-fault notification in IT systems.',
-        symbol: 'CPI',
-        standard: 'CEI 61557-8',
-        imgUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80'
+        nameFr: 'Contrôleur Permanent d\'Isolement Numérique (CPI / IMD)',
+        nameEn: 'Digital Insulation Monitoring Device (IMD / CPI)',
+        voltage: 'Réseau IT 400 V • Injection 2.5 Hz codée',
+        roleFr: 'Surveillance continue de la résistance d\'isolement globale et localisation automatique du départ défaillant en schéma IT.',
+        roleEn: 'Continuous insulation resistance monitoring with automatic faulty branch location in IT networks.',
+        symbol: 'CPI-IMD',
+        standard: 'CEI 61557-8 / CEI 61557-9',
+        imgUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'earthing'
       },
       {
-        id: 'eq-exp-tgbt-cubicle',
-        nameFr: 'Tableau Général Basse Tension Modulaire (TGBT Forme 4b)',
-        nameEn: 'Modular Low-Voltage Main Switchboard (Form 4b)',
-        voltage: '400 V • IP54 • Forme 4b',
-        roleFr: 'Séparation physique totale des jeux de barres, unités fonctionnelles et bornes de raccordement.',
-        roleEn: 'Total physical segregation between busbars, functional units, and external cable terminations.',
-        symbol: 'TGBT',
-        standard: 'CEI 61439-1/2',
+        id: 'eq-exp-mcc-starter',
+        nameFr: 'Tiroir Débrochable Centre Contrôle Moteur (MCC Forme 4b - 160 kW)',
+        nameEn: 'Withdrawable Motor Control Center Bucket (MCC Form 4b - 160 kW)',
+        voltage: '400 V • In = 315 A • Démarreur progressif & VFD',
+        roleFr: 'Alimentation, commande et protection thermique/magnétique débrochable des moteurs asynchrones de procédé industriel.',
+        roleEn: 'Withdrawable motor circuit protector, contactor, and soft-starter/VFD for industrial process motors.',
+        symbol: 'MCC-160kW',
+        standard: 'CEI 60947-4-1 / CEI 61439-2',
         imgUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
-        calcTab: 'busbar-electrodynamic'
+        calcTab: 'motor'
+      },
+      {
+        id: 'eq-exp-pfc-capacitor',
+        nameFr: 'Batterie Automatique de Condensateurs Anti-Harmoniques (300 kvar - 7%)',
+        nameEn: 'Detuned Automatic Capacitor Bank (300 kvar - 7% Reactor)',
+        voltage: '400 V • 300 kvar • 6 gradins • Accord 189 Hz',
+        roleFr: 'Rehaussement automatique du facteur de puissance (cos φ ≥ 0.95) avec selfs de détuning évitant la résonance parallèle.',
+        roleEn: 'Automatic power factor correction (cos φ ≥ 0.95) with series detuning reactors blocking harmonic anti-resonance.',
+        symbol: 'PFC-300k',
+        standard: 'CEI 61921 / CEI 60831-1',
+        imgUrl: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=800&q=80',
+        calcTab: 'pfc'
       }
     ],
     sectionD: [
       {
         phase: '01',
-        titleFr: 'Bilan de Puissance & Choix du SLT',
-        titleEn: 'Power Schedule & Earthing Scheme Selection',
-        descFr: 'Recensement exhaustif des récepteurs, application des coefficients ku/ks et sélection du régime de neutre adapté.',
-        descEn: 'Comprehensive load audit, utilization factors assignment, and optimal earthing system selection.'
+        titleFr: 'Bilan de Puissance, Coefficients ku/ks & Dimensionnement Source',
+        titleEn: 'Power Schedule, Diversity Factors & Source Transformer Sizing',
+        descFr: 'Recensement exhaustif des récepteurs par usage, application des coefficients d\'utilisation (ku) et de foisonnement (ks), et dimensionnement du transformateur MT/BT et groupe secours.',
+        descEn: 'Comprehensive load audit, application of utilization (ku) and diversity (ks) factors, and sizing of the supply transformer and standby generator.'
       },
       {
         phase: '02',
-        titleFr: 'Dimensionnement des Câbles & Chute de Tension',
-        titleEn: 'Cable Sizing & Voltage Drop Check',
-        descFr: 'Détermination de la section normalisée garantissant le courant admissible Iz et ΔU ≤ 3% (éclairage) ou 5% (force motrice).',
-        descEn: 'Cross-section determination meeting Iz ampacity and statutory voltage drop ΔU thresholds.'
+        titleFr: 'Choix du Schéma de Liaison à la Terre (SLT) & Architecture TGBT',
+        titleEn: 'Earthing Scheme (SLT) Selection & Switchboard Segregation',
+        descFr: 'Arbitrage technico-économique entre schémas TT, TN-S, TN-C et IT selon l\'activité du site, et sélection de la forme de séparation interne du TGBT (Forme 1 à 4b per CEI 61439-2).',
+        descEn: 'Engineering selection between TT, TN-S, TN-C, and IT earthing systems based on facility operations, and choosing the internal segregation Form (Form 1 to 4b per IEC 61439-2).'
       },
       {
         phase: '03',
-        titleFr: 'Coordination & Sélectivité des Protections',
-        titleEn: 'Protection Coordination & Discrimination',
-        descFr: 'Vérification de la sélectivité ampèremétrique et chronométrique pour n\'isoler que le circuit défaillant.',
-        descEn: 'Current and time-graded discrimination ensuring only the faulty downstream circuit trips.'
+        titleFr: 'Calcul de Section des Câbles & Facteurs de Correction (NF C 15-105)',
+        titleEn: 'Cable Sizing & Grouping/Temperature Derating Factors',
+        descFr: 'Détermination de la section normalisée garantissant le courant admissible Iz = Iz0 · k1 · k2 · k3 ≥ In ≥ Ib, avec vérification de la chute de tension ΔU ≤ 3% (éclairage) ou 5% (force motrice).',
+        descEn: 'Conductor cross-section determination satisfying Iz = Iz0 · k1 · k2 · k3 ≥ In ≥ Ib, and verifying permissible voltage sag ΔU ≤ 3% (lighting) or 5% (motors).'
       },
       {
         phase: '04',
-        titleFr: 'Pose, Serrage au Couple & Mesure de Terre',
-        titleEn: 'Installation, Torque Check & Ground Rod Test',
-        descFr: 'Contrôle du serrage dynamométrique des connexions, mesure de résistance de la prise de terre (R ≤ 10 Ω).',
-        descEn: 'Torque-wrench terminal verification and ground resistance measurement with earth clamp.'
+        titleFr: 'Vérification des Délais de Coupure & Protection Chocs Électriques',
+        titleEn: 'Disconnection Times Verification & Shock Hazard Clearance',
+        descFr: 'Vérification du temps de coupure maximal prescrit par CEI 60364-4-41 (t ≤ 0.4 s en TN, t ≤ 0.2 s en TT sous 230 V), et calibrage des sensibilités différentielles DDR (30 mA pour prises).',
+        descEn: 'Verification of maximum disconnection times per IEC 60364-4-41 (t ≤ 0.4 s in TN, t ≤ 0.2 s in TT at 230 V), and coordinating RCD sensitivity (30 mA for terminal socket outlets).'
       },
       {
         phase: '05',
-        titleFr: 'Contrôle de Conformité & Réception Finale',
-        titleEn: 'Compliance Testing & Official Commissioning',
-        descFr: 'Essais de déclenchement des différentiels (temps et courant), mesure d\'isolement sous 500 Vcc et PV Consuel.',
-        descEn: 'RCD trip timing/current verification, 500 Vdc insulation resistance testing, and safety sign-off.'
+        titleFr: 'Calcul des Courts-Circuits Icc & Sélectivité des Protections',
+        titleEn: 'Short-Circuit Currents & Three-Tier Protection Discrimination',
+        descFr: 'Calcul de l\'Icc maximal au jeu de barres (tenue Icu des disjoncteurs) et de l\'Icc minimal en bout de câble pour garantir le déclenchement instantané, avec coordination sélective 3 niveaux.',
+        descEn: 'Calculation of maximum Icc at main busbar (Icu breaker rating) and minimum Icc at remote cable ends ensuring instant tripping, validated by 3-tier selective discrimination.'
+      },
+      {
+        phase: '06',
+        titleFr: 'Pose des Équipements, Serrage Dynamométrique & Équipotentialité',
+        titleEn: 'Equipment Installation, Torque Verification & Equipotential Bonding',
+        descFr: 'Cheminement en chemins de câbles selon NF C 15-100, contrôle du serrage au couple par clé dynamométrique marquée, et raccordement de la liaison équipotentielle principale (LEP) à la terre.',
+        descEn: 'Cable tray routing per NF C 15-100, torque-wrench bolt inspection with tamper-evident marking, and bonding of the Main Equipotential Bonding (MEB) to the ground electrode.'
+      },
+      {
+        phase: '07',
+        titleFr: 'Essais Réglementaires, Contrôle Consuel & Audit Thermographique IR',
+        titleEn: 'Regulatory Commissioning, Safety Certification & Infrared Thermal Audit',
+        descFr: 'Mesure de résistance de terre (R ≤ 10 Ω), essais de temps/courant de déclenchement des différentiels DDR, mesure d\'isolement sous 500 Vcc, et inspection thermographique infrarouge sous pleine charge.',
+        descEn: 'Ground resistance testing (R ≤ 10 Ω), RCD trip timing and ramp tests, 500 Vdc insulation resistance verification, and full-load infrared thermographic survey per IEC 60364-6.'
       }
     ],
     sectionE: [
       {
         id: 'tt_safety_calc',
-        tabLabelFr: 'Condition de Sécurité en Schéma TT',
-        tabLabelEn: 'TT Safety Touch Voltage Rule',
-        titleFr: 'Tension de Contact Présumée & Sensibilité Différentielle (NF C 15-100)',
-        titleEn: 'Touch Voltage Threshold & RCD Sensitivity in TT System',
-        descFr: 'Garantit que lors d\'un défaut d\'isolement, la carcasse métallique ne peut être portée à un potentiel dangereux pour l\'homme.',
-        descEn: 'Guarantees that on an insulation fault, equipment frames will not exceed conventional safety voltage limits.',
-        formula: 'R_A · I_Δn ≤ U_L',
-        formulaDescFr: 'Avec RA résistance de la prise de terre des masses réceptrices (Ω), IΔn sensibilité différentielle du DDR (A), et UL tension limite (50 V en local sec, 25 V en local mouillé).',
-        formulaDescEn: 'With RA earth electrode resistance (Ω), IΔn RCD sensitivity (A), and UL limit (50 V dry premises, 25 V wet environments).',
+        tabLabelFr: 'Sécurité Choc TT (RA · IΔn)',
+        tabLabelEn: 'TT Touch Voltage Rule',
+        titleFr: 'Condition de Sécurité contre les Chocs Électriques en Schéma TT',
+        titleEn: 'Personnel Shock Protection Condition in TT Earthing Systems',
+        descFr: 'Garantit que lors d\'un défaut d\'isolement franc sur un récepteur, la tension de contact présumée de la carcasse métallique ne peut excéder la tension limite conventionnelle de sécurité UL.',
+        descEn: 'Ensures that on a phase-to-frame insulation fault, the presumptive touch voltage on metallic enclosures cannot exceed the statutory touch limit UL.',
+        formula: 'R_A \\cdot I_{\\Delta n} \\le U_L \\quad \\iff \\quad I_{\\Delta n} \\le \\frac{U_L}{R_A}',
+        formulaDescFr: 'Où RA est la résistance de la prise de terre des masses réceptrices (Ω), IΔn la sensibilité différentielle assignée du disjoncteur différentiel (A), et UL la tension limite de sécurité (50 V en local sec, 25 V en local humide).',
+        formulaDescEn: 'Where RA is the earth electrode resistance (Ω), IΔn is the nominal residual operating current of the RCD (A), and UL is the conventional safety touch limit (50 V dry, 25 V wet environments).',
         assumptionsFr: [
           'Tension limite conventionnelle de sécurité UL = 50 V (locaux secs standards).',
-          'Tension de contact maximale en local humide UL = 25 V.',
-          'Pour une prise de terre de 100 Ω, le calibre maximal du DDR principal est : IΔn ≤ 50 / 100 = 500 mA.'
+          'Tension de contact maximale en local humide ou extérieur UL = 25 V.',
+          'Pour une prise de terre de 100 Ω, le calibre maximal du DDR de tête est : IΔn ≤ 50 / 100 = 500 mA (en pratique 300 mA sélectif).'
         ],
         assumptionsEn: [
-          'Conventional safe touch voltage UL = 50 V for dry locations.',
-          'Stricter touch limit UL = 25 V in damp/wet premises.',
-          'For a 100 Ω ground rod, maximum allowable upstream RCD rating is 500 mA.'
+          'Conventional safe touch voltage UL = 50 V for normal dry locations.',
+          'Stricter touch limit UL = 25 V in damp/wet premises and outdoor installations.',
+          'For a 100 Ω ground electrode, maximum permissible upstream RCD rating is 500 mA (typically 300 mA time-delayed).'
         ],
         calcTab: 'earthing'
       },
       {
-        id: 'cable_voltage_drop_lv',
-        tabLabelFr: 'Chute de Tension ΔU (NF C 15-105)',
-        tabLabelEn: 'Voltage Drop Sag Calculation',
-        titleFr: 'Calcul de la Chute de Tension Triphasée et Monophasée',
-        titleEn: 'Three-Phase & Single-Phase Voltage Drop Calculation',
-        descFr: 'Vérifie que la chute de tension relative entre l\'origine de l\'installation et l\'appareil terminal respecte les seuils normatifs.',
-        descEn: 'Verifies that total relative voltage sag from installation source to load does not exceed statutory limits.',
-        formula: 'ΔU = b · ( (ρ · L / S) · cos φ + λ · L · sin φ ) · I_b',
-        formulaDescFr: 'Avec b = 1 en triphasé équilibré (b = 2 en monophasé), ρ = 0.023 Ω·mm²/m pour le cuivre, L longueur en m, S section en mm², et λ = 0.08 mΩ/m.',
-        formulaDescEn: 'With b = 1 for 3-phase (b = 2 for single-phase), ρ = 0.023 for copper, L length in meters, S section in mm², and λ = 0.08 mΩ/m.',
+        id: 'tn_loop_impedance_disconnect',
+        tabLabelFr: 'Boucle Défaut TN (Id ≥ Ia)',
+        tabLabelEn: 'TN Loop Impedance (Id ≥ Ia)',
+        titleFr: 'Impédance de Boucle de Défaut & Temps de Coupure en Schéma TN',
+        titleEn: 'Fault Loop Impedance & Automatic Disconnection in TN Systems',
+        descFr: 'Vérifie que le courant de court-circuit phase-PE Id généré lors d\'un défaut d\'isolement est suffisant pour déclencher instantanément le disjoncteur dans le temps prescrit t ≤ 0.4 s.',
+        descEn: 'Verifies that phase-to-PE short-circuit current Id generated during an insulation fault is large enough to instantaneously trip the circuit breaker within t ≤ 0.4 s.',
+        formula: 'I_d = \\frac{U_0}{Z_s} = \\frac{U_0}{\\sqrt{(R_{ph} + R_{PE})^2 + (X_{ph} + X_{PE})^2}} \\ge I_a',
+        formulaDescFr: 'Avec U0 tension simple nominale (230 V), Zs impédance totale de la boucle de défaut (amont + câble phase + conducteur PE), et Ia courant assurant le déclenchement magnétique instantané.',
+        formulaDescEn: 'With U0 nominal phase voltage (230 V), Zs total fault loop impedance (source + phase conductor + PE conductor), and Ia current operating the instantaneous magnetic trip.',
         assumptionsFr: [
-          'Chute de tension maximale admise : 3% pour l\'éclairage, 5% pour les autres usages (force motrice).',
-          'Résistivité calculée à pleine charge thermique (80°C pour PVC, 100°C pour PR/XLPE).',
-          'Facteur de puissance de charge par défaut : cos φ = 0.80 si non spécifié.'
+          'Tension simple nominale de référence U0 = 230 V AC (50 Hz).',
+          'Courant de déclenchement magnétique : Ia = 5 · In (Courbe B), Ia = 10 · In (Courbe C), Ia = 14 · In (Courbe D).',
+          'Temps de coupure maximal normalisé selon CEI 60364-4-41 : t ≤ 0.4 s pour circuits terminaux ≤ 63 A.'
         ],
         assumptionsEn: [
-          'Maximum permitted voltage drop: 3% for lighting circuits, 5% for motor drives.',
-          'Conductor resistivity computed at full thermal load operating temperature.',
-          'Default load power factor: cos φ = 0.80 when unspecified.'
+          'Nominal phase-to-neutral voltage U0 = 230 V AC (50 Hz).',
+          'Instantaneous magnetic trip thresholds: Ia = 5 · In (Curve B), Ia = 10 · In (Curve C), Ia = 14 · In (Curve D).',
+          'Maximum disconnection time per IEC 60364-4-41: t ≤ 0.4 s for branch circuits ≤ 63 A.'
+        ],
+        calcTab: 'cable-short-circuit'
+      },
+      {
+        id: 'cable_voltage_drop_lv',
+        tabLabelFr: 'Chute de Tension ΔU (BT)',
+        tabLabelEn: 'LV Voltage Drop (ΔU)',
+        titleFr: 'Calcul de la Chute de Tension Triphasée et Monophasée (NF C 15-105)',
+        titleEn: 'Three-Phase & Single-Phase Low-Voltage Drop Calculation',
+        descFr: 'Garantit que la chute de tension relative entre l\'origine de l\'installation TGBT et le récepteur terminal le plus éloigné respecte les seuils normatifs (≤ 3% éclairage, ≤ 5% force motrice).',
+        descEn: 'Ensures total relative voltage drop between main switchboard and furthest consumer terminal satisfies statutory limits (≤ 3% lighting, ≤ 5% motors).',
+        formula: '\\Delta U = b \\cdot \\left( \\frac{\\rho \\cdot L}{S} \\cos\\varphi + \\lambda \\cdot L \\cdot \\sin\\varphi \\right) \\cdot I_b \\quad [\\text{V}] \\quad \\iff \\quad \\Delta u\\% = \\frac{\\Delta U}{U_n} \\cdot 100',
+        formulaDescFr: 'Avec b = 1 en triphasé équilibré (b = 2 en monophasé), ρ = 0.023 Ω·mm²/m pour le cuivre au régime chaud (0.037 Al), L longueur (m), S section (mm²), et λ = 0.08 mΩ/m.',
+        formulaDescEn: 'With b = 1 for three-phase (b = 2 for single-phase), ρ = 0.023 Ω·mm²/m for copper at operating temperature (0.037 for aluminum), L length (m), S section (mm²), and λ = 0.08 mΩ/m.',
+        assumptionsFr: [
+          'Chute de tension maximale admise : 3% pour l\'éclairage, 5% pour les autres usages (force motrice).',
+          'Résistivité calculée à pleine charge thermique : 80°C pour PVC, 90°C pour PR/XLPE.',
+          'Facteur de puissance par défaut : cos φ = 0.80 pour moteurs, cos φ = 0.95 pour éclairage LED.'
+        ],
+        assumptionsEn: [
+          'Maximum permitted voltage sag: 3% for lighting circuits, 5% for other loads (process motors).',
+          'Resistivity evaluated at peak operating temperature: 80°C for PVC, 90°C for XLPE.',
+          'Default load power factors: cos φ = 0.80 for motor drives, cos φ = 0.95 for LED luminaires.'
         ],
         calcTab: 'voltage-drop'
+      },
+      {
+        id: 'lv_cable_sizing_iz',
+        tabLabelFr: 'Courant Admissible Câble (Iz)',
+        tabLabelEn: 'Cable Thermal Capacity (Iz)',
+        titleFr: 'Courant Admissible et Facteurs de Déclassement selon CEI 60364-5-52',
+        titleEn: 'Conductor Current Carrying Capacity & Derating Factors',
+        descFr: 'Détermination du courant admissible assigné Iz garantissant que l\'échauffement en régime continu ne dépasse pas la température maximale admissible de l\'isolant (70°C PVC, 90°C PRC).',
+        descEn: 'Determination of corrected ampacity Iz ensuring steady-state conductor heating remains below insulation temperature limits (70°C PVC, 90°C XLPE).',
+        formula: 'I_z = I_{z0} \\cdot k_1 \\cdot k_2 \\cdot k_3 \\ge I_n \\ge I_b',
+        formulaDescFr: 'Où Iz0 est le courant admissible de référence du mode de pose, k1 le facteur de pose, k2 le facteur de groupement de circuits contigus, et k3 le facteur de température ambiante.',
+        formulaDescEn: 'Where Iz0 is the baseline current capacity for the installation method, k1 installation factor, k2 grouping derating factor, and k3 ambient temperature factor.',
+        assumptionsFr: [
+          'Règle de coordination triple : Ib ≤ In ≤ Iz (Ib courant d\'emploi, In calibre du disjoncteur, Iz courant admissible).',
+          'Facteur de température ambiante en milieu tropical (Cameroun, 40°C air) : k3 = 0.91 pour PR (vs 1.0 à 30°C).',
+          'Facteur de groupement de 6 câbles jointifs sur chemin de câbles perforé : k2 = 0.72.'
+        ],
+        assumptionsEn: [
+          'Triple coordination rule: Ib ≤ In ≤ Iz (Ib design current, In breaker rating, Iz permissible ampacity).',
+          'Tropical ambient temperature derating (Cameroon baseline, 40°C air): k3 = 0.91 for XLPE (vs 1.0 at 30°C).',
+          'Grouping derating factor for 6 bunched circuits on perforated cable tray: k2 = 0.72.'
+        ],
+        calcTab: 'voltage-drop'
+      },
+      {
+        id: 'motor_starting_voltage_dip',
+        tabLabelFr: 'Creux Démarrage Moteur (ΔUstart)',
+        tabLabelEn: 'Motor Starting Voltage Dip',
+        titleFr: 'Creux de Tension Transitoire au Démarrage des Moteurs Asynchrones',
+        titleEn: 'Transient Busbar Voltage Dip During Induction Motor Starting',
+        descFr: 'Modélisation du creux de tension provoqué sur le jeu de barres TGBT par l\'appel de courant de démarrage du moteur, afin d\'éviter le décollement intempestif des contacteurs (limite ≤ 10%).',
+        descEn: 'Models switchboard busbar voltage dip caused by induction motor inrush current, preventing contactor drop-out and system instability (threshold ≤ 10%).',
+        formula: '\\Delta U_{\\text{start}}\\% = \\frac{S_{\\text{start}}}{S_{cc} + S_{\\text{start}}} \\cdot 100 \\approx \\frac{k_{\\text{start}} \\cdot \\frac{P_n}{\\eta \\cos\\varphi}}{S_{cc}} \\cdot 100',
+        formulaDescFr: 'Où Sstart est la puissance apparente de démarrage du moteur (kVA), Scc la puissance de court-circuit du jeu de barres TGBT (kVA), et k_start le ratio courant de démarrage / courant nominal.',
+        formulaDescEn: 'Where Sstart is apparent starting power (kVA), Scc is switchboard short-circuit capacity (kVA), and k_start is the starting-to-nominal current ratio.',
+        assumptionsFr: [
+          'Creux de tension admissible maximal sur le jeu de barres : ≤ 10% (NF C 15-100).',
+          'Puissance de court-circuit du transformateur source Scc = Strafo / Uk% (ex: 1000 kVA à Uk=5% -> Scc = 20 MVA).',
+          'Ratio k_start selon mode de démarrage : DOL (6 à 8), Étoile-Triangle (2.5 à 3), Démarreur progressif (1.5 à 2.5).'
+        ],
+        assumptionsEn: [
+          'Maximum permitted switchboard voltage dip: ≤ 10% per NF C 15-100.',
+          'Source transformer short-circuit capacity Scc = Strafo / Uk% (e.g., 1000 kVA at Uk=5% -> Scc = 20 MVA).',
+          'Starting ratio k_start: Direct-on-Line DOL (6 to 8), Star-Delta (2.5 to 3), Soft-Starter (1.5 to 2.5).'
+        ],
+        calcTab: 'motor'
+      },
+      {
+        id: 'pfc_capacitor_sizing',
+        tabLabelFr: 'Compensation Réactif & PFC (Qc)',
+        tabLabelEn: 'Power Factor Correction (Qc)',
+        titleFr: 'Dimensionnement de la Batterie de Condensateurs et Filtrage de Détuning',
+        titleEn: 'Capacitor Bank Sizing & Detuned Harmonic Filter Tuning',
+        descFr: 'Calcul de la puissance réactive capacitive Qc indispensable pour annuler les pénalités d\'énergie réactive ENEO (cos φ ≥ 0.95), avec inductance anti-harmonique accordée à 189 Hz (7%).',
+        descEn: 'Calculates required capacitive reactive power Qc to eliminate utility power factor penalties (target cos φ ≥ 0.95), with 7% series detuning reactor blocking harmonic anti-resonance.',
+        formula: 'Q_c = P \\cdot (\\tan\\varphi_1 - \\tan\\varphi_2) \\quad [\\text{kvar}] \\quad \\text{avec} \\quad f_r = \\frac{1}{2\\pi \\sqrt{L \\cdot C}} = f_1 \\cdot \\sqrt{\\frac{1}{p}}',
+        formulaDescFr: 'Où P est la puissance active appelée (kW), tan φ1 le facteur initial, tan φ2 le facteur cible (tan φ2 = 0.33 pour cos φ = 0.95), et p le taux de détuning de la self (p = 7% -> fr = 189 Hz).',
+        formulaDescEn: 'Where P is active demand (kW), tan φ1 is initial ratio, tan φ2 is target ratio (tan φ2 = 0.33 for cos φ = 0.95), and p is reactor detuning factor (p = 7% -> fr = 189 Hz).',
+        assumptionsFr: [
+          'Seuil de facturation ENEO Cameroun : pénalités appliquées dès que tan φ dépasse 0.40 (cos φ < 0.93).',
+          'Accord anti-harmonique standard p = 7% (189 Hz à 50 Hz) protégeant contre les rangs harmoniques 5 (250 Hz) et 7 (350 Hz).',
+          'Gradins automatiques commandés par relais varmétrique à microprocesseur pour éviter toute surcompensation à vide.'
+        ],
+        assumptionsEn: [
+          'Cameroon utility billing threshold: penalty billed when tan φ exceeds 0.40 (cos φ < 0.93).',
+          'Standard 7% detuning factor (tuning frequency 189 Hz at 50 Hz fundamental) protecting against 5th and 7th harmonics.',
+          'Microprocessor-controlled multistage switching preventing dangerous overcompensation under light load.'
+        ],
+        calcTab: 'pfc'
       }
     ],
     sectionF: [
       {
         code: 'NF C 15-100',
         tag: 'BASSE TENSION',
-        titleFr: 'Installations Électriques à Basse Tension - Règles de Conception & Réalisation',
-        titleEn: 'Low Voltage Electrical Installations - Design & Erection Rules',
-        descFr: 'Norme obligatoire pour les installations domestiques, tertiaires et industrielles en milieu francophone.',
-        descEn: 'Statutory standard governing low-voltage electrical design and verification in Francophone jurisdictions.'
+        titleFr: 'Installations Électriques à Basse Tension — Règles Fondamentales de Conception & Réalisation',
+        titleEn: 'Low Voltage Electrical Installations — Design, Erection and Verification Rules',
+        descFr: 'Norme obligatoire pour toutes les installations domestiques, tertiaires et industrielles : régimes de neutre TT/TN/IT, calibres, protections différentielles 30 mA et volumes de sécurité.',
+        descEn: 'Mandatory standard governing all low-voltage electrical design: earthing schemes (TT, TN, IT), conductor ratings, 30 mA life-safety RCDs, and wet-room safety zones.'
       },
       {
         code: 'CEI 60364-4-41',
         tag: 'SÉCURITÉ DES PERSONNES',
-        titleFr: 'Protection pour Assurer la Sécurité - Protection contre les Chocs Électriques',
-        titleEn: 'Protection for Safety - Protection Against Electric Shock',
-        descFr: 'Règles internationales définissant la coupure automatique de l\'alimentation et les temps limites de déclenchement.',
-        descEn: 'International standard defining automatic disconnection of supply and disconnection time thresholds.'
+        titleFr: 'Protection pour Assurer la Sécurité — Protection contre les Chocs Électriques',
+        titleEn: 'Protection for Safety — Protection Against Electric Shock',
+        descFr: 'Standard international définissant les conditions de coupure automatique de l\'alimentation, les tensions limites de contact UL (50 V / 25 V) et les temps de déconnexion maximaux.',
+        descEn: 'International standard establishing automatic disconnection rules, touch voltage safety thresholds UL (50 V / 25 V), and maximum permissible disconnection times.'
+      },
+      {
+        code: 'CEI 61439-1 / CEI 61439-2',
+        tag: 'ENSEMBLES TGBT & MCC',
+        titleFr: 'Ensembles d\'Appareillage à Basse Tension — Tableaux de Puissance TGBT et Centres de Contrôle MCC',
+        titleEn: 'Low-Voltage Switchgear and Controlgear Assemblies — Power Switchboards & Motor Control Centers',
+        descFr: 'Spécifications de construction et d\'essais des armoires TGBT industrielles : formes de séparation interne 1 à 4b, échauffement thermique, tenue électrodynamique Icw et indice IP/IK.',
+        descEn: 'Construction and type-test requirements for industrial low-voltage switchboards: internal segregation forms 1 to 4b, temperature rise limits, and short-circuit withstand Icw.'
+      },
+      {
+        code: 'NF C 15-105',
+        tag: 'GUIDE DE CALCUL',
+        titleFr: 'Détermination des Sections de Conducteurs et Choix des Dispositifs de Protection',
+        titleEn: 'Practical Sizing Guide for Conductor Cross-Sections and Protection Devices',
+        descFr: 'Méthode normative de calcul de la chute de tension ΔU, des courants admissibles Iz selon les modes de pose, des contraintes thermiques de court-circuit et des longueurs maximales.',
+        descEn: 'Normative engineering guide for calculating voltage drop, derated conductor ampacities Iz, short-circuit thermal stresses, and maximum protected run lengths.'
+      },
+      {
+        code: 'CEI 60947-2 / CEI 60947-4-1',
+        tag: 'APPAREILLAGE BASSE TENSION',
+        titleFr: 'Appareillage à Basse Tension — Disjoncteurs Industriels & Contacteurs-Démarreurs',
+        titleEn: 'Low-Voltage Switchgear — Industrial Circuit Breakers & Motor Contactors/Starters',
+        descFr: 'Règles de performance des disjoncteurs ouverts (ACB) et boîtiers moulés (MCCB) : pouvoirs de coupure ultime Icu et de service Ics, tenue Icw, et coordination moteur type 1 et 2.',
+        descEn: 'Performance benchmarks for air circuit breakers (ACB) and molded-case breakers (MCCB): breaking capacity Icu/Ics, short-time withstand Icw, and motor starter coordination Type 1/2.'
+      },
+      {
+        code: 'CEI 60364-6',
+        tag: 'VÉRIFICATION & ESSAIS',
+        titleFr: 'Installations Électriques à Basse Tension — Vérification Initiale et Périodique',
+        titleEn: 'Low-Voltage Electrical Installations — Initial and Periodic Verification',
+        descFr: 'Protocoles de contrôle et de mise en service : mesure de continuité des conducteurs PE, résistance d\'isolement sous 500 Vcc (≥ 1 MΩ), temps/courant de déclenchement des DDR et thermographie IR.',
+        descEn: 'Mandatory commissioning testing protocols: PE conductor continuity, 500 Vdc insulation resistance (≥ 1 MΩ), RCD trip timing and ramp testing, and infrared thermal surveys.'
       }
     ]
   },

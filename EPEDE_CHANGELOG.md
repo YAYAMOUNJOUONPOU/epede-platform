@@ -80,3 +80,29 @@ All notable changes, engineering refactors, and technical enhancements across th
     5. Transformer Magnetizing Inrush Current & Fuse Grading ($I_{inrush}(100\text{ ms}) \approx 10\text{--}14 I_n$).
     6. ACR Reclosing Cycle & FLISR Loop Reconfiguration Time ($t_{reprise} \le 30\text{ s}$ vs $t_{manuel} \ge 90\text{ min}$).
   - **Section F**: Sourced 6 normative standards: IEC 62271-200, IEC 62271-111 / IEEE C37.60, NF C 13-100 / NF C 13-200, IEEE Std 1366, IEC 60076-1 / IEC 62271-202, and Cameroon ENEO / ARSEL MV Distribution Grid Code.
+
+### Domain 6 (D06) - Electrical Installations & Utilization Transformation
+- Completely overhauled pedagogical framework in `domainPedagogicalContentRegistry.ts`:
+  - **Section A**: Modeled low-voltage terminal distribution boundaries ($400\text{ V} / 230\text{ V}$), dual-supply ATS backup from diesel genset, TGBT Form 4b internal segregation (IEC 61439-2), statutory touch voltage safety thresholds ($U_L \le 50\text{ V}$ dry / $25\text{ V}$ wet), and foundation equipotential earthing loop ($R \le 10\,\Omega$).
+  - **Section B**: Documented 5 canonical low-voltage architectures:
+    1. **Schéma de Neutre TT (Distribution Publique Basse Tension & Tertiaire)** (Mandatory RCD tripping, safety rule $R_A \cdot I_{\Delta n} \le 50\text{ V}$).
+    2. **Schéma de Neutre TN-S (Grand Tertiaire, Data Centers & Industrie)** (Dedicated PE conductor, phase-to-PE short-circuit, magnetic clearance in $t \le 0.4\text{ s}$, zero stray PE currents).
+    3. **Schéma de Neutre TN-C / TN-C-S (Distribution Industrielle Économique & Colonnes)** (Combined PEN conductor $\ge 10\text{ mm}^2$ Cu, saving 20-25% copper on heavy risers).
+    4. **Schéma de Neutre IT (Hôpitaux, Salles d'Opération, Mines & Process Continus)** (Isolated/impedance-grounded neutral, 100% service continuity on 1st fault, continuous digital IMD/CPI monitoring).
+    5. **Distribution Critique Double Voie TGBT 2N avec Commutateur Statique (STS)** (Dual-bus 2N architecture, Static Transfer Switch $< 4\text{ ms}$, 99.999% availability).
+  - **Section C**: Added 6 authenticated low-voltage field apparatus:
+    1. `eq-exp-masterpact-mtz`: Disjoncteur Général TGBT Ouvert Débrochable (1 600 A, 65 kA, digital trip unit, Class 1 metering).
+    2. `eq-exp-tgbt-cubicle`: Tableau Général Basse Tension Modulaire (TGBT Forme 4b - 2 500 A, Icw 65 kA 1s).
+    3. `eq-exp-rcd-diff`: Dispositif Différentiel Résiduel Haute Sensibilité (DDR 30 mA life-safety, 300 mA fire protection).
+    4. `eq-exp-cpi-monitor`: Contrôleur Permanent d'Isolement Numérique (CPI / IMD, 2.5 Hz coded injection for IT systems).
+    5. `eq-exp-mcc-starter`: Tiroir Débrochable Centre Contrôle Moteur (MCC Forme 4b - 160 kW, soft-starter/VFD).
+    6. `eq-exp-pfc-capacitor`: Batterie Automatique de Condensateurs Anti-Harmoniques (300 kvar, 7% detuning reactor at 189 Hz).
+  - **Section D**: Modeled 7-phase project lifecycle from power schedule & diversity factors ($k_u, k_s$) to Consuel certification and infrared thermographic audit.
+  - **Section E**: Formulated 6 normative LaTeX mathematical solvers:
+    1. Personnel Shock Protection Condition in TT Systems ($R_A \cdot I_{\Delta n} \le U_L$).
+    2. Fault Loop Impedance & Automatic Disconnection in TN Systems ($I_d = \frac{U_0}{Z_s} \ge I_a$, $t \le 0.4\text{ s}$).
+    3. Three-Phase & Single-Phase LV Drop Calculation per NF C 15-105 ($\Delta U = b [(\rho \frac{L}{S}) \cos\varphi + \lambda L \sin\varphi] I_b$).
+    4. Conductor Current Carrying Capacity & Derating Factors ($I_z = I_{z0} \cdot k_1 \cdot k_2 \cdot k_3 \ge I_n \ge I_b$).
+    5. Transient Busbar Voltage Dip During Induction Motor Starting ($\Delta U_{\text{start}}\% = \frac{S_{\text{start}}}{S_{cc} + S_{\text{start}}} \cdot 100 \le 10\%$).
+    6. Capacitor Bank Sizing & Detuned Harmonic Filter Tuning ($Q_c = P (\tan\varphi_1 - \tan\varphi_2)$, $f_r = f_1 \sqrt{1/p} = 189\text{ Hz}$).
+  - **Section F**: Sourced 6 normative standards: NF C 15-100, CEI 60364-4-41, CEI 61439-1 / CEI 61439-2, NF C 15-105, CEI 60947-2 / CEI 60947-4-1, and CEI 60364-6.
