@@ -1481,6 +1481,33 @@ END_IF;`}
                   </div>
                 </div>
               </div>
+
+              {/* Normative Worked Example for D13 OT Network Availability */}
+              {getWorkedExampleById('we-d13-ot-network-prp-availability') && (
+                <div className="pt-4 border-t border-slate-800/80 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <span className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+                      <Network className="w-4 h-4" />
+                    </span>
+                    <div>
+                      <h3 className="text-sm font-bold text-white tracking-wide font-mono">
+                        {locale === 'fr' 
+                          ? 'Cas d’Ingénierie Résolu · Disponibilité Réseau PRP & Zéro-Perte (CEI 62439-3)' 
+                          : 'Normative Worked Example · PRP Network Availability & Zero-Loss (IEC 62439-3)'}
+                      </h3>
+                      <p className="text-[11px] text-slate-400 font-sans">
+                        {locale === 'fr'
+                          ? 'Calcul de la disponibilité MTBF/MTTR et temps de coupure annuel pour architecture duale LAN A / LAN B en poste HTB/SCADA.'
+                          : 'Calculation of MTBF/MTTR system availability and annual downtime for dual-star LAN A / LAN B SCADA architecture.'}
+                      </p>
+                    </div>
+                  </div>
+                  <WorkedExampleViewer
+                    example={getWorkedExampleById('we-d13-ot-network-prp-availability')!}
+                    locale={locale}
+                  />
+                </div>
+              )}
             </div>
           )}
 
@@ -2154,6 +2181,28 @@ END_IF;`}
                 </div>
                 <p className="text-[11px] text-slate-400 leading-relaxed font-sans">
                   Une autorité a_v &gt;= 0.3 garantit que la caractéristique installée de la vanne régulatrice ne dérive pas vers un comportement tout-ou-rien. Le théorème de Shannon-Nyquist impose une fréquence d'échantillonnage de boucle au moins 10 fois plus rapide que la bande passante du procédé pour éviter tout repliement de spectre.
+                </p>
+              </div>
+
+              {/* Formula 9: PRP / HSR Zero-Loss Network Availability */}
+              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                <span className="text-cyan-400 font-bold uppercase text-[11px]">9. Disponibilité Réseau Redondant PRP / HSR (CEI 62439-3)</span>
+                <div className="p-3 bg-slate-900 rounded-lg text-cyan-300 font-mono text-xs">
+                  A_sys = 1 - (1 - A_LAN_A) · (1 - A_LAN_B)  ;  T_failover = 0 ms
+                </div>
+                <p className="text-[11px] text-slate-400 leading-relaxed font-sans">
+                  Le protocole de redondance parallèle (PRP) duplique chaque trame Ethernet sur deux réseaux commutés indépendants (LAN A et LAN B). En cas de rupture complète ou panne d'un commutateur sur l'un des canaux, le récepteur élimine le doublon sans perte de trame (zéro milliseconde de bascule), garantissant une disponibilité globale supérieure à 99.999% (cinq 9).
+                </p>
+              </div>
+
+              {/* Formula 10: Broïda Process Model & PID Synthesis */}
+              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                <span className="text-purple-400 font-bold uppercase text-[11px]">10. Identification Broïda &amp; Réglage PID Robuste</span>
+                <div className="p-3 bg-slate-900 rounded-lg text-purple-300 font-mono text-xs">
+                  K_p = (0.8 / K_proc) · (T / τ)  ;  T_i = T  ;  T_d = 0.4 · τ
+                </div>
+                <p className="text-[11px] text-slate-400 leading-relaxed font-sans">
+                  Modélisation indicielle en fonction de transfert du premier ordre à retard pur G(p) = K_proc · e^(-τ·p) / (1 + T·p). Les paramètres optimaux de Broïda assurent un amortissement de 20% et évitent l'oscillation entretenue sur procédés thermiques et hydrauliques lents.
                 </p>
               </div>
 
