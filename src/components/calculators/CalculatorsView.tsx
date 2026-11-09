@@ -49,6 +49,8 @@ import { favoritesAndHistoryService } from '../../services/favoritesAndHistorySe
 import { Share2, Check } from 'lucide-react';
 import { FormulaDerivationPanel } from './FormulaDerivationPanel';
 import { generateCalculationReport, CalculatorTabType } from './services/calculationReportService';
+import { WorkedExampleViewer } from '../common/WorkedExampleViewer';
+import { getWorkedExampleById } from '../../data/workedExamplesRegistry';
 import type { SimulationTabType } from '../simulation/SimulationLabView';
 import type { InjectedCalculatorContext } from '../../services/routerService';
 import { AssumptionsLimitationsCard } from '../context/AssumptionsLimitationsCard';
@@ -76,6 +78,21 @@ const CALCULATOR_STANDARDS: Record<string, { standard: string; badgeType: Eviden
   'transmission-line': { standard: 'CEI 60826 / Cigre TB 384', badgeType: 'ENGINEERING_REFERENCE' },
   'neutral-grounding': { standard: 'CEI 60071 / NF C 13-200', badgeType: 'VERIFIED_STANDARD' },
   'relay-tcc': { standard: 'CEI 60255-151 / IEEE 242', badgeType: 'VERIFIED_STANDARD' },
+};
+
+const CALCULATOR_WORKED_EXAMPLE_MAP: Partial<Record<CalculatorTabType, string>> = {
+  power: 'we-d01-generator-rating',
+  'voltage-drop': 'we-d06-cable-voltage-drop',
+  'cable-ampacity': 'we-d06-cable-voltage-drop',
+  sil: 'we-d03-transmission-sil-ferranti',
+  'transmission-line': 'we-d03-transmission-sil-ferranti',
+  'cable-short-circuit': 'we-d04-substation-short-circuit',
+  transformer: 'we-d04-substation-short-circuit',
+  'neutral-grounding': 'we-d05-distribution-ngr-earth-fault',
+  'solar-sizing': 'we-d09-solar-pv-performance-ratio',
+  'bess-sizing': 'we-d10-bess-container-sizing',
+  'relay-tcc': 'we-d11-protection-relay-coordination',
+  earthing: 'we-d16-touch-voltage-tt'
 };
 
 const CALCULATOR_SPINE_LINKS: Record<
@@ -742,8 +759,35 @@ export const CalculatorsView: React.FC<CalculatorsViewProps> = ({
       )}
 
       {/* Formula Derivation, Step-by-Step Proof & Sensitivity Analysis */}
-      <div className="mt-6">
+      <div className="mt-6 space-y-6">
         <FormulaDerivationPanel calcTab={activeCalc} locale={locale} />
+
+        {/* Authoritative Worked Example Benchmark */}
+        {CALCULATOR_WORKED_EXAMPLE_MAP[activeCalc] && getWorkedExampleById(CALCULATOR_WORKED_EXAMPLE_MAP[activeCalc]!) && (
+          <div className="space-y-3 pt-6 border-t border-[#DEDACF] dark:border-slate-800">
+            <div className="flex items-center gap-2">
+              <span className="p-1.5 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                <Calculator className="w-4 h-4" />
+              </span>
+              <div>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white tracking-wide font-mono">
+                  {locale === 'fr' 
+                    ? 'Cas d’Ingénierie Résolu Associé au Calculateur' 
+                    : 'Associated Normative Engineering Worked Example'}
+                </h3>
+                <p className="text-[11px] text-slate-500 font-sans">
+                  {locale === 'fr'
+                    ? 'Étude de cas didactique résolue étape par étape selon les normes CEI / IEEE.'
+                    : 'Step-by-step resolved case study grounded in primary IEC / IEEE standards.'}
+                </p>
+              </div>
+            </div>
+            <WorkedExampleViewer
+              example={getWorkedExampleById(CALCULATOR_WORKED_EXAMPLE_MAP[activeCalc]!)!}
+              locale={locale}
+            />
+          </div>
+        )}
       </div>
       </div>
 
