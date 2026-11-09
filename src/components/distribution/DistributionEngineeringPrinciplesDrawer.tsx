@@ -156,6 +156,70 @@ export const DistributionEngineeringPrinciplesDrawer: React.FC<DistributionEngin
             </p>
           </div>
 
+          {/* Formula 7: Line & Cable Capacitive Charging Current */}
+          <div className="p-4 rounded-xl bg-[#0C111C] border border-[#20293B] space-y-2">
+            <div className="flex items-center justify-between text-xs font-mono font-bold text-teal-400">
+              <span>7. COURANT CAPACITIF HOMOPOLAIRE DE CÂBLE & LIGNE MT</span>
+              <span>CEI 60909-3 / NF C 13-100</span>
+            </div>
+            <div className="p-2.5 rounded-lg bg-[#06080E] font-mono text-center text-sm text-teal-300 border border-slate-800">
+              Ic = 3 · ω · C0 · (Un / √3) = √3 · ω · C0 · Un
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              {locale === 'fr'
+                ? 'En réseau HTA 30 kV ou 15 kV, chaque kilomètre de câble souterrain présente une capacité homopolaire C0 élevée (0.2 à 0.4 µF/km, soit environ 2.5 à 4 A/km à 50 Hz), contre 0.005 µF/km en ligne aérienne (0.03 A/km). Lors d\'un défaut monophasé franc à la terre, l\'ensemble du courant capacitif des départs sains transite par le point de défaut. Au-delà de 20 à 30 A, l\'arc devient auto-entretenu et impose l\'emploi d\'une résistance NGR ou d\'une bobine de Petersen.'
+                : 'In 30 kV or 15 kV distribution feeders, underground cables exhibit high zero-sequence capacitance C0 (0.2 to 0.4 µF/km, yielding ~2.5 to 4 A/km at 50 Hz), compared to 0.005 µF/km for overhead lines (0.03 A/km). During a phase-to-ground fault, the cumulative capacitive current of all healthy feeders returns through the fault point. Above 20-30 A, arcs become self-sustaining, requiring NGR grounding or a Petersen compensation coil.'}
+            </p>
+          </div>
+
+          {/* Formula 8: Petersen Coil Resonant Earthing */}
+          <div className="p-4 rounded-xl bg-[#0C111C] border border-[#20293B] space-y-2">
+            <div className="flex items-center justify-between text-xs font-mono font-bold text-indigo-400">
+              <span>8. COMPENSATION PAR BOBINE D\'EXTINCTION DE PETERSEN (NEUTRE RÉSONANT)</span>
+              <span>CEI 60071-1 / EN 50522</span>
+            </div>
+            <div className="p-2.5 rounded-lg bg-[#06080E] font-mono text-center text-sm text-indigo-300 border border-slate-800">
+              ω · Lp = 1 / (3 · ω · C0) ⟹ I_res = √(I_R² + (I_L - I_c)²)
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              {locale === 'fr'
+                ? 'L\'inductance variable Lp de la bobine de Petersen insérée entre le neutre transfo et la terre est accordée pour compenser exactement le courant capacitif global du réseau (ω·Lp = 1/[3·ω·C0]). Le courant résiduel au défaut I_res se réduit à sa composante active wattmétrique résiduelle (I_R ≤ 5 A), éteignant spontanément l\'arc électrique sans coupure de fourniture.'
+                : 'The variable inductance Lp of the Petersen coil connected between transformer neutral and earth is tuned to resonate with the total system zero-sequence capacitance (ω·Lp = 1/[3·ω·C0]). Fault residual current I_res drops to its small wattmetric active component (I_R ≤ 5 A), self-extinguishing transient arcs without tripping customers.'}
+            </p>
+          </div>
+
+          {/* Formula 9: MV Motor Inrush & Voltage Dip */}
+          <div className="p-4 rounded-xl bg-[#0C111C] border border-[#20293B] space-y-2">
+            <div className="flex items-center justify-between text-xs font-mono font-bold text-rose-400">
+              <span>9. APPEL DE COURANT & CREUX DE TENSION AU DÉMARRAGE MOTEUR MT</span>
+              <span>CEI 60034-12 / IEEE Std 399</span>
+            </div>
+            <div className="p-2.5 rounded-lg bg-[#06080E] font-mono text-center text-sm text-rose-300 border border-slate-800">
+              ΔU_bus ≈ S_start / (S_sc,bus + S_start),   Te / Tk = 2 / (s/sk + sk/s) · (U_bus / Un)²
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              {locale === 'fr'
+                ? 'Au démarrage direct d\'un moteur asynchrone MT (ex. concasseur 1 500 kW sous 6.6 kV ou 15 kV), le courant d\'appel atteint 6 à 7 · In. Le creux de tension induit sur le jeu de barres ΔU_bus dépend de la puissance de court-circuit amont S_sc. Selon la formule de Kloss, le couple électromagnétique chute proportionnellement à (U_bus/Un)² ; un creux > 15% risque de bloquer le démarrage du rotor.'
+                : 'Direct-on-line (DOL) starting of heavy MV induction motors (e.g. 1,500 kW at 6.6 kV or 15 kV) induces 6 to 7 · In inrush currents. The bus voltage dip ΔU_bus is dictated by upstream short-circuit power S_sc. Per Kloss formula, torque degrades quadratically (U_bus/Un)²; a dip > 15% risks stalling the accelerating rotor.'}
+            </p>
+          </div>
+
+          {/* Formula 10: DER Hosting Capacity & Voltage Rise */}
+          <div className="p-4 rounded-xl bg-[#0C111C] border border-[#20293B] space-y-2">
+            <div className="flex items-center justify-between text-xs font-mono font-bold text-amber-400">
+              <span>10. CAPACITÉ D\'ACCUEIL ENR & SURTENSION SUR ARTÈRE MT RADIALE</span>
+              <span>IEEE 1547-2018 / CEI 62749</span>
+            </div>
+            <div className="p-2.5 rounded-lg bg-[#06080E] font-mono text-center text-sm text-amber-300 border border-slate-800">
+              ΔV_DER ≈ (P_DER · R - Q_DER · X) / Un ≤ ΔV_adm (+5%)
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              {locale === 'fr'
+                ? 'L\'injection de production décentralisée solaire PV ou éolienne (P_DER) refoule la puissance active vers le poste source et élève la tension selon ΔV_DER ≈ (P·R - Q·X)/Un. Lorsque la production dépasse la consommation locale (flux inverse), la surtension peut franchir la limite réglementaire de +5%. Les onduleurs intelligents doivent absorber du réactif (Q_DER > 0) selon des lois Q(U) ou brider leur puissance active.'
+                : 'Distributed solar PV or wind injection (P_DER) pushes real power upstream and raises line voltage per ΔV_DER ≈ (P·R - Q·X)/Un. When generation exceeds local feeder demand (reverse power flow), voltage rise may breach the normative +5% ceiling. Smart inverters mitigate this by absorbing reactive power (Q_DER > 0 under Q(U) curves) or active power curtailment.'}
+            </p>
+          </div>
+
           {/* Standards Matrix */}
           <div className="p-4 rounded-xl bg-[#080C14] border border-[#1A2332] space-y-2 font-mono">
             <div className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
@@ -179,6 +243,12 @@ export const DistributionEngineeringPrinciplesDrawer: React.FC<DistributionEngin
               </div>
               <div className="p-2 rounded bg-slate-900 border border-slate-800">
                 <span className="font-bold text-amber-400">NF C 14-100 :</span> Branchements BT d'abonnés
+              </div>
+              <div className="p-2 rounded bg-slate-900 border border-slate-800">
+                <span className="font-bold text-amber-400">IEC 60909-3 :</span> Courts-circuits & réseaux MT
+              </div>
+              <div className="p-2 rounded bg-slate-900 border border-slate-800">
+                <span className="font-bold text-amber-400">IEEE 1547-2018 :</span> Raccordement EnR / DER
               </div>
             </div>
           </div>

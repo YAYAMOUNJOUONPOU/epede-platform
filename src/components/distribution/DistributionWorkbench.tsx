@@ -89,6 +89,7 @@ export const DistributionWorkbench: React.FC<DistributionWorkbenchProps> = ({
   const [selectedAasAssetId, setSelectedAasAssetId] = useState<string | null>(null);
   const [isSidePanelOpen, setIsSidePanelOpen] = useState<boolean>(false);
   const [sidebarSearch, setSidebarSearch] = useState<string>('');
+  const [derWorkedExampleTab, setDerWorkedExampleTab] = useState<'voltage_drop' | 'bess_sizing'>('voltage_drop');
 
   // Sync active subdomain with pillar
   useEffect(() => {
@@ -133,8 +134,10 @@ export const DistributionWorkbench: React.FC<DistributionWorkbenchProps> = ({
     { id: 'OPERATOR_FABRIC', label_fr: 'Console OperatorFabric & Jumeau AAS', label_en: 'OperatorFabric Console & AAS Twin', icon: Zap, phase: 4, phaseLabel_fr: 'Smart Grid & Jumeau', phaseLabel_en: 'Smart Grid & Twin' }
   ];
 
-  // Normative D05 Worked Example (NGR Earth Fault 30 kV)
+  // Normative Worked Examples (D05 NGR, D06 Voltage Drop, D10 BESS Storage)
   const d05WorkedExample = getWorkedExampleById('we-d05-distribution-ngr-earth-fault');
+  const d06WorkedExample = getWorkedExampleById('we-d06-cable-voltage-drop');
+  const d10WorkedExample = getWorkedExampleById('we-d10-bess-container-sizing');
 
   // Resolve equipment for AAS drawer
   const matchedEquipment = EQUIPMENT_ITEMS.find((e) => e.id === selectedAasAssetId);
@@ -480,7 +483,50 @@ export const DistributionWorkbench: React.FC<DistributionWorkbenchProps> = ({
         )}
 
         {activePillar === 'DER_RELIABILITY' && (
-          <DistributionDerAndReliabilityViewer locale={locale} />
+          <div className="space-y-6">
+            <DistributionDerAndReliabilityViewer locale={locale} />
+            <div className="p-4 sm:p-6 rounded-2xl bg-[#090D14] border border-emerald-900/40 shadow-xl space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#1E2738] pb-3 gap-3">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-xs font-bold text-white uppercase font-mono tracking-wider">
+                    {locale === 'fr'
+                      ? 'Exemples Résolus Normalisés : Intégration EnR & Réseau de Distribution'
+                      : 'Normative Worked Calculations: DER Integration & Distribution Grid'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setDerWorkedExampleTab('voltage_drop')}
+                    className={`px-3 py-1 rounded text-[11px] font-bold font-mono transition-all cursor-pointer ${
+                      derWorkedExampleTab === 'voltage_drop'
+                        ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                    }`}
+                  >
+                    {locale === 'fr' ? 'Chute de Tension BT/MT (CEI 60364-5-52)' : 'Voltage Drop (IEC 60364-5-52)'}
+                  </button>
+                  <button
+                    onClick={() => setDerWorkedExampleTab('bess_sizing')}
+                    className={`px-3 py-1 rounded text-[11px] font-bold font-mono transition-all cursor-pointer ${
+                      derWorkedExampleTab === 'bess_sizing'
+                        ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                    }`}
+                  >
+                    {locale === 'fr' ? 'Stockage BESS & C-Rate (CEI 62933)' : 'BESS C-Rate (IEC 62933)'}
+                  </button>
+                </div>
+              </div>
+
+              {derWorkedExampleTab === 'voltage_drop' && d06WorkedExample && (
+                <WorkedExampleViewer example={d06WorkedExample} locale={locale} />
+              )}
+              {derWorkedExampleTab === 'bess_sizing' && d10WorkedExample && (
+                <WorkedExampleViewer example={d10WorkedExample} locale={locale} />
+              )}
+            </div>
+          </div>
         )}
 
         {activePillar === 'OPERATOR_FABRIC' && (
