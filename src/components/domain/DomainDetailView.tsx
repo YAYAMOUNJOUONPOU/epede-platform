@@ -58,6 +58,7 @@ const GridArchitectureVisualJourney = lazy(() => import('../grid-architecture/Gr
 const TransmissionWorkbench = lazy(() => import('../transmission/TransmissionWorkbench').then(m => ({ default: m.TransmissionWorkbench })));
 const SubstationsWorkbench = lazy(() => import('../substations/SubstationsWorkbench').then(m => ({ default: m.SubstationsWorkbench })));
 const D04PedagogicalPilotView = lazy(() => import('../substations/D04PedagogicalPilotView').then(m => ({ default: m.D04PedagogicalPilotView })));
+const D05PedagogicalPilotView = lazy(() => import('../distribution/D05PedagogicalPilotView').then(m => ({ default: m.D05PedagogicalPilotView })));
 const DistributionWorkbench = lazy(() => import('../distribution/DistributionWorkbench').then(m => ({ default: m.DistributionWorkbench })));
 const InstallationsWorkbench = lazy(() => import('../installations/InstallationsWorkbench').then(m => ({ default: m.InstallationsWorkbench })));
 const AutomationControlWorkbench = lazy(() => import('../automation/AutomationControlWorkbench').then(m => ({ default: m.AutomationControlWorkbench })));
@@ -609,8 +610,7 @@ export const DomainDetailView: React.FC<DomainDetailViewProps> = ({
           onNavigate={onNavigateView}
         />
       ) : isD05 && d05Mode === 'pedagogical_pilot' ? (
-        <UniversalPedagogicalDomainView
-          domainCode="D05"
+        <D05PedagogicalPilotView
           locale={locale}
           onSelectEquipment={onSelectEquipment}
           onNavigateView={onNavigateView}

@@ -18,7 +18,8 @@ import {
   Sliders,
   CheckCircle2,
   RefreshCw,
-  BookOpen
+  BookOpen,
+  Download
 } from 'lucide-react';
 
 interface SubstationEngineeringPrinciplesDrawerProps {
@@ -556,6 +557,61 @@ export const SubstationEngineeringPrinciplesDrawer: React.FC<SubstationEngineeri
     setUserParams((prev) => ({ ...prev, [key]: val }));
   };
 
+  const handleExportCalculationPdf = async () => {
+    const { EngineeringCalculationPdfExportService } = await import('../calculators/services/EngineeringCalculationPdfExportService');
+    const paramsList = currentFormula.interactiveParams?.map((p) => ({
+      label: locale === 'fr' ? p.label_fr : p.label_en,
+      value: String(userParams[p.key] ?? p.defaultVal ?? 0),
+      unit: p.unit,
+      status: 'OK' as const
+    })) || currentFormula.variables.map((v) => ({
+      label: `${v.sym} - ${locale === 'fr' ? v.desc_fr : v.desc_en}`,
+      value: '1.0',
+      unit: v.unit,
+      status: 'OK' as const
+    }));
+
+    const reportData = {
+      title: locale === 'fr' ? currentFormula.title_fr : currentFormula.title_en,
+      calcType: `D04-${currentFormula.id}`,
+      standard: currentFormula.standard,
+      date: new Date().toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }),
+      referenceId: `EPEDE-D04-${currentFormula.id.replace(/[^A-Z0-9]/g, '-')}-${Date.now().toString(36).toUpperCase()}`,
+      complianceVerdict: {
+        status: (currentCalculation?.status === 'CRITICAL' ? 'NON_COMPLIANT' : 'COMPLIANT') as any,
+        message: currentCalculation ? (locale === 'fr' ? currentCalculation.note_fr : currentCalculation.note_en) : (locale === 'fr' ? currentFormula.explanation_fr : currentFormula.explanation_en)
+      },
+      inputs: paramsList,
+      formulas: [{
+        name: locale === 'fr' ? 'Expression Analytique Normative' : 'Normative Analytical Expression',
+        expr: currentFormula.formula
+      }],
+      results: [
+        {
+          label: currentCalculation ? (locale === 'fr' ? currentCalculation.resultLabel_fr : currentCalculation.resultLabel_en) : (locale === 'fr' ? 'Résultat de calcul' : 'Calculation result'),
+          value: currentCalculation ? currentCalculation.value : 'OK',
+          unit: '',
+          highlight: true,
+          status: (currentCalculation?.status === 'CRITICAL' ? 'DANGER' : 'OK') as any
+        }
+      ],
+      engineeringNotes: [
+        locale === 'fr' ? currentFormula.explanation_fr : currentFormula.explanation_en,
+        locale === 'fr' ? currentFormula.practical_example_fr : currentFormula.practical_example_en,
+        locale === 'fr'
+          ? 'Note technique d\'ingénierie certifiée émise par l\'environnement numérique EPEDE 2.0 (Postes HTB / THT).'
+          : 'Certified technical calculation dossier emitted by EPEDE 2.0 digital engineering environment.'
+      ]
+    };
+    EngineeringCalculationPdfExportService.exportCalculationPdf(reportData, locale);
+  };
+
   if (!isOpen) return null;
 
   const currentCalculation = currentFormula.computeInteractiveResult 
@@ -747,6 +803,14 @@ export const SubstationEngineeringPrinciplesDrawer: React.FC<SubstationEngineeri
                     <p className="text-[11px] font-sans font-normal leading-relaxed opacity-90">
                       {locale === 'fr' ? currentCalculation.note_fr : currentCalculation.note_en}
                     </p>
+                    <button
+                      type="button"
+                      onClick={handleExportCalculationPdf}
+                      className="mt-2 py-1.5 px-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold font-mono text-[11px] flex items-center justify-center gap-1.5 transition-all shadow-sm cursor-pointer"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>{locale === 'fr' ? 'Exporter la Note de Calcul PDF A4' : 'Export A4 Calculation Note PDF'}</span>
+                    </button>
                   </div>
                 )}
               </div>

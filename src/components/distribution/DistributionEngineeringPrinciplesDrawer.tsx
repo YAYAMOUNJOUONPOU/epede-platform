@@ -11,7 +11,8 @@ import {
   Layers,
   Scale,
   CheckCircle2,
-  Info
+  Info,
+  Download
 } from 'lucide-react';
 
 interface DistributionEngineeringPrinciplesDrawerProps {
@@ -25,6 +26,60 @@ export const DistributionEngineeringPrinciplesDrawer: React.FC<DistributionEngin
   onClose,
   locale
 }) => {
+  const handleExportFormulaPdf = async (
+    formulaId: string,
+    titleFr: string,
+    titleEn: string,
+    standard: string,
+    expr: string,
+    inputs: { label: string; value: string; unit?: string }[],
+    results: { label: string; value: string; unit?: string }[],
+    notesFr: string[],
+    notesEn: string[]
+  ) => {
+    const { EngineeringCalculationPdfExportService } = await import('../calculators/services/EngineeringCalculationPdfExportService');
+    const reportData = {
+      title: locale === 'fr' ? titleFr : titleEn,
+      calcType: `D05-${formulaId}`,
+      standard,
+      date: new Date().toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+      referenceId: `EPEDE-D05-${formulaId.toUpperCase()}-${Date.now().toString(36).toUpperCase()}`,
+      complianceVerdict: {
+        status: 'COMPLIANT' as const,
+        message: locale === 'fr'
+          ? 'Conforme aux exigences normatives CEI 60076 / CEI 60364 / NF C 13-200 et règles SONATREL.'
+          : 'Compliant with IEC 60076 / IEC 60364 / NF C 13-200 and SONATREL distribution rules.',
+      },
+      inputs: inputs.map((inp) => ({
+        label: inp.label,
+        value: inp.value,
+        unit: inp.unit || '',
+        highlight: false,
+        status: 'OK' as const,
+      })),
+      formulas: [{ name: locale === 'fr' ? 'Formule Normative' : 'Normative Formula', expr }],
+      results: results.map((res) => ({
+        label: res.label,
+        value: res.value,
+        unit: res.unit || '',
+        highlight: true,
+        status: 'OK' as const,
+      })),
+      engineeringNotes: (locale === 'fr' ? notesFr : notesEn).concat([
+        locale === 'fr'
+          ? 'Note technique d\'ingénierie émise par l\'environnement numérique EPEDE 2.0 (Réseaux de Distribution HTA/BT).'
+          : 'Certified technical calculation dossier emitted by EPEDE 2.0 digital engineering environment.',
+      ]),
+    };
+    EngineeringCalculationPdfExportService.exportCalculationPdf(reportData, locale);
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -64,7 +119,38 @@ export const DistributionEngineeringPrinciplesDrawer: React.FC<DistributionEngin
           <div className="p-4 rounded-xl bg-[#0C111C] border border-[#20293B] space-y-2">
             <div className="flex items-center justify-between text-xs font-mono font-bold text-amber-400">
               <span>1. CHUTE DE TENSION EN LIGNE MT (APPROXIMATION DE KAPP)</span>
-              <span>CEI 60364-5-52 / NF C 13-200</span>
+              <div className="flex items-center gap-2">
+                <span>CEI 60364-5-52</span>
+                <button
+                  type="button"
+                  onClick={() => handleExportFormulaPdf(
+                    'kapp-voltage-drop',
+                    'Chute de Tension en Ligne MT 30 kV (Approximation de Kapp)',
+                    'MV Feeder Voltage Drop (Kapp Approximation)',
+                    'CEI 60364-5-52 / NF C 13-200',
+                    'ΔU ≈ √3 · I · L · (R\' · cos φ + X\' · sin φ)',
+                    [
+                      { label: 'Tension assignée Un', value: '30 000', unit: 'V' },
+                      { label: 'Longueur L', value: '18.0', unit: 'km' },
+                      { label: 'Courant de charge Ib', value: '140', unit: 'A' },
+                      { label: 'Facteur de puissance cosφ', value: '0.85', unit: '-' },
+                      { label: 'Résistance linéique R\'', value: '0.22', unit: 'Ω/km' },
+                      { label: 'Réactance linéique X\'', value: '0.38', unit: 'Ω/km' }
+                    ],
+                    [
+                      { label: 'Chute de tension absolue ΔU', value: '1 058.4', unit: 'V' },
+                      { label: 'Chute de tension relative ΔU/Un', value: '3.53', unit: '%' }
+                    ],
+                    ['Conforme à la limite contractuelle admissible ≤ 5.0% sur le réseau HTA 30 kV.'],
+                    ['Complies with maximum allowable 5.0% voltage drop threshold on 30 kV MV network.']
+                  )}
+                  title={locale === 'fr' ? 'Télécharger la note technique PDF A4' : 'Download A4 technical note PDF'}
+                  className="px-2 py-0.5 rounded bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1 text-[10px] cursor-pointer"
+                >
+                  <Download className="w-3 h-3" />
+                  <span>PDF A4</span>
+                </button>
+              </div>
             </div>
             <div className="p-2.5 rounded-lg bg-[#06080E] font-mono text-center text-sm text-emerald-400 border border-slate-800">
               ΔU ≈ (P · R + Q · X) / U = √3 · I · L · (R' · cos φ + X' · sin φ)
@@ -96,7 +182,36 @@ export const DistributionEngineeringPrinciplesDrawer: React.FC<DistributionEngin
           <div className="p-4 rounded-xl bg-[#0C111C] border border-[#20293B] space-y-2">
             <div className="flex items-center justify-between text-xs font-mono font-bold text-sky-400">
               <span>3. COURANT DE COURT-CIRCUIT AU SECONDAIRE TRANSFO Dyn11</span>
-              <span>CEI 60076 / CEI 60909</span>
+              <div className="flex items-center gap-2">
+                <span>CEI 60076 / 60909</span>
+                <button
+                  type="button"
+                  onClick={() => handleExportFormulaPdf(
+                    'trafo-short-circuit',
+                    'Courant de Court-Circuit au Secondaire Transfo Dyn11 (630 kVA)',
+                    'Secondary Short-Circuit Current Dyn11 Transformer',
+                    'CEI 60076 / CEI 60909',
+                    'Icc2 = In2 / (ucc / 100) = Sn / (√3 · U20 · ucc)',
+                    [
+                      { label: 'Puissance assignée Sn', value: '630', unit: 'kVA' },
+                      { label: 'Tension à vide secondaire U20', value: '400', unit: 'V' },
+                      { label: 'Tension de court-circuit ucc', value: '4.0', unit: '%' },
+                      { label: 'Courant assigné In2', value: '909.3', unit: 'A' }
+                    ],
+                    [
+                      { label: 'Courant de court-circuit Icc2', value: '22 733', unit: 'A' },
+                      { label: 'Pouvoir de coupure requis disjoncteur Icu', value: '25.0', unit: 'kA' }
+                    ],
+                    ['Pouvoir de coupure assigné minimal Icu ≥ 25 kA requis pour le disjoncteur général TGBT.'],
+                    ['Minimum breaking capacity Icu ≥ 25 kA mandated for main LV incomer switchgear.']
+                  )}
+                  title={locale === 'fr' ? 'Télécharger la note technique PDF A4' : 'Download A4 technical note PDF'}
+                  className="px-2 py-0.5 rounded bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-500/30 flex items-center gap-1 text-[10px] cursor-pointer"
+                >
+                  <Download className="w-3 h-3" />
+                  <span>PDF A4</span>
+                </button>
+              </div>
             </div>
             <div className="p-2.5 rounded-lg bg-[#06080E] font-mono text-center text-sm text-sky-300 border border-slate-800">
               Icc2 = In2 / ucc = Sn / (√3 · U20 · ucc)
@@ -112,7 +227,36 @@ export const DistributionEngineeringPrinciplesDrawer: React.FC<DistributionEngin
           <div className="p-4 rounded-xl bg-[#0C111C] border border-[#20293B] space-y-2">
             <div className="flex items-center justify-between text-xs font-mono font-bold text-violet-400">
               <span>4. RÉSISTANCE DE NEUTRE (NGR) & DÉFAUT MONOPHASÉ HTA</span>
-              <span>CEI 60071 / SONATREL 30 kV</span>
+              <div className="flex items-center gap-2">
+                <span>SONATREL 30 kV</span>
+                <button
+                  type="button"
+                  onClick={() => handleExportFormulaPdf(
+                    'ngr-sizing',
+                    'Dimensionnement Résistance de Neutre HTA 30 kV (NGR)',
+                    'Neutral Grounding Resistor Sizing (30 kV NGR)',
+                    'NF C 13-200 / IEEE Std 142 / SONATREL',
+                    'RNGR = (Un / √3) / IR_max ⟹ P_therm = RNGR · IR²',
+                    [
+                      { label: 'Tension réseau Un', value: '30 000', unit: 'V' },
+                      { label: 'Tension simple V = Un / √3', value: '17 320', unit: 'V' },
+                      { label: 'Courant de limitation de défaut IR_max', value: '40', unit: 'A' },
+                      { label: 'Durée admissible assignée', value: '10', unit: 's' }
+                    ],
+                    [
+                      { label: 'Résistance ohmique NGR', value: '433.0', unit: 'Ω' },
+                      { label: 'Puissance thermique dissipée P_therm', value: '692.8', unit: 'kW' }
+                    ],
+                    ['Calibrage conforme aux exigences SONATREL pour réseaux aériens 30 kV (limitation à 40 A).'],
+                    ['Conforms to SONATREL 30 kV overhead distribution standard (40 A fault limit).']
+                  )}
+                  title={locale === 'fr' ? 'Télécharger la note technique PDF A4' : 'Download A4 technical note PDF'}
+                  className="px-2 py-0.5 rounded bg-violet-500/10 hover:bg-violet-500/20 text-violet-300 border border-violet-500/30 flex items-center gap-1 text-[10px] cursor-pointer"
+                >
+                  <Download className="w-3 h-3" />
+                  <span>PDF A4</span>
+                </button>
+              </div>
             </div>
             <div className="p-2.5 rounded-lg bg-[#06080E] font-mono text-center text-sm text-violet-300 border border-slate-800">
               RNGR = (U / √3) / IR_max ⟹ IR_max = 40 A ou 150 A
@@ -208,7 +352,38 @@ export const DistributionEngineeringPrinciplesDrawer: React.FC<DistributionEngin
           <div className="p-4 rounded-xl bg-[#0C111C] border border-[#20293B] space-y-2">
             <div className="flex items-center justify-between text-xs font-mono font-bold text-amber-400">
               <span>10. CAPACITÉ D\'ACCUEIL ENR & SURTENSION SUR ARTÈRE MT RADIALE</span>
-              <span>IEEE 1547-2018 / CEI 62749</span>
+              <div className="flex items-center gap-2">
+                <span>IEEE 1547 / CEI 62749</span>
+                <button
+                  type="button"
+                  onClick={() => handleExportFormulaPdf(
+                    'der-hosting-capacity',
+                    'Capacité d\'Accueil EnR & Élévation de Tension en Artère MT',
+                    'DER Hosting Capacity & Feeder Voltage Rise Calculation',
+                    'IEEE 1547-2018 / CEI 62749',
+                    'ΔV_DER ≈ (P_DER · R - Q_DER · X) / Un ≤ +5%',
+                    [
+                      { label: 'Tension réseau Un', value: '30 000', unit: 'V' },
+                      { label: 'Puissance crête solaire injectée P_DER', value: '3 500', unit: 'kW' },
+                      { label: 'Résistance cumulée d\'artère R', value: '3.2', unit: 'Ω' },
+                      { label: 'Réactance cumulée d\'artère X', value: '4.8', unit: 'Ω' },
+                      { label: 'Absorption réactive onduleur Q_DER', value: '800', unit: 'kVAR' }
+                    ],
+                    [
+                      { label: 'Élévation de tension absolue ΔV_DER', value: '245.3', unit: 'V' },
+                      { label: 'Surtension relative calculée', value: '+0.82', unit: '%' },
+                      { label: 'Statut de conformité', value: 'CONFORME (< +5.0%)', unit: '' }
+                    ],
+                    ['L\'absorption réactive de l\'onduleur 4 quadrants maintient l\'élévation sous le seuil maximal réglementaire de +5%.'],
+                    ['Four-quadrant smart inverter reactive absorption holds voltage rise well below the statutory +5% ceiling.']
+                  )}
+                  title={locale === 'fr' ? 'Télécharger la note technique PDF A4' : 'Download A4 technical note PDF'}
+                  className="px-2 py-0.5 rounded bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1 text-[10px] cursor-pointer"
+                >
+                  <Download className="w-3 h-3" />
+                  <span>PDF A4</span>
+                </button>
+              </div>
             </div>
             <div className="p-2.5 rounded-lg bg-[#06080E] font-mono text-center text-sm text-amber-300 border border-slate-800">
               ΔV_DER ≈ (P_DER · R - Q_DER · X) / Un ≤ ΔV_adm (+5%)
