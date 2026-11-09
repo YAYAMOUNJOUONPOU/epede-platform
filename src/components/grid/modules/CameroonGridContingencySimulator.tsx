@@ -34,6 +34,8 @@ import {
   CameroonContingencyOutput,
 } from '../../../data/cameroonGridSolver';
 import { CameroonGridSldSynoptic } from './CameroonGridSldSynoptic';
+import { getWorkedExampleById } from '../../../data/workedExamplesRegistry';
+import { WorkedExampleViewer } from '../../common/WorkedExampleViewer';
 
 interface Props {
   locale: 'fr' | 'en';
@@ -301,6 +303,17 @@ export const CameroonGridContingencySimulator: React.FC<Props> = ({
   const [songloulouReserveMw, setSongloulouReserveMw] = useState<number>(0);
   const [bessMw, setBessMw] = useState<number>(0);
   const [oltcTapPercent, setOltcTapPercent] = useState<number>(0);
+
+  // Dynamic Normative Worked Example for Selected Contingency
+  const scenarioWorkedExample = useMemo(() => {
+    if (activeScenarioId === 'scen-memveele-trip') {
+      return getWorkedExampleById('we-d03-transmission-sil-ferranti');
+    }
+    if (activeScenarioId === 'scen-nachtigal-trip' || activeScenarioId === 'scen-songloulou-line') {
+      return getWorkedExampleById('we-d02-rotor-swing-inertia');
+    }
+    return null;
+  }, [activeScenarioId]);
 
   const scenario = useMemo(() => {
     return (
@@ -951,6 +964,32 @@ export const CameroonGridContingencySimulator: React.FC<Props> = ({
             ))}
           </div>
         </div>
+        {/* Dynamic Normative Worked Example for Selected Contingency */}
+        {scenarioWorkedExample && (
+          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+            <div className="flex items-center gap-2">
+              <span className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                <Activity className="w-4 h-4" />
+              </span>
+              <div>
+                <h3 className="text-sm font-bold text-white tracking-wide font-mono">
+                  {isFr 
+                    ? 'Cas d’Ingénierie Résolu Associé au Scénario' 
+                    : 'Associated Normative Engineering Worked Example'}
+                </h3>
+                <p className="text-[11px] text-slate-400 font-sans">
+                  {isFr
+                    ? 'Calcul pas-à-pas des paramètres électrotechniques selon les normes CEI / IEEE.'
+                    : 'Step-by-step normative electrotechnical calculation per IEC / IEEE standards.'}
+                </p>
+              </div>
+            </div>
+            <WorkedExampleViewer
+              example={scenarioWorkedExample}
+              locale={locale}
+            />
+          </div>
+        )}
       </div>
 
       {/* 8. Normative Footnote & Didactic Safety Notice */}
