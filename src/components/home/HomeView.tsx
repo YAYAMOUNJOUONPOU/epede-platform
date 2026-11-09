@@ -307,7 +307,7 @@ interface ProjectCard {
 const PROJECTS: ProjectCard[] = [
   {
     slot: 'proj-nachtigal',
-    img: '/assets/production/hydro.jpg',
+    img: '/images/cameroon-grid-map-featured.jpg',
     metaEN: 'GENERATION · SANAGA · 420 MW', metaFR: 'PRODUCTION · SANAGA · 420 MW',
     titleEN: 'Nachtigal hydroelectric scheme', titleFR: 'Aménagement hydroélectrique de Nachtigal',
     descEN: 'A run-of-river plant tied to the Southern grid by a 2 × 225 kV line to Nyom II — a case study in integrating large units and evacuation lines.',
@@ -628,7 +628,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
     return () => observer.disconnect();
   }, [reducedMotion]);
 
-  // 6. Map Iframe Height & Language Sync
+  // 6. Cameroon Grid Map Display Mode & Telemetry
+  const [gridMapMode, setGridMapMode] = useState<'image' | 'interactive'>('image');
+  const [caseStudyImageMode, setCaseStudyImageMode] = useState<'map' | 'photo'>('map');
   const [mapHeight, setMapHeight] = useState(820);
   const mapIframeRef = useRef<HTMLIFrameElement | null>(null);
 
@@ -1654,15 +1656,113 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </div>
             </div>
 
-            {/* Embedded Cameroon Grid Map */}
-            <div style={{ marginTop: 40, border: '1px solid #D5E0E8', borderRadius: 6, overflow: 'hidden', background: '#FFFFFF' }}>
-              <iframe
-                ref={mapIframeRef}
-                src="/Cameroon Grid Map.html?v2"
-                title="Interactive map of Cameroon's electricity grid"
-                scrolling="no"
-                style={{ display: 'block', width: '100%', height: `${mapHeight}px`, border: 0, transition: 'height 0.3s ease' }}
-              />
+            {/* Embedded Cameroon Grid Map & Telemetry Dossier */}
+            <div style={{ marginTop: 40, border: '1px solid #D5E0E8', borderRadius: 8, overflow: 'hidden', background: '#FFFFFF', boxShadow: '0 8px 30px rgba(11, 27, 43, 0.06)' }}>
+              {/* Header / Mode Switcher bar */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', background: '#F8FAFC', borderBottom: '1px solid #D5E0E8', flexWrap: 'wrap', gap: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: '50%', background: '#1F5FAE' }} />
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, fontWeight: 700, color: '#0B1B2B', letterSpacing: '0.04em' }}>
+                    {isFR ? 'CARTE NATIONALE DU RÉSEAU DE TRANSPORT · RIS & RIN' : 'NATIONAL TRANSMISSION GRID MAP · RIS & RIN'}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <button
+                    onClick={() => setGridMapMode('image')}
+                    style={{
+                      padding: '6px 16px',
+                      borderRadius: 999,
+                      border: '1px solid',
+                      borderColor: gridMapMode === 'image' ? '#1F5FAE' : '#D5E0E8',
+                      background: gridMapMode === 'image' ? '#1F5FAE' : '#FFFFFF',
+                      color: gridMapMode === 'image' ? '#FFFFFF' : '#3A4B5C',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      fontFamily: "'IBM Plex Mono', monospace",
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    {isFR ? 'Vue Carte & Fiche HD' : 'HD Map & Dossier'}
+                  </button>
+                  <button
+                    onClick={() => setGridMapMode('interactive')}
+                    style={{
+                      padding: '6px 16px',
+                      borderRadius: 999,
+                      border: '1px solid',
+                      borderColor: gridMapMode === 'interactive' ? '#1F5FAE' : '#D5E0E8',
+                      background: gridMapMode === 'interactive' ? '#1F5FAE' : '#FFFFFF',
+                      color: gridMapMode === 'interactive' ? '#FFFFFF' : '#3A4B5C',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      fontFamily: "'IBM Plex Mono', monospace",
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    {isFR ? 'Simulateur D3 Interactif' : 'Interactive D3 Map'}
+                  </button>
+                </div>
+              </div>
+
+              {gridMapMode === 'image' ? (
+                <div style={{ position: 'relative', width: '100%', background: '#F6F4EE', overflow: 'hidden' }}>
+                  <img
+                    src="/images/cameroon-grid-map-featured.jpg"
+                    alt={isFR ? "Carte du réseau électrique du Cameroun avec fiche technique de la centrale de Nachtigal (420 MW)" : "Cameroon national power grid map with Nachtigal 420 MW hydroelectric technical dossier"}
+                    loading="eager"
+                    style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'contain' }}
+                  />
+                  {/* Overlay Action & Metadata Bar */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 20px', background: '#FFFFFF', borderTop: '1px solid #E2E8F0', flexWrap: 'wrap', gap: 14 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: '#5B6B7B' }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                        <span style={{ width: 14, height: 3, background: '#2B7A78', display: 'inline-block' }} /> 225 kV
+                      </span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                        <span style={{ width: 14, height: 3, background: '#4A6984', display: 'inline-block' }} /> 110 kV
+                      </span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                        <span style={{ width: 14, height: 3, background: '#B8872D', display: 'inline-block' }} /> 90 kV
+                      </span>
+                      <span>·</span>
+                      <span>{isFR ? 'Fiche active : Centrale de Nachtigal (420 MW · 7 groupes Francis)' : 'Active dossier: Nachtigal Hydro (420 MW · 7 Francis units)'}</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                      <button
+                        onClick={() => onSelectDomain('D01')}
+                        style={{ padding: '6px 14px', borderRadius: 4, background: '#0B1B2B', color: '#FFFFFF', fontSize: 12, fontFamily: "'IBM Plex Mono', monospace", fontWeight: 600, border: 0, cursor: 'pointer' }}
+                        className="hover:bg-[#1F5FAE] transition-colors"
+                      >
+                        {isFR ? 'Ouvrir dans D01 Production →' : 'Open in D01 Generation →'}
+                      </button>
+                      <button
+                        onClick={() => onSelectDomain('D03')}
+                        style={{ padding: '6px 14px', borderRadius: 4, background: '#1F5FAE', color: '#FFFFFF', fontSize: 12, fontFamily: "'IBM Plex Mono', monospace", fontWeight: 600, border: 0, cursor: 'pointer' }}
+                        className="hover:bg-[#154682] transition-colors"
+                      >
+                        {isFR ? 'Lignes D03 Transport →' : 'D03 Transmission →'}
+                      </button>
+                      <button
+                        onClick={() => onSelectDomain('D02')}
+                        style={{ padding: '6px 14px', borderRadius: 4, border: '1px solid #1F5FAE', background: '#FFFFFF', color: '#1F5FAE', fontSize: 12, fontFamily: "'IBM Plex Mono', monospace", fontWeight: 600, cursor: 'pointer' }}
+                        className="hover:bg-[#EEF4F8] transition-colors"
+                      >
+                        {isFR ? 'Stabilité D02 Réseau →' : 'D02 Grid Stability →'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <iframe
+                  ref={mapIframeRef}
+                  src="/Cameroon Grid Map.html?v2"
+                  title="Interactive map of Cameroon's electricity grid"
+                  scrolling="no"
+                  style={{ display: 'block', width: '100%', height: `${mapHeight}px`, border: 0, transition: 'height 0.3s ease' }}
+                />
+              )}
             </div>
           </div>
         </section>
@@ -2054,14 +2154,56 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <div style={{ marginTop: 'clamp(48px, 6vw, 80px)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 290px), 1fr))', gap: 0, borderTop: '2px solid #0B1B2B' }}>
               {/* Step 1: SEE */}
               <div style={{ padding: '28px 28px 28px 0', borderBottom: '1px solid #D5E0E8', display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, color: '#1F5FAE' }}>{isFR ? '01 · VOIR' : '01 · SEE'}</div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, color: '#1F5FAE' }}>{isFR ? '01 · VOIR' : '01 · SEE'}</div>
+                  <div style={{ display: 'flex', gap: 4 }}>
+                    <button
+                      onClick={() => setCaseStudyImageMode('map')}
+                      style={{
+                        padding: '3px 8px',
+                        borderRadius: 3,
+                        fontSize: 10,
+                        fontFamily: "'IBM Plex Mono', monospace",
+                        fontWeight: 600,
+                        border: '1px solid',
+                        borderColor: caseStudyImageMode === 'map' ? '#1F5FAE' : '#D5E0E8',
+                        background: caseStudyImageMode === 'map' ? '#1F5FAE' : '#FFFFFF',
+                        color: caseStudyImageMode === 'map' ? '#FFFFFF' : '#5B6B7B',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {isFR ? 'Carte Réseau' : 'Grid Map'}
+                    </button>
+                    <button
+                      onClick={() => setCaseStudyImageMode('photo')}
+                      style={{
+                        padding: '3px 8px',
+                        borderRadius: 3,
+                        fontSize: 10,
+                        fontFamily: "'IBM Plex Mono', monospace",
+                        fontWeight: 600,
+                        border: '1px solid',
+                        borderColor: caseStudyImageMode === 'photo' ? '#1F5FAE' : '#D5E0E8',
+                        background: caseStudyImageMode === 'photo' ? '#1F5FAE' : '#FFFFFF',
+                        color: caseStudyImageMode === 'photo' ? '#FFFFFF' : '#5B6B7B',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {isFR ? 'Centrale' : 'Plant'}
+                    </button>
+                  </div>
+                </div>
                 <div style={{ aspectRatio: '4/3', borderRadius: 4, overflow: 'hidden', background: '#E3ECF2' }}>
-                  <img src="/assets/production/hydro.jpg" alt="Nachtigal hydro powerhouse" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img
+                    src={caseStudyImageMode === 'map' ? '/images/cameroon-grid-map-featured.jpg' : '/assets/production/hydro.jpg'}
+                    alt="Nachtigal hydro powerhouse & Cameroon grid"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
                 </div>
                 <p style={{ margin: 0, fontSize: '1rem', lineHeight: 1.6, color: '#3A4B5C' }}>
                   {isFR
-                    ? 'Une centrale au fil de l’eau sur la Sanaga : sept groupes Francis d’environ 60 MW — 420 MW à pleine puissance.'
-                    : 'A run-of-river plant on the Sanaga: seven Francis units of about 60 MW — 420 MW at full output.'}
+                    ? 'Une centrale au fil de l’eau sur la Sanaga : sept groupes Francis d’environ 60 MW — 420 MW à pleine puissance, évacués en 225 kV vers Nyom II.'
+                    : 'A run-of-river plant on the Sanaga: seven Francis units of about 60 MW — 420 MW at full output, evacuated at 225 kV towards Nyom II.'}
                 </p>
               </div>
 
